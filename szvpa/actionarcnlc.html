@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>South Zone VPA Leadership Development — Action Arc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        :root {
+            --bg-deep: #0f1019;
+            --bg-card: #181825;
+            --bg-surface: #1e1e2e;
+            --accent-gold: #D4A843;
+            --accent-gold-light: #F0D68A;
+            --text-primary: #e8e6e3;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --nlc-spaces: #0EA5E9;
+            --nlc-partnerships: #F59E0B;
+            --nlc-tech: #8B5CF6;
+            --nlc-workforce: #F43F5E;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+        }
+
+        body {
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(212, 168, 67, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(14, 165, 233, 0.03) 0%, transparent 50%);
+        }
+
+        .font-serif { font-family: 'DM Serif Display', serif; }
+
+        /* Animations */
+        .fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        /* Option buttons */
+        .option-btn {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212,168,67,0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .option-btn:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,168,67,0.15);
+        }
+        .option-btn:hover::before { opacity: 1; }
+        .option-btn:active {
+            transform: translateY(0);
+            background: rgba(212,168,67,0.1);
+        }
+        .option-btn.selected {
+            border-color: var(--accent-gold);
+            background: rgba(212,168,67,0.12);
+        }
+
+        /* Progress bar */
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light));
+            border-radius: 2px;
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Primary action button */
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            font-weight: 700;
+            padding: 14px 32px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(212,168,67,0.25);
+        }
+        .btn-primary:hover {
+            background: var(--accent-gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212,168,67,0.35);
+        }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Card styles */
+        .result-card {
+            background: linear-gradient(170deg, #13131f 0%, #181825 40%, #1a1a2e 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .card-accent-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--area-color, var(--accent-gold)), transparent);
+        }
+
+        .card-section {
+            padding: 16px 20px;
+        }
+
+        .card-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 0 20px;
+        }
+
+        /* Processing animation */
+        .processing-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            animation: processingPulse 1.4s ease-in-out infinite;
+        }
+        .processing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .processing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes processingPulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Tag styles */
+        .competency-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-secondary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e1e2e;
+            border: 1px solid rgba(212,168,67,0.3);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Responsive refinements */
+        @media (max-width: 640px) {
+            .option-btn { padding: 14px 16px; font-size: 0.9rem; }
+        }
+
+        /* Prevent card scaling issues with html2canvas */
+        #result-card-render { transform-origin: top left; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8">
+        <!-- Dynamic content -->
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        //  EMAILJS CONFIGURATION
+        //  Instructions: See SETUP-GUIDE.md for how to configure EmailJS
+        //  Replace the three values below with your own.
+        // ============================================================
+        const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+        const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+        const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+        // ============================================================
+        //  DATA: NLC Focus Areas
+        // ============================================================
+        const NLC_AREAS = {
+            spaces: {
+                name: "Shaping Learning Spaces",
+                short: "Learning Spaces",
+                color: "#0EA5E9",
+                colorLight: "rgba(14,165,233,0.12)",
+                icon: "✦",
+                description: "You are drawn to reimagining how physical and conceptual environments influence teaching, learning, and school culture. You see spaces not as static backdrops, but as active ingredients in the school experience — and you are energised by the possibility of transforming them.",
+                actionPrompt: "In the Action Arc, you might explore how intentional spatial design — from classroom layouts to communal areas — can catalyse shifts in pedagogy and school culture."
+            },
+            partnerships: {
+                name: "Leveraging Partnerships",
+                short: "Partnerships",
+                color: "#F59E0B",
+                colorLight: "rgba(245,158,11,0.12)",
+                icon: "◈",
+                description: "You instinctively look beyond the school gates. You see the potential in connections — with community organisations, industry, alumni, and neighbouring schools — and you understand that sustainable partnerships can amplify impact in ways that working alone cannot.",
+                actionPrompt: "In the Action Arc, you might investigate how structured partnerships can be designed, sustained, and evaluated to create lasting value for your school community."
+            },
+            tech: {
+                name: "Leveraging Technology",
+                short: "Technology",
+                color: "#8B5CF6",
+                colorLight: "rgba(139,92,246,0.12)",
+                icon: "◆",
+                description: "You are energised by the potential of digital tools, platforms, and systems to transform how schools operate, teach, and learn. You see technology not as an add-on, but as a lever for meaningful improvement — and you are ready to explore what is possible.",
+                actionPrompt: "In the Action Arc, you might deep-dive into how technology can be harnessed strategically — moving beyond adoption to genuine integration that shifts practice."
+            },
+            workforce: {
+                name: "Engaging a Multi-Generation Workforce",
+                short: "Multi-Gen Workforce",
+                color: "#F43F5E",
+                colorLight: "rgba(244,63,94,0.12)",
+                icon: "◇",
+                description: "You are attuned to the human dynamics of your school — particularly the richness and tension that comes from a workforce spanning different generations, career stages, and perspectives. You believe that getting this right is the foundation for everything else.",
+                actionPrompt: "In the Action Arc, you might explore how intentional strategies for cross-generational engagement can strengthen team cohesion, professional growth, and school culture."
+            }
+        };
+
+        // ============================================================
+        //  DATA: Core Competencies
+        // ============================================================
+        const CORE_COMPETENCIES = {
+            thinking:     { name: "Thinking Clearly & Making Sound Judgements", short: "Clear Thinking" },
+            heart:        { name: "Serving with Heart, Commitment & Purpose", short: "Purposeful Service" },
+            onePS:        { name: "Working as One Public Service", short: "One Public Service" },
+            stakeholders: { name: "Working Effectively with Citizens & Stakeholders", short: "Stakeholder Engagement" },
+            learning:     { name: "Keep Learning & Putting Skills into Action", short: "Continuous Learning" },
+            innovating:   { name: "Improving & Innovating Continuously", short: "Innovation" },
+            stewarding:   { name: "Stewarding Systems for Today & Tomorrow", short: "Systems Stewardship" },
+            caring:       { name: "Caring for, Developing & Inspiring Staff", short: "People Development" }
+        };
+
+        // ============================================================
+        //  DATA: Survey Questions with Weighted Scoring
+        //  Each option carries scores across ALL NLC areas and competencies.
+        //  Primary alignment: 3 pts. Cross-pollination: 1-2 pts.
+        // ============================================================
+        const QUESTIONS = [
+            {
+                scenario: "Your school has just received approval for a significant improvement project. As the Admin lead, you are energised by the range of possibilities ahead.",
+                question: "What aspect of leading this project draws you in most?",
+                options: [
+                    {
+                        text: "Reimagining how the physical environment — classrooms, corridors, communal areas — can better support varied modes of learning.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 1, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 2, stewarding: 2, caring: 0 }
+                    },
+                    {
+                        text: "Reaching out to community organisations, alumni networks, or industry partners who could bring fresh perspectives and resources to the project.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 1 },
+                        cc: { thinking: 0, heart: 1, onePS: 1, stakeholders: 3, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Investigating how digital tools, platforms, or smart systems could transform the way the project is planned, delivered, and experienced.",
+                        nlc: { spaces: 1, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 2, innovating: 2, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Thinking about how to rally staff across different generations and experience levels to co-own and co-create the project together.",
+                        nlc: { spaces: 0, partnerships: 1, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 1, onePS: 1, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            },
+            {
+                scenario: "You have the opportunity to reallocate a modest budget surplus before the financial year closes. Several proposals land on your desk — each with merit.",
+                question: "Which proposal do you find yourself instinctively advocating for?",
+                options: [
+                    {
+                        text: "Refreshing a tired learning space — new furniture arrangements, flexible zones, or improved aesthetics that signal a shift in how the school thinks about environment.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 1, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 3, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Seed-funding a partnership programme with a local organisation or neighbouring school — something that could grow into a sustained collaboration.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 1 },
+                        cc: { thinking: 0, heart: 0, onePS: 2, stakeholders: 2, learning: 0, innovating: 0, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Piloting a new edtech tool or upgrading infrastructure for blended learning — something the school has been meaning to explore.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 2, innovating: 2, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Investing in a cross-generational mentoring or structured professional growth initiative for staff across career stages.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 1, onePS: 0, stakeholders: 0, learning: 1, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            },
+            {
+                scenario: "You notice a growing divide in how experienced and newer staff are responding to a recent change in school processes. Conversations in the staffroom hint at frustration on both sides.",
+                question: "As the Admin overseeing this, your instinct is to…",
+                options: [
+                    {
+                        text: "Create a shared space — physical or conceptual — where both groups can co-design solutions. Sometimes changing the environment changes the conversation.",
+                        nlc: { spaces: 2, partnerships: 0, tech: 0, workforce: 2 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 1, stewarding: 1, caring: 1 }
+                    },
+                    {
+                        text: "Bring in an external facilitator or partner — someone outside the school dynamics — to mediate and offer fresh perspectives on the situation.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 1 },
+                        cc: { thinking: 0, heart: 0, onePS: 1, stakeholders: 2, learning: 0, innovating: 0, stewarding: 0, caring: 1 }
+                    },
+                    {
+                        text: "Set up a digital feedback channel or collaborative platform to surface and address concerns transparently, giving everyone an equal voice.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 1 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 1, innovating: 1, stewarding: 0, caring: 1 }
+                    },
+                    {
+                        text: "Pair experienced staff with newer colleagues in structured dialogue sessions — the gap needs bridging through deliberate, human connection.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 2, onePS: 0, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            },
+            {
+                scenario: "A new MOE initiative requires your school to rethink how a key programme is delivered. The timeline is tight, and your Principal is looking to you to chart the initial direction.",
+                question: "Your first move is to…",
+                options: [
+                    {
+                        text: "Walk through the existing spaces and ask: how could we reconfigure the environment to support this new approach? The space itself might be part of the answer.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 0, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 1, stewarding: 2, caring: 0 }
+                    },
+                    {
+                        text: "Map the external stakeholders and partners who could support the transition — who has done this well, and who might we learn from or collaborate with?",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 1, stakeholders: 3, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Research what technological solutions other schools or systems have used for similar initiatives — there might be a platform or tool that accelerates everything.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 0, stakeholders: 0, learning: 3, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Convene a diverse task force that deliberately includes voices from different career stages and roles — the initiative will only land well if everyone feels ownership.",
+                        nlc: { spaces: 0, partnerships: 1, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 1, onePS: 1, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 2 }
+                    }
+                ]
+            },
+            {
+                scenario: "You discover that a significant space in your school — perhaps a corner of the library, an old AV room, or a section of the canteen — is consistently underutilised.",
+                question: "What possibility comes to mind first?",
+                options: [
+                    {
+                        text: "Transforming it into a flexible learning hub — a maker space, collaborative zone, or wellness corner that responds to what students and staff actually need.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 3, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Opening it up to community partners — a shared space that connects the school to its wider ecosystem and invites outside expertise in.",
+                        nlc: { spaces: 1, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 2, stakeholders: 2, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Equipping it with technology to serve as a digital learning lab or innovation studio — somewhere the school can experiment with new tools.",
+                        nlc: { spaces: 2, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 1, innovating: 2, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Designating it as a staff development hub where colleagues across generations can learn, share, and recharge together.",
+                        nlc: { spaces: 1, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 1, onePS: 0, stakeholders: 0, learning: 1, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            },
+            {
+                scenario: "You are planning an upcoming professional development session for the Admin team. You have some latitude to shape the format and focus.",
+                question: "Which approach appeals to you most?",
+                options: [
+                    {
+                        text: "A site visit to a school or organisation known for innovative use of learning environments — seeing it in person changes how people think about what is possible.",
+                        nlc: { spaces: 3, partnerships: 1, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 2, innovating: 1, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Inviting an external partner — from industry, a community organisation, or another sector entirely — to share how they approach similar challenges.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 2, learning: 1, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "A hands-on workshop exploring emerging tools and platforms relevant to school administration and learning — something people can try immediately.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 3, innovating: 1, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "A facilitated session that deliberately pairs senior and junior staff to exchange insights, challenge assumptions, and co-develop ideas.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 1, onePS: 0, stakeholders: 0, learning: 1, innovating: 0, stewarding: 0, caring: 2 }
+                    }
+                ]
+            },
+            {
+                scenario: "A parent volunteer group approaches you with energy and ideas. They are keen to contribute meaningfully to the school, and you sense genuine goodwill.",
+                question: "Your first thought is…",
+                options: [
+                    {
+                        text: "How might their input inform the way we design or improve our school's physical environment? Parents see spaces differently — that perspective is valuable.",
+                        nlc: { spaces: 3, partnerships: 1, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 1, learning: 0, innovating: 1, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "This is a partnership opportunity — how do we structure this for sustained, mutual benefit rather than a one-off engagement?",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 1, stakeholders: 3, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Could we channel their energy into a digital initiative — an app, a platform, or a tech-supported programme that scales their contribution?",
+                        nlc: { spaces: 0, partnerships: 1, tech: 3, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 1, learning: 0, innovating: 2, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "How do we ensure this engages staff across experience levels — so it does not become siloed to one group and instead enriches the whole team?",
+                        nlc: { spaces: 0, partnerships: 1, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 0, onePS: 1, stakeholders: 1, learning: 0, innovating: 0, stewarding: 0, caring: 2 }
+                    }
+                ]
+            },
+            {
+                scenario: "When leading a significant change in your school — perhaps a restructured timetable, a new assessment model, or a shift in how CCAs are managed — you find yourself gravitating toward a particular leadership approach.",
+                question: "Which resonates most?",
+                options: [
+                    {
+                        text: "Making the change visible and tangible — reconfiguring environments so people can see and feel the difference. Physical shifts signal mindset shifts.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 1, stewarding: 2, caring: 0 }
+                    },
+                    {
+                        text: "Anchoring the change through relationships — building coalitions with partners inside and outside the school who believe in the direction.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 1 },
+                        cc: { thinking: 0, heart: 1, onePS: 2, stakeholders: 2, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Using data, dashboards, and digital tools to track progress and maintain transparency throughout the process — evidence builds trust.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 3, heart: 0, onePS: 0, stakeholders: 0, learning: 1, innovating: 0, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Focusing on people — ensuring every generation and experience level feels heard, valued, and equipped for the shift. Change is only real when people own it.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 2, onePS: 0, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            },
+            {
+                scenario: "It is a quiet Saturday morning. You find yourself reading an article that really grabs your attention — the kind you would bookmark and perhaps share with a colleague on Monday.",
+                question: "What is it about?",
+                options: [
+                    {
+                        text: "How a school in Scandinavia redesigned its campus to dissolve the boundaries between indoor and outdoor learning — and the pedagogical shifts that followed.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 1, innovating: 2, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "A public-private partnership model in education that produced unexpected benefits for both the school and the community — and the design principles behind it.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 1, heart: 0, onePS: 2, stakeholders: 2, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "An AI-powered system that is helping school leaders make better resource allocation decisions — with clear evidence of improved outcomes.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 2, heart: 0, onePS: 0, stakeholders: 0, learning: 2, innovating: 1, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "A multi-generational workplace study showing how intentional cross-age teaming boosts both innovation and retention — with lessons directly applicable to schools.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 1, heart: 1, onePS: 0, stakeholders: 0, learning: 1, innovating: 0, stewarding: 0, caring: 2 }
+                    }
+                ]
+            },
+            {
+                scenario: "When you picture the lasting impact of your leadership in this role, you allow yourself a moment of honest reflection about what matters most to you.",
+                question: "You hope colleagues will one day say you were the leader who…",
+                options: [
+                    {
+                        text: "Transformed the way spaces in our school look, feel, and function — making the environment itself a teacher and a statement of values.",
+                        nlc: { spaces: 3, partnerships: 0, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 1, onePS: 0, stakeholders: 0, learning: 0, innovating: 2, stewarding: 2, caring: 0 }
+                    },
+                    {
+                        text: "Built bridges we never imagined — connecting us with partners who made our school community richer, more resourceful, and more outward-looking.",
+                        nlc: { spaces: 0, partnerships: 3, tech: 0, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 1, stakeholders: 3, learning: 0, innovating: 0, stewarding: 0, caring: 0 }
+                    },
+                    {
+                        text: "Brought us into the future — making technology work for us in ways that felt natural, empowering, and genuinely useful.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 3, workforce: 0 },
+                        cc: { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 2, innovating: 2, stewarding: 1, caring: 0 }
+                    },
+                    {
+                        text: "Brought us together — making sure every voice, from the most experienced to the newest, was heard, valued, and woven into the fabric of our school.",
+                        nlc: { spaces: 0, partnerships: 0, tech: 0, workforce: 3 },
+                        cc: { thinking: 0, heart: 2, onePS: 0, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 3 }
+                    }
+                ]
+            }
+        ];
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        const app = document.getElementById('app');
+        let participantName = '';
+        let currentQ = 0;
+        let answers = []; // stores index of chosen option per question
+
+        // ============================================================
+        //  RENDERING HELPERS
+        // ============================================================
+        function showToast(msg, duration = 3000) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), duration);
+        }
+
+        function shuffleOptions(question) {
+            // Shuffle options for each question to avoid position bias
+            // We return a new array with shuffled indices
+            const indices = question.options.map((_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            return indices;
+        }
+
+        // Store shuffled orders so we can map back to original indices
+        let shuffledOrders = QUESTIONS.map(q => shuffleOptions(q));
+
+        // ============================================================
+        //  SCREENS
+        // ============================================================
+
+        function renderWelcome() {
+            app.innerHTML = `
+                <div class="w-full max-w-lg text-center fade-up">
+                    <!-- Header Mark -->
+                    <div class="mb-10">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] mb-6">
+                            <span class="text-xs font-semibold tracking-widest uppercase" style="color: var(--accent-gold);">South Zone</span>
+                        </div>
+                        <h1 class="font-serif text-3xl sm:text-4xl leading-tight mb-3" style="color: var(--accent-gold-light);">
+                            VPA Leadership<br>Development Series
+                        </h1>
+                        <p class="text-sm tracking-widest uppercase font-semibold" style="color: var(--text-muted);">
+                            Action Arc &nbsp;·&nbsp; 2026 – 27
+                        </p>
+                    </div>
+
+                    <!-- Context -->
+                    <div class="text-left bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-8">
+                        <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+                            Welcome to the <strong style="color: var(--text-primary);">Action Arc</strong> — the second phase of our 6-year leadership development journey. Before our first workshop, we would like to help you discover your <em>area of focus</em> for the work ahead.
+                        </p>
+                        <p class="text-sm leading-relaxed mt-3" style="color: var(--text-secondary);">
+                            This short exercise presents 10 leadership scenarios. There are no right or wrong answers — simply choose what resonates most naturally with you.
+                        </p>
+                    </div>
+
+                    <!-- Name Input -->
+                    <div class="mb-6">
+                        <label for="nameInput" class="block text-xs font-semibold tracking-wider uppercase mb-2" style="color: var(--text-muted);">Your name</label>
+                        <input
+                            type="text"
+                            id="nameInput"
+                            maxlength="40"
+                            placeholder="e.g. Alvin"
+                            class="w-full px-5 py-4 rounded-xl text-center text-lg font-semibold outline-none transition-all"
+                            style="background: var(--bg-surface); border: 1.5px solid rgba(255,255,255,0.08); color: var(--text-primary);"
+                            onfocus="this.style.borderColor='var(--accent-gold)'"
+                            onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
+                        >
+                    </div>
+
+                    <button id="startBtn" class="btn-primary w-full text-base" disabled>Begin</button>
+
+                    <p class="text-[11px] mt-6" style="color: var(--text-muted);">Takes about 5 minutes &nbsp;·&nbsp; 10 scenarios</p>
+                </div>
+            `;
+
+            const input = document.getElementById('nameInput');
+            const btn = document.getElementById('startBtn');
+
+            input.addEventListener('input', () => {
+                btn.disabled = input.value.trim().length < 1;
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && input.value.trim().length >= 1) startSurvey();
+            });
+            btn.addEventListener('click', startSurvey);
+        }
+
+        function startSurvey() {
+            participantName = document.getElementById('nameInput').value.trim();
+            currentQ = 0;
+            answers = [];
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = QUESTIONS[currentQ];
+            const order = shuffledOrders[currentQ];
+            const progress = ((currentQ) / QUESTIONS.length) * 100;
+
+            app.innerHTML = `
+                <div class="w-full max-w-lg fade-up">
+                    <!-- Progress -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[11px] font-semibold tracking-widest uppercase" style="color: var(--text-muted);">Question ${currentQ + 1} of ${QUESTIONS.length}</span>
+                            <span class="text-[11px] font-medium" style="color: var(--accent-gold);">${Math.round(progress)}%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Scenario -->
+                    <div class="mb-5 p-4 rounded-xl" style="background: rgba(212,168,67,0.04); border: 1px solid rgba(212,168,67,0.08);">
+                        <p class="text-sm leading-relaxed font-serif italic" style="color: var(--text-secondary);">${q.scenario}</p>
+                    </div>
+
+                    <!-- Question -->
+                    <h2 class="text-lg sm:text-xl font-bold mb-6 leading-snug" style="color: var(--text-primary);">${q.question}</h2>
+
+                    <!-- Options -->
+                    <div class="space-y-3" id="optionsContainer">
+                        ${order.map((origIdx, displayIdx) => `
+                            <button class="option-btn w-full fade-up stagger-${displayIdx + 1}" data-original-index="${origIdx}">
+                                ${q.options[origIdx].text}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.originalIndex)));
+            });
+        }
+
+        function handleAnswer(optionIndex) {
+            answers.push(optionIndex);
+
+            // Brief visual feedback
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => {
+                b.disabled = true;
+                if (parseInt(b.dataset.originalIndex) === optionIndex) {
+                    b.classList.add('selected');
+                } else {
+                    b.style.opacity = '0.3';
+                }
+            });
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ >= QUESTIONS.length) {
+                    renderProcessing();
+                } else {
+                    renderQuestion();
+                }
+            }, 400);
+        }
+
+        function renderProcessing() {
+            app.innerHTML = `
+                <div class="text-center fade-up">
+                    <div class="flex justify-center gap-3 mb-8">
+                        <div class="processing-dot"></div>
+                        <div class="processing-dot"></div>
+                        <div class="processing-dot"></div>
+                    </div>
+                    <p class="font-serif text-xl mb-2" style="color: var(--accent-gold-light);">Mapping your leadership profile…</p>
+                    <p class="text-sm" style="color: var(--text-muted);">Analysing your responses across focus areas and competencies</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const results = calculateResults();
+                sendEmailNotification(results);
+                renderResults(results);
+            }, 2200);
+        }
+
+        // ============================================================
+        //  SCORING ENGINE
+        // ============================================================
+        function calculateResults() {
+            const nlcScores = { spaces: 0, partnerships: 0, tech: 0, workforce: 0 };
+            const ccScores = { thinking: 0, heart: 0, onePS: 0, stakeholders: 0, learning: 0, innovating: 0, stewarding: 0, caring: 0 };
+
+            answers.forEach((optIdx, qIdx) => {
+                const option = QUESTIONS[qIdx].options[optIdx];
+                // NLC scores
+                for (const key in option.nlc) {
+                    nlcScores[key] += option.nlc[key];
+                }
+                // CC scores
+                for (const key in option.cc) {
+                    ccScores[key] += option.cc[key];
+                }
+            });
+
+            // Sort NLC areas
+            const sortedNLC = Object.entries(nlcScores).sort((a, b) => b[1] - a[1]);
+            const primaryNLC = sortedNLC[0];
+            const secondaryNLC = sortedNLC[1];
+
+            // Determine if secondary is close enough to mention (within 70% of primary)
+            const hasSecondary = secondaryNLC[1] >= primaryNLC[1] * 0.7 && secondaryNLC[1] > 0;
+
+            // Sort competencies - pick top 2
+            const sortedCC = Object.entries(ccScores).sort((a, b) => b[1] - a[1]);
+            const topCompetencies = sortedCC.slice(0, 2).filter(c => c[1] > 0);
+
+            return {
+                nlcScores,
+                ccScores,
+                primary: { key: primaryNLC[0], score: primaryNLC[1] },
+                secondary: hasSecondary ? { key: secondaryNLC[0], score: secondaryNLC[1] } : null,
+                competencies: topCompetencies.map(c => c[0]),
+                allNLCSorted: sortedNLC
+            };
+        }
+
+        // ============================================================
+        //  RESULT CARD RENDERING
+        // ============================================================
+        function renderResults(results) {
+            const primary = NLC_AREAS[results.primary.key];
+            const secondary = results.secondary ? NLC_AREAS[results.secondary.key] : null;
+            const compNames = results.competencies.map(k => CORE_COMPETENCIES[k]);
+
+            // Build competency tags HTML
+            const compTagsHTML = compNames.map(c =>
+                `<span class="competency-tag">${c.short}</span>`
+            ).join(' ');
+
+            // Build secondary HTML
+            const secondaryHTML = secondary ? `
+                <div class="flex items-start gap-2 mt-3">
+                    <span class="text-xs font-bold mt-0.5" style="color: ${secondary.color};">${secondary.icon}</span>
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-wider" style="color: var(--text-muted);">You also showed a strong inclination toward</p>
+                        <p class="text-sm font-bold mt-0.5" style="color: ${secondary.color};">${secondary.name}</p>
+                    </div>
+                </div>
+            ` : '';
+
+            // Build NLC bar chart for visual interest
+            const maxScore = results.allNLCSorted[0][1];
+            const barsHTML = results.allNLCSorted.map(([key, score]) => {
+                const area = NLC_AREAS[key];
+                const pct = maxScore > 0 ? (score / maxScore) * 100 : 0;
+                return `
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-[9px] font-semibold w-20 text-right truncate" style="color: var(--text-muted);">${area.short}</span>
+                        <div class="flex-1 h-2 rounded-full" style="background: rgba(255,255,255,0.04);">
+                            <div class="h-full rounded-full" style="width: ${pct}%; background: ${area.color}; min-width: ${score > 0 ? '4px' : '0'};"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            app.innerHTML = `
+                <div class="w-full max-w-md fade-up pb-12">
+                    <!-- The actual card for download -->
+                    <div id="result-card-render" class="result-card" style="--area-color: ${primary.color};">
+
+                        <!-- Accent bar -->
+                        <div class="card-accent-bar"></div>
+
+                        <!-- Header -->
+                        <div class="card-section pb-2">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-[10px] font-bold tracking-[0.15em] uppercase" style="color: var(--accent-gold);">South Zone VPA Leadership Development</p>
+                                    <p class="text-[9px] font-medium tracking-wider uppercase mt-0.5" style="color: var(--text-muted);">Action Arc &nbsp;·&nbsp; 2026 – 27</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] font-semibold px-2 py-1 rounded" style="background: ${primary.colorLight}; color: ${primary.color};">NLC Focus</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Greeting & Primary Result -->
+                        <div class="card-section">
+                            <p class="text-base font-bold mb-1" style="color: var(--text-primary);">Hi, ${participantName}!</p>
+                            <p class="text-[11px] leading-relaxed mb-4" style="color: var(--text-secondary);">Based on your responses across 10 leadership scenarios, here is what we found.</p>
+
+                            <div class="rounded-xl p-4 mb-3" style="background: ${primary.colorLight}; border: 1px solid ${primary.color}33;">
+                                <p class="text-[10px] font-semibold uppercase tracking-wider mb-1" style="color: var(--text-muted);">Your Primary Focus Area</p>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-lg">${primary.icon}</span>
+                                    <h2 class="text-xl font-bold" style="color: ${primary.color};">${primary.name}</h2>
+                                </div>
+                                <p class="text-[11px] leading-relaxed" style="color: var(--text-secondary);">${primary.description}</p>
+                            </div>
+
+                            ${secondaryHTML}
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Profile Breakdown -->
+                        <div class="card-section">
+                            <p class="text-[10px] font-semibold uppercase tracking-wider mb-3" style="color: var(--text-muted);">Your Profile</p>
+                            ${barsHTML}
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Competencies -->
+                        <div class="card-section">
+                            <p class="text-[10px] font-semibold uppercase tracking-wider mb-1" style="color: var(--text-muted);">Competencies to Consider</p>
+                            <p class="text-[10px] leading-relaxed mb-2" style="color: var(--text-secondary);">As you work on your focus area, you might consider developing these competencies alongside your learning.</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${compTagsHTML}
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Action Prompt -->
+                        <div class="card-section">
+                            <p class="text-[10px] font-semibold uppercase tracking-wider mb-1" style="color: var(--accent-gold);">Looking Ahead</p>
+                            <p class="text-[11px] leading-relaxed font-serif italic" style="color: var(--text-secondary);">${primary.actionPrompt}</p>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Arc 1 Recap & Timeline -->
+                        <div class="card-section" style="background: rgba(255,255,255,0.015);">
+                            <p class="text-[10px] font-semibold uppercase tracking-wider mb-2" style="color: var(--text-muted);">Our Journey So Far</p>
+                            <p class="text-[10px] leading-relaxed mb-3" style="color: var(--text-secondary);">
+                                In the <strong style="color: var(--text-primary);">Awareness Arc (2024–25)</strong>, we explore values and values hierarchies, emotional intelligence and the narratives we frame, design thinking and engaging the voice of our communities, and systems thinking and complexity through gameplay — connecting between these ideas to inform how we show up and lead.
+                            </p>
+                            <div class="flex gap-3 text-[9px]">
+                                <div class="flex-1 rounded-lg p-2.5 text-center" style="background: var(--bg-deep); border: 1px solid rgba(255,255,255,0.06);">
+                                    <p class="font-bold" style="color: var(--accent-gold);">2024 – 25</p>
+                                    <p style="color: var(--text-muted);">Awareness</p>
+                                </div>
+                                <div class="flex-1 rounded-lg p-2.5 text-center" style="background: ${primary.colorLight}; border: 1px solid ${primary.color}44;">
+                                    <p class="font-bold" style="color: ${primary.color};">2026 – 27</p>
+                                    <p style="color: var(--text-secondary);">Action</p>
+                                </div>
+                                <div class="flex-1 rounded-lg p-2.5 text-center" style="background: var(--bg-deep); border: 1px solid rgba(255,255,255,0.06);">
+                                    <p class="font-bold" style="color: var(--text-muted);">2028 – 29</p>
+                                    <p style="color: var(--text-muted);">Agency</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Key Dates -->
+                        <div class="card-section pb-5">
+                            <p class="text-[10px] font-semibold uppercase tracking-wider mb-2" style="color: var(--text-muted);">Key Dates — 2026</p>
+                            <div class="flex gap-3 text-[10px]">
+                                <div class="flex-1">
+                                    <p class="font-bold" style="color: var(--text-primary);">Kickoff Workshop</p>
+                                    <p style="color: var(--text-muted);">Last 2 weeks of March</p>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold" style="color: var(--text-primary);">Mid-Point Celebration</p>
+                                    <p style="color: var(--text-muted);">Last week of October</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="px-5 py-3 flex items-center justify-between" style="background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.04);">
+                            <p class="text-[8px] uppercase tracking-widest font-semibold" style="color: var(--text-muted);">Awareness → Action → Agency</p>
+                            <p class="text-[8px]" style="color: var(--text-muted);">2024 – 2029</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions (outside the card - not captured in PNG) -->
+                    <div class="mt-8 space-y-3">
+                        <button id="downloadBtn" class="btn-primary w-full text-base">
+                            Download Card ⬇
+                        </button>
+                        <p class="text-[11px] text-center" style="color: var(--text-muted);">Save this card — bring it along to the kickoff workshop.</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+        }
+
+        // ============================================================
+        //  CARD DOWNLOAD (html2canvas)
+        // ============================================================
+        function downloadCard() {
+            const card = document.getElementById('result-card-render');
+            const btn = document.getElementById('downloadBtn');
+            btn.textContent = 'Generating…';
+            btn.disabled = true;
+
+            html2canvas(card, {
+                backgroundColor: '#13131f',
+                scale: 3,
+                useCORS: true,
+                logging: false,
+                windowWidth: card.scrollWidth,
+                windowHeight: card.scrollHeight
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const safeName = participantName.replace(/[^a-zA-Z0-9]/g, '-');
+                link.download = `SZ-Action-Arc-${safeName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                btn.textContent = 'Download Card ⬇';
+                btn.disabled = false;
+                showToast('Card downloaded!');
+            }).catch(err => {
+                console.error('Canvas generation failed:', err);
+                btn.textContent = 'Download Failed — Try Again';
+                btn.disabled = false;
+            });
+        }
+
+        // ============================================================
+        //  EMAIL NOTIFICATION (EmailJS)
+        // ============================================================
+        function sendEmailNotification(results) {
+            // Skip if EmailJS not configured
+            if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+                console.log('[EmailJS] Not configured — skipping notification.');
+                console.log('[EmailJS] Results:', {
+                    name: participantName,
+                    primary: NLC_AREAS[results.primary.key].name,
+                    secondary: results.secondary ? NLC_AREAS[results.secondary.key].name : 'None',
+                    competencies: results.competencies.map(k => CORE_COMPETENCIES[k].name).join(', ')
+                });
+                return;
+            }
+
+            try {
+                emailjs.init(EMAILJS_PUBLIC_KEY);
+
+                const primary = NLC_AREAS[results.primary.key];
+                const secondary = results.secondary ? NLC_AREAS[results.secondary.key] : null;
+                const comps = results.competencies.map(k => CORE_COMPETENCIES[k].name).join(' | ');
+
+                // Build a simple score summary
+                const scoreSummary = results.allNLCSorted.map(([key, score]) =>
+                    `${NLC_AREAS[key].short}: ${score}`
+                ).join(', ');
+
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    participant_name: participantName,
+                    primary_area: primary.name,
+                    secondary_area: secondary ? secondary.name : '—',
+                    competencies: comps,
+                    score_summary: scoreSummary,
+                    timestamp: new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
+                }).then(() => {
+                    console.log('[EmailJS] Notification sent.');
+                }).catch(err => {
+                    console.warn('[EmailJS] Send failed:', err);
+                });
+            } catch(e) {
+                console.warn('[EmailJS] Error:', e);
+            }
+        }
+
+        // ============================================================
+        //  BOOT
+        // ============================================================
+        renderWelcome();
+
+    })();
+    </script>
+</body>
+</html>
