@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What's Your Hawker Personality?</title>
+    <title>What's Your Hawker Personality? — S3 Cluster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,514 +23,356 @@
             --text3: #6b6584;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body {
-            min-height: 100vh; min-height: 100dvh;
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-        }
-        body {
-            background-image:
-                radial-gradient(ellipse at 30% 0%, rgba(255,45,120,0.07) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 100%, rgba(255,225,77,0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(61,255,138,0.03) 0%, transparent 60%);
-        }
-        .font-hand { font-family: 'Caveat', cursive; }
-
-        .fade-up { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) forwards; opacity:0; transform:translateY(14px); }
-        @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
-        .stagger-1 { animation-delay:0.06s; } .stagger-2 { animation-delay:0.12s; }
-        .stagger-3 { animation-delay:0.18s; } .stagger-4 { animation-delay:0.24s; }
-        .stagger-5 { animation-delay:0.30s; } .stagger-6 { animation-delay:0.36s; }
-        .stagger-7 { animation-delay:0.42s; } .stagger-8 { animation-delay:0.48s; }
-
-        /* Glow text */
-        .glow { text-shadow: 0 0 20px rgba(255,225,77,0.4), 0 0 40px rgba(255,225,77,0.15); }
-        .glow-pink { text-shadow: 0 0 20px rgba(255,45,120,0.5), 0 0 40px rgba(255,45,120,0.2); }
-
-        /* Option buttons */
+        html, body { min-height:100vh;min-height:100dvh;font-family:'Outfit',sans-serif;background-color:var(--bg);color:var(--text); }
+        body { background-image: radial-gradient(ellipse at 30% 0%,rgba(255,45,120,0.08) 0%,transparent 50%), radial-gradient(ellipse at 70% 100%,rgba(255,225,77,0.06) 0%,transparent 50%), radial-gradient(ellipse at 50% 50%,rgba(61,255,138,0.03) 0%,transparent 60%); }
+        .font-hand { font-family:'Caveat',cursive; }
+        .fade-up { animation:fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) forwards; opacity:0; transform:translateY(14px); }
+        @keyframes fadeUp { to{opacity:1;transform:translateY(0);} }
+        .stagger-1{animation-delay:0.05s}.stagger-2{animation-delay:0.1s}.stagger-3{animation-delay:0.15s}.stagger-4{animation-delay:0.2s}.stagger-5{animation-delay:0.25s}
+        .glow { text-shadow:0 0 20px rgba(255,225,77,0.5),0 0 60px rgba(255,225,77,0.15); }
+        .glow-pink { text-shadow:0 0 20px rgba(255,45,120,0.5),0 0 40px rgba(255,45,120,0.2); }
         .opt-btn {
-            background: var(--surface);
-            border: 1.5px solid rgba(255,255,255,0.05);
-            border-radius: 14px;
-            padding: 14px 18px 14px 46px;
-            text-align: left; cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
-            color: var(--text); font-size: 0.92rem; line-height: 1.5;
-            position: relative; width: 100%;
+            background:var(--surface); border:1.5px solid rgba(255,255,255,0.05); border-radius:14px;
+            padding:14px 16px 14px 46px; text-align:left; cursor:pointer;
+            transition:all 0.25s cubic-bezier(0.22,1,0.36,1); color:var(--text);
+            font-size:0.92rem; line-height:1.5; position:relative; width:100%;
         }
-        .opt-btn:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .opt-btn:active { transform: translateY(0); }
+        .opt-btn:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+        .opt-btn:active{transform:translateY(0);}
         .opt-badge {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-            width: 26px; height: 26px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 800;
-            border: 2px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.12);
-            transition: all 0.25s;
+            position:absolute;left:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;
+            border:2px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.12);transition:all 0.25s;
         }
-        .opt-btn.p1 { border-color: var(--neon-yellow); background: rgba(255,225,77,0.08); }
-        .opt-btn.p1 .opt-badge { background: var(--neon-yellow); border-color: var(--neon-yellow); color: var(--bg); }
-        .opt-btn.p2 { border-color: var(--neon-pink); background: rgba(255,45,120,0.06); }
-        .opt-btn.p2 .opt-badge { background: var(--neon-pink); border-color: var(--neon-pink); color: white; }
-
-        .progress-track { width:100%; height:4px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg,var(--neon-yellow),var(--neon-orange)); border-radius:2px; transition:width 0.5s cubic-bezier(0.22,1,0.36,1); }
-
-        .btn-main {
-            background: linear-gradient(135deg, var(--neon-yellow), var(--neon-orange));
-            color: var(--bg); font-weight: 800; padding: 14px 32px; border-radius: 12px;
-            border: none; cursor: pointer; font-size: 1rem;
-            transition: all 0.2s; box-shadow: 0 4px 16px rgba(255,138,61,0.3);
-            letter-spacing: 0.02em;
-        }
-        .btn-main:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,138,61,0.4); }
-        .btn-main:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        .toast {
-            position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
-            background:var(--surface2);border:1px solid rgba(255,225,77,0.2);
-            color:var(--text);padding:12px 24px;border-radius:12px;font-size:0.85rem;z-index:100;
-            transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);
-            box-shadow:0 8px 32px rgba(0,0,0,0.5);
-        }
-        .toast.show { transform:translateX(-50%) translateY(0); }
-
-        .float { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
-
-        @media (max-width:640px) { .opt-btn { padding:12px 14px 12px 42px; font-size:0.87rem; } }
+        .opt-btn.p1{border-color:var(--neon-yellow);background:rgba(255,225,77,0.08);}
+        .opt-btn.p1 .opt-badge{background:var(--neon-yellow);border-color:var(--neon-yellow);color:var(--bg);}
+        .opt-btn.p2{border-color:var(--neon-pink);background:rgba(255,45,120,0.06);}
+        .opt-btn.p2 .opt-badge{background:var(--neon-pink);border-color:var(--neon-pink);color:white;}
+        .progress-track{width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--neon-yellow),var(--neon-orange));border-radius:2px;transition:width 0.5s cubic-bezier(0.22,1,0.36,1);}
+        .btn-main{background:linear-gradient(135deg,var(--neon-yellow),var(--neon-orange));color:var(--bg);font-weight:800;padding:14px 32px;border-radius:12px;border:none;cursor:pointer;font-size:1rem;transition:all 0.2s;box-shadow:0 4px 16px rgba(255,138,61,0.3);letter-spacing:0.02em;}
+        .btn-main:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,138,61,0.4);}
+        .btn-main:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none;}
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface2);border:1px solid rgba(255,225,77,0.2);color:var(--text);padding:12px 24px;border-radius:12px;font-size:0.85rem;z-index:100;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+        .toast.show{transform:translateX(-50%) translateY(0);}
+        .float{animation:float 3s ease-in-out infinite;}
+        @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+        @media(max-width:640px){.opt-btn{padding:12px 14px 12px 42px;font-size:0.87rem;}}
     </style>
 </head>
 <body class="antialiased">
     <div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8"></div>
     <div id="toast" class="toast"></div>
+<script>
+(function(){
+'use strict';
 
-    <script>
-    (function(){
-        'use strict';
+// ============================================================
+//  8 DISHES — vibrant SVG icons
+// ============================================================
+const DISHES = {
+    nasilemak: {
+        name:"Nasi Lemak", emoji:"\uD83C\uDF5A", color:"#22c55e", colorLight:"rgba(34,197,94,0.14)",
+        tagline:"The Heart of Every Table",
+        description:"You are the comforting constant. Reliable, grounding, and always showing up when it matters most. People gravitate toward you because you hold things together with warmth and quiet strength.",
+        holdsDear:"Community, stability, and showing up for people consistently.",
+        secretIngredient:"You make everyone feel at home. Your steady presence gives others the confidence to take risks.",
+        learningStyle:"Through real conversations and shared experiences. You learn best alongside others.",
+        leadershipSpark:"You lead by being the person everyone trusts. Not flashy, but indispensable.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="nl1" cx="50%" cy="50%"><stop offset="0%" stop-color="#bbf7d0"/><stop offset="100%" stop-color="#166534" stop-opacity="0.4"/></radialGradient></defs><path d="M8 58c0 0 16-6 42-6s42 6 42 6v10c0 5-19 10-42 10S8 73 8 68v-10z" fill="url(#nl1)" opacity="0.75"/><path d="M10 58c10-3 24-5 40-5s30 2 40 5" stroke="#15803d" stroke-width="1.2" fill="none" opacity="0.4"/><path d="M38 36c3-10 8-14 14-14s12 5 14 14c1 4 0 10-1 14H39c-1-4-2-10-1-14z" fill="#fefce8"/><path d="M40 38c2-6 6-10 12-10s10 4 12 10" stroke="#e5e5e5" stroke-width="0.6" fill="none" opacity="0.4"/><path d="M18 48c3-5 7-6 10-4s4 6 2 9-5 4-8 3-6-4-4-8z" fill="#dc2626" opacity="0.9"/><path d="M20 49c1-2 3-3 5-2s2 3 1 4" stroke="#fbbf24" stroke-width="0.6" fill="none" opacity="0.5"/><circle cx="22" cy="50" r="0.8" fill="#fbbf24" opacity="0.4"/><ellipse cx="72" cy="50" rx="9" ry="7" fill="#fefce8" stroke="#d4d4d4" stroke-width="0.7"/><ellipse cx="72" cy="50" rx="5" ry="4" fill="#fbbf24"/><circle cx="72" cy="50" r="1.5" fill="#f59e0b" opacity="0.4"/><circle cx="60" cy="56" r="3" fill="#22c55e" opacity="0.75" stroke="#16a34a" stroke-width="0.5"/><path d="M59 56h2" stroke="#15803d" stroke-width="0.4"/><circle cx="56" cy="59" r="2.5" fill="#22c55e" opacity="0.6" stroke="#16a34a" stroke-width="0.4"/><path d="M34 55l2-1 2 0.5 2-0.5 1.5 1" stroke="#92400e" stroke-width="1.2" fill="none" opacity="0.7"/><path d="M33 57l1.5-0.5 2 0.5 1.5-1 2 0.5" stroke="#92400e" stroke-width="1" fill="none" opacity="0.5"/><circle cx="42" cy="52" r="1.2" fill="#d4a843" opacity="0.7"/><circle cx="44" cy="54" r="1" fill="#d4a843" opacity="0.6"/><circle cx="40" cy="54" r="0.9" fill="#d4a843" opacity="0.6"/><circle cx="46" cy="53" r="0.8" fill="#d4a843" opacity="0.5"/></svg>`
+    },
+    chickenrice: {
+        name:"Chicken Rice", emoji:"\uD83C\uDF57", color:"#eab308", colorLight:"rgba(234,179,8,0.14)",
+        tagline:"The Quiet Perfectionist",
+        description:"Deceptively simple, impossibly excellent. You believe in doing things right. Behind your calm exterior is someone who obsesses over the details that others miss. That is what makes you exceptional.",
+        holdsDear:"Precision, craft, and the pride of doing something really well.",
+        secretIngredient:"You raise the standard for everyone around you, quietly and consistently.",
+        learningStyle:"Through deep focus and practice. You master one thing before moving to the next.",
+        leadershipSpark:"You lead by example. Your work speaks louder than words ever could.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cr1" cx="50%" cy="45%"><stop offset="0%" stop-color="#fef9c3"/><stop offset="100%" stop-color="#92400e" stop-opacity="0.15"/></radialGradient></defs><ellipse cx="50" cy="64" rx="38" ry="20" fill="url(#cr1)" opacity="0.4"/><ellipse cx="50" cy="60" rx="34" ry="16" fill="#fefce8"/><ellipse cx="50" cy="60" rx="34" ry="16" fill="none" stroke="#eab308" stroke-width="1.2" opacity="0.4"/><path d="M28 52c2-8 8-12 14-12s10 4 12 10l-2 4H30l-2-2z" fill="#fde68a" opacity="0.8"/><path d="M30 50c1-4 5-8 10-8s8 3 10 7" stroke="#d97706" stroke-width="0.6" fill="none" opacity="0.4"/><path d="M30 50l26 0" stroke="#d97706" stroke-width="0.4" opacity="0.3"/><path d="M32 46l22 0" stroke="#d97706" stroke-width="0.3" opacity="0.2"/><ellipse cx="36" cy="52" rx="12" ry="3" fill="#f59e0b" opacity="0.3"/><path d="M28 54c0 0 4-1.5 8-1.5s6 1.5 6 1.5" fill="#fbbf24" opacity="0.5"/><path d="M32 54c0 0 3-1 5-1s4 1 4 1" fill="#eab308" opacity="0.4"/><path d="M36 54c0 0 2-0.5 3-0.5s3 0.5 3 0.5" fill="#d97706" opacity="0.3"/><circle cx="66" cy="54" r="5" fill="#dc2626" opacity="0.75"/><circle cx="66" cy="54" r="3" fill="#ef4444" opacity="0.5"/><circle cx="66" cy="54" r="1" fill="#fbbf24" opacity="0.4"/><circle cx="56" cy="62" r="2.5" fill="#22c55e" opacity="0.7" stroke="#16a34a" stroke-width="0.4"/><circle cx="61" cy="64" r="2" fill="#22c55e" opacity="0.5" stroke="#16a34a" stroke-width="0.3"/><circle cx="50" cy="64" r="2" fill="#22c55e" opacity="0.6" stroke="#16a34a" stroke-width="0.3"/><ellipse cx="40" cy="62" rx="6" ry="4" fill="#fefce8" opacity="0.6"/><ellipse cx="40" cy="61" rx="4" ry="2.5" fill="#fef9c3" opacity="0.5"/><circle cx="40" cy="60" r="0.5" fill="#d4d4d4" opacity="0.3"/></svg>`
+    },
+    laksa: {
+        name:"Laksa", emoji:"\uD83C\uDF5C", color:"#f97316", colorLight:"rgba(249,115,22,0.14)",
+        tagline:"The Flavour Alchemist",
+        description:"You bring different worlds together and make them richer for it. Complex, layered, and unafraid of mixing things up. Where others see contradiction, you see possibility.",
+        holdsDear:"Diversity, connection, and the beauty of blending different perspectives.",
+        secretIngredient:"You help people see how seemingly different ideas can come together into something extraordinary.",
+        learningStyle:"Through immersion. You dive into the unfamiliar and emerge with new insights.",
+        leadershipSpark:"You lead by bridging divides. You are the person who finds common ground where none seemed to exist.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="lk1" cx="50%" cy="45%"><stop offset="0%" stop-color="#ffedd5"/><stop offset="100%" stop-color="#9a3412" stop-opacity="0.2"/></radialGradient></defs><path d="M20 50c0-14 14-26 30-26s30 12 30 26v6c0 12-14 20-30 20S20 68 20 56v-6z" fill="url(#lk1)" opacity="0.6"/><ellipse cx="50" cy="50" rx="28" ry="14" fill="#fb923c" opacity="0.7"/><ellipse cx="50" cy="50" rx="28" ry="14" fill="none" stroke="#ea580c" stroke-width="1.5" opacity="0.6"/><path d="M28 48c8 4 16-2 22 2s12 0 20-2" stroke="#fefce8" stroke-width="2.5" fill="none" opacity="0.9"/><path d="M30 52c6 2 12-1 18 1s14-1 18 1" stroke="#fefce8" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="38" cy="46" r="4" fill="#dc2626" opacity="0.7"/><circle cx="58" cy="47" r="3.5" fill="#dc2626" opacity="0.6"/><circle cx="48" cy="44" r="2.5" fill="#16a34a" opacity="0.8"/><ellipse cx="35" cy="50" rx="4" ry="2" fill="#fbbf24" opacity="0.5"/><circle cx="64" cy="50" r="2" fill="#eab308" opacity="0.5"/><path d="M66 42l8-14" stroke="#78350f" stroke-width="2" stroke-linecap="round" opacity="0.5"/><path d="M68 43l7-12" stroke="#78350f" stroke-width="2" stroke-linecap="round" opacity="0.4"/><circle cx="42" cy="48" r="1.5" fill="#f97316" opacity="0.6"/></svg>`
+    },
+    rotiprata: {
+        name:"Roti Prata", emoji:"\uD83E\uDED3", color:"#d4a843", colorLight:"rgba(212,168,67,0.14)",
+        tagline:"The Crowd Favourite",
+        description:"Warm, versatile, and universally loved. You have the rare ability to bring joy to every situation and adapt effortlessly to whatever is needed. People light up around you.",
+        holdsDear:"Warmth, generosity, and bringing out the best in every moment.",
+        secretIngredient:"You put people at ease instantly. Your openness invites others to be themselves.",
+        learningStyle:"Through play and experimentation. You try things out, flip them around, and make them your own.",
+        leadershipSpark:"You lead with warmth. People follow you because being around you feels good and right.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="rp1" cx="45%" cy="42%"><stop offset="0%" stop-color="#fef3c7"/><stop offset="70%" stop-color="#d4a843" stop-opacity="0.3"/></radialGradient></defs><ellipse cx="50" cy="56" rx="36" ry="24" fill="url(#rp1)" opacity="0.5"/><ellipse cx="50" cy="52" rx="30" ry="20" fill="#fde68a" opacity="0.8"/><ellipse cx="50" cy="52" rx="30" ry="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/><ellipse cx="46" cy="48" rx="12" ry="8" fill="#f59e0b" opacity="0.25"/><ellipse cx="56" cy="54" rx="10" ry="7" fill="#d97706" opacity="0.15"/><circle cx="36" cy="48" r="2.5" fill="#b45309" opacity="0.35"/><circle cx="62" cy="50" r="2" fill="#b45309" opacity="0.3"/><circle cx="50" cy="44" r="1.5" fill="#92400e" opacity="0.25"/><circle cx="42" cy="56" r="1.5" fill="#92400e" opacity="0.2"/><path d="M70 44c4-4 8-8 6-12" stroke="#fbbf24" stroke-width="1.5" fill="none" opacity="0.3"/><path d="M72 46c3-3 6-7 4-10" stroke="#fbbf24" stroke-width="1" fill="none" opacity="0.2"/><ellipse cx="50" cy="52" rx="22" ry="14" fill="none" stroke="#eab308" stroke-width="0.5" opacity="0.3" stroke-dasharray="3 3"/><circle cx="26" cy="58" r="5" fill="#dc2626" opacity="0.15"/><circle cx="26" cy="58" r="5" fill="none" stroke="#dc2626" stroke-width="0.8" opacity="0.3"/></svg>`
+    },
+    charkwayteow: {
+        name:"Char Kway Teow", emoji:"\uD83C\uDF73", color:"#ef4444", colorLight:"rgba(239,68,68,0.14)",
+        tagline:"The Wok Hei",
+        description:"Bold, full of fire, and impossible to ignore. You lead with conviction and energy that is absolutely infectious. When you commit to something, people can feel the heat of your passion from across the room.",
+        holdsDear:"Authenticity, courage, and the conviction to do what is right.",
+        secretIngredient:"Your energy is contagious. You ignite passion in others and make bold ideas feel achievable.",
+        learningStyle:"Through action. You learn by doing, fast and fearless, and refine on the go.",
+        leadershipSpark:"You lead from the front. When things get intense, you thrive.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="ck1" cx="50%" cy="50%"><stop offset="0%" stop-color="#fef2f2"/><stop offset="100%" stop-color="#991b1b" stop-opacity="0.12"/></radialGradient></defs><ellipse cx="50" cy="64" rx="38" ry="18" fill="url(#ck1)" opacity="0.4"/><ellipse cx="50" cy="60" rx="32" ry="15" fill="#fef2f2" opacity="0.6"/><ellipse cx="50" cy="60" rx="32" ry="15" fill="none" stroke="#ef4444" stroke-width="1.2" opacity="0.35"/><path d="M24 56c8-2 14 2 20-1s10-3 14 1 10-1 16 2" stroke="#fefce8" stroke-width="4" fill="none" opacity="0.85" stroke-linecap="round"/><path d="M26 60c6 1 12-2 18 0s12 2 18-1" stroke="#fefce8" stroke-width="3.5" fill="none" opacity="0.6" stroke-linecap="round"/><path d="M28 58c10-1 14 2 22 0s14-2 20 1" stroke="#854d0e" stroke-width="2.5" fill="none" opacity="0.45" stroke-linecap="round"/><path d="M30 62c8 0 14-1 20 0s14 1 18-1" stroke="#92400e" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/><circle cx="38" cy="55" r="3.5" fill="#dc2626" opacity="0.6" stroke="#991b1b" stroke-width="0.5"/><circle cx="38" cy="55" r="1.5" fill="#fef2f2" opacity="0.3"/><circle cx="62" cy="57" r="3" fill="#dc2626" opacity="0.5" stroke="#991b1b" stroke-width="0.5"/><circle cx="62" cy="57" r="1.2" fill="#fef2f2" opacity="0.3"/><path d="M46 54l3 1M50 56l2-1M54 53l2 2" stroke="#f0fdf4" stroke-width="1" fill="none" opacity="0.5"/><ellipse cx="52" cy="58" rx="3.5" ry="2" fill="#fbbf24" opacity="0.55"/><circle cx="70" cy="60" r="2" fill="#f97316" opacity="0.5"/><circle cx="32" cy="60" r="1.5" fill="#16a34a" opacity="0.6"/><path d="M40 30c-2-10 3-16 6-16s8 8 6 16" fill="#ef4444" opacity="0.45"/><path d="M48 32c-1-8 3-13 5-13s6 6 5 13" fill="#f97316" opacity="0.45"/><path d="M44 31c-1-7 2-11 4-11s5 5 4 11" fill="#fbbf24" opacity="0.5"/><path d="M42 30c-0.5-4 1-7 2-7s2.5 3 2 7" fill="#fef9c3" opacity="0.35"/></svg>`
+    },
+    chaitowkway: {
+        name:"Chai Tow Kway", emoji:"\uD83E\uDDC1", color:"#a3e635", colorLight:"rgba(163,230,53,0.14)",
+        tagline:"The Hidden Gem",
+        description:"Unassuming on the outside, full of depth and delightful surprises within. You are the person people underestimate at first and deeply appreciate once they truly know you. Your substance is your superpower.",
+        holdsDear:"Depth, humility, and the power of quiet substance over loud style.",
+        secretIngredient:"You surprise people. Just when they think they know you, you reveal another layer.",
+        learningStyle:"Through observation and reflection. You take things in carefully before forming your perspective.",
+        leadershipSpark:"You lead with insight. You see what others miss and speak up when it matters most.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="ct1" cx="50%" cy="50%"><stop offset="0%" stop-color="#f7fee7"/><stop offset="100%" stop-color="#365314" stop-opacity="0.12"/></radialGradient></defs><ellipse cx="50" cy="62" rx="36" ry="18" fill="url(#ct1)" opacity="0.35"/><ellipse cx="50" cy="58" rx="32" ry="16" fill="#fefce8" opacity="0.7"/><ellipse cx="50" cy="58" rx="32" ry="16" fill="none" stroke="#a3e635" stroke-width="1" opacity="0.4"/><rect x="28" y="46" width="11" height="9" rx="2" fill="#fefce8" stroke="#d4d4d4" stroke-width="0.6" transform="rotate(-5 33 50)"/><rect x="30" y="47" width="7" height="4" rx="1" fill="#fde68a" opacity="0.5"/><rect x="41" y="44" width="12" height="10" rx="2" fill="#92400e" opacity="0.75" transform="rotate(3 47 49)"/><rect x="43" y="45" width="8" height="3" rx="1" fill="#78350f" opacity="0.4"/><rect x="55" y="47" width="11" height="9" rx="2" fill="#fefce8" stroke="#d4d4d4" stroke-width="0.6" transform="rotate(8 60 51)"/><rect x="57" y="48" width="7" height="4" rx="1" fill="#fde68a" opacity="0.5"/><rect x="32" y="56" width="10" height="9" rx="2" fill="#78350f" opacity="0.7" transform="rotate(-3 37 60)"/><rect x="34" y="57" width="6" height="3" rx="1" fill="#92400e" opacity="0.5"/><rect x="44" y="55" width="11" height="9" rx="2" fill="#fefce8" stroke="#d4d4d4" stroke-width="0.6" transform="rotate(5 49 59)"/><rect x="46" y="56" width="7" height="4" rx="1" fill="#fde68a" opacity="0.5"/><rect x="57" y="57" width="10" height="8" rx="2" fill="#92400e" opacity="0.65" transform="rotate(-6 62 61)"/><path d="M26 54c2 0 4 2 4 1s-2-2-3-1" fill="#fbbf24" opacity="0.5"/><path d="M68 52c-1 1-2 3-1 3s3-1 2-2" fill="#fbbf24" opacity="0.4"/><circle cx="38" cy="52" r="1" fill="#fbbf24" opacity="0.5"/><circle cx="62" cy="54" r="0.8" fill="#fbbf24" opacity="0.45"/><circle cx="52" cy="62" r="0.8" fill="#a3e635" opacity="0.5"/><circle cx="36" cy="63" r="0.7" fill="#16a34a" opacity="0.4"/></svg>`
+    },
+    meesiam: {
+        name:"Mee Siam", emoji:"\uD83C\uDF5D", color:"#ec4899", colorLight:"rgba(236,72,153,0.14)",
+        tagline:"The Bridge Builder",
+        description:"Sweet, tangy, a little spicy. You navigate tensions with grace and bring balance to even the most complex situations. You understand that the best outcomes come from honouring all sides.",
+        holdsDear:"Harmony, empathy, and the belief that understanding is the foundation of progress.",
+        secretIngredient:"You de-escalate and connect. People come to you when things feel stuck because you find the way through.",
+        learningStyle:"Through dialogue and exchange. You learn best when ideas flow back and forth.",
+        leadershipSpark:"You lead by listening first. Your ability to hold space for different views is what moves things forward.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="ms1" cx="50%" cy="45%"><stop offset="0%" stop-color="#fdf2f8"/><stop offset="100%" stop-color="#9d174d" stop-opacity="0.15"/></radialGradient></defs><path d="M20 52c0-12 14-24 30-24s30 12 30 24v4c0 10-14 18-30 18S20 66 20 56v-4z" fill="url(#ms1)" opacity="0.5"/><ellipse cx="50" cy="52" rx="28" ry="14" fill="#fce7f3" opacity="0.6"/><ellipse cx="50" cy="52" rx="28" ry="14" fill="none" stroke="#ec4899" stroke-width="1.2" opacity="0.5"/><path d="M26 48c8 4 16-3 24 2s12-2 22 1" stroke="#fde68a" stroke-width="2.5" fill="none" opacity="0.8"/><path d="M28 52c6 2 12-2 20 1s14 0 18-1" stroke="#fde68a" stroke-width="1.8" fill="none" opacity="0.5"/><circle cx="38" cy="46" r="3.5" fill="#ec4899" opacity="0.5"/><circle cx="56" cy="48" r="3" fill="#f97316" opacity="0.5"/><circle cx="48" cy="44" r="2.5" fill="#22c55e" opacity="0.7"/><ellipse cx="34" cy="50" rx="3.5" ry="1.5" fill="#fbbf24" opacity="0.4"/><circle cx="62" cy="50" r="2" fill="#dc2626" opacity="0.5"/><path d="M60 42c2-2 4-4 5-3s0 3-2 4" fill="#a3e635" opacity="0.6"/><circle cx="44" cy="54" r="1.5" fill="#ec4899" opacity="0.3"/><path d="M30 54l-2 6M70 54l2 6" stroke="#ec4899" stroke-width="0.8" fill="none" opacity="0.2"/></svg>`
+    },
+    biryani: {
+        name:"Biryani", emoji:"\uD83C\uDF5B", color:"#a855f7", colorLight:"rgba(168,85,247,0.14)",
+        tagline:"The Grand Experience",
+        description:"Rich, layered, and every encounter with you is memorable. You bring depth and generosity to everything you do. People leave your presence feeling like they have experienced something special.",
+        holdsDear:"Generosity, richness of experience, and making every moment count.",
+        secretIngredient:"You make the ordinary feel extraordinary. Your attention to the human experience lifts everyone around you.",
+        learningStyle:"Through stories and meaning-making. Facts alone bore you; you need the narrative.",
+        leadershipSpark:"You lead with presence. When you walk into a room, people feel it, and the energy shifts.",
+        svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="br1" cx="50%" cy="40%"><stop offset="0%" stop-color="#faf5ff"/><stop offset="100%" stop-color="#581c87" stop-opacity="0.15"/></radialGradient></defs><ellipse cx="50" cy="64" rx="38" ry="20" fill="url(#br1)" opacity="0.4"/><ellipse cx="50" cy="58" rx="32" ry="18" fill="#faf5ff" opacity="0.5"/><ellipse cx="50" cy="58" rx="32" ry="18" fill="none" stroke="#a855f7" stroke-width="1.2" opacity="0.4"/><ellipse cx="50" cy="52" rx="22" ry="10" fill="#fbbf24" opacity="0.6"/><circle cx="38" cy="50" r="4" fill="#a855f7" opacity="0.4"/><circle cx="60" cy="51" r="3.5" fill="#22c55e" opacity="0.5"/><circle cx="50" cy="47" r="3" fill="#dc2626" opacity="0.45"/><circle cx="44" cy="55" r="2.5" fill="#f59e0b" opacity="0.5"/><circle cx="56" cy="55" r="2" fill="#a855f7" opacity="0.35"/><circle cx="48" cy="52" r="1.5" fill="#16a34a" opacity="0.4"/><path d="M40 38l-1-8M50 36l0-10M60 38l1-8" stroke="#eab308" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/><circle cx="39" cy="30" r="2" fill="#eab308" opacity="0.35"/><circle cx="50" cy="26" r="2" fill="#eab308" opacity="0.35"/><circle cx="61" cy="30" r="2" fill="#eab308" opacity="0.35"/><path d="M37 30l-1-3M51 26l0-3M63 30l1-3" stroke="#fbbf24" stroke-width="0.8" opacity="0.3" stroke-linecap="round"/></svg>`
+    }
+};
 
-        // ============================================================
-        //  DATA: 8 HAWKER DISHES
-        // ============================================================
-        const DISHES = {
-            nasilemak: {
-                name: "Nasi Lemak",
-                emoji: "\uD83C\uDF5A",
-                color: "#22c55e",
-                colorLight: "rgba(34,197,94,0.12)",
-                tagline: "The Heart of Every Table",
-                description: "You are the comforting constant. Reliable, grounding, and always showing up when it matters most. People gravitate toward you because you hold things together with warmth and quiet strength.",
-                holdsDear: "Community, stability, and showing up for people consistently.",
-                secretIngredient: "You make everyone feel at home. Your steady presence gives others the confidence to take risks.",
-                learningStyle: "Through real conversations and shared experiences. You learn best alongside others.",
-                leadershipSpark: "You lead by being the person everyone trusts. Not flashy, but indispensable.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="52" rx="30" ry="18" fill="#22c55e" opacity="0.3"/><ellipse cx="40" cy="48" rx="26" ry="14" fill="#fefce8"/><circle cx="32" cy="44" r="4" fill="#fbbf24"/><circle cx="48" cy="44" r="3" fill="#ef4444"/><path d="M36 40c2-6 6-6 8 0" stroke="#22c55e" stroke-width="2" fill="none"/><circle cx="40" cy="50" r="2" fill="#a3e635"/><path d="M20 38c4-14 16-18 20-18s16 4 20 18" stroke="#166534" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="26" cy="46" r="1.5" fill="#dc2626" opacity="0.7"/><circle cx="54" cy="46" r="1.5" fill="#dc2626" opacity="0.7"/></svg>`
-            },
-            chickenrice: {
-                name: "Chicken Rice",
-                emoji: "\uD83C\uDF57",
-                color: "#eab308",
-                colorLight: "rgba(234,179,8,0.12)",
-                tagline: "The Quiet Perfectionist",
-                description: "Deceptively simple, impossibly excellent. You believe in doing things right. Behind your calm exterior is someone who obsesses over the details that others miss. That is what makes you exceptional.",
-                holdsDear: "Precision, craft, and the pride of doing something really well.",
-                secretIngredient: "You raise the standard for everyone around you, quietly and consistently.",
-                learningStyle: "Through deep focus and practice. You master one thing before moving to the next.",
-                leadershipSpark: "You lead by example. Your work speaks louder than words ever could.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="54" rx="28" ry="16" fill="#eab308" opacity="0.2"/><ellipse cx="40" cy="50" rx="24" ry="12" fill="#fefce8"/><ellipse cx="40" cy="46" rx="16" ry="8" fill="#fde68a"/><path d="M30 42c2-4 6-8 10-8s8 4 10 8" fill="#f59e0b" opacity="0.6"/><circle cx="36" cy="44" r="1" fill="#dc2626"/><circle cx="44" cy="44" r="1" fill="#dc2626"/><line x1="28" y1="52" x2="52" y2="52" stroke="#d97706" stroke-width="0.5" opacity="0.5"/><circle cx="40" cy="38" r="6" fill="#fbbf24" opacity="0.4"/><path d="M32 56l-2 4M48 56l2 4" stroke="#92400e" stroke-width="1" opacity="0.3"/></svg>`
-            },
-            laksa: {
-                name: "Laksa",
-                emoji: "\uD83C\uDF5C",
-                color: "#f97316",
-                colorLight: "rgba(249,115,22,0.12)",
-                tagline: "The Flavour Alchemist",
-                description: "You bring different worlds together and make them richer for it. Complex, layered, and unafraid of mixing things up. Where others see contradiction, you see possibility.",
-                holdsDear: "Diversity, connection, and the beauty of blending different perspectives.",
-                secretIngredient: "You help people see how seemingly different ideas can come together into something extraordinary.",
-                learningStyle: "Through immersion. You dive into the unfamiliar and emerge with new insights.",
-                leadershipSpark: "You lead by bridging divides. You are the person who finds common ground where none seemed to exist.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="50" rx="26" ry="18" fill="#f97316" opacity="0.15"/><path d="M18 44c0-8 10-16 22-16s22 8 22 16v4c0 8-10 14-22 14S18 56 18 48v-4z" fill="#fed7aa" opacity="0.5"/><ellipse cx="40" cy="44" rx="20" ry="10" fill="#fb923c" opacity="0.6"/><path d="M28 42c4 2 8-1 12 1s6 3 8 0" stroke="#fefce8" stroke-width="1.5" fill="none"/><circle cx="32" cy="40" r="2.5" fill="#dc2626" opacity="0.7"/><circle cx="46" cy="41" r="2" fill="#16a34a" opacity="0.7"/><ellipse cx="38" cy="43" rx="3" ry="1.5" fill="#fbbf24" opacity="0.5"/><path d="M52 38l6-10M54 37l5-8" stroke="#78350f" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/></svg>`
-            },
-            rotiprata: {
-                name: "Roti Prata",
-                emoji: "\uD83E\uDED3",
-                color: "#d4a843",
-                colorLight: "rgba(212,168,67,0.12)",
-                tagline: "The Crowd Favourite",
-                description: "Warm, versatile, and universally loved. You have the rare ability to bring joy to every situation and adapt effortlessly to whatever is needed. People light up around you.",
-                holdsDear: "Warmth, generosity, and bringing out the best in every moment.",
-                secretIngredient: "You put people at ease instantly. Your openness invites others to be themselves.",
-                learningStyle: "Through play and experimentation. You try things out, flip them around, and make them your own.",
-                leadershipSpark: "You lead with warmth. People follow you because being around you feels good and right.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="48" rx="28" ry="20" fill="#d4a843" opacity="0.15"/><ellipse cx="40" cy="44" rx="22" ry="16" fill="#fde68a" opacity="0.7"/><ellipse cx="40" cy="44" rx="22" ry="16" fill="none" stroke="#d4a843" stroke-width="1"/><ellipse cx="38" cy="42" rx="8" ry="5" fill="#f59e0b" opacity="0.3"/><ellipse cx="44" cy="46" rx="6" ry="4" fill="#d97706" opacity="0.2"/><circle cx="30" cy="40" r="1.5" fill="#b45309" opacity="0.4"/><circle cx="50" cy="42" r="1.5" fill="#b45309" opacity="0.4"/><circle cx="42" cy="38" r="1" fill="#92400e" opacity="0.3"/><path d="M56 36c4-2 6-6 4-8" stroke="#fbbf24" stroke-width="1" opacity="0.4" fill="none"/></svg>`
-            },
-            charkwayteow: {
-                name: "Char Kway Teow",
-                emoji: "\uD83C\uDF73",
-                color: "#ef4444",
-                colorLight: "rgba(239,68,68,0.12)",
-                tagline: "The Wok Hei",
-                description: "Bold, full of fire, and impossible to ignore. You lead with conviction and energy that is absolutely infectious. When you commit to something, people can feel the heat of your passion from across the room.",
-                holdsDear: "Authenticity, courage, and the conviction to do what is right.",
-                secretIngredient: "Your energy is contagious. You ignite passion in others and make bold ideas feel achievable.",
-                learningStyle: "Through action. You learn by doing, fast and fearless, and refine on the go.",
-                leadershipSpark: "You lead from the front. When things get intense, you thrive.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="52" rx="26" ry="16" fill="#ef4444" opacity="0.12"/><ellipse cx="40" cy="48" rx="22" ry="12" fill="#fef2f2" opacity="0.5"/><path d="M24 46c6-2 10 1 16-1s10-3 16 1" stroke="#fde68a" stroke-width="2.5" fill="none" opacity="0.7"/><path d="M26 48c4 0 6-2 10-1s8 2 12 0 8-1 8 1" stroke="#854d0e" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="30" cy="44" r="2" fill="#dc2626" opacity="0.6"/><circle cx="50" cy="45" r="1.5" fill="#16a34a" opacity="0.7"/><circle cx="42" cy="43" r="2.5" fill="#fbbf24" opacity="0.4"/><path d="M36 30c-1-6 2-10 4-10s5 4 4 10M44 32c0-5 3-8 4-8s3 3 2 8" fill="#ef4444" opacity="0.3"/><path d="M38 30c0-4 1.5-7 2-7s2 3 2 7" fill="#fbbf24" opacity="0.4"/></svg>`
-            },
-            chaitowkway: {
-                name: "Chai Tow Kway",
-                emoji: "\uD83E\uDDC1",
-                color: "#a3e635",
-                colorLight: "rgba(163,230,53,0.12)",
-                tagline: "The Hidden Gem",
-                description: "Unassuming on the outside, full of depth and delightful surprises within. You are the person people underestimate at first and deeply appreciate once they truly know you. Your substance is your superpower.",
-                holdsDear: "Depth, humility, and the power of quiet substance over loud style.",
-                secretIngredient: "You surprise people. Just when they think they know you, you reveal another layer.",
-                learningStyle: "Through observation and reflection. You take things in carefully before forming your perspective.",
-                leadershipSpark: "You lead with insight. You see what others miss and speak up when it matters most.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="52" rx="26" ry="14" fill="#a3e635" opacity="0.1"/><rect x="22" y="38" rx="4" ry="4" width="36" height="22" fill="#fefce8" opacity="0.7"/><rect x="22" y="38" rx="4" ry="4" width="36" height="22" fill="none" stroke="#a3e635" stroke-width="1" opacity="0.5"/><rect x="26" y="42" width="8" height="6" rx="1" fill="#fde68a" opacity="0.8"/><rect x="36" y="42" width="8" height="6" rx="1" fill="#fbbf24" opacity="0.6"/><rect x="46" y="42" width="8" height="6" rx="1" fill="#fde68a" opacity="0.8"/><rect x="26" y="50" width="8" height="6" rx="1" fill="#d97706" opacity="0.4"/><rect x="36" y="50" width="8" height="6" rx="1" fill="#fde68a" opacity="0.6"/><rect x="46" y="50" width="8" height="6" rx="1" fill="#d97706" opacity="0.4"/><circle cx="30" cy="45" r="1" fill="#dc2626" opacity="0.5"/><circle cx="50" cy="53" r="1" fill="#16a34a" opacity="0.5"/></svg>`
-            },
-            meesiam: {
-                name: "Mee Siam",
-                emoji: "\uD83C\uDF5D",
-                color: "#ec4899",
-                colorLight: "rgba(236,72,153,0.12)",
-                tagline: "The Bridge Builder",
-                description: "Sweet, tangy, a little spicy. You navigate tensions with grace and bring balance to even the most complex situations. You understand that the best outcomes come from honouring all sides.",
-                holdsDear: "Harmony, empathy, and the belief that understanding is the foundation of progress.",
-                secretIngredient: "You de-escalate and connect. People come to you when things feel stuck because you find the way through.",
-                learningStyle: "Through dialogue and exchange. You learn best when ideas flow back and forth.",
-                leadershipSpark: "You lead by listening first. Your ability to hold space for different views is what moves things forward.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="52" rx="26" ry="16" fill="#ec4899" opacity="0.1"/><ellipse cx="40" cy="48" rx="22" ry="14" fill="#fdf2f8" opacity="0.4"/><path d="M22 44c6 4 12-2 18 2s10 0 18-2" stroke="#fde68a" stroke-width="2" fill="none" opacity="0.8"/><path d="M24 48c4 2 8-1 14 1s10-1 14 1" stroke="#fde68a" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="34" cy="42" r="2.5" fill="#ec4899" opacity="0.4"/><circle cx="46" cy="44" r="2" fill="#f97316" opacity="0.5"/><circle cx="40" cy="40" r="1.5" fill="#22c55e" opacity="0.6"/><ellipse cx="28" cy="46" rx="3" ry="1.5" fill="#fbbf24" opacity="0.3"/><path d="M50 44l4-2 2 1" stroke="#ec4899" stroke-width="1" fill="none" opacity="0.4"/><circle cx="52" cy="46" r="1" fill="#dc2626" opacity="0.5"/></svg>`
-            },
-            biryani: {
-                name: "Biryani",
-                emoji: "\uD83C\uDF5B",
-                color: "#a855f7",
-                colorLight: "rgba(168,85,247,0.12)",
-                tagline: "The Grand Experience",
-                description: "Rich, layered, and every encounter with you is memorable. You bring depth and generosity to everything you do. People leave your presence feeling like they have experienced something special.",
-                holdsDear: "Generosity, richness of experience, and making every moment count.",
-                secretIngredient: "You make the ordinary feel extraordinary. Your attention to the human experience lifts everyone around you.",
-                learningStyle: "Through stories and meaning-making. Facts alone bore you; you need the narrative.",
-                leadershipSpark: "You lead with presence. When you walk into a room, people feel it, and the energy shifts.",
-                svg: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="52" rx="28" ry="16" fill="#a855f7" opacity="0.12"/><ellipse cx="40" cy="48" rx="24" ry="14" fill="#faf5ff" opacity="0.4"/><ellipse cx="40" cy="44" rx="18" ry="8" fill="#fbbf24" opacity="0.5"/><circle cx="32" cy="42" r="3" fill="#a855f7" opacity="0.3"/><circle cx="48" cy="43" r="2.5" fill="#22c55e" opacity="0.4"/><circle cx="40" cy="40" r="2" fill="#dc2626" opacity="0.4"/><circle cx="36" cy="46" r="1.5" fill="#f59e0b" opacity="0.5"/><circle cx="44" cy="46" r="1.5" fill="#a855f7" opacity="0.4"/><path d="M34 36l-1-6M40 34l0-7M46 36l1-6" stroke="#eab308" stroke-width="1" opacity="0.4" stroke-linecap="round"/><circle cx="33" cy="30" r="1" fill="#eab308" opacity="0.3"/><circle cx="40" cy="27" r="1" fill="#eab308" opacity="0.3"/><circle cx="47" cy="30" r="1" fill="#eab308" opacity="0.3"/></svg>`
-            }
-        };
+const DISH_KEYS = Object.keys(DISHES);
 
-        const DISH_KEYS = Object.keys(DISHES);
+// ============================================================
+//  6 QUESTIONS, 5 options each (rotating dish coverage)
+// ============================================================
+const QUESTIONS = [
+    {
+        scenario:"You have a little break. Your staffroom/office is buzzing. You have 20 minutes before your next meeting.",
+        question:"What are you most likely doing?",
+        options:[
+            {text:"Making sure the newer colleague beside you is settling in alright. A warm check-in goes a long way.", dish:"nasilemak"},
+            {text:"Quietly finishing up that one document. It is almost perfect. Almost.", dish:"chickenrice"},
+            {text:"In animated conversation, pulling together three different ideas from three different people.", dish:"laksa"},
+            {text:"Cracking jokes and rallying folks for a coffee run. Life is too short for sad recess.", dish:"rotiprata"},
+            {text:"Passionately explaining your latest idea to anyone who will listen. You simply cannot help it.", dish:"charkwayteow"}
+        ]
+    },
+    {
+        scenario:"You are at a hawker centre on a Saturday afternoon. The queue at your favourite stall is 15 minutes long.",
+        question:"What do you do?",
+        options:[
+            {text:"Go to the stall with no queue that you have quietly discovered is actually incredible.", dish:"chaitowkway"},
+            {text:"Offer to queue while your friends go chope seats. Everyone has a role to play.", dish:"meesiam"},
+            {text:"Strike up a conversation with the hawker about how they perfected their recipe. You want the story.", dish:"biryani"},
+            {text:"Queue patiently. Some things are worth waiting for. You chat with the auntie behind you.", dish:"nasilemak"},
+            {text:"Wander around and order from three different stalls instead. Variety is the spice of life.", dish:"laksa"}
+        ]
+    },
+    {
+        scenario:"Your school is organising a staff retreat. You have been asked to plan one of the segments.",
+        question:"What do you propose?",
+        options:[
+            {text:"A well-structured workshop with clear takeaways. No fluff, just substance that people can use.", dish:"chickenrice"},
+            {text:"A fun, unexpected activity. Maybe a cooking challenge? Keep it light and memorable.", dish:"rotiprata"},
+            {text:"An energetic team challenge with a bit of healthy competition. Get the blood pumping!", dish:"charkwayteow"},
+            {text:"A quiet nature walk with journaling prompts. The best ideas sometimes come from stillness.", dish:"chaitowkway"},
+            {text:"Pair activities where experienced and newer staff are matched for mutual learning.", dish:"meesiam"}
+        ]
+    },
+    {
+        scenario:"Think back to your school days. The bell rings. It is time to head home.",
+        question:"What kind of student were you most like?",
+        options:[
+            {text:"The one who always had the most interesting \"What I Did Over the Holidays\" story.", dish:"biryani"},
+            {text:"The one friends came to when they needed advice or just someone to listen.", dish:"nasilemak"},
+            {text:"The one who was in every CCA and somehow friends with people from every class.", dish:"laksa"},
+            {text:"The one who could make anyone laugh, even the strictest teacher.", dish:"rotiprata"},
+            {text:"The one who was quiet in class but wrote essays that made the teacher go \"Wow.\"", dish:"chaitowkway"}
+        ]
+    },
+    {
+        scenario:"A new colleague has just joined your school. They look a little lost on their first day.",
+        question:"What is your natural response?",
+        options:[
+            {text:"Tell them honestly what the school culture is really like. No sugarcoating.", dish:"charkwayteow"},
+            {text:"Check in with the HOD to make sure the buddy system is actually working for them.", dish:"meesiam"},
+            {text:"Take them out after work for a proper welcome. Share stories, build connection.", dish:"biryani"},
+            {text:"Prepare a helpful summary of key info and share it with them. Clarity helps.", dish:"chickenrice"},
+            {text:"Walk over, introduce yourself, and make sure they know where everything is.", dish:"nasilemak"}
+        ]
+    },
+    {
+        scenario:"It is Sunday evening. You have some free time before the week begins.",
+        question:"How are you most likely spending it?",
+        options:[
+            {text:"Bouncing between a podcast, a recipe experiment, and a half-read book.", dish:"laksa"},
+            {text:"Organising a last-minute dinner with friends. The more the merrier.", dish:"rotiprata"},
+            {text:"Alone with a good book or a long walk. Recharging your inner batteries.", dish:"chaitowkway"},
+            {text:"Calling a friend who has been having a tough time. Just to check in.", dish:"meesiam"},
+            {text:"Exploring a new neighbourhood or cafe. You collect experiences like passport stamps.", dish:"biryani"}
+        ]
+    }
+];
 
-        // ============================================================
-        //  QUIZ QUESTIONS: 6 scored + 1 text input
-        //  2-choice: 1st = x1.0, 2nd = x0.5
-        // ============================================================
-        const QUESTIONS = [
-            {
-                scenario: "It is recess time. The staffroom is buzzing. You have exactly 20 minutes before your next meeting.",
-                question: "What are you most likely doing?",
-                options: [
-                    { text: "Making sure the newer colleague beside you is settling in alright. You check in with a warm smile.", dish: "nasilemak" },
-                    { text: "Quietly finishing up that one spreadsheet. It is almost perfect. Almost.", dish: "chickenrice" },
-                    { text: "In animated conversation, pulling together three different ideas from three different people.", dish: "laksa" },
-                    { text: "Cracking a joke, rallying folks for a coffee run. Life is too short for sad recess.", dish: "rotiprata" },
-                    { text: "Passionately explaining your latest idea to anyone who will listen. You cannot help it.", dish: "charkwayteow" },
-                    { text: "Observing quietly. You have noticed something interesting about the new timetable that nobody else has caught.", dish: "chaitowkway" },
-                    { text: "Mediating between two colleagues who cannot agree on the duty roster. Again.", dish: "meesiam" },
-                    { text: "Sharing a story from your weekend that somehow turns into a meaningful reflection for everyone.", dish: "biryani" }
-                ]
-            },
-            {
-                scenario: "You are at a hawker centre on a Saturday afternoon. The queue at your favourite stall is 15 minutes long.",
-                question: "What do you do?",
-                options: [
-                    { text: "Queue. Of course. Some things are worth waiting for. You chat with the uncle behind you.", dish: "nasilemak" },
-                    { text: "Queue. You have been coming here for years. The consistency is the whole point.", dish: "chickenrice" },
-                    { text: "Wander around and order from three different stalls instead. Variety is life.", dish: "laksa" },
-                    { text: "Convince your friends to try a completely different stall they have never heard of.", dish: "rotiprata" },
-                    { text: "Stay in line but loudly declare that this stall is the BEST and everyone else is wrong.", dish: "charkwayteow" },
-                    { text: "Go to the stall with no queue that you have quietly discovered is actually incredible.", dish: "chaitowkway" },
-                    { text: "Offer to queue while your friends go chope seats. Everyone has a role.", dish: "meesiam" },
-                    { text: "Strike up a conversation with the hawker about how they perfected their recipe. You want the story.", dish: "biryani" }
-                ]
-            },
-            {
-                scenario: "Your school is organising a staff retreat. You have been asked to plan a segment.",
-                question: "What do you propose?",
-                options: [
-                    { text: "A heartfelt sharing circle where everyone reflects on why they joined education.", dish: "nasilemak" },
-                    { text: "A well-structured workshop with clear takeaways. No fluff, just substance.", dish: "chickenrice" },
-                    { text: "A cross-department challenge that mixes people who never work together.", dish: "laksa" },
-                    { text: "A fun, unexpected activity. Maybe a cooking competition? Keep it light.", dish: "rotiprata" },
-                    { text: "An energetic team challenge with a bit of healthy competition. Get the blood pumping.", dish: "charkwayteow" },
-                    { text: "A quiet nature walk with journaling prompts. Sometimes the best ideas come from stillness.", dish: "chaitowkway" },
-                    { text: "Pair activities where experienced and newer staff are matched for mutual learning.", dish: "meesiam" },
-                    { text: "Invite a guest speaker with an incredible life story. Something that moves people.", dish: "biryani" }
-                ]
-            },
-            {
-                scenario: "Think back to your school days. The bell rings. It is time to head home.",
-                question: "What kind of student were you most like?",
-                options: [
-                    { text: "The one friends came to when they needed advice or just someone to listen.", dish: "nasilemak" },
-                    { text: "The one who always had neat notes and never missed a homework deadline.", dish: "chickenrice" },
-                    { text: "The one in every CCA and somehow friends with people from every class.", dish: "laksa" },
-                    { text: "The one who could make anyone laugh, even the strictest teacher.", dish: "rotiprata" },
-                    { text: "The one who would argue passionately in class when you believed you were right.", dish: "charkwayteow" },
-                    { text: "The one who was quiet in class but wrote essays that made the teacher go \"Wow.\"", dish: "chaitowkway" },
-                    { text: "The one who ended up being the peacemaker in every group project.", dish: "meesiam" },
-                    { text: "The one who always had the most interesting \"What I Did Over the Holidays\" story.", dish: "biryani" }
-                ]
-            },
-            {
-                scenario: "A new colleague has just joined your school. They look a little lost on their first day.",
-                question: "What is your natural response?",
-                options: [
-                    { text: "Walk over, introduce yourself, and make sure they know where everything is. Nobody should feel alone.", dish: "nasilemak" },
-                    { text: "Prepare a helpful summary of key processes and share it with them. Clarity matters.", dish: "chickenrice" },
-                    { text: "Introduce them to five different people before lunch. Network activated.", dish: "laksa" },
-                    { text: "Invite them for lunch immediately. First rule: food first, admin later.", dish: "rotiprata" },
-                    { text: "Tell them honestly what the school culture is really like. No sugarcoating.", dish: "charkwayteow" },
-                    { text: "Leave a handwritten note on their desk with a few quiet tips. No fuss needed.", dish: "chaitowkway" },
-                    { text: "Check in with the HOD to make sure the buddy system is actually working for them.", dish: "meesiam" },
-                    { text: "Take them out after work for a proper welcome. Share stories, build connection.", dish: "biryani" }
-                ]
-            },
-            {
-                scenario: "It is Sunday evening. You have some free time before the week begins.",
-                question: "How are you most likely spending it?",
-                options: [
-                    { text: "Catching up with family over a home-cooked dinner. This is what matters.", dish: "nasilemak" },
-                    { text: "Prepping your week ahead. Planner out, colour-coded, satisfying.", dish: "chickenrice" },
-                    { text: "Bouncing between a podcast, a recipe experiment, and a half-read book.", dish: "laksa" },
-                    { text: "Organising a last-minute dinner with friends. The more the merrier.", dish: "rotiprata" },
-                    { text: "At the gym, or on a run. You need the physical outlet to feel alive.", dish: "charkwayteow" },
-                    { text: "Alone with a good book or a long walk. Recharging your inner batteries.", dish: "chaitowkway" },
-                    { text: "Calling a friend who has been having a tough time. Just to check in.", dish: "meesiam" },
-                    { text: "Exploring a new neighbourhood or cafe. You collect experiences like stamps.", dish: "biryani" }
-                ]
-            }
-        ];
+// ============================================================
+//  STATE
+// ============================================================
+const appEl = document.getElementById('app');
+let userName='', userRole='', userCanteenFood='';
+let currentQ=0, answers=[], pick1=null, pick2=null;
+const shuffledOrders = QUESTIONS.map(q=>{const a=q.options.map((_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;});
 
-        // ============================================================
-        //  STATE
-        // ============================================================
-        const appEl = document.getElementById('app');
-        let userName = '', userRole = '', userCanteenFood = '';
-        let currentQ = 0, answers = [], pick1 = null, pick2 = null;
-        const shuffledOrders = QUESTIONS.map(q => {
-            const a = q.options.map((_,i)=>i);
-            for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-            return a;
-        });
+function showToast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
 
-        function showToast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+// ============================================================
+//  WELCOME
+// ============================================================
+function renderWelcome(){
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg text-center fade-up">
+        <div class="text-6xl mb-3 float">\uD83C\uDF74</div>
+        <h1 class="text-3xl sm:text-4xl font-black mb-1 glow" style="color:var(--neon-yellow);">What's Your<br>Hawker Personality?</h1>
+        <p class="font-hand text-2xl mb-1 glow-pink" style="color:var(--neon-pink);">Find your dish. Find your people.</p>
+        <p class="text-xs font-bold tracking-widest uppercase mb-6" style="color:var(--text3);">S3 Cluster</p>
+        <div class="text-left rounded-2xl p-5 mb-6" style="background:var(--surface);border:1px solid rgba(255,255,255,0.05);">
+            <p class="text-sm leading-relaxed" style="color:var(--text2);">Answer 6 fun questions and discover your <strong style="color:var(--neon-yellow);">Hawker Personality</strong>. Then wander around to find 4 others with <em>different</em> dishes to form your very own <strong style="color:var(--neon-orange);">S3 Masterchef Canteen</strong>!</p>
+            <p class="text-sm leading-relaxed mt-2" style="color:var(--text2);">For each question, pick <strong style="color:var(--neon-yellow);">two</strong> options: your first choice carries more weight. No right or wrong answers; just go with your gut!</p>
+        </div>
+        <div class="space-y-4 mb-6">
+            <div><label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--text3);">Your name</label><input type="text" id="inpName" maxlength="40" placeholder="e.g. Alvin" class="w-full px-4 py-3 rounded-xl text-center text-lg font-semibold outline-none" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--neon-yellow)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></div>
+            <div><label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--text3);">Your role</label><div class="flex gap-2" id="roleButtons"><button data-role="P" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">P</button><button data-role="VP" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">VP</button><button data-role="VPA" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">VPA</button></div></div>
+        </div>
+        <button id="startBtn" class="btn-main w-full" disabled>Let's Makan! \uD83E\uDD62</button>
+        <p class="text-xs mt-4" style="color:var(--text3);">Takes about 3 minutes \u00B7 6 questions + 1 bonus</p>
+    </div>`;
+    const inp=document.getElementById('inpName'),btn=document.getElementById('startBtn');
+    let selRole='';
+    document.querySelectorAll('#roleButtons button').forEach(rb=>{rb.addEventListener('click',()=>{selRole=rb.dataset.role;document.querySelectorAll('#roleButtons button').forEach(b=>{b.style.borderColor='rgba(255,255,255,0.06)';b.style.background='var(--surface2)';b.style.color='var(--text2)';});rb.style.borderColor='var(--neon-yellow)';rb.style.background='rgba(255,225,77,0.1)';rb.style.color='var(--neon-yellow)';ck();});});
+    inp.addEventListener('input',ck);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go();});btn.addEventListener('click',go);
+    function ck(){btn.disabled=!(inp.value.trim().length>=1&&selRole);}
+    function go(){if(inp.value.trim().length>=1&&selRole){userName=inp.value.trim();userRole=selRole;currentQ=0;answers=[];renderQuestion();}}
+}
 
-        // ============================================================
-        //  WELCOME
-        // ============================================================
-        function renderWelcome(){
-            appEl.innerHTML = `
-            <div class="w-full max-w-lg text-center fade-up">
-                <div class="text-6xl mb-4 float">\uD83C\uDF74</div>
-                <h1 class="text-3xl sm:text-4xl font-black mb-2 glow" style="color:var(--neon-yellow);">What's Your<br>Hawker Personality?</h1>
-                <p class="font-hand text-2xl mb-6 glow-pink" style="color:var(--neon-pink);">Find your dish. Find your people.</p>
-                <div class="text-left rounded-2xl p-5 mb-6" style="background:var(--surface);border:1px solid rgba(255,255,255,0.05);">
-                    <p class="text-sm leading-relaxed" style="color:var(--text2);">Answer 6 fun questions and discover your <strong style="color:var(--neon-yellow);">Hawker Personality</strong>. Then find 4 others with <em>different</em> dishes to form your very own <strong style="color:var(--neon-orange);">Canteen Crew</strong>!</p>
-                    <p class="text-sm leading-relaxed mt-2" style="color:var(--text2);">For each question, pick <strong style="color:var(--neon-yellow);">two</strong> options: your first choice carries more weight. This is not a test; there are no wrong answers. Just go with your gut!</p>
-                </div>
-                <div class="space-y-4 mb-6">
-                    <div>
-                        <label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--text3);">Your name</label>
-                        <input type="text" id="inpName" maxlength="40" placeholder="e.g. Alvin" class="w-full px-4 py-3 rounded-xl text-center text-lg font-semibold outline-none" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--neon-yellow)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--text3);">Your role</label>
-                        <div class="flex gap-2" id="roleButtons">
-                            <button data-role="P" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">Principal</button>
-                            <button data-role="VP" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">VP</button>
-                            <button data-role="VPA" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;">VPA</button>
-                        </div>
-                    </div>
-                </div>
-                <button id="startBtn" class="btn-main w-full" disabled>Let's Makan! \uD83E\uDD62</button>
-                <p class="text-xs mt-4" style="color:var(--text3);">Takes about 3 minutes \u00B7 6 questions + 1 bonus</p>
-            </div>`;
+// ============================================================
+//  QUESTION
+// ============================================================
+function renderQuestion(){
+    pick1=null;pick2=null;
+    const q=QUESTIONS[currentQ],order=shuffledOrders[currentQ],pct=(currentQ/QUESTIONS.length)*100;
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg fade-up">
+        <div class="mb-5"><div class="flex justify-between items-center mb-2"><span class="text-xs font-bold tracking-widest uppercase" style="color:var(--text3);">Q${currentQ+1} of ${QUESTIONS.length}</span><span class="text-xs font-semibold" style="color:var(--neon-yellow);">${Math.round(pct)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+        <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,225,77,0.03);border:1px solid rgba(255,225,77,0.06);"><p class="text-base leading-relaxed font-hand text-xl" style="color:var(--text2);">${q.scenario}</p></div>
+        <h2 class="text-xl sm:text-2xl font-extrabold mb-2 leading-snug" style="color:var(--neon-yellow);">${q.question}</h2>
+        <p class="text-xs mb-4" style="color:var(--text3);">Pick two. <span style="color:var(--neon-yellow);font-weight:700;">1st</span> = stronger. <span style="color:var(--neon-pink);font-weight:700;">2nd</span> = also you. Tap again to deselect.</p>
+        <div class="space-y-2.5" id="opts">${order.map((oi,di)=>`<button class="opt-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="opt-badge"></span>${q.options[oi].text}</button>`).join('')}</div>
+        <div class="mt-5 flex items-center gap-3">
+            ${currentQ>0?'<button id="backBtn" style="padding:12px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:var(--text3);font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.borderColor=\'rgba(255,255,255,0.2)\';this.style.color=\'var(--text)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.08)\';this.style.color=\'var(--text3)\'">Back</button>':''}
+            <button id="nextBtn" class="btn-main w-full" disabled>Next</button>
+        </div>
+    </div>`;
+    document.querySelectorAll('.opt-btn').forEach(b=>b.addEventListener('click',()=>handlePick(parseInt(b.dataset.orig))));
+    document.getElementById('nextBtn').addEventListener('click',advance);
+    if(document.getElementById('backBtn'))document.getElementById('backBtn').addEventListener('click',goBack);
+}
 
-            const inp = document.getElementById('inpName');
-            const btn = document.getElementById('startBtn');
-            let selectedRole = '';
+function handlePick(i){
+    if(pick1===i){pick1=pick2!==null?pick2:null;pick2=null;}
+    else if(pick2===i){pick2=null;}
+    else if(pick1===null){pick1=i;}
+    else if(pick2===null){pick2=i;}
+    else{showToast('Deselect one first!');return;}
+    refreshPicks();
+}
+function refreshPicks(){
+    document.querySelectorAll('.opt-btn').forEach(b=>{const o=parseInt(b.dataset.orig),bd=b.querySelector('.opt-badge');b.classList.remove('p1','p2');bd.textContent='';if(o===pick1){b.classList.add('p1');bd.textContent='1';}else if(o===pick2){b.classList.add('p2');bd.textContent='2';}});
+    document.getElementById('nextBtn').disabled=(pick1===null||pick2===null);
+}
+function advance(){answers.push({first:pick1,second:pick2});currentQ++;currentQ>=QUESTIONS.length?renderCanteenQ():renderQuestion();}
+function goBack(){if(currentQ>0){currentQ--;const prev=answers.pop();renderQuestion();pick1=prev.first;pick2=prev.second;refreshPicks();}}
 
-            document.querySelectorAll('#roleButtons button').forEach(rb => {
-                rb.addEventListener('click', () => {
-                    selectedRole = rb.dataset.role;
-                    document.querySelectorAll('#roleButtons button').forEach(b => {
-                        b.style.borderColor = 'rgba(255,255,255,0.06)';
-                        b.style.background = 'var(--surface2)';
-                        b.style.color = 'var(--text2)';
-                    });
-                    rb.style.borderColor = 'var(--neon-yellow)';
-                    rb.style.background = 'rgba(255,225,77,0.1)';
-                    rb.style.color = 'var(--neon-yellow)';
-                    checkReady();
-                });
-            });
+// ============================================================
+//  BONUS QUESTION
+// ============================================================
+function renderCanteenQ(){
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg text-center fade-up">
+        <div class="text-5xl mb-4">\uD83C\uDFEB</div>
+        <h2 class="text-xl font-bold mb-2" style="color:var(--neon-yellow);">Bonus Round!</h2>
+        <p class="text-sm mb-1" style="color:var(--text2);">This one is just for fun and will appear on your card. It does not affect your result.</p>
+        <p class="text-xl font-extrabold mb-4 mt-4" style="color:var(--text);">When you were in Primary or Secondary school, what was your go-to canteen food?</p>
+        <input type="text" id="canteenInp" maxlength="50" placeholder="e.g. Fishball noodles, Nasi goreng..." class="w-full px-4 py-4 rounded-xl text-center text-lg font-semibold outline-none mb-4" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--neon-yellow)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+        <button id="revealBtn" class="btn-main w-full">Reveal My Dish! \uD83D\uDD25</button>
+        <button id="skipBtn" class="w-full mt-2 py-3 text-sm font-semibold" style="color:var(--text3);background:none;border:none;cursor:pointer;">Skip</button>
+    </div>`;
+    document.getElementById('revealBtn').addEventListener('click',()=>{userCanteenFood=document.getElementById('canteenInp').value.trim();renderProcessing();});
+    document.getElementById('skipBtn').addEventListener('click',()=>{userCanteenFood='';renderProcessing();});
+}
 
-            inp.addEventListener('input', checkReady);
-            inp.addEventListener('keydown', e => { if(e.key==='Enter') tryStart(); });
-            btn.addEventListener('click', tryStart);
+// ============================================================
+//  PROCESSING
+// ============================================================
+function renderProcessing(){
+    appEl.innerHTML=`<div class="text-center fade-up"><div class="text-5xl mb-6 float">\uD83D\uDD25</div><p class="text-xl font-bold mb-2 glow" style="color:var(--neon-yellow);">Firing up the wok\u2026</p><p class="text-sm" style="color:var(--text3);">Discovering your hawker personality</p></div>`;
+    setTimeout(()=>{const r=calculate();renderCard(r);},2000);
+}
 
-            function checkReady(){ btn.disabled = !(inp.value.trim().length>=1 && selectedRole); }
-            function tryStart(){
-                if(inp.value.trim().length>=1 && selectedRole){
-                    userName = inp.value.trim();
-                    userRole = selectedRole;
-                    currentQ=0; answers=[];
-                    renderQuestion();
-                }
-            }
-        }
+// ============================================================
+//  SCORING: 1st x1.0, 2nd x0.5
+// ============================================================
+function calculate(){
+    const scores={};DISH_KEYS.forEach(k=>scores[k]=0);
+    answers.forEach((a,qi)=>{
+        const d1=QUESTIONS[qi].options[a.first].dish;
+        const d2=QUESTIONS[qi].options[a.second].dish;
+        scores[d1]+=1.0;scores[d2]+=0.5;
+    });
+    const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+    return{scores,sorted,dish:sorted[0][0]};
+}
 
-        // ============================================================
-        //  QUESTION
-        // ============================================================
-        function renderQuestion(){
-            pick1=null; pick2=null;
-            const q = QUESTIONS[currentQ];
-            const order = shuffledOrders[currentQ];
-            const pct = (currentQ/QUESTIONS.length)*100;
+// ============================================================
+//  CARD — all inline for html2canvas
+// ============================================================
+function renderCard(r){
+    const d=DISHES[r.dish];
+    const others=DISH_KEYS.filter(k=>k!==r.dish).map(k=>DISHES[k]);
+    const shuffled=[...others].sort(()=>Math.random()-0.5);
+    const findThese=shuffled.slice(0,4);
+    const C={bg:'#0c0a1a',s:'#161329',s2:'#1e1a35',t:'#f0eef5',t2:'#a8a3be',t3:'#6b6584',ny:'#ffe14d',np:'#ff2d78',no:'#ff8a3d'};
 
-            appEl.innerHTML = `
-            <div class="w-full max-w-lg fade-up">
-                <div class="mb-5">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-bold tracking-widest uppercase" style="color:var(--text3);">Q${currentQ+1} of ${QUESTIONS.length}</span>
-                        <span class="text-xs font-semibold" style="color:var(--neon-yellow);">${Math.round(pct)}%</span>
-                    </div>
-                    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-                </div>
-                <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,225,77,0.03);border:1px solid rgba(255,225,77,0.06);">
-                    <p class="text-sm leading-relaxed font-hand text-lg" style="color:var(--text2);">${q.scenario}</p>
-                </div>
-                <h2 class="text-lg font-bold mb-2" style="color:var(--text);">${q.question}</h2>
-                <p class="text-xs mb-4" style="color:var(--text3);">Pick two. <span style="color:var(--neon-yellow);font-weight:700;">1st choice</span> = stronger. <span style="color:var(--neon-pink);font-weight:700;">2nd choice</span> = also you. Tap again to deselect.</p>
-                <div class="space-y-2.5" id="opts">
-                    ${order.map((oi,di) => `<button class="opt-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="opt-badge"></span>${q.options[oi].text}</button>`).join('')}
-                </div>
-                <div class="mt-5 flex items-center gap-3">
-                    ${currentQ>0?'<button id="backBtn" style="padding:12px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:var(--text3);font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.borderColor=\'rgba(255,255,255,0.2)\';this.style.color=\'var(--text)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.08)\';this.style.color=\'var(--text3)\'">Back</button>':''}
-                    <button id="nextBtn" class="btn-main w-full" disabled>Next</button>
-                </div>
-            </div>`;
-            document.querySelectorAll('.opt-btn').forEach(b=>b.addEventListener('click',()=>handlePick(parseInt(b.dataset.orig))));
-            document.getElementById('nextBtn').addEventListener('click', advance);
-            if(document.getElementById('backBtn')) document.getElementById('backBtn').addEventListener('click', goBack);
-        }
+    const canteenHTML=userCanteenFood?`<div style="margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);"><p style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:${C.t3};margin-bottom:2px;">School Canteen Go-To</p><p style="font-size:14px;font-weight:700;color:${C.ny};font-family:'Caveat',cursive;">"${userCanteenFood}"</p></div>`:'';
 
-        function handlePick(i){
-            if(pick1===i){pick1=pick2!==null?pick2:null;pick2=null;}
-            else if(pick2===i){pick2=null;}
-            else if(pick1===null){pick1=i;}
-            else if(pick2===null){pick2=i;}
-            else{showToast('Deselect one first!');return;}
-            refreshPicks();
-        }
+    const findHTML=findThese.map(f=>`<div style="display:flex;align-items:center;gap:6px;"><div style="width:28px;height:28px;border-radius:50%;background:${f.colorLight};display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px solid ${f.color}44;">${f.emoji}</div><span style="font-size:11px;font-weight:600;color:${C.t2};">${f.name}</span></div>`).join('');
 
-        function refreshPicks(){
-            document.querySelectorAll('.opt-btn').forEach(b=>{
-                const o=parseInt(b.dataset.orig), badge=b.querySelector('.opt-badge');
-                b.classList.remove('p1','p2'); badge.textContent='';
-                if(o===pick1){b.classList.add('p1');badge.textContent='1';}
-                else if(o===pick2){b.classList.add('p2');badge.textContent='2';}
-            });
-            document.getElementById('nextBtn').disabled=(pick1===null||pick2===null);
-        }
-
-        function advance(){
-            answers.push({first:pick1,second:pick2});
-            currentQ++;
-            currentQ>=QUESTIONS.length ? renderCanteenQ() : renderQuestion();
-        }
-
-        function goBack(){
-            if(currentQ>0){currentQ--;const prev=answers.pop();renderQuestion();pick1=prev.first;pick2=prev.second;refreshPicks();}
-        }
-
-        // ============================================================
-        //  BONUS: Canteen food question (no scoring)
-        // ============================================================
-        function renderCanteenQ(){
-            appEl.innerHTML = `
-            <div class="w-full max-w-lg text-center fade-up">
-                <div class="text-5xl mb-4">\uD83C\uDFEB</div>
-                <h2 class="text-xl font-bold mb-2" style="color:var(--neon-yellow);">Bonus Round!</h2>
-                <p class="text-sm mb-1" style="color:var(--text2);">This one does not affect your result. It is just for fun and will appear on your card.</p>
-                <p class="text-lg font-bold mb-4 mt-4" style="color:var(--text);">When you were in Primary or Secondary school, what was your go-to canteen food?</p>
-                <input type="text" id="canteenInp" maxlength="50" placeholder="e.g. Fishball noodles, Nasi goreng..." class="w-full px-4 py-4 rounded-xl text-center text-lg font-semibold outline-none mb-4" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--neon-yellow)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                <button id="revealBtn" class="btn-main w-full">Reveal My Dish! \uD83D\uDD25</button>
-                <button id="skipBtn" class="w-full mt-2 py-3 text-sm font-semibold" style="color:var(--text3);background:none;border:none;cursor:pointer;">Skip</button>
-            </div>`;
-            document.getElementById('revealBtn').addEventListener('click',()=>{userCanteenFood=document.getElementById('canteenInp').value.trim();renderProcessing();});
-            document.getElementById('skipBtn').addEventListener('click',()=>{userCanteenFood='';renderProcessing();});
-        }
-
-        // ============================================================
-        //  PROCESSING
-        // ============================================================
-        function renderProcessing(){
-            appEl.innerHTML = `<div class="text-center fade-up"><div class="text-5xl mb-6 float">\uD83D\uDD25</div><p class="text-xl font-bold mb-2 glow" style="color:var(--neon-yellow);">Firing up the wok\u2026</p><p class="text-sm" style="color:var(--text3);">Discovering your hawker personality</p></div>`;
-            setTimeout(()=>{const r=calculate();renderCard(r);},2000);
-        }
-
-        // ============================================================
-        //  SCORING
-        // ============================================================
-        function calculate(){
-            const scores = {};
-            DISH_KEYS.forEach(k=>scores[k]=0);
-            answers.forEach((a,qi)=>{
-                const d1 = QUESTIONS[qi].options[a.first].dish;
-                const d2 = QUESTIONS[qi].options[a.second].dish;
-                scores[d1] += 1.0;
-                scores[d2] += 0.5;
-            });
-            const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-            return { scores, sorted, dish: sorted[0][0] };
-        }
-
-        // ============================================================
-        //  RESULT CARD — all inline for html2canvas
-        // ============================================================
-        function renderCard(r){
-            const d = DISHES[r.dish];
-            const others = DISH_KEYS.filter(k=>k!==r.dish).map(k=>DISHES[k]);
-            // Pick 4 random others to show as "find these"
-            const shuffled = [...others].sort(()=>Math.random()-0.5);
-            const findThese = shuffled.slice(0,4);
-
-            const C = { bg:'#0c0a1a', s:'#161329', s2:'#1e1a35', t:'#f0eef5', t2:'#a8a3be', t3:'#6b6584', ny:'#ffe14d', np:'#ff2d78', no:'#ff8a3d' };
-
-            const canteenHTML = userCanteenFood ? `<div style="margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);"><p style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:${C.t3};margin-bottom:2px;">School Canteen Go-To</p><p style="font-size:13px;font-weight:700;color:${C.ny};font-family:'Caveat',cursive;">"${userCanteenFood}"</p></div>` : '';
-
-            const findHTML = findThese.map(f => `<div style="display:flex;align-items:center;gap:6px;"><div style="width:28px;height:28px;border-radius:50%;background:${f.colorLight};display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px solid ${f.color}44;">${f.emoji}</div><span style="font-size:11px;font-weight:600;color:${C.t2};">${f.name}</span></div>`).join('');
-
-            const card = `
+    const card=`
 <div style="height:5px;background:linear-gradient(90deg,${d.color},${C.no},${C.ny});"></div>
 <div style="padding:20px 20px 12px;">
     <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:64px;height:64px;border-radius:16px;background:${d.colorLight};border:2px solid ${d.color}44;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${d.svg}</div>
+        <div style="width:72px;height:72px;border-radius:18px;background:${d.colorLight};border:2px solid ${d.color}55;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${d.svg}</div>
         <div>
             <p style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${C.t3};">Your Hawker Personality</p>
-            <p style="font-size:22px;font-weight:800;color:${d.color};line-height:1.2;">${d.emoji} ${d.name}</p>
-            <p style="font-size:12px;font-weight:600;font-style:italic;color:${C.ny};font-family:'Caveat',cursive;margin-top:1px;">"${d.tagline}"</p>
+            <p style="font-size:24px;font-weight:900;color:${d.color};line-height:1.2;">${d.emoji} ${d.name}</p>
+            <p style="font-size:13px;font-weight:700;font-style:italic;color:${C.ny};font-family:'Caveat',cursive;margin-top:1px;">"${d.tagline}"</p>
         </div>
     </div>
 </div>
 <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 20px;"></div>
 <div style="padding:14px 20px;">
-    <p style="font-size:15px;font-weight:700;color:${C.t};margin-bottom:4px;">Hi, ${userName}! <span style="font-size:12px;font-weight:500;color:${C.t3};">${userRole}</span></p>
+    <p style="font-size:15px;font-weight:700;color:${C.t};margin-bottom:4px;">Hi, ${userName}! <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,0.05);color:${C.t3};margin-left:4px;">${userRole}</span></p>
     <p style="font-size:11px;line-height:1.6;color:${C.t2};">${d.description}</p>
     ${canteenHTML}
 </div>
@@ -554,56 +396,46 @@
     </div>
 </div>
 <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 20px;"></div>
-<div style="padding:14px 20px;background:rgba(255,225,77,0.03);">
-    <p style="font-size:11px;font-weight:800;color:${C.ny};margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">\uD83C\uDF74 Complete Your Canteen Crew!</p>
-    <p style="font-size:10px;color:${C.t2};margin-bottom:10px;">You are the Masterchef for <strong style="color:${d.color};">${d.name}</strong>. Find <strong>4 people with different dishes</strong> to complete your canteen!</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-        ${findHTML}
-    </div>
-    <p style="font-size:9px;color:${C.t3};margin-top:8px;font-style:italic;">Any 5 different dishes = 1 Canteen Crew. Mix it up!</p>
+<div style="padding:14px 20px;background:rgba(255,225,77,0.04);border-top:1px solid rgba(255,225,77,0.08);">
+    <p style="font-size:12px;font-weight:800;color:${C.ny};margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">\uD83C\uDF74 Complete Your S3 Masterchef Canteen!</p>
+    <p style="font-size:10px;color:${C.t2};margin-bottom:10px;">You are the Masterchef for <strong style="color:${d.color};">${d.name}</strong>. Find <strong style="color:${C.ny};">4 people with different dishes</strong> to complete your S3 Canteen!</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${findHTML}</div>
+    <p style="font-size:9px;color:${C.t3};margin-top:8px;font-style:italic;">Any 5 different dishes = 1 S3 Masterchef Canteen. Mix it up!</p>
 </div>
 <div style="padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.03);">
-    <p style="font-size:8px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:${C.t3};">South Zone Story Circles</p>
+    <p style="font-size:8px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:${C.t3};">S3 Cluster \u00B7 Story Circles</p>
     <p style="font-size:8px;color:${C.t3};">What's Your Hawker Personality?</p>
 </div>`;
 
-            appEl.innerHTML = `
-            <div class="w-full max-w-md fade-up pb-12">
-                <div id="hawker-card" style="background:linear-gradient(170deg,#0e0b1e 0%,#161329 40%,#1a1635 100%);border-radius:20px;overflow:hidden;border:2px solid ${d.color}33;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px ${d.color}11;font-family:'Outfit',sans-serif;color:${C.t};">
-                    ${card}
-                </div>
-                <div class="mt-8 space-y-3">
-                    <button id="dlBtn" class="btn-main w-full text-base">Download Card \u2B07</button>
-                    <p class="text-xs text-center" style="color:var(--text3);">Show your card to find your Canteen Crew!</p>
-                </div>
-            </div>`;
-            document.getElementById('dlBtn').addEventListener('click', download);
-        }
+    appEl.innerHTML=`
+    <div class="w-full max-w-md fade-up pb-12">
+        <div id="hawker-card" style="background:linear-gradient(170deg,#0e0b1e 0%,#161329 40%,#1a1635 100%);border-radius:20px;overflow:hidden;border:2px solid ${d.color}33;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px ${d.color}11;font-family:'Outfit',sans-serif;color:${C.t};">${card}</div>
+        <div class="mt-8 space-y-3">
+            <button id="dlBtn" class="btn-main w-full text-base">Download Card \u2B07</button>
+            <p class="text-xs text-center" style="color:var(--text3);">Show your card to find your S3 Masterchef Canteen!</p>
+        </div>
+    </div>`;
+    document.getElementById('dlBtn').addEventListener('click',download);
+}
 
-        // ============================================================
-        //  DOWNLOAD
-        // ============================================================
-        function download(){
-            const card = document.getElementById('hawker-card');
-            const btn = document.getElementById('dlBtn');
-            btn.textContent='Generating\u2026'; btn.disabled=true;
-            html2canvas(card,{backgroundColor:'#0e0b1e',scale:2,useCORS:true,logging:false,allowTaint:true,width:card.offsetWidth,height:card.offsetHeight,scrollX:0,scrollY:-window.scrollY}).then(canvas=>{
-                const url=canvas.toDataURL('image/png');
-                const safe=userName.replace(/[^a-zA-Z0-9]/g,'-');
-                if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
-                    const w=window.open('');
-                    if(w){w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Your Hawker Card</title><style>body{margin:0;padding:16px;background:#0c0a1a;display:flex;flex-direction:column;align-items:center;font-family:sans-serif;}img{max-width:100%;height:auto;border-radius:12px;}p{color:#a8a3be;font-size:14px;margin-top:16px;text-align:center;}</style></head><body><p>Long-press the image to save it.</p><img src="'+url+'" alt="Hawker Card"></body></html>');w.document.close();}
-                    else{dl(url,safe);}
-                }else{dl(url,safe);}
-                btn.textContent='Download Card \u2B07';btn.disabled=false;showToast('Card generated! \uD83C\uDF89');
-            }).catch(e=>{console.error(e);btn.textContent='Failed \u2014 Try Again';btn.disabled=false;});
-        }
+// ============================================================
+//  DOWNLOAD
+// ============================================================
+function download(){
+    const card=document.getElementById('hawker-card'),btn=document.getElementById('dlBtn');
+    btn.textContent='Generating\u2026';btn.disabled=true;
+    html2canvas(card,{backgroundColor:'#0e0b1e',scale:2,useCORS:true,logging:false,allowTaint:true,width:card.offsetWidth,height:card.offsetHeight,scrollX:0,scrollY:-window.scrollY}).then(canvas=>{
+        const url=canvas.toDataURL('image/png'),safe=userName.replace(/[^a-zA-Z0-9]/g,'-');
+        if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){const w=window.open('');if(w){w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Your Hawker Card</title><style>body{margin:0;padding:16px;background:#0c0a1a;display:flex;flex-direction:column;align-items:center;font-family:sans-serif;}img{max-width:100%;height:auto;border-radius:12px;}p{color:#a8a3be;font-size:14px;margin-top:16px;text-align:center;}</style></head><body><p>Long-press the image to save it.</p><img src="'+url+'" alt="Hawker Card"></body></html>');w.document.close();}else{dl(url,safe);}}
+        else{dl(url,safe);}
+        btn.textContent='Download Card \u2B07';btn.disabled=false;showToast('Card generated! \uD83C\uDF89');
+    }).catch(e=>{console.error(e);btn.textContent='Failed \u2014 Try Again';btn.disabled=false;});
+}
+function dl(url,name){const a=document.createElement('a');a.download='Hawker-'+name+'.png';a.href=url;document.body.appendChild(a);a.click();document.body.removeChild(a);}
 
-        function dl(url,name){const a=document.createElement('a');a.download='Hawker-'+name+'.png';a.href=url;document.body.appendChild(a);a.click();document.body.removeChild(a);}
-
-        // ============================================================
-        renderWelcome();
-    })();
-    </script>
+// ============================================================
+renderWelcome();
+})();
+</script>
 </body>
 </html>
