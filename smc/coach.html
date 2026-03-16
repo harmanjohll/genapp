@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Coaching Compass — BTY SMC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg:#0b0f1a;--surface:#141a2a;--surface2:#1a2236;
+            --gold:#d4a843;--gold-light:#f0d68a;--sage:#7cb68a;
+            --sky:#6ba4c9;--rose:#c97b8b;--amber:#d4a243;--violet:#9b8ec4;
+            --text:#eae8e3;--text2:#9ca3af;--text3:#5f697a;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        html,body{min-height:100vh;min-height:100dvh;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);}
+        body{background-image:radial-gradient(ellipse at 25% 0%,rgba(212,168,67,0.05) 0%,transparent 50%),radial-gradient(ellipse at 75% 100%,rgba(124,182,138,0.04) 0%,transparent 50%);}
+        .font-serif{font-family:'DM Serif Display',serif;}
+        .font-hand{font-family:'Caveat',cursive;}
+        .fade-up{animation:fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards;opacity:0;transform:translateY(14px);}
+        @keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+        .stagger-1{animation-delay:0.04s}.stagger-2{animation-delay:0.08s}.stagger-3{animation-delay:0.12s}.stagger-4{animation-delay:0.16s}.stagger-5{animation-delay:0.20s}.stagger-6{animation-delay:0.24s}
+
+        .opt-btn{background:var(--surface);border:1.5px solid rgba(255,255,255,0.05);border-radius:12px;padding:13px 15px 13px 44px;text-align:left;cursor:pointer;transition:all 0.25s cubic-bezier(0.22,1,0.36,1);color:var(--text);font-size:0.9rem;line-height:1.45;position:relative;width:100%;}
+        .opt-btn:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.25);}
+        .opt-badge{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;border:2px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.12);transition:all 0.25s;}
+        .opt-btn.p1{border-color:var(--gold);background:rgba(212,168,67,0.08);}
+        .opt-btn.p1 .opt-badge{background:var(--gold);border-color:var(--gold);color:var(--bg);}
+        .opt-btn.p2{border-color:var(--sage);background:rgba(124,182,138,0.06);}
+        .opt-btn.p2 .opt-badge{background:var(--sage);border-color:var(--sage);color:var(--bg);}
+
+        .sel-btn{background:var(--surface);border:1.5px solid rgba(255,255,255,0.05);border-radius:12px;padding:11px 15px;text-align:left;cursor:pointer;transition:all 0.25s;color:var(--text);font-size:0.88rem;line-height:1.4;width:100%;}
+        .sel-btn:hover{border-color:rgba(255,255,255,0.12);}
+        .sel-btn.active{border-color:var(--gold);background:rgba(212,168,67,0.08);}
+
+        .progress-track{width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--sage));border-radius:2px;transition:width 0.5s cubic-bezier(0.22,1,0.36,1);}
+        .btn-main{background:linear-gradient(135deg,var(--gold),#c49a38);color:var(--bg);font-weight:700;padding:14px 32px;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:all 0.2s;box-shadow:0 4px 12px rgba(212,168,67,0.25);}
+        .btn-main:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.35);}
+        .btn-main:disabled{opacity:0.3;cursor:not-allowed;transform:none;box-shadow:none;}
+        .btn-back{padding:12px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:var(--text3);font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+        .btn-back:hover{border-color:rgba(255,255,255,0.2);color:var(--text);}
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface2);border:1px solid rgba(212,168,67,0.2);color:var(--text);padding:12px 24px;border-radius:10px;font-size:0.85rem;z-index:100;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+        .toast.show{transform:translateX(-50%) translateY(0);}
+        @media(max-width:640px){.opt-btn{padding:11px 13px 11px 40px;font-size:0.85rem;}.sel-btn{font-size:0.85rem;}}
+    </style>
+</head>
+<body class="antialiased">
+    <div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8"></div>
+    <div id="toast" class="toast"></div>
+<script>
+(function(){
+'use strict';
+
+// ============================================================
+//  GOOGLE SHEETS
+// ============================================================
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdLa9qqAqQFAejOU0mSyoMj8iQCpusZO1cu-YJ-zh50GT0NyOpPF-GOUi1amfnuJNjkg/exec';
+
+// ============================================================
+//  6 COMPASS DIMENSIONS
+// ============================================================
+const COMPASS = {
+    presence: {
+        name:"Presence", colour:"#6ba4c9", colourLight:"rgba(107,164,201,0.12)",
+        bringToRoom:"Stillness and deep attention. You give others the rare gift of being fully heard.",
+        shift:"From solving to holding space. From filling silence to trusting it.",
+        question:"What would happen if I simply listened longer?"
+    },
+    growth: {
+        name:"Growth", colour:"#7cb68a", colourLight:"rgba(124,182,138,0.12)",
+        bringToRoom:"A belief in what people can become. You help others see possibility they did not know was there.",
+        shift:"From assessing performance to developing potential. From expert to enabler.",
+        question:"What does this person need to become, not just to do?"
+    },
+    connection: {
+        name:"Connection", colour:"#d4a843", colourLight:"rgba(212,168,67,0.12)",
+        bringToRoom:"Warmth and genuine care. You build the safety that makes real conversation possible.",
+        shift:"From focusing on tasks to focusing on people. From directing to understanding.",
+        question:"What is really going on for this person right now?"
+    },
+    courage: {
+        name:"Courage", colour:"#c97b8b", colourLight:"rgba(201,123,139,0.12)",
+        bringToRoom:"Honesty delivered with heart. You create the conditions for breakthrough.",
+        shift:"From avoiding discomfort to leaning in. From telling to asking the hard questions.",
+        question:"What is the question I have been avoiding?"
+    },
+    curiosity: {
+        name:"Curiosity", colour:"#d4a243", colourLight:"rgba(212,162,67,0.12)",
+        bringToRoom:"A genuine desire to understand. Your questions unlock insights others did not know they had.",
+        shift:"From assuming to exploring. From knowing to wondering.",
+        question:"What am I not seeing here?"
+    },
+    resilience: {
+        name:"Resilience", colour:"#9b8ec4", colourLight:"rgba(155,142,196,0.12)",
+        bringToRoom:"Steadiness and patience. You help others find their footing when the ground is uneven.",
+        shift:"From rescuing to empowering. From smoothing the path to walking alongside.",
+        question:"How can I support without solving?"
+    }
+};
+
+const DIM_KEYS = Object.keys(COMPASS);
+
+// Compass statements: STATEMENTS[primary][secondary]
+const STATEMENTS = {
+    presence:{
+        growth:"You lead with stillness, and that stillness creates room for others to grow. You trust the process, even when it is slow.",
+        connection:"You lead with presence. You listen in a way that makes people feel seen, and that safety becomes the foundation for everything.",
+        courage:"You lead with quiet strength. You hold space patiently, and when the moment calls for it, you ask the question that changes everything.",
+        curiosity:"You lead with attentive wonder. Your stillness is not passive; it is alive with genuine interest in what others are thinking and feeling.",
+        resilience:"You lead with calm endurance. Your steady presence anchors others when things get difficult, and your patience gives them room to recover."
+    },
+    growth:{
+        presence:"You see what others can become, and you have the patience to let that growth unfold. You develop people, not just performance.",
+        connection:"You believe in people and you build the trust that gives them permission to stretch. Your coaching grows both competence and confidence.",
+        courage:"You stretch others toward their best, and you are not afraid to challenge them. Your belief in their growth makes the challenge safe.",
+        curiosity:"You are drawn to what people could become, and your questions help them discover the path themselves. You grow others through genuine inquiry.",
+        resilience:"You develop people with a long view. You know growth takes time and setbacks are part of the journey, and you stay the course."
+    },
+    connection:{
+        presence:"You meet people where they are. Your warmth and attentiveness create the trust that makes honest conversation possible.",
+        growth:"You build relationships that become the ground on which people grow. They trust you because you see who they are, not just what they produce.",
+        courage:"You connect deeply and speak honestly. People trust you because you care enough to be both gentle and direct.",
+        curiosity:"You connect through genuine interest. Your care for others shows in the quality of the questions you ask and the attention you give.",
+        resilience:"You hold relationships through difficulty. Your warmth does not disappear when things get hard; it becomes the anchor others need."
+    },
+    courage:{
+        presence:"You name what others will not, and you stay present through the discomfort that follows. That combination is rare and powerful.",
+        growth:"You ask the hard questions because you believe in what is on the other side. Your courage is always in service of growth.",
+        connection:"You are honest because you care. You say what needs to be said, and you say it in a way that strengthens the relationship.",
+        curiosity:"You lean into difficulty with open questions, not just bold statements. Your courage lives in your willingness to explore the unknown together.",
+        resilience:"You face hard truths and hold steady. Your courage is not reckless; it is grounded in a deep capacity to endure what follows."
+    },
+    curiosity:{
+        presence:"You wonder aloud and listen deeply. Your questions are not rushed; they come from a place of genuine stillness and interest.",
+        growth:"Your curiosity fuels development. You ask the questions that help people discover capabilities they did not know they had.",
+        connection:"You connect by being genuinely interested. People feel valued when you ask, because they know you truly want to understand.",
+        courage:"You ask the questions others shy away from, not to provoke, but because you are genuinely curious about what lies beneath.",
+        resilience:"You stay curious when others shut down. Your ability to keep asking, gently and persistently, helps people work through what is hard."
+    },
+    resilience:{
+        presence:"You hold space through difficulty. Your calm endurance and attentive presence make you a steady anchor in uncertain times.",
+        growth:"You know that growth is not linear. You support others through setbacks with patience, always believing in what they are becoming.",
+        connection:"You stay connected when things get tough. Your relationships deepen through difficulty because you do not walk away.",
+        courage:"You face difficulty with quiet determination. You do not flinch from hard conversations, and you have the stamina to see them through.",
+        curiosity:"You stay open when things are hard. Where others retreat into certainty, you keep asking, keep learning, keep finding a way forward."
+    }
+};
+
+// ============================================================
+//  5 REFLECTIVE QUESTIONS, 6 options each
+// ============================================================
+const QUESTIONS = [
+    {
+        prompt:"After today, which shift feels most alive for you?",
+        options:[
+            {text:"From fixing to holding space for others to think.", dim:"presence"},
+            {text:"From evaluating to developing potential.", dim:"growth"},
+            {text:"From directing to genuinely understanding people.", dim:"connection"},
+            {text:"From avoiding hard conversations to leaning in.", dim:"courage"},
+            {text:"From assuming to asking with genuine curiosity.", dim:"curiosity"},
+            {text:"From rescuing to walking alongside through difficulty.", dim:"resilience"}
+        ]
+    },
+    {
+        prompt:"When you imagine your next coaching conversation, what do you most want to bring?",
+        options:[
+            {text:"The patience to let silence do its work.", dim:"presence"},
+            {text:"A belief in what this person can become.", dim:"growth"},
+            {text:"Real curiosity about their world and perspective.", dim:"curiosity"},
+            {text:"Warmth that builds trust and safety.", dim:"connection"},
+            {text:"The willingness to ask what no one else will.", dim:"courage"},
+            {text:"Steadiness through whatever comes up.", dim:"resilience"}
+        ]
+    },
+    {
+        prompt:"Which of these feels most true about why coaching matters?",
+        options:[
+            {text:"It gives people space to find their own answers.", dim:"presence"},
+            {text:"It builds capacity that outlasts any single conversation.", dim:"growth"},
+            {text:"It deepens trust and strengthens relationships.", dim:"connection"},
+            {text:"It surfaces what people need to confront.", dim:"courage"},
+            {text:"It unlocks insights through the right questions.", dim:"curiosity"},
+            {text:"It helps people find their footing in difficult times.", dim:"resilience"}
+        ]
+    },
+    {
+        prompt:"A colleague is stuck. Your instinct is to\u2026",
+        options:[
+            {text:"Listen fully before responding. They need to feel heard.", dim:"presence"},
+            {text:"Help them see what success could look like.", dim:"growth"},
+            {text:"Understand what is really going on beneath the surface.", dim:"connection"},
+            {text:"Name what I see honestly, with care.", dim:"courage"},
+            {text:"Ask open questions to help them think it through.", dim:"curiosity"},
+            {text:"Sit with the difficulty without rushing to fix it.", dim:"resilience"}
+        ]
+    },
+    {
+        prompt:"What do you want to be more intentional about going forward?",
+        options:[
+            {text:"Being still. Not rushing to fill every silence.", dim:"presence"},
+            {text:"Helping others see what they are capable of.", dim:"growth"},
+            {text:"Building deeper trust with the people I lead.", dim:"connection"},
+            {text:"Having the conversations I have been putting off.", dim:"courage"},
+            {text:"Asking better questions, more often.", dim:"curiosity"},
+            {text:"Staying steady when things get uncomfortable.", dim:"resilience"}
+        ]
+    }
+];
+
+// ============================================================
+//  SELECT OPTIONS
+// ============================================================
+const CHALLENGES = [
+    "Balancing tasks with developing people",
+    "Navigating change I did not choose",
+    "Having conversations I have been avoiding",
+    "Supporting someone who cannot see their struggle",
+    "Finding space to think strategically",
+    "Building trust with a new team",
+    "Letting go and trusting others",
+    "Sustaining my own energy"
+];
+const ACKNOWLEDGES = [
+    "I have grown more than I realise",
+    "I genuinely care about my people",
+    "I am learning to listen first",
+    "I show up, even on the hard days",
+    "I am willing to be uncomfortable to grow",
+    "I create safety for others",
+    "I have not given up on the difficult ones",
+    "I am still here, still learning"
+];
+const REMINDERS = [
+    "Not every silence needs filling",
+    "Asking beats telling, almost always",
+    "My pace is not everyone's pace",
+    "I do not need all the answers",
+    "Coaching is a long game",
+    "My presence matters more than my solutions",
+    "Growth lives in discomfort",
+    "The simplest question is often the best"
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+const appEl = document.getElementById('app');
+let userName='';
+let currentStep=0;
+let answers=[];
+let pick1=null, pick2=null;
+let chosenChallenge='', chosenAcknowledge='', chosenReminder='', chosenWord='';
+const totalSteps=9;
+const shuffledOrders=QUESTIONS.map(q=>{const a=q.options.map((_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;});
+
+function showToast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+
+// ============================================================
+//  WELCOME
+// ============================================================
+function renderWelcome(){
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg text-center fade-up">
+        <p class="text-2xl mb-2" style="color:var(--sage);">\uD83C\uDF3F</p>
+        <h1 class="font-serif text-3xl sm:text-4xl leading-tight mb-2" style="color:var(--gold-light);">Your Coaching<br>Compass</h1>
+        <p class="text-xs font-semibold tracking-widest uppercase mb-6" style="color:var(--text3);">BTY SMC \u00B7 Coaching Workshop</p>
+        <div class="text-left rounded-2xl p-5 mb-6" style="background:var(--surface);border:1px solid rgba(255,255,255,0.05);">
+            <p class="text-sm leading-relaxed" style="color:var(--text2);">Before you leave today, take a few minutes to reflect on what this workshop has surfaced in you.</p>
+            <p class="text-sm leading-relaxed mt-2" style="color:var(--text2);">You will answer a few reflective questions, name a challenge you are holding, acknowledge something about yourself, and choose a reminder to carry forward. At the end, you will receive a personal card to keep.</p>
+            <p class="text-sm leading-relaxed mt-2" style="color:var(--text2);">For the first five questions, pick <strong style="color:var(--gold);">two</strong>: your first choice carries more weight. There are no right answers. Go with what feels true.</p>
+        </div>
+        <div class="mb-6">
+            <label class="block text-xs font-semibold tracking-wider uppercase mb-1.5" style="color:var(--text3);">Your name</label>
+            <input type="text" id="inpName" maxlength="40" placeholder="e.g. Alvin" class="w-full px-4 py-3 rounded-xl text-center text-lg font-semibold outline-none" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+        </div>
+        <button id="startBtn" class="btn-main w-full" disabled>Begin \uD83C\uDF3F</button>
+        <p class="text-xs mt-4" style="color:var(--text3);">Takes about 4 minutes</p>
+    </div>`;
+    const inp=document.getElementById('inpName'),btn=document.getElementById('startBtn');
+    inp.addEventListener('input',()=>{btn.disabled=inp.value.trim().length<1;});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&inp.value.trim().length>=1)go();});
+    btn.addEventListener('click',go);
+    function go(){userName=inp.value.trim();currentStep=0;answers=[];renderStep();}
+}
+
+// ============================================================
+//  STEP ROUTER
+// ============================================================
+function renderStep(){
+    if(currentStep<5)renderReflective();
+    else if(currentStep===5)renderSelect('challenge');
+    else if(currentStep===6)renderSelect('acknowledge');
+    else if(currentStep===7)renderSelect('reminder');
+    else if(currentStep===8)renderWordInput();
+    else renderProcessing();
+}
+
+// ============================================================
+//  REFLECTIVE (two-choice, 6 options)
+// ============================================================
+function renderReflective(){
+    pick1=null;pick2=null;
+    const q=QUESTIONS[currentStep],order=shuffledOrders[currentStep],pct=(currentStep/totalSteps)*100;
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg fade-up">
+        <div class="mb-5"><div class="flex justify-between items-center mb-2"><span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text3);">Reflection ${currentStep+1} of 5</span><span class="text-xs font-medium" style="color:var(--gold);">${Math.round(pct)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+        <h2 class="font-serif text-xl sm:text-2xl leading-snug mb-2" style="color:var(--gold-light);">${q.prompt}</h2>
+        <p class="text-xs mb-4" style="color:var(--text3);">Pick two. <span style="color:var(--gold);font-weight:600;">1st</span> = stronger. <span style="color:var(--sage);font-weight:600;">2nd</span> = also you. Tap again to deselect.</p>
+        <div class="space-y-2" id="opts">${order.map((oi,di)=>`<button class="opt-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="opt-badge"></span>${q.options[oi].text}</button>`).join('')}</div>
+        <div class="mt-5 flex items-center gap-3">
+            ${currentStep>0?'<button id="backBtn" class="btn-back">Back</button>':''}
+            <button id="nextBtn" class="btn-main w-full" disabled>Next</button>
+        </div>
+    </div>`;
+    document.querySelectorAll('.opt-btn').forEach(b=>b.addEventListener('click',()=>handlePick(parseInt(b.dataset.orig))));
+    document.getElementById('nextBtn').addEventListener('click',()=>{answers.push({first:pick1,second:pick2});currentStep++;renderStep();});
+    if(document.getElementById('backBtn'))document.getElementById('backBtn').addEventListener('click',()=>{
+        if(currentStep>0){currentStep--;const prev=answers.pop();renderReflective();pick1=prev.first;pick2=prev.second;refreshPicks();}
+    });
+}
+
+function handlePick(i){
+    if(pick1===i){pick1=pick2!==null?pick2:null;pick2=null;}
+    else if(pick2===i){pick2=null;}
+    else if(pick1===null){pick1=i;}
+    else if(pick2===null){pick2=i;}
+    else{showToast('Deselect one first.');return;}
+    refreshPicks();
+}
+function refreshPicks(){
+    document.querySelectorAll('.opt-btn').forEach(b=>{const o=parseInt(b.dataset.orig),bd=b.querySelector('.opt-badge');b.classList.remove('p1','p2');bd.textContent='';if(o===pick1){b.classList.add('p1');bd.textContent='1';}else if(o===pick2){b.classList.add('p2');bd.textContent='2';}});
+    document.getElementById('nextBtn').disabled=(pick1===null||pick2===null);
+}
+
+// ============================================================
+//  SELECT (single + Others)
+// ============================================================
+function renderSelect(type){
+    const pct=(currentStep/totalSteps)*100;
+    let title,subtitle,items;
+    if(type==='challenge'){title='\uD83C\uDF0A A challenge I am holding';subtitle='Which feels closest to where you are right now?';items=CHALLENGES;}
+    else if(type==='acknowledge'){title='\uD83C\uDF31 Something I want to acknowledge';subtitle='Choose the one that feels most true about you today.';items=ACKNOWLEDGES;}
+    else{title='\uD83D\uDD14 A reminder I am carrying forward';subtitle='Which do you most need to hear?';items=REMINDERS;}
+
+    let selected='', isOther=false;
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg fade-up">
+        <div class="mb-5"><div class="flex justify-between items-center mb-2"><span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text3);">Step ${currentStep+1} of ${totalSteps}</span><span class="text-xs font-medium" style="color:var(--gold);">${Math.round(pct)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+        <h2 class="font-serif text-xl sm:text-2xl leading-snug mb-1" style="color:var(--gold-light);">${title}</h2>
+        <p class="text-sm mb-4" style="color:var(--text2);">${subtitle}</p>
+        <div class="space-y-2" id="selOpts">${items.map((item,i)=>`<button class="sel-btn fade-up stagger-${Math.min(i+1,4)}" data-val="${item}">${item}</button>`).join('')}
+            <button class="sel-btn fade-up stagger-4" data-val="__other" style="font-style:italic;color:var(--text2);">Something else\u2026</button>
+        </div>
+        <div id="otherWrap" class="mt-3 hidden"><input type="text" id="otherInp" maxlength="80" placeholder="Type your own\u2026" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--text);" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></div>
+        <div class="mt-5 flex items-center gap-3">
+            <button id="backBtn" class="btn-back">Back</button>
+            <button id="nextBtn" class="btn-main w-full" disabled>Next</button>
+        </div>
+    </div>`;
+
+    document.querySelectorAll('.sel-btn').forEach(b=>{
+        b.addEventListener('click',()=>{
+            document.querySelectorAll('.sel-btn').forEach(x=>x.classList.remove('active'));
+            b.classList.add('active');
+            if(b.dataset.val==='__other'){isOther=true;document.getElementById('otherWrap').classList.remove('hidden');document.getElementById('otherInp').focus();selected='';ck();}
+            else{isOther=false;document.getElementById('otherWrap').classList.add('hidden');selected=b.dataset.val;ck();}
+        });
+    });
+    const oi=document.getElementById('otherInp');
+    if(oi)oi.addEventListener('input',()=>{if(isOther){selected=oi.value.trim();ck();}});
+    function ck(){document.getElementById('nextBtn').disabled=selected.length<1;}
+
+    document.getElementById('nextBtn').addEventListener('click',()=>{
+        if(type==='challenge')chosenChallenge=selected;
+        else if(type==='acknowledge')chosenAcknowledge=selected;
+        else chosenReminder=selected;
+        currentStep++;renderStep();
+    });
+    document.getElementById('backBtn').addEventListener('click',()=>{
+        currentStep--;
+        if(currentStep<5){const prev=answers.pop();renderReflective();pick1=prev.first;pick2=prev.second;refreshPicks();}
+        else renderStep();
+    });
+}
+
+// ============================================================
+//  ONE WORD
+// ============================================================
+function renderWordInput(){
+    const pct=(currentStep/totalSteps)*100;
+    appEl.innerHTML=`
+    <div class="w-full max-w-lg text-center fade-up">
+        <div class="mb-5"><div class="flex justify-between items-center mb-2"><span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text3);">Final step</span><span class="text-xs font-medium" style="color:var(--gold);">${Math.round(pct)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+        <h2 class="font-serif text-xl sm:text-2xl leading-snug mb-2" style="color:var(--gold-light);">One word to carry with you.</h2>
+        <p class="text-sm mb-6" style="color:var(--text2);">What is one word from today that you want to hold onto?</p>
+        <input type="text" id="wordInp" maxlength="30" placeholder="e.g. Listen, Patience, Trust\u2026" class="w-full px-4 py-4 rounded-xl text-center text-2xl font-bold outline-none" style="background:var(--surface2);border:1.5px solid rgba(255,255,255,0.06);color:var(--gold-light);font-family:'DM Serif Display',serif;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+        <div class="mt-5 flex items-center gap-3">
+            <button id="backBtn" class="btn-back">Back</button>
+            <button id="revealBtn" class="btn-main w-full" disabled>Reveal My Compass \uD83C\uDF3F</button>
+        </div>
+    </div>`;
+    const inp=document.getElementById('wordInp'),btn=document.getElementById('revealBtn');
+    inp.addEventListener('input',()=>{btn.disabled=inp.value.trim().length<1;});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&inp.value.trim().length>=1){chosenWord=inp.value.trim();currentStep++;renderStep();}});
+    btn.addEventListener('click',()=>{chosenWord=inp.value.trim();currentStep++;renderStep();});
+    document.getElementById('backBtn').addEventListener('click',()=>{currentStep--;renderStep();});
+}
+
+// ============================================================
+//  PROCESSING
+// ============================================================
+function renderProcessing(){
+    appEl.innerHTML=`<div class="text-center fade-up"><p class="font-serif text-xl mb-2" style="color:var(--gold-light);">Finding your compass\u2026</p><p class="text-sm" style="color:var(--text3);">Reflecting on what you shared</p></div>`;
+    setTimeout(()=>{const r=calculate();sendToSheets(r);renderCard(r);},1800);
+}
+
+// ============================================================
+//  SCORING: 1st x1.0, 2nd x0.5
+// ============================================================
+function calculate(){
+    const scores={};DIM_KEYS.forEach(k=>scores[k]=0);
+    answers.forEach((a,qi)=>{
+        scores[QUESTIONS[qi].options[a.first].dim]+=1.0;
+        scores[QUESTIONS[qi].options[a.second].dim]+=0.5;
+    });
+    const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+    return{scores,sorted,primary:sorted[0][0],secondary:sorted[1][0]};
+}
+
+// ============================================================
+//  GOOGLE SHEETS
+// ============================================================
+function sendToSheets(r){
+    if(!SHEETS_URL||SHEETS_URL==='YOUR_SHEETS_URL_HERE')return;
+    fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        name:userName, primary:COMPASS[r.primary].name, secondary:COMPASS[r.secondary].name,
+        challenge:chosenChallenge, acknowledge:chosenAcknowledge, reminder:chosenReminder, oneWord:chosenWord
+    })}).catch(e=>console.warn('[Sheets]',e));
+}
+
+// ============================================================
+//  CARD — all inline for html2canvas
+// ============================================================
+function renderCard(r){
+    const pri=COMPASS[r.primary],sec=COMPASS[r.secondary];
+    const statement=STATEMENTS[r.primary][r.secondary];
+    const C={bg:'#0b0f1a',t:'#eae8e3',t2:'#9ca3af',t3:'#5f697a',gold:'#d4a843',goldL:'#f0d68a',sage:'#7cb68a',div:'rgba(255,255,255,0.05)'};
+    const dv=`<div style="height:1px;background:${C.div};margin:0 20px;"></div>`;
+    const sc=(c,x='')=>`<div style="padding:14px 20px;${x}">${c}</div>`;
+
+    const card=`
+<div style="height:4px;background:linear-gradient(90deg,${pri.colour},${sec.colour},${C.gold});"></div>
+${sc(`<div style="display:flex;align-items:flex-start;justify-content:space-between;"><div><p style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${C.t3};">Your Coaching Compass</p><p style="font-size:9px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-top:2px;color:${C.t3};">BTY SMC \u00B7 Coaching Workshop</p></div><div style="display:flex;gap:6px;"><span style="font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;background:${pri.colourLight};color:${pri.colour};">${pri.name}</span><span style="font-size:9px;font-weight:600;padding:3px 8px;border-radius:4px;background:${sec.colourLight};color:${sec.colour};">${sec.name}</span></div></div>`,'padding-bottom:10px;')}
+${dv}
+${sc(`<p style="font-size:16px;font-weight:700;color:${C.t};margin-bottom:6px;">Hi, ${userName}.</p><p style="font-size:12px;line-height:1.7;color:${C.t2};font-style:italic;font-family:'DM Serif Display',serif;">${statement}</p>`)}
+${dv}
+<div style="padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid ${C.div};"><p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${pri.colour};margin-bottom:3px;">\u2728 What You Bring</p><p style="font-size:10px;line-height:1.5;color:${C.t2};">${pri.bringToRoom}</p></div>
+    <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid ${C.div};"><p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.sage};margin-bottom:3px;">\uD83C\uDF31 The Shift</p><p style="font-size:10px;line-height:1.5;color:${C.t2};">${pri.shift}</p></div>
+</div>
+${dv}
+${sc(`<p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.gold};margin-bottom:6px;">\uD83D\uDCAC A Question to Carry</p><p style="font-size:13px;line-height:1.6;color:${C.t};font-family:'DM Serif Display',serif;font-style:italic;">\u201C${pri.question}\u201D</p>`)}
+${dv}
+<div style="padding:14px 20px;"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+    <div style="padding:10px;border-radius:10px;background:rgba(107,164,201,0.06);border:1px solid rgba(107,164,201,0.12);"><p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6ba4c9;margin-bottom:3px;">\uD83C\uDF0A Challenge</p><p style="font-size:9px;line-height:1.45;color:${C.t2};">${chosenChallenge}</p></div>
+    <div style="padding:10px;border-radius:10px;background:rgba(124,182,138,0.06);border:1px solid rgba(124,182,138,0.12);"><p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7cb68a;margin-bottom:3px;">\uD83C\uDF31 Acknowledge</p><p style="font-size:9px;line-height:1.45;color:${C.t2};">${chosenAcknowledge}</p></div>
+    <div style="padding:10px;border-radius:10px;background:rgba(201,123,139,0.06);border:1px solid rgba(201,123,139,0.12);"><p style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#c97b8b;margin-bottom:3px;">\uD83D\uDD14 Reminder</p><p style="font-size:9px;line-height:1.45;color:${C.t2};">${chosenReminder}</p></div>
+</div></div>
+${dv}
+${sc(`<div style="text-align:center;"><p style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:${C.t3};margin-bottom:4px;">One word I am carrying with me</p><p style="font-size:28px;font-weight:700;color:${C.goldL};font-family:'DM Serif Display',serif;">${chosenWord}</p></div>`,'background:rgba(212,168,67,0.03);')}
+<div style="padding:10px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.25);border-top:1px solid ${C.div};"><p style="font-size:8px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;color:${C.t3};">BTY SMC \u00B7 Coaching Workshop</p><p style="font-size:8px;color:${C.t3};">Your Coaching Compass</p></div>`;
+
+    appEl.innerHTML=`
+    <div class="w-full max-w-md fade-up pb-12">
+        <div id="compass-card" style="background:linear-gradient(170deg,#0c1020 0%,#141a2a 40%,#161e30 100%);border-radius:20px;overflow:hidden;border:2px solid ${pri.colour}33;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 30px ${pri.colour}08;font-family:'Outfit',sans-serif;color:${C.t};">${card}</div>
+        <div class="mt-8 space-y-3">
+            <button id="dlBtn" class="btn-main w-full text-base">Download Card \u2B07</button>
+            <p class="text-xs text-center" style="color:var(--text3);">Keep this. Return to it. Let it remind you.</p>
+        </div>
+    </div>`;
+    document.getElementById('dlBtn').addEventListener('click',download);
+}
+
+// ============================================================
+//  DOWNLOAD
+// ============================================================
+function download(){
+    const card=document.getElementById('compass-card'),btn=document.getElementById('dlBtn');
+    btn.textContent='Generating\u2026';btn.disabled=true;
+    html2canvas(card,{backgroundColor:'#0c1020',scale:2,useCORS:true,logging:false,allowTaint:true,width:card.offsetWidth,height:card.offsetHeight,scrollX:0,scrollY:-window.scrollY}).then(canvas=>{
+        const url=canvas.toDataURL('image/png'),safe=userName.replace(/[^a-zA-Z0-9]/g,'-');
+        if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){const w=window.open('');if(w){w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Your Coaching Compass</title><style>body{margin:0;padding:16px;background:#0b0f1a;display:flex;flex-direction:column;align-items:center;font-family:sans-serif;}img{max-width:100%;height:auto;border-radius:12px;}p{color:#9ca3af;font-size:14px;margin-top:16px;text-align:center;}</style></head><body><p>Long-press the image to save it.</p><img src="'+url+'" alt="Coaching Compass"></body></html>');w.document.close();}else{dl(url,safe);}}
+        else{dl(url,safe);}
+        btn.textContent='Download Card \u2B07';btn.disabled=false;showToast('Card generated!');
+    }).catch(e=>{console.error(e);btn.textContent='Failed \u2014 Try Again';btn.disabled=false;});
+}
+function dl(url,name){const a=document.createElement('a');a.download='Coaching-Compass-'+name+'.png';a.href=url;document.body.appendChild(a);a.click();document.body.removeChild(a);}
+
+// ============================================================
+renderWelcome();
+})();
+</script>
+</body>
+</html>
