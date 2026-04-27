@@ -180,7 +180,7 @@
         // ============================================================
         //  CONFIG
         // ============================================================
-        const SHEETS_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+        const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzBB8L2-We2WzW7oA3zXYmtGnLn-5JgVx3YIEmwbUjEz2L5vcCA7wthx12wu2LTuMQw/exec';
         const WORKSHOP_DATE_FULL = 'Wednesday, 6 May 2026 \u00B7 2:00 pm';
         const WORKSHOP_DATE_SHORT = '6 May 2026 \u00B7 2:00 pm';
 
@@ -391,16 +391,6 @@
                 ]
             },
             {
-                scenario: "You have made something useful. A small tool, a worksheet generator, a planning template. You are quietly proud of it.",
-                question: "What happens next?",
-                options: [
-                    { text: "You use it yourself. No need to share. Others can build their own.", persona: "durian", p: "prohibit", confidence: 1 },
-                    { text: "You share it in your level chat with a short note on how to use it.", persona: "caifan", p: "produce", confidence: 2 },
-                    { text: "You publish it on a simple URL so anyone, your school or other schools, can use it.", persona: "icekacang", p: "partner", confidence: 3 },
-                    { text: "You share it and ask others what they would change, so you can build a better version.", persona: "tehtarik", persona2: "zichar", p: "polish", confidence: 3 }
-                ]
-            },
-            {
                 scenario: "End of the term. You have used AI more this year than ever before.",
                 question: "What is the next move?",
                 options: [
@@ -408,6 +398,20 @@
                     { text: "Get faster and sharper at the things you already do. Admin, comms, marking.", persona: "caifan", p: "produce", confidence: 2 },
                     { text: "Learn to build small tools and artefacts your students can actually use.", persona: "icekacang", p: "partner", confidence: 3 },
                     { text: "Use AI to think harder, not faster. About pedagogy. About your own practice.", persona: "zichar", persona2: "tehtarik", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                type: "reject",
+                scenario: "Last one. A different kind of question.",
+                question: "Which kind of work would you least want to do?",
+                hint: "Pick what you would least want first. Then pick a second. The work you reject reveals as much as the work you would choose.",
+                options: [
+                    { text: "Building admin and comms templates that save you Sunday evenings.", persona: "caifan" },
+                    { text: "Designing different learning pathways for different students in the same lesson.", persona: "rojak" },
+                    { text: "Coaching colleagues and helping them improve their teaching.", persona: "tehtarik" },
+                    { text: "Working through curriculum design and complex unit planning.", persona: "zichar" },
+                    { text: "Building games, simulations, or interactives for students to use.", persona: "icekacang" },
+                    { text: "Watching how others use AI before trying things yourself.", persona: "kopio" }
                 ]
             }
         ];
@@ -494,7 +498,14 @@
             pick1 = null; pick2 = null;
             const q = QUESTIONS[currentQ];
             const order = shuffledOrders[currentQ];
-            const pct = ((currentQ) / QUESTIONS.length) * 100;
+            // Progress: count current question as in-progress (so Q1 shows 10%, Q10 shows 100%)
+            const pct = ((currentQ + 1) / QUESTIONS.length) * 100;
+            const isReject = q.type === 'reject';
+
+            // Hint copy varies for reject question
+            const hintHtml = isReject
+                ? `<p class="text-xs mb-5" style="color:var(--text-muted);">Pick the work you would <span style="color:var(--accent-gold);font-weight:600;">least want to do</span> first. Then pick a <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>`
+                : `<p class="text-xs mb-5" style="color:var(--text-muted);">Select two. <span style="color:var(--accent-gold);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>`;
 
             app.innerHTML = `
                 <div class="w-full max-w-lg fade-up">
@@ -509,11 +520,11 @@
                         <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-secondary);">${q.scenario}</p>
                     </div>
                     <h2 class="text-lg sm:text-xl font-bold mb-2 leading-snug" style="color:var(--text-primary);">${q.question}</h2>
-                    <p class="text-xs mb-5" style="color:var(--text-muted);">Select two. <span style="color:var(--accent-gold);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
+                    ${hintHtml}
                     <div class="space-y-3" id="opts">
                         ${order.map((oi, di) => `<button class="option-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="option-badge"></span>${q.options[oi].text}</button>`).join('')}
                     </div>
-                    <div class="mt-6"><button id="nextQBtn" class="btn-primary w-full" disabled>Next</button></div>
+                    <div class="mt-6"><button id="nextQBtn" class="btn-primary w-full" disabled>${currentQ === QUESTIONS.length - 1 ? 'See your result' : 'Next'}</button></div>
                 </div>`;
             document.querySelectorAll('.option-btn').forEach(b => b.addEventListener('click', () => handleClick(parseInt(b.dataset.orig))));
             document.getElementById('nextQBtn').addEventListener('click', advance);
@@ -562,50 +573,68 @@
             const pScores = { prohibit:0, plan:0, polish:0, produce:0, partner:0 };
             let durianCount = 0;
             let confidenceSum = 0;
+            let rejectedPrimary = null;
+            let rejectedSecondary = null;
 
             answers.forEach((a, qi) => {
-                const f = QUESTIONS[qi].options[a.first];
-                const s = QUESTIONS[qi].options[a.second];
+                const q = QUESTIONS[qi];
+                const f = q.options[a.first];
+                const s = q.options[a.second];
 
+                // ---- Reject-type question: subtract from rejected personas ----
+                if (q.type === 'reject') {
+                    rejectedPrimary = f.persona;
+                    rejectedSecondary = s.persona;
+                    if (f.persona && personaScores[f.persona] !== undefined) {
+                        personaScores[f.persona] -= 4;
+                    }
+                    if (s.persona && personaScores[s.persona] !== undefined) {
+                        personaScores[s.persona] -= 2;
+                    }
+                    return; // no p-score, confidence, or durian effect
+                }
+
+                // ---- Standard question: weighted scoring ----
+                // First choice: 3 points primary, 1.5 secondary
                 if (f.persona && f.persona !== 'durian') {
-                    personaScores[f.persona] += 2;
-                    if (f.persona2) personaScores[f.persona2] += 1;
+                    personaScores[f.persona] += 3;
+                    if (f.persona2) personaScores[f.persona2] += 1.5;
                 }
                 if (f.persona === 'durian') durianCount++;
-                pScores[f.p] += 2;
+                pScores[f.p] += 3;
                 confidenceSum += f.confidence;
 
+                // Second choice: 2 points primary, 1 secondary
                 if (s.persona && s.persona !== 'durian') {
-                    personaScores[s.persona] += 1;
-                    if (s.persona2) personaScores[s.persona2] += 0.5;
+                    personaScores[s.persona] += 2;
+                    if (s.persona2) personaScores[s.persona2] += 1;
                 }
-                pScores[s.p] += 1;
+                pScores[s.p] += 2;
             });
 
             const ranked = Object.entries(personaScores).sort((a, b) => b[1] - a[1]);
             let primaryKey, adjacentKey;
 
-            if (durianCount >= 4) {
+            // Durian threshold lowered from 4 to 3
+            if (durianCount >= 3) {
                 primaryKey = 'durian';
-                adjacentKey = PERSONAS.durian.adjacentKey;
             } else if (confidenceSum < 12) {
                 primaryKey = 'kopio';
-                adjacentKey = ranked.filter(([k]) => k !== 'kopio')[0][0];
             } else {
                 primaryKey = ranked[0][0];
-                adjacentKey = ranked[1][0];
-                if (primaryKey === 'kopio') {
-                    adjacentKey = ranked.filter(([k]) => k !== 'kopio')[0][0];
-                }
             }
+
+            // Hardcoded adjacency from PERSONAS.adjacentKey — guarantees bridge text fits
+            adjacentKey = PERSONAS[primaryKey].adjacentKey;
 
             const pRanked = Object.entries(pScores).sort((a, b) => b[1] - a[1]);
             const topP = pRanked.slice(0, 2).map(([k]) => k);
             const lowP = pRanked[pRanked.length - 1][0];
 
+            // Confidence sum max is now 27 (9 standard questions × 3 max). Bands adjusted.
             let confidenceLabel;
             if (confidenceSum < 10) confidenceLabel = 'building';
-            else if (confidenceSum <= 20) confidenceLabel = 'steady';
+            else if (confidenceSum <= 18) confidenceLabel = 'steady';
             else confidenceLabel = 'fluent';
 
             return {
@@ -614,6 +643,7 @@
                 topP, lowP,
                 confidenceLabel, confidenceSum,
                 durianCount,
+                rejectedPrimary, rejectedSecondary,
                 rankedPersonas: ranked
             };
         }
@@ -640,7 +670,9 @@
                 topP: r.topP.join(' / '),
                 lowP: r.lowP,
                 personaScores: personaBreakdown,
-                pScores: pBreakdown
+                pScores: pBreakdown,
+                rejectedPrimary: r.rejectedPrimary && PERSONAS[r.rejectedPrimary] ? PERSONAS[r.rejectedPrimary].name : '',
+                rejectedSecondary: r.rejectedSecondary && PERSONAS[r.rejectedSecondary] ? PERSONAS[r.rejectedSecondary].name : ''
             };
             fetch(SHEETS_URL, {
                 method:'POST',
@@ -691,7 +723,7 @@
                 const v = r.pScores[k];
                 const pct = (v / pMx) * 100;
                 const isTop = r.topP.includes(k);
-                const colour = isTop ? C.gold : 'rgba(255,255,255,0.2)';
+                const colour = isTop ? C.gold : 'rgba(255,255,255,0.35)';
                 return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:9px;font-weight:700;width:60px;text-align:right;color:${isTop ? C.gold : C.tM};text-transform:uppercase;letter-spacing:0.05em;">${P_LABELS[k]}</span><div style="flex:1;height:5px;border-radius:9999px;background:rgba(255,255,255,0.04);"><div style="height:100%;border-radius:9999px;width:${pct}%;background:${colour};${v>0?'min-width:3px;':''}"></div></div></div>`;
             }).join('');
 
