@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Confident Educators &mdash; Find Your Persona</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        :root {
+            --bg-deep: #0f1019;
+            --bg-card: #181825;
+            --bg-surface: #1e1e2e;
+            --accent-gold: #D4A843;
+            --accent-gold-light: #F0D68A;
+            --text-primary: #e8e6e3;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+        }
+
+        body {
+            background-image:
+                radial-gradient(ellipse at 20% 0%, rgba(212, 168, 67, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(14, 165, 233, 0.03) 0%, transparent 50%);
+        }
+
+        .font-serif { font-family: 'DM Serif Display', serif; }
+
+        .fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0; transform: translateY(16px);
+        }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        .stagger-1 { animation-delay: 0.08s; }
+        .stagger-2 { animation-delay: 0.16s; }
+        .stagger-3 { animation-delay: 0.24s; }
+        .stagger-4 { animation-delay: 0.32s; }
+
+        .option-btn {
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px 20px 16px 48px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            color: var(--text-primary);
+            font-size: 0.93rem;
+            line-height: 1.5;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .option-btn:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .option-btn:active { transform: translateY(0); }
+
+        .option-badge {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.15);
+            transition: all 0.25s;
+        }
+
+        .option-btn.pick-1 {
+            border-color: var(--accent-gold);
+            background: rgba(212,168,67,0.08);
+        }
+        .option-btn.pick-1 .option-badge {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: var(--bg-deep);
+        }
+
+        .option-btn.pick-2 {
+            border-color: #60a5fa;
+            background: rgba(96,165,250,0.06);
+        }
+        .option-btn.pick-2 .option-badge {
+            background: #60a5fa;
+            border-color: #60a5fa;
+            color: var(--bg-deep);
+        }
+
+        .progress-track {
+            width: 100%; height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light));
+            border-radius: 2px;
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg-deep);
+            font-weight: 700;
+            padding: 14px 32px;
+            border-radius: 10px;
+            border: none; cursor: pointer;
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(212,168,67,0.25);
+        }
+        .btn-primary:hover {
+            background: var(--accent-gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212,168,67,0.35);
+        }
+        .btn-primary:disabled {
+            opacity: 0.35; cursor: not-allowed;
+            transform: none; box-shadow: none;
+        }
+
+        .processing-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent-gold);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        .processing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .processing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e1e2e; border: 1px solid rgba(212,168,67,0.3);
+            color: var(--text-primary); padding: 12px 24px; border-radius: 10px;
+            font-size: 0.85rem; z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 640px) {
+            .option-btn { padding: 14px 16px 14px 44px; font-size: 0.88rem; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8"></div>
+    <div id="toast" class="toast"></div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        //  CONFIG
+        // ============================================================
+        const SHEETS_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+        const WORKSHOP_DATE_FULL = 'Wednesday, 6 May 2026 \u00B7 2:00 pm';
+        const WORKSHOP_DATE_SHORT = '6 May 2026 \u00B7 2:00 pm';
+
+        // ============================================================
+        //  PERANAKAN-STYLE SVG ICONS
+        //  Each persona has a distinct geometric motif drawn from
+        //  Peranakan tile and textile patterns. Sized 28x28 viewBox.
+        //  Filled with currentColor so persona colour applies.
+        // ============================================================
+        const ICONS = {
+            // Quatrefoil — Cai Fan Collector
+            caifan: '<svg viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 4 C14 8 10 8 10 14 C10 8 6 8 4 8 C8 8 8 12 14 14 C8 14 8 18 4 20 C8 18 12 22 14 24 C14 20 18 20 24 20 C18 20 20 16 14 14 C20 14 20 10 24 8 C20 8 18 8 14 4 Z" opacity="0.9"/><circle cx="14" cy="14" r="2" fill="currentColor"/></svg>',
+            // Eight-pointed star — Rojak Remixer
+            rojak: '<svg viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 2 L16 10 L24 4 L18 12 L26 14 L18 16 L24 24 L16 18 L14 26 L12 18 L4 24 L10 16 L2 14 L10 12 L4 4 L12 10 Z"/></svg>',
+            // Nested diamond — Teh Tarik Trainer
+            tehtarik: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 2 L26 14 L14 26 L2 14 Z"/><path d="M14 7 L21 14 L14 21 L7 14 Z" fill="currentColor" fill-opacity="0.4"/><circle cx="14" cy="14" r="1.5" fill="currentColor"/></svg>',
+            // Hexagonal lattice — Zi Char Strategist
+            zichar: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3 L23 8 L23 18 L14 23 L5 18 L5 8 Z"/><path d="M14 9 L19 11.5 L19 16.5 L14 19 L9 16.5 L9 11.5 Z" fill="currentColor" fill-opacity="0.35"/><path d="M14 3 L14 9 M23 8 L19 11.5 M23 18 L19 16.5 M14 23 L14 19 M5 18 L9 16.5 M5 8 L9 11.5" stroke-width="1.2"/></svg>',
+            // Floral medallion — Ice Kacang Architect
+            icekacang: '<svg viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="3" /><ellipse cx="14" cy="6" rx="2.5" ry="4" /><ellipse cx="14" cy="22" rx="2.5" ry="4" /><ellipse cx="6" cy="14" rx="4" ry="2.5" /><ellipse cx="22" cy="14" rx="4" ry="2.5" /><ellipse cx="8" cy="8" rx="2" ry="3" transform="rotate(-45 8 8)" /><ellipse cx="20" cy="8" rx="2" ry="3" transform="rotate(45 20 8)" /><ellipse cx="8" cy="20" rx="2" ry="3" transform="rotate(45 8 20)" /><ellipse cx="20" cy="20" rx="2" ry="3" transform="rotate(-45 20 20)" /></svg>',
+            // Open circle with dot — Kopi-O Observer
+            kopio: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="10"/><circle cx="14" cy="14" r="5" stroke-width="1.4"/><circle cx="14" cy="14" r="1.8" fill="currentColor"/></svg>',
+            // Shield with cross — Durian Defender
+            durian: '<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3 L23 6 L23 14 C23 19 19 23 14 25 C9 23 5 19 5 14 L5 6 Z" fill="currentColor" fill-opacity="0.18"/><path d="M14 9 L14 19 M9 14 L19 14" stroke-width="1.6"/></svg>'
+        };
+
+        // Larger version for the result card (40x40)
+        const ICONS_LG = {
+            caifan: '<svg viewBox="0 0 28 28" width="36" height="36" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 4 C14 8 10 8 10 14 C10 8 6 8 4 8 C8 8 8 12 14 14 C8 14 8 18 4 20 C8 18 12 22 14 24 C14 20 18 20 24 20 C18 20 20 16 14 14 C20 14 20 10 24 8 C20 8 18 8 14 4 Z" opacity="0.9"/><circle cx="14" cy="14" r="2" fill="currentColor"/></svg>',
+            rojak: '<svg viewBox="0 0 28 28" width="36" height="36" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14 2 L16 10 L24 4 L18 12 L26 14 L18 16 L24 24 L16 18 L14 26 L12 18 L4 24 L10 16 L2 14 L10 12 L4 4 L12 10 Z"/></svg>',
+            tehtarik: '<svg viewBox="0 0 28 28" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 2 L26 14 L14 26 L2 14 Z"/><path d="M14 7 L21 14 L14 21 L7 14 Z" fill="currentColor" fill-opacity="0.4"/><circle cx="14" cy="14" r="1.5" fill="currentColor"/></svg>',
+            zichar: '<svg viewBox="0 0 28 28" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3 L23 8 L23 18 L14 23 L5 18 L5 8 Z"/><path d="M14 9 L19 11.5 L19 16.5 L14 19 L9 16.5 L9 11.5 Z" fill="currentColor" fill-opacity="0.35"/><path d="M14 3 L14 9 M23 8 L19 11.5 M23 18 L19 16.5 M14 23 L14 19 M5 18 L9 16.5 M5 8 L9 11.5" stroke-width="1.2"/></svg>',
+            icekacang: '<svg viewBox="0 0 28 28" width="36" height="36" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="3" /><ellipse cx="14" cy="6" rx="2.5" ry="4" /><ellipse cx="14" cy="22" rx="2.5" ry="4" /><ellipse cx="6" cy="14" rx="4" ry="2.5" /><ellipse cx="22" cy="14" rx="4" ry="2.5" /><ellipse cx="8" cy="8" rx="2" ry="3" transform="rotate(-45 8 8)" /><ellipse cx="20" cy="8" rx="2" ry="3" transform="rotate(45 20 8)" /><ellipse cx="8" cy="20" rx="2" ry="3" transform="rotate(45 8 20)" /><ellipse cx="20" cy="20" rx="2" ry="3" transform="rotate(-45 20 20)" /></svg>',
+            kopio: '<svg viewBox="0 0 28 28" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="10"/><circle cx="14" cy="14" r="5" stroke-width="1.4"/><circle cx="14" cy="14" r="1.8" fill="currentColor"/></svg>',
+            durian: '<svg viewBox="0 0 28 28" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3 L23 6 L23 14 C23 19 19 23 14 25 C9 23 5 19 5 14 L5 6 Z" fill="currentColor" fill-opacity="0.18"/><path d="M14 9 L14 19 M9 14 L19 14" stroke-width="1.6"/></svg>'
+        };
+
+        // Small inline icon for "Bring + We will try" block
+        const ICON_BRING = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>';
+        const ICON_TRY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 L14.5 8.5 L21.5 9 L16 13.5 L17.5 20.5 L12 17 L6.5 20.5 L8 13.5 L2.5 9 L9.5 8.5 Z"/></svg>';
+        const ICON_DATE = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+
+        // ============================================================
+        //  PERSONAS — seven, with new labels and merged copy
+        // ============================================================
+        const PERSONAS = {
+            caifan: {
+                name: "Cai Fan Collector",
+                short: "Cai Fan Collector",
+                color: "#D4A843",
+                colorLight: "rgba(212,168,67,0.12)",
+                description: "AI is your extra pair of hands for admin. You want to automate parent emails, report comments, and the repetitive tasks that drain your week. The workshop clears your plate by making your administrative workflow faster and cleaner.",
+                adjacentKey: "kopio",
+                bridge: "Your focus on efficiency and systems puts you close to the Kopi-O Observers, who are looking for their first administrative win.",
+                bring: "one repetitive admin task you would like to automate.",
+                tryBuild: "build a communications tool that produces three calibrated versions of one message, for different audiences."
+            },
+            rojak: {
+                name: "Rojak Remixer",
+                short: "Rojak Remixer",
+                color: "#F43F5E",
+                colorLight: "rgba(244,63,94,0.12)",
+                description: "You design for diversity. You think in learning pathways, not static worksheets, and you want help balancing multiple learner needs in a single lesson. The workshop sharpens your ability to use AI to personalise instruction without doubling your own workload.",
+                adjacentKey: "zichar",
+                bridge: "You prioritise pedagogical strategy before production, which aligns your thinking with the Zi Char Strategists.",
+                bring: "one specific differentiation challenge from your current classes.",
+                tryBuild: "build a differentiation tool that takes one objective and generates three distinct learning pathways with a readiness check."
+            },
+            tehtarik: {
+                name: "Teh Tarik Trainer",
+                short: "Teh Tarik Trainer",
+                color: "#F59E0B",
+                colorLight: "rgba(245,158,11,0.12)",
+                description: "You support staffroom growth. You want AI to enhance professional dialogue and coaching, not just produce material. The workshop helps you build tools that prompt reflection, answer staff questions, and lead better coaching conversations with colleagues.",
+                adjacentKey: "zichar",
+                bridge: "Your work is rooted in dialogue and reasoning, which puts you close to the Zi Char Strategists.",
+                bring: "one coaching or mentoring conversation scenario.",
+                tryBuild: "build a coaching simulator that acts as a wise mentor, asking reflective questions based on a teacher's specific classroom scenario."
+            },
+            zichar: {
+                name: "Zi Char Strategist",
+                short: "Zi Char Strategist",
+                color: "#8B5CF6",
+                colorLight: "rgba(139,92,246,0.12)",
+                description: "You tackle complex curriculum design. Unit plans, assessment alignment, curriculum mapping. You want an AI thinking partner to stress-test your reasoning and spot logical gaps. The workshop shows you how to make AI challenge your curriculum assumptions properly.",
+                adjacentKey: "rojak",
+                bridge: "Your unit plans often drive classroom differentiation, bridging your work to the Rojak Remixers.",
+                bring: "one complex planning or curriculum problem.",
+                tryBuild: "build a unit plan stress-tester that identifies assumed prior knowledge, likely misconceptions, and assessment misalignments."
+            },
+            icekacang: {
+                name: "Ice Kacang Architect",
+                short: "Ice Kacang Architect",
+                color: "#10B981",
+                colorLight: "rgba(16,185,129,0.12)",
+                description: "You build interactive student experiences. You want games, simulations, and digital artefacts that land in a child's hands, not just handouts. The workshop helps you build small, working browser-based tools that students can actually use to explore concepts.",
+                adjacentKey: "rojak",
+                bridge: "What you build is essentially differentiation in action, which puts you close to the Rojak Remixers.",
+                bring: "one student-facing activity or concept you want to digitise.",
+                tryBuild: "build an adaptive practice tool, a small interactive that adjusts difficulty and feedback based on real-time student performance."
+            },
+            kopio: {
+                name: "Kopi-O Observer",
+                short: "Kopi-O Observer",
+                color: "#0EA5E9",
+                colorLight: "rgba(14,165,233,0.12)",
+                description: "AI is a new horizon for you. You are watching, saving what works, and building confidence before diving in. The workshop meets you exactly where you are. There is no catching up to do, only a chance to start.",
+                adjacentKey: "caifan",
+                bridge: "Administrative efficiency is usually the first win for new users, linking you to the Cai Fan Collectors.",
+                bring: "one small, simple task you would like to try with AI.",
+                tryBuild: "build a personal AI workflow map. One daily school task documented from prompt to final output."
+            },
+            durian: {
+                name: "Durian Defender",
+                short: "Durian Defender",
+                color: "#94A3B8",
+                colorLight: "rgba(148,163,184,0.12)",
+                description: "You have valid concerns about ethics, data privacy, and cognitive offloading. You are not anti-AI; you are pro-human. The workshop respects your critical lens, helping you build the frameworks to decide where AI earns its place and where it does not.",
+                adjacentKey: "zichar",
+                bridge: "Your analytical stance and need for logical rigour align you with the Zi Char Strategists.",
+                bring: "one specific reservation or ethical concern you have about AI.",
+                tryBuild: "build an AI ethics audit tool, a checklist to evaluate classroom AI tools for bias, rigour, and cognitive impact."
+            }
+        };
+
+        // ============================================================
+        //  QUESTIONS — same 10 scenarios, plain English, persona keys updated
+        // ============================================================
+        const QUESTIONS = [
+            {
+                scenario: "A Primary 4 child writes that plants get their food from the soil. Half the class wrote something similar.",
+                question: "What is your first move?",
+                options: [
+                    { text: "You re-teach the small group the next morning, slower and clearer. AI does not really come into it.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You meet two colleagues to figure out where the misconception came from before doing anything.", persona: "kopio", p: "plan", confidence: 1 },
+                    { text: "You ask Claude for three diagnostic questions that would surface the misconception, and predict what a child holding it would answer.", persona: "zichar", p: "partner", confidence: 3 },
+                    { text: "You design a choice board: three different ways for children to investigate where plants actually get their food.", persona: "rojak", p: "produce", confidence: 2 }
+                ]
+            },
+            {
+                scenario: "At a P3 level meeting, a colleague mentions her class loved a card-based game she made on energy and forces. You have never seen anything like it.",
+                question: "What do you do next?",
+                options: [
+                    { text: "Card games are not really your style. You stick with what works in your classroom.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You ask to borrow the cards. You will try them as-is next week.", persona: "kopio", p: "plan", confidence: 1 },
+                    { text: "You ask Claude to help you understand games-based pedagogy, then design your own version on a topic you actually teach.", persona: "zichar", persona2: "icekacang", p: "partner", confidence: 3 },
+                    { text: "You sketch three games that would work for your topic. You ask Claude to help build one as a printable.", persona: "icekacang", p: "produce", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "End of term. The marking pile is huge, parent comms are overdue, and tomorrow's lesson is not ready. You have three hours.",
+                question: "How do you spend them?",
+                options: [
+                    { text: "Marking first, always. Parent comms can wait until the weekend.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You start with whatever is on top of the pile. No system, just go.", persona: "kopio", p: "plan", confidence: 1 },
+                    { text: "You ask Claude to draft three parent comms templates you can adapt. That frees up an hour for the lesson.", persona: "caifan", p: "produce", confidence: 2 },
+                    { text: "You list everything. Decide what only you can do. Ask Claude to take a first pass at the rest.", persona: "caifan", persona2: "zichar", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "Your HOD wants a new differentiated worksheet for a struggling group by Friday. You have one prep period.",
+                question: "Where do you start?",
+                options: [
+                    { text: "You search online for similar worksheets you can adapt. Stick to what you know.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You ask Claude to write the worksheet directly. Clean format, ready to print.", persona: "caifan", p: "produce", confidence: 2 },
+                    { text: "You describe each child in the group, what they can do and where they are stuck. Ask Claude for tasks that meet each one where they are.", persona: "rojak", p: "partner", confidence: 3 },
+                    { text: "Worksheets are not really the point. You ask Claude for three short tasks that diagnose why they are stuck, before producing anything.", persona: "zichar", p: "polish", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "You want to introduce condensation to P3 in a way they will actually remember. The textbook page is dry.",
+                question: "What do you build?",
+                options: [
+                    { text: "You bring in cold drinks from the canteen and let the children observe for themselves. Old-school works.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You design three entry points. A video, a hands-on station, a short reading. Children choose how to start.", persona: "rojak", p: "produce", confidence: 2 },
+                    { text: "You build a small interactive simulation with Claude. Children cool a surface and watch water vapour collect on it.", persona: "icekacang", p: "partner", confidence: 3 },
+                    { text: "You design the whole inquiry sequence with Claude. Hook, prediction, investigation, three tiers of inquiry questions.", persona: "zichar", persona2: "rojak", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "Your school is having a parent engagement evening on supporting their child's learning at home. You have been asked to share a 10-minute slot.",
+                question: "How do you prepare?",
+                options: [
+                    { text: "You decline politely and offer to help set up instead.", persona: "durian", p: "prohibit", confidence: 0 },
+                    { text: "You ask Claude to draft talking points based on what you know about your parents.", persona: "caifan", p: "produce", confidence: 2 },
+                    { text: "You ask Claude to help you design the experience. What parents should feel, do, and leave with. Build the slides around that.", persona: "tehtarik", p: "partner", confidence: 3 },
+                    { text: "You build a small interactive parents can try with their child later that evening. A take-home artefact that does the talking for you.", persona: "icekacang", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "You have drafted a lesson with Claude's help, but something feels off when you read it aloud.",
+                question: "What do you do?",
+                options: [
+                    { text: "You shelve it. Use last year's lesson plan instead. Time is short.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You ask Claude what might be off, and to suggest three different ways to revise.", persona: "kopio", persona2: "zichar", p: "polish", confidence: 2 },
+                    { text: "You read it aloud to a colleague at the next break. Fresh ears catch what you cannot.", persona: "tehtarik", p: "plan", confidence: 2 },
+                    { text: "You go back to your original prompt. Realise you did not tell Claude enough about your class. Rebuild from there.", persona: "zichar", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "A colleague asks how you made that lesson. You are using AI in ways she has not tried.",
+                question: "How do you respond?",
+                options: [
+                    { text: "You play it down. Nothing fancy, you say. You will share the prompt later if she asks again.", persona: "kopio", p: "plan", confidence: 1 },
+                    { text: "You walk her through what you did, step by step. Offer to sit with her while she tries it.", persona: "tehtarik", p: "partner", confidence: 3 },
+                    { text: "You write up a short guide so she, and others, can try it on their own time.", persona: "tehtarik", persona2: "caifan", p: "produce", confidence: 3 },
+                    { text: "You suggest you both bring it to the next level meeting. Design something together.", persona: "tehtarik", persona2: "zichar", p: "partner", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "You have made something useful. A small tool, a worksheet generator, a planning template. You are quietly proud of it.",
+                question: "What happens next?",
+                options: [
+                    { text: "You use it yourself. No need to share. Others can build their own.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "You share it in your level chat with a short note on how to use it.", persona: "caifan", p: "produce", confidence: 2 },
+                    { text: "You publish it on a simple URL so anyone, your school or other schools, can use it.", persona: "icekacang", p: "partner", confidence: 3 },
+                    { text: "You share it and ask others what they would change, so you can build a better version.", persona: "tehtarik", persona2: "zichar", p: "polish", confidence: 3 }
+                ]
+            },
+            {
+                scenario: "End of the term. You have used AI more this year than ever before.",
+                question: "What is the next move?",
+                options: [
+                    { text: "Honestly, you are still figuring out if it is worth the effort. See how next term goes.", persona: "durian", p: "prohibit", confidence: 1 },
+                    { text: "Get faster and sharper at the things you already do. Admin, comms, marking.", persona: "caifan", p: "produce", confidence: 2 },
+                    { text: "Learn to build small tools and artefacts your students can actually use.", persona: "icekacang", p: "partner", confidence: 3 },
+                    { text: "Use AI to think harder, not faster. About pedagogy. About your own practice.", persona: "zichar", persona2: "tehtarik", p: "partner", confidence: 3 }
+                ]
+            }
+        ];
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        const app = document.getElementById('app');
+        let participantName = '';
+        let participantSchool = '';
+        let currentQ = 0;
+        let answers = [];
+        let pick1 = null;
+        let pick2 = null;
+
+        function showToast(msg, dur = 3000) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), dur);
+        }
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        const shuffledOrders = QUESTIONS.map(q => shuffle(q.options.map((_, i) => i)));
+
+        // ============================================================
+        //  WELCOME
+        // ============================================================
+        function renderWelcome() {
+            app.innerHTML = `
+                <div class="w-full max-w-lg text-center fade-up">
+                    <div class="mb-10">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] mb-6">
+                            <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--accent-gold);">Pre-Workshop</span>
+                        </div>
+                        <h1 class="font-serif text-3xl sm:text-4xl leading-tight mb-3" style="color:var(--accent-gold-light);">AI Confident<br>Educators</h1>
+                        <p class="text-sm tracking-widest uppercase font-semibold" style="color:var(--text-muted);">Find Your Persona</p>
+                        <p class="text-xs tracking-wider uppercase mt-2" style="color:var(--text-muted);">${WORKSHOP_DATE_FULL}</p>
+                    </div>
+                    <div class="text-left bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-8">
+                        <p class="text-sm leading-relaxed" style="color:var(--text-secondary);">Before we meet, this short exercise will help us group you for the workshop. Ten teaching situations. For each, <strong style="color:var(--accent-gold);">pick two responses</strong>. Your first choice carries more weight than your second.</p>
+                        <p class="text-sm leading-relaxed mt-3" style="color:var(--text-secondary);">There are no right answers. Pick what resonates most naturally with how you actually work.</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="nameInput" class="block text-xs font-semibold tracking-wider uppercase mb-2" style="color:var(--text-muted);">Your name</label>
+                        <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Aishah" class="w-full px-5 py-4 rounded-xl text-center text-lg font-semibold outline-none transition-all" style="background:var(--bg-surface);border:1.5px solid rgba(255,255,255,0.08);color:var(--text-primary);" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                    </div>
+                    <div class="mb-6">
+                        <label for="schoolInput" class="block text-xs font-semibold tracking-wider uppercase mb-2" style="color:var(--text-muted);">Your school <span style="color:var(--text-muted);text-transform:none;letter-spacing:0;font-weight:500;">(optional)</span></label>
+                        <input type="text" id="schoolInput" maxlength="80" placeholder="e.g. Springdale Primary" class="w-full px-5 py-4 rounded-xl text-center text-base font-medium outline-none transition-all" style="background:var(--bg-surface);border:1.5px solid rgba(255,255,255,0.08);color:var(--text-primary);" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+                    </div>
+                    <button id="startBtn" class="btn-primary w-full text-base" disabled>Begin</button>
+                    <p class="text-xs mt-6" style="color:var(--text-muted);">About 4 minutes &middot; 10 situations</p>
+                </div>`;
+            const inp = document.getElementById('nameInput');
+            const sch = document.getElementById('schoolInput');
+            const btn = document.getElementById('startBtn');
+            const checkReady = () => { btn.disabled = inp.value.trim().length < 1; };
+            inp.addEventListener('input', checkReady);
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim().length >= 1) startSurvey(); });
+            sch.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim().length >= 1) startSurvey(); });
+            btn.addEventListener('click', startSurvey);
+        }
+
+        function startSurvey() {
+            participantName = document.getElementById('nameInput').value.trim();
+            participantSchool = document.getElementById('schoolInput').value.trim();
+            currentQ = 0; answers = [];
+            renderQuestion();
+        }
+
+        // ============================================================
+        //  QUESTION
+        // ============================================================
+        function renderQuestion() {
+            pick1 = null; pick2 = null;
+            const q = QUESTIONS[currentQ];
+            const order = shuffledOrders[currentQ];
+            const pct = ((currentQ) / QUESTIONS.length) * 100;
+
+            app.innerHTML = `
+                <div class="w-full max-w-lg fade-up">
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-muted);">Situation ${currentQ+1} of ${QUESTIONS.length}</span>
+                            <span class="text-xs font-medium" style="color:var(--accent-gold);">${Math.round(pct)}%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+                    </div>
+                    <div class="mb-4 p-4 rounded-xl" style="background:rgba(212,168,67,0.04);border:1px solid rgba(212,168,67,0.08);">
+                        <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-secondary);">${q.scenario}</p>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold mb-2 leading-snug" style="color:var(--text-primary);">${q.question}</h2>
+                    <p class="text-xs mb-5" style="color:var(--text-muted);">Select two. <span style="color:var(--accent-gold);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
+                    <div class="space-y-3" id="opts">
+                        ${order.map((oi, di) => `<button class="option-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="option-badge"></span>${q.options[oi].text}</button>`).join('')}
+                    </div>
+                    <div class="mt-6"><button id="nextQBtn" class="btn-primary w-full" disabled>Next</button></div>
+                </div>`;
+            document.querySelectorAll('.option-btn').forEach(b => b.addEventListener('click', () => handleClick(parseInt(b.dataset.orig))));
+            document.getElementById('nextQBtn').addEventListener('click', advance);
+        }
+
+        function handleClick(idx) {
+            if (pick1 === idx) { pick1 = pick2 !== null ? pick2 : null; pick2 = null; }
+            else if (pick2 === idx) { pick2 = null; }
+            else if (pick1 === null) { pick1 = idx; }
+            else if (pick2 === null) { pick2 = idx; }
+            else { showToast('Deselect an option first.'); return; }
+            updateStyles();
+        }
+
+        function updateStyles() {
+            document.querySelectorAll('.option-btn').forEach(b => {
+                const o = parseInt(b.dataset.orig);
+                const badge = b.querySelector('.option-badge');
+                b.classList.remove('pick-1','pick-2');
+                badge.textContent = '';
+                if (o === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                else if (o === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+            });
+            document.getElementById('nextQBtn').disabled = (pick1 === null || pick2 === null);
+        }
+
+        function advance() {
+            answers.push({ first: pick1, second: pick2 });
+            currentQ++;
+            currentQ >= QUESTIONS.length ? renderProcessing() : renderQuestion();
+        }
+
+        // ============================================================
+        //  PROCESSING
+        // ============================================================
+        function renderProcessing() {
+            app.innerHTML = `<div class="text-center fade-up"><div class="flex justify-center gap-3 mb-8"><div class="processing-dot"></div><div class="processing-dot"></div><div class="processing-dot"></div></div><p class="font-serif text-xl mb-2" style="color:var(--accent-gold-light);">Reading your responses\u2026</p><p class="text-sm" style="color:var(--text-muted);">Mapping persona, stance, and where you lean.</p></div>`;
+            setTimeout(() => { const r = calculateResults(); sendToSheets(r); renderResults(r); }, 2200);
+        }
+
+        // ============================================================
+        //  SCORING
+        // ============================================================
+        function calculateResults() {
+            const personaScores = { caifan:0, rojak:0, tehtarik:0, zichar:0, icekacang:0, kopio:0 };
+            const pScores = { prohibit:0, plan:0, polish:0, produce:0, partner:0 };
+            let durianCount = 0;
+            let confidenceSum = 0;
+
+            answers.forEach((a, qi) => {
+                const f = QUESTIONS[qi].options[a.first];
+                const s = QUESTIONS[qi].options[a.second];
+
+                if (f.persona && f.persona !== 'durian') {
+                    personaScores[f.persona] += 2;
+                    if (f.persona2) personaScores[f.persona2] += 1;
+                }
+                if (f.persona === 'durian') durianCount++;
+                pScores[f.p] += 2;
+                confidenceSum += f.confidence;
+
+                if (s.persona && s.persona !== 'durian') {
+                    personaScores[s.persona] += 1;
+                    if (s.persona2) personaScores[s.persona2] += 0.5;
+                }
+                pScores[s.p] += 1;
+            });
+
+            const ranked = Object.entries(personaScores).sort((a, b) => b[1] - a[1]);
+            let primaryKey, adjacentKey;
+
+            if (durianCount >= 4) {
+                primaryKey = 'durian';
+                adjacentKey = PERSONAS.durian.adjacentKey;
+            } else if (confidenceSum < 12) {
+                primaryKey = 'kopio';
+                adjacentKey = ranked.filter(([k]) => k !== 'kopio')[0][0];
+            } else {
+                primaryKey = ranked[0][0];
+                adjacentKey = ranked[1][0];
+                if (primaryKey === 'kopio') {
+                    adjacentKey = ranked.filter(([k]) => k !== 'kopio')[0][0];
+                }
+            }
+
+            const pRanked = Object.entries(pScores).sort((a, b) => b[1] - a[1]);
+            const topP = pRanked.slice(0, 2).map(([k]) => k);
+            const lowP = pRanked[pRanked.length - 1][0];
+
+            let confidenceLabel;
+            if (confidenceSum < 10) confidenceLabel = 'building';
+            else if (confidenceSum <= 20) confidenceLabel = 'steady';
+            else confidenceLabel = 'fluent';
+
+            return {
+                primaryKey, adjacentKey,
+                personaScores, pScores,
+                topP, lowP,
+                confidenceLabel, confidenceSum,
+                durianCount,
+                rankedPersonas: ranked
+            };
+        }
+
+        // ============================================================
+        //  SHEETS
+        // ============================================================
+        function sendToSheets(r) {
+            if (!SHEETS_URL || SHEETS_URL.startsWith('PASTE_')) {
+                console.warn('[Sheets] No URL configured; skipping log.');
+                return;
+            }
+            const personaBreakdown = r.rankedPersonas.map(([k,v]) => PERSONAS[k].short + ': ' + v.toFixed(1)).join(', ');
+            const pBreakdown = Object.entries(r.pScores).map(([k,v]) => k + ': ' + v.toFixed(1)).join(', ');
+            const payload = {
+                timestamp: new Date().toISOString(),
+                name: participantName,
+                school: participantSchool || '',
+                primaryPersona: PERSONAS[r.primaryKey].name,
+                adjacentPersona: PERSONAS[r.adjacentKey].name,
+                durianCount: r.durianCount,
+                confidenceSum: r.confidenceSum,
+                confidenceLabel: r.confidenceLabel,
+                topP: r.topP.join(' / '),
+                lowP: r.lowP,
+                personaScores: personaBreakdown,
+                pScores: pBreakdown
+            };
+            fetch(SHEETS_URL, {
+                method:'POST',
+                mode:'no-cors',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify(payload)
+            }).catch(e => console.warn('[Sheets]', e));
+        }
+
+        // ============================================================
+        //  P-LEAN COPY
+        // ============================================================
+        const P_LABELS = {
+            prohibit: 'Prohibit',
+            plan: 'Plan',
+            polish: 'Polish',
+            produce: 'Produce',
+            partner: 'Partner'
+        };
+
+        function leanSentence(topP, lowP) {
+            const top1 = P_LABELS[topP[0]];
+            const top2 = P_LABELS[topP[1]];
+            const low = P_LABELS[lowP];
+            return `Your responses lean toward <strong>${top1}</strong> and <strong>${top2}</strong>. You're less drawn to <strong>${low}</strong>.`;
+        }
+
+        function confidenceSentence(label) {
+            if (label === 'building') return 'Your confidence with AI is still building. The workshop will start with the basics and move at a pace you set.';
+            if (label === 'steady') return 'Your confidence with AI is steady. The workshop will build on what you already know and push you a little further.';
+            return 'Your confidence with AI is fluent. The workshop will push you toward harder uses and longer-form work.';
+        }
+
+        // ============================================================
+        //  RESULT CARD
+        // ============================================================
+        function renderResults(r) {
+            const pri = PERSONAS[r.primaryKey];
+            const adj = PERSONAS[r.adjacentKey];
+            const C = { gold:'#D4A843', goldL:'#F0D68A', tP:'#e8e6e3', tS:'#9ca3af', tM:'#6b7280', bgD:'#0f1019', div:'rgba(255,255,255,0.06)' };
+
+            // Adjacent block — small sub-section
+            const adjacentHTML = `<div style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid ${C.div};"><span style="color:${adj.color};margin-top:1px;flex-shrink:0;">${ICONS[r.adjacentKey]}</span><div><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${C.tM};margin-bottom:2px;">Your adjacent group</p><p style="font-size:13px;font-weight:700;color:${adj.color};margin-bottom:4px;">${adj.short}</p><p style="font-size:11px;line-height:1.55;color:${C.tS};">${pri.bridge}</p></div></div>`;
+
+            // 5P lean bars
+            const pMx = Math.max(...Object.values(r.pScores)) || 1;
+            const pBars = ['prohibit','plan','polish','produce','partner'].map(k => {
+                const v = r.pScores[k];
+                const pct = (v / pMx) * 100;
+                const isTop = r.topP.includes(k);
+                const colour = isTop ? C.gold : 'rgba(255,255,255,0.2)';
+                return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:9px;font-weight:700;width:60px;text-align:right;color:${isTop ? C.gold : C.tM};text-transform:uppercase;letter-spacing:0.05em;">${P_LABELS[k]}</span><div style="flex:1;height:5px;border-radius:9999px;background:rgba(255,255,255,0.04);"><div style="height:100%;border-radius:9999px;width:${pct}%;background:${colour};${v>0?'min-width:3px;':''}"></div></div></div>`;
+            }).join('');
+
+            const d = `<div style="height:1px;background:${C.div};margin:0 20px;"></div>`;
+            const s = (c, x = '') => `<div style="padding:16px 20px;${x}">${c}</div>`;
+
+            const card = `
+<div style="height:4px;background:linear-gradient(90deg,${pri.color},transparent);"></div>
+${s(`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;"><div><p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${C.gold};">AI Confident Educators</p><p style="font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;color:${C.tM};display:flex;align-items:center;gap:5px;"><span style="display:inline-flex;color:${C.tM};">${ICON_DATE}</span>${WORKSHOP_DATE_FULL}</p></div><div><span style="font-size:9px;font-weight:600;padding:4px 8px;border-radius:4px;background:${pri.colorLight};color:${pri.color};white-space:nowrap;">Your Persona</span></div></div>`, 'padding-bottom:8px;')}
+${d}
+${s(`<p style="font-size:16px;font-weight:700;margin-bottom:4px;color:${C.tP};">Hi, ${participantName}!</p><p style="font-size:11px;line-height:1.6;margin-bottom:16px;color:${C.tS};">From ten teaching situations, here is what we found.</p><div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;"><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;color:${C.tM};">You are a</p><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:${pri.color};display:inline-flex;">${ICONS_LG[r.primaryKey]}</span><span style="font-size:22px;font-weight:700;color:${pri.color};line-height:1.1;">${pri.name}</span></div><p style="font-size:11.5px;line-height:1.6;color:${C.tS};">${pri.description}</p>${adjacentHTML}</div>`)}
+${d}
+${s(`<p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your 5P lean</p><div style="margin-bottom:12px;">${pBars}</div><p style="font-size:11px;line-height:1.6;color:${C.tS};margin-bottom:6px;">${leanSentence(r.topP, r.lowP)}</p><p style="font-size:11px;line-height:1.6;color:${C.tS};">${confidenceSentence(r.confidenceLabel)}</p>`)}
+${d}
+${s(`<div style="border-radius:12px;padding:14px;background:rgba(212,168,67,0.06);border:1px solid rgba(212,168,67,0.15);"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;"><span style="color:${C.gold};margin-top:1px;flex-shrink:0;">${ICON_BRING}</span><div style="flex:1;"><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${C.gold};margin-bottom:4px;">Bring</p><p style="font-size:11.5px;line-height:1.6;color:${C.tS};">${pri.bring}</p></div></div><div style="display:flex;align-items:flex-start;gap:10px;"><span style="color:${C.gold};margin-top:1px;flex-shrink:0;">${ICON_TRY}</span><div style="flex:1;"><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${C.gold};margin-bottom:4px;">We will try to</p><p style="font-size:11.5px;line-height:1.6;color:${C.tS};">${pri.tryBuild}</p></div></div></div>`)}
+${d}
+${s(`<p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;color:${C.tM};">Set up these three accounts</p><div style="display:flex;flex-direction:column;gap:6px;font-size:10.5px;line-height:1.5;color:${C.tS};"><div style="display:flex;gap:8px;"><span style="color:${C.gold};font-weight:700;width:14px;flex-shrink:0;">1.</span><span><strong style="color:${C.tP};">Claude</strong> &mdash; claude.ai. Free tier is enough.</span></div><div style="display:flex;gap:8px;"><span style="color:${C.gold};font-weight:700;width:14px;flex-shrink:0;">2.</span><span><strong style="color:${C.tP};">GitHub</strong> &mdash; github.com. Free, browser-based.</span></div><div style="display:flex;gap:8px;"><span style="color:${C.gold};font-weight:700;width:14px;flex-shrink:0;">3.</span><span><strong style="color:${C.tP};">Notion</strong> &mdash; notion.com. Free, browser-based.</span></div></div><p style="font-size:10px;line-height:1.5;color:${C.tM};margin-top:10px;font-style:italic;">No installs required. Bring your own laptop if you can.</p>`, 'background:rgba(255,255,255,0.015);')}
+${d}
+<div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.04);"><p style="font-size:9px;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;color:${C.tM};">Bring this card on the day</p><p style="font-size:9px;color:${C.tM};display:flex;align-items:center;gap:5px;"><span style="color:${C.tM};display:inline-flex;">${ICON_DATE}</span>${WORKSHOP_DATE_SHORT}</p></div>`;
+
+            app.innerHTML = `<div class="w-full max-w-md fade-up pb-12"><div id="result-card-render" style="background:linear-gradient(170deg,#13131f 0%,#181825 40%,#1a1a2e 100%);border-radius:20px;overflow:hidden;border:2px solid rgba(255,255,255,0.06);box-shadow:0 20px 60px rgba(0,0,0,0.5);font-family:'Plus Jakarta Sans',sans-serif;color:${C.tP};">${card}</div><div class="mt-8 space-y-3"><button id="downloadBtn" class="btn-primary w-full text-base">Download Card \u2B07</button><p class="text-xs text-center" style="color:var(--text-muted);">Save this card. Bring it along on the day.</p></div></div>`;
+            document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+        }
+
+        // ============================================================
+        //  DOWNLOAD
+        // ============================================================
+        function downloadCard() {
+            const card = document.getElementById('result-card-render');
+            const btn = document.getElementById('downloadBtn');
+            btn.textContent = 'Generating\u2026'; btn.disabled = true;
+
+            html2canvas(card, { backgroundColor:'#13131f', scale:2, useCORS:true, logging:false, allowTaint:true, width:card.offsetWidth, height:card.offsetHeight, scrollX:0, scrollY:-window.scrollY }).then(canvas => {
+                const url = canvas.toDataURL('image/png');
+                const safe = participantName.replace(/[^a-zA-Z0-9]/g,'-');
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    const w = window.open('');
+                    if (w) { w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Your Card</title><style>body{margin:0;padding:16px;background:#0f1019;display:flex;flex-direction:column;align-items:center;font-family:sans-serif;}img{max-width:100%;height:auto;border-radius:12px;}p{color:#9ca3af;font-size:14px;margin-top:16px;text-align:center;}</style></head><body><p>Long-press the image to save it.</p><img src="'+url+'" alt="Card"></body></html>'); w.document.close(); }
+                    else { dl(url, safe); }
+                } else { dl(url, safe); }
+                btn.textContent = 'Download Card \u2B07'; btn.disabled = false;
+                showToast('Card generated!');
+            }).catch(e => { console.error(e); btn.textContent = 'Failed \u2014 Try Again'; btn.disabled = false; });
+        }
+
+        function dl(url, name) {
+            const a = document.createElement('a');
+            a.download = 'AI-Confident-' + name + '.png';
+            a.href = url;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        // ============================================================
+        renderWelcome();
+    })();
+    </script>
+</body>
+</html>
