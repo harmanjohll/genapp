@@ -49,6 +49,8 @@
         .stagger-2 { animation-delay: 0.16s; }
         .stagger-3 { animation-delay: 0.24s; }
         .stagger-4 { animation-delay: 0.32s; }
+        .stagger-5 { animation-delay: 0.40s; }
+        .stagger-6 { animation-delay: 0.48s; }
 
         .option-btn {
             background: var(--bg-surface);
@@ -167,11 +169,17 @@
         @media (max-width: 640px) {
             .option-btn { padding: 14px 16px 14px 44px; font-size: 0.88rem; }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-up { animation: none; opacity: 1; transform: none; }
+            .processing-dot { animation: none; opacity: 0.7; }
+            .progress-fill, .option-btn, .btn-primary, .toast { transition: none; }
+        }
     </style>
 </head>
 <body class="antialiased">
     <div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8"></div>
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script>
     (function() {
@@ -182,7 +190,10 @@
         // ============================================================
         const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzBB8L2-We2WzW7oA3zXYmtGnLn-5JgVx3YIEmwbUjEz2L5vcCA7wthx12wu2LTuMQw/exec';
         const WORKSHOP_DATE_FULL = 'Wednesday, 6 May 2026 \u00B7 2:00 pm';
-        const WORKSHOP_DATE_SHORT = '6 May 2026 \u00B7 2:00 pm';
+        // Strip the leading day-name and comma to produce the short form.
+        const WORKSHOP_DATE_SHORT = WORKSHOP_DATE_FULL.replace(/^[^,]+,\s*/, '');
+        const STORAGE_KEY = 'aic-state-v1';
+        const SHEETS_SENT_KEY = 'aic-sent-v1';
 
         // ============================================================
         //  ILLUSTRATIVE FOOD ICONS
@@ -193,37 +204,37 @@
         // ============================================================
         const ICONS = {
             // Cai Fan — plate with rice, sambal, egg, greens
-            caifan: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="#fefce8"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="none" stroke="#D4A843" stroke-width="0.8" opacity="0.6"/><path d="M14 38c4-2 10-4 18-4s14 2 18 4" fill="#fef9c3"/><ellipse cx="22" cy="36" rx="6" ry="3" fill="#fbbf24" opacity="0.85"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#f59e0b" opacity="0.5"/><path d="M30 32c0 0 4-3 8-2s4 5 2 7-6 1-8 0z" fill="#dc2626" opacity="0.85"/><circle cx="42" cy="36" r="2.5" fill="#22c55e"/><circle cx="46" cy="38" r="2" fill="#16a34a"/><circle cx="38" cy="40" r="1" fill="#92400e"/><circle cx="40" cy="42" r="0.8" fill="#92400e"/><circle cx="36" cy="41" r="0.7" fill="#92400e"/></svg>',
+            caifan: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="#fefce8"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="none" stroke="#D4A843" stroke-width="0.8" opacity="0.6"/><path d="M14 38c4-2 10-4 18-4s14 2 18 4" fill="#fef9c3"/><ellipse cx="22" cy="36" rx="6" ry="3" fill="#fbbf24" opacity="0.85"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#f59e0b" opacity="0.5"/><path d="M30 32c0 0 4-3 8-2s4 5 2 7-6 1-8 0z" fill="#dc2626" opacity="0.85"/><circle cx="42" cy="36" r="2.5" fill="#22c55e"/><circle cx="46" cy="38" r="2" fill="#16a34a"/><circle cx="38" cy="40" r="1" fill="#92400e"/><circle cx="40" cy="42" r="0.8" fill="#92400e"/><circle cx="36" cy="41" r="0.7" fill="#92400e"/></svg>',
             // Rojak — bowl with mixed colourful ingredients
-            rojak: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="#fef9c3"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="none" stroke="#F43F5E" stroke-width="0.8" opacity="0.5"/><ellipse cx="22" cy="38" rx="5" ry="3" fill="#F43F5E" opacity="0.7"/><ellipse cx="40" cy="36" rx="4" ry="2.5" fill="#fbbf24"/><ellipse cx="32" cy="40" rx="3" ry="2" fill="#22c55e"/><ellipse cx="42" cy="44" rx="3.5" ry="2" fill="#fb923c"/><ellipse cx="20" cy="44" rx="3" ry="2" fill="#a78bfa"/><circle cx="28" cy="36" r="1.5" fill="#92400e"/><circle cx="36" cy="42" r="1" fill="#fbbf24"/><circle cx="46" cy="40" r="1.2" fill="#dc2626"/></svg>',
+            rojak: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="#fef9c3"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="none" stroke="#F43F5E" stroke-width="0.8" opacity="0.5"/><ellipse cx="22" cy="38" rx="5" ry="3" fill="#F43F5E" opacity="0.7"/><ellipse cx="40" cy="36" rx="4" ry="2.5" fill="#fbbf24"/><ellipse cx="32" cy="40" rx="3" ry="2" fill="#22c55e"/><ellipse cx="42" cy="44" rx="3.5" ry="2" fill="#fb923c"/><ellipse cx="20" cy="44" rx="3" ry="2" fill="#a78bfa"/><circle cx="28" cy="36" r="1.5" fill="#92400e"/><circle cx="36" cy="42" r="1" fill="#fbbf24"/><circle cx="46" cy="40" r="1.2" fill="#dc2626"/></svg>',
             // Teh Tarik — tall mug with frothy top, steam wisps
-            tehtarik: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 26 L20 50 Q20 54 24 54 L40 54 Q44 54 44 50 L44 26 Z" fill="#fefce8" stroke="#D4A843" stroke-width="0.8"/><path d="M44 32 Q52 32 52 38 Q52 44 44 44" fill="none" stroke="#D4A843" stroke-width="1.5"/><ellipse cx="32" cy="26" rx="12" ry="3" fill="#92400e"/><ellipse cx="32" cy="25" rx="10" ry="2" fill="#a16207"/><ellipse cx="32" cy="22" rx="11" ry="2.5" fill="#fef3c7" opacity="0.85"/><ellipse cx="28" cy="20" rx="3" ry="1.5" fill="#fff" opacity="0.95"/><ellipse cx="35" cy="19" rx="2" ry="1" fill="#fff" opacity="0.7"/><path d="M26 14 Q24 10 27 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 13 Q30 9 33 7" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M38 14 Q36 10 39 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/></svg>',
+            tehtarik: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 26 L20 50 Q20 54 24 54 L40 54 Q44 54 44 50 L44 26 Z" fill="#fefce8" stroke="#D4A843" stroke-width="0.8"/><path d="M44 32 Q52 32 52 38 Q52 44 44 44" fill="none" stroke="#D4A843" stroke-width="1.5"/><ellipse cx="32" cy="26" rx="12" ry="3" fill="#92400e"/><ellipse cx="32" cy="25" rx="10" ry="2" fill="#a16207"/><ellipse cx="32" cy="22" rx="11" ry="2.5" fill="#fef3c7" opacity="0.85"/><ellipse cx="28" cy="20" rx="3" ry="1.5" fill="#fff" opacity="0.95"/><ellipse cx="35" cy="19" rx="2" ry="1" fill="#fff" opacity="0.7"/><path d="M26 14 Q24 10 27 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 13 Q30 9 33 7" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M38 14 Q36 10 39 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/></svg>',
             // Zi Char — wok with food being tossed, flame licks
-            zichar: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="22" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M12 32 Q12 50 32 52 Q52 50 52 32 Z" fill="#fefce8" stroke="#8B5CF6" stroke-width="0.8"/><ellipse cx="32" cy="32" rx="20" ry="5" fill="#92400e" opacity="0.85"/><ellipse cx="32" cy="31" rx="18" ry="3.5" fill="#a16207"/><path d="M22 30 Q24 26 28 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M30 30 Q34 26 38 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M40 30 Q42 27 45 29" stroke="#fbbf24" stroke-width="2" fill="none"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#dc2626"/><ellipse cx="40" cy="36" rx="4" ry="2" fill="#f59e0b"/><ellipse cx="32" cy="38" rx="3" ry="1.5" fill="#22c55e"/><circle cx="26" cy="33" r="1" fill="#fff" opacity="0.7"/><circle cx="38" cy="33" r="1" fill="#fff" opacity="0.7"/></svg>',
+            zichar: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="22" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M12 32 Q12 50 32 52 Q52 50 52 32 Z" fill="#fefce8" stroke="#8B5CF6" stroke-width="0.8"/><ellipse cx="32" cy="32" rx="20" ry="5" fill="#92400e" opacity="0.85"/><ellipse cx="32" cy="31" rx="18" ry="3.5" fill="#a16207"/><path d="M22 30 Q24 26 28 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M30 30 Q34 26 38 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M40 30 Q42 27 45 29" stroke="#fbbf24" stroke-width="2" fill="none"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#dc2626"/><ellipse cx="40" cy="36" rx="4" ry="2" fill="#f59e0b"/><ellipse cx="32" cy="38" rx="3" ry="1.5" fill="#22c55e"/><circle cx="26" cy="33" r="1" fill="#fff" opacity="0.7"/><circle cx="38" cy="33" r="1" fill="#fff" opacity="0.7"/></svg>',
             // Ice Kacang — conical layered shave-ice with toppings
-            icekacang: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 38 L24 54 L40 54 L44 38 Z" fill="#fefce8" stroke="#10B981" stroke-width="0.8"/><path d="M16 22 L48 22 L44 38 L20 38 Z" fill="#fce7f3" opacity="0.95"/><path d="M16 22 L48 22 L46 28 L18 28 Z" fill="#10B981" opacity="0.7"/><path d="M18 28 L46 28 L44 34 L20 34 Z" fill="#fbbf24" opacity="0.85"/><path d="M20 34 L44 34 L42 38 L22 38 Z" fill="#dc2626" opacity="0.75"/><circle cx="22" cy="20" r="2" fill="#dc2626"/><circle cx="32" cy="18" r="2.5" fill="#22c55e"/><circle cx="42" cy="20" r="2" fill="#a78bfa"/><circle cx="28" cy="14" r="1.5" fill="#fbbf24"/><circle cx="38" cy="15" r="1.5" fill="#f43f5e"/></svg>',
+            icekacang: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 38 L24 54 L40 54 L44 38 Z" fill="#fefce8" stroke="#10B981" stroke-width="0.8"/><path d="M16 22 L48 22 L44 38 L20 38 Z" fill="#fce7f3" opacity="0.95"/><path d="M16 22 L48 22 L46 28 L18 28 Z" fill="#10B981" opacity="0.7"/><path d="M18 28 L46 28 L44 34 L20 34 Z" fill="#fbbf24" opacity="0.85"/><path d="M20 34 L44 34 L42 38 L22 38 Z" fill="#dc2626" opacity="0.75"/><circle cx="22" cy="20" r="2" fill="#dc2626"/><circle cx="32" cy="18" r="2.5" fill="#22c55e"/><circle cx="42" cy="20" r="2" fill="#a78bfa"/><circle cx="28" cy="14" r="1.5" fill="#fbbf24"/><circle cx="38" cy="15" r="1.5" fill="#f43f5e"/></svg>',
             // Kopi-O — small white cup, dark coffee, steam wisps
-            kopio: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="20" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M16 32 L18 48 Q18 52 22 52 L42 52 Q46 52 46 48 L48 32 Z" fill="#fefce8" stroke="#0EA5E9" stroke-width="0.8"/><path d="M48 36 Q56 36 56 42 Q56 48 48 48" fill="none" stroke="#0EA5E9" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="16" ry="3" fill="#0c0a08"/><ellipse cx="32" cy="31" rx="14" ry="2" fill="#3a2d1f"/><path d="M22 27 Q24 23 27 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 26 Q30 22 33 20" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M40 27 Q42 23 45 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><circle cx="32" cy="42" r="2" fill="#fefce8" opacity="0.4"/></svg>',
+            kopio: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="20" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M16 32 L18 48 Q18 52 22 52 L42 52 Q46 52 46 48 L48 32 Z" fill="#fefce8" stroke="#0EA5E9" stroke-width="0.8"/><path d="M48 36 Q56 36 56 42 Q56 48 48 48" fill="none" stroke="#0EA5E9" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="16" ry="3" fill="#0c0a08"/><ellipse cx="32" cy="31" rx="14" ry="2" fill="#3a2d1f"/><path d="M22 27 Q24 23 27 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 26 Q30 22 33 20" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M40 27 Q42 23 45 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><circle cx="32" cy="42" r="2" fill="#fefce8" opacity="0.4"/></svg>',
             // Durian — spiky whole fruit with stem
-            durian: '<svg viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="20" ry="3" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="34" rx="20" ry="22" fill="#84cc16"/><ellipse cx="32" cy="34" rx="18" ry="20" fill="#65a30d"/><g fill="#365314"><path d="M22 18 L24 14 L26 18 Z"/><path d="M30 14 L32 10 L34 14 Z"/><path d="M38 18 L40 14 L42 18 Z"/><path d="M16 26 L18 22 L20 26 Z"/><path d="M44 26 L46 22 L48 26 Z"/><path d="M14 34 L16 30 L18 34 Z"/><path d="M46 34 L48 30 L50 34 Z"/><path d="M16 42 L18 38 L20 42 Z"/><path d="M44 42 L46 38 L48 42 Z"/><path d="M22 50 L24 46 L26 50 Z"/><path d="M30 52 L32 48 L34 52 Z"/><path d="M38 50 L40 46 L42 50 Z"/><path d="M28 24 L30 20 L32 24 Z"/><path d="M34 30 L36 26 L38 30 Z"/><path d="M24 36 L26 32 L28 36 Z"/><path d="M36 38 L38 34 L40 38 Z"/><path d="M28 44 L30 40 L32 44 Z"/></g><path d="M28 8 Q30 4 32 6 Q34 4 36 8 L34 14 L30 14 Z" fill="#365314"/></svg>'
+            durian: '<svg aria-hidden="true" viewBox="0 0 64 64" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="20" ry="3" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="34" rx="20" ry="22" fill="#84cc16"/><ellipse cx="32" cy="34" rx="18" ry="20" fill="#65a30d"/><g fill="#365314"><path d="M22 18 L24 14 L26 18 Z"/><path d="M30 14 L32 10 L34 14 Z"/><path d="M38 18 L40 14 L42 18 Z"/><path d="M16 26 L18 22 L20 26 Z"/><path d="M44 26 L46 22 L48 26 Z"/><path d="M14 34 L16 30 L18 34 Z"/><path d="M46 34 L48 30 L50 34 Z"/><path d="M16 42 L18 38 L20 42 Z"/><path d="M44 42 L46 38 L48 42 Z"/><path d="M22 50 L24 46 L26 50 Z"/><path d="M30 52 L32 48 L34 52 Z"/><path d="M38 50 L40 46 L42 50 Z"/><path d="M28 24 L30 20 L32 24 Z"/><path d="M34 30 L36 26 L38 30 Z"/><path d="M24 36 L26 32 L28 36 Z"/><path d="M36 38 L38 34 L40 38 Z"/><path d="M28 44 L30 40 L32 44 Z"/></g><path d="M28 8 Q30 4 32 6 Q34 4 36 8 L34 14 L30 14 Z" fill="#365314"/></svg>'
         };
 
         // Larger version for the primary persona block on the result card.
         // Same SVGs, sized at 56x56 for prominence.
         const ICONS_LG = {
-            caifan: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="#fefce8"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="none" stroke="#D4A843" stroke-width="0.8" opacity="0.6"/><path d="M14 38c4-2 10-4 18-4s14 2 18 4" fill="#fef9c3"/><ellipse cx="22" cy="36" rx="6" ry="3" fill="#fbbf24" opacity="0.85"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#f59e0b" opacity="0.5"/><path d="M30 32c0 0 4-3 8-2s4 5 2 7-6 1-8 0z" fill="#dc2626" opacity="0.85"/><circle cx="42" cy="36" r="2.5" fill="#22c55e"/><circle cx="46" cy="38" r="2" fill="#16a34a"/><circle cx="38" cy="40" r="1" fill="#92400e"/><circle cx="40" cy="42" r="0.8" fill="#92400e"/><circle cx="36" cy="41" r="0.7" fill="#92400e"/></svg>',
-            rojak: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="#fef9c3"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="none" stroke="#F43F5E" stroke-width="0.8" opacity="0.5"/><ellipse cx="22" cy="38" rx="5" ry="3" fill="#F43F5E" opacity="0.7"/><ellipse cx="40" cy="36" rx="4" ry="2.5" fill="#fbbf24"/><ellipse cx="32" cy="40" rx="3" ry="2" fill="#22c55e"/><ellipse cx="42" cy="44" rx="3.5" ry="2" fill="#fb923c"/><ellipse cx="20" cy="44" rx="3" ry="2" fill="#a78bfa"/><circle cx="28" cy="36" r="1.5" fill="#92400e"/><circle cx="36" cy="42" r="1" fill="#fbbf24"/><circle cx="46" cy="40" r="1.2" fill="#dc2626"/></svg>',
-            tehtarik: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 26 L20 50 Q20 54 24 54 L40 54 Q44 54 44 50 L44 26 Z" fill="#fefce8" stroke="#D4A843" stroke-width="0.8"/><path d="M44 32 Q52 32 52 38 Q52 44 44 44" fill="none" stroke="#D4A843" stroke-width="1.5"/><ellipse cx="32" cy="26" rx="12" ry="3" fill="#92400e"/><ellipse cx="32" cy="25" rx="10" ry="2" fill="#a16207"/><ellipse cx="32" cy="22" rx="11" ry="2.5" fill="#fef3c7" opacity="0.85"/><ellipse cx="28" cy="20" rx="3" ry="1.5" fill="#fff" opacity="0.95"/><ellipse cx="35" cy="19" rx="2" ry="1" fill="#fff" opacity="0.7"/><path d="M26 14 Q24 10 27 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 13 Q30 9 33 7" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M38 14 Q36 10 39 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/></svg>',
-            zichar: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="22" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M12 32 Q12 50 32 52 Q52 50 52 32 Z" fill="#fefce8" stroke="#8B5CF6" stroke-width="0.8"/><ellipse cx="32" cy="32" rx="20" ry="5" fill="#92400e" opacity="0.85"/><ellipse cx="32" cy="31" rx="18" ry="3.5" fill="#a16207"/><path d="M22 30 Q24 26 28 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M30 30 Q34 26 38 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M40 30 Q42 27 45 29" stroke="#fbbf24" stroke-width="2" fill="none"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#dc2626"/><ellipse cx="40" cy="36" rx="4" ry="2" fill="#f59e0b"/><ellipse cx="32" cy="38" rx="3" ry="1.5" fill="#22c55e"/><circle cx="26" cy="33" r="1" fill="#fff" opacity="0.7"/><circle cx="38" cy="33" r="1" fill="#fff" opacity="0.7"/></svg>',
-            icekacang: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 38 L24 54 L40 54 L44 38 Z" fill="#fefce8" stroke="#10B981" stroke-width="0.8"/><path d="M16 22 L48 22 L44 38 L20 38 Z" fill="#fce7f3" opacity="0.95"/><path d="M16 22 L48 22 L46 28 L18 28 Z" fill="#10B981" opacity="0.7"/><path d="M18 28 L46 28 L44 34 L20 34 Z" fill="#fbbf24" opacity="0.85"/><path d="M20 34 L44 34 L42 38 L22 38 Z" fill="#dc2626" opacity="0.75"/><circle cx="22" cy="20" r="2" fill="#dc2626"/><circle cx="32" cy="18" r="2.5" fill="#22c55e"/><circle cx="42" cy="20" r="2" fill="#a78bfa"/><circle cx="28" cy="14" r="1.5" fill="#fbbf24"/><circle cx="38" cy="15" r="1.5" fill="#f43f5e"/></svg>',
-            kopio: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="20" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M16 32 L18 48 Q18 52 22 52 L42 52 Q46 52 46 48 L48 32 Z" fill="#fefce8" stroke="#0EA5E9" stroke-width="0.8"/><path d="M48 36 Q56 36 56 42 Q56 48 48 48" fill="none" stroke="#0EA5E9" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="16" ry="3" fill="#0c0a08"/><ellipse cx="32" cy="31" rx="14" ry="2" fill="#3a2d1f"/><path d="M22 27 Q24 23 27 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 26 Q30 22 33 20" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M40 27 Q42 23 45 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><circle cx="32" cy="42" r="2" fill="#fefce8" opacity="0.4"/></svg>',
-            durian: '<svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="20" ry="3" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="34" rx="20" ry="22" fill="#84cc16"/><ellipse cx="32" cy="34" rx="18" ry="20" fill="#65a30d"/><g fill="#365314"><path d="M22 18 L24 14 L26 18 Z"/><path d="M30 14 L32 10 L34 14 Z"/><path d="M38 18 L40 14 L42 18 Z"/><path d="M16 26 L18 22 L20 26 Z"/><path d="M44 26 L46 22 L48 26 Z"/><path d="M14 34 L16 30 L18 34 Z"/><path d="M46 34 L48 30 L50 34 Z"/><path d="M16 42 L18 38 L20 42 Z"/><path d="M44 42 L46 38 L48 42 Z"/><path d="M22 50 L24 46 L26 50 Z"/><path d="M30 52 L32 48 L34 52 Z"/><path d="M38 50 L40 46 L42 50 Z"/><path d="M28 24 L30 20 L32 24 Z"/><path d="M34 30 L36 26 L38 30 Z"/><path d="M24 36 L26 32 L28 36 Z"/><path d="M36 38 L38 34 L40 38 Z"/><path d="M28 44 L30 40 L32 44 Z"/></g><path d="M28 8 Q30 4 32 6 Q34 4 36 8 L34 14 L30 14 Z" fill="#365314"/></svg>'
+            caifan: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="#fefce8"/><ellipse cx="32" cy="44" rx="24" ry="8" fill="none" stroke="#D4A843" stroke-width="0.8" opacity="0.6"/><path d="M14 38c4-2 10-4 18-4s14 2 18 4" fill="#fef9c3"/><ellipse cx="22" cy="36" rx="6" ry="3" fill="#fbbf24" opacity="0.85"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#f59e0b" opacity="0.5"/><path d="M30 32c0 0 4-3 8-2s4 5 2 7-6 1-8 0z" fill="#dc2626" opacity="0.85"/><circle cx="42" cy="36" r="2.5" fill="#22c55e"/><circle cx="46" cy="38" r="2" fill="#16a34a"/><circle cx="38" cy="40" r="1" fill="#92400e"/><circle cx="40" cy="42" r="0.8" fill="#92400e"/><circle cx="36" cy="41" r="0.7" fill="#92400e"/></svg>',
+            rojak: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="48" rx="26" ry="6" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="#fef9c3"/><ellipse cx="32" cy="42" rx="24" ry="10" fill="none" stroke="#F43F5E" stroke-width="0.8" opacity="0.5"/><ellipse cx="22" cy="38" rx="5" ry="3" fill="#F43F5E" opacity="0.7"/><ellipse cx="40" cy="36" rx="4" ry="2.5" fill="#fbbf24"/><ellipse cx="32" cy="40" rx="3" ry="2" fill="#22c55e"/><ellipse cx="42" cy="44" rx="3.5" ry="2" fill="#fb923c"/><ellipse cx="20" cy="44" rx="3" ry="2" fill="#a78bfa"/><circle cx="28" cy="36" r="1.5" fill="#92400e"/><circle cx="36" cy="42" r="1" fill="#fbbf24"/><circle cx="46" cy="40" r="1.2" fill="#dc2626"/></svg>',
+            tehtarik: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 26 L20 50 Q20 54 24 54 L40 54 Q44 54 44 50 L44 26 Z" fill="#fefce8" stroke="#D4A843" stroke-width="0.8"/><path d="M44 32 Q52 32 52 38 Q52 44 44 44" fill="none" stroke="#D4A843" stroke-width="1.5"/><ellipse cx="32" cy="26" rx="12" ry="3" fill="#92400e"/><ellipse cx="32" cy="25" rx="10" ry="2" fill="#a16207"/><ellipse cx="32" cy="22" rx="11" ry="2.5" fill="#fef3c7" opacity="0.85"/><ellipse cx="28" cy="20" rx="3" ry="1.5" fill="#fff" opacity="0.95"/><ellipse cx="35" cy="19" rx="2" ry="1" fill="#fff" opacity="0.7"/><path d="M26 14 Q24 10 27 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 13 Q30 9 33 7" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M38 14 Q36 10 39 8" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/></svg>',
+            zichar: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="22" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M12 32 Q12 50 32 52 Q52 50 52 32 Z" fill="#fefce8" stroke="#8B5CF6" stroke-width="0.8"/><ellipse cx="32" cy="32" rx="20" ry="5" fill="#92400e" opacity="0.85"/><ellipse cx="32" cy="31" rx="18" ry="3.5" fill="#a16207"/><path d="M22 30 Q24 26 28 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M30 30 Q34 26 38 28" stroke="#fbbf24" stroke-width="2" fill="none"/><path d="M40 30 Q42 27 45 29" stroke="#fbbf24" stroke-width="2" fill="none"/><ellipse cx="22" cy="36" rx="4" ry="2" fill="#dc2626"/><ellipse cx="40" cy="36" rx="4" ry="2" fill="#f59e0b"/><ellipse cx="32" cy="38" rx="3" ry="1.5" fill="#22c55e"/><circle cx="26" cy="33" r="1" fill="#fff" opacity="0.7"/><circle cx="38" cy="33" r="1" fill="#fff" opacity="0.7"/></svg>',
+            icekacang: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="14" ry="3" fill="#1a1a1a" opacity="0.4"/><path d="M20 38 L24 54 L40 54 L44 38 Z" fill="#fefce8" stroke="#10B981" stroke-width="0.8"/><path d="M16 22 L48 22 L44 38 L20 38 Z" fill="#fce7f3" opacity="0.95"/><path d="M16 22 L48 22 L46 28 L18 28 Z" fill="#10B981" opacity="0.7"/><path d="M18 28 L46 28 L44 34 L20 34 Z" fill="#fbbf24" opacity="0.85"/><path d="M20 34 L44 34 L42 38 L22 38 Z" fill="#dc2626" opacity="0.75"/><circle cx="22" cy="20" r="2" fill="#dc2626"/><circle cx="32" cy="18" r="2.5" fill="#22c55e"/><circle cx="42" cy="20" r="2" fill="#a78bfa"/><circle cx="28" cy="14" r="1.5" fill="#fbbf24"/><circle cx="38" cy="15" r="1.5" fill="#f43f5e"/></svg>',
+            kopio: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="54" rx="20" ry="4" fill="#1a1a1a" opacity="0.4"/><path d="M16 32 L18 48 Q18 52 22 52 L42 52 Q46 52 46 48 L48 32 Z" fill="#fefce8" stroke="#0EA5E9" stroke-width="0.8"/><path d="M48 36 Q56 36 56 42 Q56 48 48 48" fill="none" stroke="#0EA5E9" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="16" ry="3" fill="#0c0a08"/><ellipse cx="32" cy="31" rx="14" ry="2" fill="#3a2d1f"/><path d="M22 27 Q24 23 27 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M32 26 Q30 22 33 20" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><path d="M40 27 Q42 23 45 25" stroke="#cbd5e1" stroke-width="1" fill="none" opacity="0.6"/><circle cx="32" cy="42" r="2" fill="#fefce8" opacity="0.4"/></svg>',
+            durian: '<svg aria-hidden="true" viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="56" rx="20" ry="3" fill="#1a1a1a" opacity="0.4"/><ellipse cx="32" cy="34" rx="20" ry="22" fill="#84cc16"/><ellipse cx="32" cy="34" rx="18" ry="20" fill="#65a30d"/><g fill="#365314"><path d="M22 18 L24 14 L26 18 Z"/><path d="M30 14 L32 10 L34 14 Z"/><path d="M38 18 L40 14 L42 18 Z"/><path d="M16 26 L18 22 L20 26 Z"/><path d="M44 26 L46 22 L48 26 Z"/><path d="M14 34 L16 30 L18 34 Z"/><path d="M46 34 L48 30 L50 34 Z"/><path d="M16 42 L18 38 L20 42 Z"/><path d="M44 42 L46 38 L48 42 Z"/><path d="M22 50 L24 46 L26 50 Z"/><path d="M30 52 L32 48 L34 52 Z"/><path d="M38 50 L40 46 L42 50 Z"/><path d="M28 24 L30 20 L32 24 Z"/><path d="M34 30 L36 26 L38 30 Z"/><path d="M24 36 L26 32 L28 36 Z"/><path d="M36 38 L38 34 L40 38 Z"/><path d="M28 44 L30 40 L32 44 Z"/></g><path d="M28 8 Q30 4 32 6 Q34 4 36 8 L34 14 L30 14 Z" fill="#365314"/></svg>'
         };
 
         // Small inline icon for "Bring + We will try" block
-        const ICON_BRING = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>';
-        const ICON_TRY = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 L14.5 8.5 L21.5 9 L16 13.5 L17.5 20.5 L12 17 L6.5 20.5 L8 13.5 L2.5 9 L9.5 8.5 Z"/></svg>';
-        const ICON_DATE = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+        const ICON_BRING = '<svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>';
+        const ICON_TRY = '<svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 L14.5 8.5 L21.5 9 L16 13.5 L17.5 20.5 L12 17 L6.5 20.5 L8 13.5 L2.5 9 L9.5 8.5 Z"/></svg>';
+        const ICON_DATE = '<svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
 
         // ============================================================
         //  PERSONAS — seven, with new labels and merged copy
@@ -406,7 +417,6 @@
                 type: "reject",
                 scenario: "Last one. A different kind of question.",
                 question: "Which kind of work would you least want to do?",
-                hint: "Pick what you would least want first. Then pick a second. The work you reject reveals as much as the work you would choose.",
                 options: [
                     { text: "Building admin and comms templates that save you Sunday evenings.", persona: "caifan" },
                     { text: "Designing different learning pathways for different students in the same lesson.", persona: "rojak" },
@@ -446,6 +456,41 @@
         }
 
         const shuffledOrders = QUESTIONS.map(q => shuffle(q.options.map((_, i) => i)));
+
+        // Count how often each P-stance appears across the scoring questions.
+        // Used to normalise pScores so under-represented stances (e.g. polish)
+        // are not structurally penalised in the 5P lean.
+        const P_COUNTS = (() => {
+            const counts = { prohibit:0, plan:0, polish:0, produce:0, partner:0 };
+            QUESTIONS.forEach(q => {
+                if (q.type === 'reject') return;
+                q.options.forEach(o => { if (counts[o.p] !== undefined) counts[o.p]++; });
+            });
+            return counts;
+        })();
+
+        // ============================================================
+        //  PERSISTENCE — survive accidental refresh mid-survey
+        // ============================================================
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    name: participantName,
+                    school: participantSchool,
+                    currentQ,
+                    answers
+                }));
+            } catch (e) { /* storage unavailable; quiz still works */ }
+        }
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function clearState() {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        }
 
         // ============================================================
         //  WELCOME
@@ -490,14 +535,26 @@
             participantName = document.getElementById('nameInput').value.trim();
             participantSchool = document.getElementById('schoolInput').value.trim();
             currentQ = 0; answers = [];
+            saveState();
             renderQuestion();
+        }
+
+        function restartSurvey() {
+            clearState();
+            try { sessionStorage.removeItem(SHEETS_SENT_KEY); } catch (e) {}
+            participantName = ''; participantSchool = '';
+            currentQ = 0; answers = [];
+            renderWelcome();
         }
 
         // ============================================================
         //  QUESTION
         // ============================================================
         function renderQuestion() {
-            pick1 = null; pick2 = null;
+            // Restore prior selection if the user is revisiting this question.
+            const prior = answers[currentQ];
+            pick1 = prior ? prior.first : null;
+            pick2 = prior ? prior.second : null;
             const q = QUESTIONS[currentQ];
             const order = shuffledOrders[currentQ];
             // Progress: count current question as in-progress (so Q1 shows 10%, Q10 shows 100%)
@@ -509,6 +566,11 @@
                 ? `<p class="text-xs mb-5" style="color:var(--text-muted);">Pick the work you would <span style="color:var(--accent-gold);font-weight:600;">least want to do</span> first. Then pick a <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>`
                 : `<p class="text-xs mb-5" style="color:var(--text-muted);">Select two. <span style="color:var(--accent-gold);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>`;
 
+            const isLast = currentQ === QUESTIONS.length - 1;
+            const backBtn = currentQ > 0
+                ? `<button id="backQBtn" type="button" class="px-5 py-3 rounded-xl text-sm font-semibold transition-all" style="background:transparent;border:1.5px solid rgba(255,255,255,0.10);color:var(--text-secondary);">Back</button>`
+                : '';
+
             app.innerHTML = `
                 <div class="w-full max-w-lg fade-up">
                     <div class="mb-6">
@@ -516,7 +578,7 @@
                             <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-muted);">Situation ${currentQ+1} of ${QUESTIONS.length}</span>
                             <span class="text-xs font-medium" style="color:var(--accent-gold);">${Math.round(pct)}%</span>
                         </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+                        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><div class="progress-fill" style="width:${pct}%"></div></div>
                     </div>
                     <div class="mb-4 p-4 rounded-xl" style="background:rgba(212,168,67,0.04);border:1px solid rgba(212,168,67,0.08);">
                         <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-secondary);">${q.scenario}</p>
@@ -524,12 +586,24 @@
                     <h2 class="text-lg sm:text-xl font-bold mb-2 leading-snug" style="color:var(--text-primary);">${q.question}</h2>
                     ${hintHtml}
                     <div class="space-y-3" id="opts">
-                        ${order.map((oi, di) => `<button class="option-btn fade-up stagger-${di+1}" data-orig="${oi}"><span class="option-badge"></span>${q.options[oi].text}</button>`).join('')}
+                        ${order.map((oi, di) => `<button type="button" class="option-btn fade-up stagger-${Math.min(di+1, 6)}" data-orig="${oi}" aria-pressed="false"><span class="option-badge" aria-hidden="true"></span>${q.options[oi].text}</button>`).join('')}
                     </div>
-                    <div class="mt-6"><button id="nextQBtn" class="btn-primary w-full" disabled>${currentQ === QUESTIONS.length - 1 ? 'See your result' : 'Next'}</button></div>
+                    <div class="mt-6 flex gap-3">
+                        ${backBtn}
+                        <button id="nextQBtn" class="btn-primary flex-1" disabled>${isLast ? 'See your result' : 'Next'}</button>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <button id="restartBtn" type="button" style="font-size:11px;color:var(--text-muted);background:transparent;border:none;cursor:pointer;padding:4px 8px;text-decoration:underline;text-decoration-color:rgba(255,255,255,0.15);text-underline-offset:3px;">Start over</button>
+                    </div>
                 </div>`;
             document.querySelectorAll('.option-btn').forEach(b => b.addEventListener('click', () => handleClick(parseInt(b.dataset.orig))));
             document.getElementById('nextQBtn').addEventListener('click', advance);
+            const back = document.getElementById('backQBtn');
+            if (back) back.addEventListener('click', goBack);
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                if (confirm('Start over? Your current answers will be cleared.')) restartSurvey();
+            });
+            updateStyles();
         }
 
         function handleClick(idx) {
@@ -547,16 +621,29 @@
                 const badge = b.querySelector('.option-badge');
                 b.classList.remove('pick-1','pick-2');
                 badge.textContent = '';
-                if (o === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
-                else if (o === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+                b.setAttribute('aria-pressed', 'false');
+                if (o === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; b.setAttribute('aria-pressed', 'true'); }
+                else if (o === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; b.setAttribute('aria-pressed', 'true'); }
             });
             document.getElementById('nextQBtn').disabled = (pick1 === null || pick2 === null);
         }
 
         function advance() {
-            answers.push({ first: pick1, second: pick2 });
+            answers[currentQ] = { first: pick1, second: pick2 };
             currentQ++;
+            saveState();
             currentQ >= QUESTIONS.length ? renderProcessing() : renderQuestion();
+        }
+
+        function goBack() {
+            if (currentQ === 0) return;
+            // Persist any complete selection on the current question before navigating.
+            if (pick1 !== null && pick2 !== null) {
+                answers[currentQ] = { first: pick1, second: pick2 };
+            }
+            currentQ--;
+            saveState();
+            renderQuestion();
         }
 
         // ============================================================
@@ -616,12 +703,14 @@
 
             const ranked = Object.entries(personaScores).sort((a, b) => b[1] - a[1]);
             let primaryKey, adjacentKey;
+            let placedByConfidence = false;
 
             // Durian threshold lowered from 4 to 3
             if (durianCount >= 3) {
                 primaryKey = 'durian';
             } else if (confidenceSum < 12) {
                 primaryKey = 'kopio';
+                placedByConfidence = ranked[0][0] !== 'kopio';
             } else {
                 primaryKey = ranked[0][0];
             }
@@ -629,7 +718,13 @@
             // Hardcoded adjacency from PERSONAS.adjacentKey — guarantees bridge text fits
             adjacentKey = PERSONAS[primaryKey].adjacentKey;
 
-            const pRanked = Object.entries(pScores).sort((a, b) => b[1] - a[1]);
+            // Normalise pScores by how often each stance appears in the bank.
+            // Without this, partner (13 options) outweighs polish (2 options) regardless of intent.
+            const pAvg = {};
+            Object.keys(pScores).forEach(k => {
+                pAvg[k] = P_COUNTS[k] > 0 ? pScores[k] / P_COUNTS[k] : 0;
+            });
+            const pRanked = Object.entries(pAvg).sort((a, b) => b[1] - a[1]);
             const topP = pRanked.slice(0, 2).map(([k]) => k);
             const lowP = pRanked[pRanked.length - 1][0];
 
@@ -641,12 +736,13 @@
 
             return {
                 primaryKey, adjacentKey,
-                personaScores, pScores,
+                personaScores, pScores, pAvg,
                 topP, lowP,
                 confidenceLabel, confidenceSum,
                 durianCount,
                 rejectedPrimary, rejectedSecondary,
-                rankedPersonas: ranked
+                rankedPersonas: ranked,
+                placedByConfidence
             };
         }
 
@@ -658,6 +754,11 @@
                 console.warn('[Sheets] No URL configured; skipping log.');
                 return;
             }
+            // Avoid re-submitting on a same-session refresh of the result page.
+            try {
+                if (sessionStorage.getItem(SHEETS_SENT_KEY) === '1') return;
+                sessionStorage.setItem(SHEETS_SENT_KEY, '1');
+            } catch (e) { /* sessionStorage unavailable; submit anyway */ }
             const personaBreakdown = r.rankedPersonas.map(([k,v]) => PERSONAS[k].short + ': ' + v.toFixed(1)).join(', ');
             const pBreakdown = Object.entries(r.pScores).map(([k,v]) => k + ': ' + v.toFixed(1)).join(', ');
             const payload = {
@@ -712,6 +813,8 @@
         //  RESULT CARD
         // ============================================================
         function renderResults(r) {
+            // The quiz is complete; drop the in-progress save so a refresh shows the welcome screen.
+            clearState();
             const pri = PERSONAS[r.primaryKey];
             const adj = PERSONAS[r.adjacentKey];
             const C = { gold:'#D4A843', goldL:'#F0D68A', tP:'#e8e6e3', tS:'#9ca3af', tM:'#6b7280', bgD:'#0f1019', div:'rgba(255,255,255,0.06)' };
@@ -719,10 +822,21 @@
             // Adjacent block — small sub-section
             const adjacentHTML = `<div style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid ${C.div};"><span style="color:${adj.color};margin-top:1px;flex-shrink:0;">${ICONS[r.adjacentKey]}</span><div><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:${C.tM};margin-bottom:2px;">Your adjacent group</p><p style="font-size:13px;font-weight:700;color:${adj.color};margin-bottom:4px;">${adj.short}</p><p style="font-size:11px;line-height:1.55;color:${C.tS};">${pri.bridge}</p></div></div>`;
 
-            // 5P lean bars
-            const pMx = Math.max(...Object.values(r.pScores)) || 1;
+            // Transparency note when the kopi-O override placed the user here
+            // even though their persona scores leant elsewhere.
+            let placedByConfidenceHTML = '';
+            if (r.placedByConfidence && r.rankedPersonas && r.rankedPersonas.length) {
+                const topScorerKey = r.rankedPersonas[0][0];
+                const topScorer = PERSONAS[topScorerKey];
+                const lean = topScorer && topScorerKey !== 'kopio' ? `, though your answers also leant toward the <strong>${topScorer.short}</strong>` : '';
+                placedByConfidenceHTML = `<p style="font-size:10.5px;line-height:1.55;margin-top:10px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);color:${C.tM};font-style:italic;">We started you here because confidence with AI is still building${lean}. The workshop will meet you where you are.</p>`;
+            }
+
+            // 5P lean bars — driven by pAvg (points per opportunity) so under-represented
+            // stances like Polish are not structurally penalised.
+            const pMx = Math.max(...Object.values(r.pAvg)) || 1;
             const pBars = ['prohibit','plan','polish','produce','partner'].map(k => {
-                const v = r.pScores[k];
+                const v = r.pAvg[k];
                 const pct = (v / pMx) * 100;
                 const isTop = r.topP.includes(k);
                 const colour = isTop ? C.gold : 'rgba(255,255,255,0.35)';
@@ -736,7 +850,7 @@
 <div style="height:4px;background:linear-gradient(90deg,${pri.color},transparent);"></div>
 ${s(`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;"><div><p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${C.gold};">AI Confident Educators</p><p style="font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;color:${C.tM};display:flex;align-items:center;gap:5px;"><span style="display:inline-flex;color:${C.tM};">${ICON_DATE}</span>${WORKSHOP_DATE_FULL}</p></div><div><span style="font-size:9px;font-weight:600;padding:4px 8px;border-radius:4px;background:${pri.colorLight};color:${pri.color};white-space:nowrap;">Your Persona</span></div></div>`, 'padding-bottom:8px;')}
 ${d}
-${s(`<p style="font-size:16px;font-weight:700;margin-bottom:4px;color:${C.tP};">Hi, ${participantName}!</p><p style="font-size:11px;line-height:1.6;margin-bottom:16px;color:${C.tS};">From ten teaching situations, here is what we found.</p><div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;"><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;color:${C.tM};">You are a</p><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:${pri.color};display:inline-flex;">${ICONS_LG[r.primaryKey]}</span><span style="font-size:22px;font-weight:700;color:${pri.color};line-height:1.1;">${pri.name}</span></div><p style="font-size:11.5px;line-height:1.6;color:${C.tS};">${pri.description}</p>${adjacentHTML}</div>`)}
+${s(`<p style="font-size:16px;font-weight:700;margin-bottom:4px;color:${C.tP};">Hi, ${participantName}!</p><p style="font-size:11px;line-height:1.6;margin-bottom:16px;color:${C.tS};">From ten teaching situations, here is what we found.</p><div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;"><p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;color:${C.tM};">You are a</p><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="color:${pri.color};display:inline-flex;">${ICONS_LG[r.primaryKey]}</span><span style="font-size:22px;font-weight:700;color:${pri.color};line-height:1.1;">${pri.name}</span></div><p style="font-size:11.5px;line-height:1.6;color:${C.tS};">${pri.description}</p>${placedByConfidenceHTML}${adjacentHTML}</div>`)}
 ${d}
 ${s(`<p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your 5P lean</p><div style="margin-bottom:12px;">${pBars}</div><p style="font-size:11px;line-height:1.6;color:${C.tS};margin-bottom:6px;">${leanSentence(r.topP, r.lowP)}</p><p style="font-size:11px;line-height:1.6;color:${C.tS};">${confidenceSentence(r.confidenceLabel)}</p>`)}
 ${d}
@@ -779,7 +893,24 @@ ${d}
         }
 
         // ============================================================
-        renderWelcome();
+        //  ENTRY — resume mid-survey if a saved state exists
+        // ============================================================
+        function init() {
+            const saved = loadState();
+            if (saved && saved.name && Array.isArray(saved.answers)
+                && saved.answers.length > 0
+                && typeof saved.currentQ === 'number'
+                && saved.currentQ < QUESTIONS.length) {
+                participantName = saved.name;
+                participantSchool = saved.school || '';
+                answers = saved.answers;
+                currentQ = Math.min(saved.currentQ, QUESTIONS.length - 1);
+                renderQuestion();
+            } else {
+                renderWelcome();
+            }
+        }
+        init();
     })();
     </script>
 </body>
