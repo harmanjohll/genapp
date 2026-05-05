@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTY 2026 Review &amp; Planning — Pre-Session Reflection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        :root {
+            --bg-deep:    #07091e;
+            --bg-card:    #0d1138;
+            --bg-surface: #131848;
+            --accent:     #FFE200;
+            --accent-dim: #D4A843;
+            --accent-lt:  #FFF176;
+            --text-p:     #e8e6e3;
+            --text-s:     #9ca3af;
+            --text-m:     #6b7280;
+            --bty-navy:   #000C53;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100vh; min-height: 100dvh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-p);
+        }
+
+        body {
+            background-image:
+                radial-gradient(ellipse at 18% 0%,   rgba(255,226,0,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 82% 100%,  rgba(0,12,83,0.35)  0%, transparent 55%);
+        }
+
+        .font-serif { font-family: 'DM Serif Display', serif; }
+
+        .fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+            opacity: 0; transform: translateY(16px);
+        }
+        @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+        .stagger-1 { animation-delay: 0.06s; }
+        .stagger-2 { animation-delay: 0.12s; }
+        .stagger-3 { animation-delay: 0.18s; }
+        .stagger-4 { animation-delay: 0.24s; }
+        .stagger-5 { animation-delay: 0.30s; }
+        .stagger-6 { animation-delay: 0.36s; }
+
+        /* ── Dual-choice option buttons ── */
+        .option-btn {
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px 20px 16px 50px;
+            text-align: left; cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+            color: var(--text-p);
+            font-size: 0.92rem; line-height: 1.55;
+            position: relative; width: 100%;
+        }
+        .option-btn:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+        }
+        .option-badge {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 800;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.15);
+            transition: all 0.25s;
+        }
+        .option-btn.pick-1 {
+            border-color: var(--accent);
+            background: rgba(255,226,0,0.07);
+        }
+        .option-btn.pick-1 .option-badge {
+            background: var(--accent); border-color: var(--accent); color: #080919;
+        }
+        .option-btn.pick-2 {
+            border-color: #60a5fa;
+            background: rgba(96,165,250,0.06);
+        }
+        .option-btn.pick-2 .option-badge {
+            background: #60a5fa; border-color: #60a5fa; color: #080919;
+        }
+
+        /* ── Single-choice select buttons ── */
+        .sel-btn {
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 13px 16px; text-align: left; cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+            color: var(--text-p); font-size: 0.92rem; line-height: 1.45; width: 100%;
+        }
+        .sel-btn:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
+        .sel-btn.active { border-color: var(--accent); background: rgba(255,226,0,0.07); }
+
+        /* ── Progress ── */
+        .progress-track {
+            width: 100%; height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-lt));
+            border-radius: 2px;
+            transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        /* ── Primary button ── */
+        .btn-primary {
+            background: var(--accent); color: #080919;
+            font-weight: 700; padding: 14px 32px;
+            border-radius: 10px; border: none; cursor: pointer;
+            font-size: 1rem; letter-spacing: 0.02em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(255,226,0,0.2);
+        }
+        .btn-primary:hover {
+            background: var(--accent-lt); transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255,226,0,0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.3; cursor: not-allowed;
+            transform: none; box-shadow: none;
+        }
+
+        /* ── Textarea ── */
+        .reflect-ta {
+            width: 100%; min-height: 115px;
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 14px 16px;
+            color: var(--text-p);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.93rem; line-height: 1.6;
+            resize: vertical; outline: none;
+            transition: border-color 0.2s;
+        }
+        .reflect-ta:focus { border-color: var(--accent); }
+        .reflect-ta::placeholder { color: var(--text-m); }
+
+        /* ── Inline text input (other) ── */
+        .other-input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 10px 14px;
+            color: var(--text-p);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.88rem; outline: none;
+            transition: border-color 0.2s; margin-top: 8px;
+        }
+        .other-input:focus { border-color: var(--accent); }
+
+        /* ── Name input ── */
+        .name-input {
+            width: 100%; padding: 15px 20px;
+            border-radius: 12px; text-align: center;
+            font-size: 1.1rem; font-weight: 600;
+            outline: none; transition: border-color 0.2s;
+            background: var(--bg-surface);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            color: var(--text-p);
+        }
+        .name-input:focus { border-color: var(--accent); }
+
+        /* ── Processing dots ── */
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes pulse {
+            0%,80%,100% { transform: scale(0.6); opacity: 0.3; }
+            40%          { transform: scale(1);   opacity: 1;   }
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid rgba(255,226,0,0.25);
+            color: var(--text-p); padding: 12px 24px;
+            border-radius: 10px; font-size: 0.85rem;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 640px) {
+            .option-btn { padding: 14px 16px 14px 46px; font-size: 0.86rem; }
+            .sel-btn    { font-size: 0.86rem; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+<div id="app" class="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-4 py-8"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ── Replace with live Apps Script URL ──
+    const SHEETS_URL = 'YOUR_GOOGLE_SHEETS_URL_HERE';
+
+    // ================================================================
+    //  PERSONAS
+    // ================================================================
+    const PERSONAS = {
+        architect: {
+            name: 'Architect',
+            icon: '◈',
+            color: '#6ba4c9',
+            colorLight: 'rgba(107,164,201,0.12)',
+            tagline: 'You build for the long game.',
+            description: 'You see the system behind the work. You are energised by designing structures, frameworks, and processes that endure — by making sure the scaffolding is strong enough for what comes next. You lead through clarity, coherence, and careful design.',
+            invitation: 'As Beatty moves into 2026–27, your Architect lens will help the school build on its strongest foundations. Look for moments to map the unseen systems, clarify the connective tissue, and design the scaffolding for the next chapter.'
+        },
+        cultivator: {
+            name: 'Cultivator',
+            icon: '◇',
+            color: '#7cb68a',
+            colorLight: 'rgba(124,182,138,0.12)',
+            tagline: 'You grow people.',
+            description: 'Your instinct is to develop. You notice what others need before they do, and you invest in people with patience and intentionality. The best outcome for you is when someone else succeeds — and grows beyond what they thought possible.',
+            invitation: 'As Beatty moves into 2026–27, your Cultivator lens will help the school\'s people thrive. Look for opportunities to coach, to create conditions where others do their best work, and to celebrate the growth you see in those around you.'
+        },
+        explorer: {
+            name: 'Explorer',
+            icon: '◆',
+            color: '#D4A843',
+            colorLight: 'rgba(212,168,67,0.12)',
+            tagline: 'You push the frontier.',
+            description: 'You are drawn to what does not exist yet. You are energised by possibility, comfortable with ambiguity, and willing to take the risks that open new paths. You lead with curiosity and courage — and you make others braver in the process.',
+            invitation: 'As Beatty moves into 2026–27, your Explorer lens will help the school stay adaptive and innovative. Look for the white spaces, pilot something bold, and help others see what could be.'
+        },
+        weaver: {
+            name: 'Weaver',
+            icon: '◉',
+            color: '#c97b8b',
+            colorLight: 'rgba(201,123,139,0.12)',
+            tagline: 'You hold things together.',
+            description: 'You sense the relationships in the room and across the school. You bridge gaps, translate between worlds, and ensure that no one is working in isolation. Connection is your contribution — and it is more powerful than it looks from the outside.',
+            invitation: 'As Beatty moves into 2026–27, your Weaver lens will help the school become more cohesive and connected. Look for the threads between teams and departments, and tie them together deliberately.'
+        }
+    };
+
+    const PERSONA_KEYS = ['architect', 'cultivator', 'explorer', 'weaver'];
+
+    // ================================================================
+    //  Q2: DUAL CHOICE — BTY INITIATIVES  [Arch, Cult, Expl, Weav]
+    // ================================================================
+    const Q2_OPTIONS = [
+        { text: 'NEXUS@BTY — interdisciplinary learning and student agency across the curriculum',                scores: [3, 0, 1, 0] },
+        { text: 'PCM@BTY — pastoral care, mentoring, and holistic student development',                          scores: [3, 0, 0, 1] },
+        { text: 'ALP 3.0 — advancing learning through pedagogical innovation and teacher research',              scores: [2, 0, 2, 0] },
+        { text: 'EcoStewardship — sustainability, environmental leadership, and student-led action',             scores: [0, 0, 3, 1] },
+        { text: 'Staff Recognition & Welfare — celebrating our people and sustaining their commitment',          scores: [0, 3, 0, 1] },
+        { text: 'PD Hackathons — professional learning through collaborative, teacher-led experimentation',      scores: [2, 2, 0, 0] }
+    ];
+
+    // ================================================================
+    //  Q4: DUAL CHOICE — FORWARD DIRECTIONS  [Arch, Cult, Expl, Weav]
+    // ================================================================
+    const Q4_OPTIONS = [
+        { text: 'Strengthen what works — deepen and sustain our best practices and flagship programmes',           scores: [3, 1, 0, 0] },
+        { text: 'Develop our people — invest meaningfully in staff growth, wellbeing, and belonging',              scores: [0, 3, 0, 1] },
+        { text: 'Push new frontiers — pilot boldly, experiment with purpose, and expand what Beatty does',         scores: [1, 0, 3, 0] },
+        { text: 'Weave the community — build stronger connections inside our school and with the world beyond',    scores: [0, 0, 1, 3] }
+    ];
+
+    // ================================================================
+    //  Q3: SINGLE SELECT — GROWING EDGE
+    // ================================================================
+    const Q3_OPTIONS = [
+        { text: 'Designing stronger systems and structures for lasting impact',   label: 'Systems & Structure' },
+        { text: 'Developing and empowering the people around me',                 label: 'People Development'  },
+        { text: 'Being more experimental and comfortable with ambiguity',          label: 'Experimentation'     },
+        { text: 'Connecting more deliberately across teams and silos',            label: 'Bridging & Connecting'},
+        { text: 'Something else…',                                           label: null                  }
+    ];
+
+    // ================================================================
+    //  Q5: SINGLE SELECT — EMOTIONAL STATE
+    // ================================================================
+    const Q5_OPTIONS = [
+        { text: 'Energised — ready to contribute and shape what comes next',          label: 'Energised' },
+        { text: 'Reflective — carrying questions and sitting with them',              label: 'Reflective' },
+        { text: 'Stretched — committed, but feeling the weight of it all',           label: 'Stretched'  },
+        { text: 'Hopeful — cautiously optimistic and open to what this session can be', label: 'Hopeful' },
+        { text: 'Something else…',                                                   label: null          }
+    ];
+
+    // ================================================================
+    //  STATE
+    // ================================================================
+    const app = document.getElementById('app');
+    let participantName = '';
+    let q1Text = '';
+    let q2Picks = { first: null, second: null };
+    let q3Answer = null;
+    let q3OtherText = '';
+    let q4Picks = { first: null, second: null };
+    let q5Answer = null;
+    let q5OtherText = '';
+
+    // Shuffle option display orders once per session
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    const q2Order = shuffle(Q2_OPTIONS.map((_, i) => i));
+    const q4Order = shuffle(Q4_OPTIONS.map((_, i) => i));
+
+    function showToast(msg, dur = 3000) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    // ================================================================
+    //  WELCOME
+    // ================================================================
+    function renderWelcome() {
+        app.innerHTML = `
+        <div class="w-full max-w-lg text-center fade-up">
+            <div class="mb-10">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] mb-6">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--accent);">Beatty Secondary School</span>
+                </div>
+                <h1 class="font-serif text-3xl sm:text-4xl leading-tight mb-3" style="color:var(--accent-lt);">2026 Review<br>&amp; Planning</h1>
+                <p class="text-sm tracking-widest uppercase font-semibold" style="color:var(--text-m);">Pre-Session Reflection &middot; May 2026</p>
+            </div>
+            <div class="text-left bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-8">
+                <p class="text-sm leading-relaxed" style="color:var(--text-s);">
+                    Before we come together on Friday, take five minutes to reflect on the year that was — and the year ahead.
+                    This short exercise will surface your <strong style="color:var(--text-p);">leadership persona</strong>, help you arrive with intention, and generate a card you can bring to the session.
+                </p>
+                <p class="text-sm leading-relaxed mt-3" style="color:var(--text-s);">
+                    For the scenario questions, <strong style="color:var(--accent);">select two options</strong>: your first choice carries more weight than your second. There are no right or wrong answers — simply choose what resonates.
+                </p>
+            </div>
+            <div class="mb-6">
+                <label class="block text-xs font-semibold tracking-wider uppercase mb-2" style="color:var(--text-m);">Your name</label>
+                <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Harman" class="name-input">
+            </div>
+            <button id="startBtn" class="btn-primary w-full text-base" disabled>Begin</button>
+            <p class="text-xs mt-5" style="color:var(--text-m);">Takes about 5 minutes &middot; 5 questions</p>
+            <p class="text-xs mt-3 font-serif italic" style="color:var(--text-m);">Non Vi Sed Arte</p>
+        </div>`;
+
+        const inp = document.getElementById('nameInput');
+        const btn = document.getElementById('startBtn');
+        inp.addEventListener('input', () => { btn.disabled = inp.value.trim().length < 1; });
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim().length >= 1) startFlow(); });
+        btn.addEventListener('click', startFlow);
+    }
+
+    function startFlow() {
+        participantName = document.getElementById('nameInput').value.trim();
+        renderQ1();
+    }
+
+    // ================================================================
+    //  Q1 — FREE TEXT
+    // ================================================================
+    function renderQ1() {
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 1 of 5</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">0%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+            </div>
+            <div class="mb-5 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Gift yourself a moment of honest reflection. What has gone well — for you, your department, your students, your colleagues?</p>
+            </div>
+            <h2 class="text-xl font-bold mb-5 leading-snug font-serif" style="color:var(--text-p);">Describe one achievement this year you are genuinely proud of — and what it meant to the people around you.</h2>
+            <textarea id="q1ta" class="reflect-ta" placeholder="Write freely. No answer is too small or too grand." maxlength="400">${q1Text}</textarea>
+            <div class="flex justify-between items-center mt-1 mb-6">
+                <span id="charCount" class="text-xs" style="color:var(--text-m);">0 / 400</span>
+                <span class="text-xs" style="color:var(--text-m);">Minimum 10 characters</span>
+            </div>
+            <button id="q1Next" class="btn-primary w-full" disabled>Next</button>
+        </div>`;
+
+        const ta  = document.getElementById('q1ta');
+        const btn = document.getElementById('q1Next');
+        const cc  = document.getElementById('charCount');
+
+        function update() {
+            cc.textContent = ta.value.length + ' / 400';
+            btn.disabled = ta.value.trim().length < 10;
+        }
+        ta.addEventListener('input', update);
+        if (q1Text) update();
+
+        btn.addEventListener('click', () => {
+            q1Text = ta.value.trim();
+            renderQ2();
+        });
+    }
+
+    // ================================================================
+    //  Q2 — DUAL CHOICE: BTY INITIATIVES
+    // ================================================================
+    function renderQ2() {
+        let pick1 = q2Picks.first;
+        let pick2 = q2Picks.second;
+
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 2 of 5</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">20%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+            </div>
+            <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Own the year that was. Each initiative represented real energy, real decisions, real people.</p>
+            </div>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Which two of Beatty&#8217;s signature initiatives felt most alive and energising to you in 2025&#8211;26?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select two. <span style="color:var(--accent);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
+            <div class="space-y-3" id="q2opts">
+                ${q2Order.map((oi, di) => {
+                    const badge = oi === pick1 ? '1' : oi === pick2 ? '2' : '';
+                    const cls   = 'option-btn fade-up stagger-' + Math.min(di + 1, 6) +
+                                  (oi === pick1 ? ' pick-1' : oi === pick2 ? ' pick-2' : '');
+                    return `<button class="${cls}" data-oi="${oi}"><span class="option-badge">${badge}</span>${Q2_OPTIONS[oi].text}</button>`;
+                }).join('')}
+            </div>
+            <div class="mt-6">
+                <button id="q2Next" class="btn-primary w-full" ${pick1 !== null && pick2 !== null ? '' : 'disabled'}>Next</button>
+            </div>
+        </div>`;
+
+        function updateStyles() {
+            document.querySelectorAll('#q2opts .option-btn').forEach(b => {
+                const oi = parseInt(b.dataset.oi);
+                const badge = b.querySelector('.option-badge');
+                b.classList.remove('pick-1', 'pick-2');
+                badge.textContent = '';
+                if (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                else if (oi === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+            });
+            document.getElementById('q2Next').disabled = (pick1 === null || pick2 === null);
+        }
+
+        document.querySelectorAll('#q2opts .option-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                const oi = parseInt(b.dataset.oi);
+                if      (pick1 === oi) { pick1 = pick2 !== null ? pick2 : null; pick2 = null; }
+                else if (pick2 === oi) { pick2 = null; }
+                else if (pick1 === null) { pick1 = oi; }
+                else if (pick2 === null) { pick2 = oi; }
+                else { showToast('Deselect an option first.'); return; }
+                updateStyles();
+            });
+        });
+
+        document.getElementById('q2Next').addEventListener('click', () => {
+            q2Picks = { first: pick1, second: pick2 };
+            renderQ3();
+        });
+    }
+
+    // ================================================================
+    //  Q3 — SINGLE SELECT: GROWING EDGE
+    // ================================================================
+    function renderQ3() {
+        let selIdx = q3Answer;
+
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 3 of 5</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">40%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+            </div>
+            <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Rise above the comfortable. What is your real growing edge right now?</p>
+            </div>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Where would you say your most honest growing edge sits right now?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
+            <div class="space-y-3" id="q3opts">
+                ${Q3_OPTIONS.map((opt, i) => `
+                    <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
+                `).join('')}
+            </div>
+            <div id="q3OtherWrap" style="display:${selIdx === Q3_OPTIONS.length - 1 ? 'block' : 'none'};">
+                <input type="text" id="q3OtherInput" class="other-input" placeholder="Describe your growing edge…" maxlength="120" value="${q3OtherText}">
+            </div>
+            <div class="mt-6">
+                <button id="q3Next" class="btn-primary w-full" disabled>Next</button>
+            </div>
+        </div>`;
+
+        function checkQ3() {
+            const isOther = selIdx === Q3_OPTIONS.length - 1;
+            document.getElementById('q3OtherWrap').style.display = isOther ? 'block' : 'none';
+            const otherVal = document.getElementById('q3OtherInput').value.trim();
+            document.getElementById('q3Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
+        }
+        // Initial check
+        if (selIdx !== null) checkQ3();
+
+        document.querySelectorAll('#q3opts .sel-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                selIdx = parseInt(b.dataset.idx);
+                document.querySelectorAll('#q3opts .sel-btn').forEach(x => x.classList.toggle('active', parseInt(x.dataset.idx) === selIdx));
+                checkQ3();
+            });
+        });
+
+        document.getElementById('q3OtherInput').addEventListener('input', checkQ3);
+
+        document.getElementById('q3Next').addEventListener('click', () => {
+            q3Answer    = selIdx;
+            q3OtherText = selIdx === Q3_OPTIONS.length - 1 ? document.getElementById('q3OtherInput').value.trim() : '';
+            renderQ4();
+        });
+    }
+
+    // ================================================================
+    //  Q4 — DUAL CHOICE: FORWARD DIRECTIONS
+    // ================================================================
+    function renderQ4() {
+        let pick1 = q4Picks.first;
+        let pick2 = q4Picks.second;
+
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 4 of 5</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">60%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+            </div>
+            <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Watch for what comes next. Which directions call to you as you look ahead to 2026&#8211;27?</p>
+            </div>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Looking ahead to 2026&#8211;27, which two strategic directions feel most urgent and compelling to you?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select two. <span style="color:var(--accent);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
+            <div class="space-y-3" id="q4opts">
+                ${q4Order.map((oi, di) => {
+                    const badge = oi === pick1 ? '1' : oi === pick2 ? '2' : '';
+                    const cls   = 'option-btn fade-up stagger-' + (di + 1) +
+                                  (oi === pick1 ? ' pick-1' : oi === pick2 ? ' pick-2' : '');
+                    return `<button class="${cls}" data-oi="${oi}"><span class="option-badge">${badge}</span>${Q4_OPTIONS[oi].text}</button>`;
+                }).join('')}
+            </div>
+            <div class="mt-6">
+                <button id="q4Next" class="btn-primary w-full" ${pick1 !== null && pick2 !== null ? '' : 'disabled'}>Next</button>
+            </div>
+        </div>`;
+
+        function updateStyles() {
+            document.querySelectorAll('#q4opts .option-btn').forEach(b => {
+                const oi = parseInt(b.dataset.oi);
+                const badge = b.querySelector('.option-badge');
+                b.classList.remove('pick-1', 'pick-2');
+                badge.textContent = '';
+                if (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                else if (oi === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+            });
+            document.getElementById('q4Next').disabled = (pick1 === null || pick2 === null);
+        }
+
+        document.querySelectorAll('#q4opts .option-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                const oi = parseInt(b.dataset.oi);
+                if      (pick1 === oi) { pick1 = pick2 !== null ? pick2 : null; pick2 = null; }
+                else if (pick2 === oi) { pick2 = null; }
+                else if (pick1 === null) { pick1 = oi; }
+                else if (pick2 === null) { pick2 = oi; }
+                else { showToast('Deselect an option first.'); return; }
+                updateStyles();
+            });
+        });
+
+        document.getElementById('q4Next').addEventListener('click', () => {
+            q4Picks = { first: pick1, second: pick2 };
+            renderQ5();
+        });
+    }
+
+    // ================================================================
+    //  Q5 — SINGLE SELECT: EMOTIONAL STATE
+    // ================================================================
+    function renderQ5() {
+        let selIdx = q5Answer;
+
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 5 of 5</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">80%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:80%"></div></div>
+            </div>
+            <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Honest arrival matters. How you show up to Friday&#8217;s session will shape what you take from it.</p>
+            </div>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">As you arrive at Friday&#8217;s session, how would you honestly describe your state?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
+            <div class="space-y-3" id="q5opts">
+                ${Q5_OPTIONS.map((opt, i) => `
+                    <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
+                `).join('')}
+            </div>
+            <div id="q5OtherWrap" style="display:${selIdx === Q5_OPTIONS.length - 1 ? 'block' : 'none'};">
+                <input type="text" id="q5OtherInput" class="other-input" placeholder="Describe how you&#8217;re arriving…" maxlength="80" value="${q5OtherText}">
+            </div>
+            <div class="mt-6">
+                <button id="q5Next" class="btn-primary w-full" disabled>See my profile</button>
+            </div>
+        </div>`;
+
+        function checkQ5() {
+            const isOther = selIdx === Q5_OPTIONS.length - 1;
+            document.getElementById('q5OtherWrap').style.display = isOther ? 'block' : 'none';
+            const otherVal = document.getElementById('q5OtherInput').value.trim();
+            document.getElementById('q5Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
+        }
+        if (selIdx !== null) checkQ5();
+
+        document.querySelectorAll('#q5opts .sel-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                selIdx = parseInt(b.dataset.idx);
+                document.querySelectorAll('#q5opts .sel-btn').forEach(x => x.classList.toggle('active', parseInt(x.dataset.idx) === selIdx));
+                checkQ5();
+            });
+        });
+
+        document.getElementById('q5OtherInput').addEventListener('input', checkQ5);
+
+        document.getElementById('q5Next').addEventListener('click', () => {
+            q5Answer    = selIdx;
+            q5OtherText = selIdx === Q5_OPTIONS.length - 1 ? document.getElementById('q5OtherInput').value.trim() : '';
+            renderProcessing();
+        });
+    }
+
+    // ================================================================
+    //  PROCESSING
+    // ================================================================
+    function renderProcessing() {
+        app.innerHTML = `
+        <div class="text-center fade-up">
+            <div class="flex justify-center gap-3 mb-8">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <p class="font-serif text-xl mb-2" style="color:var(--accent-lt);">Mapping your leadership profile…</p>
+            <p class="text-sm" style="color:var(--text-m);">Analysing your responses across personas and priorities</p>
+        </div>`;
+        setTimeout(() => {
+            const r = calculateResults();
+            sendToSheets(r);
+            renderResults(r);
+        }, 2400);
+    }
+
+    // ================================================================
+    //  SCORING  —  Q2 first ×1.0, second ×0.5;  Q4 first ×1.0, second ×0.5
+    // ================================================================
+    function calculateResults() {
+        const totals = [0, 0, 0, 0]; // [Arch, Cult, Expl, Weav]
+
+        if (q2Picks.first  !== null) Q2_OPTIONS[q2Picks.first ].scores.forEach((s, i) => totals[i] += s);
+        if (q2Picks.second !== null) Q2_OPTIONS[q2Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
+        if (q4Picks.first  !== null) Q4_OPTIONS[q4Picks.first ].scores.forEach((s, i) => totals[i] += s);
+        if (q4Picks.second !== null) Q4_OPTIONS[q4Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
+
+        const sorted  = PERSONA_KEYS.map((k, i) => ({ key: k, score: totals[i] })).sort((a, b) => b.score - a.score);
+        const primary = sorted[0];
+        const secondary = (sorted[1].score >= primary.score * 0.7 && sorted[1].score > 0) ? sorted[1] : null;
+
+        const q3IsOther = q3Answer === Q3_OPTIONS.length - 1;
+        const growingEdge = q3IsOther ? q3OtherText : (q3Answer !== null ? Q3_OPTIONS[q3Answer].label : '—');
+
+        const q5IsOther = q5Answer === Q5_OPTIONS.length - 1;
+        const emotionalState = q5IsOther ? q5OtherText : (q5Answer !== null ? Q5_OPTIONS[q5Answer].label : '—');
+
+        const q1Truncated = q1Text.length > 130 ? q1Text.slice(0, 130) + '…' : q1Text;
+
+        return { totals, sorted, primary, secondary, growingEdge, emotionalState, q1Truncated };
+    }
+
+    // ================================================================
+    //  GOOGLE SHEETS
+    // ================================================================
+    function sendToSheets(r) {
+        const payload = {
+            timestamp:       new Date().toISOString(),
+            name:            participantName,
+            persona:         PERSONAS[r.primary.key].name,
+            secondaryPersona: r.secondary ? PERSONAS[r.secondary.key].name : '—',
+            growingEdge:     r.growingEdge,
+            emotionalState:  r.emotionalState,
+            q1:              q1Text,
+            q2first:         q2Picks.first  !== null ? Q2_OPTIONS[q2Picks.first ].text : '—',
+            q2second:        q2Picks.second !== null ? Q2_OPTIONS[q2Picks.second].text : '—',
+            q4first:         q4Picks.first  !== null ? Q4_OPTIONS[q4Picks.first ].text : '—',
+            q4second:        q4Picks.second !== null ? Q4_OPTIONS[q4Picks.second].text : '—',
+            scoreBreakdown:  r.sorted.map(s => PERSONAS[s.key].name + ':' + s.score.toFixed(1)).join(', ')
+        };
+        fetch(SHEETS_URL, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(e => console.warn('[Sheets]', e));
+    }
+
+    // ================================================================
+    //  RESULT CARD  —  all inline styles for html2canvas compatibility
+    // ================================================================
+    function renderResults(r) {
+        const pri = PERSONAS[r.primary.key];
+        const sec = r.secondary ? PERSONAS[r.secondary.key] : null;
+
+        // Card colour constants
+        const C = {
+            navy:    '#000C53',
+            yellow:  '#FFE200',
+            yDim:    '#D4A843',
+            tP:      '#e8e6e3',
+            tS:      '#9ca3af',
+            tM:      '#6b7280',
+            div:     'rgba(255,255,255,0.06)',
+            bg:      'linear-gradient(170deg,#08081f 0%,#0d1138 45%,#111540 100%)'
+        };
+
+        // Score bars
+        const mx = Math.max(...r.sorted.map(s => s.score), 1);
+        const bars = r.sorted.map(s => {
+            const p   = PERSONAS[s.key];
+            const pct = Math.round((s.score / mx) * 100);
+            return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:10px;font-weight:700;width:80px;text-align:right;color:${p.color};white-space:nowrap;">${p.name}</span>
+                <div style="flex:1;height:7px;border-radius:9999px;background:rgba(255,255,255,0.06);">
+                    <div style="height:100%;border-radius:9999px;width:${pct}%;background:${p.color};${s.score > 0 ? 'min-width:4px;' : ''}"></div>
+                </div>
+                <span style="font-size:9px;color:${C.tM};width:28px;">${s.score.toFixed(1)}</span>
+            </div>`;
+        }).join('');
+
+        const secHTML = sec ? `
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);">
+                <span style="font-size:14px;color:${sec.color};">${sec.icon}</span>
+                <div>
+                    <p style="font-size:9px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;color:${C.tM};">Secondary persona</p>
+                    <p style="font-size:12px;font-weight:700;margin-top:1px;color:${sec.color};">${sec.name} &mdash; <span style="font-style:italic;font-weight:400;">${sec.tagline}</span></p>
+                </div>
+            </div>` : '';
+
+        const d = `<div style="height:1px;background:${C.div};margin:0 20px;"></div>`;
+        const S = (content, extra = '') => `<div style="padding:16px 20px;${extra}">${content}</div>`;
+
+        const card = `
+${/* top gradient bar */''}
+<div style="height:5px;background:linear-gradient(90deg,${C.navy},${C.yellow});"></div>
+
+${/* header */S(`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+            <p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${C.yDim};">Beatty Secondary School</p>
+            <p style="font-size:9px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-top:2px;color:${C.tM};">2026 Review &amp; Planning &middot; Pre-Session Reflection</p>
+        </div>
+        <span style="font-size:9px;font-weight:600;padding:4px 8px;border-radius:4px;background:rgba(255,226,0,0.08);color:${C.yellow};margin-top:2px;">May 2026</span>
+    </div>
+`, 'padding-bottom:8px;')}
+
+${d}
+
+${/* greeting + Q1 */S(`
+    <p style="font-size:16px;font-weight:700;margin-bottom:6px;color:${C.tP};">Hi, ${participantName}!</p>
+    <p style="font-size:11px;line-height:1.65;color:${C.tS};font-style:italic;">&ldquo;${r.q1Truncated}&rdquo;</p>
+`)}
+
+${d}
+
+${/* persona */S(`
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your leadership persona</p>
+    <div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:22px;color:${pri.color};">${pri.icon}</span>
+            <div>
+                <p style="font-size:21px;font-weight:700;color:${pri.color};font-family:'DM Serif Display',serif;">${pri.name}</p>
+                <p style="font-size:11px;color:${C.tS};font-style:italic;">${pri.tagline}</p>
+            </div>
+        </div>
+        <p style="font-size:11px;line-height:1.65;color:${C.tS};">${pri.description}</p>
+    </div>
+    ${secHTML}
+`)}
+
+${d}
+
+${/* score bars */S(`
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;color:${C.tM};">Persona profile</p>
+    ${bars}
+`)}
+
+${d}
+
+${/* growing edge + emotional state */S(`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);">
+            <p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.tM};margin-bottom:4px;">Growing edge</p>
+            <p style="font-size:12px;font-weight:600;color:${C.tP};">${r.growingEdge}</p>
+        </div>
+        <div style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);">
+            <p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.tM};margin-bottom:4px;">Arriving as</p>
+            <p style="font-size:12px;font-weight:600;color:${C.tP};">${r.emotionalState}</p>
+        </div>
+    </div>
+`)}
+
+${d}
+
+${/* invitation */S(`
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;color:${C.yDim};">Your invitation for 2026&#8211;27</p>
+    <p style="font-size:11px;line-height:1.7;font-style:italic;color:${C.tS};font-family:'DM Serif Display',serif;">${pri.invitation}</p>
+`)}
+
+${d}
+
+${/* footer */`
+<div style="padding:11px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.4);border-top:1px solid rgba(255,255,255,0.04);">
+    <p style="font-size:8px;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;color:${C.tM};">Non Vi Sed Arte</p>
+    <p style="font-size:8px;color:${C.tM};">Beatty Secondary School</p>
+</div>`}`;
+
+        app.innerHTML = `
+        <div class="w-full max-w-md fade-up pb-12">
+            <div id="result-card-render" style="background:${C.bg};border-radius:20px;overflow:hidden;border:2px solid rgba(255,255,255,0.06);box-shadow:0 20px 60px rgba(0,0,0,0.55);font-family:'Plus Jakarta Sans',sans-serif;color:${C.tP};">
+                ${card}
+            </div>
+            <div class="mt-8 space-y-3">
+                <button id="downloadBtn" class="btn-primary w-full text-base">Download Card &#x2B07;</button>
+                <p class="text-xs text-center" style="color:var(--text-m);">Save this card &mdash; bring it along to Friday&#8217;s session.</p>
+            </div>
+        </div>`;
+
+        document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+    }
+
+    // ================================================================
+    //  DOWNLOAD
+    // ================================================================
+    function downloadCard() {
+        const card = document.getElementById('result-card-render');
+        const btn  = document.getElementById('downloadBtn');
+        btn.textContent = 'Generating…'; btn.disabled = true;
+
+        html2canvas(card, {
+            backgroundColor: '#08081f',
+            scale: 2, useCORS: true,
+            logging: false, allowTaint: true,
+            width: card.offsetWidth,
+            height: card.offsetHeight,
+            scrollX: 0, scrollY: -window.scrollY
+        }).then(canvas => {
+            const url  = canvas.toDataURL('image/png');
+            const safe = participantName.replace(/[^a-zA-Z0-9]/g, '-');
+            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                const w = window.open('');
+                if (w) {
+                    w.document.write('<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Your Card</title><style>body{margin:0;padding:16px;background:#07091e;display:flex;flex-direction:column;align-items:center;font-family:sans-serif;}img{max-width:100%;height:auto;border-radius:12px;}p{color:#9ca3af;font-size:14px;margin-top:16px;text-align:center;}</style></head><body><p>Long-press the image to save it.</p><img src="' + url + '" alt="Card"></body></html>');
+                    w.document.close();
+                } else { dlFile(url, safe); }
+            } else { dlFile(url, safe); }
+            btn.textContent = 'Download Card ⬇'; btn.disabled = false;
+            showToast('Card ready — bring it to Friday!');
+        }).catch(e => {
+            console.error(e);
+            btn.textContent = 'Failed — Try Again'; btn.disabled = false;
+        });
+    }
+
+    function dlFile(url, name) {
+        const a = document.createElement('a');
+        a.download = 'BTY-2026-' + name + '.png';
+        a.href = url;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    // ================================================================
+    renderWelcome();
+})();
+</script>
+</body>
+</html>
