@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check your thinking — How plants make food</title>
+<style>
+  :root {
+    --bg: #FAF7F0;
+    --card: #FFFFFF;
+    --text: #1F2937;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --accent: #16A34A;
+    --accent-soft: #DCFCE7;
+    --water: #2563EB;
+    --water-soft: #DBEAFE;
+    --sun: #F59E0B;
+    --warn-bg: #FEF3C7;
+    --warn-border: #FCD34D;
+    --warn-text: #78350F;
+    --danger: #B91C1C;
+    --danger-soft: #FEE2E2;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --radius: 16px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  main { max-width: 720px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 14px; }
+  h1 { font-size: 1.4rem; line-height: 1.25; margin-bottom: 6px; }
+  .subtitle { font-size: 0.95rem; color: var(--text-muted); }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ---------- Progress strip ---------- */
+  .progress-strip { padding: 14px 16px; }
+  .progress-title {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .progress-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .pcell {
+    text-align: center;
+    padding: 8px 6px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .pcell-emoji { font-size: 1.3rem; }
+  .pcell-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.2;
+  }
+  .pcell-score {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    margin-top: 3px;
+    font-size: 0.95rem;
+  }
+  .pcell.active { border-color: var(--accent); background: var(--accent-soft); }
+
+  /* ---------- Setup card ---------- */
+  .setup h2 { font-size: 1.15rem; margin-bottom: 8px; }
+  .setup p { margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted); }
+  .setup label {
+    display: block;
+    font-weight: 600;
+    margin: 12px 0 6px;
+    font-size: 0.95rem;
+  }
+  .key-row { display: flex; gap: 6px; }
+  .setup input[type="password"], .setup input[type="text"] {
+    flex: 1;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.9rem;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    min-height: 44px;
+    background: white;
+    color: var(--text);
+  }
+  .setup input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .reveal-btn {
+    padding: 0 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    min-width: 50px;
+  }
+  .key-hint { font-size: 0.82rem; color: var(--text-muted); margin-top: 6px; }
+  .key-hint a { color: var(--water); text-decoration: underline; }
+
+  .privacy-callout {
+    background: var(--warn-bg);
+    border: 2px solid var(--warn-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    margin: 14px 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .privacy-callout strong { color: var(--warn-text); }
+
+  /* ---------- Question card ---------- */
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .q-tag {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.72rem;
+  }
+  .q-tag.open { background: var(--water-soft); color: var(--water); }
+  .q-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn {
+    text-align: left;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.98rem;
+    color: var(--text);
+    line-height: 1.4;
+    min-height: 44px;
+    width: 100%;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .option-btn:hover { background: #FAFAFA; }
+  .option-btn:active { transform: scale(0.99); }
+  .option-btn:focus-visible { outline: 3px solid var(--water); outline-offset: 2px; }
+  .option-btn:disabled { cursor: default; opacity: 0.6; }
+  .option-btn.chosen { border-color: var(--water); background: var(--water-soft); }
+  .option-btn.correct {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    opacity: 1;
+  }
+  .option-btn.correct::after { content: " ✓"; font-weight: 700; color: var(--accent); }
+  .option-btn.wrong { opacity: 0.5; }
+
+  /* ---------- Open-ended input ---------- */
+  .open-input {
+    width: 100%;
+    min-height: 90px;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    color: var(--text);
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .open-input:focus { outline: none; border-color: var(--accent); }
+  .open-input:disabled { background: #F9FAFB; color: var(--text-muted); }
+  .open-hint {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .submit-row { margin-top: 12px; }
+
+  /* ---------- Buttons ---------- */
+  button.primary {
+    font-family: inherit;
+    font-size: 0.98rem;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--accent);
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    min-height: 44px;
+    width: 100%;
+  }
+  button.primary:disabled { opacity: 0.5; cursor: wait; }
+  button.primary:focus-visible { outline: 3px solid var(--water); outline-offset: 2px; }
+  button.secondary {
+    font-family: inherit;
+    font-size: 0.92rem;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    background: white;
+    color: var(--text);
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  /* ---------- Feedback ---------- */
+  .feedback {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .feedback-icon { font-size: 1.2rem; flex: none; line-height: 1.4; }
+  .feedback.correct { background: var(--accent-soft); border: 2px solid #86EFAC; }
+  .feedback.partly { background: var(--warn-bg); border: 2px solid var(--warn-border); }
+  .feedback.notyet { background: var(--danger-soft); border: 2px solid #FCA5A5; }
+
+  /* ---------- Loading + error ---------- */
+  .loading, .error-state {
+    text-align: center;
+    padding: 30px 18px;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto 12px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text-muted); font-size: 0.95rem; }
+
+  .error-state {
+    background: var(--danger-soft);
+    border: 2px solid #FCA5A5;
+    border-radius: var(--radius);
+  }
+  .error-state h3 { font-size: 1.05rem; margin-bottom: 6px; color: var(--danger); }
+  .error-state p { font-size: 0.92rem; margin-bottom: 12px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  footer button {
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  footer button:hover { background: white; }
+
+  @media (min-width: 640px) {
+    h1 { font-size: 1.8rem; }
+    .q-text { font-size: 1.2rem; }
+    .pcell-emoji { font-size: 1.5rem; }
+    .pcell-label { font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Check your thinking</h1>
+    <p class="subtitle">Questions about how plants make their food.</p>
+  </header>
+
+  <!-- Progress strip -->
+  <section class="card progress-strip" id="progress-strip" aria-label="Your progress">
+    <div class="progress-title">Your thinking so far</div>
+    <div class="progress-grid">
+      <div class="pcell" id="p-soil">
+        <div class="pcell-emoji">🌱</div>
+        <div class="pcell-label">Soil isn't food</div>
+        <div class="pcell-score" id="score-soil">0 / 0</div>
+      </div>
+      <div class="pcell" id="p-sun">
+        <div class="pcell-emoji">☀️</div>
+        <div class="pcell-label">Sunlight is energy</div>
+        <div class="pcell-score" id="score-sun">0 / 0</div>
+      </div>
+      <div class="pcell" id="p-living">
+        <div class="pcell-emoji">🌙</div>
+        <div class="pcell-label">Plants live day & night</div>
+        <div class="pcell-score" id="score-living">0 / 0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup card (first run) -->
+  <section class="card setup" id="setup">
+    <h2>Welcome 🌿</h2>
+    <p>This will ask you questions to help check your thinking after the plant simulation. New questions every time.</p>
+
+    <label for="api-key">Your Claude API key</label>
+    <div class="key-row">
+      <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+      <button type="button" class="reveal-btn" id="reveal-key" aria-label="Show or hide key">👁</button>
+    </div>
+    <div class="key-hint">Get one from <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.</div>
+
+    <div class="privacy-callout">
+      <span style="font-size: 1.3rem; flex: none;">🔒</span>
+      <div>
+        <strong>Your key stays on this device.</strong> It is saved in this browser only. Nobody else can see it. Each question costs a tiny amount on your account.
+      </div>
+    </div>
+
+    <button class="primary" id="start-btn" disabled>Start</button>
+  </section>
+
+  <!-- Loading state -->
+  <section class="card loading hidden" id="loading">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="loading-text" id="loading-text">Thinking up a question…</div>
+  </section>
+
+  <!-- Question card -->
+  <section class="card question-card hidden" id="question-card">
+    <div class="q-meta">
+      <span id="q-counter">Question 1</span>
+      <span class="q-tag" id="q-tag">Multiple choice</span>
+    </div>
+    <div class="q-text" id="q-text">…</div>
+
+    <div class="options hidden" id="options"></div>
+
+    <div class="open-area hidden" id="open-area">
+      <textarea class="open-input" id="open-input" placeholder="Write 1 or 2 sentences. Don't worry about spelling." aria-label="Your answer"></textarea>
+      <div class="open-hint">Tip: explain what the plant is doing and why.</div>
+      <div class="submit-row">
+        <button class="primary" id="submit-open">Send my answer</button>
+      </div>
+    </div>
+
+    <div class="feedback hidden" id="feedback"></div>
+
+    <div class="submit-row hidden" id="next-row">
+      <button class="primary" id="next-btn">Next question →</button>
+    </div>
+  </section>
+
+  <!-- Error state -->
+  <section class="card error-state hidden" id="error-state">
+    <h3 id="error-title">Something went wrong</h3>
+    <p id="error-message">…</p>
+    <button class="primary" id="retry-btn">Try again</button>
+  </section>
+
+  <footer>
+    <button id="change-key">Change API key</button>
+    <button id="reset-progress">Reset progress</button>
+  </footer>
+</main>
+
+<script>
+/* ------------------------------------------------------------------
+   PROMPTS — both base prompts the API receives.
+   Reviewed with the teacher before building. Keep them in plain sight
+   so the teacher can edit them without digging.
+   ------------------------------------------------------------------ */
+
+const SYSTEM_PROMPT_GENERATE = `You write science questions for Primary 4 students (9-10 years old) in Singapore. They have just used a simulation about how plants make their own food using light, water, and carbon dioxide.
+
+ABOUT THESE STUDENTS
+- Mixed readiness. About one-third learn English as a second language.
+- They already know plants have roots, stems, leaves, flowers, and that plants need water and sunlight to grow.
+- They are confident verbally but find writing scientific explanations hard.
+
+THE THREE MISCONCEPTIONS YOU MUST TARGET. Each question targets exactly one.
+1. soil_food — Plants get their food from the soil. Most students believe this. They do not yet see that plants make their own food. Soil holds the plant up and stores water; it is not the food.
+2. sunlight_food — Plants "eat" sunlight. Students treat sunlight as food itself, not as the energy that powers food-making. Light is the energy; water and air (carbon dioxide) are the raw materials.
+3. photo_resp_conflation — Plants only need food during the day, or plants stop being alive at night. Plants make food when there is light, AND they use food to live all the time, including at night. Both happen — making and using are different.
+
+QUESTION RULES
+- Surface understanding, not recall. A child who memorised "light + water + air" without understanding should still be tripped up.
+- Prefer scenarios over definitions. Give the student something to reason about.
+- Use Singapore examples where natural: angsana trees along the road, hibiscus, algae in the monsoon drain, pot plants on an HDB corridor. Do not force it.
+- One idea per question.
+- Short, concrete sentences. ELL-friendly. No idioms.
+- Do NOT use the word "photosynthesis" unless you immediately explain it in plain language. NEVER use "chlorophyll" or "chloroplast".
+
+FORMAT
+The user will tell you which format to produce: "mcq" or "open".
+
+For "mcq":
+- Exactly three options.
+- Exactly one is_correct: true.
+- Distractors must sound like real Primary 4 thinking — write them in a child's voice. The wrong answers should be the misconception itself, said aloud.
+- Every option has feedback. Correct: confirm in one sentence, then add one sentence that extends or sharpens. Incorrect: never say "wrong". Use "not quite" or "let's check". Name the thinking error gently, ask one short thinking question, and point back to evidence the student saw in the simulation (the sliders, what happened when light went to zero, the soil callout).
+- Feedback is 1-2 short sentences. ELL-friendly.
+- Shuffle which option (A/B/C) is correct across calls.
+
+For "open":
+- One question that asks the student to explain or predict in 1-2 sentences.
+- Include a rubric: the key idea the student must convey, and what common wrong thinking would look like in their answer.
+
+OUTPUT
+Return ONLY valid JSON. No preamble, no backticks, no commentary.
+
+For "mcq" return:
+{"format":"mcq","question":"...","misconception_targeted":"soil_food|sunlight_food|photo_resp_conflation","options":[{"id":"A","text":"...","is_correct":true,"feedback":"..."},{"id":"B","text":"...","is_correct":false,"feedback":"..."},{"id":"C","text":"...","is_correct":false,"feedback":"..."}]}
+
+For "open" return:
+{"format":"open","question":"...","misconception_targeted":"soil_food|sunlight_food|photo_resp_conflation","rubric":{"key_idea":"...","common_misconception_signal":"..."}}`;
+
+const SYSTEM_PROMPT_EVALUATE = `You evaluate Primary 4 student answers about how plants make their food. You are encouraging. You are LENIENT on spelling and grammar — many students learn English as a second language. Focus on whether the key idea is present.
+
+Three verdicts:
+- got_it: the key idea is clearly there.
+- partly: some right thinking, but a piece is missing or muddled.
+- not_yet: the answer shows the misconception, or misses the key idea.
+
+Feedback rules:
+- 1 to 2 short sentences. ELL-friendly.
+- Encouraging tone. Never say "wrong".
+- For partly or not_yet: gently name the gap, ask one short thinking question, and reference what they saw in the simulation if helpful (the sliders, what happened when light went to zero, the soil callout).
+- For got_it: confirm and add one sentence that extends or sharpens the thinking.
+
+Return ONLY valid JSON. No preamble, no backticks.
+{"verdict":"got_it|partly|not_yet","feedback":"..."}`;
+
+/* ------------------------------------------------------------------
+   CONFIG
+   ------------------------------------------------------------------ */
+const MODEL = "claude-haiku-4-5-20251001";
+const API_URL = "https://api.anthropic.com/v1/messages";
+const STORAGE_KEY = "bty_check_thinking_v1";
+
+const MISCONCEPTIONS = ["soil_food", "sunlight_food", "photo_resp_conflation"];
+const MISCONCEPTION_TO_CELL = {
+  soil_food: { cellId: "p-soil", scoreId: "score-soil" },
+  sunlight_food: { cellId: "p-sun", scoreId: "score-sun" },
+  photo_resp_conflation: { cellId: "p-living", scoreId: "score-living" }
+};
+
+/* ------------------------------------------------------------------
+   STATE
+   ------------------------------------------------------------------ */
+function freshState() {
+  return {
+    apiKey: "",
+    totalAnswered: 0,
+    misconceptionIndex: 0,
+    misconceptions: {
+      soil_food: { attempted: 0, correct: 0, mcqCount: 0, openCount: 0 },
+      sunlight_food: { attempted: 0, correct: 0, mcqCount: 0, openCount: 0 },
+      photo_resp_conflation: { attempted: 0, correct: 0, mcqCount: 0, openCount: 0 }
+    },
+    recentStems: []
+  };
+}
+
+let state = loadState();
+let currentQuestion = null;
+let currentMisconception = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return freshState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(freshState(), parsed);
+  } catch (e) {
+    return freshState();
+  }
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+/* ------------------------------------------------------------------
+   DOM
+   ------------------------------------------------------------------ */
+const el = (id) => document.getElementById(id);
+const setup = el("setup");
+const apiKeyInput = el("api-key");
+const revealBtn = el("reveal-key");
+const startBtn = el("start-btn");
+const loading = el("loading");
+const loadingText = el("loading-text");
+const questionCard = el("question-card");
+const qCounter = el("q-counter");
+const qTag = el("q-tag");
+const qText = el("q-text");
+const optionsBox = el("options");
+const openArea = el("open-area");
+const openInput = el("open-input");
+const submitOpenBtn = el("submit-open");
+const feedbackBox = el("feedback");
+const nextRow = el("next-row");
+const nextBtn = el("next-btn");
+const errorState = el("error-state");
+const errorTitle = el("error-title");
+const errorMessage = el("error-message");
+const retryBtn = el("retry-btn");
+
+/* ------------------------------------------------------------------
+   VIEW HELPERS
+   ------------------------------------------------------------------ */
+function show(...nodes) { nodes.forEach(n => n.classList.remove("hidden")); }
+function hide(...nodes) { nodes.forEach(n => n.classList.add("hidden")); }
+function hideAllPanels() { hide(setup, loading, questionCard, errorState); }
+
+function renderProgress() {
+  for (const m of MISCONCEPTIONS) {
+    const { cellId, scoreId } = MISCONCEPTION_TO_CELL[m];
+    const cell = el(cellId);
+    const score = el(scoreId);
+    const data = state.misconceptions[m];
+    score.textContent = `${data.correct} / ${data.attempted}`;
+    cell.classList.toggle("active", m === currentMisconception);
+  }
+}
+
+function setLoading(text) {
+  loadingText.textContent = text;
+  hideAllPanels();
+  show(loading);
+}
+
+function setError(title, message) {
+  errorTitle.textContent = title;
+  errorMessage.textContent = message;
+  hideAllPanels();
+  show(errorState);
+}
+
+/* ------------------------------------------------------------------
+   API
+   ------------------------------------------------------------------ */
+async function callClaude({ systemPrompt, userMessage, maxTokens }) {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": state.apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userMessage }]
+    })
+  });
+
+  if (!response.ok) {
+    let errBody = "";
+    try { errBody = await response.text(); } catch (e) {}
+    const status = response.status;
+    if (status === 401) throw new ApiError("invalid_key", "That API key didn't work. Check it and try again.");
+    if (status === 429) throw new ApiError("rate_limit", "Slow down a bit. The server asked for a short break. Try again in a moment.");
+    if (status >= 500) throw new ApiError("server", "The server is having trouble. Try again in a moment.");
+    throw new ApiError("api", `Couldn't reach Claude (status ${status}). ${errBody.slice(0, 200)}`);
+  }
+
+  const data = await response.json();
+  const text = (data.content || [])
+    .filter(b => b.type === "text")
+    .map(b => b.text)
+    .join("\n");
+  return text;
+}
+
+class ApiError extends Error {
+  constructor(kind, message) { super(message); this.kind = kind; }
+}
+
+function parseJsonResponse(text) {
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+  // Try to find first { and last } in case there's stray text.
+  const first = cleaned.indexOf("{");
+  const last = cleaned.lastIndexOf("}");
+  if (first !== -1 && last !== -1 && last > first) {
+    cleaned = cleaned.slice(first, last + 1);
+  }
+  return JSON.parse(cleaned);
+}
+
+/* ------------------------------------------------------------------
+   QUESTION FLOW
+   ------------------------------------------------------------------ */
+function pickMisconception() {
+  const m = MISCONCEPTIONS[state.misconceptionIndex % MISCONCEPTIONS.length];
+  state.misconceptionIndex = (state.misconceptionIndex + 1) % MISCONCEPTIONS.length;
+  return m;
+}
+
+function pickFormat(misconception) {
+  // First time on this misconception → MCQ (scaffold).
+  // After that, alternate based on what they've seen most.
+  const m = state.misconceptions[misconception];
+  if (m.attempted === 0) return "mcq";
+  return m.mcqCount > m.openCount ? "open" : "mcq";
+}
+
+async function loadNewQuestion() {
+  hide(feedbackBox, nextRow, optionsBox, openArea);
+  feedbackBox.className = "feedback hidden";
+  feedbackBox.innerHTML = "";
+
+  currentMisconception = pickMisconception();
+  const format = pickFormat(currentMisconception);
+  renderProgress();
+
+  setLoading("Thinking up a question…");
+
+  const recent = state.recentStems.slice(-3).map(s => `"${s}"`).join("; ") || "none";
+  const seed = Math.floor(Math.random() * 10000);
+  const userMessage = `Generate one question. Format: ${format}. Target the misconception: ${currentMisconception}.
+Avoid these recent question stems so this one feels fresh: ${recent}.
+Variety seed: ${seed}.`;
+
+  try {
+    const raw = await callClaude({
+      systemPrompt: SYSTEM_PROMPT_GENERATE,
+      userMessage,
+      maxTokens: 800
+    });
+    const parsed = parseJsonResponse(raw);
+    if (!parsed.format || !parsed.question) throw new Error("Bad question shape");
+    if (parsed.format === "mcq" && (!Array.isArray(parsed.options) || parsed.options.length !== 3)) {
+      throw new Error("Bad mcq options");
+    }
+    if (parsed.format === "open" && !parsed.rubric) throw new Error("Missing rubric");
+    currentQuestion = parsed;
+    showQuestion();
+  } catch (err) {
+    if (err instanceof ApiError) {
+      setError(err.kind === "invalid_key" ? "Key not accepted" : "Couldn't load a question", err.message);
+    } else {
+      setError("Couldn't read the question", "Claude sent something we couldn't read. Try again.");
+    }
+  }
+}
+
+function showQuestion() {
+  hideAllPanels();
+  show(questionCard);
+
+  const number = state.totalAnswered + 1;
+  qCounter.textContent = `Question ${number}`;
+  qText.textContent = currentQuestion.question;
+
+  if (currentQuestion.format === "mcq") {
+    qTag.textContent = "Multiple choice";
+    qTag.className = "q-tag";
+    optionsBox.innerHTML = "";
+    // Shuffle option display order (defensive — model may not always shuffle).
+    const shuffled = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+    currentQuestion._displayOrder = shuffled;
+    for (const opt of shuffled) {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.type = "button";
+      btn.textContent = opt.text;
+      btn.addEventListener("click", () => handleMcqAnswer(opt, btn));
+      optionsBox.appendChild(btn);
+    }
+    show(optionsBox);
+    hide(openArea);
+  } else {
+    qTag.textContent = "Open answer";
+    qTag.className = "q-tag open";
+    openInput.value = "";
+    openInput.disabled = false;
+    submitOpenBtn.disabled = false;
+    submitOpenBtn.textContent = "Send my answer";
+    show(openArea);
+    hide(optionsBox);
+    setTimeout(() => openInput.focus(), 50);
+  }
+}
+
+function handleMcqAnswer(chosen, chosenBtn) {
+  // Lock all buttons.
+  const allBtns = optionsBox.querySelectorAll("button");
+  allBtns.forEach(b => { b.disabled = true; });
+  chosenBtn.classList.add("chosen");
+
+  // Reveal correctness on each.
+  currentQuestion._displayOrder.forEach((opt, i) => {
+    const btn = allBtns[i];
+    if (opt.is_correct) btn.classList.add("correct");
+    else if (opt !== chosen) btn.classList.add("wrong");
+  });
+
+  const correct = !!chosen.is_correct;
+  recordAnswer(correct);
+  showFeedback(correct ? "correct" : "notyet", chosen.feedback);
+  show(nextRow);
+}
+
+async function handleOpenAnswer() {
+  const answer = openInput.value.trim();
+  if (answer.length < 3) {
+    feedbackBox.className = "feedback partly";
+    feedbackBox.innerHTML = `<span class="feedback-icon">✏️</span><span>Try writing a bit more — even one short sentence is fine.</span>`;
+    show(feedbackBox);
+    return;
+  }
+
+  openInput.disabled = true;
+  submitOpenBtn.disabled = true;
+  submitOpenBtn.textContent = "Checking…";
+
+  const userMessage = `Question: ${currentQuestion.question}
+Misconception we are checking: ${currentQuestion.misconception_targeted}
+What we want them to show: ${currentQuestion.rubric.key_idea}
+Common wrong thinking to watch for: ${currentQuestion.rubric.common_misconception_signal}
+Student's answer: ${answer}`;
+
+  try {
+    const raw = await callClaude({
+      systemPrompt: SYSTEM_PROMPT_EVALUATE,
+      userMessage,
+      maxTokens: 300
+    });
+    const parsed = parseJsonResponse(raw);
+    const verdict = parsed.verdict || "partly";
+    const fb = parsed.feedback || "Good thinking.";
+
+    // Score: got_it = correct, partly/not_yet = not correct (but counted attempted).
+    recordAnswer(verdict === "got_it");
+
+    let kind = "partly";
+    if (verdict === "got_it") kind = "correct";
+    else if (verdict === "not_yet") kind = "notyet";
+    showFeedback(kind, fb);
+    show(nextRow);
+    submitOpenBtn.textContent = "Sent ✓";
+  } catch (err) {
+    openInput.disabled = false;
+    submitOpenBtn.disabled = false;
+    submitOpenBtn.textContent = "Send my answer";
+    if (err instanceof ApiError) {
+      feedbackBox.className = "feedback notyet";
+      feedbackBox.innerHTML = `<span class="feedback-icon">⚠️</span><span>${err.message}</span>`;
+      show(feedbackBox);
+    } else {
+      feedbackBox.className = "feedback notyet";
+      feedbackBox.innerHTML = `<span class="feedback-icon">⚠️</span><span>Couldn't read the reply. Try sending again.</span>`;
+      show(feedbackBox);
+    }
+  }
+}
+
+function showFeedback(kind, text) {
+  const icon = kind === "correct" ? "✓" : kind === "partly" ? "💭" : "💭";
+  feedbackBox.className = `feedback ${kind}`;
+  feedbackBox.innerHTML = `<span class="feedback-icon">${icon}</span><span>${escapeHtml(text)}</span>`;
+  show(feedbackBox);
+}
+
+function recordAnswer(correct) {
+  state.totalAnswered += 1;
+  const m = state.misconceptions[currentMisconception];
+  m.attempted += 1;
+  if (correct) m.correct += 1;
+  if (currentQuestion.format === "mcq") m.mcqCount += 1;
+  else m.openCount += 1;
+
+  // Track recent stems (first 60 chars).
+  state.recentStems.push(currentQuestion.question.slice(0, 60));
+  if (state.recentStems.length > 6) state.recentStems = state.recentStems.slice(-6);
+
+  saveState();
+  renderProgress();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+/* ------------------------------------------------------------------
+   EVENT WIRING
+   ------------------------------------------------------------------ */
+apiKeyInput.addEventListener("input", () => {
+  startBtn.disabled = apiKeyInput.value.trim().length < 10;
+});
+
+revealBtn.addEventListener("click", () => {
+  const isHidden = apiKeyInput.type === "password";
+  apiKeyInput.type = isHidden ? "text" : "password";
+  revealBtn.textContent = isHidden ? "🙈" : "👁";
+});
+
+startBtn.addEventListener("click", () => {
+  state.apiKey = apiKeyInput.value.trim();
+  saveState();
+  loadNewQuestion();
+});
+
+submitOpenBtn.addEventListener("click", handleOpenAnswer);
+
+openInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    handleOpenAnswer();
+  }
+});
+
+nextBtn.addEventListener("click", loadNewQuestion);
+
+retryBtn.addEventListener("click", () => {
+  if (!state.apiKey) {
+    hideAllPanels();
+    show(setup);
+  } else {
+    loadNewQuestion();
+  }
+});
+
+el("change-key").addEventListener("click", () => {
+  apiKeyInput.value = state.apiKey || "";
+  startBtn.disabled = (state.apiKey || "").length < 10;
+  hideAllPanels();
+  show(setup);
+});
+
+el("reset-progress").addEventListener("click", () => {
+  if (!confirm("Clear your progress? Your API key will stay saved.")) return;
+  const key = state.apiKey;
+  state = freshState();
+  state.apiKey = key;
+  currentQuestion = null;
+  currentMisconception = null;
+  saveState();
+  renderProgress();
+  if (state.apiKey) loadNewQuestion();
+  else { hideAllPanels(); show(setup); }
+});
+
+/* ------------------------------------------------------------------
+   BOOT
+   ------------------------------------------------------------------ */
+function boot() {
+  renderProgress();
+  if (state.apiKey && state.apiKey.length >= 10) {
+    loadNewQuestion();
+  } else {
+    hideAllPanels();
+    show(setup);
+  }
+}
+boot();
+</script>
+</body>
+</html>
