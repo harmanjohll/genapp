@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Story Star — PSLE Narrative Writing Helper</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <h1>Story Star <span class="star">*</span></h1>
+  <p class="tagline">Your PSLE narrative writing buddy</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="guide" role="tab">Learn</button>
+  <button class="tab" data-tab="show" role="tab">Show, Don't Tell</button>
+  <button class="tab" data-tab="samples" role="tab">Sample Essays</button>
+  <button class="tab" data-tab="practice" role="tab">Practice</button>
+</nav>
+
+<main>
+  <!-- ============ GUIDE TAB ============ -->
+  <section id="guide" class="tab-panel active">
+    <div class="intro-card">
+      <h2>The 5 parts of a great story</h2>
+      <p>Every awesome PSLE composition has the same 5 parts. Think of it as a roller-coaster ride. We climb up, reach the top, then come down.</p>
+      <div class="arc">
+        <div class="arc-step s1">1. Introduction</div>
+        <div class="arc-step s2">2. Rising Action</div>
+        <div class="arc-step s3">3. Climax</div>
+        <div class="arc-step s4">4. Falling Action</div>
+        <div class="arc-step s5">5. Conclusion</div>
+      </div>
+    </div>
+
+    <article class="part-card" style="--accent:#ff8fa3">
+      <h3>1. Introduction <span class="emoji">[start]</span></h3>
+      <p class="what"><strong>What it is:</strong> The opening of your story. Pull the reader in and set the scene.</p>
+      <ul class="tips">
+        <li>Start with a <strong>hook</strong>: dialogue, a sound, an action, or a strong feeling.</li>
+        <li>Tell us <strong>who, where, when</strong> — but don't list them like a shopping list.</li>
+        <li>Hint at the trouble that's coming.</li>
+      </ul>
+      <div class="example">
+        <p class="bad"><span class="label">Boring:</span> My name is Tom. I am 12 years old. One day, I went to the park with my friends.</p>
+        <p class="good"><span class="label">Exciting:</span> "Last one to the swings is a rotten egg!" Marcus yelled, sprinting ahead. I laughed and chased him, not knowing this would be the strangest afternoon of my life.</p>
+      </div>
+    </article>
+
+    <article class="part-card" style="--accent:#ffb84d">
+      <h3>2. Rising Action <span class="emoji">[up]</span></h3>
+      <p class="what"><strong>What it is:</strong> The build-up. Things start to go wrong, or get more exciting.</p>
+      <ul class="tips">
+        <li>Add <strong>2 or 3 events</strong> that lead to the big moment.</li>
+        <li>Make the reader feel something is about to happen.</li>
+        <li>Use the <strong>5 senses</strong>: what did you see, hear, smell, taste, feel?</li>
+      </ul>
+      <div class="example">
+        <p class="good"><span class="label">Example:</span> The sky darkened. A cold wind whipped through the trees, sending leaves spiralling around our feet. Somewhere far off, thunder grumbled like an angry giant. Marcus stopped laughing. "We should go home," he whispered.</p>
+      </div>
+    </article>
+
+    <article class="part-card" style="--accent:#ff5252">
+      <h3>3. Climax <span class="emoji">[!]</span></h3>
+      <p class="what"><strong>What it is:</strong> The most exciting part. The biggest moment of the story.</p>
+      <ul class="tips">
+        <li>This is where the <strong>problem peaks</strong>.</li>
+        <li>Use <strong>short sentences</strong> to make it tense. Like this. Bang. Run.</li>
+        <li>Slow down time — describe it in detail.</li>
+      </ul>
+      <div class="example">
+        <p class="good"><span class="label">Example:</span> A jagged bolt of lightning split the sky. CRACK! The old oak tree beside us groaned, then began to fall — straight towards Marcus. My heart hammered. I shoved him with all my strength. We tumbled into the wet grass as the tree slammed down behind us.</p>
+      </div>
+    </article>
+
+    <article class="part-card" style="--accent:#7ed957">
+      <h3>4. Falling Action <span class="emoji">[down]</span></h3>
+      <p class="what"><strong>What it is:</strong> Things start to calm down. The problem is being solved.</p>
+      <ul class="tips">
+        <li>Show the <strong>aftermath</strong> — what happened right after the climax?</li>
+        <li>Show characters reacting (shaking, crying, laughing in relief).</li>
+        <li>Wrap up loose ends.</li>
+      </ul>
+      <div class="example">
+        <p class="good"><span class="label">Example:</span> For a long moment, neither of us moved. My ears rang. Marcus's hand was trembling in mine. Slowly, we crawled out from under the branches. A jogger had seen everything and was already calling for help. Sirens wailed in the distance.</p>
+      </div>
+    </article>
+
+    <article class="part-card" style="--accent:#7cc6ff">
+      <h3>5. Conclusion <span class="emoji">[end]</span></h3>
+      <p class="what"><strong>What it is:</strong> The ending. Leave the reader with a feeling or a lesson.</p>
+      <ul class="tips">
+        <li>Show how the character has <strong>changed</strong> or what they <strong>learned</strong>.</li>
+        <li>End on a strong image, thought, or feeling.</li>
+        <li>Don't just write "And that was my day." — that's a wasted ending!</li>
+      </ul>
+      <div class="example">
+        <p class="bad"><span class="label">Weak:</span> And that was the scariest day of my life. The end.</p>
+        <p class="good"><span class="label">Strong:</span> That night, I lay awake listening to the rain tap against my window. I would never look at a thunderstorm the same way again — and I would never forget how close I had come to losing my best friend.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ SHOW DON'T TELL TAB ============ -->
+  <section id="show" class="tab-panel">
+    <div class="intro-card">
+      <h2>Show, Don't Tell</h2>
+      <p>Don't <em>tell</em> the reader how someone feels. <strong>Show</strong> it through their body, actions, and surroundings. The reader should <em>feel</em> what your character feels.</p>
+      <p class="rule">Rule of thumb: if you wrote "He was ___", try again. Show us instead.</p>
+    </div>
+
+    <div id="emotion-grid" class="emotion-grid"></div>
+  </section>
+
+  <!-- ============ SAMPLE ESSAYS TAB ============ -->
+  <section id="samples" class="tab-panel">
+    <div class="intro-card">
+      <h2>Annotated Sample Essays</h2>
+      <p>Read these full essays. Each part is colour-coded so you can see the story arc in action.</p>
+      <div class="legend">
+        <span class="chip s1">Introduction</span>
+        <span class="chip s2">Rising Action</span>
+        <span class="chip s3">Climax</span>
+        <span class="chip s4">Falling Action</span>
+        <span class="chip s5">Conclusion</span>
+      </div>
+    </div>
+
+    <article class="sample-card">
+      <h3>Sample 1: A Frightening Experience</h3>
+      <p class="ann s1"><span class="tag">Introduction</span>
+        "Just one quick shortcut," I muttered, glancing at the dark alley behind the hawker centre. Mother had warned me a hundred times never to take it, but it was already 9 p.m. and my legs ached from a long day at school. I tightened the strap of my schoolbag and stepped into the shadows, never imagining what was waiting for me there.
+      </p>
+      <p class="ann s2"><span class="tag">Rising Action</span>
+        The alley smelled of rotting fruit and damp cardboard. A flickering streetlamp buzzed somewhere overhead, throwing jumpy shadows on the brick walls. My footsteps echoed strangely — too loud, somehow. Then I heard it. Another set of footsteps, slow and heavy, falling in time with mine. I quickened my pace. So did the footsteps. My mouth turned dry as paper.
+      </p>
+      <p class="ann s3"><span class="tag">Climax</span>
+        Suddenly, a hand clamped down on my shoulder. I screamed. My schoolbag slipped from my arm and crashed onto the pavement, books spilling everywhere. I spun around, fists raised, my heart pounding so hard I could feel it in my ears.
+      </p>
+      <p class="ann s4"><span class="tag">Falling Action</span>
+        "Wei! Why you running so fast?" It was Uncle Lim, the noodle seller from the hawker centre. He was puffing, holding out my water bottle with a worried frown. "You drop this, lah." My knees turned to jelly. I let out a shaky laugh and bent down to gather my books, my hands still trembling.
+      </p>
+      <p class="ann s5"><span class="tag">Conclusion</span>
+        Uncle Lim walked me home that night, scolding me gently the whole way. As I climbed into bed, I promised myself I would never take that alley again. Some shortcuts, I had learned, are not worth the fright.
+      </p>
+    </article>
+
+    <article class="sample-card">
+      <h3>Sample 2: An Act of Kindness</h3>
+      <p class="ann s1"><span class="tag">Introduction</span>
+        The rain had been falling for hours by the time I left the library. I clutched my thin jacket around me and stared glumly at the flooded pavement. My bus was in five minutes, and I had no umbrella. That was when I noticed her — an elderly lady sitting on the bench, soaked to the skin, hugging a plastic bag of groceries.
+      </p>
+      <p class="ann s2"><span class="tag">Rising Action</span>
+        I hesitated. My bus would arrive any moment. If I missed it, I would be late for dinner and Mother would be furious. The lady coughed — a deep, rattling cough that shook her whole body. Her lips were turning a faint shade of blue. I looked at my watch. I looked at the lady. I looked at my watch again.
+      </p>
+      <p class="ann s3"><span class="tag">Climax</span>
+        Before I could change my mind, I darted over and pulled off my jacket. "Auntie, please use this," I said, draping it around her bony shoulders. Her eyes, milky with age, widened in surprise. Just then, my bus rumbled past in a spray of dirty water. Gone. I bit my lip hard.
+      </p>
+      <p class="ann s4"><span class="tag">Falling Action</span>
+        The auntie's wrinkled hand found mine and squeezed it tightly. "Thank you, child," she whispered, her voice cracking. We waited together for the next bus. When it finally arrived, I helped her on board and made sure she had a seat. She waved at me through the foggy window as the bus pulled away.
+      </p>
+      <p class="ann s5"><span class="tag">Conclusion</span>
+        I was twenty minutes late for dinner. I was cold, wet, and a little hungry. But as I walked home through the drizzle, I felt warmer than I had in a very long time. Sometimes, I realised, the smallest kindness can fill you up more than a hot meal ever could.
+      </p>
+    </article>
+  </section>
+
+  <!-- ============ PRACTICE TAB ============ -->
+  <section id="practice" class="tab-panel">
+    <div class="intro-card">
+      <h2>Practice: Build Your Own Story</h2>
+      <p>Write your essay one part at a time. Read the hints, then type your section. The word counter will help you stay on track.</p>
+      <p class="goal">PSLE goal: <strong>at least 150 words</strong>. A good essay is usually <strong>250-400 words</strong>.</p>
+    </div>
+
+    <div class="practice-step" data-step="1" style="--accent:#ff8fa3">
+      <h3>Step 1: Introduction</h3>
+      <p class="hint"><strong>Hints:</strong> Start with a hook — dialogue, a sound, or an action. Set the scene. Hint that something is about to happen.</p>
+      <textarea data-section="intro" placeholder="Type your introduction here..."></textarea>
+      <div class="counter"><span class="words">0</span> words</div>
+    </div>
+
+    <div class="practice-step" data-step="2" style="--accent:#ffb84d">
+      <h3>Step 2: Rising Action</h3>
+      <p class="hint"><strong>Hints:</strong> Build the tension. Use the 5 senses. Add 2-3 events that lead to the big moment.</p>
+      <textarea data-section="rising" placeholder="Type your rising action here..."></textarea>
+      <div class="counter"><span class="words">0</span> words</div>
+    </div>
+
+    <div class="practice-step" data-step="3" style="--accent:#ff5252">
+      <h3>Step 3: Climax</h3>
+      <p class="hint"><strong>Hints:</strong> The biggest moment! Use short, punchy sentences. Slow down time. Show feelings through the body.</p>
+      <textarea data-section="climax" placeholder="Type your climax here..."></textarea>
+      <div class="counter"><span class="words">0</span> words</div>
+    </div>
+
+    <div class="practice-step" data-step="4" style="--accent:#7ed957">
+      <h3>Step 4: Falling Action</h3>
+      <p class="hint"><strong>Hints:</strong> Calm things down. Show how characters react after the big moment. Solve the problem.</p>
+      <textarea data-section="falling" placeholder="Type your falling action here..."></textarea>
+      <div class="counter"><span class="words">0</span> words</div>
+    </div>
+
+    <div class="practice-step" data-step="5" style="--accent:#7cc6ff">
+      <h3>Step 5: Conclusion</h3>
+      <p class="hint"><strong>Hints:</strong> What did you learn? How did you change? End with a strong image or thought.</p>
+      <textarea data-section="conclusion" placeholder="Type your conclusion here..."></textarea>
+      <div class="counter"><span class="words">0</span> words</div>
+    </div>
+
+    <div class="total-bar">
+      <div class="total-label">Total: <span id="total-words">0</span> words</div>
+      <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="goal-marks">
+        <span>0</span><span>150 (min)</span><span>400 (great)</span>
+      </div>
+    </div>
+
+    <div class="practice-actions">
+      <button id="preview-btn" class="big-btn">Preview My Essay</button>
+      <button id="clear-btn" class="big-btn secondary">Clear Everything</button>
+    </div>
+
+    <div id="preview" class="preview hidden">
+      <h3>Your Full Essay</h3>
+      <div id="preview-content"></div>
+      <button id="close-preview" class="big-btn secondary">Close Preview</button>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>You've got this! Practice every day and your stories will sparkle.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
