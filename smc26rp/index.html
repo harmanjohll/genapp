@@ -224,6 +224,8 @@
 
     // ================================================================
     //  PERSONAS
+    //  ideology: Schiro (1978) curriculum ideology mapping
+    //  st:       Primary BTY strategic thrust alignment
     // ================================================================
     const PERSONAS = {
         architect: {
@@ -231,36 +233,44 @@
             icon: '◈',
             color: '#6ba4c9',
             colorLight: 'rgba(107,164,201,0.12)',
+            ideology: 'Scholar Academic',
+            st: 'ST4 & ST5',
             tagline: 'You build for the long game.',
-            description: 'You see the system behind the work. You are energised by designing structures, frameworks, and processes that endure — by making sure the scaffolding is strong enough for what comes next. You lead through clarity, coherence, and careful design.',
-            invitation: 'As Beatty moves into 2026–27, your Architect lens will help the school build on its strongest foundations. Look for moments to map the unseen systems, clarify the connective tissue, and design the scaffolding for the next chapter.'
+            description: 'A Scholar Academic orientation — you believe enduring impact comes from well-designed systems, rigorous frameworks, and deliberate structure. At BTY, you are drawn to the architecture beneath the programme: the coherence of NEXUS, the integrity of assessment and curriculum design, the connective tissue that makes a school run with precision. You see what needs to be built before others see the gap. You lead through clarity, coherence, and careful intent — Non Vi Sed Arte in its most structured form.',
+            invitation: 'In 2026–27, your Architect lens will help Beatty strengthen its intellectual infrastructure. Look for moments to map the unseen systems, consolidate what works across departments, and design the scaffolding for the next chapter. DREAM well: the Discipline and Adaptability in your work is what gives others room to grow.'
         },
         cultivator: {
             name: 'Cultivator',
             icon: '◇',
             color: '#7cb68a',
             colorLight: 'rgba(124,182,138,0.12)',
+            ideology: 'Learner-Centred',
+            st: 'ST1 & ST4',
             tagline: 'You grow people.',
-            description: 'Your instinct is to develop. You notice what others need before they do, and you invest in people with patience and intentionality. The best outcome for you is when someone else succeeds — and grows beyond what they thought possible.',
-            invitation: 'As Beatty moves into 2026–27, your Cultivator lens will help the school\'s people thrive. Look for opportunities to coach, to create conditions where others do their best work, and to celebrate the growth you see in those around you.'
+            description: 'A Learner-Centred orientation — you believe the most important thing is who the learner is becoming, not just what they know or produce. At BTY, you are the person who notices what a colleague or student needs before they ask. PCM@BTY, staff wellbeing, and recognition programmes are where your energy naturally flows — because you understand that a school thrives when its people do. You invest with patience and intentionality. The best outcome for you is when someone grows beyond what they thought possible.',
+            invitation: 'In 2026–27, your Cultivator lens will help Beatty\'s people thrive under ST1 and ST4. Look for opportunities to coach, to co-create conditions where others do their best work, and to name the growth that often goes unnoticed in the daily busyness of school life. Every Beattyian a Purpose Driven Steward — starting with the adults in the room.'
         },
         explorer: {
             name: 'Explorer',
             icon: '◆',
             color: '#D4A843',
             colorLight: 'rgba(212,168,67,0.12)',
+            ideology: 'Social Reconstructionist',
+            st: 'ST2 & ST3',
             tagline: 'You push the frontier.',
-            description: 'You are drawn to what does not exist yet. You are energised by possibility, comfortable with ambiguity, and willing to take the risks that open new paths. You lead with curiosity and courage — and you make others braver in the process.',
-            invitation: 'As Beatty moves into 2026–27, your Explorer lens will help the school stay adaptive and innovative. Look for the white spaces, pilot something bold, and help others see what could be.'
+            description: 'A Social Reconstructionist orientation — you believe learning should change the world, not merely describe it. At BTY, you are drawn to the edges: to ALP 3.0 where students apply learning to real problems, to PD Hackathons where teachers take risks together, to EcoStewardship where students become agents of change, and to the Symphony of Dreams Concert where the school dares to create something it has never created before. You are energised by ambiguity, comfortable at the frontier, and willing to take the risks that open new paths. You make others braver in the process.',
+            invitation: 'In 2026–27, your Explorer lens will help Beatty stay innovative under ST2 and ST3. Look for the white spaces in the strategic plan, pilot something bold with your team, and help colleagues imagine what could be. Non Vi Sed Arte is not just restraint — it is the courage to try a better way.'
         },
         weaver: {
             name: 'Weaver',
             icon: '◉',
             color: '#c97b8b',
             colorLight: 'rgba(201,123,139,0.12)',
+            ideology: 'Social Efficiency',
+            st: 'ST2 & ST5',
             tagline: 'You hold things together.',
-            description: 'You sense the relationships in the room and across the school. You bridge gaps, translate between worlds, and ensure that no one is working in isolation. Connection is your contribution — and it is more powerful than it looks from the outside.',
-            invitation: 'As Beatty moves into 2026–27, your Weaver lens will help the school become more cohesive and connected. Look for the threads between teams and departments, and tie them together deliberately.'
+            description: 'A Social Efficiency orientation — you believe in purposeful connections that make systems work for people. At BTY, you are the person who senses the relationships in the room and across departments. UNITY Parade and the school\'s partnership programmes are where you feel most alive — because you understand that cohesion is not accidental. You bridge gaps, translate across teams, and ensure that energy is not lost in silos. Connection is your contribution, and it is more powerful than it looks from the outside.',
+            invitation: 'In 2026–27, your Weaver lens will help Beatty become more cohesive under ST2 and ST5. Look for the threads between committees, departments, and the wider community — and tie them together deliberately. Your greatest contribution may be the connections others never notice, but always depend on.'
         }
     };
 
@@ -275,7 +285,9 @@
         { text: 'ALP 3.0 — advancing learning through pedagogical innovation and teacher research',              scores: [2, 0, 2, 0] },
         { text: 'EcoStewardship — sustainability, environmental leadership, and student-led action',             scores: [0, 0, 3, 1] },
         { text: 'Staff Recognition & Welfare — celebrating our people and sustaining their commitment',          scores: [0, 3, 0, 1] },
-        { text: 'PD Hackathons — professional learning through collaborative, teacher-led experimentation',      scores: [2, 2, 0, 0] }
+        { text: 'PD Hackathons — professional learning through collaborative, teacher-led experimentation',      scores: [2, 2, 0, 0] },
+        { text: 'UNITY Parade — our school-wide expression of Beattyian identity, cohesion, and collective pride', scores: [0, 1, 1, 3] },
+        { text: 'Symphony of Dreams Concert — a collective celebration of aesthetics, performance, and creative courage', scores: [0, 2, 2, 0] }
     ];
 
     // ================================================================
@@ -813,12 +825,16 @@ ${d}
 ${/* persona */S(`
     <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your leadership persona</p>
     <div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
             <span style="font-size:22px;color:${pri.color};">${pri.icon}</span>
             <div>
                 <p style="font-size:21px;font-weight:700;color:${pri.color};font-family:'DM Serif Display',serif;">${pri.name}</p>
                 <p style="font-size:11px;color:${C.tS};font-style:italic;">${pri.tagline}</p>
             </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+            <span style="font-size:9px;font-weight:600;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,0.06);color:${C.tS};border:1px solid rgba(255,255,255,0.1);">${pri.ideology}</span>
+            <span style="font-size:9px;font-weight:600;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,0.06);color:${C.tS};border:1px solid rgba(255,255,255,0.1);">${pri.st}</span>
         </div>
         <p style="font-size:11px;line-height:1.65;color:${C.tS};">${pri.description}</p>
     </div>
