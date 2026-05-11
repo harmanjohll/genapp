@@ -272,14 +272,15 @@
     const Q4_OTHER_IDX = Q4_OPTIONS.length - 1; // 4
 
     // ================================================================
-    //  Q3: SINGLE SELECT — GROWTH FOCUS
+    //  Q3: DUAL CHOICE — GROWTH FOCUS  [Arch, Cult, Expl, Weav]
+    //  Scoring weights: 1st x1.0 · 2nd x0.5
     // ================================================================
     const Q3_OPTIONS = [
-        { text: 'Designing stronger systems and structures for lasting impact',   label: 'Systems & Structure'  },
-        { text: 'Developing and empowering the people around me',                 label: 'People Development'   },
-        { text: 'Being more experimental and comfortable with ambiguity',          label: 'Experimentation'      },
-        { text: 'Connecting more deliberately across teams and silos',            label: 'Bridging & Connecting' },
-        { text: 'Something else…',                                           label: null                   }
+        { text: 'Designing stronger systems and structures for lasting impact',   label: 'Systems & Structure',   scores: [3, 0, 0, 0] },
+        { text: 'Developing and empowering the people around me',                 label: 'People Development',    scores: [0, 3, 0, 0] },
+        { text: 'Being more experimental and comfortable with ambiguity',          label: 'Experimentation',       scores: [0, 0, 3, 0] },
+        { text: 'Connecting more deliberately across teams and silos',            label: 'Bridging & Connecting', scores: [0, 0, 0, 3] },
+        { text: 'Something else…',                                           label: null,                    scores: [0, 0, 0, 0] }
     ];
     const Q3_OTHER_IDX = Q3_OPTIONS.length - 1; // 4
 
@@ -316,11 +317,11 @@
     //  Q6: SINGLE SELECT — EMOTIONAL STATE
     // ================================================================
     const Q6_OPTIONS = [
-        { text: 'Energised: ready to contribute and shape what comes next',             label: 'Energised'  },
-        { text: 'Reflective: carrying questions and sitting with them',                 label: 'Reflective' },
-        { text: 'Stretched: committed, but feeling the weight of it all',              label: 'Stretched'  },
-        { text: 'Hopeful: cautiously optimistic and open to what this session can be', label: 'Hopeful'    },
-        { text: 'Something else…',                                                label: null         }
+        { text: 'Energised: ready to contribute and shape what comes next',              label: 'Energised'  },
+        { text: 'Reflective: carrying questions I want to sit with before Friday',       label: 'Reflective' },
+        { text: 'Stretched: committed, but carrying the weight of a full week',          label: 'Stretched'  },
+        { text: 'Hopeful: cautiously optimistic and open to what Friday can be',         label: 'Hopeful'    },
+        { text: 'Something else…',                                                  label: null         }
     ];
     const Q6_OTHER_IDX = Q6_OPTIONS.length - 1; // 4
 
@@ -332,7 +333,7 @@
     let q1Text      = '';
     let q2Picks     = { first: null, second: null, third: null };
     let q2OtherText = '';
-    let q3Answer    = null;
+    let q3Picks     = { first: null, second: null };
     let q3OtherText = '';
     let q4Picks     = { first: null, second: null };
     let q4OtherText = '';
@@ -550,10 +551,13 @@
     }
 
     // ================================================================
-    //  Q3 — SINGLE SELECT: GROWTH FOCUS
+    //  Q3 — DUAL CHOICE: GROWTH FOCUS
+    //  Weights: 1st x1.0 · 2nd x0.5
     // ================================================================
     function renderQ3() {
-        let selIdx = q3Answer;
+        let pick1 = q3Picks.first;
+        let pick2 = q3Picks.second;
+        const q3OtherActive = (pick1 === Q3_OTHER_IDX || pick2 === Q3_OTHER_IDX);
 
         app.innerHTML = `
         <div class="w-full max-w-lg fade-up">
@@ -567,42 +571,67 @@
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Rise above the comfortable. What is calling you to grow next?</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Where does your next area of growth sit right now?</h2>
-            <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Where do your next two areas of growth sit right now?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select two. <span style="color:var(--accent);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
             <div class="space-y-3" id="q3opts">
-                ${Q3_OPTIONS.map((opt, i) => `
-                    <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
-                `).join('')}
+                ${Q3_OPTIONS.map((opt, i) => {
+                    const badge = i === pick1 ? '1' : i === pick2 ? '2' : '';
+                    const cls   = 'option-btn fade-up stagger-' + Math.min(i + 1, 6) +
+                                  (i === pick1 ? ' pick-1' : i === pick2 ? ' pick-2' : '');
+                    return `<button class="${cls}" data-oi="${i}"><span class="option-badge">${badge}</span>${opt.text}</button>`;
+                }).join('')}
             </div>
-            <div id="q3OtherWrap" style="display:${selIdx === Q3_OTHER_IDX ? 'block' : 'none'};">
+            <div id="q3OtherWrap" style="display:${q3OtherActive ? 'block' : 'none'};margin-top:12px;">
                 <input type="text" id="q3OtherInput" class="other-input" placeholder="Describe your next area of growth…" maxlength="120" value="${q3OtherText}">
             </div>
             <div class="flex gap-3 mt-6">
                 <button id="q3Back" class="btn-back">&#8592; Back</button>
-                <button id="q3Next" class="btn-primary flex-1" disabled>Next</button>
+                <button id="q3Next" class="btn-primary flex-1" ${
+                    pick1 !== null && pick2 !== null &&
+                    (!q3OtherActive || q3OtherText.trim().length > 0) ? '' : 'disabled'
+                }>Next</button>
             </div>
         </div>`;
 
-        function checkQ3() {
-            const isOther = selIdx === Q3_OTHER_IDX;
-            document.getElementById('q3OtherWrap').style.display = isOther ? 'block' : 'none';
-            const otherVal = document.getElementById('q3OtherInput').value.trim();
-            document.getElementById('q3Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
+        function updateStyles() {
+            document.querySelectorAll('#q3opts .option-btn').forEach(b => {
+                const oi = parseInt(b.dataset.oi);
+                const badge = b.querySelector('.option-badge');
+                b.classList.remove('pick-1', 'pick-2');
+                badge.textContent = '';
+                if      (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                else if (oi === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+            });
+            const otherActive = (pick1 === Q3_OTHER_IDX || pick2 === Q3_OTHER_IDX);
+            document.getElementById('q3OtherWrap').style.display = otherActive ? 'block' : 'none';
+            const otherVal = otherActive ? document.getElementById('q3OtherInput').value.trim() : '';
+            document.getElementById('q3Next').disabled = pick1 === null || pick2 === null || (otherActive && otherVal.length === 0);
         }
-        if (selIdx !== null) checkQ3();
 
-        document.querySelectorAll('#q3opts .sel-btn').forEach(b => {
+        document.getElementById('q3OtherInput').addEventListener('input', updateStyles);
+
+        document.querySelectorAll('#q3opts .option-btn').forEach(b => {
             b.addEventListener('click', () => {
-                selIdx = parseInt(b.dataset.idx);
-                document.querySelectorAll('#q3opts .sel-btn').forEach(x => x.classList.toggle('active', parseInt(x.dataset.idx) === selIdx));
-                checkQ3();
+                const oi = parseInt(b.dataset.oi);
+                if      (pick1 === oi) { pick1 = pick2 !== null ? pick2 : null; pick2 = null; }
+                else if (pick2 === oi) { pick2 = null; }
+                else if (pick1 === null) { pick1 = oi; }
+                else if (pick2 === null) { pick2 = oi; }
+                else { showToast('Deselect an option first.'); return; }
+                updateStyles();
             });
         });
-        document.getElementById('q3OtherInput').addEventListener('input', checkQ3);
-        document.getElementById('q3Back').addEventListener('click', () => { renderQ2(); });
+
+        document.getElementById('q3Back').addEventListener('click', () => {
+            q3Picks = { first: pick1, second: pick2 };
+            const inp = document.getElementById('q3OtherInput');
+            if (inp) q3OtherText = inp.value.trim();
+            renderQ2();
+        });
         document.getElementById('q3Next').addEventListener('click', () => {
-            q3Answer    = selIdx;
-            q3OtherText = selIdx === Q3_OTHER_IDX ? document.getElementById('q3OtherInput').value.trim() : '';
+            q3Picks = { first: pick1, second: pick2 };
+            q3OtherText = (pick1 === Q3_OTHER_IDX || pick2 === Q3_OTHER_IDX)
+                ? document.getElementById('q3OtherInput').value.trim() : '';
             renderQ4();
         });
     }
@@ -711,7 +740,7 @@
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Connect. What would bring all of us together around one shared commitment?</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">If there is just one thing we should work on together, it is&#8230;</h2>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">What is the one thing this room most needs to lean into, together?</h2>
             <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
             <div class="space-y-3" id="q5opts">
                 ${Q5_OPTIONS.map((opt, i) => `
@@ -767,9 +796,9 @@
                 <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
             </div>
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
-                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">How you arrive matters. The state you bring to Friday&#8217;s session will shape what you take from it.</p>
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">What you notice in yourself right now is already part of the work.</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">As you arrive at Friday&#8217;s session, how would you describe your state?</h2>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Right now, as you think about Friday, what best describes where you are?</h2>
             <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
             <div class="space-y-3" id="q6opts">
                 ${Q6_OPTIONS.map((opt, i) => `
@@ -777,7 +806,7 @@
                 `).join('')}
             </div>
             <div id="q6OtherWrap" style="display:${selIdx === Q6_OTHER_IDX ? 'block' : 'none'};">
-                <input type="text" id="q6OtherInput" class="other-input" placeholder="Describe how you&#8217;re arriving…" maxlength="80" value="${q6OtherText}">
+                <input type="text" id="q6OtherInput" class="other-input" placeholder="Describe where you are right now…" maxlength="80" value="${q6OtherText}">
             </div>
             <div class="flex gap-3 mt-6">
                 <button id="q6Back" class="btn-back">&#8592; Back</button>
@@ -840,6 +869,8 @@
         if (q2Picks.first  !== null) Q2_OPTIONS[q2Picks.first ].scores.forEach((s, i) => totals[i] += s);
         if (q2Picks.second !== null) Q2_OPTIONS[q2Picks.second].scores.forEach((s, i) => totals[i] += s * 0.6);
         if (q2Picks.third  !== null) Q2_OPTIONS[q2Picks.third ].scores.forEach((s, i) => totals[i] += s * 0.3);
+        if (q3Picks.first  !== null) Q3_OPTIONS[q3Picks.first ].scores.forEach((s, i) => totals[i] += s);
+        if (q3Picks.second !== null) Q3_OPTIONS[q3Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
         if (q4Picks.first  !== null) Q4_OPTIONS[q4Picks.first ].scores.forEach((s, i) => totals[i] += s);
         if (q4Picks.second !== null) Q4_OPTIONS[q4Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
 
@@ -847,8 +878,13 @@
         const primary   = sorted[0];
         const secondary = (sorted[1].score >= primary.score * 0.7 && sorted[1].score > 0) ? sorted[1] : null;
 
-        const q3IsOther   = q3Answer === Q3_OTHER_IDX;
-        const growthFocus = q3IsOther ? q3OtherText : (q3Answer !== null ? Q3_OPTIONS[q3Answer].label : 'Not specified');
+        const growthFirst  = q3Picks.first  !== null
+            ? (q3Picks.first  === Q3_OTHER_IDX ? q3OtherText : Q3_OPTIONS[q3Picks.first ].label)
+            : 'Not specified';
+        const growthSecond = q3Picks.second !== null
+            ? (q3Picks.second === Q3_OTHER_IDX ? q3OtherText : Q3_OPTIONS[q3Picks.second].label)
+            : null;
+        const growthFocus = growthSecond ? `${growthFirst} · ${growthSecond}` : growthFirst;
 
         const q5IsOther       = q5Answer === Q5_OTHER_IDX;
         const collectiveFocus = q5IsOther ? q5OtherText : (q5Answer !== null ? Q5_OPTIONS[q5Answer].label : 'Not specified');
@@ -870,6 +906,11 @@
             if (idx === Q2_OTHER_IDX) return 'Others: ' + q2OtherText;
             return Q2_OPTIONS[idx].text;
         };
+        const q3label = (idx) => {
+            if (idx === null) return 'Not specified';
+            if (idx === Q3_OTHER_IDX) return 'Others: ' + q3OtherText;
+            return Q3_OPTIONS[idx].label;
+        };
         const q4label = (idx) => {
             if (idx === null) return 'Not specified';
             if (idx === Q4_OTHER_IDX) return 'Others: ' + q4OtherText;
@@ -888,6 +929,8 @@
             q2first:            q2label(q2Picks.first),
             q2second:           q2label(q2Picks.second),
             q2third:            q2label(q2Picks.third),
+            q3first:            q3label(q3Picks.first),
+            q3second:           q3label(q3Picks.second),
             q4first:            q4label(q4Picks.first),
             q4second:           q4label(q4Picks.second),
             scoreBreakdown:     r.sorted.map(s => PERSONAS[s.key].name + ':' + s.score.toFixed(1)).join(', ')
