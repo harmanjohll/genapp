@@ -53,7 +53,7 @@
         .stagger-5 { animation-delay: 0.30s; }
         .stagger-6 { animation-delay: 0.36s; }
 
-        /* ── Dual-choice option buttons ── */
+        /* ── Dual/triple-choice option buttons ── */
         .option-btn {
             background: var(--bg-surface);
             border: 1.5px solid rgba(255,255,255,0.06);
@@ -80,20 +80,12 @@
             color: rgba(255,255,255,0.15);
             transition: all 0.25s;
         }
-        .option-btn.pick-1 {
-            border-color: var(--accent);
-            background: rgba(255,226,0,0.07);
-        }
-        .option-btn.pick-1 .option-badge {
-            background: var(--accent); border-color: var(--accent); color: #080919;
-        }
-        .option-btn.pick-2 {
-            border-color: #60a5fa;
-            background: rgba(96,165,250,0.06);
-        }
-        .option-btn.pick-2 .option-badge {
-            background: #60a5fa; border-color: #60a5fa; color: #080919;
-        }
+        .option-btn.pick-1 { border-color: var(--accent); background: rgba(255,226,0,0.07); }
+        .option-btn.pick-1 .option-badge { background: var(--accent); border-color: var(--accent); color: #080919; }
+        .option-btn.pick-2 { border-color: #60a5fa; background: rgba(96,165,250,0.06); }
+        .option-btn.pick-2 .option-badge { background: #60a5fa; border-color: #60a5fa; color: #080919; }
+        .option-btn.pick-3 { border-color: #34d399; background: rgba(52,211,153,0.06); }
+        .option-btn.pick-3 .option-badge { background: #34d399; border-color: #34d399; color: #080919; }
 
         /* ── Single-choice select buttons ── */
         .sel-btn {
@@ -102,17 +94,13 @@
             border-radius: 12px;
             padding: 13px 16px; text-align: left; cursor: pointer;
             transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
-            color: var(--text-p); font-size: 0.92rem; line-height: 1.45; width: 100%;
+            color: var(--text-p); font-size: 0.92rem; line-height: 1.5; width: 100%;
         }
         .sel-btn:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
         .sel-btn.active { border-color: var(--accent); background: rgba(255,226,0,0.07); }
 
         /* ── Progress ── */
-        .progress-track {
-            width: 100%; height: 4px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 2px; overflow: hidden;
-        }
+        .progress-track { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--accent), var(--accent-lt));
@@ -129,30 +117,19 @@
             transition: all 0.2s;
             box-shadow: 0 4px 12px rgba(255,226,0,0.2);
         }
-        .btn-primary:hover {
-            background: var(--accent-lt); transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(255,226,0,0.3);
-        }
-        .btn-primary:disabled {
-            opacity: 0.3; cursor: not-allowed;
-            transform: none; box-shadow: none;
-        }
+        .btn-primary:hover { background: var(--accent-lt); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,226,0,0.3); }
+        .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* ── Back button ── */
         .btn-back {
-            background: transparent;
-            color: var(--text-s);
+            background: transparent; color: var(--text-s);
             font-weight: 600; padding: 14px 20px;
-            border-radius: 10px;
-            border: 1.5px solid rgba(255,255,255,0.08);
+            border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.08);
             cursor: pointer; font-size: 0.9rem;
             transition: all 0.2s; white-space: nowrap;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .btn-back:hover {
-            border-color: rgba(255,255,255,0.2);
-            color: var(--text-p);
-        }
+        .btn-back:hover { border-color: rgba(255,255,255,0.2); color: var(--text-p); }
 
         /* ── Textarea ── */
         .reflect-ta {
@@ -163,20 +140,17 @@
             color: var(--text-p);
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.93rem; line-height: 1.6;
-            resize: vertical; outline: none;
-            transition: border-color 0.2s;
+            resize: vertical; outline: none; transition: border-color 0.2s;
         }
         .reflect-ta:focus { border-color: var(--accent); }
         .reflect-ta::placeholder { color: var(--text-m); }
 
         /* ── Inline text input (other) ── */
         .other-input {
-            width: 100%;
-            background: var(--bg-surface);
+            width: 100%; background: var(--bg-surface);
             border: 1.5px solid rgba(255,255,255,0.08);
             border-radius: 10px; padding: 10px 14px;
-            color: var(--text-p);
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-p); font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.88rem; outline: none;
             transition: border-color 0.2s; margin-top: 8px;
         }
@@ -195,27 +169,18 @@
         .name-input:focus { border-color: var(--accent); }
 
         /* ── Processing dots ── */
-        .dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: var(--accent);
-            animation: pulse 1.4s ease-in-out infinite;
-        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); animation: pulse 1.4s ease-in-out infinite; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes pulse {
-            0%,80%,100% { transform: scale(0.6); opacity: 0.3; }
-            40%          { transform: scale(1);   opacity: 1;   }
-        }
+        @keyframes pulse { 0%,80%,100% { transform: scale(0.6); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
 
         /* ── Toast ── */
         .toast {
             position: fixed; bottom: 24px; left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            border: 1px solid rgba(255,226,0,0.25);
+            background: var(--bg-card); border: 1px solid rgba(255,226,0,0.25);
             color: var(--text-p); padding: 12px 24px;
-            border-radius: 10px; font-size: 0.85rem;
-            z-index: 100;
+            border-radius: 10px; font-size: 0.85rem; z-index: 100;
             transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
@@ -245,45 +210,29 @@
     // ================================================================
     const PERSONAS = {
         architect: {
-            name: 'Architect',
-            icon: '◈',
-            color: '#6ba4c9',
-            colorLight: 'rgba(107,164,201,0.12)',
-            ideology: 'Scholar Academic',
-            st: 'ST4 & ST5',
+            name: 'Architect', icon: '◈', color: '#6ba4c9', colorLight: 'rgba(107,164,201,0.12)',
+            ideology: 'Scholar Academic', st: 'ST4 & ST5',
             tagline: 'You build for the long game.',
             description: 'A Scholar Academic orientation: you believe enduring impact comes from well-designed systems, rigorous frameworks, and deliberate structure. At BTY, you are drawn to the architecture beneath the programme: the coherence of NEXUS, the integrity of assessment and curriculum design, the connective tissue that makes a school run with precision. You see what needs to be built before others see the gap. You lead through clarity, coherence, and careful intent. Non Vi Sed Arte in its most structured form.',
             invitation: 'In 2026–27, your Architect lens will help Beatty strengthen its intellectual infrastructure. Look for moments to map the unseen systems, consolidate what works across departments, and design the scaffolding for the next chapter. DREAM well: the Discipline and Adaptability in your work is what gives others room to grow.'
         },
         cultivator: {
-            name: 'Cultivator',
-            icon: '◇',
-            color: '#7cb68a',
-            colorLight: 'rgba(124,182,138,0.12)',
-            ideology: 'Learner-Centred',
-            st: 'ST1 & ST4',
+            name: 'Cultivator', icon: '◇', color: '#7cb68a', colorLight: 'rgba(124,182,138,0.12)',
+            ideology: 'Learner-Centred', st: 'ST1 & ST4',
             tagline: 'You grow people.',
             description: 'A Learner-Centred orientation: you believe the most important thing is who the learner is becoming, not just what they know or produce. At BTY, you are the person who notices what a colleague or student needs before they ask. PCM@BTY, staff wellbeing, and recognition programmes are where your energy naturally flows, because you understand that a school thrives when its people do. You invest with patience and intentionality. The best outcome for you is when someone grows beyond what they thought possible.',
             invitation: 'In 2026–27, your Cultivator lens will help Beatty\'s people thrive under ST1 and ST4. Look for opportunities to coach, to co-create conditions where others do their best work, and to name the growth that often goes unnoticed in the daily busyness of school life. Every Beattyian a Purpose Driven Steward, starting with the adults in the room.'
         },
         explorer: {
-            name: 'Explorer',
-            icon: '◆',
-            color: '#D4A843',
-            colorLight: 'rgba(212,168,67,0.12)',
-            ideology: 'Social Reconstructionist',
-            st: 'ST2 & ST3',
+            name: 'Explorer', icon: '◆', color: '#D4A843', colorLight: 'rgba(212,168,67,0.12)',
+            ideology: 'Social Reconstructionist', st: 'ST2 & ST3',
             tagline: 'You push the frontier.',
             description: 'A Social Reconstructionist orientation: you believe learning should change the world, not merely describe it. At BTY, you are drawn to the edges: to ALP 3.0 where students apply learning to real problems, to PD Hackathons where teachers take risks together, to EcoStewardship where students become agents of change, and to the Symphony of Dreams Concert where the school dares to create something it has never created before. You are energised by ambiguity, comfortable at the frontier, and willing to take the risks that open new paths. You make others braver in the process.',
             invitation: 'In 2026–27, your Explorer lens will help Beatty stay innovative under ST2 and ST3. Look for the white spaces in the strategic plan, pilot something bold with your team, and help colleagues imagine what could be. Non Vi Sed Arte is not just restraint; it is the courage to try a better way.'
         },
         weaver: {
-            name: 'Weaver',
-            icon: '◉',
-            color: '#c97b8b',
-            colorLight: 'rgba(201,123,139,0.12)',
-            ideology: 'Social Efficiency',
-            st: 'ST2 & ST5',
+            name: 'Weaver', icon: '◉', color: '#c97b8b', colorLight: 'rgba(201,123,139,0.12)',
+            ideology: 'Social Efficiency', st: 'ST2 & ST5',
             tagline: 'You hold things together.',
             description: 'A Social Efficiency orientation: you believe in purposeful connections that make systems work for people. At BTY, you are the person who senses the relationships in the room and across departments. UNITY Parade and the school\'s partnership programmes are where you feel most alive, because you understand that cohesion is not accidental. You bridge gaps, translate across teams, and ensure that energy is not lost in silos. Connection is your contribution, and it is more powerful than it looks from the outside.',
             invitation: 'In 2026–27, your Weaver lens will help Beatty become more cohesive under ST2 and ST5. Look for the threads between committees, departments, and the wider community, and tie them together deliberately. Your greatest contribution may be the connections others never notice, but always depend on.'
@@ -293,7 +242,8 @@
     const PERSONA_KEYS = ['architect', 'cultivator', 'explorer', 'weaver'];
 
     // ================================================================
-    //  Q2: DUAL CHOICE — BTY INITIATIVES  [Arch, Cult, Expl, Weav]
+    //  Q2: TRIPLE CHOICE — BTY INITIATIVES  [Arch, Cult, Expl, Weav]
+    //  Scoring weights: 1st x1.0 · 2nd x0.6 · 3rd x0.3
     // ================================================================
     const Q2_OPTIONS = [
         { text: 'NEXUS@BTY: interdisciplinary learning and student agency across the curriculum',                   scores: [3, 0, 1, 0] },
@@ -306,9 +256,11 @@
         { text: 'Symphony of Dreams Concert: a collective celebration of aesthetics, performance, and creative courage', scores: [0, 2, 2, 0] },
         { text: 'Something else…',                                                                            scores: [0, 0, 0, 0] }
     ];
+    const Q2_OTHER_IDX = Q2_OPTIONS.length - 1; // 8
 
     // ================================================================
     //  Q4: DUAL CHOICE — FORWARD DIRECTIONS  [Arch, Cult, Expl, Weav]
+    //  Scoring weights: 1st x1.0 · 2nd x0.5
     // ================================================================
     const Q4_OPTIONS = [
         { text: 'Strengthen what works: deepen and sustain our best practices and flagship programmes',           scores: [3, 1, 0, 0] },
@@ -317,6 +269,7 @@
         { text: 'Weave the community: build stronger connections inside our school and with the world beyond',    scores: [0, 0, 1, 3] },
         { text: 'Something else…',                                                                            scores: [0, 0, 0, 0] }
     ];
+    const Q4_OTHER_IDX = Q4_OPTIONS.length - 1; // 4
 
     // ================================================================
     //  Q3: SINGLE SELECT — GROWTH FOCUS
@@ -328,38 +281,65 @@
         { text: 'Connecting more deliberately across teams and silos',            label: 'Bridging & Connecting' },
         { text: 'Something else…',                                           label: null                   }
     ];
+    const Q3_OTHER_IDX = Q3_OPTIONS.length - 1; // 4
 
     // ================================================================
-    //  Q5: SINGLE SELECT — EMOTIONAL STATE
+    //  Q5: SINGLE SELECT — COLLECTIVE POSTURE  (data-for-you, no persona scoring)
+    //  html: rendered in button (supports <em>); label: displayed on card & sent to Sheets
     // ================================================================
     const Q5_OPTIONS = [
+        {
+            html:  'This is <em>OUR</em> work. Let&#8217;s talk about our gaps and what we can do better, together.',
+            label: 'This is OUR work'
+        },
+        {
+            html:  'Both inquire and appreciate. We have done well in many ways, <em>AND</em> we inquire how we can do more.',
+            label: 'Inquire and appreciate, both'
+        },
+        {
+            html:  'Do less, but with greater depth. Commit fully to what matters, and let go of what we know is not working.',
+            label: 'Do less, with greater depth'
+        },
+        {
+            html:  'Connect and partner. Several inter-unit collaborations are already going well. Let&#8217;s go deeper into these and build more bridges across the school.',
+            label: 'Connect and partner'
+        },
+        {
+            html:  'Celebrate more visibly. Many things are done well and done quietly. Let&#8217;s name them, not for simplistic reasons, but to declare what we truly value.',
+            label: 'Celebrate more visibly'
+        },
+        { html: 'Something else…', label: null }
+    ];
+    const Q5_OTHER_IDX = Q5_OPTIONS.length - 1; // 5
+
+    // ================================================================
+    //  Q6: SINGLE SELECT — EMOTIONAL STATE
+    // ================================================================
+    const Q6_OPTIONS = [
         { text: 'Energised: ready to contribute and shape what comes next',             label: 'Energised'  },
         { text: 'Reflective: carrying questions and sitting with them',                 label: 'Reflective' },
         { text: 'Stretched: committed, but feeling the weight of it all',              label: 'Stretched'  },
         { text: 'Hopeful: cautiously optimistic and open to what this session can be', label: 'Hopeful'    },
         { text: 'Something else…',                                                label: null         }
     ];
-
-    // ================================================================
-    //  CONSTANTS — Others indices (always last in each array)
-    // ================================================================
-    const Q2_OTHER_IDX = Q2_OPTIONS.length - 1; // 8
-    const Q4_OTHER_IDX = Q4_OPTIONS.length - 1; // 4
+    const Q6_OTHER_IDX = Q6_OPTIONS.length - 1; // 4
 
     // ================================================================
     //  STATE
     // ================================================================
     const app = document.getElementById('app');
     let participantName = '';
-    let q1Text = '';
-    let q2Picks     = { first: null, second: null };
+    let q1Text      = '';
+    let q2Picks     = { first: null, second: null, third: null };
     let q2OtherText = '';
     let q3Answer    = null;
     let q3OtherText = '';
     let q4Picks     = { first: null, second: null };
     let q4OtherText = '';
-    let q5Answer    = null;
+    let q5Answer    = null;   // collective posture
     let q5OtherText = '';
+    let q6Answer    = null;   // emotional state
+    let q6OtherText = '';
 
     // Shuffle option display order once per session; Others always stays last
     function shuffle(arr) {
@@ -395,11 +375,11 @@
             </div>
             <div class="text-left bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-8">
                 <p class="text-sm leading-relaxed" style="color:var(--text-s);">
-                    Before we come together on Friday, take five minutes to reflect on the year that was, and the year ahead.
+                    Before we come together on Friday, take a few minutes to reflect on the year that was, and the year ahead.
                     This short exercise will surface your <strong style="color:var(--text-p);">professional orientation</strong>, help you arrive with intention, and generate a card you can bring to the session.
                 </p>
                 <p class="text-sm leading-relaxed mt-3" style="color:var(--text-s);">
-                    For the scenario questions, <strong style="color:var(--accent);">select two options</strong>: your first choice carries more weight than your second. There are no right or wrong answers. Simply choose what resonates.
+                    Some questions ask you to <strong style="color:var(--accent);">select two or three options</strong>. Earlier choices carry more weight. There are no right or wrong answers. Simply choose what resonates.
                 </p>
             </div>
             <div class="mb-6">
@@ -407,7 +387,7 @@
                 <input type="text" id="nameInput" maxlength="40" placeholder="e.g. Harman" class="name-input" value="${participantName}">
             </div>
             <button id="startBtn" class="btn-primary w-full text-base" ${participantName.length > 0 ? '' : 'disabled'}>Begin</button>
-            <p class="text-xs mt-5" style="color:var(--text-m);">Takes about 5 minutes &middot; 5 questions</p>
+            <p class="text-xs mt-5" style="color:var(--text-m);">About 6 minutes &middot; 6 questions</p>
             <p class="text-xs mt-3 font-serif italic" style="color:var(--text-m);">Non Vi Sed Arte</p>
         </div>`;
 
@@ -431,15 +411,15 @@
         <div class="w-full max-w-lg fade-up">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 1 of 5</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 1 of 6</span>
                     <span class="text-xs font-medium" style="color:var(--accent);">0%</span>
                 </div>
                 <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
             </div>
             <div class="mb-5 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
-                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Let&#8217;s reflect and introspect. What has gone well for you, for your team(s), your students and/or your colleagues?</p>
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Gift yourself success.</p>
             </div>
-            <h2 class="text-xl font-bold mb-5 leading-snug font-serif" style="color:var(--text-p);">Describe that success that you are genuinely proud of, and what it meant to, and felt for, you and those around you.</h2>
+            <h2 class="text-xl font-bold mb-5 leading-snug font-serif" style="color:var(--text-p);">Think about your moments of success. What did that feel like? And what did it mean to you and those around you?</h2>
             <textarea id="q1ta" class="reflect-ta" placeholder="Write freely. No answer is too small or too grand." maxlength="400">${q1Text}</textarea>
             <div class="flex justify-between items-center mt-1 mb-6">
                 <span id="charCount" class="text-xs" style="color:var(--text-m);">0 / 400</span>
@@ -466,7 +446,6 @@
             q1Text = ta.value.trim();
             renderWelcome();
         });
-
         btn.addEventListener('click', () => {
             q1Text = ta.value.trim();
             renderQ2();
@@ -474,32 +453,39 @@
     }
 
     // ================================================================
-    //  Q2 — DUAL CHOICE: BTY INITIATIVES
+    //  Q2 — TRIPLE CHOICE: BTY INITIATIVES
+    //  Weights: 1st x1.0 · 2nd x0.6 · 3rd x0.3
     // ================================================================
     function renderQ2() {
         let pick1 = q2Picks.first;
         let pick2 = q2Picks.second;
-        const q2OtherActive = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX);
+        let pick3 = q2Picks.third;
+        const q2OtherActive = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX || pick3 === Q2_OTHER_IDX);
 
         app.innerHTML = `
         <div class="w-full max-w-lg fade-up">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 2 of 5</span>
-                    <span class="text-xs font-medium" style="color:var(--accent);">20%</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 2 of 6</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">17%</span>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:17%"></div></div>
             </div>
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Own the year that was. Each initiative represented real energy, real decisions, real people.</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Which two of Beatty&#8217;s signature initiatives felt most alive and energising to you in 2025&#8211;26?</h2>
-            <p class="text-xs mb-5" style="color:var(--text-m);">Select two. <span style="color:var(--accent);font-weight:600;">First choice</span> carries more weight than your <span style="color:#60a5fa;font-weight:600;">second</span>. Tap again to deselect.</p>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Which three of Beatty&#8217;s signature initiatives felt most alive and energising to you in 2025&#8211;26?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">
+                Select three. <span style="color:var(--accent);font-weight:600;">First</span> carries most weight,
+                <span style="color:#60a5fa;font-weight:600;">second</span> carries some,
+                <span style="color:#34d399;font-weight:600;">third</span> adds context.
+                Tap again to deselect.
+            </p>
             <div class="space-y-3" id="q2opts">
                 ${q2Order.map((oi, di) => {
-                    const badge = oi === pick1 ? '1' : oi === pick2 ? '2' : '';
+                    const badge = oi === pick1 ? '1' : oi === pick2 ? '2' : oi === pick3 ? '3' : '';
                     const cls   = 'option-btn fade-up stagger-' + Math.min(di + 1, 6) +
-                                  (oi === pick1 ? ' pick-1' : oi === pick2 ? ' pick-2' : '');
+                                  (oi === pick1 ? ' pick-1' : oi === pick2 ? ' pick-2' : oi === pick3 ? ' pick-3' : '');
                     return `<button class="${cls}" data-oi="${oi}"><span class="option-badge">${badge}</span>${Q2_OPTIONS[oi].text}</button>`;
                 }).join('')}
             </div>
@@ -508,7 +494,10 @@
             </div>
             <div class="flex gap-3 mt-6">
                 <button id="q2Back" class="btn-back">&#8592; Back</button>
-                <button id="q2Next" class="btn-primary flex-1" ${pick1 !== null && pick2 !== null && (!q2OtherActive || q2OtherText.trim().length > 0) ? '' : 'disabled'}>Next</button>
+                <button id="q2Next" class="btn-primary flex-1" ${
+                    pick1 !== null && pick2 !== null && pick3 !== null &&
+                    (!q2OtherActive || q2OtherText.trim().length > 0) ? '' : 'disabled'
+                }>Next</button>
             </div>
         </div>`;
 
@@ -516,15 +505,17 @@
             document.querySelectorAll('#q2opts .option-btn').forEach(b => {
                 const oi = parseInt(b.dataset.oi);
                 const badge = b.querySelector('.option-badge');
-                b.classList.remove('pick-1', 'pick-2');
+                b.classList.remove('pick-1', 'pick-2', 'pick-3');
                 badge.textContent = '';
-                if (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                if      (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
                 else if (oi === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
+                else if (oi === pick3) { b.classList.add('pick-3'); badge.textContent = '3'; }
             });
-            const otherActive = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX);
+            const otherActive = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX || pick3 === Q2_OTHER_IDX);
             document.getElementById('q2OtherWrap').style.display = otherActive ? 'block' : 'none';
             const otherVal = otherActive ? document.getElementById('q2OtherInput').value.trim() : '';
-            document.getElementById('q2Next').disabled = pick1 === null || pick2 === null || (otherActive && otherVal.length === 0);
+            document.getElementById('q2Next').disabled =
+                pick1 === null || pick2 === null || pick3 === null || (otherActive && otherVal.length === 0);
         }
 
         document.getElementById('q2OtherInput').addEventListener('input', updateStyles);
@@ -532,25 +523,27 @@
         document.querySelectorAll('#q2opts .option-btn').forEach(b => {
             b.addEventListener('click', () => {
                 const oi = parseInt(b.dataset.oi);
-                if      (pick1 === oi) { pick1 = pick2 !== null ? pick2 : null; pick2 = null; }
-                else if (pick2 === oi) { pick2 = null; }
+                if      (pick1 === oi) { pick1 = pick2; pick2 = pick3; pick3 = null; }
+                else if (pick2 === oi) { pick2 = pick3; pick3 = null; }
+                else if (pick3 === oi) { pick3 = null; }
                 else if (pick1 === null) { pick1 = oi; }
                 else if (pick2 === null) { pick2 = oi; }
+                else if (pick3 === null) { pick3 = oi; }
                 else { showToast('Deselect an option first.'); return; }
                 updateStyles();
             });
         });
 
         document.getElementById('q2Back').addEventListener('click', () => {
-            q2Picks = { first: pick1, second: pick2 };
+            q2Picks = { first: pick1, second: pick2, third: pick3 };
             const inp = document.getElementById('q2OtherInput');
             if (inp) q2OtherText = inp.value.trim();
             renderQ1();
         });
 
         document.getElementById('q2Next').addEventListener('click', () => {
-            q2Picks = { first: pick1, second: pick2 };
-            q2OtherText = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX)
+            q2Picks = { first: pick1, second: pick2, third: pick3 };
+            q2OtherText = (pick1 === Q2_OTHER_IDX || pick2 === Q2_OTHER_IDX || pick3 === Q2_OTHER_IDX)
                 ? document.getElementById('q2OtherInput').value.trim() : '';
             renderQ3();
         });
@@ -566,10 +559,10 @@
         <div class="w-full max-w-lg fade-up">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 3 of 5</span>
-                    <span class="text-xs font-medium" style="color:var(--accent);">40%</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 3 of 6</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">33%</span>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:33%"></div></div>
             </div>
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Rise above the comfortable. What is calling you to grow next?</p>
@@ -581,7 +574,7 @@
                     <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
                 `).join('')}
             </div>
-            <div id="q3OtherWrap" style="display:${selIdx === Q3_OPTIONS.length - 1 ? 'block' : 'none'};">
+            <div id="q3OtherWrap" style="display:${selIdx === Q3_OTHER_IDX ? 'block' : 'none'};">
                 <input type="text" id="q3OtherInput" class="other-input" placeholder="Describe your next area of growth…" maxlength="120" value="${q3OtherText}">
             </div>
             <div class="flex gap-3 mt-6">
@@ -591,7 +584,7 @@
         </div>`;
 
         function checkQ3() {
-            const isOther = selIdx === Q3_OPTIONS.length - 1;
+            const isOther = selIdx === Q3_OTHER_IDX;
             document.getElementById('q3OtherWrap').style.display = isOther ? 'block' : 'none';
             const otherVal = document.getElementById('q3OtherInput').value.trim();
             document.getElementById('q3Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
@@ -605,22 +598,18 @@
                 checkQ3();
             });
         });
-
         document.getElementById('q3OtherInput').addEventListener('input', checkQ3);
-
-        document.getElementById('q3Back').addEventListener('click', () => {
-            renderQ2();
-        });
-
+        document.getElementById('q3Back').addEventListener('click', () => { renderQ2(); });
         document.getElementById('q3Next').addEventListener('click', () => {
             q3Answer    = selIdx;
-            q3OtherText = selIdx === Q3_OPTIONS.length - 1 ? document.getElementById('q3OtherInput').value.trim() : '';
+            q3OtherText = selIdx === Q3_OTHER_IDX ? document.getElementById('q3OtherInput').value.trim() : '';
             renderQ4();
         });
     }
 
     // ================================================================
     //  Q4 — DUAL CHOICE: FORWARD DIRECTIONS
+    //  Weights: 1st x1.0 · 2nd x0.5
     // ================================================================
     function renderQ4() {
         let pick1 = q4Picks.first;
@@ -631,10 +620,10 @@
         <div class="w-full max-w-lg fade-up">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 4 of 5</span>
-                    <span class="text-xs font-medium" style="color:var(--accent);">60%</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 4 of 6</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">50%</span>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:50%"></div></div>
             </div>
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Watch for what comes next. Which directions call to you as you look ahead to 2026&#8211;27?</p>
@@ -654,7 +643,10 @@
             </div>
             <div class="flex gap-3 mt-6">
                 <button id="q4Back" class="btn-back">&#8592; Back</button>
-                <button id="q4Next" class="btn-primary flex-1" ${pick1 !== null && pick2 !== null && (!q4OtherActive || q4OtherText.trim().length > 0) ? '' : 'disabled'}>Next</button>
+                <button id="q4Next" class="btn-primary flex-1" ${
+                    pick1 !== null && pick2 !== null &&
+                    (!q4OtherActive || q4OtherText.trim().length > 0) ? '' : 'disabled'
+                }>Next</button>
             </div>
         </div>`;
 
@@ -664,7 +656,7 @@
                 const badge = b.querySelector('.option-badge');
                 b.classList.remove('pick-1', 'pick-2');
                 badge.textContent = '';
-                if (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
+                if      (oi === pick1) { b.classList.add('pick-1'); badge.textContent = '1'; }
                 else if (oi === pick2) { b.classList.add('pick-2'); badge.textContent = '2'; }
             });
             const otherActive = (pick1 === Q4_OTHER_IDX || pick2 === Q4_OTHER_IDX);
@@ -693,7 +685,6 @@
             if (inp) q4OtherText = inp.value.trim();
             renderQ3();
         });
-
         document.getElementById('q4Next').addEventListener('click', () => {
             q4Picks = { first: pick1, second: pick2 };
             q4OtherText = (pick1 === Q4_OTHER_IDX || pick2 === Q4_OTHER_IDX)
@@ -703,7 +694,7 @@
     }
 
     // ================================================================
-    //  Q5 — SINGLE SELECT: EMOTIONAL STATE
+    //  Q5 — SINGLE SELECT: COLLECTIVE POSTURE  (data-for-you)
     // ================================================================
     function renderQ5() {
         let selIdx = q5Answer;
@@ -712,32 +703,32 @@
         <div class="w-full max-w-lg fade-up">
             <div class="mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 5 of 5</span>
-                    <span class="text-xs font-medium" style="color:var(--accent);">80%</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 5 of 6</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">67%</span>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width:80%"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:67%"></div></div>
             </div>
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
-                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">How you arrive matters. The state you bring to Friday&#8217;s session will shape what you take from it.</p>
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Connect. What would bring all of us together around one shared commitment?</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">As you arrive at Friday&#8217;s session, how would you describe your state?</h2>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">If there is just one thing we should work on together, it is&#8230;</h2>
             <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
             <div class="space-y-3" id="q5opts">
                 ${Q5_OPTIONS.map((opt, i) => `
-                    <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
+                    <button class="sel-btn fade-up stagger-${Math.min(i + 1, 6)}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.html}</button>
                 `).join('')}
             </div>
-            <div id="q5OtherWrap" style="display:${selIdx === Q5_OPTIONS.length - 1 ? 'block' : 'none'};">
-                <input type="text" id="q5OtherInput" class="other-input" placeholder="Describe how you&#8217;re arriving…" maxlength="80" value="${q5OtherText}">
+            <div id="q5OtherWrap" style="display:${selIdx === Q5_OTHER_IDX ? 'block' : 'none'};">
+                <input type="text" id="q5OtherInput" class="other-input" placeholder="Describe the one thing…" maxlength="120" value="${q5OtherText}">
             </div>
             <div class="flex gap-3 mt-6">
                 <button id="q5Back" class="btn-back">&#8592; Back</button>
-                <button id="q5Next" class="btn-primary flex-1" disabled>See my profile</button>
+                <button id="q5Next" class="btn-primary flex-1" disabled>Next</button>
             </div>
         </div>`;
 
         function checkQ5() {
-            const isOther = selIdx === Q5_OPTIONS.length - 1;
+            const isOther = selIdx === Q5_OTHER_IDX;
             document.getElementById('q5OtherWrap').style.display = isOther ? 'block' : 'none';
             const otherVal = document.getElementById('q5OtherInput').value.trim();
             document.getElementById('q5Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
@@ -751,16 +742,69 @@
                 checkQ5();
             });
         });
-
         document.getElementById('q5OtherInput').addEventListener('input', checkQ5);
-
-        document.getElementById('q5Back').addEventListener('click', () => {
-            renderQ4();
-        });
-
+        document.getElementById('q5Back').addEventListener('click', () => { renderQ4(); });
         document.getElementById('q5Next').addEventListener('click', () => {
             q5Answer    = selIdx;
-            q5OtherText = selIdx === Q5_OPTIONS.length - 1 ? document.getElementById('q5OtherInput').value.trim() : '';
+            q5OtherText = selIdx === Q5_OTHER_IDX ? document.getElementById('q5OtherInput').value.trim() : '';
+            renderQ6();
+        });
+    }
+
+    // ================================================================
+    //  Q6 — SINGLE SELECT: EMOTIONAL STATE
+    // ================================================================
+    function renderQ6() {
+        let selIdx = q6Answer;
+
+        app.innerHTML = `
+        <div class="w-full max-w-lg fade-up">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--text-m);">Question 6 of 6</span>
+                    <span class="text-xs font-medium" style="color:var(--accent);">83%</span>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width:83%"></div></div>
+            </div>
+            <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
+                <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">How you arrive matters. The state you bring to Friday&#8217;s session will shape what you take from it.</p>
+            </div>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">As you arrive at Friday&#8217;s session, how would you describe your state?</h2>
+            <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
+            <div class="space-y-3" id="q6opts">
+                ${Q6_OPTIONS.map((opt, i) => `
+                    <button class="sel-btn fade-up stagger-${i + 1}${selIdx === i ? ' active' : ''}" data-idx="${i}">${opt.text}</button>
+                `).join('')}
+            </div>
+            <div id="q6OtherWrap" style="display:${selIdx === Q6_OTHER_IDX ? 'block' : 'none'};">
+                <input type="text" id="q6OtherInput" class="other-input" placeholder="Describe how you&#8217;re arriving…" maxlength="80" value="${q6OtherText}">
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button id="q6Back" class="btn-back">&#8592; Back</button>
+                <button id="q6Next" class="btn-primary flex-1" disabled>See my profile</button>
+            </div>
+        </div>`;
+
+        function checkQ6() {
+            const isOther = selIdx === Q6_OTHER_IDX;
+            document.getElementById('q6OtherWrap').style.display = isOther ? 'block' : 'none';
+            const otherVal = document.getElementById('q6OtherInput').value.trim();
+            document.getElementById('q6Next').disabled = selIdx === null || (isOther && otherVal.length === 0);
+        }
+        if (selIdx !== null) checkQ6();
+
+        document.querySelectorAll('#q6opts .sel-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                selIdx = parseInt(b.dataset.idx);
+                document.querySelectorAll('#q6opts .sel-btn').forEach(x => x.classList.toggle('active', parseInt(x.dataset.idx) === selIdx));
+                checkQ6();
+            });
+        });
+        document.getElementById('q6OtherInput').addEventListener('input', checkQ6);
+        document.getElementById('q6Back').addEventListener('click', () => { renderQ5(); });
+        document.getElementById('q6Next').addEventListener('click', () => {
+            q6Answer    = selIdx;
+            q6OtherText = selIdx === Q6_OTHER_IDX ? document.getElementById('q6OtherInput').value.trim() : '';
             renderProcessing();
         });
     }
@@ -785,13 +829,17 @@
     }
 
     // ================================================================
-    //  SCORING  —  Q2 first x1.0, second x0.5;  Q4 first x1.0, second x0.5
+    //  SCORING
+    //  Q2: 1st x1.0, 2nd x0.6, 3rd x0.3
+    //  Q4: 1st x1.0, 2nd x0.5
+    //  Q5: no scoring (data-for-you)
     // ================================================================
     function calculateResults() {
         const totals = [0, 0, 0, 0]; // [Arch, Cult, Expl, Weav]
 
         if (q2Picks.first  !== null) Q2_OPTIONS[q2Picks.first ].scores.forEach((s, i) => totals[i] += s);
-        if (q2Picks.second !== null) Q2_OPTIONS[q2Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
+        if (q2Picks.second !== null) Q2_OPTIONS[q2Picks.second].scores.forEach((s, i) => totals[i] += s * 0.6);
+        if (q2Picks.third  !== null) Q2_OPTIONS[q2Picks.third ].scores.forEach((s, i) => totals[i] += s * 0.3);
         if (q4Picks.first  !== null) Q4_OPTIONS[q4Picks.first ].scores.forEach((s, i) => totals[i] += s);
         if (q4Picks.second !== null) Q4_OPTIONS[q4Picks.second].scores.forEach((s, i) => totals[i] += s * 0.5);
 
@@ -799,47 +847,50 @@
         const primary   = sorted[0];
         const secondary = (sorted[1].score >= primary.score * 0.7 && sorted[1].score > 0) ? sorted[1] : null;
 
-        const q3IsOther  = q3Answer === Q3_OPTIONS.length - 1;
+        const q3IsOther   = q3Answer === Q3_OTHER_IDX;
         const growthFocus = q3IsOther ? q3OtherText : (q3Answer !== null ? Q3_OPTIONS[q3Answer].label : 'Not specified');
 
-        const q5IsOther      = q5Answer === Q5_OPTIONS.length - 1;
-        const emotionalState = q5IsOther ? q5OtherText : (q5Answer !== null ? Q5_OPTIONS[q5Answer].label : 'Not specified');
+        const q5IsOther       = q5Answer === Q5_OTHER_IDX;
+        const collectiveFocus = q5IsOther ? q5OtherText : (q5Answer !== null ? Q5_OPTIONS[q5Answer].label : 'Not specified');
+
+        const q6IsOther      = q6Answer === Q6_OTHER_IDX;
+        const emotionalState = q6IsOther ? q6OtherText : (q6Answer !== null ? Q6_OPTIONS[q6Answer].label : 'Not specified');
 
         const q1Truncated = q1Text.length > 130 ? q1Text.slice(0, 130) + '…' : q1Text;
 
-        return { totals, sorted, primary, secondary, growthFocus, emotionalState, q1Truncated };
+        return { totals, sorted, primary, secondary, growthFocus, collectiveFocus, emotionalState, q1Truncated };
     }
 
     // ================================================================
     //  GOOGLE SHEETS
     // ================================================================
     function sendToSheets(r) {
-        const q2first_text  = q2Picks.first  !== null
-            ? (q2Picks.first  === Q2_OTHER_IDX ? 'Others: ' + q2OtherText : Q2_OPTIONS[q2Picks.first ].text)
-            : 'Not specified';
-        const q2second_text = q2Picks.second !== null
-            ? (q2Picks.second === Q2_OTHER_IDX ? 'Others: ' + q2OtherText : Q2_OPTIONS[q2Picks.second].text)
-            : 'Not specified';
-        const q4first_text  = q4Picks.first  !== null
-            ? (q4Picks.first  === Q4_OTHER_IDX ? 'Others: ' + q4OtherText : Q4_OPTIONS[q4Picks.first ].text)
-            : 'Not specified';
-        const q4second_text = q4Picks.second !== null
-            ? (q4Picks.second === Q4_OTHER_IDX ? 'Others: ' + q4OtherText : Q4_OPTIONS[q4Picks.second].text)
-            : 'Not specified';
+        const q2label = (idx) => {
+            if (idx === null) return 'Not specified';
+            if (idx === Q2_OTHER_IDX) return 'Others: ' + q2OtherText;
+            return Q2_OPTIONS[idx].text;
+        };
+        const q4label = (idx) => {
+            if (idx === null) return 'Not specified';
+            if (idx === Q4_OTHER_IDX) return 'Others: ' + q4OtherText;
+            return Q4_OPTIONS[idx].text;
+        };
 
         const payload = {
-            timestamp:        new Date().toISOString(),
-            name:             participantName,
-            orientation:      PERSONAS[r.primary.key].name,
+            timestamp:          new Date().toISOString(),
+            name:               participantName,
+            orientation:        PERSONAS[r.primary.key].name,
             secondaryOrientation: r.secondary ? PERSONAS[r.secondary.key].name : 'None',
-            growthFocus:      r.growthFocus,
-            emotionalState:   r.emotionalState,
-            q1:               q1Text,
-            q2first:          q2first_text,
-            q2second:         q2second_text,
-            q4first:          q4first_text,
-            q4second:         q4second_text,
-            scoreBreakdown:   r.sorted.map(s => PERSONAS[s.key].name + ':' + s.score.toFixed(1)).join(', ')
+            growthFocus:        r.growthFocus,
+            collectiveFocus:    r.collectiveFocus,
+            emotionalState:     r.emotionalState,
+            q1:                 q1Text,
+            q2first:            q2label(q2Picks.first),
+            q2second:           q2label(q2Picks.second),
+            q2third:            q2label(q2Picks.third),
+            q4first:            q4label(q4Picks.first),
+            q4second:           q4label(q4Picks.second),
+            scoreBreakdown:     r.sorted.map(s => PERSONAS[s.key].name + ':' + s.score.toFixed(1)).join(', ')
         };
         fetch(SHEETS_URL, {
             method: 'POST', mode: 'no-cors',
@@ -855,19 +906,13 @@
         const pri = PERSONAS[r.primary.key];
         const sec = r.secondary ? PERSONAS[r.secondary.key] : null;
 
-        // Card colour constants
         const C = {
-            navy:    '#000C53',
-            yellow:  '#FFE200',
-            yDim:    '#D4A843',
-            tP:      '#e8e6e3',
-            tS:      '#9ca3af',
-            tM:      '#6b7280',
-            div:     'rgba(255,255,255,0.06)',
-            bg:      'linear-gradient(170deg,#08081f 0%,#0d1138 45%,#111540 100%)'
+            navy:  '#000C53', yellow: '#FFE200', yDim: '#D4A843',
+            tP:    '#e8e6e3', tS:     '#9ca3af', tM:   '#6b7280',
+            div:   'rgba(255,255,255,0.06)',
+            bg:    'linear-gradient(170deg,#08081f 0%,#0d1138 45%,#111540 100%)'
         };
 
-        // Score bars
         const mx = Math.max(...r.sorted.map(s => s.score), 1);
         const bars = r.sorted.map(s => {
             const p   = PERSONAS[s.key];
@@ -944,7 +989,12 @@ ${S(`
 ${d}
 
 ${S(`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Reflections to carry</p>
+    <div style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">
+        <p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.tM};margin-bottom:4px;">One thing, together</p>
+        <p style="font-size:12px;font-weight:600;color:${C.tP};">${r.collectiveFocus}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);">
             <p style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${C.tM};margin-bottom:4px;">Area of growth</p>
             <p style="font-size:12px;font-weight:600;color:${C.tP};">${r.growthFocus}</p>
@@ -993,11 +1043,9 @@ ${d}
         btn.textContent = 'Generating…'; btn.disabled = true;
 
         html2canvas(card, {
-            backgroundColor: '#08081f',
-            scale: 2, useCORS: true,
+            backgroundColor: '#08081f', scale: 2, useCORS: true,
             logging: false, allowTaint: true,
-            width: card.offsetWidth,
-            height: card.offsetHeight,
+            width: card.offsetWidth, height: card.offsetHeight,
             scrollX: 0, scrollY: -window.scrollY
         }).then(canvas => {
             const url  = canvas.toDataURL('image/png');
