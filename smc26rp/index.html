@@ -290,11 +290,11 @@
     // ================================================================
     const Q5_OPTIONS = [
         {
-            html:  'This is <em>OUR</em> work. Let&#8217;s talk about our gaps and what we can do better, together.',
-            label: 'This is OUR work'
+            html:  'This is our work. Let&#8217;s talk about our gaps and what we can do better, together.',
+            label: 'This is our work'
         },
         {
-            html:  'Both inquire and appreciate. We have done well in many ways, <em>AND</em> we inquire how we can do more.',
+            html:  'Both inquire and appreciate. We have done well in many ways, and we inquire how we can do more.',
             label: 'Inquire and appreciate, both'
         },
         {
@@ -318,9 +318,9 @@
     // ================================================================
     const Q6_OPTIONS = [
         { text: 'Energised: ready to contribute and shape what comes next',              label: 'Energised'  },
-        { text: 'Reflective: carrying questions I want to sit with before Friday',       label: 'Reflective' },
+        { text: 'Reflective: carrying questions I want to sit with before the upcoming sessions',       label: 'Reflective' },
         { text: 'Stretched: committed, but carrying the weight of a full week',          label: 'Stretched'  },
-        { text: 'Hopeful: cautiously optimistic and open to what Friday can be',         label: 'Hopeful'    },
+        { text: 'Hopeful: cautiously optimistic and open to what the sessions can be',         label: 'Hopeful'    },
         { text: 'Something else…',                                                  label: null         }
     ];
     const Q6_OTHER_IDX = Q6_OPTIONS.length - 1; // 4
@@ -376,8 +376,8 @@
             </div>
             <div class="text-left bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 mb-8">
                 <p class="text-sm leading-relaxed" style="color:var(--text-s);">
-                    Before we come together on Friday, take a few minutes to reflect on the year that was, and the year ahead.
-                    This short exercise will surface your <strong style="color:var(--text-p);">professional orientation</strong>, help you arrive with intention, and generate a card you can bring to the session.
+                    Before we come together for the review sessions, take a few minutes to reflect on the year that was, and the year ahead.
+                    This short exercise will surface your <strong style="color:var(--text-p);">where we are at right now</strong>, help you arrive for our Review & Planning with intention, and generate a card you can bring to the session.
                 </p>
                 <p class="text-sm leading-relaxed mt-3" style="color:var(--text-s);">
                     Some questions ask you to <strong style="color:var(--accent);">select two or three options</strong>. Earlier choices carry more weight. There are no right or wrong answers. Simply choose what resonates.
@@ -420,7 +420,7 @@
             <div class="mb-5 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Gift yourself success.</p>
             </div>
-            <h2 class="text-xl font-bold mb-5 leading-snug font-serif" style="color:var(--text-p);">Think about your moments of success. What did that feel like? And what did it mean to you and those around you?</h2>
+            <h2 class="text-xl font-bold mb-5 leading-snug font-serif" style="color:var(--text-p);">Think about your moments of success. What did those feel like? And what did they mean to you and those around you?</h2>
             <textarea id="q1ta" class="reflect-ta" placeholder="Write freely. No answer is too small or too grand." maxlength="400">${q1Text}</textarea>
             <div class="flex justify-between items-center mt-1 mb-6">
                 <span id="charCount" class="text-xs" style="color:var(--text-m);">0 / 400</span>
@@ -740,7 +740,7 @@
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">Connect. What would bring all of us together around one shared commitment?</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">What is the one thing this room most needs to lean into, together?</h2>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">What is the one thing we, as SMC, need to lean most into, together?</h2>
             <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
             <div class="space-y-3" id="q5opts">
                 ${Q5_OPTIONS.map((opt, i) => `
@@ -798,7 +798,7 @@
             <div class="mb-4 p-4 rounded-xl" style="background:rgba(255,226,0,0.03);border:1px solid rgba(255,226,0,0.07);">
                 <p class="text-sm leading-relaxed font-serif italic" style="color:var(--text-s);">What you notice in yourself right now is already part of the work.</p>
             </div>
-            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Right now, as you think about Friday, what best describes where you are?</h2>
+            <h2 class="text-lg font-bold mb-2 leading-snug" style="color:var(--text-p);">Right now, as you think about the review sessions, what best describes where you are?</h2>
             <p class="text-xs mb-5" style="color:var(--text-m);">Select one.</p>
             <div class="space-y-3" id="q6opts">
                 ${Q6_OPTIONS.map((opt, i) => `
@@ -847,8 +847,8 @@
             <div class="flex justify-center gap-3 mb-8">
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-            <p class="font-serif text-xl mb-2" style="color:var(--accent-lt);">Mapping your professional orientation…</p>
-            <p class="text-sm" style="color:var(--text-m);">Analysing your responses across orientations and priorities</p>
+            <p class="font-serif text-xl mb-2" style="color:var(--accent-lt);">Mapping your orientation…</p>
+            <p class="text-sm" style="color:var(--text-m);">Analysing your responses across various priorities</p>
         </div>`;
         setTimeout(() => {
             const r = calculateResults();
@@ -1004,7 +1004,7 @@ ${S(`
 ${d}
 
 ${S(`
-    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your professional orientation</p>
+    <p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;color:${C.tM};">Your inclinations at this point</p>
     <div style="border-radius:12px;padding:16px;background:${pri.colorLight};border:1px solid ${pri.color}33;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
             <span style="font-size:22px;color:${pri.color};">${pri.icon}</span>
@@ -1070,7 +1070,7 @@ ${d}
             </div>
             <div class="mt-8 space-y-3">
                 <button id="downloadBtn" class="btn-primary w-full text-base">Download Card &#x2B07;</button>
-                <p class="text-xs text-center" style="color:var(--text-m);">Save this card. Bring it along to Friday&#8217;s session.</p>
+                <p class="text-xs text-center" style="color:var(--text-m);">Save this card. Bring it along to the review sessions&#8217;s session.</p>
             </div>
         </div>`;
 
@@ -1101,7 +1101,7 @@ ${d}
                 } else { dlFile(url, safe); }
             } else { dlFile(url, safe); }
             btn.textContent = 'Download Card ⬇'; btn.disabled = false;
-            showToast('Card ready. Bring it to Friday!');
+            showToast('Card ready. Bring it when we meet!');
         }).catch(e => {
             console.error(e);
             btn.textContent = 'Failed. Try Again'; btn.disabled = false;
