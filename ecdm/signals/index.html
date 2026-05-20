@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ECDM · Signals — what's moving Singapore's energy bill this week</title>
+  <meta name="description" content="A daily-ish digest of statements, prints and prices from the players who actually move Singapore's energy system." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/components.css" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23F5F1EA'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23D98F30'/%3E%3C/svg%3E" />
+
+  <style>
+    /* Signals-page-specific styles. Reuses tokens + base from main dashboard. */
+    .signals-nav {
+      display: flex; gap: 18px; align-items: center;
+      font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+    .signals-nav a { color: var(--ink-mute); text-decoration: none; }
+    .signals-nav a:hover { color: var(--ink); }
+    .signals-nav a.is-here { color: var(--amber); }
+    .signals-nav .dot { color: var(--ink-mute); opacity: 0.5; }
+
+    .tldr-strip {
+      background: var(--ink);
+      color: var(--paper);
+      padding: var(--s-7) 0 var(--s-7);
+    }
+    .tldr-strip .wrap { color: var(--paper); }
+    .tldr-strip .kicker {
+      font-size: var(--t-micro); letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: var(--s-3);
+    }
+    .tldr-strip h1 {
+      font-family: var(--display); color: var(--paper);
+      font-size: clamp(1.5rem, 3.4vw, 2.4rem); line-height: 1.18;
+      letter-spacing: -0.015em; margin: 0 0 var(--s-3); max-width: 30ch;
+    }
+    .tldr-strip .as-of {
+      font-size: var(--t-small); color: rgba(245,241,234,0.62);
+      margin-bottom: var(--s-6);
+    }
+    .tldr-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-5);
+    }
+    @media (max-width: 880px) { .tldr-grid { grid-template-columns: 1fr; } }
+    .tldr-card {
+      border-top: 1px solid rgba(245,241,234,0.16);
+      padding-top: var(--s-4);
+    }
+    .tldr-card .num {
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1; color: var(--amber);
+      letter-spacing: -0.02em;
+    }
+    .tldr-card .lab {
+      font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,241,234,0.6); margin-bottom: var(--s-2);
+    }
+    .tldr-card .body {
+      font-family: var(--display); font-size: 1.05rem; line-height: 1.4;
+      color: var(--paper); margin-top: var(--s-2); max-width: 32ch;
+    }
+    .tldr-card .src {
+      margin-top: var(--s-3); font-size: var(--t-small); color: rgba(245,241,234,0.62);
+    }
+    .tldr-card .src a { color: rgba(245,241,234,0.85); }
+    .tldr-card.is-warning .num { color: var(--amber-soft); }
+
+    .focus-row {
+      margin-top: var(--s-6); padding-top: var(--s-5);
+      border-top: 1px solid rgba(245,241,234,0.16);
+      display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: baseline;
+    }
+    .focus-row .lab {
+      font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--amber);
+    }
+    .focus-row .text {
+      font-family: var(--display); font-size: 1.15rem; line-height: 1.4;
+      color: var(--paper); max-width: 64ch;
+    }
+
+    /* Filter strip */
+    .filter-strip {
+      position: sticky; top: 0; z-index: 40;
+      background: var(--paper);
+      border-bottom: 1px solid var(--rule);
+      padding: var(--s-3) 0;
+    }
+    .filter-strip .wrap {
+      display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center;
+    }
+    .chip-filter {
+      appearance: none;
+      background: var(--paper-warm);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: var(--t-small);
+      color: var(--ink-mute);
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+    .chip-filter:hover { color: var(--ink); border-color: var(--ink-mute); }
+    .chip-filter[aria-pressed="true"] {
+      background: var(--ink); color: var(--paper); border-color: var(--ink);
+    }
+    .filter-search {
+      flex: 1; min-width: 180px;
+      padding: 7px 12px;
+      font: inherit; font-size: var(--t-small);
+      background: var(--paper-warm);
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      color: var(--ink);
+    }
+    .filter-search:focus { outline: none; border-color: var(--amber); }
+    .filter-count {
+      margin-left: auto;
+      font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+
+    /* Feed */
+    .feed {
+      padding: var(--s-7) 0 var(--s-9);
+    }
+    .feed-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-4);
+    }
+    @media (max-width: 1080px) { .feed-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .feed-grid { grid-template-columns: 1fr; } }
+
+    .signal {
+      background: var(--paper-warm);
+      border: 1px solid var(--rule);
+      border-radius: var(--r-md);
+      padding: var(--s-4) var(--s-4) var(--s-4);
+      display: flex; flex-direction: column; gap: var(--s-2);
+      cursor: pointer;
+      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      position: relative;
+    }
+    .signal:hover {
+      border-color: var(--ink-mute);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(14,17,22,0.06);
+    }
+    .signal__top {
+      display: flex; align-items: center; gap: 8px;
+      font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .signal__kind {
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--paper); border: 1px solid var(--rule);
+      color: var(--ink-mute);
+    }
+    .signal[data-kind="official-sg"] .signal__kind { color: var(--teal-deep); border-color: rgba(44,120,115,0.4); background: var(--teal-wash); }
+    .signal[data-kind="market"]      .signal__kind { color: #8c5f1a;             border-color: rgba(217,143,48,0.45); background: var(--amber-wash); }
+    .signal[data-kind="analyst"]     .signal__kind { color: #5a4d8a;             border-color: rgba(110,90,160,0.45); background: rgba(110,90,160,0.10); }
+    .signal[data-kind="press"]       .signal__kind { color: var(--ink); border-color: var(--ink-soft); background: var(--paper-warm); }
+    .signal[data-kind="intl"]        .signal__kind { color: #1f4a78;             border-color: rgba(58,74,122,0.45); background: rgba(58,74,122,0.10); }
+    .signal[data-kind="regional"]    .signal__kind { color: #6e3030;             border-color: rgba(178,58,42,0.45); background: rgba(178,58,42,0.08); }
+    .signal[data-kind="operator"]    .signal__kind { color: var(--ink-soft); border-color: var(--rule); background: var(--paper-warm); }
+    .signal[data-kind="civil"]       .signal__kind { color: #4a6840;             border-color: rgba(74,104,64,0.45); background: rgba(74,104,64,0.10); }
+
+    .signal__date { color: var(--ink-mute); margin-left: auto; }
+
+    .signal__src {
+      font-size: var(--t-small); color: var(--ink-soft);
+      display: flex; align-items: baseline; gap: 6px;
+    }
+    .signal__src .handle { color: var(--ink-mute); font-size: var(--t-micro); letter-spacing: 0.04em; }
+
+    .signal__head {
+      font-family: var(--display); font-size: 1.05rem; line-height: 1.32;
+      color: var(--ink); margin-top: 2px;
+    }
+    .signal__body {
+      font-size: var(--t-small); line-height: 1.55; color: var(--ink-soft);
+      display: none;
+    }
+    .signal__why {
+      margin-top: auto; padding-top: var(--s-2);
+      font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    /* Zoomed (modal-like detail) */
+    .zoom-veil {
+      position: fixed; inset: 0;
+      background: rgba(14,17,22,0.55);
+      display: none;
+      z-index: 70;
+    }
+    .zoom-veil.is-open { display: block; }
+    .zoom {
+      position: fixed;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: min(640px, calc(100vw - 32px));
+      max-height: calc(100vh - 64px);
+      overflow-y: auto;
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      border-radius: var(--r-lg);
+      box-shadow: 0 24px 60px rgba(14,17,22,0.3);
+      padding: var(--s-6) var(--s-6) var(--s-5);
+      z-index: 71;
+      display: none;
+    }
+    .zoom.is-open { display: block; }
+    .zoom__close {
+      position: absolute; top: 12px; right: 12px;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--rule); background: var(--paper-warm);
+      cursor: pointer; font-size: 18px; line-height: 1; color: var(--ink-mute);
+    }
+    .zoom__close:hover { color: var(--ink); border-color: var(--ink); }
+    .zoom__top {
+      display: flex; gap: 8px; align-items: center;
+      font-size: var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-mute);
+      margin-bottom: var(--s-3);
+    }
+    .zoom h2 {
+      font-family: var(--display); font-size: clamp(1.3rem, 2.4vw, 1.65rem);
+      line-height: 1.25; margin: 0 0 var(--s-3);
+    }
+    .zoom__body {
+      font-size: var(--t-body); line-height: 1.6; color: var(--ink-soft);
+      margin-bottom: var(--s-4);
+    }
+    .zoom__why {
+      padding: var(--s-3) var(--s-4);
+      background: var(--amber-wash);
+      border-left: 3px solid var(--amber);
+      border-radius: 4px;
+      font-size: var(--t-small);
+      line-height: 1.5;
+      color: var(--ink);
+    }
+    .zoom__why strong {
+      display: block; margin-bottom: 4px;
+      font-size: var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber);
+    }
+    .zoom__meta {
+      margin-top: var(--s-4);
+      padding-top: var(--s-4);
+      border-top: 1px solid var(--rule);
+      font-size: var(--t-small);
+      color: var(--ink-mute);
+    }
+    .zoom__meta a { color: var(--ink); }
+
+    /* Crosspage nav */
+    .topnav {
+      display: flex; gap: 20px; align-items: center;
+      font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-mute);
+    }
+    .topnav a { color: var(--ink-mute); text-decoration: none; }
+    .topnav a:hover { color: var(--ink); }
+    .topnav a.is-here { color: var(--amber); }
+    .topnav .dot { color: var(--rule); opacity: 1; }
+  </style>
+</head>
+<body>
+  <a href="#feed" class="skip-link">Skip to feed</a>
+
+  <header class="topbar" role="banner">
+    <div class="topbar__inner">
+      <a href="../" class="brand">ECDM<span class="brand__sub">Singapore energy · signals</span></a>
+      <nav class="topnav" aria-label="Cross-page">
+        <a href="../">Dashboard</a>
+        <span class="dot">·</span>
+        <a href="../map/">Map</a>
+        <span class="dot">·</span>
+        <a href="./" class="is-here">Signals</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- TLDR: the synthesis, top of page -->
+  <section class="tldr-strip" aria-labelledby="tldr-title">
+    <div class="wrap">
+      <p class="kicker">This week · the signal</p>
+      <h1 id="tldr-title">What's moving Singapore's energy system right now.</h1>
+      <p class="as-of">As of <span id="tldr-asof">—</span> · curated from <span id="tldr-srccount">—</span> public sources</p>
+
+      <div class="tldr-grid" id="tldr-grid">
+        <!-- TLDR cards rendered by JS -->
+      </div>
+
+      <div class="focus-row">
+        <span class="lab">Focus this week →</span>
+        <span class="text" id="tldr-focus">Loading…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters + feed -->
+  <div class="filter-strip" id="filter-strip">
+    <div class="wrap">
+      <button class="chip-filter" data-kind="all" aria-pressed="true">All</button>
+      <button class="chip-filter" data-kind="official-sg" aria-pressed="false">SG officials</button>
+      <button class="chip-filter" data-kind="operator" aria-pressed="false">Operators</button>
+      <button class="chip-filter" data-kind="regional" aria-pressed="false">Regional</button>
+      <button class="chip-filter" data-kind="intl" aria-pressed="false">International</button>
+      <button class="chip-filter" data-kind="market" aria-pressed="false">Market prints</button>
+      <button class="chip-filter" data-kind="analyst" aria-pressed="false">Analysts</button>
+      <button class="chip-filter" data-kind="press" aria-pressed="false">Press</button>
+      <button class="chip-filter" data-kind="civil" aria-pressed="false">Civil society</button>
+      <input class="filter-search" id="filter-search" type="search" placeholder="Search signals…" aria-label="Search signals" />
+      <span class="filter-count" id="filter-count">—</span>
+    </div>
+  </div>
+
+  <main id="feed" class="wrap feed">
+    <div class="feed-grid" id="feed-grid"></div>
+  </main>
+
+  <!-- Zoom-in modal -->
+  <div class="zoom-veil" id="zoom-veil"></div>
+  <article class="zoom" id="zoom" role="dialog" aria-modal="true" aria-labelledby="zoom-title">
+    <button class="zoom__close" id="zoom-close" aria-label="Close">×</button>
+    <div class="zoom__top" id="zoom-top"></div>
+    <h2 id="zoom-title"></h2>
+    <div class="zoom__body" id="zoom-body"></div>
+    <div class="zoom__why"><strong>Why it matters</strong><span id="zoom-why"></span></div>
+    <div class="zoom__meta" id="zoom-meta"></div>
+  </article>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="wrap site-footer__grid">
+      <div>
+        <h3>About signals</h3>
+        <p class="muted" style="max-width:48ch;">
+          A curated feed of statements, prints and prices from the players who actually move
+          Singapore's energy system: regulators, operators, regional ministries, analysts and the
+          markets themselves. Phase 1 is editorial; Phase 2 will pull live from RSS, X handles and
+          OilPriceAPI. Every entry names a real source you can verify.
+        </p>
+        <p class="micro" style="margin-top:12px;">Latest signal: <span id="footer-date">—</span></p>
+      </div>
+      <div>
+        <h3>Other pages</h3>
+        <p><a href="../">Dashboard</a></p>
+        <p><a href="../map/">Macro-systems map</a></p>
+        <p><a href="../METHODOLOGY.md">Methodology</a></p>
+      </div>
+      <div>
+        <h3>Source kinds</h3>
+        <p class="muted" style="max-width:28ch;">Officials · Operators · Regional · International · Market · Analysts · Press · Civil society. Click any card to zoom in.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./signals.js"></script>
+</body>
+</html>

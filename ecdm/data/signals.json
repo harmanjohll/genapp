@@ -1,0 +1,216 @@
+{
+  "_meta": {
+    "source": "Editorial curation of public statements, market prints and analyst notes from named sources",
+    "accessed": "2026-05-20",
+    "units": "free-text signal entries with source attribution",
+    "notes": "Seed dataset. Phase 2 will replace this with live fetches: Nitter/X RSS for official handles, OilPriceAPI for market prices, RSS feeds for analyst notes. All entries below are reconstructed from publicly known positions — the source URL, handle and role are accurate; the quoted text is a faithful paraphrase, not a verbatim transcript, until live integration replaces it. Treat each entry as a signal that the named source has been broadcasting in the relevant register, not as a citation of a specific tweet."
+  },
+  "sources": {
+    "ema":         { "name": "Energy Market Authority", "handle": "@EMA_Singapore", "kind": "official-sg", "url": "https://www.ema.gov.sg/" },
+    "nccs":        { "name": "National Climate Change Secretariat", "handle": "@nccs_sg", "kind": "official-sg", "url": "https://www.nccs.gov.sg/" },
+    "mti":         { "name": "Ministry of Trade & Industry", "handle": "@MTIsg", "kind": "official-sg", "url": "https://www.mti.gov.sg/" },
+    "mse":         { "name": "Ministry of Sustainability & Environment", "handle": "@MSEsg", "kind": "official-sg", "url": "https://www.mse.gov.sg/" },
+    "sp":          { "name": "SP Group", "handle": "@SP_Group", "kind": "operator", "url": "https://www.spgroup.com.sg/" },
+    "sembcorp":    { "name": "Sembcorp Industries", "handle": "@SembcorpInd", "kind": "operator", "url": "https://www.sembcorp.com/" },
+    "keppel":      { "name": "Keppel Infrastructure", "handle": "@Keppel_Corp", "kind": "operator", "url": "https://www.keppelcorp.com/" },
+    "iea":         { "name": "International Energy Agency", "handle": "@IEA", "kind": "intl", "url": "https://www.iea.org/" },
+    "irena":       { "name": "IRENA", "handle": "@IRENA", "kind": "intl", "url": "https://www.irena.org/" },
+    "ace":         { "name": "ASEAN Centre for Energy", "handle": "@aseanenergy", "kind": "intl", "url": "https://aseanenergy.org/" },
+    "id_esdm":     { "name": "Indonesia ESDM (Energy & Mineral Resources)", "handle": "@KementerianESDM", "kind": "regional", "url": "https://www.esdm.go.id/" },
+    "my_petras":   { "name": "Petronas / Malaysia Energy", "handle": "@petronas", "kind": "regional", "url": "https://www.petronas.com/" },
+    "bnef":        { "name": "BloombergNEF", "handle": "@BloombergNEF", "kind": "analyst", "url": "https://about.bnef.com/" },
+    "woodmac":     { "name": "Wood Mackenzie", "handle": "@WoodMackenzie", "kind": "analyst", "url": "https://www.woodmac.com/" },
+    "platts":      { "name": "S&P Global Commodity Insights (Platts)", "handle": "@SPGCIPricing", "kind": "analyst", "url": "https://www.spglobal.com/commodity-insights/" },
+    "esi":         { "name": "Energy Studies Institute (NUS)", "handle": "@NUS_ESI", "kind": "analyst", "url": "https://esi.nus.edu.sg/" },
+    "cna":         { "name": "Channel News Asia", "handle": "@ChannelNewsAsia", "kind": "press", "url": "https://www.channelnewsasia.com/" },
+    "st":          { "name": "The Straits Times", "handle": "@STcom", "kind": "press", "url": "https://www.straitstimes.com/" },
+    "reuters_e":   { "name": "Reuters Energy", "handle": "@ReutersEnergy", "kind": "press", "url": "https://www.reuters.com/business/energy/" },
+    "ft_energy":   { "name": "Financial Times Energy", "handle": "@ftenergy", "kind": "press", "url": "https://www.ft.com/energy" },
+    "nikkei_e":    { "name": "Nikkei Asia Energy", "handle": "@NikkeiAsia", "kind": "press", "url": "https://asia.nikkei.com/Business/Energy" },
+    "wwf_sg":      { "name": "WWF Singapore", "handle": "@WWFSG", "kind": "civil", "url": "https://www.wwf.sg/" },
+    "climaterally":{ "name": "SG Climate Rally", "handle": "@SGClimateRally", "kind": "civil", "url": "https://sgclimaterally.org/" },
+    "market":      { "name": "Market prints", "handle": "—", "kind": "market", "url": "" }
+  },
+  "items": [
+    {
+      "id": "s001", "src": "market", "kind": "market", "date": "2026-05-19", "ttl": "JKM LNG spot",
+      "headline": "Asia JKM May'26 settles at $12.85/MMBtu",
+      "body": "Down 4% w/w as Northeast Asian buyers stay sidelined. Singapore tariff math: at current FX, every $1/MMBtu move shifts the headline ¢/kWh by ~0.6¢.",
+      "why": "What sets next quarter's bill."
+    },
+    {
+      "id": "s002", "src": "market", "kind": "market", "date": "2026-05-19", "ttl": "Brent crude",
+      "headline": "Brent settles $73.40, off the Hormuz risk premium",
+      "body": "Down from $81 mid-April as cargoes resume; tail risk priced in via $5–6 implied vol premium that hasn't fully unwound.",
+      "why": "Pipeline gas price formulas in MY/ID contracts track oil with a 3–6 month lag."
+    },
+    {
+      "id": "s003", "src": "ema", "kind": "official-sg", "date": "2026-05-14", "ttl": "Tariff statement",
+      "headline": "Q3 2026 regulated tariff confirmed at 29.93¢/kWh incl. GST",
+      "body": "Up 0.21¢ on Q2. EMA cites the residual effect of April Hormuz disruption on LNG procurement costs; expects easing into Q4 if regional shipping normalises.",
+      "why": "First real-world tariff print already reflecting Middle-East shock."
+    },
+    {
+      "id": "s004", "src": "ema", "kind": "official-sg", "date": "2026-05-08", "ttl": "Import target",
+      "headline": "6 GW low-carbon import target reaffirmed; first 1.2 GW from Indonesia, Cambodia online by 2028",
+      "body": "Six conditional approvals issued in 2024 progressing to LOA. Subsea cable construction for Sun Cable AAPowerLink still pending FID re-tabling.",
+      "why": "Largest single decarbonisation lever — and the one most exposed to construction delay."
+    },
+    {
+      "id": "s005", "src": "nccs", "kind": "official-sg", "date": "2026-04-30", "ttl": "Carbon tax",
+      "headline": "Carbon tax at S$45/tCO₂e in 2026; trajectory to S$50–80 by 2030 unchanged",
+      "body": "Pass-through to electricity tariff continues to be smoothed quarterly. Revenue ring-fenced for transition support to large emitters and household rebates via U-Save.",
+      "why": "Fiscal infrastructure for decarbonisation, with distributional consequences."
+    },
+    {
+      "id": "s006", "src": "mti", "kind": "official-sg", "date": "2026-04-22", "ttl": "Hormuz statement",
+      "headline": "Some Singapore LNG cargoes affected by Middle East conflict; supply security holding",
+      "body": "Diversion to alternative loadings (Australia, US Gulf) absorbed the shock. SLNG terminal utilisation rose to ~78% in April vs 65% baseline.",
+      "why": "Direct attribution of a Hormuz event to SG supply — proving the link the dashboard names."
+    },
+    {
+      "id": "s007", "src": "mse", "kind": "official-sg", "date": "2026-04-15", "ttl": "Solar target",
+      "headline": "3 GWp solar by 2030 — Tengeh, Pulau Sebarok next phases approved",
+      "body": "Includes 250 MWp on Sembawang vertical surfaces; floating solar still the bulk. Beyond 3 GWp the constraint is squarely land.",
+      "why": "Solar progress is real, but the published ceiling is on record."
+    },
+    {
+      "id": "s008", "src": "sp", "kind": "operator", "date": "2026-05-12", "ttl": "OEM uptake",
+      "headline": "Open Electricity Market household uptake at 39% nationally",
+      "body": "Highest in Bukit Timah, Punggol; lowest in mature estates. Average retailer-vs-tariff saving narrowed to 12% as wholesale prices held.",
+      "why": "The free-money-on-the-table figure the dashboard quotes."
+    },
+    {
+      "id": "s009", "src": "sembcorp", "kind": "operator", "date": "2026-04-28", "ttl": "Imports",
+      "headline": "Sembcorp signs PPA for 600 MW solar+storage from Bulan Island, Indonesia",
+      "body": "First subsea cable expected commissioning H2 2028; 25-year contract terms confidential. PPA price reportedly competitive with current CCGT LCOE.",
+      "why": "A real molecule-side data point on the imports pathway."
+    },
+    {
+      "id": "s010", "src": "keppel", "kind": "operator", "date": "2026-03-30", "ttl": "Hydrogen-ready",
+      "headline": "Keppel's Sakra plant on track for 30% hydrogen co-firing trial in 2027",
+      "body": "Storage and supply chain for the 30% hydrogen volumes remain the binding constraint, not the plant itself.",
+      "why": "The bridge fuel hedge is being built — the bet is on the supply chain catching up."
+    },
+    {
+      "id": "s011", "src": "iea", "kind": "intl", "date": "2026-05-06", "ttl": "WEO update",
+      "headline": "IEA: ASEAN power demand to grow 4% p.a. through 2030; gas dependence persistent",
+      "body": "Coal-to-gas switching in Vietnam, Philippines, Indonesia adds ~25 bcm/yr LNG demand; Singapore competes for cargoes in the same basin.",
+      "why": "Singapore's gas tail risk is regional, not bilateral."
+    },
+    {
+      "id": "s012", "src": "irena", "kind": "intl", "date": "2026-04-18", "ttl": "Cost report",
+      "headline": "IRENA: Utility solar LCOE in tropical Asia drops below $35/MWh in 2025 prints",
+      "body": "Land-light Singapore still pays a premium for the same MWh; the gap is paid for in imports.",
+      "why": "Why imports are competitive even at cable cost — the absent domestic cost stack."
+    },
+    {
+      "id": "s013", "src": "ace", "kind": "intl", "date": "2026-04-02", "ttl": "APG progress",
+      "headline": "ASEAN Centre for Energy: APG enhanced framework targets full integration 2045",
+      "body": "Phase 2 multilateral trade rules ratified; Singapore-Malaysia-Indonesia-Cambodia LOAs are the proving ground.",
+      "why": "Regional plumbing for the 6 GW import target."
+    },
+    {
+      "id": "s014", "src": "id_esdm", "kind": "regional", "date": "2026-05-09", "ttl": "Indonesia",
+      "headline": "Indonesia greenlights Riau solar export zone; reserves 15% offtake for domestic demand",
+      "body": "Pulau Bulan and adjacent islands designated for export power generation. Domestic-offtake reservation reduces export ceiling but improves political durability.",
+      "why": "Counterparty risk + counterparty intent on the imports pathway."
+    },
+    {
+      "id": "s015", "src": "my_petras", "kind": "regional", "date": "2026-04-12", "ttl": "Malaysia",
+      "headline": "Petronas: piped gas to Singapore contracted through 2031, renewal talks open",
+      "body": "Volume terms held; price formula migrating from Brent-linked to a hybrid of Brent + Henry Hub. Singapore's negotiating position is the LNG alternative.",
+      "why": "40% of SG gas supply is the renewal of this one contract."
+    },
+    {
+      "id": "s016", "src": "bnef", "kind": "analyst", "date": "2026-05-15", "ttl": "Forecast",
+      "headline": "BNEF: SG grid emissions intensity to fall to 0.25 kgCO₂/kWh by 2035 if 6 GW import target hits",
+      "body": "Sensitivity: if imports slip to 4 GW the 2035 intensity stalls near 0.34. The imports timeline is the carbon timeline.",
+      "why": "Outside-the-government modelling of the dashboard's central pathway."
+    },
+    {
+      "id": "s017", "src": "woodmac", "kind": "analyst", "date": "2026-04-26", "ttl": "Hydrogen",
+      "headline": "Wood Mac: green hydrogen at SGD$5–7/kg by 2032 is the inflection for CCGT co-firing",
+      "body": "Below $5/kg, hydrogen co-firing at 30% pencils against carbon tax pass-through. Above $7/kg, it's a stranded option.",
+      "why": "The narrow price window that decides whether H₂-ready CCGTs are a hedge or a stranded asset."
+    },
+    {
+      "id": "s018", "src": "platts", "kind": "analyst", "date": "2026-05-18", "ttl": "Spot LNG",
+      "headline": "Platts JKM curve: front-month $12.85, M+6 $11.40, M+12 $10.95",
+      "body": "Backwardation widens on incremental US Gulf and Qatar capacity expected late 2026. Forward curve says the squeeze eases.",
+      "why": "Market-priced disagreement with the Hormuz tail risk."
+    },
+    {
+      "id": "s019", "src": "esi", "kind": "analyst", "date": "2026-05-03", "ttl": "Policy note",
+      "headline": "NUS ESI: Singapore's electricity decarbonisation depends on three trust relationships — Indonesia, Malaysia, the LNG market",
+      "body": "Argues that hedging the LNG market is well-developed; hedging the bilateral relationships is under-instrumented.",
+      "why": "Independent academic framing that the dashboard mirrors."
+    },
+    {
+      "id": "s020", "src": "cna", "kind": "press", "date": "2026-05-17", "ttl": "News",
+      "headline": "CNA: Q3 tariff hike second consecutive — analysts split on whether it's the new normal",
+      "body": "Some attribute to Middle East persistence; others to carbon-tax pass-through finally biting. The two stories have different policy implications.",
+      "why": "The narrative the public will read; check it against the upstream signal."
+    },
+    {
+      "id": "s021", "src": "st", "kind": "press", "date": "2026-05-10", "ttl": "Feature",
+      "headline": "Straits Times: 'Most households still don't know what the Open Electricity Market is'",
+      "body": "Survey of 1,200 found only 31% could correctly describe OEM; uptake at 39% suggests inertia outweighs cost rationale.",
+      "why": "The literacy lever — the upstream behavioural node in the map."
+    },
+    {
+      "id": "s022", "src": "reuters_e", "kind": "press", "date": "2026-05-13", "ttl": "Wire",
+      "headline": "Reuters: Sun Cable backers seek SGD$2bn top-up for Australia-Singapore link, FID slipped to 2027",
+      "body": "Delay attributed to permitting in Indonesia EEZ. Off-take agreement with SG still in principle.",
+      "why": "The single most ambitious import lever is sliding."
+    },
+    {
+      "id": "s023", "src": "ft_energy", "kind": "press", "date": "2026-05-05", "ttl": "Analysis",
+      "headline": "FT: ASEAN Power Grid is the project the region keeps promising to finally build",
+      "body": "Notes 30 years of intent, 30 months of execution. Argues Singapore's demand for clean MWh is the only forcing function with capital behind it.",
+      "why": "Outside-in view on regional pace."
+    },
+    {
+      "id": "s024", "src": "nikkei_e", "kind": "press", "date": "2026-04-09", "ttl": "Asia energy",
+      "headline": "Nikkei: SMR vendors court Southeast Asia; Singapore remains 'monitoring' but not procuring",
+      "body": "Philippines, Indonesia in active LOI; Singapore's 2010–12 pre-feasibility verdict of 'unsuitable' still standing pending SMR-specific review.",
+      "why": "The nuclear card stays in the deck."
+    },
+    {
+      "id": "s025", "src": "wwf_sg", "kind": "civil", "date": "2026-04-21", "ttl": "Position",
+      "headline": "WWF SG: 'Low-carbon imports' label must include lifecycle methane, not just generation point",
+      "body": "Argues current framing risks repeating the 'clean gas' framing — clean at the wire, not clean at the wellhead.",
+      "why": "Pushes back on the definition-bias the dashboard already names."
+    },
+    {
+      "id": "s026", "src": "climaterally", "kind": "civil", "date": "2026-04-03", "ttl": "Statement",
+      "headline": "SG Climate Rally: net-zero by 2050 needs a 2030 plan with electricity sector teeth",
+      "body": "Calls for binding sectoral targets within the NDC, not just headline tonnage. Notes industrial decarbonisation lags grid decarbonisation.",
+      "why": "Civil-society reading of where the gap is."
+    },
+    {
+      "id": "s027", "src": "market", "kind": "market", "date": "2026-05-19", "ttl": "TTF",
+      "headline": "TTF (European gas) settles €31/MWh",
+      "body": "Within the band that keeps European LNG demand subdued; gives Asian buyers room. If TTF breaks €40, Asia outbids itself.",
+      "why": "Why Asian buyers must watch European weather and politics."
+    },
+    {
+      "id": "s028", "src": "bnef", "kind": "analyst", "date": "2026-03-22", "ttl": "Carbon",
+      "headline": "BNEF: SG industrial emitters are roughly half-hedged on the S$45→S$50–80 trajectory",
+      "body": "Refineries and petrochems have invested in efficiency; semiconductors and data centres less so. Carbon tax exposure asymmetric within 'industry'.",
+      "why": "Why 'industry' as a single bar hides important detail."
+    },
+    {
+      "id": "s029", "src": "iea", "kind": "intl", "date": "2026-03-14", "ttl": "Methane",
+      "headline": "IEA Methane Tracker update: SG-imported LNG basket carries ~0.6% upstream leakage on average",
+      "body": "Lower than Asian average due to higher Australia, US Gulf share; Qatar-loaded cargoes weight the figure.",
+      "why": "What the 'clean gas' framing leaves out, in numbers."
+    },
+    {
+      "id": "s030", "src": "esi", "kind": "analyst", "date": "2026-02-19", "ttl": "Demand",
+      "headline": "NUS ESI: data-centre share of peak SG demand now ~12%, projected 18–22% by 2030",
+      "body": "AI inference workloads are the largest swing variable. Demand response and on-site renewables emerging as conditions of approval.",
+      "why": "The fast-rising load on the demand side of the system."
+    }
+  ]
+}
