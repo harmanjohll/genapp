@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ECDM · Map — Singapore Energy as a System</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d0f14'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23e8a33d'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg-grad: #11141b;
+    --panel: #161a22;
+    --panel-edge: #232936;
+    --ink: #e7eaf0;
+    --ink-dim: #9aa3b2;
+    --ink-faint: #5a6172;
+
+    /* category colours */
+    --c-supply:   #e8a33d;
+    --c-demand:   #4fc2a6;
+    --c-price:    #8bc34a;
+    --c-policy:   #5b9bd5;
+    --c-pathway:  #a98edb;
+    --c-geo:      #e06c75;
+    --c-behaviour:#ec87c0;
+    --c-bias:     #b7bfca;
+
+    --edge-intra: rgba(120,130,150,0.16);
+    --edge-inter: rgba(150,165,195,0.34);
+    --edge-bias:  rgba(232,163,61,0.40);
+
+    --display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+    --sans: 'Avenir Next', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 800px at 30% 18%, var(--bg-grad), var(--bg) 70%);
+  }
+
+  #stage { position: fixed; inset: 0; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  canvas.grabbing { cursor: grabbing; }
+
+  /* ---------- Title block ---------- */
+  #titlebar {
+    position: fixed; top: 18px; left: 20px; right: 280px;
+    pointer-events: none; z-index: 5;
+  }
+  #titlebar nav {
+    pointer-events: auto;
+    display: flex; gap: 16px; align-items: center;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  #titlebar nav a { color: var(--ink-faint); text-decoration: none; }
+  #titlebar nav a:hover { color: var(--ink); }
+  #titlebar nav a.is-here { color: var(--c-supply); }
+  #titlebar nav span.dot { color: var(--ink-faint); opacity: 0.6; }
+  #titlebar h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.2px;
+    margin: 0;
+    color: var(--ink);
+    text-shadow: 0 1px 14px rgba(0,0,0,0.6);
+  }
+  #titlebar p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: var(--ink-dim);
+    max-width: 540px;
+    line-height: 1.45;
+  }
+
+  /* ---------- Control panel ---------- */
+  #controls {
+    position: fixed; top: 16px; right: 16px; z-index: 8;
+    width: 248px;
+    background: linear-gradient(180deg, rgba(22,26,34,0.95), rgba(18,21,28,0.95));
+    border: 1px solid var(--panel-edge);
+    border-radius: 12px;
+    padding: 12px 13px 14px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+    font-size: 12px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  #controls h2 {
+    font-family: var(--sans);
+    font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--ink-faint);
+    margin: 13px 0 7px;
+  }
+  #controls h2:first-child { margin-top: 2px; }
+
+  .search-wrap { position: relative; }
+  #search {
+    width: 100%; padding: 8px 9px; font-size: 12px; font-family: var(--sans);
+    background: #0e1117; border: 1px solid var(--panel-edge); color: var(--ink);
+    border-radius: 8px; outline: none;
+  }
+  #search:focus { border-color: var(--c-policy); }
+  #searchResults {
+    position: absolute; left: 0; right: 0; top: 38px; z-index: 12;
+    background: #0e1117; border: 1px solid var(--panel-edge); border-radius: 8px;
+    overflow: hidden; display: none;
+  }
+  #searchResults button {
+    display: block; width: 100%; text-align: left; padding: 7px 9px;
+    background: none; border: none; color: var(--ink-dim); font-size: 12px;
+    font-family: var(--sans); cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  #searchResults button:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 5px; border-radius: 7px; cursor: pointer;
+    user-select: none; transition: background 0.12s;
+  }
+  .legend-item:hover { background: rgba(255,255,255,0.04); }
+  .legend-item.off { opacity: 0.34; }
+  .legend-item.off .swatch { box-shadow: none; }
+  .swatch {
+    width: 11px; height: 11px; border-radius: 50%; flex: none;
+    box-shadow: 0 0 8px 1px currentColor;
+  }
+  .swatch.bias { border-radius: 3px; box-shadow: none; border: 1.5px dashed currentColor; background: transparent !important; }
+  .legend-item span { color: var(--ink-dim); font-size: 12px; }
+  .legend-item .count { margin-left: auto; color: var(--ink-faint); font-size: 10.5px; }
+
+  .seg { display: flex; background: #0e1117; border: 1px solid var(--panel-edge); border-radius: 8px; overflow: hidden; }
+  .seg button {
+    flex: 1; padding: 7px 4px; font-size: 11px; font-family: var(--sans);
+    background: none; border: none; color: var(--ink-dim); cursor: pointer;
+  }
+  .seg button.active { background: rgba(91,155,213,0.22); color: var(--ink); }
+
+  .toggle-row { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 5px; border-radius: 7px; user-select: none; }
+  .toggle-row:hover { background: rgba(255,255,255,0.04); }
+  .switch { width: 30px; height: 17px; border-radius: 10px; background: #2a3140; position: relative; flex: none; transition: background 0.15s; }
+  .switch::after { content:''; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--ink-dim); transition: transform 0.15s, background 0.15s; }
+  .toggle-row.on .switch { background: rgba(232,163,61,0.45); }
+  .toggle-row.on .switch::after { transform: translateX(13px); background: var(--c-supply); }
+  .toggle-row span { font-size: 12px; color: var(--ink-dim); }
+
+  .btn-row { display: flex; gap: 7px; margin-top: 4px; }
+  .ghost-btn {
+    flex: 1; padding: 7px; font-size: 11px; font-family: var(--sans);
+    background: #0e1117; border: 1px solid var(--panel-edge); color: var(--ink-dim);
+    border-radius: 8px; cursor: pointer;
+  }
+  .ghost-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  /* ---------- Detail drawer ---------- */
+  #detail {
+    position: fixed; z-index: 9; left: 16px; bottom: 16px;
+    width: 330px; max-width: calc(100vw - 32px);
+    background: linear-gradient(180deg, rgba(24,28,37,0.97), rgba(18,21,28,0.97));
+    border: 1px solid var(--panel-edge); border-radius: 14px;
+    padding: 16px 17px 17px;
+    box-shadow: 0 22px 60px rgba(0,0,0,0.6);
+    transform: translateY(140%); transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+    max-height: calc(100vh - 32px); overflow-y: auto;
+  }
+  #detail.open { transform: translateY(0); }
+  #detail .cat-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  #detail .cat-tag .dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 7px 1px currentColor; }
+  #detail h3 { font-family: var(--display); font-size: 21px; font-weight: 600; margin: 8px 0 2px; line-height: 1.2; }
+  #detail .stat { font-size: 12.5px; color: var(--c-supply); font-weight: 600; margin-bottom: 9px; font-variant-numeric: tabular-nums; }
+  #detail .desc { font-size: 13px; line-height: 1.6; color: var(--ink-dim); margin: 0 0 13px; }
+  #detail .conn-block { margin-top: 11px; }
+  #detail .conn-label { font-size: 10px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  #detail .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  #detail .chip {
+    font-size: 11.5px; padding: 4px 9px; border-radius: 20px; cursor: pointer;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--panel-edge); color: var(--ink-dim);
+  }
+  #detail .chip:hover { color: var(--ink); border-color: var(--ink-faint); }
+  #detail .chip.bias { border-style: dashed; border-color: rgba(232,163,61,0.55); color: #f0c07a; }
+  #detail .bias-note {
+    margin-top: 12px; padding: 10px 11px; border-radius: 9px;
+    background: rgba(232,163,61,0.08); border: 1px solid rgba(232,163,61,0.22);
+    font-size: 12px; line-height: 1.55; color: #e8c690;
+  }
+  #detail .bias-note b { color: #f0c07a; }
+  #detailClose {
+    position: absolute; top: 12px; right: 12px; width: 26px; height: 26px;
+    border-radius: 50%; background: rgba(255,255,255,0.06); border: none; color: var(--ink-dim);
+    cursor: pointer; font-size: 15px; line-height: 1;
+  }
+  #detailClose:hover { background: rgba(255,255,255,0.12); color: var(--ink); }
+
+  /* ---------- Hint + mobile ---------- */
+  #hint {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4;
+    font-size: 11px; color: var(--ink-faint); pointer-events: none; text-align: center;
+    background: rgba(13,15,20,0.6); padding: 5px 12px; border-radius: 20px;
+    transition: opacity 0.5s;
+  }
+  @media (max-width: 720px) {
+    #controls { top: auto; bottom: 14px; right: 12px; left: 12px; width: auto; max-height: 44vh; }
+    #detail { bottom: auto; top: 92px; left: 12px; }
+    #titlebar p { display: none; }
+    #hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="cv"></canvas></div>
+
+<div id="titlebar">
+  <nav>
+    <a href="../">ECDM</a>
+    <span class="dot">·</span>
+    <a href="../">Dashboard</a>
+    <a href="./" class="is-here">Map</a>
+    <a href="../signals/">Signals</a>
+  </nav>
+  <h1>Singapore Energy — A Macro-Systems Map</h1>
+  <p>Eight interlocking systems, their cross-links (interconnections) and their internal wiring (intraconnections). Dashed nodes are framing biases, attached to what they distort. Tap any node. The map is data-driven — see <code style="font-family:inherit;color:var(--ink-dim)">/data/map-nodes.json</code> to add more.</p>
+</div>
+
+<aside id="controls">
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Search a node…" autocomplete="off" aria-label="Search nodes">
+    <div id="searchResults"></div>
+  </div>
+
+  <h2>Connections shown</h2>
+  <div class="seg" id="connSeg">
+    <button data-mode="all" class="active">All</button>
+    <button data-mode="inter">Inter</button>
+    <button data-mode="intra">Intra</button>
+  </div>
+
+  <h2>Systems</h2>
+  <div id="legend"></div>
+
+  <h2>Bias layer</h2>
+  <div class="toggle-row on" id="biasToggle"><div class="switch"></div><span>Show framing biases</span></div>
+
+  <div class="btn-row">
+    <button class="ghost-btn" id="recenter">Re-centre</button>
+    <button class="ghost-btn" id="reheat">Reflow</button>
+  </div>
+</aside>
+
+<section id="detail" aria-live="polite">
+  <button id="detailClose" aria-label="Close">×</button>
+  <div id="detailBody"></div>
+</section>
+
+<div id="hint">Drag to pan · scroll to zoom · drag a node to pull it · tap a node for detail</div>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   1. DATA  —  Singapore energy macro-system
+   Every node carries a short, sourced description. Numbers are seed values
+   (EMA / SP Group / NCCS / data.gov.sg, 2024–26) for Claude Code to refresh.
+   ========================================================================= */
+
+const CATS = {
+  supply:   { label: "Supply",                color: "#e8a33d" },
+  demand:   { label: "Demand",                color: "#4fc2a6" },
+  price:    { label: "Price & Economics",     color: "#8bc34a" },
+  policy:   { label: "Policy & Governance",   color: "#5b9bd5" },
+  pathway:  { label: "Decarbonisation Paths", color: "#a98edb" },
+  geo:      { label: "Geopolitics & External",color: "#e06c75" },
+  behaviour:{ label: "Behaviour & Society",   color: "#ec87c0" },
+  bias:     { label: "Framing & Bias",        color: "#b7bfca" }
+};
+
+const NODES = [
+  // ---------------- SUPPLY ----------------
+  { id:"gas", cat:"supply", w:11, label:"Natural Gas", stat:"93.1% of fuel mix (2025 H1)",
+    desc:"The spine of the whole system. Singapore generates nine in every ten units of electricity from natural gas, the cleanest fossil fuel but a single imported one." },
+  { id:"piped", cat:"supply", w:6, label:"Piped Gas (MY / ID)", stat:"~40% of gas supply",
+    desc:"Gas arriving by pipeline from Malaysia and Indonesia. Cheaper than LNG but tied to bilateral relationships and contracts that expire." },
+  { id:"lng", cat:"supply", w:7, label:"LNG Imports", stat:"~60% of gas, shipped",
+    desc:"Liquefied natural gas shipped from Qatar, Australia, the US and others. The flexible part of supply, and the part most exposed to global shipping chokepoints." },
+  { id:"slng", cat:"supply", w:4, label:"SLNG Terminal", stat:"Jurong Island",
+    desc:"Singapore LNG Corporation's regasification terminal. Throughput is being expanded so gas can remain the bridge fuel through the transition." },
+  { id:"plants", cat:"supply", w:8, label:"Power Plants (CCGT / OCGT)", stat:"31 plants operating",
+    desc:"Combined-cycle units carry the base load; fast-start open-cycle units cover contingencies in under ten minutes. Four hydrogen-ready plants were added in 2025." },
+  { id:"solar", cat:"supply", w:6, label:"Solar PV", stat:"2.5% of mix · 1.37 GWac (2025 H1)",
+    desc:"The only domestic renewable at scale. Rooftops, reservoirs and vertical surfaces. Real and growing, but physically capped by land at roughly 3% of demand." },
+  { id:"imports_elec", cat:"supply", w:6, label:"Electricity Imports", stat:"~0.5% today · target 30% by 2035",
+    desc:"Low-carbon electricity drawn from the region through interconnectors. Tiny today, central to the 2035 plan, dependent on subsea cables not yet built." },
+  { id:"bess", cat:"supply", w:5, label:"Energy Storage (BESS)", stat:"285 MWh · largest in SE Asia",
+    desc:"Batteries that smooth solar intermittency and hold reserve. The hinge that lets a gas grid absorb variable renewables." },
+  { id:"coal", cat:"supply", w:4, label:"Coal & Petroleum", stat:"1.2% and falling",
+    desc:"The residual high-carbon sliver of the mix, being squeezed out. Its decline is most of the recent fall in grid carbon intensity." },
+  { id:"waste", cat:"supply", w:4, label:"Waste-to-Energy & Biomass", stat:"part of 'other', ~3%",
+    desc:"Incinerated municipal waste and biomass. Small, but counted as lower-carbon and a quiet contributor to the falling emission factor." },
+
+  // ---------------- DEMAND ----------------
+  { id:"peak", cat:"demand", w:7, label:"Peak Demand", stat:"~8 GW now · 9.6–11.4 GW by 2031",
+    desc:"The highest call on the grid in any moment, the 'rush hour' of power. Forecast to grow 2.4–4.8% a year, which is what forces new plants to be built." },
+  { id:"industry", cat:"demand", w:7, label:"Industry", stat:"39.4% of consumption",
+    desc:"Refineries, petrochemicals, semiconductors. The largest slice, the hardest to decarbonise, and the main payer of the carbon tax." },
+  { id:"commerce", cat:"demand", w:7, label:"Commerce & Services", stat:"40.2% of consumption",
+    desc:"Offices, malls, hotels, the air-conditioned city. The other dominant slice, driven by cooling in a tropical climate." },
+  { id:"households", cat:"demand", w:7, label:"Households", stat:"14.6% of consumption (8 TWh)",
+    desc:"Where most public attention lands and where the least electricity is actually used. The gap between attention and share is itself a systems insight." },
+  { id:"datacentres", cat:"demand", w:6, label:"Data Centres", stat:"fast-rising demand driver",
+    desc:"AI and digital infrastructure. A small footprint growing quickly, increasingly the reason peak demand forecasts keep rising." },
+  { id:"transport", cat:"demand", w:5, label:"Transport & EVs", stat:"5.3% · petrol/diesel phase-out by 2040",
+    desc:"Electrifying transport moves emissions from the tailpipe onto the grid. Cleaner only if the grid itself gets cleaner." },
+
+  // ---------------- PRICE & ECONOMICS ----------------
+  { id:"globalgas", cat:"price", w:8, label:"Global Gas & Oil Price", stat:"sets the fuel cost",
+    desc:"Singapore is a price-taker. The single largest swing factor in the bill, set by markets and conflicts far outside the country's control." },
+  { id:"tariff", cat:"price", w:7, label:"Regulated Tariff", stat:"29.72 c/kWh incl. GST (Q2 2026)",
+    desc:"Revised every quarter from average gas prices in the prior quarter. The visible price that translates global volatility into a household number." },
+  { id:"oem", cat:"price", w:5, label:"Open Electricity Market", stat:"retailers 15–30% below tariff",
+    desc:"Since 2019 households can buy from competing retailers. A real lever most people never pull, partly from inertia and partly from low literacy." },
+  { id:"bill", cat:"price", w:6, label:"Household Bill", stat:"~S$130/mo, 4-room HDB",
+    desc:"The endpoint where the entire upstream system becomes one number a family feels. The only part of the system most people ever see." },
+  { id:"carbontax", cat:"price", w:7, label:"Carbon Tax", stat:"S$45/tCO₂e (2026) → S$50–80 by 2030",
+    desc:"Southeast Asia's first carbon price. Falls mainly on ~50 large emitters, covering ~70% of emissions, climbing fast to reshape investment." },
+  { id:"secpremium", cat:"price", w:4, label:"Energy Security Cost", stat:"reserves, diversification, cables",
+    desc:"The price of resilience: diesel reserves, gas stockpiles, GasCo aggregation, subsea cables. Rarely itemised, always paid." },
+
+  // ---------------- POLICY & GOVERNANCE ----------------
+  { id:"ema", cat:"policy", w:8, label:"Energy Market Authority", stat:"the regulator",
+    desc:"Plans capacity on a rolling ten-year horizon, sets the tariff guidelines, runs the market and commissions new plants. The hand on most levers." },
+  { id:"netzero", cat:"policy", w:7, label:"Net Zero 2050", stat:"national target",
+    desc:"The destination that organises every pathway. Brought forward from 'second half of the century' to a firm 2050, though the route is not fully mapped." },
+  { id:"ndc", cat:"policy", w:6, label:"NDC Targets", stat:"≤60 Mt (2030) · 45–50 Mt (2035)",
+    desc:"Singapore's Paris commitments. The interim checkpoints that turn a 2050 promise into near-term obligations." },
+  { id:"greenplan", cat:"policy", w:6, label:"Green Plan 2030", stat:"whole-of-nation roadmap",
+    desc:"The umbrella that houses the Energy Reset: solar deployment, efficiency, green finance, the EV transition." },
+  { id:"gasco", cat:"policy", w:5, label:"GasCo", stat:"established 2025",
+    desc:"State buyer that centralises gas procurement, aggregating demand to win steadier supply and steadier prices." },
+  { id:"sgei", cat:"policy", w:5, label:"SGEI", stat:"established April 2025",
+    desc:"Singapore Energy Interconnections: the body building and operating the cross-border cables that electricity imports depend on." },
+
+  // ---------------- DECARBONISATION PATHWAYS ----------------
+  { id:"regimport", cat:"pathway", w:7, label:"Regional Imports (6 GW)", stat:"~30% of demand by 2035",
+    desc:"The largest single bet. Importing clean power from neighbours, raised from a 4 GW to a 6 GW target. Trades fuel dependence for grid dependence." },
+  { id:"domsolar", cat:"pathway", w:6, label:"Domestic Solar (3 GWp)", stat:"target raised Feb 2026",
+    desc:"Maximising every available surface. The 2 GWp target was hit early and lifted to 3 GWp, yet the physical ceiling stays near 3% of demand." },
+  { id:"h2ccgt", cat:"pathway", w:6, label:"Hydrogen-ready CCGT", stat:"≥11 plants by 2032",
+    desc:"New gas plants built to run on at least 30% hydrogen later. The bridge made future-proof, or the gas lock-in dressed for the transition." },
+  { id:"hydrogen", cat:"pathway", w:5, label:"Hydrogen & Ammonia", stat:"up to 50% of power by 2050 (notional)",
+    desc:"The long-horizon hope. A National Hydrogen Strategy and S$184m in research, but not yet commercial at the scale or price needed." },
+  { id:"ccs", cat:"pathway", w:5, label:"Carbon Capture (CCS / CCUS)", stat:"feasibility studies, 2025",
+    desc:"Catching emissions from gas plants rather than avoiding them. Three feasibility studies commissioned in 2025; unproven at grid scale here." },
+  { id:"nuclear", cat:"pathway", w:5, label:"Advanced Nuclear (SMR)", stat:"under study, not deployed",
+    desc:"A 2010–12 study judged it unsuitable; small modular reactors are now being monitored. Carries the largest gap between potential and public acceptance." },
+  { id:"geothermal", cat:"pathway", w:4, label:"Geothermal", stat:"early exploration",
+    desc:"Deep-heat resources being investigated in the north. Speculative, but one of the few domestic firm low-carbon options if it proves out." },
+  { id:"apg", cat:"pathway", w:6, label:"ASEAN Power Grid", stat:"full integration target 2045",
+    desc:"The regional dream Singapore's demand is helping fund. Connect the region's renewables to the region's cities; progress is real but slow." },
+
+  // ---------------- GEOPOLITICS & EXTERNAL ----------------
+  { id:"lngmarket", cat:"geo", w:6, label:"Global LNG Market", stat:"the price-setting arena",
+    desc:"A globally traded commodity. When Europe bids for cargoes or a producer stumbles, Singapore competes on the same spot market." },
+  { id:"hormuz", cat:"geo", w:6, label:"Strait of Hormuz", stat:"~20% of global LNG passed through",
+    desc:"A shipping chokepoint. Conflict here in 2025–26 disrupted some Middle East cargoes and pushed Singapore to source LNG elsewhere." },
+  { id:"mideast", cat:"geo", w:5, label:"Middle East Conflict", stat:"2025–26 disruption",
+    desc:"A live external shock. EMA confirmed in April 2026 that some LNG shipments were affected, with tariff effects expected to feed through over following quarters." },
+  { id:"ukraine", cat:"geo", w:5, label:"Russia–Ukraine War", stat:"2022 gas crunch",
+    desc:"The shock that drove the 2022 tariff spike, the clearest recent proof that a distant war lands on a Singapore electricity bill." },
+  { id:"malaysia", cat:"geo", w:6, label:"Malaysia", stat:"pipeline + grid neighbour",
+    desc:"Source of piped gas, partner in the second phase of power trade, and the land bridge every regional import must cross." },
+  { id:"indonesia", cat:"geo", w:6, label:"Indonesia", stat:"pipeline + Bulan solar",
+    desc:"Source of piped gas and host of planned solar imports from Pulau Bulan. Abundant renewable potential, located away from its own demand." },
+  { id:"laos", cat:"geo", w:5, label:"Laos", stat:"hydropower, since June 2022",
+    desc:"The 'battery of Southeast Asia'. First country to sell power to Singapore, through the four-nation LTMS project via Thailand and Malaysia." },
+  { id:"australia", cat:"geo", w:5, label:"Australia (Sun Cable)", stat:"AAPowerLink, ~1.75 GW",
+    desc:"The most ambitious import: solar from the Northern Territory through a 4,300 km subsea cable. Technically daring, financially fragile." },
+
+  // ---------------- BEHAVIOUR & SOCIETY ----------------
+  { id:"aircon", cat:"behaviour", w:6, label:"Air-conditioning Load", stat:"150–200 kWh/mo per unit",
+    desc:"The single largest household lever in a tropical city. One split unit run eight hours a day can be a third of a family's electricity." },
+  { id:"standby", cat:"behaviour", w:5, label:"Standby / Phantom Load", stat:"10–30 kWh/mo, doing nothing",
+    desc:"Devices drawing power while idle. Across 1.4 million homes it is a power station's worth of electricity spent on nothing." },
+  { id:"switching", cat:"behaviour", w:4, label:"Retailer Switching", stat:"15–30% potential saving",
+    desc:"Choosing a cheaper Open Market plan. A low-friction action with real savings, blocked mostly by inertia rather than cost." },
+  { id:"literacy", cat:"behaviour", w:5, label:"Energy Literacy", stat:"the upstream enabler",
+    desc:"Whether people understand where their power comes from and what moves the price. Low literacy is why most levers stay unpulled." },
+  { id:"complacency", cat:"behaviour", w:5, label:"Reliability Complacency", stat:"0.14 min outage/yr",
+    desc:"A grid this reliable trains people to ignore it. The very excellence of supply manufactures the inattention that lets structural risk hide." },
+  { id:"attitudes", cat:"behaviour", w:4, label:"Climate Attitudes", stat:"shapes acceptance",
+    desc:"Public willingness to accept higher prices, rooftop solar, or nuclear. The soft constraint that decides which hard pathways are politically possible." },
+
+  // ---------------- FRAMING & BIAS (the meta-layer) ----------------
+  { id:"bias_crisis", cat:"bias", w:5, label:'The "Crisis" Frame', stat:"loss-framing bias",
+    desc:"Calling this a 'crisis' grabs attention but can distort. The grid is not failing; the risk is slow and structural. Panic framing and complacency framing both mislead.",
+    biasOf:["gas","complacency","netzero"] },
+  { id:"bias_clean", cat:"bias", w:5, label:'"Clean Gas" Framing', stat:"relative-not-absolute bias",
+    desc:"Gas is the cleanest fossil fuel, which is true and also a comfort. 'Cleaner than coal' quietly becomes 'clean', and a 93% fossil grid reads as green.",
+    biasOf:["gas","plants","carbontax"] },
+  { id:"bias_attribution", cat:"bias", w:5, label:"Household-vs-Industry Blame", stat:"attribution bias",
+    desc:"Campaigns target households, who use 14.6%, while industry and commerce use ~80%. Misplaced attribution can both over-burden families and let big emitters fade from view.",
+    biasOf:["households","industry","commerce"] },
+  { id:"bias_offset", cat:"bias", w:5, label:"Net-Zero Accounting", stat:"offshoring bias",
+    desc:"Net zero can lean on imported carbon credits and emissions counted elsewhere. A target met on paper is not always a tonne avoided in the atmosphere.",
+    biasOf:["netzero","ndc","carbontax"] },
+  { id:"bias_import", cat:"bias", w:5, label:'"Low-Carbon" Import Label', stat:"definition bias",
+    desc:"Imports are sold as clean, yet phase-two trade through Malaysia includes coal and gas power. The label can outrun the molecules actually flowing.",
+    biasOf:["imports_elec","regimport","malaysia"] },
+  { id:"bias_solar", cat:"bias", w:4, label:"Solar Optimism", stat:"ceiling bias",
+    desc:"Solar headlines celebrate rising targets while rarely stating the ceiling: land caps it near 3% of demand. Genuine progress framed as near-sufficiency.",
+    biasOf:["solar","domsolar"] },
+  { id:"bias_source", cat:"bias", w:5, label:"Single-Source Data", stat:"provenance bias",
+    desc:"Almost every figure here originates from one institution, the EMA. Authoritative, but a single official lens. Independent and contrarian data is scarce.",
+    biasOf:["ema","tariff","netzero"] },
+  { id:"bias_reliability", cat:"bias", w:4, label:"Reliability Halo", stat:"survivorship bias",
+    desc:"World-class uptime is read as world-class resilience. But reliability under normal conditions says little about exposure to a fuel-supply shock.",
+    biasOf:["complacency","peak","gas"] },
+  { id:"bias_gef", cat:"bias", w:4, label:"Emission-Factor Optics", stat:"methodology bias",
+    desc:"A falling grid emission factor looks like decarbonisation, but much of the recent fall is fuel-switching and method choice, not a structurally cleaner system.",
+    biasOf:["plants","netzero"] }
+];
+
+/* Edges. type is computed: 'bias' if either end is a bias node,
+   else 'intra' (same category) or 'inter' (different categories). */
+const RAW_EDGES = [
+  // intra-supply wiring
+  ["piped","gas"],["lng","gas"],["lng","slng"],["slng","gas"],["gas","plants"],
+  ["coal","plants"],["waste","plants"],["solar","bess"],["plants","bess"],["imports_elec","bess"],
+  // supply -> demand (generation meets the grid via peak)
+  ["plants","peak"],["solar","peak"],["imports_elec","peak"],
+  ["peak","industry"],["peak","commerce"],["peak","households"],["peak","datacentres"],["peak","transport"],
+  // price intra
+  ["globalgas","tariff"],["tariff","oem"],["tariff","bill"],["oem","bill"],["secpremium","tariff"],["carbontax","secpremium"],
+  // supply/geo -> price
+  ["gas","tariff"],["globalgas","gas"],["lngmarket","globalgas"],["lngmarket","lng"],
+  // geo intra + geo -> supply
+  ["mideast","hormuz"],["hormuz","lng"],["mideast","lng"],["ukraine","lngmarket"],["ukraine","globalgas"],
+  ["malaysia","piped"],["indonesia","piped"],["laos","imports_elec"],["malaysia","imports_elec"],["indonesia","imports_elec"],
+  // policy intra
+  ["ema","gasco"],["ema","sgei"],["ema","tariff"],["ema","oem"],["ema","plants"],
+  ["netzero","ndc"],["greenplan","netzero"],["ndc","netzero"],
+  // policy -> supply / price
+  ["gasco","gas"],["sgei","imports_elec"],["carbontax","ndc"],["carbontax","netzero"],["greenplan","domsolar"],
+  // policy -> pathways
+  ["netzero","regimport"],["netzero","domsolar"],["netzero","h2ccgt"],["netzero","hydrogen"],["netzero","ccs"],["netzero","nuclear"],["netzero","geothermal"],
+  // pathways intra
+  ["regimport","apg"],["h2ccgt","hydrogen"],["hydrogen","ccs"],["regimport","domsolar"],
+  // pathways -> supply
+  ["domsolar","solar"],["regimport","imports_elec"],["h2ccgt","plants"],["ccs","plants"],["nuclear","plants"],["geothermal","plants"],["regimport","bess"],
+  // pathways -> geo
+  ["apg","laos"],["apg","malaysia"],["apg","indonesia"],["regimport","australia"],["sgei","australia"],
+  // demand -> pathways / price
+  ["datacentres","h2ccgt"],["peak","regimport"],["datacentres","peak"],["industry","carbontax"],["transport","households"],["transport","domsolar"],
+  // carbon tax falls on industry
+  ["carbontax","industry"],["carbontax","plants"],
+  // behaviour intra
+  ["literacy","switching"],["literacy","attitudes"],["complacency","literacy"],["aircon","standby"],
+  // behaviour -> demand / price / pathway
+  ["aircon","households"],["standby","households"],["households","bill"],["switching","oem"],["attitudes","domsolar"],["attitudes","nuclear"],["literacy","bill"],
+
+  // ---- BIAS edges (dashed) generated from node.biasOf below, but a few extra cross-links: ----
+  ["bias_crisis","tariff"],["bias_source","ndc"]
+];
+
+/* expand biasOf into edges */
+NODES.forEach(n => {
+  if (n.biasOf) n.biasOf.forEach(t => RAW_EDGES.push([n.id, t]));
+});
+
+/* =========================================================================
+   2. BUILD GRAPH STRUCTURES
+   ========================================================================= */
+const nodeById = {};
+NODES.forEach(n => {
+  n.x = (Math.random()-0.5)*600;
+  n.y = (Math.random()-0.5)*400;
+  n.vx = 0; n.vy = 0;
+  n.r = 5 + n.w * 1.5;
+  n.deg = 0;
+  nodeById[n.id] = n;
+});
+
+const EDGES = [];
+const seen = new Set();
+RAW_EDGES.forEach(([a,b]) => {
+  if (!nodeById[a] || !nodeById[b]) return;
+  const key = a < b ? a+"|"+b : b+"|"+a;
+  if (seen.has(key)) return;
+  seen.add(key);
+  const na = nodeById[a], nb = nodeById[b];
+  let type;
+  if (na.cat === "bias" || nb.cat === "bias") type = "bias";
+  else if (na.cat === nb.cat) type = "intra";
+  else type = "inter";
+  const e = { a, b, na, nb, type };
+  EDGES.push(e);
+  na.deg++; nb.deg++;
+});
+
+// adjacency for highlighting + detail
+const adj = {};
+NODES.forEach(n => adj[n.id] = []);
+EDGES.forEach(e => { adj[e.a].push(e); adj[e.b].push(e); });
+
+/* =========================================================================
+   3. CANVAS + CAMERA
+   ========================================================================= */
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+const cam = { x: 0, y: 0, scale: 1 };
+
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  cv.style.width = W+"px"; cv.style.height = H+"px";
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener("resize", resize);
+resize();
+cam.x = W/2; cam.y = H/2;
+
+const toScreen = (wx, wy) => ({ x: cam.x + wx*cam.scale, y: cam.y + wy*cam.scale });
+const toWorld  = (sx, sy) => ({ x: (sx-cam.x)/cam.scale, y: (sy-cam.y)/cam.scale });
+
+/* =========================================================================
+   4. FORCE SIMULATION  (vanilla)
+   ========================================================================= */
+let alpha = 1;
+const LINK_DIST = { intra: 70, inter: 150, bias: 95 };
+const REPULSION = 5200;
+const CENTER_PULL = 0.012;
+
+function tick(){
+  if (alpha < 0.02) return;
+  const active = NODES.filter(n => n.visible);
+
+  // repulsion (O(n^2), fine for ~60 nodes)
+  for (let i=0;i<active.length;i++){
+    const a = active[i];
+    for (let j=i+1;j<active.length;j++){
+      const b = active[j];
+      let dx = a.x-b.x, dy = a.y-b.y;
+      let d2 = dx*dx+dy*dy; if (d2 < 1) d2 = 1;
+      const d = Math.sqrt(d2);
+      const f = REPULSION / d2;
+      const fx = (dx/d)*f, fy = (dy/d)*f;
+      a.vx += fx*alpha; a.vy += fy*alpha;
+      b.vx -= fx*alpha; b.vy -= fy*alpha;
+    }
+  }
+  // spring links
+  EDGES.forEach(e => {
+    if (!e.visible) return;
+    const a = e.na, b = e.nb;
+    let dx = b.x-a.x, dy = b.y-a.y;
+    let d = Math.sqrt(dx*dx+dy*dy) || 1;
+    const target = LINK_DIST[e.type];
+    const f = (d - target) * 0.04;
+    const fx = (dx/d)*f, fy = (dy/d)*f;
+    a.vx += fx*alpha; a.vy += fy*alpha;
+    b.vx -= fx*alpha; b.vy -= fy*alpha;
+  });
+  // centering + integrate
+  active.forEach(n => {
+    n.vx += (-n.x)*CENTER_PULL*alpha;
+    n.vy += (-n.y)*CENTER_PULL*alpha;
+    if (n === dragNode) return;
+    n.vx *= 0.82; n.vy *= 0.82;
+    n.x += n.vx; n.y += n.vy;
+  });
+  alpha *= 0.99;
+}
+function reheat(a=0.8){ alpha = Math.max(alpha, a); }
+
+/* =========================================================================
+   5. STATE  (filters / selection / hover)
+   ========================================================================= */
+const state = {
+  connMode: "all",      // all | inter | intra
+  showBias: true,
+  catOn: {},            // category -> bool
+  selected: null,
+  hover: null
+};
+Object.keys(CATS).forEach(c => state.catOn[c] = true);
+
+function applyVisibility(){
+  NODES.forEach(n => {
+    let v = state.catOn[n.cat];
+    if (n.cat === "bias" && !state.showBias) v = false;
+    n.visible = v;
+  });
+  EDGES.forEach(e => {
+    let v = e.na.visible && e.nb.visible;
+    if (v){
+      if (e.type === "bias") v = state.showBias;
+      else if (state.connMode === "inter") v = (e.type === "inter");
+      else if (state.connMode === "intra") v = (e.type === "intra");
+    }
+    e.visible = v;
+  });
+  reheat(0.5);
+}
+
+/* =========================================================================
+   6. RENDER
+   ========================================================================= */
+function neighbourSet(id){
+  const s = new Set([id]);
+  adj[id].forEach(e => { if (e.visible){ s.add(e.a); s.add(e.b); } });
+  return s;
+}
+
+function draw(){
+  tick();
+  ctx.clearRect(0,0,W,H);
+
+  const focusId = state.hover || state.selected;
+  const near = focusId ? neighbourSet(focusId) : null;
+
+  // edges
+  EDGES.forEach(e => {
+    if (!e.visible) return;
+    const a = toScreen(e.na.x, e.na.y), b = toScreen(e.nb.x, e.nb.y);
+    let col, lw = 1;
+    if (e.type === "bias"){ col = "rgba(232,163,61,0.40)"; }
+    else if (e.type === "inter"){ col = "rgba(150,165,195,0.34)"; lw = 1.1; }
+    else { col = "rgba(120,130,150,0.16)"; }
+    let dim = false, hi = false;
+    if (near){ const on = near.has(e.a) && near.has(e.b); hi = on; dim = !on; }
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+    if (e.type === "bias"){ ctx.setLineDash([4,4]); } else { ctx.setLineDash([]); }
+    if (hi){
+      ctx.strokeStyle = e.type==="bias" ? "rgba(240,192,122,0.85)"
+                      : e.type==="inter" ? "rgba(190,205,235,0.8)" : "rgba(170,180,200,0.55)";
+      ctx.lineWidth = lw+0.8;
+    } else if (dim){
+      ctx.strokeStyle = "rgba(90,97,114,0.07)"; ctx.lineWidth = lw;
+    } else {
+      ctx.strokeStyle = col; ctx.lineWidth = lw;
+    }
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // nodes
+  const labelThreshold = 0.7;
+  NODES.forEach(n => {
+    if (!n.visible) return;
+    const p = toScreen(n.x, n.y);
+    const col = CATS[n.cat].color;
+    const r = n.r * Math.min(Math.max(cam.scale,0.6),1.6);
+    let dim = near && !near.has(n.id);
+    const isFocus = focusId === n.id;
+
+    // glow
+    if (!dim){
+      ctx.shadowColor = col;
+      ctx.shadowBlur = isFocus ? 26 : 12;
+    } else { ctx.shadowBlur = 0; }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+    if (n.cat === "bias"){
+      ctx.fillStyle = dim ? "rgba(20,23,30,0.7)" : "rgba(28,32,42,0.92)";
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 1.6; ctx.setLineDash([3,3]);
+      ctx.strokeStyle = dim ? "rgba(183,191,202,0.25)" : "#d9b27a";
+      ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      ctx.fillStyle = dim ? hexA(col,0.18) : col;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      if (isFocus){ ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke(); }
+    }
+
+    // label
+    const showLabel = isFocus || (!dim && cam.scale > labelThreshold) || (near && near.has(n.id));
+    if (showLabel){
+      ctx.font = (n.w>=7?"600 ":"500 ") + Math.round(11*Math.min(cam.scale,1.3)) + "px " +
+                 "'Avenir Next', 'Segoe UI', system-ui, sans-serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillStyle = dim ? "rgba(154,163,178,0.25)" : (isFocus ? "#fff" : "rgba(231,234,240,0.92)");
+      ctx.fillText(n.label, p.x, p.y + r + 4);
+    }
+  });
+  ctx.shadowBlur = 0;
+  requestAnimationFrame(draw);
+}
+
+function hexA(hex, a){
+  const h = hex.replace("#","");
+  const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* =========================================================================
+   7. INTERACTION  (pan / zoom / drag / pick) — pointer events
+   ========================================================================= */
+let pointerDown = false, dragNode = null, didDrag = false;
+let lastX=0, lastY=0, downX=0, downY=0;
+
+function pick(sx, sy){
+  let best = null, bestD = 16;
+  for (const n of NODES){
+    if (!n.visible) continue;
+    const p = toScreen(n.x, n.y);
+    const r = n.r * Math.min(Math.max(cam.scale,0.6),1.6);
+    const d = Math.hypot(p.x-sx, p.y-sy);
+    if (d < r + 6 && d < bestD + r){ best = n; bestD = d; }
+  }
+  return best;
+}
+
+cv.addEventListener("pointerdown", ev => {
+  cv.setPointerCapture(ev.pointerId);
+  pointerDown = true; didDrag = false;
+  lastX = downX = ev.clientX; lastY = downY = ev.clientY;
+  const hit = pick(ev.clientX, ev.clientY);
+  if (hit){ dragNode = hit; cv.classList.add("grabbing"); }
+  else { cv.classList.add("grabbing"); }
+});
+cv.addEventListener("pointermove", ev => {
+  if (!pointerDown){
+    const hit = pick(ev.clientX, ev.clientY);
+    const id = hit ? hit.id : null;
+    if (id !== state.hover){ state.hover = id; cv.style.cursor = hit ? "pointer" : "grab"; }
+    return;
+  }
+  const dx = ev.clientX - lastX, dy = ev.clientY - lastY;
+  if (Math.abs(ev.clientX-downX) + Math.abs(ev.clientY-downY) > 4) didDrag = true;
+  if (dragNode){
+    const w = toWorld(ev.clientX, ev.clientY);
+    dragNode.x = w.x; dragNode.y = w.y; dragNode.vx = 0; dragNode.vy = 0;
+    reheat(0.4);
+  } else {
+    cam.x += dx; cam.y += dy;
+  }
+  lastX = ev.clientX; lastY = ev.clientY;
+});
+cv.addEventListener("pointerup", ev => {
+  pointerDown = false; cv.classList.remove("grabbing");
+  if (!didDrag){
+    const hit = pick(ev.clientX, ev.clientY);
+    if (hit) selectNode(hit.id);
+    else closeDetail();
+  }
+  dragNode = null;
+});
+cv.addEventListener("wheel", ev => {
+  ev.preventDefault();
+  const factor = ev.deltaY < 0 ? 1.12 : 1/1.12;
+  const before = toWorld(ev.clientX, ev.clientY);
+  cam.scale = Math.min(2.6, Math.max(0.35, cam.scale*factor));
+  const after = toWorld(ev.clientX, ev.clientY);
+  cam.x += (after.x-before.x)*cam.scale;
+  cam.y += (after.y-before.y)*cam.scale;
+}, { passive:false });
+
+// pinch zoom
+let pinch = null;
+cv.addEventListener("touchstart", ev => {
+  if (ev.touches.length === 2){
+    pinch = pinchInfo(ev);
+  }
+}, {passive:true});
+cv.addEventListener("touchmove", ev => {
+  if (ev.touches.length === 2 && pinch){
+    const p = pinchInfo(ev);
+    const factor = p.dist / pinch.dist;
+    const before = toWorld(p.cx, p.cy);
+    cam.scale = Math.min(2.6, Math.max(0.35, cam.scale*factor));
+    const after = toWorld(p.cx, p.cy);
+    cam.x += (after.x-before.x)*cam.scale;
+    cam.y += (after.y-before.y)*cam.scale;
+    pinch = p;
+  }
+}, {passive:true});
+cv.addEventListener("touchend", ()=>{ pinch = null; });
+function pinchInfo(ev){
+  const a = ev.touches[0], b = ev.touches[1];
+  return { dist: Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY),
+           cx:(a.clientX+b.clientX)/2, cy:(a.clientY+b.clientY)/2 };
+}
+
+/* =========================================================================
+   8. DETAIL DRAWER
+   ========================================================================= */
+const detail = document.getElementById("detail");
+const detailBody = document.getElementById("detailBody");
+document.getElementById("detailClose").addEventListener("click", closeDetail);
+
+function selectNode(id){
+  state.selected = id;
+  const n = nodeById[id];
+  const c = CATS[n.cat];
+
+  // group connections
+  let inter=[], intra=[], biases=[];
+  adj[id].forEach(e => {
+    const other = e.a === id ? e.nb : e.na;
+    if (e.type === "bias"){
+      if (n.cat === "bias"){ inter.push(other); }      // a bias node lists what it distorts
+      else biases.push(other);                          // a normal node lists biases on it
+    } else if (e.type === "inter") inter.push(other);
+    else intra.push(other);
+  });
+  const uniq = arr => { const s=new Set(), out=[]; arr.forEach(o=>{if(!s.has(o.id)){s.add(o.id);out.push(o);}}); return out; };
+  inter=uniq(inter); intra=uniq(intra); biases=uniq(biases);
+
+  let html = `<div class="cat-tag" style="color:${c.color}"><span class="dot" style="background:${c.color}"></span>${c.label}</div>`;
+  html += `<h3>${n.label}</h3>`;
+  if (n.stat) html += `<div class="stat" style="color:${c.color}">${n.stat}</div>`;
+  html += `<p class="desc">${n.desc}</p>`;
+
+  if (n.cat === "bias"){
+    html += `<div class="bias-note"><b>What this distorts:</b> the nodes below are where this framing can mislead. The link is a caution, not a fact.</div>`;
+    if (inter.length){
+      html += connBlock("Applies to", inter, c.color, false);
+    }
+  } else {
+    if (intra.length) html += connBlock(`Intra-links · within ${c.label}`, intra, c.color, false);
+    if (inter.length) html += connBlock("Inter-links · to other systems", inter, c.color, false);
+    if (biases.length) html += connBlock("⚠ Framing caveats", biases, "#f0c07a", true);
+  }
+  detailBody.innerHTML = html;
+  detail.classList.add("open");
+
+  // wire chip clicks
+  detailBody.querySelectorAll(".chip").forEach(ch => {
+    ch.addEventListener("click", () => { focusOn(ch.dataset.id); selectNode(ch.dataset.id); });
+  });
+  // gently bring node toward centre focus
+  reheat(0.15);
+}
+function connBlock(label, list, color, bias){
+  let s = `<div class="conn-block"><div class="conn-label" style="${bias?'color:#f0c07a':''}">${label} <span style="color:var(--ink-faint);font-weight:600">${list.length}</span></div><div class="chips">`;
+  list.forEach(o => { s += `<button class="chip${bias?' bias':''}" data-id="${o.id}">${o.label}</button>`; });
+  return s + `</div></div>`;
+}
+function closeDetail(){ detail.classList.remove("open"); state.selected = null; }
+
+function focusOn(id){
+  const n = nodeById[id];
+  cam.scale = Math.max(cam.scale, 1.0);
+  cam.x = W/2 - n.x*cam.scale;
+  cam.y = (window.innerWidth>720 ? H*0.42 : H*0.55) - n.y*cam.scale;
+}
+
+/* =========================================================================
+   9. CONTROL PANEL WIRING
+   ========================================================================= */
+// legend
+const legend = document.getElementById("legend");
+Object.keys(CATS).forEach(cat => {
+  const c = CATS[cat];
+  const count = NODES.filter(n => n.cat===cat).length;
+  const row = document.createElement("div");
+  row.className = "legend-item";
+  row.dataset.cat = cat;
+  row.innerHTML = `<span class="swatch ${cat==='bias'?'bias':''}" style="${cat==='bias'?'color:'+c.color:'background:'+c.color+';color:'+c.color}"></span>
+                   <span>${c.label}</span><span class="count">${count}</span>`;
+  row.addEventListener("click", () => {
+    state.catOn[cat] = !state.catOn[cat];
+    row.classList.toggle("off", !state.catOn[cat]);
+    if (cat === "bias"){ state.showBias = state.catOn[cat]; syncBiasToggle(); }
+    applyVisibility();
+  });
+  legend.appendChild(row);
+});
+
+// connection segmented control
+document.getElementById("connSeg").addEventListener("click", ev => {
+  const btn = ev.target.closest("button"); if (!btn) return;
+  document.querySelectorAll("#connSeg button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  state.connMode = btn.dataset.mode;
+  applyVisibility();
+});
+
+// bias toggle
+const biasToggle = document.getElementById("biasToggle");
+biasToggle.addEventListener("click", () => {
+  state.showBias = !state.showBias;
+  state.catOn.bias = state.showBias;
+  syncBiasToggle();
+  document.querySelector('.legend-item[data-cat="bias"]').classList.toggle("off", !state.showBias);
+  applyVisibility();
+});
+function syncBiasToggle(){ biasToggle.classList.toggle("on", state.showBias); }
+
+// buttons
+document.getElementById("recenter").addEventListener("click", () => {
+  cam.scale = 1; cam.x = W/2; cam.y = H/2; reheat(0.3);
+});
+document.getElementById("reheat").addEventListener("click", () => {
+  NODES.forEach(n => { n.x=(Math.random()-0.5)*600; n.y=(Math.random()-0.5)*400; n.vx=0; n.vy=0; });
+  reheat(1);
+});
+
+// search
+const search = document.getElementById("search");
+const searchResults = document.getElementById("searchResults");
+search.addEventListener("input", () => {
+  const q = search.value.trim().toLowerCase();
+  if (!q){ searchResults.style.display="none"; return; }
+  const hits = NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0,7);
+  if (!hits.length){ searchResults.style.display="none"; return; }
+  searchResults.innerHTML = "";
+  hits.forEach(n => {
+    const b = document.createElement("button");
+    b.textContent = n.label;
+    b.addEventListener("click", () => {
+      if (!state.catOn[n.cat]){ state.catOn[n.cat]=true; document.querySelector(`.legend-item[data-cat="${n.cat}"]`).classList.remove("off"); applyVisibility(); }
+      focusOn(n.id); selectNode(n.id);
+      searchResults.style.display="none"; search.value="";
+    });
+    searchResults.appendChild(b);
+  });
+  searchResults.style.display="block";
+});
+document.addEventListener("click", ev => {
+  if (!ev.target.closest(".search-wrap")) searchResults.style.display="none";
+});
+
+// fade hint
+setTimeout(()=>{ const h=document.getElementById("hint"); if(h) h.style.opacity=0; }, 6500);
+
+/* =========================================================================
+   10. GO
+   ========================================================================= */
+applyVisibility();
+reheat(1);
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
