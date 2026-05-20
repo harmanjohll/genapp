@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "source": "SP Group typical household consumption; EMA statistics on dwelling types",
+    "url": "https://www.spgroup.com.sg/our-services/utilities/tariff-information",
+    "accessed": "2026-05-20",
+    "units": "average kWh per month, S$ per month at Q2 2026 regulated tariff (29.72¢/kWh incl. GST)",
+    "notes": "Median figures; actual usage varies widely with aircon hours, household size, appliance age."
+  },
+  "dwellings": [
+    { "type": "1-room HDB",   "median_kwh_month": 130,  "median_bill_sgd": 39 },
+    { "type": "2-room HDB",   "median_kwh_month": 175,  "median_bill_sgd": 52 },
+    { "type": "3-room HDB",   "median_kwh_month": 270,  "median_bill_sgd": 80 },
+    { "type": "4-room HDB",   "median_kwh_month": 365,  "median_bill_sgd": 108 },
+    { "type": "5-room HDB",   "median_kwh_month": 450,  "median_bill_sgd": 134 },
+    { "type": "Executive HDB","median_kwh_month": 520,  "median_bill_sgd": 155 },
+    { "type": "Condominium",  "median_kwh_month": 680,  "median_bill_sgd": 202 },
+    { "type": "Landed",       "median_kwh_month": 1250, "median_bill_sgd": 372 }
+  ],
+  "appliance_anchors": [
+    { "appliance": "Aircon (1HP split, 8 h/day)",   "kwh_month": 175, "sgd_month": 52 },
+    { "appliance": "Water heater (storage, daily)", "kwh_month": 90,  "sgd_month": 27 },
+    { "appliance": "Refrigerator (4-tick)",         "kwh_month": 35,  "sgd_month": 10 },
+    { "appliance": "Standby load (whole household)","kwh_month": 20,  "sgd_month": 6 },
+    { "appliance": "LED lighting",                  "kwh_month": 25,  "sgd_month": 7 },
+    { "appliance": "Washing machine + dryer",       "kwh_month": 45,  "sgd_month": 13 }
+  ],
+  "behavioural": {
+    "standby_kwh_per_household_low": 10,
+    "standby_kwh_per_household_high": 30,
+    "households_total": 1400000,
+    "oem_typical_saving_pct": [15, 30],
+    "oem_uptake_pct_estimate": 38
+  }
+}

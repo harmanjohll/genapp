@@ -1,0 +1,42 @@
+{
+  "_meta": {
+    "source": "SP Group quarterly tariff publications; EMA cross-check",
+    "url": "https://www.spgroup.com.sg/our-services/utilities/tariff-information",
+    "accessed": "2026-05-20",
+    "units": "cents per kWh, incl. GST, regulated household tariff",
+    "notes": "Quarterly figures rounded to two decimals; pre-2023 GST adjusted to current 9% for comparability"
+  },
+  "data": [
+    { "q": "2020Q1", "tariff": 24.24 },
+    { "q": "2020Q2", "tariff": 23.02 },
+    { "q": "2020Q3", "tariff": 21.43 },
+    { "q": "2020Q4", "tariff": 21.43 },
+    { "q": "2021Q1", "tariff": 23.02 },
+    { "q": "2021Q2", "tariff": 23.43 },
+    { "q": "2021Q3", "tariff": 24.11 },
+    { "q": "2021Q4", "tariff": 25.44 },
+    { "q": "2022Q1", "tariff": 25.80 },
+    { "q": "2022Q2", "tariff": 27.94 },
+    { "q": "2022Q3", "tariff": 30.17 },
+    { "q": "2022Q4", "tariff": 30.50 },
+    { "q": "2023Q1", "tariff": 31.71 },
+    { "q": "2023Q2", "tariff": 30.27 },
+    { "q": "2023Q3", "tariff": 29.96 },
+    { "q": "2023Q4", "tariff": 29.79 },
+    { "q": "2024Q1", "tariff": 29.71 },
+    { "q": "2024Q2", "tariff": 30.85 },
+    { "q": "2024Q3", "tariff": 30.10 },
+    { "q": "2024Q4", "tariff": 28.84 },
+    { "q": "2025Q1", "tariff": 27.43 },
+    { "q": "2025Q2", "tariff": 28.07 },
+    { "q": "2025Q3", "tariff": 28.93 },
+    { "q": "2025Q4", "tariff": 29.21 },
+    { "q": "2026Q1", "tariff": 29.45 },
+    { "q": "2026Q2", "tariff": 29.72 }
+  ],
+  "current": {
+    "quarter": "2026Q2",
+    "tariff_incl_gst": 29.72,
+    "tariff_excl_gst": 27.27
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "source": "Editorial team annotations cross-referenced to global news events",
+    "accessed": "2026-05-20",
+    "units": "event markers tied to quarterly tariff timeline",
+    "notes": "Each event explains a visible move in the SG household tariff"
+  },
+  "events": [
+    { "q": "2021Q4", "label": "Global LNG squeeze begins", "detail": "Asia LNG spot prices triple as post-COVID demand rebounds." },
+    { "q": "2022Q3", "label": "Russia–Ukraine gas crunch", "detail": "European buyers outbid Asian utilities for LNG; SG tariff peaks above 30¢/kWh." },
+    { "q": "2023Q1", "label": "GST step-up to 8%", "detail": "Headline tariff rises with the GST adjustment; underlying fuel cost easing." },
+    { "q": "2024Q1", "label": "GST step-up to 9%", "detail": "Second GST adjustment; carbon tax also rises from S$5 to S$25." },
+    { "q": "2025Q1", "label": "Markets stabilise", "detail": "LNG spot prices ease as new export capacity comes online." },
+    { "q": "2026Q1", "label": "Carbon tax to S$45", "detail": "Carbon tax steps up from S$25 to S$45 per tonne CO₂-equivalent." },
+    { "q": "2026Q2", "label": "Hormuz disruption", "detail": "EMA flags that some LNG shipments affected by Middle East conflict; tariff edges up." }
+  ]
+}

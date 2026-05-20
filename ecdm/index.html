@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ECDM — Singapore Energy: the quiet kind of crisis</title>
+  <meta name="description" content="A civic dashboard on Singapore's structural energy exposure. 93% imported gas. Choose your role, model the tradeoffs, leave with a position you could defend." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./assets/css/tokens.css" />
+  <link rel="stylesheet" href="./assets/css/base.css" />
+  <link rel="stylesheet" href="./assets/css/components.css" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23F5F1EA'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23D98F30'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <a href="#zone-1" class="skip-link">Skip to content</a>
+
+  <div id="stale-banner" class="stale-banner" role="status">
+    Data last refreshed <span id="stale-date">—</span>. Some figures may be stale.
+  </div>
+
+  <header class="topbar" role="banner">
+    <div class="topbar__inner">
+      <div style="display:flex;align-items:center;gap:14px;min-width:0;">
+        <a href="#" class="brand">ECDM<span class="brand__sub">Singapore energy · choices, decisions, models</span></a>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div id="persona-mount"></div>
+        <div id="geo-mount"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Zone 0: persona chooser -->
+    <section id="zone-0" class="wrap persona-chooser reveal" aria-labelledby="z0-title">
+      <p class="zone__kicker">Before we start</p>
+      <h1 id="z0-title" class="persona-chooser__title">Who are you reading as?</h1>
+      <p class="persona-chooser__lede">
+        This dashboard serves four readers at once — a Sec 1 student, a parent paying the bill,
+        a teacher building a lesson, a cabinet member weighing a 30-year decision. The data is
+        the same. The levers and the language change. You can switch any time.
+      </p>
+      <div id="persona-grid" class="persona-grid" role="radiogroup" aria-label="Choose your role"></div>
+      <button id="persona-skip" class="persona-chooser__skip">Skip — read as a citizen</button>
+    </section>
+
+    <!-- Zone 1: the situation -->
+    <section id="zone-1" class="wrap zone reveal" aria-labelledby="z1-title">
+      <p class="zone__kicker">Zone 1 · the situation · 30 seconds</p>
+      <h2 id="z1-title" class="sr-only">The situation</h2>
+
+      <div class="hero-grid">
+        <div>
+          <div class="hero-number">
+            <span id="hero-number-val">0.0</span><span class="hero-number__unit">%</span>
+          </div>
+          <p class="hero-caption" id="hero-caption">
+            of Singapore's electricity in 2025 came from imported natural gas.
+          </p>
+          <p class="hero-frame" id="hero-frame">
+            This is the quiet kind of crisis. No sirens. No blackouts. The lights stay on —
+            and that reliability is part of what hides the risk.
+          </p>
+          <div class="hero-tariff" aria-label="Current regulated tariff">
+            <span class="hero-tariff__lab">Q2 2026 regulated tariff</span>
+            <span class="hero-tariff__val tnum"><span id="tariff-current">29.72</span>¢ / kWh</span>
+            <span class="hero-tariff__lab">incl. GST</span>
+          </div>
+        </div>
+
+        <div class="fuel-mix" id="fuel-mix">
+          <div class="fuel-mix__title">Singapore electricity mix · 2024</div>
+          <div class="fuel-mix__bar" id="fuel-mix-bar" role="img" aria-label="Stacked bar of Singapore's 2024 electricity fuel mix"></div>
+          <ul class="fuel-mix__legend" id="fuel-mix-legend"></ul>
+          <p class="fuel-mix__overlay" id="fuel-mix-overlay">— 2025 H1 tracking the same trajectory —</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 2: why it matters -->
+    <section id="zone-2" class="wrap zone reveal" aria-labelledby="z2-title">
+      <p class="zone__kicker">Zone 2 · why it matters · 3 minutes</p>
+      <h2 id="z2-title">The 93% sits at the end of a long line of choices made by people who are not us.</h2>
+      <p class="zone__lede">Where the gas comes from. What moves the bill. What the reliability number hides.</p>
+
+      <div class="grid">
+        <div class="col-8">
+          <div class="sankey-card">
+            <div class="sankey-card__title">Gas, in and through</div>
+            <div class="sankey-card__hint">Roughly 40% pipeline (Indonesia, Malaysia) and 60% LNG (Qatar, Australia, US, others) into 31 power plants.</div>
+            <div id="sankey" class="sankey"></div>
+            <div id="sankey-fallback" class="sankey-fallback"></div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="reliability">
+            <div class="reliability__num"><span class="tnum">0.14</span></div>
+            <div class="reliability__unit">minutes of interruption per customer per year</div>
+            <div class="reliability__cap">The thing that hides the risk. SAIDI 2023 — one of the lowest figures in the world.</div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="spark-card">
+            <div class="spark-card__title">Tariff, 2020 → 2026 · what moved it</div>
+            <div class="spark-card__hint">Household regulated tariff, quarterly, incl. GST. Every move tracks an event happening somewhere else.</div>
+            <div class="spark-canvas-wrap"><canvas id="tariff-canvas"></canvas></div>
+            <ul id="spark-events" class="spark-events"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 3: tradeoffs -->
+    <section id="zone-3" class="wrap zone reveal" aria-labelledby="z3-title">
+      <p class="zone__kicker">Zone 3 · the tradeoffs · 8 minutes</p>
+      <h2 id="z3-title">Every path costs something. Pick honestly.</h2>
+      <p class="zone__lede">Five paths to 2050. Each carries a maturity, a land cost, and an exposure. None of them are free.</p>
+
+      <div id="path-grid" class="path-grid"></div>
+
+      <div class="tax-card">
+        <div class="tax-card__title">Carbon tax · S$5 → S$25 → S$45 → S$50–80</div>
+        <div class="tax-card__sub">The price on a tonne of CO₂ has multiplied by nine in three years. It will roughly double again by 2030.</div>
+        <div class="tax-canvas-wrap"><canvas id="tax-canvas"></canvas></div>
+        <p class="tax-card__implication">A tonne of CO₂ in Singapore is about to cost a third of an iPhone — and there are 38 million of them every year.</p>
+      </div>
+
+      <div class="comparator-card">
+        <div class="comparator-card__title">How Singapore compares</div>
+        <div class="comparator-card__hint">Use the toggle in the top bar to expand from SG only to regional neighbours, or to a curated international set.</div>
+        <div id="comparator" class="comparator" role="img" aria-label="Comparator chart of carbon intensity and per-capita electricity"></div>
+      </div>
+    </section>
+
+    <!-- Zone 4: decision studio -->
+    <section id="zone-4" class="wrap zone reveal" aria-labelledby="z4-title">
+      <p class="zone__kicker">Zone 4 · decision studio · the heart of it</p>
+      <h2 id="z4-title">If you had to back one mix, what would you back?</h2>
+      <p class="zone__lede">Drag the sliders. Move the year. Watch the carbon line, the bill, and the import dependence move with you.</p>
+
+      <div class="studio">
+        <div class="studio__head">
+          <div>
+            <div class="mixer__year">
+              <div class="mixer__year-val tnum"><span id="year-val">2050</span></div>
+              <div class="mixer__year-lab">Horizon year</div>
+            </div>
+            <p class="studio__sub" id="studio-sub">Decisions made now operate for about 35 years. A plant approved in 2026 may still be running in 2061.</p>
+            <p class="lock-stamp" id="lock-stamp">Locks in until ≈ 2085</p>
+          </div>
+          <div id="scrubber" class="scrubber" role="tablist" aria-label="Choose horizon year"></div>
+        </div>
+
+        <div class="studio__layout">
+          <div>
+            <div id="sliders"></div>
+            <div class="mix-total" id="mix-total">
+              <span>Total of mix</span>
+              <strong class="tnum">100%</strong>
+            </div>
+            <div class="mix-summary" id="mix-summary" aria-hidden="true"></div>
+            <div id="household-input-wrap"></div>
+          </div>
+
+          <div>
+            <div class="outputs" id="outputs"></div>
+            <div class="studio__actions">
+              <button id="share-btn" class="btn">Lock this mix · save card</button>
+              <button id="reset-btn" class="btn btn--ghost">Reset to current</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 5: behavioural-economics strip -->
+    <section id="zone-5" class="wrap zone reveal" aria-labelledby="z5-title">
+      <p class="zone__kicker">Zone 5 · the economics of choice</p>
+      <h2 id="z5-title">Three places economics meets behaviour — and where the bill actually moves.</h2>
+
+      <div class="econ-grid" id="econ-grid"></div>
+    </section>
+
+    <!-- Zone 6: what you can do -->
+    <section id="zone-6" class="wrap zone reveal" aria-labelledby="z6-title">
+      <p class="zone__kicker">Zone 6 · three things you could do this week</p>
+      <h2 id="z6-title">Pick one. Not ten.</h2>
+      <p class="zone__lede" id="action-lede">Quantified-effect chips below each action. We have not made any of them up.</p>
+
+      <div class="action-grid" id="action-grid"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="wrap site-footer__grid">
+      <div>
+        <h3>About this dashboard</h3>
+        <p class="muted" style="max-width:48ch;">
+          ECDM is a static civic-literacy dashboard built from public Singapore energy data.
+          It does not lobby, capture emails, or take a position on any pathway. It asks you to take yours.
+        </p>
+        <p class="micro" style="margin-top:12px;">Latest data: <span id="footer-date">—</span></p>
+      </div>
+      <div>
+        <h3>Read further</h3>
+        <p><a href="./METHODOLOGY.md">Methodology</a></p>
+        <p><a href="./OPEN_QUESTIONS.md">Open questions</a></p>
+        <p><a href="./README.md">Build notes</a></p>
+      </div>
+      <div>
+        <h3>Live sources</h3>
+        <p><a href="https://www.ema.gov.sg/resources/singapore-energy-statistics" target="_blank" rel="noopener">EMA Statistics</a></p>
+        <p><a href="https://www.spgroup.com.sg/our-services/utilities/tariff-information" target="_blank" rel="noopener">SP Group tariff</a></p>
+        <p><a href="https://data.gov.sg" target="_blank" rel="noopener">data.gov.sg</a></p>
+        <p><a href="https://ourworldindata.org/energy" target="_blank" rel="noopener">Our World in Data</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- libs (bundled locally — works offline, no CDN dependency) -->
+  <script src="./assets/vendor/d3.min.js"></script>
+  <script src="./assets/vendor/d3-sankey.min.js"></script>
+  <script src="./assets/vendor/chart.umd.min.js"></script>
+  <script src="./assets/vendor/chartjs-plugin-annotation.min.js"></script>
+  <script src="./assets/vendor/html2canvas.min.js"></script>
+
+  <script type="module" src="./assets/js/main.js"></script>
+</body>
+</html>
