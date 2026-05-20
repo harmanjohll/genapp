@@ -1,0 +1,32 @@
+{
+  "_meta": {
+    "source": "EMA Singapore Energy Statistics; NCCS climate action portal",
+    "url": "https://www.nccs.gov.sg/singapores-climate-action/",
+    "accessed": "2026-05-20",
+    "units": "kgCO2 per kWh and percent of electricity consumption by sector",
+    "notes": "GEF is grid-average operating emission factor"
+  },
+  "gef_history": [
+    { "year": 2018, "gef": 0.4192 },
+    { "year": 2019, "gef": 0.4085 },
+    { "year": 2020, "gef": 0.4080 },
+    { "year": 2021, "gef": 0.4168 },
+    { "year": 2022, "gef": 0.4170 },
+    { "year": 2023, "gef": 0.4120 },
+    { "year": 2024, "gef": 0.4020 }
+  ],
+  "consumption_sector_2024": [
+    { "sector": "Commerce & services", "pct": 40.2 },
+    { "sector": "Industry",            "pct": 39.4 },
+    { "sector": "Households",          "pct": 14.6 },
+    { "sector": "Transport (rail)",    "pct": 5.3 },
+    { "sector": "Others",              "pct": 0.5 }
+  ],
+  "totals": {
+    "electricity_consumption_twh_2024": 58,
+    "saidi_min_per_customer_year": 0.14,
+    "ndc_2030_mtco2e_ceiling": 60,
+    "ndc_2035_mtco2e_range": [45, 50],
+    "net_zero_year": 2050
+  }
+}

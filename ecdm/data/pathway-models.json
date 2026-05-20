@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "source": "EMA scenario discussions; NCCS net-zero commentary; OWID + IEA cost benchmarks; pathway envelopes are editorial — see METHODOLOGY.md",
+    "url": "https://www.ema.gov.sg/our-energy-story",
+    "accessed": "2026-05-20",
+    "units": "feasibility caps in % of generation; LCOE in S$/MWh (indicative); land in ha per TWh; risk on a 1–5 scale",
+    "notes": "Envelopes are design-locked anchors for the mixer. They are not forecasts. They are plausibility brackets drawn from public targets and published cost benchmarks. Conservative bias: caps tend to be optimistic-but-defensible."
+  },
+  "year_targets": [2026, 2030, 2032, 2040, 2050],
+  "default_mix_2026": { "gas": 93, "solar": 3, "imports": 1, "hydrogen": 0, "nuclear_ccs": 0, "other": 3 },
+  "pathways": [
+    {
+      "id": "gas",
+      "label": "Natural gas (incl. H2-ready CCGT)",
+      "tone": "amber",
+      "maturity": "Mature",
+      "land_per_twh_ha": 5,
+      "geopolitical_risk": 5,
+      "lcoe_sgd_per_mwh": 110,
+      "carbon_kg_per_kwh": 0.402,
+      "feasibility_cap": [
+        { "year": 2026, "cap": 95 },
+        { "year": 2030, "cap": 85 },
+        { "year": 2032, "cap": 75 },
+        { "year": 2040, "cap": 50 },
+        { "year": 2050, "cap": 25 }
+      ],
+      "notes": "By 2032 there are at least 11 H2-ready CCGT plants. Beyond 2040, residual gas is hard to retire without import or storage backup."
+    },
+    {
+      "id": "solar",
+      "label": "Domestic solar PV",
+      "tone": "teal",
+      "maturity": "Mature but land-bound",
+      "land_per_twh_ha": 1100,
+      "geopolitical_risk": 1,
+      "lcoe_sgd_per_mwh": 95,
+      "carbon_kg_per_kwh": 0.040,
+      "feasibility_cap": [
+        { "year": 2026, "cap": 3 },
+        { "year": 2030, "cap": 5 },
+        { "year": 2032, "cap": 6 },
+        { "year": 2040, "cap": 7 },
+        { "year": 2050, "cap": 8 }
+      ],
+      "notes": "Theoretical ceiling ~3% of demand under current land-use planning; offshore + reservoir + rooftop expansion edges that up. 3 GWp target by 2030."
+    },
+    {
+      "id": "imports",
+      "label": "Regional low-carbon imports (SGEI / LTMS+)",
+      "tone": "teal-deep",
+      "maturity": "Emerging at scale",
+      "land_per_twh_ha": 50,
+      "geopolitical_risk": 3,
+      "lcoe_sgd_per_mwh": 130,
+      "carbon_kg_per_kwh": 0.120,
+      "feasibility_cap": [
+        { "year": 2026, "cap": 2 },
+        { "year": 2030, "cap": 10 },
+        { "year": 2032, "cap": 18 },
+        { "year": 2040, "cap": 35 },
+        { "year": 2050, "cap": 45 }
+      ],
+      "notes": "200 MW LTMS-PIP phase 2; target 6 GW low-carbon imports by 2035 (~30% of demand). SGEI established April 2025."
+    },
+    {
+      "id": "hydrogen",
+      "label": "Hydrogen / ammonia firing",
+      "tone": "violet",
+      "maturity": "Pre-commercial",
+      "land_per_twh_ha": 20,
+      "geopolitical_risk": 4,
+      "lcoe_sgd_per_mwh": 220,
+      "carbon_kg_per_kwh": 0.060,
+      "feasibility_cap": [
+        { "year": 2026, "cap": 0 },
+        { "year": 2030, "cap": 1 },
+        { "year": 2032, "cap": 3 },
+        { "year": 2040, "cap": 15 },
+        { "year": 2050, "cap": 50 }
+      ],
+      "notes": "Notional potential of up to 50% of power needs by 2050 per National Hydrogen Strategy 2022; currently not commercial."
+    },
+    {
+      "id": "nuclear_ccs",
+      "label": "Nuclear (SMR) + CCS + geothermal",
+      "tone": "indigo",
+      "maturity": "Under study",
+      "land_per_twh_ha": 15,
+      "geopolitical_risk": 2,
+      "lcoe_sgd_per_mwh": 180,
+      "carbon_kg_per_kwh": 0.030,
+      "feasibility_cap": [
+        { "year": 2026, "cap": 0 },
+        { "year": 2030, "cap": 0 },
+        { "year": 2032, "cap": 2 },
+        { "year": 2040, "cap": 10 },
+        { "year": 2050, "cap": 25 }
+      ],
+      "notes": "Three power-gencos appointed July 2025 for CCS feasibility; SMRs being monitored. Public-acceptance and siting are bottlenecks at least as large as engineering."
+    }
+  ],
+  "lock_in_years": 35,
+  "demand_forecast_twh": [
+    { "year": 2026, "twh": 60 },
+    { "year": 2030, "twh": 68 },
+    { "year": 2032, "twh": 72 },
+    { "year": 2040, "twh": 84 },
+    { "year": 2050, "twh": 95 }
+  ]
+}

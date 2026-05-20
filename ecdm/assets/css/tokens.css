@@ -1,0 +1,70 @@
+:root {
+  /* ink + paper */
+  --ink:        #0E1116;
+  --ink-soft:   #2A2F38;
+  --ink-mute:   #5B6470;
+  --paper:      #F5F1EA;
+  --paper-warm: #FAF7F2;
+  --rule:       #D9D2C5;
+
+  /* signal */
+  --amber:      #D98F30;   /* gas, hero, "this matters" */
+  --amber-soft: #E8A33D;
+  --amber-wash: rgba(217, 143, 48, 0.10);
+
+  --teal:       #2C7873;   /* renewables, imports, action */
+  --teal-soft:  #3A8E89;
+  --teal-wash:  rgba(44, 120, 115, 0.10);
+
+  --teal-deep:  #1B5048;   /* imports / SGEI accent */
+  --violet:     #6E5AA0;   /* hydrogen */
+  --indigo:     #3A4A7A;   /* nuclear / CCS */
+  --smoke:      #8C8478;   /* coal / petroleum */
+
+  --critical:   #B23A2A;   /* used twice only */
+
+  /* fuel mix neutrals */
+  --neutral:    #A89A82;
+
+  /* type */
+  --display: 'Fraunces', 'Source Serif 4', Georgia, serif;
+  --body:    'Inter Tight', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+
+  --t-hero:   clamp(2.6rem, 7vw, 5.6rem);
+  --t-h1:     clamp(1.8rem, 3.6vw, 2.6rem);
+  --t-h2:     clamp(1.3rem, 2.2vw, 1.55rem);
+  --t-body:   1.05rem;
+  --t-small:  0.86rem;
+  --t-micro:  0.74rem;
+
+  --lh-hero: 1.02;
+  --lh-h:    1.18;
+  --lh-body: 1.55;
+
+  /* spacing */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  72px;
+  --s-9:  112px;
+
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 14px;
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur:  600ms;
+
+  /* layout */
+  --gutter: clamp(16px, 4vw, 48px);
+  --max:    1240px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+}

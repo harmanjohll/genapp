@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "source": "NCCS carbon tax policy publications; Budget statements 2022–2026",
+    "url": "https://www.nccs.gov.sg/singapores-climate-action/carbon-tax/",
+    "accessed": "2026-05-20",
+    "units": "Singapore dollars per tonne of CO2-equivalent",
+    "notes": "2030 figure is the announced range S$50–80; midpoint S$65 used for charting"
+  },
+  "steps": [
+    { "from": 2019, "to": 2023, "rate": 5,  "label": "S$5" },
+    { "from": 2024, "to": 2025, "rate": 25, "label": "S$25" },
+    { "from": 2026, "to": 2027, "rate": 45, "label": "S$45" },
+    { "from": 2028, "to": 2029, "rate": 50, "label": "S$50 (low end of 2030 range)" },
+    { "from": 2030, "to": 2050, "rate": 65, "label": "S$50–80 (midpoint S$65)" }
+  ]
+}

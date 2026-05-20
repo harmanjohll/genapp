@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "source": "EMA Singapore Energy Statistics 2025 H1",
+    "url": "https://www.ema.gov.sg/resources/singapore-energy-statistics",
+    "accessed": "2026-05-20",
+    "units": "percent of electricity generation",
+    "notes": "2024 full-year and 2025 H1; figures sum to ~100% with rounding"
+  },
+  "series": [
+    {
+      "year": "2024",
+      "label": "2024 full year",
+      "values": [
+        { "fuel": "Natural gas",     "pct": 94.0, "tone": "amber" },
+        { "fuel": "Other (waste, biomass, imports)", "pct": 2.7, "tone": "neutral" },
+        { "fuel": "Solar",           "pct": 2.1,  "tone": "teal" },
+        { "fuel": "Coal & petroleum","pct": 1.2,  "tone": "smoke" }
+      ]
+    },
+    {
+      "year": "2025H1",
+      "label": "2025 H1",
+      "values": [
+        { "fuel": "Natural gas",     "pct": 93.1, "tone": "amber" },
+        { "fuel": "Other (waste, biomass, imports)", "pct": 3.0, "tone": "neutral" },
+        { "fuel": "Solar",           "pct": 2.5,  "tone": "teal" },
+        { "fuel": "Coal & petroleum","pct": 1.4,  "tone": "smoke" }
+      ]
+    }
+  ]
+}

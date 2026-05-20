@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "source": "EMA Our Energy Story; trade-press reporting on LNG cargoes 2024–2025",
+    "url": "https://www.ema.gov.sg/our-energy-story",
+    "accessed": "2026-05-20",
+    "units": "approximate share of imported gas, by mode and origin",
+    "notes": "Pipeline gas roughly 40% of supply; LNG the balance. LNG-origin shares are indicative and vary cargo-by-cargo."
+  },
+  "modes": [
+    {
+      "mode": "Pipeline",
+      "share": 40,
+      "origins": [
+        { "country": "Indonesia", "share": 25, "chokepoint": null },
+        { "country": "Malaysia",  "share": 15, "chokepoint": null }
+      ]
+    },
+    {
+      "mode": "LNG",
+      "share": 60,
+      "origins": [
+        { "country": "Qatar",     "share": 22, "chokepoint": "Strait of Hormuz" },
+        { "country": "Australia", "share": 15, "chokepoint": null },
+        { "country": "United States", "share": 12, "chokepoint": null },
+        { "country": "Other (Oman, Indonesia LNG, spot)", "share": 11, "chokepoint": "mixed" }
+      ]
+    }
+  ],
+  "destination": {
+    "label": "Singapore — 31 power plants",
+    "plants": 31,
+    "peak_demand_gw": 8.0,
+    "forecast_peak_2031_gw": [9.6, 11.4]
+  }
+}

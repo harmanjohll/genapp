@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "source": "Our World in Data — Energy; Ember Climate; IEA country profiles",
+    "url": "https://ourworldindata.org/energy",
+    "accessed": "2026-05-20",
+    "units": "approximate shares, kWh per capita per year, gCO2 per kWh",
+    "notes": "Indicative figures locked at design phase; refresh from primary sources on first data refresh action"
+  },
+  "regional": [
+    { "country": "Singapore",   "dominant": "Natural gas",      "share_label": "93% gas",        "per_capita_kwh": 9800,  "gco2_per_kwh": 402, "why": "The subject of this dashboard." },
+    { "country": "Malaysia",    "dominant": "Coal + gas",       "share_label": "~80% fossil",    "per_capita_kwh": 5000,  "gco2_per_kwh": 570, "why": "Pipeline gas neighbour; co-investor in LTMS-PIP." },
+    { "country": "Indonesia",   "dominant": "Coal",             "share_label": "~60% coal",      "per_capita_kwh": 1200,  "gco2_per_kwh": 770, "why": "Pipeline gas neighbour; large coal fleet." },
+    { "country": "Thailand",    "dominant": "Gas",              "share_label": "~60% gas",       "per_capita_kwh": 2800,  "gco2_per_kwh": 480, "why": "Transit country for LTMS-PIP power imports." },
+    { "country": "Vietnam",     "dominant": "Coal + hydro",     "share_label": "~50% coal",      "per_capita_kwh": 2800,  "gco2_per_kwh": 450, "why": "Fastest-growing demand in ASEAN; coal-heavy." },
+    { "country": "Philippines", "dominant": "Coal + gas",       "share_label": "~55% coal",      "per_capita_kwh": 1100,  "gco2_per_kwh": 620, "why": "Island grid; geothermal experience relevant to SG study." },
+    { "country": "Cambodia",    "dominant": "Hydro + coal",     "share_label": "~50% hydro",     "per_capita_kwh": 600,   "gco2_per_kwh": 410, "why": "Regional context on lower per-capita demand." }
+  ],
+  "international": [
+    { "country": "Singapore", "dominant": "Natural gas",       "share_label": "93% gas",          "per_capita_kwh": 9800,  "gco2_per_kwh": 402, "why": "The subject of this dashboard." },
+    { "country": "Germany",   "dominant": "Wind + solar + gas","share_label": "renewables ~55%",  "per_capita_kwh": 6500,  "gco2_per_kwh": 340, "why": "Energiewende — large industrial economy transitioning under public scrutiny." },
+    { "country": "Denmark",   "dominant": "Wind",              "share_label": "wind ~50%",        "per_capita_kwh": 5800,  "gco2_per_kwh": 150, "why": "Most-wind small grid; market design lessons for SG imports." },
+    { "country": "France",    "dominant": "Nuclear",           "share_label": "nuclear ~62%",     "per_capita_kwh": 7300,  "gco2_per_kwh": 50,  "why": "What a decarbonised grid actually looks like at scale." },
+    { "country": "Norway",    "dominant": "Hydropower",        "share_label": "hydro ~88%",       "per_capita_kwh": 22000, "gco2_per_kwh": 25,  "why": "Geographic luck — a counterfactual SG cannot copy." },
+    { "country": "Japan",     "dominant": "Gas + coal + nuclear","share_label": "mixed",          "per_capita_kwh": 7400,  "gco2_per_kwh": 470, "why": "Post-Fukushima reset — a peer SG watches closely." },
+    { "country": "United Kingdom", "dominant": "Gas + wind",   "share_label": "gas ~35%, wind growing", "per_capita_kwh": 4500, "gco2_per_kwh": 210, "why": "Coal phase-out in one generation; market liberalisation case." },
+    { "country": "Iceland",   "dominant": "Geothermal + hydro","share_label": "renewables ~100%", "per_capita_kwh": 52000, "gco2_per_kwh": 28,  "why": "What complete renewable supply looks like — and why SG cannot." }
+  ]
+}
