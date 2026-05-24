@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAP · Chord — Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #141821;
+        --bg-grad-1: #181C28;
+        --surface: #1C2232;
+        --surface-raised: #252B3D;
+        --text: #E8E3D3;
+        --text-dim: #A8A494;
+        --text-mute: #6B6D74;
+        --gold: #C9A961;
+        --gold-dim: #8C7843;
+        --gold-bright: #DBBA72;
+        --teal: #7B9393;
+        --violet: #9A8BA6;
+        --border: rgba(232, 227, 211, 0.08);
+        --border-strong: rgba(232, 227, 211, 0.18);
+        --border-gold: rgba(201, 169, 97, 0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: radial-gradient(ellipse at top, var(--bg-grad-1), var(--bg) 70%);
+        background-attachment: fixed;
+        color: var(--text);
+        font-family: Calibri, 'Segoe UI', system-ui, sans-serif;
+        line-height: 1.65;
+        min-height: 100vh;
+    }
+    .container {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 40px 24px 120px;
+    }
+
+    /* HEADER */
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-align: center;
+        margin-bottom: 14px;
+    }
+    .title {
+        font-family: Georgia, serif;
+        font-weight: 400;
+        font-size: 44px;
+        text-align: center;
+        letter-spacing: 0.01em;
+        line-height: 1.1;
+    }
+    .subtitle {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 20px;
+        text-align: center;
+        color: var(--text-dim);
+        margin-top: 10px;
+    }
+    .divider-line {
+        max-width: 200px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        margin: 32px auto 40px;
+    }
+    .question-banner { text-align: center; margin-bottom: 14px; }
+    .question {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 26px;
+        color: var(--text);
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    /* FRAMEWORK PANEL */
+    .framework {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 2px solid var(--teal);
+        border-radius: 4px;
+        padding: 0;
+        margin: 40px 0;
+        overflow: hidden;
+    }
+    .framework summary {
+        padding: 16px 22px;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-weight: 600;
+    }
+    .framework summary::-webkit-details-marker { display: none; }
+    .framework summary .chev {
+        font-family: Georgia, serif;
+        font-size: 14px;
+        transition: transform 0.2s;
+    }
+    .framework[open] summary .chev { transform: rotate(90deg); }
+    .framework-body {
+        padding: 0 22px 22px;
+        color: var(--text-dim);
+        font-size: 14.5px;
+    }
+    .framework-body strong { color: var(--text); }
+    .framework-body .effect {
+        padding: 10px 0;
+        border-top: 1px solid var(--border);
+    }
+    .framework-body .effect:first-of-type { border-top: none; }
+
+    /* VOICE CARDS (NOTES OF A CHORD) */
+    .strata-intro {
+        text-align: center;
+        margin: 56px 0 28px;
+        color: var(--text-mute);
+        font-size: 12px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+    }
+    .stratum {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 32px 34px;
+        margin-bottom: 28px;
+        position: relative;
+        transition: border-color 0.3s, background 0.3s;
+    }
+    .stratum.done {
+        border-color: var(--border-gold);
+        background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+    }
+    .stratum-num {
+        position: absolute;
+        top: -14px;
+        left: 26px;
+        background: var(--bg);
+        padding: 0 12px;
+        font-family: Georgia, serif;
+        font-style: italic;
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 0.25em;
+    }
+    .stratum-tense {
+        font-family: Calibri, sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: 10px;
+    }
+    .stratum-q {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 20px;
+        color: var(--text);
+        line-height: 1.5;
+        margin-bottom: 18px;
+    }
+    .stratum-q-editable {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px dashed var(--border-strong);
+        padding: 8px 0;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 20px;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .stratum-q-editable:focus { border-bottom-color: var(--gold); }
+    .stratum-q-editable::placeholder { color: var(--text-mute); opacity: 0.7; }
+    .co-author-note {
+        font-size: 12px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin-bottom: 10px;
+    }
+
+    /* FORM-CHOICE CHIPS (the agency move: choose how to answer) */
+    .form-choice {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        font-size: 12px;
+    }
+    .form-choice .label {
+        color: var(--text-mute);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: 6px 10px 6px 0;
+        align-self: center;
+    }
+    .chip {
+        background: transparent;
+        border: 1px solid var(--border-strong);
+        color: var(--text-dim);
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-family: Calibri, sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .chip:hover {
+        border-color: var(--gold-dim);
+        color: var(--text);
+    }
+    .chip.selected {
+        background: rgba(201, 169, 97, 0.12);
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+
+    .reflection-area {
+        width: 100%;
+        min-height: 110px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 16px 18px;
+        color: var(--text);
+        font-family: Calibri, sans-serif;
+        font-size: 15px;
+        line-height: 1.75;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.2s, min-height 0.3s;
+    }
+    .reflection-area:focus { border-color: var(--gold-dim); }
+    .reflection-area::placeholder { color: var(--text-mute); font-style: italic; }
+    .reflection-area.form-word { min-height: 50px; font-family: Georgia, serif; font-size: 22px; font-style: italic; }
+    .reflection-area.form-phrase { min-height: 80px; }
+    .reflection-area.form-paragraph { min-height: 140px; }
+
+    /* CLOSING */
+    .closing {
+        margin-top: 60px;
+        padding-top: 40px;
+        border-top: 1px solid var(--border);
+    }
+    .closing-eyebrow {
+        text-align: center;
+        color: var(--gold);
+        font-size: 11px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+    .closing-title {
+        text-align: center;
+        font-family: Georgia, serif;
+        font-weight: 400;
+        font-size: 24px;
+        color: var(--text);
+        margin-bottom: 30px;
+    }
+    .close-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 24px 28px;
+        margin-bottom: 20px;
+    }
+    .close-label {
+        font-family: Georgia, serif;
+        font-style: italic;
+        font-size: 17px;
+        color: var(--gold);
+        margin-bottom: 14px;
+    }
+    .close-sub {
+        font-size: 13px;
+        color: var(--text-mute);
+        margin-bottom: 16px;
+        font-style: italic;
+    }
+    .shift-scale {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 14px;
+    }
+    .shift-option {
+        flex: 1;
+        background: transparent;
+        border: 1px solid var(--border-strong);
+        color: var(--text-dim);
+        font-family: Georgia, serif;
+        font-size: 20px;
+        padding: 14px 0;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-radius: 3px;
+    }
+    .shift-option:hover { border-color: var(--gold-dim); color: var(--text); }
+    .shift-option.selected {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: var(--bg);
+    }
+    .shift-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-mute);
+    }
+    input.short {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 14px 16px;
+        color: var(--text);
+        font-family: Calibri, sans-serif;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    input.short:focus { border-color: var(--gold-dim); }
+
+    /* SUBMIT */
+    .submit-area {
+        text-align: center;
+        margin-top: 48px;
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .submit-area .submit-status { flex-basis: 100%; }
+    .btn {
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        padding: 14px 48px;
+        font-size: 13px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-family: Calibri, sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        border-radius: 2px;
+    }
+    .btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+    .btn:disabled { border-color: var(--text-mute); color: var(--text-mute); cursor: not-allowed; }
+    .btn.ghost { border-color: var(--border-strong); color: var(--text-dim); }
+    .submit-status {
+        margin-top: 20px;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 17px;
+        color: var(--gold);
+        min-height: 30px;
+    }
+
+    /* NAME BANNER */
+    .name-banner {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 16px 22px;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .name-banner .label {
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text-mute);
+    }
+    .name-banner input {
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--border-strong);
+        padding: 4px 8px;
+        color: var(--text);
+        font-family: Calibri, sans-serif;
+        font-size: 15px;
+        outline: none;
+        width: 240px;
+        max-width: 100%;
+    }
+    .name-banner input:focus { border-bottom-color: var(--gold-dim); }
+
+    @media (max-width: 640px) {
+        .title { font-size: 32px; }
+        .question { font-size: 20px; }
+        .stratum { padding: 24px 22px; }
+        .name-banner { flex-direction: column; align-items: flex-start; }
+        .name-banner input { width: 100%; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <div class="question-banner">
+        <div class="eyebrow">GAP · Session Two</div>
+        <h1 class="title">Chord</h1>
+        <div class="subtitle">Agency</div>
+        <div class="divider-line"></div>
+        <div class="question">Where does agency live, and where does it die?</div>
+    </div>
+
+    <div class="name-banner">
+        <div>
+            <div class="label" style="margin-bottom:6px;">Your name &amp; school</div>
+            <input type="text" id="inp-id" placeholder="Your name, your school">
+        </div>
+        <div style="text-align:right;">
+            <div class="label">Date</div>
+            <div style="color: var(--text-dim); font-family: Georgia, serif; font-style: italic;" id="today-date"></div>
+        </div>
+    </div>
+
+    <details class="framework">
+        <summary>
+            <span>Agency in three tenses · a reminder</span>
+            <span class="chev">▸</span>
+        </summary>
+        <div class="framework-body">
+            <div class="effect"><strong>Iterational.</strong> Drawing on the past: habits, routines, inherited patterns. Memory as ground.</div>
+            <div class="effect"><strong>Practical-evaluative.</strong> Judgment in the live moment. The situation in front of you, right now.</div>
+            <div class="effect"><strong>Projective.</strong> Imagining futures and committing toward them. Intention as movement.</div>
+            <div style="padding-top: 14px; border-top: 1px solid var(--border); margin-top: 14px; font-style: italic; color: var(--text-mute);">Every act of agency is all three, sounded at once. Emirbayer &amp; Mische (1998).</div>
+        </div>
+    </details>
+
+    <div class="strata-intro">Three voices, sounded together. For each, choose how to answer.</div>
+
+    <!-- NOTE I · ITERATIONAL -->
+    <div class="stratum" id="s1">
+        <div class="stratum-num">Note I</div>
+        <div class="stratum-tense">Iterational  ·  memory</div>
+        <div class="stratum-q">When did I last feel my own agency most sharply? When least?</div>
+        <div class="form-choice">
+            <div class="label">Answer in:</div>
+            <button class="chip" data-target="r1" data-form="word">A word</button>
+            <button class="chip selected" data-target="r1" data-form="phrase">A phrase</button>
+            <button class="chip" data-target="r1" data-form="paragraph">A paragraph</button>
+        </div>
+        <textarea class="reflection-area form-phrase" id="r1" placeholder="Let the form fit the answer."></textarea>
+    </div>
+
+    <!-- NOTE II · PRACTICAL-EVALUATIVE -->
+    <div class="stratum" id="s2">
+        <div class="stratum-num">Note II</div>
+        <div class="stratum-tense">Practical-Evaluative  ·  observation</div>
+        <div class="stratum-q">What structures in our schools cultivate agency? What structures quietly erode it, even with good intent?</div>
+        <div class="form-choice">
+            <div class="label">Answer in:</div>
+            <button class="chip" data-target="r2" data-form="word">A word</button>
+            <button class="chip" data-target="r2" data-form="phrase">A phrase</button>
+            <button class="chip selected" data-target="r2" data-form="paragraph">A paragraph</button>
+        </div>
+        <textarea class="reflection-area form-paragraph" id="r2" placeholder="What have you observed? Stay close to the specific."></textarea>
+    </div>
+
+    <!-- NOTE III · PROJECTIVE — co-authored -->
+    <div class="stratum" id="s3">
+        <div class="stratum-num">Note III</div>
+        <div class="stratum-tense">Projective  ·  intention</div>
+        <div class="co-author-note">Co-authored by the room</div>
+        <input type="text" class="stratum-q-editable" id="r3q" placeholder="Write the third question the group arrived at tonight...">
+        <div class="form-choice" style="margin-top:14px;">
+            <div class="label">Answer in:</div>
+            <button class="chip" data-target="r3" data-form="word">A word</button>
+            <button class="chip selected" data-target="r3" data-form="phrase">A phrase</button>
+            <button class="chip" data-target="r3" data-form="paragraph">A paragraph</button>
+        </div>
+        <textarea class="reflection-area form-phrase" id="r3" placeholder="Your answer to the question you helped shape."></textarea>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="closing">
+        <div class="closing-eyebrow">The Closing</div>
+        <div class="closing-title">Three short questions to sediment tonight.</div>
+
+        <div class="close-block">
+            <div class="close-label">Has your thinking shifted tonight?</div>
+            <div class="close-sub">Compared to when you walked in.</div>
+            <div class="shift-scale" id="shift-scale">
+                <button class="shift-option" data-val="1">1</button>
+                <button class="shift-option" data-val="2">2</button>
+                <button class="shift-option" data-val="3">3</button>
+                <button class="shift-option" data-val="4">4</button>
+                <button class="shift-option" data-val="5">5</button>
+            </div>
+            <div class="shift-labels"><span>Not at all</span><span>Substantially</span></div>
+        </div>
+
+        <div class="close-block">
+            <div class="close-label">A resonance.</div>
+            <div class="close-sub">One thing I picked up from another Principal that I want to carry.</div>
+            <input type="text" class="short" id="resonance" placeholder="A phrase, a line, a shift in how I heard it...">
+        </div>
+
+        <div class="close-block">
+            <div class="close-label">A provocation.</div>
+            <div class="close-sub">One question I am taking home.</div>
+            <input type="text" class="short" id="provocation" placeholder="What I cannot stop turning over...">
+        </div>
+    </div>
+
+    <div class="submit-area">
+        <button class="btn ghost" id="btn-download">Download as PNG</button>
+        <button class="btn" id="btn-save">Keep This Card</button>
+        <div class="submit-status" id="status"></div>
+    </div>
+
+</div>
+
+<script>
+function $(id) { return document.getElementById(id); }
+
+// Date
+const today = new Date();
+$("today-date").textContent = today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+// Restore name
+try {
+    const n = localStorage.getItem('gap_name');
+    const s = localStorage.getItem('gap_school');
+    if (n && s) $("inp-id").value = `${n}, ${s}`;
+    else if (n) $("inp-id").value = n;
+} catch(e) {}
+
+// Form-choice chips: change textarea sizing and record choice
+const formChoices = { r1: 'phrase', r2: 'paragraph', r3: 'phrase' };
+document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        const target = chip.dataset.target;
+        const form = chip.dataset.form;
+        document.querySelectorAll(`.chip[data-target="${target}"]`).forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        const ta = $(target);
+        ta.classList.remove('form-word', 'form-phrase', 'form-paragraph');
+        ta.classList.add('form-' + form);
+        formChoices[target] = form;
+        saveDraft();
+    });
+});
+
+// Shift scale
+let selectedShift = null;
+document.querySelectorAll('.shift-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.shift-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedShift = btn.dataset.val;
+        saveDraft();
+    });
+});
+
+// Stratum completion
+['r1', 'r2', 'r3'].forEach((id, i) => {
+    const el = $(id);
+    el.addEventListener('blur', () => {
+        const stratum = $('s' + (i+1));
+        if (el.value.trim().length > 0) stratum.classList.add('done');
+        else stratum.classList.remove('done');
+    });
+});
+
+// Draft autosave
+const DRAFT_KEY = 'gap_chord_draft';
+function saveDraft() {
+    try {
+        const draft = {
+            id: $("inp-id").value,
+            r1: $("r1").value, r2: $("r2").value,
+            r3q: $("r3q").value, r3: $("r3").value,
+            forms: formChoices,
+            shift: selectedShift,
+            resonance: $("resonance").value,
+            provocation: $("provocation").value
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch(e) {}
+}
+function restoreDraft() {
+    try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        const d = JSON.parse(raw);
+        if (d.id) $("inp-id").value = d.id;
+        if (d.r1) { $("r1").value = d.r1; $("s1").classList.add('done'); }
+        if (d.r2) { $("r2").value = d.r2; $("s2").classList.add('done'); }
+        if (d.r3q) $("r3q").value = d.r3q;
+        if (d.r3) { $("r3").value = d.r3; $("s3").classList.add('done'); }
+        if (d.forms) {
+            Object.entries(d.forms).forEach(([target, form]) => {
+                document.querySelectorAll(`.chip[data-target="${target}"]`).forEach(c => c.classList.remove('selected'));
+                const chip = document.querySelector(`.chip[data-target="${target}"][data-form="${form}"]`);
+                if (chip) chip.classList.add('selected');
+                const ta = $(target);
+                if (ta) {
+                    ta.classList.remove('form-word', 'form-phrase', 'form-paragraph');
+                    ta.classList.add('form-' + form);
+                }
+                formChoices[target] = form;
+            });
+        }
+        if (d.shift) {
+            selectedShift = d.shift;
+            const btn = document.querySelector(`.shift-option[data-val="${d.shift}"]`);
+            if (btn) btn.classList.add('selected');
+        }
+        if (d.resonance) $("resonance").value = d.resonance;
+        if (d.provocation) $("provocation").value = d.provocation;
+    } catch(e) {}
+}
+restoreDraft();
+
+document.querySelectorAll('textarea, input').forEach(el => {
+    el.addEventListener('input', saveDraft);
+});
+
+// ============================================================
+//  BACKEND CONFIG
+//  Paste Apps Script Web App URL here.
+// ============================================================
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzIeCscDLvDvPAk63LXfCdrsLzkXNIRn4rlAQeWzbk7XGCLhOa2NKRfaSm-GTX-vqrrbw/exec";
+
+$("btn-save").addEventListener('click', async () => {
+    const payload = {
+        card: "Chord",
+        session: "2-Agency",
+        name_school: $("inp-id").value.trim(),
+        date: today.toISOString().slice(0, 10),
+        timestamp: new Date().toISOString(),
+        note_1_form: formChoices.r1,
+        note_1: $("r1").value.trim(),
+        note_2_form: formChoices.r2,
+        note_2: $("r2").value.trim(),
+        note_3_question: $("r3q").value.trim(),
+        note_3_form: formChoices.r3,
+        note_3_answer: $("r3").value.trim(),
+        shift: selectedShift,
+        resonance: $("resonance").value.trim(),
+        provocation: $("provocation").value.trim()
+    };
+
+    try {
+        const archive = JSON.parse(localStorage.getItem('gap_cards_archive') || '[]');
+        archive.push({ ts: Date.now(), ...payload });
+        localStorage.setItem('gap_cards_archive', JSON.stringify(archive));
+    } catch(e) {}
+
+    if (!BACKEND_URL) {
+        $("status").innerHTML = "Your card is kept locally. <em>Facilitator: paste the Apps Script URL into BACKEND_URL to enable aggregation.</em>";
+        $("btn-save").disabled = true;
+        $("btn-save").textContent = "Card Kept";
+        return;
+    }
+
+    $("status").textContent = "Sending...";
+    try {
+        await fetch(BACKEND_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        $("status").textContent = "Your card is kept. See you at Session 3.";
+        $("btn-save").disabled = true;
+        $("btn-save").textContent = "Card Kept";
+    } catch (e) {
+        $("status").textContent = "Submission failed. Your card is kept locally. You can try again.";
+    }
+});
+
+// ============================================================
+//  PNG KEEPSAKE
+// ============================================================
+$("btn-download").addEventListener('click', async () => {
+    if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+    const W = 1200, H = 1800;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    const bg = ctx.createRadialGradient(W/2, 0, 100, W/2, H/2, H);
+    bg.addColorStop(0, '#1A1F2E');
+    bg.addColorStop(1, '#0F131B');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Top gold line
+    ctx.fillStyle = '#C9A961';
+    ctx.fillRect(W/2 - 100, 90, 200, 1);
+
+    // Eyebrow
+    ctx.fillStyle = '#C9A961';
+    ctx.font = "600 22px Calibri, sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('G · A · P    S E S S I O N   T W O', W/2, 150);
+
+    // Title
+    ctx.fillStyle = '#E8E3D3';
+    ctx.font = "italic 400 96px Georgia, serif";
+    ctx.fillText('Chord', W/2, 270);
+
+    // Subtitle
+    ctx.fillStyle = '#A8A494';
+    ctx.font = "italic 34px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillText('Agency', W/2, 325);
+
+    // Question
+    ctx.fillStyle = '#C9A961';
+    ctx.font = "italic 28px 'Cormorant Garamond', Georgia, serif";
+    wrapText(ctx, 'Where does agency live, and where does it die?', W/2, 395, W - 200, 40);
+
+    // Name & date
+    const nameSchool = ($("inp-id").value.trim() || 'Anonymous').toUpperCase();
+    ctx.fillStyle = '#8C7843';
+    ctx.font = "400 18px Calibri, sans-serif";
+    ctx.fillText(nameSchool, W/2, 470);
+    ctx.fillStyle = '#6B6D74';
+    ctx.font = "italic 18px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillText(today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), W/2, 500);
+
+    drawOrnament(ctx, W/2, 540, '#C9A961');
+
+    // Three notes
+    const notes = [
+        { num: 'Note I',   tense: 'Iterational  ·  memory',           q: 'When did I last feel my own agency most sharply? When least?',                           a: $("r1").value.trim(),       form: formChoices.r1 },
+        { num: 'Note II',  tense: 'Practical-Evaluative  ·  observation', q: 'What structures in our schools cultivate agency? What structures quietly erode it, even with good intent?', a: $("r2").value.trim(), form: formChoices.r2 },
+        { num: 'Note III', tense: 'Projective  ·  intention',         q: $("r3q").value.trim() || 'Co-authored by the room.',                                      a: $("r3").value.trim(),       form: formChoices.r3 }
+    ];
+
+    let y = 600;
+    notes.forEach(v => {
+        const x = 100;
+        const w = W - 200;
+        const aFont = v.form === 'word'
+            ? "italic 34px 'Cormorant Garamond', Georgia, serif"
+            : v.form === 'phrase'
+                ? "italic 24px 'Cormorant Garamond', Georgia, serif"
+                : "italic 22px 'Cormorant Garamond', Georgia, serif";
+        const aLineH = v.form === 'word' ? 40 : 32;
+        const qLines = estimateLines(ctx, v.q, w - 80, 28, "italic 22px 'Cormorant Garamond', Georgia, serif");
+        const aLines = estimateLines(ctx, v.a || 'Held in silence.', w - 80, aLineH, aFont);
+        const h = 100 + qLines * 30 + 20 + aLines * aLineH + 40;
+
+        ctx.fillStyle = '#1C2232';
+        roundRect(ctx, x, y, w, h, 10, true, false);
+        ctx.strokeStyle = 'rgba(201,169,97,0.35)';
+        ctx.lineWidth = 1;
+        roundRect(ctx, x, y, w, h, 10, false, true);
+
+        // Note label
+        ctx.fillStyle = '#C9A961';
+        ctx.font = "italic 18px Georgia, serif";
+        ctx.textAlign = 'left';
+        ctx.fillText(v.num, x + 36, y + 40);
+
+        // Tense
+        ctx.fillStyle = '#7B9393';
+        ctx.font = "600 12px Calibri, sans-serif";
+        ctx.fillText(v.tense.toUpperCase(), x + 36, y + 64);
+
+        // Question
+        ctx.fillStyle = '#A8A494';
+        ctx.font = "italic 22px 'Cormorant Garamond', Georgia, serif";
+        wrapText(ctx, v.q, x + 36, y + 100, w - 80, 30, 'left');
+
+        const qEndY = y + 100 + qLines * 30;
+        ctx.fillStyle = 'rgba(201,169,97,0.2)';
+        ctx.fillRect(x + 36, qEndY + 10, 60, 1);
+
+        // Answer (form-sized)
+        ctx.fillStyle = v.a ? '#E8E3D3' : '#6B6D74';
+        ctx.font = aFont;
+        wrapText(ctx, v.a || 'Held in silence.', x + 36, qEndY + 40, w - 80, aLineH, 'left');
+
+        y += h + 24;
+    });
+
+    // Closings
+    const resonance = $("resonance").value.trim();
+    const provocation = $("provocation").value.trim();
+    if (selectedShift || resonance || provocation) {
+        ctx.fillStyle = 'rgba(201,169,97,0.2)';
+        ctx.fillRect(100, y + 20, W - 200, 1);
+        let rowY = y + 60;
+        if (selectedShift) {
+            ctx.fillStyle = '#C9A961';
+            ctx.font = "600 13px Calibri, sans-serif";
+            ctx.textAlign = 'left';
+            ctx.fillText('S H I F T', 120, rowY);
+            ctx.fillStyle = '#E8E3D3';
+            ctx.font = "italic 24px 'Cormorant Garamond', Georgia, serif";
+            ctx.fillText(`${selectedShift} of 5`, 120, rowY + 30);
+            rowY += 70;
+        }
+        if (resonance) {
+            ctx.fillStyle = '#C9A961';
+            ctx.font = "600 13px Calibri, sans-serif";
+            ctx.fillText('R E S O N A N C E', 120, rowY);
+            ctx.fillStyle = '#E8E3D3';
+            ctx.font = "italic 22px 'Cormorant Garamond', Georgia, serif";
+            wrapText(ctx, resonance, 120, rowY + 30, W - 240, 30, 'left');
+            rowY += 30 + estimateLines(ctx, resonance, W - 240, 30, "italic 22px 'Cormorant Garamond', Georgia, serif") * 30 + 30;
+        }
+        if (provocation) {
+            ctx.fillStyle = '#C9A961';
+            ctx.font = "600 13px Calibri, sans-serif";
+            ctx.fillText('P R O V O C A T I O N', 120, rowY);
+            ctx.fillStyle = '#E8E3D3';
+            ctx.font = "italic 22px 'Cormorant Garamond', Georgia, serif";
+            wrapText(ctx, provocation, 120, rowY + 30, W - 240, 30, 'left');
+        }
+    }
+
+    drawOrnament(ctx, W/2, H - 100, '#8C7843');
+    ctx.fillStyle = '#6B6D74';
+    ctx.font = "italic 22px 'Cormorant Garamond', Georgia, serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('Generations  ·  Agency  ·  Principles', W/2, H - 55);
+
+    canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gap-chord-${nameSchool.split(' ')[0].toLowerCase()}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+});
+
+// Canvas helpers
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+}
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, align) {
+    ctx.textAlign = align || 'center';
+    const words = text.split(' ');
+    let line = '';
+    const lines = [];
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    lines.push(line.trim());
+    lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+}
+function estimateLines(ctx, text, maxWidth, lineHeight, font) {
+    const prev = ctx.font;
+    if (font) ctx.font = font;
+    const words = text.split(' ');
+    let line = '', count = 1;
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            count++;
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.font = prev;
+    return count;
+}
+function drawOrnament(ctx, cx, cy, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(cx - 22, cy, 2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,      cy, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 22, cy, 2, 0, Math.PI*2); ctx.fill();
+}
+</script>
+</body>
+</html>
