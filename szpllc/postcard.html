@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAP · Postcard Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #141821;
+        --bg-grad-1: #181C28;
+        --surface: #1C2232;
+        --text: #E8E3D3;
+        --text-dim: #A8A494;
+        --text-mute: #6B6D74;
+        --gold: #C9A961;
+        --gold-dim: #8C7843;
+        --teal: #7B9393;
+        --border: rgba(232, 227, 211, 0.08);
+        --border-strong: rgba(232, 227, 211, 0.18);
+        --border-gold: rgba(201, 169, 97, 0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: radial-gradient(ellipse at top, var(--bg-grad-1), var(--bg) 70%);
+        background-attachment: fixed;
+        color: var(--text);
+        font-family: Calibri, 'Segoe UI', system-ui, sans-serif;
+        line-height: 1.65;
+        min-height: 100vh;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 120px; }
+
+    .eyebrow { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 14px; }
+    .title { font-family: Georgia, serif; font-weight: 400; font-size: 40px; text-align: center; line-height: 1.1; }
+    .subtitle { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 20px; text-align: center; color: var(--text-dim); margin-top: 10px; }
+    .divider-line { max-width: 200px; height: 1px; background: linear-gradient(to right, transparent, var(--border-gold), transparent); margin: 32px auto 40px; }
+
+    .facilitator-note {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 2px solid var(--teal);
+        padding: 16px 22px;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        color: var(--text-dim);
+        font-size: 14px;
+    }
+    .facilitator-note strong { color: var(--text); }
+
+    .form-grid { display: grid; gap: 24px; margin-bottom: 40px; }
+    .field {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 20px 24px;
+    }
+    .field label {
+        display: block;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text-mute);
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    .field .hint {
+        font-size: 13px;
+        color: var(--text-mute);
+        font-style: italic;
+        margin-bottom: 12px;
+    }
+    .field input, .field textarea {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 12px 14px;
+        color: var(--text);
+        font-family: Calibri, sans-serif;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--gold-dim); }
+    .field textarea { resize: vertical; min-height: 100px; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 17px; line-height: 1.5; }
+
+    .preview-section { margin: 40px 0; }
+    .preview-title {
+        text-align: center; font-family: Georgia, serif; font-size: 22px; color: var(--text);
+        margin-bottom: 20px;
+    }
+    .preview-frame {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        overflow: auto;
+        text-align: center;
+    }
+    .preview-frame canvas { max-width: 100%; height: auto; border-radius: 4px; }
+
+    .submit-area {
+        text-align: center;
+        margin-top: 40px;
+        display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn {
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        padding: 14px 36px;
+        font-size: 13px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-family: Calibri, sans-serif;
+        cursor: pointer;
+        transition: all 0.25s;
+        border-radius: 2px;
+    }
+    .btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+    .btn:disabled { border-color: var(--text-mute); color: var(--text-mute); cursor: not-allowed; }
+    .btn.ghost { border-color: var(--border-strong); color: var(--text-dim); }
+
+    @media (max-width: 640px) {
+        .title { font-size: 30px; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <div style="text-align:center;">
+        <div class="eyebrow">GAP · The Return</div>
+        <h1 class="title">Postcard Generator</h1>
+        <div class="subtitle">One postcard per Principal, two weeks after Session 3</div>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="facilitator-note">
+        <strong>Facilitator tool.</strong> Pull each Principal's compass entries and a provocation from the Google Sheet, fill the fields below, preview, and download the postcard PNG. Send by email, print, or ship as you wish. One at a time keeps each one personal.
+    </div>
+
+    <div class="form-grid">
+        <div class="field">
+            <label>Principal's name</label>
+            <input type="text" id="inp-name" maxlength="80" placeholder="e.g. Anna">
+        </div>
+
+        <div class="field">
+            <label>A provocation</label>
+            <p class="hint">One quote from the series that you want this Principal to sit with. Their own or another's.</p>
+            <textarea id="inp-provocation" placeholder="The quote that belongs with this postcard."></textarea>
+        </div>
+
+        <div class="field">
+            <label>Attribution (optional)</label>
+            <p class="hint">How to credit the quote. Leave blank for "from the series." Use "yours" if it's their own.</p>
+            <input type="text" id="inp-attribution" maxlength="80" placeholder="e.g. from the series · yours · a fellow Principal">
+        </div>
+
+        <div class="field">
+            <label>Compass highlight (optional)</label>
+            <p class="hint">One principle from their compass to carry back. Pick whatever direction landed most for them.</p>
+            <input type="text" id="inp-compass-principle" maxlength="160" placeholder="e.g. trust is the first condition of learning">
+            <div style="margin-top: 14px;">
+                <label style="margin-bottom: 6px;">Direction</label>
+                <select id="inp-compass-direction" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px; color: var(--text); font-family: Calibri, sans-serif; font-size: 15px; outline: none;">
+                    <option value="">— none —</option>
+                    <option value="north">True North (timeless)</option>
+                    <option value="east">Emerging East (nascent)</option>
+                    <option value="south">Grounding South (stable)</option>
+                    <option value="west">Setting West (waning)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Closing line (optional)</label>
+            <p class="hint">A short line from you to close the postcard. Defaults to "Thank you for the three evenings."</p>
+            <input type="text" id="inp-closing" maxlength="120" placeholder="A word from you to close.">
+        </div>
+    </div>
+
+    <div class="submit-area">
+        <button class="btn ghost" id="btn-preview">Preview</button>
+        <button class="btn" id="btn-download" disabled>Download Postcard</button>
+    </div>
+
+    <div class="preview-section" id="preview-section" style="display:none;">
+        <h3 class="preview-title">Preview</h3>
+        <div class="preview-frame">
+            <canvas id="preview-canvas" width="1600" height="1100" style="max-width:100%; height:auto;"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function $(id) { return document.getElementById(id); }
+
+// Postcard is landscape — classic 1600 × 1100 postcard proportions
+const POSTCARD_W = 1600;
+const POSTCARD_H = 1100;
+
+function renderPostcard(canvas) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    const name = $("inp-name").value.trim() || 'A Principal';
+    const provocation = $("inp-provocation").value.trim() || '';
+    const attribution = $("inp-attribution").value.trim() || 'from the series';
+    const compassPrinciple = $("inp-compass-principle").value.trim();
+    const compassDirection = $("inp-compass-direction").value;
+    const closing = $("inp-closing").value.trim() || 'Thank you for the three evenings.';
+
+    // Background
+    const bg = ctx.createRadialGradient(W/2, H/2, 100, W/2, H/2, H);
+    bg.addColorStop(0, '#1F2332');
+    bg.addColorStop(1, '#0F131B');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Inner border frame
+    ctx.strokeStyle = 'rgba(201,169,97,0.35)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, 40, 40, W - 80, H - 80, 10, false, true);
+    ctx.strokeStyle = 'rgba(201,169,97,0.12)';
+    roundRect(ctx, 60, 60, W - 120, H - 120, 6, false, true);
+
+    // Small compass mark top-left
+    drawCompassRose(ctx, 130, 130, 40);
+
+    // Top-right: series tag
+    ctx.fillStyle = '#C9A961';
+    ctx.font = "600 16px Calibri, sans-serif";
+    ctx.textAlign = 'right';
+    ctx.fillText('G · A · P    T H E   R E T U R N', W - 120, 135);
+
+    // Vertical line down the middle (postcard style)
+    const midX = W * 0.58;
+    ctx.strokeStyle = 'rgba(201,169,97,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(midX, 220);
+    ctx.lineTo(midX, H - 220);
+    ctx.stroke();
+
+    // ============ LEFT SIDE: the provocation ============
+    const leftCx = midX / 2 + 30;
+
+    // Small eyebrow
+    ctx.fillStyle = '#C9A961';
+    ctx.font = "600 14px Calibri, sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('A   P R O V O C A T I O N', leftCx, 290);
+
+    // Opening quote glyph
+    ctx.fillStyle = '#8C7843';
+    ctx.font = "italic 140px Georgia, serif";
+    ctx.fillText('"', leftCx, 400);
+
+    // The quote
+    if (provocation) {
+        ctx.fillStyle = '#E8E3D3';
+        ctx.font = "italic 30px 'Cormorant Garamond', Georgia, serif";
+        wrapText(ctx, provocation, leftCx, 470, midX - 140, 42);
+    } else {
+        ctx.fillStyle = '#6B6D74';
+        ctx.font = "italic 26px 'Cormorant Garamond', Georgia, serif";
+        ctx.fillText('(a quote from the series)', leftCx, 470);
+    }
+
+    // Attribution
+    ctx.fillStyle = '#A8A494';
+    ctx.font = "400 15px Calibri, sans-serif";
+    ctx.fillText('— ' + attribution, leftCx, H - 280);
+
+    // ============ RIGHT SIDE: personal address ============
+    const rightX = midX + 60;
+    const rightW = W - midX - 120;
+
+    // To:
+    ctx.fillStyle = '#C9A961';
+    ctx.font = "600 12px Calibri, sans-serif";
+    ctx.textAlign = 'left';
+    ctx.fillText('T O', rightX, 290);
+    ctx.fillStyle = '#E8E3D3';
+    ctx.font = "italic 38px Georgia, serif";
+    ctx.fillText(name + ',', rightX, 340);
+
+    // Divider
+    ctx.fillStyle = 'rgba(201,169,97,0.25)';
+    ctx.fillRect(rightX, 370, 60, 1);
+
+    // Compass highlight (if provided)
+    let yAfterCompass = 420;
+    if (compassPrinciple) {
+        ctx.fillStyle = '#C9A961';
+        ctx.font = "600 12px Calibri, sans-serif";
+        ctx.fillText('Y O U R   C O M P A S S   H O L D S', rightX, 410);
+
+        // Direction label
+        const dirMap = {
+            north: { label: 'True North — timeless',      color: '#C9A961' },
+            east:  { label: 'Emerging East — nascent',    color: '#B89870' },
+            south: { label: 'Grounding South — stable',   color: '#7B9393' },
+            west:  { label: 'Setting West — waning',      color: '#9A8BA6' }
+        };
+        if (dirMap[compassDirection]) {
+            ctx.fillStyle = dirMap[compassDirection].color;
+            ctx.font = "italic 16px 'Cormorant Garamond', Georgia, serif";
+            ctx.fillText(dirMap[compassDirection].label, rightX, 445);
+        }
+
+        // The principle
+        ctx.fillStyle = '#E8E3D3';
+        ctx.font = "italic 24px 'Cormorant Garamond', Georgia, serif";
+        const lines = wrapLinesMeasured(ctx, compassPrinciple, rightW);
+        lines.forEach((line, i) => {
+            ctx.fillText(line, rightX, 485 + i * 32);
+        });
+        yAfterCompass = 485 + lines.length * 32 + 40;
+    }
+
+    // Closing line
+    ctx.fillStyle = '#A8A494';
+    ctx.font = "italic 20px 'Cormorant Garamond', Georgia, serif";
+    ctx.textAlign = 'left';
+    wrapText(ctx, closing, rightX, yAfterCompass, rightW, 28, 'left');
+
+    // Signature ornament (three dots)
+    drawOrnament(ctx, rightX + 50, H - 300, '#8C7843');
+
+    ctx.fillStyle = '#6B6D74';
+    ctx.font = "italic 16px 'Cormorant Garamond', Georgia, serif";
+    ctx.textAlign = 'left';
+    ctx.fillText('from the series', rightX, H - 260);
+
+    // Bottom footer
+    ctx.fillStyle = '#6B6D74';
+    ctx.font = "italic 18px 'Cormorant Garamond', Georgia, serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('Generations  ·  Agency  ·  Principles', W/2, H - 80);
+}
+
+$("btn-preview").addEventListener('click', () => {
+    if (!$("inp-name").value.trim() || !$("inp-provocation").value.trim()) {
+        alert("A name and a provocation are needed before preview.");
+        return;
+    }
+    $("preview-section").style.display = 'block';
+    renderPostcard($("preview-canvas"));
+    $("btn-download").disabled = false;
+    $("preview-section").scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+$("btn-download").addEventListener('click', async () => {
+    if (document.fonts && document.fonts.ready) { await document.fonts.ready; }
+    // Render at full resolution to an offscreen canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = POSTCARD_W;
+    canvas.height = POSTCARD_H;
+    renderPostcard(canvas);
+
+    canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const name = ($("inp-name").value.trim() || 'principal').replace(/\s+/g, '-').toLowerCase();
+        a.download = `gap-postcard-${name}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+});
+
+// Helpers (same as the cards)
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+}
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, align) {
+    ctx.textAlign = align || 'center';
+    const words = text.split(' ');
+    let line = '';
+    const lines = [];
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    lines.push(line.trim());
+    lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+}
+function wrapLinesMeasured(ctx, text, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let line = '';
+    for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+            lines.push(line.trim());
+            line = words[n] + ' ';
+        } else {
+            line = testLine;
+        }
+    }
+    lines.push(line.trim());
+    return lines;
+}
+function drawCompassRose(ctx, cx, cy, r) {
+    ctx.strokeStyle = 'rgba(201,169,97,0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.4, 0, Math.PI * 2); ctx.stroke();
+    for (let i = 0; i < 4; i++) {
+        const angle = i * Math.PI / 2 - Math.PI / 2;
+        const x1 = cx + Math.cos(angle) * r * 0.4;
+        const y1 = cy + Math.sin(angle) * r * 0.4;
+        const x2 = cx + Math.cos(angle) * r;
+        const y2 = cy + Math.sin(angle) * r;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+}
+function drawOrnament(ctx, cx, cy, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(cx - 18, cy, 2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,      cy, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 18, cy, 2, 0, Math.PI*2); ctx.fill();
+}
+</script>
+</body>
+</html>
