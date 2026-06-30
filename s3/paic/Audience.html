@@ -73,6 +73,7 @@
     width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:16px;}
   .pblock .pname{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--gold);}
   .pblock .pq{font-size:14px;color:var(--navy);font-weight:700;}
+  .pblock .pex{font-size:12.5px;color:var(--muted);font-style:italic;margin:6px 0 2px;}
   .sendrow{display:flex;gap:8px;margin-top:8px;}
   .sharerow{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;}
   .sharetoggle{font-family:var(--sans);font-size:12.5px;font-weight:700;border:1.5px solid var(--line);
@@ -127,7 +128,7 @@
 <div class="statusbar">
   <div class="brand"><b>AI</b> Confident</div>
   <div class="conn"><span class="dot" id="dot"></span><span id="connlbl">offline</span>
-    <button onclick="if(confirm('Start fresh? This clears your answers and rejoins.'))location.reload()" title="Start fresh" style="margin-left:8px;background:transparent;border:1px solid rgba(255,255,255,.25);color:#cdd6e6;border-radius:8px;padding:2px 9px;font-size:13px;cursor:pointer;">↻</button></div>
+    <button onclick="if(confirm('Start fresh? This clears your answers and rejoins. Only do this if asked.'))location.reload()" title="Start fresh (only if asked)" aria-label="Start fresh" style="margin-left:10px;background:transparent;border:1px solid rgba(255,255,255,.14);color:#8595b0;border-radius:7px;padding:1px 6px;font-size:11px;opacity:.5;cursor:pointer;">↻</button></div>
 </div>
 
 <div class="app"><div id="view"></div></div>
@@ -144,12 +145,12 @@ const S = { room:"", name:"", confIn:null, confOut:null,
             buildoff:{phase:"name",teams:[],myTeam:null,myVote:null} };   // Build-Off: name then vote
 
 const QUIZ = [
-  { icon:"🎯", tag:"True or false", claim:"AI usually gives correct, reliable answers.",
-    options:["True","False"], answer:1,
-    why:"<b>False.</b> AI is confident, not correct. A wrong fact stated plainly is a <b>hallucination</b>. It is how the tool works, not a fault.",
+  { icon:"🎯", tag:"Best assumption", claim:"Your teen quotes a confident, detailed 'fact' from AI for a project. The safest assumption is:",
+    options:["It's reliable, AI is trained on everything","It's right because it sounds sure and detailed","It could be invented, check before it's used","It's only wrong on hard or obscure topics"], answer:2,
+    why:"<b>It could be invented.</b> AI is confident, not correct. A wrong fact stated plainly is a <b>hallucination</b>. It is how the tool works, not a fault.",
     note:"AI is confident, not correct. Check anything that matters." },
   { icon:"📝", tag:"Best response", claim:"Your teen pastes a whole essay and asks AI to 'make it better'. The healthiest reply is to:",
-    options:["Ban AI for homework","Let it go, it reads better now","Ask them to show what changed, and why","Quietly rewrite it yourself"],
+    options:["Ban AI for schoolwork from now on","Accept it, the writing is clearly stronger","Ask them to show what changed, and why","Fix it yourself before the teacher sees"],
     answer:2,
     why:"<b>Show me what changed.</b> Coaching beats policing. The learning lives in the choices a child can explain.",
     note:"Coach, don't police. If they can't explain it, AI did too much." },
@@ -158,22 +159,22 @@ const QUIZ = [
     answer:3,
     why:"<b>The maths problem.</b> What you paste can be stored. If you would not put it on a postcard, do not paste it.",
     note:"No names, photos, address, or secrets. The postcard rule." },
-  { icon:"🛠️", tag:"True or false", claim:"A child who builds their own revision quiz with AI learns more than one who asks for the answers.",
-    options:["True","False"], answer:0,
-    why:"<b>True.</b> Making stretches thinking. Copying skips it. Building a tool means understanding the topic first.",
+  { icon:"🛠️", tag:"Which builds the most learning?", claim:"Your child has a science test on Friday. Which way of using AI builds the most learning?",
+    options:["Ask AI for the answers to the practice paper","Have AI summarise the chapter to reread","Build a quiz with AI, then sit the quiz","Have AI write model answers to memorise"], answer:2,
+    why:"<b>Build a quiz, then sit it.</b> Making stretches thinking. Copying, summarising, and memorising skip it. Building a tool means understanding the topic first.",
     note:"Encourage making, not taking. Building stretches thinking." },
   { icon:"💬", tag:"What is this?", claim:"Your teen says an AI companion is their best listener, nightly. This is:",
-    options:["Sweet and harmless","A wellbeing signal worth a gentle talk","Proof AI is dangerous, confiscate it","Nothing to do with you"],
+    options:["Sweet, and good they have someone","A wellbeing signal worth a gentle talk","Proof AI is dangerous, take the phone","Normal for their age, leave it be"],
     answer:1,
     why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open.",
     note:"An AI that always agrees is not a real friend. Companions are built to keep your child talking." }
 ];
 const PS = [
-  { p:"P", name:"Plan", q:"In our home, AI is for…", ph:"e.g. homework help we can explain, planning, making things together", key:"plan" },
-  { p:"P", name:"Prohibit", q:"In our home, AI is never for…", ph:"e.g. passing off work as our own, sharing private details", key:"prohibit" },
-  { p:"P", name:"Partner", q:"One thing we will build together this week…", ph:"e.g. a revision game, a family quiz, plan a day out", key:"partner" },
-  { p:"P", name:"Polish", q:"We will revisit this charter when…", ph:"e.g. each new school year, or when something changes", key:"polish" },
-  { p:"P", name:"Produce", q:"When we are unsure, we…", ph:"e.g. ask each other first, check a second source", key:"produce" }
+  { p:"P", icon:"🧭", name:"Plan", q:"In our home, AI is for…", ph:"e.g. homework help we can explain, planning, making things together", key:"plan" },
+  { p:"P", icon:"🛡️", name:"Prohibit", q:"In our home, AI is never for…", ph:"e.g. passing off work as our own, sharing private details", key:"prohibit" },
+  { p:"P", icon:"🛠️", name:"Partner", q:"One thing we will build together this week…", ph:"e.g. a revision game, a family quiz, plan a day out", key:"partner" },
+  { p:"P", icon:"✨", name:"Polish", q:"We will revisit this charter when…", ph:"e.g. each new school year, or when something changes", key:"polish" },
+  { p:"P", icon:"🚀", name:"Produce", q:"When we are unsure, we…", ph:"e.g. ask each other first, check a second source", key:"produce" }
 ];
 
 /* ---------- SYNC (MQTT over WebSocket) ---------- */
@@ -316,13 +317,29 @@ function renderIn(){
     <div class="card">
       <div class="scale" id="sc"></div>
       <div class="lab"><span>1 · New to this</span><span>5 · Very comfortable</span></div>
-      <label class="f" for="sf-question">The question sitting at the back of your head</label>
-      ${shareHTML("question","What have you been wondering about AI and your child?")}
+      <label class="f">The questions sitting at the back of your head</label>
+      <div id="qfields"></div>
+      <button class="btn ghost sm" type="button" id="qadd">+ Add another question</button>
+      <div class="sendrow" style="margin-top:12px;"><button class="btn" type="button" id="qsubmit">Submit</button></div>
       <div id="inflag"></div>
     </div></div>`;
-  wireShare("question","question");
-  buildScale("sc","confIn",()=>{ send({type:"confidence",phase:"in",value:S.confIn});
-    document.getElementById("inflag").innerHTML='<div class="doneflag">✓ Confidence shared. Thank you.</div>'; });
+  S.qShown = Math.max(S.qShown||1, QKEYS.filter(k=>sv(k)).length||1);
+  renderQFields();
+  document.getElementById("qadd").onclick=()=>{ if(S.qShown<QKEYS.length){ S.qShown++; renderQFields(); } };
+  document.getElementById("qsubmit").onclick=()=>{
+    QKEYS.slice(0,S.qShown).forEach(k=>publishShare(k,"question"));
+    send({type:"confidence",phase:"in",value:S.confIn});
+    document.getElementById("inflag").innerHTML='<div class="doneflag">✓ Shared with the room. Thank you.</div>';
+  };
+  buildScale("sc","confIn",()=>{ send({type:"confidence",phase:"in",value:S.confIn}); });
+}
+const QKEYS=["question","question2","question3"];
+function renderQFields(){
+  const host=document.getElementById("qfields"); if(!host) return;
+  host.innerHTML=QKEYS.slice(0,S.qShown).map((k,i)=>
+    `<div style="margin-bottom:12px;">${shareHTML(k, i===0?"What have you been wondering about AI and your child?":"Another question (optional)")}</div>`).join("");
+  QKEYS.slice(0,S.qShown).forEach(k=>wireShare(k,"question"));
+  const add=document.getElementById("qadd"); if(add) add.style.display = S.qShown>=QKEYS.length ? "none" : "";
 }
 
 /* ---------- QUIZ (one at a time) ---------- */
@@ -394,8 +411,9 @@ function renderCharter(){
   const host=document.getElementById("ch");
   PS.forEach(p=>{
     const d=document.createElement("div"); d.className="pblock";
-    d.innerHTML=`<div class="pl"><div class="pchip">${p.p}</div>
+    d.innerHTML=`<div class="pl"><div class="pchip">${p.icon||p.p}</div>
       <div><div class="pname">${p.name}</div><div class="pq">${p.q}</div></div></div>
+      <div class="pex">For example: ${p.ph.replace(/^e\.g\.\s*/i,"")}</div>
       ${shareHTML(p.key,p.ph)}`;
     host.appendChild(d);
   });
