@@ -158,6 +158,14 @@
   .flipex li{font-size:15px;color:var(--ink);margin-bottom:7px;line-height:1.35;}
   .fliphint{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-top:auto;padding-top:12px;}
   .flip:focus{outline:2px solid var(--gold);outline-offset:3px;}
+  .vsgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px;}
+  @media(max-width:820px){.vsgrid{grid-template-columns:1fr;}}
+  .vscard{border:1px solid var(--line);border-radius:16px;padding:22px;}
+  .vscard.rich{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+  .vstag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--muted);}
+  .vscard.rich .vstag{color:var(--gold);}
+  .vsp{font-size:clamp(15px,1.7vw,19px);font-weight:400;margin:10px 0 12px;line-height:1.4;}
+  .vsout{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;}
   .polar{display:flex;flex-direction:column;gap:12px;margin-top:8px;max-width:780px;}
   .polar .row{display:flex;align-items:center;gap:16px;font-size:clamp(20px,2.6vw,28px);font-weight:600;border:1px solid var(--line);border-radius:14px;padding:16px 24px;}
   .polar .amp{color:var(--gold);font-weight:800;font-style:italic;}
@@ -258,15 +266,16 @@ const STAGES = [
   {id:"reflex-correct",   aud:"watch", sub:null,   label:"Reflex · confident is not correct"},
   {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Quick read 2 · the essay"},
   {id:"reflex-coach",     aud:"watch", sub:null,   label:"Reflex · coach, don't police"},
-  {id:"hands-rooms",  aud:"watch",   sub:null,     label:"Explorer Rooms · hands on"},
   {id:"q2", aud:"quiz", q:2, sub:"q2", label:"Quick read 3 · what's safe to type"},
   {id:"reflex-postcard",  aud:"watch", sub:null,   label:"Reflex · the postcard test"},
   {id:"q3", aud:"quiz", q:3, sub:"q3", label:"Quick read 4 · build or copy"},
   {id:"reflex-make",      aud:"watch", sub:null,   label:"Reflex · make, don't take"},
-  {id:"break",        aud:"watch",   sub:null,     label:"Break · 10 minutes"},
-  {id:"buildoff",     aud:"hold",    sub:null,     label:"The Build-Off"},
   {id:"q4", aud:"quiz", q:4, sub:"q4", label:"Quick read 5 · the AI 'friend'"},
   {id:"reflex-companion", aud:"watch", sub:null,   label:"Reflex · an agreeable bot is not a friend"},
+  {id:"hands-rooms",  aud:"watch",   sub:null,     label:"Explorer Rooms · hands on"},
+  {id:"howto-clear",  aud:"watch",   sub:null,     label:"How to prompt · be CLEAR"},
+  {id:"howto-demo",   aud:"watch",   sub:null,     label:"Thin prompt vs rich prompt"},
+  {id:"buildoff",     aud:"hold",    sub:null,     label:"Kopi &amp; Build"},
   {id:"heart-intro",  aud:"watch",   sub:null,     label:"What stays human"},
   {id:"heart-polar",  aud:"watch",   sub:null,     label:"Hold both · polarities"},
   {id:"heart-guard",  aud:"watch",   sub:null,     label:"Guardrails for home"},
@@ -544,10 +553,10 @@ function renderWallTiles(){
   if(c) c.textContent = all.length ? all.length+" line"+(all.length>1?"s":"")+" and counting" : "No lines yet. The first one breaks the ice.";
 }
 function stageOly(){
-  return `<span class="eyebrow">The signature challenge</span>
-    <h1>The Build-Off</h1>
-    <p class="sub">Teams build something with AI, then the room votes for the one that makes them smile. Make it, show it, vote.</p>
-    <div class="wsw-band"><span class="a">Make · 10 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
+  return `<span class="eyebrow">The signature challenge · grab a kopi</span>
+    <h1>Kopi &amp; Build</h1>
+    <p class="sub">Refreshments are out. Take a drink, then build something with AI at your table, using CLEAR. The room votes for the one that makes them smile.</p>
+    <div class="wsw-band"><span class="a">Kopi + Make · 10 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
     <div class="lead" id="lead"></div>
     <div class="bo-controls"><span class="bo-phase" id="bophase"></span><button class="btn" id="votebtn"></button></div>
     <div class="addteam"><input id="teamname" placeholder="Add a team by hand (no laptop), then Enter"><button class="btn ghost" id="addteambtn">Add team</button></div>`;
@@ -655,8 +664,21 @@ const CONTENT = {
       <div class="cc"><div class="n">☕</div><h3>Kopi-O Kosong</h3><p>New to AI. One calm first try with Claude. Ask it to explain something your child is learning.</p></div>
       <div class="cc"><div class="n">☕</div><h3>Kopi-C</h3><p>Some experience. Compare two tools, then drop a school newsletter into NotebookLM and ask it questions.</p></div>
       <div class="cc"><div class="n">☕</div><h3>Kopi Gao</h3><p>Confident. Build a family quiz or revision game with your child. Make, don't take.</p></div></div>`},
-  "break":{icon:"pause", e:"Break", t:"Ten minutes.",
-    h:`<p class="body-txt">Coffee. We form teams for the Build-Off when you're back.</p>`},
+  "howto-clear":{icon:"compass", e:"How to prompt", t:"Be CLEAR with AI.",
+    h:`<p class="body-txt">Five small moves take a prompt from average to genuinely useful. Tap each one.</p>
+      <div class="flipgrid cols5">
+      ${flipTile('<div class="n">C</div><h3>Context</h3>','compass',["Give it a role and the situation","“You are helping my 13-year-old revise, who gets anxious before tests”","beats “explain the topic”"])}
+      ${flipTile('<div class="n">L</div><h3>Limits</h3>','shield',["Tell it what NOT to do","“Don’t give the answers, ask questions instead”","Saying no works harder than saying yes"])}
+      ${flipTile('<div class="n">E</div><h3>Expectations</h3>','target',["Say what a good result looks like","Invite it to ask you first","Build it together, not for you"])}
+      ${flipTile('<div class="n">A</div><h3>Arrange</h3>','tool',["Lay your ask out in clear steps","A short list beats a long paragraph"])}
+      ${flipTile('<div class="n">R</div><h3>Roadmap</h3>','rocket',["Ask it to plan before doing","“Plan first, then do it. Ask me before you start.”","The single best move"])}
+      </div>`},
+  "howto-demo":{icon:"spark", e:"Watch the difference", t:"Thin prompt vs rich prompt.",
+    h:`<div class="vsgrid">
+      <div class="vscard thin"><div class="vstag">Thin</div><p class="vsp">“Help my son with his history essay.”</p><div class="vsout">Generic. It writes a bland essay nobody owns.</div></div>
+      <div class="vscard rich"><div class="vstag">Rich · with context</div><p class="vsp">“You are helping my 14-year-old who finds history dry and writes in short, flat sentences. The topic is why Singapore separated from Malaysia. Do not write it for him. Ask him three questions first, then suggest one way to make his opening more gripping. Keep it encouraging.”</p><div class="vsout">Specific. It coaches your child, in your words.</div></div>
+      </div>
+      <p class="body-txt" style="margin-top:18px;">Same tool, same minutes. The difference is the context, and the context is <b>you</b>.</p>`},
   "heart-intro":{icon:"heart", e:"What stays human", t:"Protect what AI cannot grow.",
     h:`<p class="body-txt">Learn beyond AI. The effort that builds a mind. The struggle that earns confidence. The relationship at the table. AI amplifies a human; it does not replace one.</p>`},
   "heart-polar":{icon:"scales", e:"Hold both", t:"It's rarely ban or allow.",
