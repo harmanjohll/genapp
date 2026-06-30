@@ -189,6 +189,37 @@
   .rail .s{width:20px;height:4px;border-radius:99px;background:var(--line-2);}
   .rail .s.done{background:var(--accent-d);opacity:.5;}
   .rail .s.now{background:var(--accent);}
+
+  /* frame questions */
+  .frameq{font-family:var(--serif);font-size:clamp(22px,3.4vw,38px);line-height:1.18;margin:16px 0;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+  .frameq b{color:var(--accent);}
+  /* welcome QR placeholder */
+  .joinrow{display:flex;gap:34px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .qrslot{width:170px;height:170px;flex:none;border:2px dashed var(--line-2);border-radius:16px;display:grid;place-items:center;
+    color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-align:center;line-height:1.6;}
+  .joinmeta{text-align:left;}
+  /* HEART highlight */
+  .polar .row.lit{border-color:var(--accent);background:rgba(158,199,189,.09);}
+  /* flip tiles */
+  .flipgrid{display:grid;gap:14px;margin-top:18px;}
+  .flipgrid.g2{grid-template-columns:1fr 1fr;}
+  .flipgrid.gauto{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));}
+  @media(max-width:820px){.flipgrid.g2,.flipgrid.gauto{grid-template-columns:1fr;}}
+  .flipcol{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .fliptile{position:relative;cursor:pointer;}
+  .fliptile .inner{position:relative;transition:transform .55s;transform-style:preserve-3d;}
+  .flipgrid .fliptile .inner{min-height:158px;}
+  .flipcol .fliptile .inner{min-height:92px;}
+  .fliptile.flipped .inner{transform:rotateY(180deg);}
+  .fliptile .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border:1px solid var(--line);border-radius:16px;padding:18px 22px;display:flex;flex-direction:column;justify-content:center;}
+  .fliptile .back{transform:rotateY(180deg);background:rgba(158,199,189,.08);border-color:var(--accent);}
+  .fliptile .fw{font-family:var(--serif);font-weight:800;font-size:clamp(20px,2.5vw,28px);color:#fff;letter-spacing:-.01em;}
+  .fliptile .fs{font-size:14px;color:var(--muted);margin-top:4px;}
+  .fliptile .fi{font-size:28px;margin-bottom:8px;line-height:1;}
+  .fliptile .fl{font-size:14.5px;color:var(--ink);line-height:1.4;margin:3px 0;}
+  .fliphint{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-top:14px;}
+  @media (prefers-reduced-motion: reduce){.fliptile .inner{transition:none;}}
 </style>
 </head>
 <body>
@@ -212,7 +243,7 @@
     <button class="btn ghost sm" id="reset">⟳ New session</button>
     <button class="btn ghost" id="prev">◀ Back</button>
   </div>
-  <div class="label">Stage <b id="stagei">1</b> · <span id="stagelbl"></span></div>
+  <div class="label">Slide <b id="stagei">1</b> · <span id="stagelbl"></span></div>
   <div class="rail" id="rail"></div>
   <div class="right">
     <button class="btn ghost" id="reveal" style="display:none;">Reveal answer</button>
@@ -240,22 +271,22 @@ let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase();
 const QUIZ = [
   {tag:"What makes it new",
    claim:"An agent differs from a chatbot because it…",
-   options:["Gives longer, fuller answers","Runs a loop: plans, acts, checks its own work, repeats","Uses a larger model","Is right more often"],
+   options:["It uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","It remembers everything you have ever told it","It is always connected to the live internet"],
    answer:1,
    why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. You govern a process that keeps running when you are not watching, not a single answer."},
   {tag:"Your call",
    claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
-   options:["Approve, it saves real time","Approve once names are stripped","Decline; records stay on the government platform","Approve as a one-subject pilot"],
+   options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"],
    answer:2,
    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Student and staff records stay on Pair and AIBots. Free Claude is for open work only."},
   {tag:"Spot the risk",
    claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
-   options:["It will take too long to write","One person's voice and blind spots pass as the whole school's","Staff will refuse to use it","The licensing cost"],
+   options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"],
    answer:1,
    why:"<b>A skill reflects whoever made it.</b> One voice can pass as the whole school's, and what we never write down is never captured. Build it with many, and govern the blind spots."},
   {tag:"What stays yours",
    claim:"Across Sergiovanni's five forces, which must a leader never delegate to AI?",
-   options:["Technical: timetabling and logistics","Managerial: rosters and routing","Cultural: what the school believes and stands for","Administrative paperwork around people"],
+   options:["Technical: timetabling and logistics","Human: relationships and morale","Cultural: what the school believes and stands for","Educational: teaching and curriculum"],
    answer:2,
    why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what you notice and what you stand for, stay yours. Treating them as optional is the category error."},
   {tag:"True or false",
@@ -272,10 +303,11 @@ const STAGES = [
   {id:"premise",       aud:"watch",   sub:null,        label:"The premise"},
   {id:"in",            aud:"in",      sub:"in",        label:"Readiness · walking in"},
   {id:"cos",           aud:"watch",   sub:null,        label:"The national frame · four moves"},
-  {id:"pilot",         aud:"watch",   sub:null,        label:"PILOT · the posture"},
+  {id:"pilot",         aud:"watch",   sub:null,        label:"PILOT · the frame"},
+  {id:"aspects",       aud:"watch",   sub:null,        label:"Four aspects · two machine, two human"},
+  {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Read 1 · predict: agent vs chatbot"},
   {id:"loop",          aud:"watch",   sub:null,        label:"A tool answers once. An agent loops."},
   {id:"agent",         aud:"watch",   sub:null,        label:"What an agent is · five layers"},
-  {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Read 1 · agent vs chatbot"},
   {id:"govern",        aud:"watch",   sub:null,        label:"Govern it · what goes where"},
   {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Read 2 · the data boundary"},
   {id:"forces",        aud:"watch",   sub:null,        label:"Five forces · what AI takes"},
@@ -475,11 +507,16 @@ function renderStage(){
 function stageWelcome(){
   return `<span class="eyebrow">A working session for school leaders</span>
     <h1>Leading with AI</h1>
-    <p class="sub">Forty minutes. We model it. We govern it. We each build one thing. You leave having built, not just heard about it. You stay in command.</p>
+    <p class="sub">How might we use AI with confidence, govern it with care, and keep schools that think?</p>
     <div class="join"><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">Join on your device</div>
-      <div class="url">Open <b>Audience_SL.html</b>, then enter</div>
-      <div class="code">${ROOM||"—"}</div>
-      <div class="hint">Your screen will follow this one. We move together.</div></div>`;
+      <div class="joinrow">
+        <div class="qrslot" id="qrslot">QR code<br>here</div>
+        <div class="joinmeta">
+          <div class="url">Scan the code, or open the companion</div>
+          <div class="code">${ROOM||"—"}</div>
+          <div class="hint">Your screen will follow this one. We move together.</div>
+        </div>
+      </div></div>`;
 }
 function stageQuiz(q){
   const Q=QUIZ[q], votes=qVotes[q], total=Object.keys(votes).length, rev=!!revealed[q];
@@ -588,27 +625,53 @@ function renderLead(){
 }
 function renderContent(id){ const c=CONTENT[id]||{};
   return `<span class="eyebrow">${c.e||""}</span><h1>${c.t||""}</h1>${c.h||""}`; }
+function flipTile(word, sub, icon, lines){
+  const back=(lines||[]).map(l=>`<div class="fl">${l}</div>`).join("");
+  return `<div class="fliptile"><div class="inner">
+    <div class="face front"><div class="fw">${word}</div><div class="fs">${sub}</div></div>
+    <div class="face back"><div class="fi">${icon}</div>${back}</div>
+  </div></div>`;
+}
 
 const CONTENT = {
   "frame":{e:"The frame", t:"Leading in, with, and beyond AI.",
-    h:`<p class="body-txt">Three questions tonight. How do we <b>use</b> it. How do we <b>govern</b> it. How do we keep a school that <b>learns</b>.</p>
-      <p class="body-txt" style="font-size:clamp(17px,2vw,21px);color:var(--muted)">You already lead people through change. This change is different. It acts on its own. Reading a brief and deciding is no longer enough.</p>`},
-  "premise":{e:"The premise", t:"You cannot govern what you have only been briefed on.",
-    h:`<p class="body-txt">A brief tells you what a tool did once. Building one shows you how it breaks, where it drifts, and what you must never let it do.</p>`},
-  "cos":{e:"The national frame", t:"The country already named the moves.",
-    h:`<p class="body-txt">At COS 2026, the goal for every student was set as four moves. Hers name what students do. Ours name what leaders do. Same shape, one level up.</p>
-      <div class="gridc g4"><div class="c"><b>About</b><span>learn about AI</span></div><div class="c"><b>Use</b><span>use AI</span></div><div class="c"><b>With</b><span>learn with AI</span></div><div class="c"><b>Beyond</b><span>learn beyond AI</span></div></div>
-      <p class="src">Jasmin Lau, Minister of State for Education, COS2026, 3 March 2026.</p>`},
-  "pilot":{e:"The posture", t:"We PILOT it. We stay in command.",
-    h:`<p class="body-txt" style="font-size:clamp(18px,2.2vw,23px)">In command of the craft, like a pilot. We set the course, engage the systems, and answer for the flight, even on autopilot.</p>
-      <div class="pilotrow">
-        <div class="p"><b>Plan</b><span>set the course</span></div>
-        <div class="p"><b>Instruct</b><span>load your skills</span></div>
-        <div class="p"><b>Launch</b><span>let the loop run</span></div>
-        <div class="p"><b>Oversee</b><span>stay in command</span></div>
-        <div class="p"><b>Tune</b><span>add capability</span></div>
+    h:`<div style="margin-top:8px">
+        <div class="frameq">How might we <b>partner</b> with AI?</div>
+        <div class="frameq">How might we <b>govern</b> AI use?</div>
+        <div class="frameq">How might we lead schools that keep <b>thinking and learning</b>, ever more deeply?</div>
+        <div class="frameq">How might we embrace the <b>human heart</b> of all that we do?</div>
       </div>
-      <p class="body-txt" style="font-size:clamp(15px,1.8vw,18px);color:var(--muted);margin-top:18px">Co-Author and Govern the machine. Transform and Stay Human. The machine pair serves the human pair.</p>`},
+      <p class="body-txt" style="font-size:clamp(15px,1.8vw,18px);color:var(--muted);margin-top:24px">You already lead people through change. This change is different: it acts on its own. Reading a brief and deciding is no longer enough.</p>`},
+  "premise":{e:"The premise", t:"You cannot govern what you have only been briefed on.",
+    h:`<p class="body-txt">A brief tells you what a tool did once. Building one shows you how it breaks, where it drifts, and what you must never allow it to do.</p>`},
+  "cos":{e:"The national frame", t:"We have already named our key moves.",
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">At COS 2026 the national frame named four moves. They were set for students; the same shape, one level up, is ours to lead: for teachers, parents, and the community, not students alone.</p>
+      <div class="flipgrid g2">
+        ${flipTile("About","learn about AI","🧭",["Staff learn what AI is, and is not.","We name its limits, not just its promise."])}
+        ${flipTile("Use","use AI","⚡",["Leaders model it in the open.","Show the loop; do not just tell."])}
+        ${flipTile("With","learn with AI","🤝",["Teachers co-plan and co-mark with it.","It drafts; we judge."])}
+        ${flipTile("Beyond","learn beyond AI","🌱",["We protect what AI cannot do.","Presence, noticing, the values call."])}
+      </div>
+      <p class="src">Jasmin Lau, Minister of State for Education, COS2026, 3 March 2026.</p>
+      <p class="fliphint">Tap a card to turn it.</p>`},
+  "pilot":{e:"PILOT as a frame", t:"We PILOT and stay in command.",
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">All the more, we need clarity of thought and metacognition: what is most needed, and what we want for our people.</p>
+      <div class="flipcol">
+        ${flipTile("Plan","set the course","🧭",["Name the goal and the guardrails before you start."])}
+        ${flipTile("Instruct","load your skills","📋",["Give it your context, your voice, your rules."])}
+        ${flipTile("Launch","let the loop run","🚀",["Hand it the task; let it plan, act, and check."])}
+        ${flipTile("Oversee","stay in command","👁️",["You judge the result, and you answer for it."])}
+        ${flipTile("Tune","add capability","🎚️",["Add a skill or connector; raise the ceiling."])}
+      </div>
+      <p class="fliphint">Tap a tile to turn it.</p>`},
+  "aspects":{e:"Four aspects", t:"Two for the machine. Two for the human.",
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">Inside the posture sit four aspects: two for how you work the tool, two for what the tool is for.</p>
+      <div class="matrix">
+        <div class="mcard"><h3>Co-Author AI</h3><div class="ssub">the machine</div><p style="margin:0;color:var(--muted);font-size:15px;line-height:1.5">You learn from it; it learns from you. Feed your judgement back in. Push its boundary out.</p></div>
+        <div class="mcard"><h3>Govern AI</h3><div class="ssub">the machine</div><p style="margin:0;color:var(--muted);font-size:15px;line-height:1.5">Deploy, delegate, discern. Operate it and rule it. Discern is the verb that catches its bias.</p></div>
+        <div class="mcard secure"><h3>Transform the Human</h3><div class="ssub">the human</div><p style="margin:0;color:var(--muted);font-size:15px;line-height:1.5">Supercharge thinking. Move the person past their own ceiling. The person is what changes, not the model.</p></div>
+        <div class="mcard secure"><h3>Stay Human</h3><div class="ssub">the human</div><p style="margin:0;color:var(--muted);font-size:15px;line-height:1.5">Guard the part no model reaches: the noticing, the mentoring, the presence, the values.</p></div>
+      </div>`},
   "loop":{e:"The loop", t:"A tool answers once. An agent runs a loop.",
     h:`<p class="body-txt">It sets a goal, acts, <b>checks its own work</b>, and tries again until the work is done.</p>
       <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--muted)">That is what you govern. Not one answer. A process that keeps running when you are not watching.</p>`},
@@ -629,9 +692,11 @@ const CONTENT = {
         <div class="mcard secure"><h3>Pair and AIBots</h3><div class="ssub">GovTech, for official work</div>
           <ul class="uselist"><li><span class="mk yes">✓</span><span>Cleared for Restricted and Sensitive Normal</span></li><li><span class="mk yes">✓</span><span>Official school work</span></li><li><span class="mk yes">✓</span><span>No provider logging of your inputs</span></li></ul></div>
       </div>
-      <p class="quote" style="margin-top:18px">Get your hands dirty, and then you understand both the potential and the limits. <b>V. Balakrishnan, 2026</b></p>`},
+      <p class="quote" style="margin-top:18px">Get your hands dirty, and then you understand both the potential and the limits.</p>
+      <p class="src">Vivian Balakrishnan, Minister for Foreign Affairs, AI Engineer Singapore, 16 May 2026.</p>`},
   "forces":{e:"Five forces", t:"What AI takes. What it cannot.",
-    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">Sergiovanni's five forces. The bottom two make a school run. The top three make it good.</p>
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">We need everyone to raise the tide; with AI, every force has become more critical, and more nuanced.</p>
+      <p class="src" style="margin:0 0 10px">After Sergiovanni's five forces. The bottom two make a school run; the top three make it good.</p>
       <div class="ladder">
         <div class="rung keep"><span class="lvl">Cultural</span><span class="role2">Values and beliefs. The keeper of meaning.</span><span class="fx frees">stays yours</span></div>
         <div class="rung keep"><span class="lvl">Symbolic</span><span class="role2">What you notice tells the school what counts.</span><span class="fx frees">stays yours</span></div>
@@ -640,30 +705,33 @@ const CONTENT = {
         <div class="rung"><span class="lvl">Technical</span><span class="role2">Planning and logistics. The manager.</span><span class="fx takes">AI absorbs</span></div>
       </div>`},
   "heart":{e:"Your language", t:"Last year, VOICE. This year, HEART.",
-    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">VOICE is how we lead. HEART is what it is for. Three pairs carry the AI age.</p>
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">VOICE is how we lead; HEART is what it is for. Five pairs, each reaching the other. The three we lean on today are lit.</p>
       <div class="polar">
-        <div class="row">Engagement <span class="amp">through</span> Ownership</div>
-        <div class="row">Relatedness <span class="amp">through</span> Contribution</div>
-        <div class="row">Transformation <span class="amp">through</span> Empowerment</div>
+        <div class="row">Honour <span class="amp">through</span> Values</div>
+        <div class="row lit">Engagement <span class="amp">through</span> Ownership</div>
+        <div class="row">Affinity <span class="amp">through</span> Inclusion</div>
+        <div class="row lit">Relatedness <span class="amp">through</span> Contribution</div>
+        <div class="row lit">Transformation <span class="amp">through</span> Empowerment</div>
       </div>
-      <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">People engage with what they own. So staff must build the tool, not watch a demo. We used to share what we know; now we share what we can do.</p>`},
+      <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">People engage with what they own, so staff must build the tool, not watch a demo. We used to share what we know; now we share what we can do.</p>`},
   "mirror":{e:"The mirror", t:"A skill reflects whoever made it.",
     h:`<p class="body-txt">It learns our best day and our blind spots alike. One voice can pass as the whole school's. And what we never write down is never captured.</p>`},
-  "postures":{e:"The 5Ps", t:"Postures, not a ladder.",
+  "postures":{e:"The 5 Ps", t:"Postures, not a ladder.",
     h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Set per task, by data and stakes. <b>Partner does not beat Prohibit.</b> The right posture is the one the task calls for.</p>
-      <div class="gridc g5">
-        <div class="c"><b>Prohibit</b><span>keep AI out</span></div>
-        <div class="c"><b>Polish</b><span>refine, not originate</span></div>
-        <div class="c"><b>Plan</b><span>think it through</span></div>
-        <div class="c"><b>Produce</b><span>draft with you</span></div>
-        <div class="c"><b>Partner</b><span>co-author, you own</span></div>
-      </div>`},
+      <div class="flipgrid gauto">
+        ${flipTile("Prohibit","keep AI out","⛔",["Sensitive, official, or the values call.","Some things AI never touches."])}
+        ${flipTile("Polish","refine, not originate","✨",["You write it; AI sharpens it.","Never let it originate the message."])}
+        ${flipTile("Plan","think it through","🗺️",["Reason it out with you.","You decide."])}
+        ${flipTile("Produce","draft with you","📝",["It drafts on your standard.","You own and answer for it."])}
+        ${flipTile("Partner","co-author, you own","🤝",["You co-author with AI.","Highest trust, fullest ownership."])}
+      </div>
+      <p class="fliphint">Tap a card to turn it.</p>`},
   "flash":{e:"See it", t:"Built. Free. Hosted.",
     h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">A colleague built these on a free account, in a browser. The same way you will build yours.</p>
       <div class="closegrid">
         <div class="cc"><div class="n">→</div><h3>Co-Cher</h3><p>A lesson design and classroom layout helper, built on E21CC. A teacher made it.</p></div>
         <div class="cc"><div class="n">→</div><h3>SgSL</h3><p>A Singapore Sign Language reader. Still rough, and that is the point. Ship, then fix in the open.</p></div>
-        <div class="cc"><div class="n">→</div><h3>Yours next</h3><p>One staff job, one tool. Built tonight, hosted this week.</p></div>
+        <div class="cc"><div class="n">→</div><h3>Yours next</h3><p>One staff job, one tool. Built today, hosted this week.</p></div>
       </div>`},
   "wow":{e:"Watch it run", t:"No terminal. I asked. It built.",
     h:`<p class="body-txt">I describe a chemistry clip. The agent writes the code, renders it, <b>checks the frames, fixes what broke</b>, and adds narration. I never opened a command line.</p>
@@ -678,7 +746,7 @@ const CONTENT = {
       </div>
       <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">Next: the Relay, in threes. Maker, User, Governor.</p>`},
   "close":{e:"The close", t:"Human agency in an agentic age.",
-    h:`<p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. You cannot govern it on a brief, and tonight you have built one.</p>`}
+    h:`<p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. You cannot govern it on a brief, and today you have built one.</p>`}
 };
 
 /* ---------- util ---------- */
@@ -687,6 +755,10 @@ function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">"
 /* ---------- init ---------- */
 if(!ROOM) ROOM="BTY-SL";
 defaultTeams().forEach(function(n){teams.push({name:n,score:0});});
+/* tap any flip tile (cos, pilot, postures) to turn it; one delegated listener survives re-renders */
+document.getElementById("stage").addEventListener("click", function(e){
+  const t=e.target.closest(".fliptile"); if(t) t.classList.toggle("flipped");
+});
 loadMqtt(); renderStage(); whenMqttReady(connect);
 </script>
 </body>
