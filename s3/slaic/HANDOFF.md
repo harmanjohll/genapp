@@ -12,6 +12,7 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 |---|---|---|
 | `leadai.html` | The original scrollytelling session. The **content canon** and the deep reference each leader carries home. | **Do not edit.** Port ideas out of it; never change it. |
 | `leadaipacket.md` | The working content pack (research, quick wins, demos, task cards, ship steps). Background source. | Reference only. |
+| `index.html` | Landing page. One URL for the room; links Presenter, Audience, the run sheet, the reference, the cards. | Active. |
 | `Presenter_SL.html` | Facilitator console. Drives the deck, aggregates live responses. | Active. |
 | `Audience_SL.html` | Participant companion. Follows the console, collects each leader's input, builds their card. | Active. |
 | `SL_Facilitation_Plan.html` | Run sheet: clock, the Relay script, tensions, guardrails, pre flight. | Active. |
@@ -25,18 +26,22 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 
 ## The MQTT contract (do not break this)
 
-Both files must agree exactly on these two constants:
+Both files must agree exactly on these four constants (byte for byte):
 
 ```
-MQTT_URL = "wss://broker.hivemq.com:8884/mqtt"   // public test broker
-TOPIC_NS = "leadai"                              // topic = leadai/<ROOM>/bus
+MQTT_URL  = "wss://broker.hivemq.com:8884/mqtt"   // swap for your own 443 endpoint
+TOPIC_NS  = "leadai-bty"                           // topic = leadai-bty/<ROOM>/bus
+MQTT_USER = ""                                     // broker username, if the broker needs auth
+MQTT_PASS = ""                                     // broker password, if the broker needs auth
 ```
 
 Default room is `BTY-SL`. Override with `?room=XYZ` on either URL.
 
-Message types on the bus: `stage`, `reveal`, `reset` (presenter to room); `join`, `hb`, `confidence`, `quiz`, `share`, `submitted` (room to presenter). The presenter's `aud` id on each stage maps 1:1 to a case in the Audience router: `welcome, in, quiz, reflect, charter, hold, watch, out, log`. If you add a stage type, add both sides.
+Message types on the bus: `stage` (carries `rev` for quiz stages), `reveal`, `reset`, `reqmine` (presenter to room); `join`, `hb`, `req`, `confidence`, `quiz`, `share`, `submitted` (room to presenter). `req` asks the presenter to resend the current stage; `reqmine` asks every leader to resend their own answers (used after a presenter reload so aggregates rebuild). The presenter's `aud` id on each stage maps 1:1 to a case in the Audience router: `welcome, in, quiz, reflect, charter, hold, watch, out, log`. If you add a stage type, add both sides.
 
-Verified at handoff: both script blocks pass `node --check`; the two constants match; every `aud` id has a router case.
+Reliability notes: the presenter rebroadcasts the current stage on a low cadence (a beacon) so a desynced leader reconverges within a few seconds; the Audience render is idempotent (it skips no-op rebroadcasts, re-renders if its view was lost). The presenter persists its session id in `localStorage`, so an accidental reload resumes the same run rather than orphaning every screen; "New session" still mints a fresh id and clears everything.
+
+Verified at handoff: both script blocks pass `node --check`; the four constants match; every `aud` id has a router case.
 
 ## Conventions
 
@@ -53,11 +58,12 @@ Verified at handoff: both script blocks pass `node --check`; the two constants m
 
 ## Next (backlog, roughly ordered)
 
-1. **Host on GitHub Pages** (steps below).
-2. **Move off the public broker.** Stand up a free dedicated broker (HiveMQ Cloud free tier or EMQX Cloud), give it a unique topic namespace, and swap `MQTT_URL` and `TOPIC_NS` in both files. The public broker is world readable and rate limited; charter and reflection lines, though anonymous, currently cross a shared bus.
-3. **Add an `index.html` landing page** linking Presenter, Audience, the run sheet, and `leadai.html`, so the room has one clean URL.
-4. **Rehearse on the venue network** and fix anything the firewall blocks (the WebSocket and the two CDN scripts: `mqtt`, `html2canvas`).
-5. Optional: a reconnect or rejoin grace so a leader who drops returns to the current stage cleanly; a presenter side export of the wall and reflections.
+1. **Host on GitHub Pages** (steps below). `index.html` now exists in this folder and links every piece, so the room URL is the folder itself.
+2. **Provision the port 443 broker (the one open item that needs an account).** The code is ready: both files read `MQTT_URL`, `TOPIC_NS`, `MQTT_USER`, `MQTT_PASS`, and pass auth to `mqtt.connect`. You still need to stand up a broker that serves WSS on **port 443** (non standard ports like 8884 are blocked on many mobile and corporate networks, which defeats the "any network" goal). Options: a managed MQTT service that natively serves `wss://host:443/mqtt`, or a small broker fronted by Cloudflare on 443. Scope the credential to `leadai-bty/<NS>/#`, set the four constants in both files, and confirm reachability with the cross network test below. Rotate the credential after the event.
+3. **Rehearse across networks.** Confirm a join from a phone on mobile data (not only the venue wifi), and from a second carrier. Confirm the two CDN scripts (`mqtt`, `html2canvas`) load; if a network blocks them, the new connection failure UX says so honestly and points at the paper card.
+4. Optional: a presenter side export of the wall and reflections.
+
+Done since the original handoff: reconnect and rejoin recovery (beacon, `req`, `reqmine`, idempotent render, persisted session id); honest connection failure UX in both files; the `index.html` landing page; a unique topic namespace and auth scaffolding for the broker move.
 
 ## Hosting (multi file, no build)
 
