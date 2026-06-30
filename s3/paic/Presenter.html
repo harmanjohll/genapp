@@ -193,7 +193,8 @@
 
 <script>
 /* ===== CONFIG · must match Audience.html exactly ===== */
-const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker — swap for your own for the day
+const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker — fine for a one-off event
+const ROOM_DEFAULT = "BTY-AI-K7QX";  // unguessable room on the shared broker — rename per event; pass ?room= to override
 /* ===================================================== */
 
 const me = Math.random().toString(36).slice(2,9);
@@ -280,7 +281,7 @@ function whenMqttReady(cb,tries){ tries=tries||0;
 }
 function topic(){ return "aiconf/"+ROOM+"/bus"; }
 function connect(){
-  if(!ROOM){ ROOM="BTY-AI"; }
+  if(!ROOM){ ROOM=ROOM_DEFAULT; }
   document.getElementById("rc").textContent="Room "+ROOM;
   client = mqtt.connect(MQTT_URL, {clientId:"pres_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30});
   client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic()); broadcastStage(); });
@@ -616,7 +617,7 @@ const CONTENT = {
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 
 /* ---------- init ---------- */
-if(!ROOM) ROOM="BTY-AI";
+if(!ROOM) ROOM=ROOM_DEFAULT;
 loadMqtt(); renderStage(); whenMqttReady(connect);
 </script>
 </body>

@@ -33,8 +33,8 @@ A self-contained **live workshop system**, two single HTML files that talk to ea
 
 ## 2. How to run and test (local, no hosting needed)
 
-1. Open `Presenter.html` in a full browser tab (Chrome or Arc full tab, **not** Arc's preview window). It defaults the room code to **BTY-AI** (top-left).
-2. Open `Audience.html` in another tab → enter `BTY-AI` → Join.
+1. Open `Presenter.html` in a full browser tab (Chrome or Arc full tab, **not** Arc's preview window). It defaults the room code to **BTY-AI-K7QX** (top-left; `ROOM_DEFAULT` constant — rename per event).
+2. Open `Audience.html` in another tab → enter `BTY-AI-K7QX` → Join.
 3. Both go **green** within ~2s. Presenter shows **1 connected**. Click **Next** → the Audience screen follows.
 4. Reset between runs with the Presenter's **⟳ New session** button (bottom-left).
 
@@ -47,7 +47,7 @@ The files need **internet** (they pull `mqtt`, `html2canvas`, and Google Fonts f
 ### Transport / sync
 - **MQTT over secure WebSocket**, library `mqtt@5.10.1` loaded dynamically from jsDelivr (never a blocking `<script>` in `<head>` — that caused a hang on some networks; see `loadMqtt()` + `whenMqttReady()`).
 - Broker: `const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt"` at the top of **both** files. This is a **public test broker** — for the real day, swap it (and use a unique room code) so you never collide with strangers. The whole world can publish to a public topic; the session ID (below) stops them counting or steering, but a private broker/room is correct for production.
-- Topic: `aiconf/<ROOM>/bus`. ROOM must match on both files (Presenter defaults BTY-AI; Audience types it, or use `?room=YOURCODE` on both).
+- Topic: `aiconf/<ROOM>/bus`. ROOM must match on both files (Presenter defaults to `ROOM_DEFAULT` = BTY-AI-K7QX; Audience types it, or use `?room=YOURCODE` on both — the unguessable room is what keeps strangers off the public broker).
 
 ### Session integrity
 - `SID` = a per-session id generated on Presenter load and regenerated on **New session**. Every message carries `sid`.
@@ -95,9 +95,12 @@ Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ w
 ## 5. State: TODO (in priority order)
 
 ### Day-of / hosting
-- Swap `MQTT_URL` (both files) to your own free broker (HiveMQ Cloud / EMQX / Ably) and set a unique room code.
-- Host on **GitHub Pages**: push `Presenter.html` + `Audience.html`; parents open the Audience URL on their laptops, you open the Presenter URL on the projector machine. (Static hosting is fine — all logic is client-side; only the broker is external.)
-- Pre-flight: test the full run on the actual venue Wi-Fi with two real devices; confirm the broker port isn't blocked; have the offline fallback in mind (deck still steps; sync just won't).
+- **Broker (decided):** keep the **public** `MQTT_URL`; isolation comes from the **unguessable room** `ROOM_DEFAULT` (BTY-AI-K7QX) plus the per-session `SID`. Rename the room per event. (A private broker would only push throwaway creds into a world-readable static file, so it buys little for a one-off.)
+- **Hosting (GitHub Pages):** this repo (`genapp`) is already a static-app collection served by Pages (root `.nojekyll`, default branch `main`). `s3/paic/index.html` links the two screens. **Publish by merging this branch into `main`** — then:
+  - Presenter: `https://harmanjohll.github.io/genapp/s3/paic/Presenter.html?room=BTY-AI-K7QX`
+  - Audience:  `https://harmanjohll.github.io/genapp/s3/paic/Audience.html?room=BTY-AI-K7QX`
+  - or share the landing page: `…/genapp/s3/paic/`
+- Pre-flight: full run on the actual venue Wi-Fi with two real devices; confirm WSS port 8884 isn't blocked; offline fallback in mind (deck still steps; sync just won't).
 
 ---
 

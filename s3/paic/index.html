@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Confident · Parents</title>
+<style>
+  :root{
+    --navy:#16233f;--navy-2:#1f3358;--ink:#1b2435;
+    --gold:#e0a82e;--gold-soft:#f3d488;--red:#d2452f;
+    --cream:#f6f1e7;--paper:#fbf8f1;--line:#d8cdb8;--muted:#5d6b82;
+    --serif:Georgia,'Times New Roman',serif;--sans:'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.5;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 18px;}
+  .wrap{max-width:760px;width:100%;}
+  .head{text-align:center;margin-bottom:26px;}
+  .eyebrow{letter-spacing:.28em;text-transform:uppercase;font-size:11px;font-weight:800;color:var(--red);}
+  h1{font-family:var(--serif);font-size:clamp(34px,6vw,46px);margin:8px 0 6px;color:var(--navy);}
+  h1 .bot{color:var(--gold);}
+  .head p{color:var(--muted);font-size:16px;margin:0 auto;max-width:560px;}
+  .room{display:inline-block;margin-top:16px;font-family:var(--serif);font-size:15px;color:var(--navy);
+    background:#fbf3df;border:1px solid var(--gold);border-radius:999px;padding:7px 18px;}
+  .room b{letter-spacing:.04em;}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;}
+  @media(max-width:620px){.cards{grid-template-columns:1fr;}}
+  a.card{display:flex;flex-direction:column;text-decoration:none;border-radius:18px;padding:26px 24px;
+    border:1px solid var(--line);box-shadow:0 8px 22px rgba(22,35,63,.10);transition:transform .15s,box-shadow .15s;}
+  a.card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(22,35,63,.16);}
+  a.card .role{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;}
+  a.card h2{font-family:var(--serif);font-size:26px;margin:6px 0 8px;}
+  a.card p{font-size:14px;margin:0 0 16px;}
+  a.card .go{margin-top:auto;font-weight:700;font-size:15px;}
+  .pres{background:linear-gradient(160deg,#16233f,#1f3358);border-color:#2b4063;color:#eef2f9;}
+  .pres .role{color:var(--gold-soft);} .pres h2{color:#fff;} .pres p{color:#cdd6e6;} .pres .go{color:var(--gold-soft);}
+  .aud{background:var(--paper);}
+  .aud .role{color:var(--gold);} .aud h2{color:var(--navy);} .aud p{color:var(--ink);} .aud .go{color:var(--navy);}
+
+  .docs{margin-top:22px;text-align:center;font-size:13.5px;color:var(--muted);}
+  .docs a{color:var(--navy);font-weight:700;text-decoration:none;border-bottom:1px solid var(--gold);}
+  .docs a:hover{color:var(--gold);}
+  .docs span{margin:0 8px;color:var(--line);}
+  .foot{margin-top:26px;text-align:center;font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">South 3 Cluster · Parenting &amp; Thriving Together 2026</div>
+    <h1><span class="bot">AI</span> Confident · Parents</h1>
+    <p>A live, two-screen workshop. The facilitator drives the deck; each parent follows along and keeps their own card.</p>
+    <div class="room">Room code · <b>BTY-AI-K7QX</b></div>
+  </div>
+
+  <div class="cards">
+    <a class="card pres" href="Presenter.html?room=BTY-AI-K7QX">
+      <div class="role">Facilitator · projector</div>
+      <h2>Open the Presenter</h2>
+      <p>The deck and your controls. Project this and drive it Back / Next. Open it once, on the room machine.</p>
+      <div class="go">Open Presenter →</div>
+    </a>
+    <a class="card aud" href="Audience.html?room=BTY-AI-K7QX">
+      <div class="role">Parents · your laptop</div>
+      <h2>Join as a parent</h2>
+      <p>Your companion for the morning, and yours to keep. The room code is filled in for you, just tap Join.</p>
+      <div class="go">Join the room →</div>
+    </a>
+  </div>
+
+  <div class="docs">
+    No laptop, or want it on paper?
+    <a href="AI_Confident_Parents_Cards.html">Learning Log (print)</a>
+    <span>·</span>
+    <a href="AI_Confident_Parents_Facilitation_Plan.html">Facilitation Plan</a>
+  </div>
+
+  <div class="foot">Beatty Secondary School · Sat 4 July 2026 · 8:30–11:30 AM</div>
+</div>
+</body>
+</html>
