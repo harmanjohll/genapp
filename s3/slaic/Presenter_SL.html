@@ -195,8 +195,8 @@
   .frameq b{color:var(--accent);}
   /* welcome QR placeholder */
   .joinrow{display:flex;gap:34px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:16px;}
-  .qrslot{width:170px;height:170px;flex:none;border:2px dashed var(--line-2);border-radius:16px;display:grid;place-items:center;
-    color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-align:center;line-height:1.6;}
+  .qrslot{width:204px;height:204px;flex:none;background:#fff;border-radius:16px;display:grid;place-items:center;padding:12px;}
+  .qrslot img{width:100%;height:100%;display:block;}
   .joinmeta{text-align:left;}
   /* HEART highlight */
   .polar .row.lit{border-color:var(--accent);background:rgba(158,199,189,.09);}
@@ -510,9 +510,9 @@ function stageWelcome(){
     <p class="sub">How might we use AI with confidence, govern it with care, and keep schools that think?</p>
     <div class="join"><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">Join on your device</div>
       <div class="joinrow">
-        <div class="qrslot" id="qrslot">QR code<br>here</div>
+        <div class="qrslot" id="qrslot"><img src="qr.svg" alt="Scan to join the session" width="180" height="180"></div>
         <div class="joinmeta">
-          <div class="url">Scan the code, or open the companion</div>
+          <div class="url">Scan, or open <b>go.gov.sg/s3slaic</b></div>
           <div class="code">${ROOM||"—"}</div>
           <div class="hint">Your screen will follow this one. We move together.</div>
         </div>
