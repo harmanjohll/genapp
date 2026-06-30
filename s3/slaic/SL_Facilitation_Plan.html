@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading with AI · Facilitation Plan</title>
+<style>
+  :root{
+    --ink:#1d2a2b;--ink-soft:#3c4f4d;--muted:#5d6b6a;--paper:#f4f1ea;--soft:#e8ede9;--card:#fbfaf6;--line:#d6ddd6;
+    --accent:#2f7d72;--accent-d:#25655c;--amber:#b7791f;--rust:#9a3b3b;--dark:#16282a;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:16px;}
+  .wrap{max-width:860px;margin:0 auto;padding:0 22px 80px;}
+  header{background:var(--dark);color:#eaf1ee;padding:54px 22px 46px;}
+  header .wrap{padding-bottom:0;}
+  .kick{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;}
+  header h1{font-family:var(--serif);font-size:clamp(30px,5vw,44px);margin:10px 0 8px;font-weight:700;}
+  header p{color:#cfe0db;max-width:640px;margin:0;font-size:17px;}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+  .meta span{font-size:13px;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:6px 14px;color:#dfeae6;}
+  section{border-bottom:1px solid var(--line);padding:34px 0;}
+  h2{font-family:var(--serif);font-size:25px;margin:0 0 4px;position:relative;padding-bottom:12px;}
+  h2::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:3px;background:var(--accent);border-radius:2px;}
+  .lede{color:var(--ink-soft);font-size:17px;margin:14px 0 0;}
+  h3{font-family:var(--serif);font-size:19px;margin:22px 0 6px;}
+  p{margin:0 0 12px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;}
+  .three{display:grid;gap:14px;margin-top:16px;}
+  @media(min-width:680px){.three{grid-template-columns:repeat(3,1fr);}}
+  .qcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 18px;}
+  .qcard .t{font-family:var(--serif);font-weight:700;font-size:18px;margin-bottom:4px;}
+  .qcard p{font-size:14.5px;color:var(--ink-soft);margin:0;}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14.5px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-d);font-weight:700;}
+  td.min{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);width:74px;}
+  td.tag{white-space:nowrap;}
+  .pill{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:99px;padding:3px 10px;}
+  .pill.live{background:var(--soft);color:var(--accent-d);border:1px solid var(--accent);}
+  .pill.watch{background:#fff;color:var(--muted);border:1px solid var(--line);}
+  .pill.build{background:#f3ecda;color:var(--amber);border:1px solid var(--amber);}
+  ol,ul{margin:8px 0 12px;padding-left:22px;}
+  li{margin:6px 0;}
+  .roles{display:grid;gap:12px;margin-top:14px;}
+  @media(min-width:680px){.roles{grid-template-columns:repeat(3,1fr);}}
+  .role{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:12px;padding:16px;}
+  .role.opt{border-top-color:var(--amber);}
+  .role .rl{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent-d);font-weight:700;}
+  .role.opt .rl{color:var(--amber);}
+  .role .rn{font-family:var(--serif);font-weight:700;font-size:18px;margin:2px 0 8px;}
+  .role code{display:block;background:var(--soft);border-radius:6px;padding:7px 9px;font-size:12.5px;margin:6px 0;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;}
+  .grid2{display:grid;gap:14px;margin-top:14px;}
+  @media(min-width:680px){.grid2{grid-template-columns:1fr 1fr;}}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .box h3{margin-top:0;}
+  .check{list-style:none;padding:0;margin:10px 0;}
+  .check li{padding-left:28px;position:relative;margin:9px 0;}
+  .check li::before{content:"";position:absolute;left:0;top:2px;width:17px;height:17px;border:1.6px solid var(--accent);border-radius:5px;}
+  .note{font-size:14px;color:var(--muted);font-style:italic;margin-top:6px;}
+  .amp{color:var(--accent);font-style:italic;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kick">Facilitation plan · for the presenter</div>
+    <h1>Leading with AI</h1>
+    <p>A working session for school leaders. Parent-workshop structure, leader-level content. We model it, we govern it, we each build one thing. Leaders leave having built, not just heard about it.</p>
+    <div class="meta"><span>40 to 45 minutes</span><span>40 to 45 leaders</span><span>One device each</span><span>Trios for the Relay</span></div>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <h2>The big idea</h2>
+    <p class="lede">You cannot govern what you have only been briefed on. A brief tells you what a tool did once; building one shows you how it breaks, where it drifts, and what you must never let it do. So the room builds.</p>
+    <div class="card"><b>The through-line.</b> Every beat returns to one posture: we PILOT it and stay in command. Plan, Instruct, Launch, Oversee, Tune. The machine pair (Co-Author, Govern) serves the human pair (Transform, Stay Human).</div>
+  </section>
+
+  <section>
+    <h2>Three questions, one level up</h2>
+    <p class="lede">The national frame names what students do: learn about, use, learn with, learn beyond AI. Ours names what leaders do.</p>
+    <div class="three">
+      <div class="qcard"><div class="t">Use it</div><p>Model the loop and the agent in the open. Show, do not tell.</p></div>
+      <div class="qcard"><div class="t">Govern it</div><p>Decide what data goes where. Set postures per task, by data and stakes.</p></div>
+      <div class="qcard"><div class="t">Keep a school that learns</div><p>Guard the cultural and human forces no model reaches.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The set-up</h2>
+    <div class="grid2">
+      <div class="box">
+        <h3>Two screens, one room</h3>
+        <p><b>Presenter_SL.html</b> on the main screen: you drive it. <b>Audience_SL.html</b> on each leader's device: their screen follows yours, live.</p>
+        <p>They join with the room code shown on the welcome slide. Default is <b>BTY-SL</b>. Add <code style="font-family:ui-monospace,monospace">?room=BTY-SL</code> to either URL to set it directly.</p>
+      </div>
+      <div class="box">
+        <h3>Grouping</h3>
+        <p>Seat in <b>trios</b> from the start: enough for the Relay's three roles. With 40 to 45 leaders that is 13 to 15 trios.</p>
+        <p>Mixed experience per trio works best. The confident leader becomes the Maker; the cautious one makes a sharp Governor.</p>
+      </div>
+    </div>
+    <p class="note">The sync uses a public MQTT broker over WebSocket. It needs venue wifi. Test the join on the day, on the venue network, before leaders arrive.</p>
+  </section>
+
+  <section>
+    <h2>The flow, beat by beat</h2>
+    <p class="lede">Twenty-seven stages. Trim the reads if time runs short; never trim the Relay. <span class="pill live">live</span> means leaders act on their screens; <span class="pill watch">watch</span> means eyes on the main screen; <span class="pill build">build</span> is hands-on.</p>
+    <table>
+      <thead><tr><th>Min</th><th>Stage</th><th></th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td class="min">0:00</td><td>Welcome</td><td class="tag"><span class="pill live">live</span></td><td>Leaders join with the room code. Wait for the connected count to climb.</td></tr>
+        <tr><td class="min">0:02</td><td>Frame · Premise</td><td class="tag"><span class="pill watch">watch</span></td><td>Three questions. You cannot govern what you have only been briefed on.</td></tr>
+        <tr><td class="min">0:04</td><td>Readiness in</td><td class="tag"><span class="pill live">live</span></td><td>Rate the school 1 to 5. Each leader names the question on their mind; the sharp ones surface on your screen. Read two aloud.</td></tr>
+        <tr><td class="min">0:07</td><td>COS · PILOT</td><td class="tag"><span class="pill watch">watch</span></td><td>The national frame, then the posture. Set the through-line.</td></tr>
+        <tr><td class="min">0:10</td><td>Loop · Agent</td><td class="tag"><span class="pill watch">watch</span></td><td>A tool answers once; an agent loops. Name the five layers.</td></tr>
+        <tr><td class="min">0:13</td><td>Read 1 · agent vs chatbot</td><td class="tag"><span class="pill live">live</span></td><td>Predict, then Reveal. The loop is the answer.</td></tr>
+        <tr><td class="min">0:15</td><td>Govern · what goes where</td><td class="tag"><span class="pill watch">watch</span></td><td>Free Claude for open work; records on Pair and AIBots.</td></tr>
+        <tr><td class="min">0:17</td><td>Read 2 · the data boundary</td><td class="tag"><span class="pill live">live</span></td><td>The cohort-records scenario. Decline. This is the one most will get wrong.</td></tr>
+        <tr><td class="min">0:19</td><td>Forces</td><td class="tag"><span class="pill watch">watch</span></td><td>What AI takes; what stays yours.</td></tr>
+        <tr><td class="min">0:21</td><td>Read 3 · what stays yours</td><td class="tag"><span class="pill live">live</span></td><td>The cultural force. The category error to avoid.</td></tr>
+        <tr><td class="min">0:23</td><td>HEART · Mirror</td><td class="tag"><span class="pill watch">watch</span></td><td>Engagement through ownership. A skill reflects its maker.</td></tr>
+        <tr><td class="min">0:25</td><td>Read 4 · the one-voice risk</td><td class="tag"><span class="pill live">live</span></td><td>Build the skill with many; govern the blind spots.</td></tr>
+        <tr><td class="min">0:26</td><td>Postures</td><td class="tag"><span class="pill watch">watch</span></td><td>The 5 Ps. Postures, not a ladder.</td></tr>
+        <tr><td class="min">0:27</td><td>Read 5 · Partner is not the top</td><td class="tag"><span class="pill live">live</span></td><td>Set the posture per task. The pivot into the build.</td></tr>
+        <tr><td class="min">0:28</td><td>See it · Watch it run · Build</td><td class="tag"><span class="pill watch">watch</span></td><td>Co-Cher and SgSL, built free. The chemistry pipeline. Then the three tiers.</td></tr>
+        <tr><td class="min">0:31</td><td>The Relay</td><td class="tag"><span class="pill build">build</span></td><td>Twelve minutes. Maker, User, Governor. Run sheet below. Tally trios who ship a working skill.</td></tr>
+        <tr><td class="min">0:43</td><td>Command Charter</td><td class="tag"><span class="pill live">live</span></td><td>Each leader sets a posture on the 5 Ps. Lines fill the wall live. Read the boldest Prohibit aloud.</td></tr>
+        <tr><td class="min">0:45</td><td>Reflect · Readiness out</td><td class="tag"><span class="pill live">live</span></td><td>Three lines plus the belief shift. Rate again. Show the room's delta.</td></tr>
+        <tr><td class="min">0:47</td><td>Close · Command card</td><td class="tag"><span class="pill watch">watch</span></td><td>Human agency in an agentic age. Leaders save or print their card.</td></tr>
+      </tbody>
+    </table>
+    <p class="note">Timings overrun on purpose; the deck is fuller than the cut. If you must claw back time, drop Reads 4 and 5 and keep the Relay whole.</p>
+  </section>
+
+  <section>
+    <h2>The Relay · run sheet</h2>
+    <p class="lede">Twelve minutes. Three roles in each trio. Each person sends only a handful of messages. Keep agents, loops, and connectors on your account; the rest runs on free accounts.</p>
+    <div class="roles">
+      <div class="role">
+        <div class="rl">A · Co-Author</div><div class="rn">Maker · 8 min</div>
+        <code>I'm building a reusable writing skill. Ask me six questions, one at a time, to capture how I write parent letters: tone, things I always do, things I never do, length, structure, and one short example.</code>
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:6px 0;">Answer the six, then:</p>
+        <code>Now write it as a SKILL.md: a name, a "when to use" line, my voice rules as bullets, the format, and my example. Keep it tight. Inform only.</code>
+        <p style="font-size:13px;color:var(--muted);margin:6px 0 0;">Copy the SKILL.md. Hand it to the User.</p>
+      </div>
+      <div class="role">
+        <div class="rl">B · Co-Author</div><div class="rn">User · 3 min</div>
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 6px;">Paste the Maker's SKILL.md, then:</p>
+        <code>Use this skill. Draft a parent letter about the science fair on 14 March. Inform only, minimal words.</code>
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:6px 0;">Change one fact and watch it hold the voice:</p>
+        <code>Update: a wet-weather plan has been added, indoors if it rains. Redo.</code>
+      </div>
+      <div class="role opt">
+        <div class="rl">C · Govern</div><div class="rn">Governor · ongoing</div>
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 6px;">Paste the draft, then:</p>
+        <code>What in this is sensitive, and what should never be put into a public AI tool?</code>
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:6px 0;">Then:</p>
+        <code>Now argue the strongest case against sending this at all, in five bullets.</code>
+      </div>
+    </div>
+    <div class="card"><b>The point.</b> Maker instructs. User launches. Governor oversees. That is PILOT, in twelve minutes. A skill made by one person works for another: capture judgement once, reuse it. Tally a point for any trio that ships a skill a colleague could use unaided.</div>
+  </section>
+
+  <section>
+    <h2>Tensions to hold, not solve</h2>
+    <p class="lede">Name these in the room. They are leadership questions, not technical ones.</p>
+    <div class="grid2">
+      <div class="box"><h3>The polarities</h3>
+        <ul>
+          <li>Efficiency <span class="amp">and</span> effort</li>
+          <li>Speed <span class="amp">and</span> depth</li>
+          <li>Trust <span class="amp">and</span> verify</li>
+          <li>Standardise <span class="amp">and</span> keep the human voice</li>
+        </ul>
+      </div>
+      <div class="box"><h3>The ethical load</h3>
+        <ul>
+          <li><b>Privacy:</b> monitoring versus trust</li>
+          <li><b>Bias:</b> only as fair as the data</li>
+          <li><b>Opacity:</b> black boxes</li>
+          <li><b>Vendor:</b> their incentives, not yours</li>
+          <li><b>Autonomy:</b> quietly eroded</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">MOE AIEd holds the line on four principles: agency, inclusivity, fairness, safety. The human decides.</p>
+  </section>
+
+  <section>
+    <h2>Guardrails to repeat</h2>
+    <ul>
+      <li><b>The data line.</b> Free Claude is for open work only. Student and staff records stay on the government platforms. Decide what data goes where before you build.</li>
+      <li><b>The maker's mirror.</b> A skill carries one person's voice and blind spots. Build shared skills with many hands, and review what they quietly assume.</li>
+      <li><b>The category error.</b> The cultural and human forces are not optional. AI clears the admin so you have more hours for people, not fewer.</li>
+      <li><b>The posture, not the ladder.</b> Partner does not beat Prohibit. The right posture is the one the task calls for.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Before leaders arrive</h2>
+    <ul class="check">
+      <li>Open <b>Presenter_SL.html</b> on the main screen. Confirm the room code reads <b>BTY-SL</b> (or set your own with <code style="font-family:ui-monospace,monospace">?room=</code>).</li>
+      <li>On a spare device, open <b>Audience_SL.html</b>, join the room, and confirm the connected count climbs and the screen follows when you press Next.</li>
+      <li>Test on the <b>venue wifi</b>, not your own hotspot. If the broker is blocked, the live beats will not sync.</li>
+      <li>Have your <b>two paid accounts</b> ready for the agent, connector, and loop demos in See it and Watch it run.</li>
+      <li>Pre-load one worked <b>house-voice SKILL.md</b> so the Relay has a fallback if a Maker stalls.</li>
+      <li>Seat the room in <b>trios</b>. Put up the room code before the doors open.</li>
+      <li>Keep <b>leadai.html</b> open in a tab: the deep reference each leader takes home.</li>
+    </ul>
+  </section>
+
+</div>
+</body>
+</html>

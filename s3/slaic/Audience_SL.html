@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading with AI · Your Companion</title>
+<style>
+  :root{
+    --ink:#1d2a2b;--ink-soft:#3c4f4d;--muted:#5d6b6a;
+    --paper:#f4f1ea;--soft:#e8ede9;--card:#fbfaf6;--line:#d6ddd6;
+    --accent:#2f7d72;--accent-d:#25655c;--amber:#b7791f;--rust:#9a3b3b;--dark:#16282a;--green:#2f7d5b;
+    --serif:Georgia,"Times New Roman",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.55;}
+  .app{max-width:680px;margin:0 auto;padding:0 18px 60px;}
+
+  .statusbar{position:sticky;top:0;z-index:30;background:var(--dark);color:#eaf1ee;
+    display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:3px solid var(--accent);}
+  .statusbar .brand{font-family:var(--serif);font-size:16px;}
+  .statusbar .brand b{color:var(--accent);}
+  .conn{display:flex;align-items:center;gap:7px;font-size:12px;color:#9fb4ae;}
+  .dot{width:9px;height:9px;border-radius:50%;background:#6e807d;}
+  .dot.on{background:#5bb89f;box-shadow:0 0 0 3px rgba(91,184,159,.25);}
+  .dot.off{background:var(--rust);}
+
+  .view{padding:26px 0;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .eyebrow{letter-spacing:.2em;text-transform:uppercase;font-size:11px;font-weight:800;color:var(--accent-d);}
+  h1{font-family:var(--serif);font-size:32px;line-height:1.08;margin:8px 0 6px;color:var(--ink);}
+  h2{font-family:var(--serif);font-size:25px;line-height:1.12;margin:6px 0 10px;color:var(--ink);}
+  p.lede{font-size:16px;color:var(--muted);margin:0 0 18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;
+    box-shadow:0 8px 22px rgba(20,40,42,.06);margin-bottom:16px;}
+  label.f{display:block;font-size:13px;font-weight:700;color:var(--ink);margin:14px 0 6px;}
+  input[type=text],textarea{width:100%;font-family:var(--sans);font-size:15px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);resize:vertical;}
+  textarea{min-height:64px;}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,125,114,.16);}
+
+  .scale{display:flex;gap:8px;margin:6px 0 4px;}
+  .scale button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:16px 0;
+    font-family:var(--serif);font-size:24px;color:var(--ink);cursor:pointer;transition:.15s;}
+  .scale button:hover{border-color:var(--accent);}
+  .scale button.sel{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .lab{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px;}
+
+  .qhead{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+  .qtag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
+  .claim{font-family:var(--serif);font-size:22px;color:var(--ink);margin:2px 0 16px;line-height:1.25;}
+  .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;
+    border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:16px;cursor:pointer;transition:.15s;color:var(--ink);}
+  .opt:hover{border-color:var(--accent);}
+  .opt.picked{border-color:var(--accent);background:var(--soft);}
+  .opt.correct{border-color:var(--green);background:#e7f4ec;}
+  .opt.wrong{border-color:var(--rust);background:#f7ece9;}
+  .opt .mark{font-weight:800;margin-right:8px;}
+  .why{border-left:3px solid var(--accent);background:#fff;padding:12px 15px;border-radius:0 10px 10px 0;font-size:14.5px;margin-top:8px;}
+  .why b{color:var(--ink);}
+  .verdict{font-weight:800;font-size:13px;margin-bottom:4px;}
+  .verdict.ok{color:var(--green);}.verdict.no{color:var(--rust);}
+  .waitmark{font-size:13px;color:var(--muted);margin-top:12px;font-style:italic;}
+
+  .beat{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;background:var(--card);}
+  .beat .wsw{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
+  .beat .qx{font-family:var(--serif);font-size:18px;color:var(--ink);margin:4px 0 8px;}
+
+  .pblock{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;background:var(--card);}
+  .pblock .pl{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .pblock .pchip{font-family:var(--serif);font-weight:800;color:#fff;background:var(--accent);
+    width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:16px;}
+  .pblock .pname{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
+  .pblock .pq{font-size:14px;color:var(--ink);font-weight:700;}
+  .sharerow{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;}
+  .sharetoggle{font-family:var(--sans);font-size:12.5px;font-weight:700;border:1.5px solid var(--line);
+    background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px 6px 12px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;}
+  .sharetoggle:before{content:"";width:9px;height:9px;border-radius:50%;background:#c2cabf;}
+  .sharetoggle.on{background:var(--soft);border-color:var(--accent);color:var(--ink);}
+  .sharetoggle.on:before{background:var(--green);}
+  .sharehint{font-size:11.5px;color:var(--muted);}
+
+  .belief{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:6px;}
+  .belief .bl{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:8px;color:var(--ink);}
+  .belief input{margin-bottom:8px;}
+
+  button.btn{font-family:var(--sans);font-size:15px;font-weight:700;border:none;border-radius:12px;
+    padding:13px 22px;cursor:pointer;background:var(--accent);color:#fff;transition:.15s;}
+  button.btn:hover{background:var(--accent-d);}
+  button.btn.ghost{background:#fff;color:var(--accent-d);border:1.5px solid var(--accent);}
+  button.btn.sm{font-size:13px;padding:10px 14px;}
+  button.btn:disabled{opacity:.45;cursor:default;}
+  .doneflag{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:700;font-size:14px;margin-top:6px;}
+
+  .delta{font-family:var(--serif);font-size:42px;color:var(--ink);text-align:center;margin:8px 0;}
+  .delta .up{color:var(--green);}
+
+  .hold{text-align:center;padding:50px 0;}
+  .hold .ring{width:54px;height:54px;border-radius:50%;border:4px solid var(--soft);border-top-color:var(--accent);
+    margin:0 auto 18px;animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .log .logcard{border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px;background:#fff;}
+  .log .logcard h3{font-family:var(--serif);margin:0 0 4px;color:var(--ink);font-size:20px;}
+  .log .ttl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
+  .log ul{margin:6px 0 0;padding-left:18px;font-size:14px;}
+  .log .good li::marker{color:var(--green);}
+  .log .note li::marker{color:var(--rust);}
+  .pillrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .pill{font-size:12px;background:var(--soft);border:1px solid var(--line);border-radius:99px;padding:4px 11px;}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:8px;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;
+    padding:10px 18px;border-radius:99px;font-size:13px;opacity:0;transition:.3s;z-index:40;}
+  .toast.show{opacity:1;}
+
+  @media print{
+    .statusbar,.hint,#printbar,.toast{display:none !important;}
+    body{background:#fff;}
+    .log .logcard{break-inside:avoid;box-shadow:none;}
+    .app{padding:0;max-width:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <div class="brand"><b>Leading</b> with AI</div>
+  <div class="conn"><span class="dot" id="dot"></span><span id="connlbl">offline</span>
+    <button onclick="if(confirm('Start fresh? This clears your answers and rejoins.'))location.reload()" title="Start fresh" style="margin-left:8px;background:transparent;border:1px solid rgba(255,255,255,.25);color:#cdd6e6;border-radius:8px;padding:2px 9px;font-size:13px;cursor:pointer;">↻</button></div>
+</div>
+
+<div class="app"><div id="view"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== CONFIG · must match Presenter_SL.html exactly ===== */
+const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker — swap for your own for the day
+const TOPIC_NS = "leadai";                              // namespace · must match Presenter_SL.html
+/* ======================================================== */
+
+const me = Math.random().toString(36).slice(2,9);
+const S = { room:"", name:"", confIn:null, confOut:null,
+            quiz:{}, reveal:{}, share:{}, belief:{b1:"",b2:""} };
+
+const QUIZ = [
+  { tag:"What makes it new", claim:"An agent differs from a chatbot because it…",
+    options:["Gives longer, fuller answers","Runs a loop: plans, acts, checks its own work, repeats","Uses a larger model","Is right more often"], answer:1,
+    why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. You govern a process that keeps running when you are not watching.",
+    note:"An agent runs a loop; you govern the process, not one answer." },
+  { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
+    options:["Approve, it saves real time","Approve once names are stripped","Decline; records stay on the government platform","Approve as a one-subject pilot"], answer:2,
+    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Student and staff records stay on Pair and AIBots. Free Claude is for open work only.",
+    note:"Decide what data goes where. Records stay on Pair and AIBots." },
+  { tag:"Spot the risk", claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
+    options:["It will take too long to write","One person's voice and blind spots pass as the whole school's","Staff will refuse to use it","The licensing cost"], answer:1,
+    why:"<b>A skill reflects whoever made it.</b> One voice can pass as the whole school's, and what we never write down is never captured. Build it with many, and govern the blind spots.",
+    note:"A skill reflects its maker. Build it with many; govern the blind spots." },
+  { tag:"What stays yours", claim:"Across Sergiovanni's five forces, which must a leader never delegate to AI?",
+    options:["Technical: timetabling and logistics","Managerial: rosters and routing","Cultural: what the school believes and stands for","Administrative paperwork around people"], answer:2,
+    why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what you notice and what you stand for, stay yours. Treating them as optional is the category error.",
+    note:"AI absorbs the technical. The cultural and symbolic stay yours." },
+  { tag:"True or false", claim:"Partner is the most advanced posture; aim to move every task there.",
+    options:["True","False"], answer:1,
+    why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for.",
+    note:"Postures, not a ladder. The right posture fits the task." }
+];
+const PS = [
+  { p:"P", name:"Prohibit", q:"We will keep AI out of…", ph:"e.g. student records, anything official or sensitive", key:"prohibit" },
+  { p:"P", name:"Polish",   q:"AI may polish, never originate…", ph:"e.g. the values message, the hard conversation", key:"polish" },
+  { p:"P", name:"Plan",     q:"A planning loop I will hand to an agent…", ph:"e.g. timetable gaps, duty rosters, PD logistics", key:"plan" },
+  { p:"P", name:"Produce",  q:"Something we will build and ship…", ph:"e.g. a feedback helper, a PD summary tool", key:"produce" },
+  { p:"P", name:"Partner",  q:"Where staff co-author with AI, and own it…", ph:"e.g. lesson design, comms drafts", key:"partner" }
+];
+
+/* ---------- SYNC (MQTT over WebSocket) ---------- */
+let client=null, wsOpen=false, hb=null, mySid=null;
+function loadMqtt(){
+  if(window.mqtt || document.getElementById("mqttlib")) return;
+  var s=document.createElement("script"); s.id="mqttlib";
+  s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
+  s.onerror=function(){ setConn(false); };
+  document.head.appendChild(s);
+}
+function whenMqttReady(cb,tries){ tries=tries||0;
+  if(typeof mqtt!=="undefined"){ cb(); }
+  else if(tries<60){ setTimeout(function(){whenMqttReady(cb,tries+1);},200); }
+  else { setConn(false); toast("Network blocked the sync library"); }
+}
+function topic(){ return TOPIC_NS+"/"+S.room+"/bus"; }
+function connect(){
+  if(!S.room || typeof mqtt==="undefined"){ setConn(false); return; }
+  client = mqtt.connect(MQTT_URL, {clientId:"aud_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30});
+  client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic());
+    send({type:"join"}); clearInterval(hb);
+    hb=setInterval(()=>send({type: mySid? "hb":"join"}),4000); });
+  client.on("reconnect", ()=>setConn(false));
+  client.on("offline", ()=>{ wsOpen=false; setConn(false); });
+  client.on("close", ()=>{ wsOpen=false; setConn(false); });
+  client.on("error", ()=>setConn(false));
+  client.on("message", (t,payload)=>onMsg(payload.toString()));
+}
+function send(o){ o.from=me; o.room=S.room; o.sid=mySid; if(client && wsOpen){ try{client.publish(topic(), JSON.stringify(o));}catch(e){} } }
+function onMsg(raw){
+  let d; try{ d=JSON.parse(raw);}catch(e){ return; }
+  if(!d || d.from===me) return;
+  if(d.type==="reset"){ mySid=d.sid||mySid; resetAudience(); return; }
+  if(d.type==="stage"){
+    if(mySid===null) mySid=d.sid||null;
+    if(d.sid && d.sid!==mySid) return;
+    gotoStage(d);
+  } else if(d.type==="reveal"){
+    if(d.sid && d.sid!==mySid) return;
+    S.reveal[d.q]=true; if(curView==="quiz"&&curQ===d.q) renderQuiz();
+  }
+}
+function resetAudience(){
+  S.confIn=null; S.confOut=null;
+  S.quiz={}; S.reveal={}; S.share={}; S.belief={b1:"",b2:""};
+  curStageKey=""; curView="welcome";
+  renderWaiting("New session. Waiting for the facilitator to begin.");
+}
+function setConn(on){
+  document.getElementById("dot").className="dot "+(on?"on":"off");
+  document.getElementById("connlbl").textContent = on ? ("following · "+S.room) : "reconnecting";
+}
+
+/* ---------- VIEW ROUTER (lockstep) ---------- */
+let curView="connect", curQ=0, curStageKey="";
+function gotoStage(m){
+  if(m.key===curStageKey) return;
+  curStageKey=m.key;
+  switch(m.id){
+    case "in": curView="in"; renderIn(); break;
+    case "quiz": curView="quiz"; curQ=m.q||0; renderQuiz(); break;
+    case "reflect": curView="reflect"; renderReflect(); break;
+    case "charter": curView="charter"; renderCharter(); break;
+    case "hold": curView="hold"; renderHold(); break;
+    case "watch": curView="watch"; renderWatch(m.title,m.eyebrow); break;
+    case "out": curView="out"; renderOut(); break;
+    case "log": curView="log"; renderLog(); break;
+    case "welcome": curView="welcome"; renderWaiting("We are about to begin."); break;
+    default: break;
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+const V=()=>document.getElementById("view");
+
+/* ---------- CONNECT ---------- */
+function renderConnect(){
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">A working session for school leaders</span>
+    <h1>Leading with AI.</h1>
+    <p class="lede">This is yours for the session, and yours to keep. Type the room code on the screen, then follow along.</p>
+    <div class="card">
+      <label class="f" for="room">Room code</label>
+      <input type="text" id="room" placeholder="e.g. BTY-SL" autocomplete="off">
+      <label class="f" for="name">Your name (optional, for your card)</label>
+      <input type="text" id="name" placeholder="optional" autocomplete="off">
+      <div style="margin-top:16px;"><button class="btn" id="join">Join the room</button></div>
+      <p class="hint">Nothing here is stored anywhere. Your answers live on your screen and print at the end.</p>
+    </div></div>`;
+  const u=new URLSearchParams(location.search);
+  if(u.get("room")) document.getElementById("room").value=u.get("room");
+  document.getElementById("join").onclick=()=>{
+    S.room=(document.getElementById("room").value||"").trim().toUpperCase().replace(/\s+/g,"-");
+    S.name=(document.getElementById("name").value||"").trim();
+    if(!S.room){ toast("Enter the room code on screen"); return; }
+    renderWaiting("You're in. Waiting for the facilitator to begin.");
+    whenMqttReady(connect);
+  };
+}
+function renderWaiting(msg){
+  curView="welcome";
+  V().innerHTML=`<div class="view hold"><div class="ring"></div>
+    <h2>${msg}</h2><p class="lede">Keep this open. Your screen will move when we do.</p></div>`;
+}
+
+/* ---------- shareable field ---------- */
+let pubT={};
+function shareState(key){ return S.share[key]||(S.share[key]={text:"",on:true}); }
+function sv(key){ const st=S.share[key]; return st?st.text:""; }
+function shareHTML(key,placeholder){ const st=shareState(key);
+  return `<textarea id="sf-${key}" placeholder="${placeholder}">${esc(st.text)}</textarea>
+    <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${key}">${st.on?'Shared with the room':'Private'}</button>
+    <span class="sharehint" id="th-${key}">${st.on?'tap to keep private':'tap to share'}</span></div>`; }
+function wireShare(key,channel){
+  const ta=document.getElementById("sf-"+key), tg=document.getElementById("tg-"+key), th=document.getElementById("th-"+key);
+  if(!ta||!tg) return;
+  ta.oninput=()=>{ shareState(key).text=ta.value.trim(); schedulePublish(key,channel); };
+  tg.onclick=()=>{ const st=shareState(key); st.on=!st.on;
+    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
+    if(th) th.textContent=st.on?'tap to keep private':'tap to share';
+    publishShare(key,channel); };
+}
+function schedulePublish(key,channel){ clearTimeout(pubT[key]); pubT[key]=setTimeout(()=>publishShare(key,channel),600); }
+function publishShare(key,channel){ const st=shareState(key); send({type:"share",channel:channel,key:key,text:st.text,on:!!st.on}); }
+
+/* ---------- READINESS IN ---------- */
+function renderIn(){
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Walking in</span>
+    <h2>How ready is your school to lead with AI?</h2>
+    <p class="lede">No wrong answer. One is just starting; five is well underway. Rate the school, not yourself.</p>
+    <div class="card">
+      <div class="scale" id="sc"></div>
+      <div class="lab"><span>1 · Just starting</span><span>5 · Well underway</span></div>
+      <label class="f" for="sf-question">The leadership question on your mind tonight</label>
+      ${shareHTML("question","What are you weighing as a leader on AI?")}
+      <div id="inflag"></div>
+    </div></div>`;
+  wireShare("question","question");
+  buildScale("sc","confIn",()=>{ send({type:"confidence",phase:"in",value:S.confIn});
+    document.getElementById("inflag").innerHTML='<div class="doneflag">✓ Readiness shared. Thank you.</div>'; });
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuiz(){
+  const q=QUIZ[curQ], picked=S.quiz[curQ], rev=!!S.reveal[curQ];
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Predict, then reveal together</span>
+    <div class="card">
+      <div class="qhead"><div><div class="qtag">${q.tag} · ${curQ+1} of ${QUIZ.length}</div></div></div>
+      <div class="claim">${q.claim}</div>
+      <div id="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
+      <div id="rev"></div>
+    </div></div>`;
+  const opts=V().querySelectorAll(".opt");
+  opts.forEach(b=>{
+    const k=+b.dataset.k;
+    if(picked===k) b.classList.add("picked");
+    if(rev){
+      if(k===q.answer) b.classList.add("correct");
+      if(k===picked&&k!==q.answer) b.classList.add("wrong");
+      b.style.pointerEvents="none";
+    }
+    b.onclick=()=>{ if(S.reveal[curQ]) return; S.quiz[curQ]=k;
+      send({type:"quiz",q:curQ,answer:k}); renderQuiz(); };
+  });
+  const r=document.getElementById("rev");
+  if(rev){
+    const ok=picked===q.answer;
+    r.innerHTML=`<div class="why"><div class="verdict ${ok?'ok':'no'}">${ok?'You read it right.':'Worth a second look.'}</div>${q.why}</div>`;
+  } else if(picked!=null){
+    r.innerHTML=`<div class="waitmark">Answer in. Tap another to change it, up until we reveal together.</div>`;
+  } else {
+    r.innerHTML=`<div class="waitmark">Tap your answer. You can change it anytime before the reveal.</div>`;
+  }
+}
+
+/* ---------- REFLECTION ---------- */
+function renderReflect(){
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Lines to carry out</span>
+    <h2>Three honest lines.</h2>
+    <p class="lede">These feed your command card at the end. Each line is shared with the room by default; tap a toggle to keep one private.</p>
+    <div class="beat"><div class="wsw">Skill</div>
+      <div class="qx">What in my work could become a skill?</div>
+      ${shareHTML("r1","A task I repeat that AI could hold…")}</div>
+    <div class="beat"><div class="wsw">Prohibit</div>
+      <div class="qx">Where would I prohibit AI, on principle?</div>
+      ${shareHTML("r2","On principle, never…")}</div>
+    <div class="beat"><div class="wsw">Build next</div>
+      <div class="qx">One thing I will build next.</div>
+      ${shareHTML("r3","I will build…")}</div>
+    <div class="belief">
+      <div class="bl">The shift (yours to keep)</div>
+      <input type="text" id="b1" placeholder="I used to believe I could not..." value="${esc(S.belief.b1)}">
+      <input type="text" id="b2" placeholder="Now I believe..." value="${esc(S.belief.b2)}">
+    </div>
+    <button class="btn" id="rdone" style="margin-top:14px;">I'm done</button><span id="rflag"></span></div>`;
+  wireShare("r1","reflect"); wireShare("r2","reflect"); wireShare("r3","reflect");
+  document.getElementById("b1").oninput=e=>S.belief.b1=e.target.value;
+  document.getElementById("b2").oninput=e=>S.belief.b2=e.target.value;
+  document.getElementById("rdone").onclick=()=>{ ["r1","r2","r3"].forEach(k=>publishShare(k,"reflect"));
+    send({type:"submitted",step:"reflect"});
+    document.getElementById("rflag").innerHTML=' <span class="doneflag">✓ Noted</span>'; };
+}
+
+/* ---------- COMMAND CHARTER ---------- */
+function renderCharter(){
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Our command charter · the 5 Ps</span>
+    <h2>What we will hold.</h2>
+    <p class="lede">A posture per line, in your own words. Postures, not a ladder. Each line is shared to the room wall by default; tap a toggle to keep one private.</p>
+    <div id="ch"></div>
+    <button class="btn" id="cdone">I'm done</button><span id="cflag"></span>
+    <p class="hint">Sharing is anonymous. Only the words appear on the wall, never your name.</p></div>`;
+  const host=document.getElementById("ch");
+  PS.forEach(p=>{
+    const d=document.createElement("div"); d.className="pblock";
+    d.innerHTML=`<div class="pl"><div class="pchip">${p.p}</div>
+      <div><div class="pname">${p.name}</div><div class="pq">${p.q}</div></div></div>
+      ${shareHTML(p.key,p.ph)}`;
+    host.appendChild(d);
+  });
+  PS.forEach(p=>wireShare(p.key,"charter"));
+  document.getElementById("cdone").onclick=()=>{ PS.forEach(p=>publishShare(p.key,"charter"));
+    send({type:"submitted",step:"charter"});
+    document.getElementById("cflag").innerHTML=' <span class="doneflag">✓ Charter set</span>'; };
+}
+
+/* ---------- HOLD (the Relay) ---------- */
+function renderHold(){
+  V().innerHTML=`<div class="view hold"><div style="font-size:46px;">🛠️</div>
+    <h2>The Relay</h2><p class="lede">In threes. Maker builds, User runs, Governor stress-tests. Eyes on the big screen for the brief.</p></div>`;
+}
+function renderWatch(title,eyebrow){
+  V().innerHTML=`<div class="view" style="text-align:center;padding-top:26px;">
+    ${eyebrow?`<span class="eyebrow">${esc(eyebrow)}</span>`:""}
+    ${title?`<h2 style="margin-top:8px;">${esc(title)}</h2>`:""}
+    <p class="lede" style="margin-top:14px;">Eyes on the main screen, please.</p>
+    <div style="font-size:26px;letter-spacing:.3em;color:var(--accent);margin-top:6px;">• • •</div></div>`;
+}
+
+/* ---------- READINESS OUT ---------- */
+function renderOut(){
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Walking out</span>
+    <h2>And now? Rate your school again.</h2>
+    <div class="card">
+      <div class="scale" id="sc"></div>
+      <div class="lab"><span>1 · Just starting</span><span>5 · Well underway</span></div>
+      <div class="delta" id="delta">—</div>
+      <p class="hint" id="dt" style="text-align:center;"></p>
+    </div></div>`;
+  buildScale("sc","confOut",()=>{ send({type:"confidence",phase:"out",value:S.confOut}); updateDelta(); });
+  updateDelta();
+}
+function updateDelta(){
+  const d=document.getElementById("delta"), t=document.getElementById("dt");
+  if(!d) return;
+  if(S.confIn==null||S.confOut==null){ d.textContent="—"; return; }
+  const diff=S.confOut-S.confIn;
+  d.innerHTML=S.confIn+" → <span class='up'>"+S.confOut+"</span>";
+  t.textContent = diff>0 ? "Up "+diff+". That movement is the session."
+              : diff===0 ? "Steady. Readiness is built by doing, not by knowing."
+              : "Honesty counts more than the number. Keep building.";
+}
+
+/* ---------- SHARED scale ---------- */
+function buildScale(host,key,cb){
+  const h=document.getElementById(host); h.innerHTML="";
+  for(let n=1;n<=5;n++){ const b=document.createElement("button"); b.textContent=n;
+    if(S[key]===n) b.classList.add("sel");
+    b.onclick=()=>{ S[key]=n; [...h.children].forEach(c=>c.classList.remove("sel")); b.classList.add("sel"); cb&&cb(); };
+    h.appendChild(b);
+  }
+}
+
+/* ---------- COMMAND CARD ---------- */
+function renderLog(){
+  const good=[],note=[];
+  QUIZ.forEach((q,i)=>{ if(S.quiz[i]===q.answer) good.push(q.note); else note.push(q.note); });
+  const who=S.name?(S.name+"'s command card"):"My command card";
+  const charterLines=PS.map(p=>sv(p.key)?`<div class="pillrow"><span class="pill"><b>${p.name}:</b> ${esc(sv(p.key))}</span></div>`:"").join("");
+  V().innerHTML=`<div class="view log" id="loglog">
+    <span class="eyebrow">Your command card · keep this</span>
+    <h2>Leading with AI.</h2>
+    <div id="printbar" style="margin:6px 0 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <button class="btn" onclick="downloadCard()">Download my card (.png)</button>
+      <button class="btn ghost" onclick="window.print()">Print / PDF</button>
+      <span class="hint">The image saves all three cards.</span></div>
+    <div class="logcard"><div class="ttl">Card 1 · Walking in</div><h3>${esc(who)}</h3>
+      <p style="margin:4px 0 0;font-size:14px;"><b>Readiness in:</b> ${S.confIn??"—"} / 5</p>
+      ${sv("question")?`<p style="margin:6px 0 0;font-size:14px;"><b>My question:</b> ${esc(sv("question"))}</p>`:""}</div>
+    <div class="logcard"><div class="ttl">Card 2 · The reads</div><h3>What landed, what to revisit</h3>
+      <p style="margin:6px 0 2px;font-size:13px;font-weight:700;color:var(--green);">Read it right</p>
+      <ul class="good">${good.length?good.map(g=>`<li>${esc(g)}</li>`).join(""):"<li>—</li>"}</ul>
+      <p style="margin:10px 0 2px;font-size:13px;font-weight:700;color:var(--rust);">Worth revisiting</p>
+      <ul class="note">${note.length?note.map(n=>`<li>${esc(n)}</li>`).join(""):"<li>Nothing flagged. Strong read.</li>"}</ul></div>
+    <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>Our command charter · the 5 Ps</h3>
+      ${charterLines||"<p style='font-size:14px;'>—</p>"}
+      <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">My lines</p>
+      <ul><li><b>A skill I will make:</b> ${esc(sv("r1"))||"—"}</li><li><b>Where I prohibit AI:</b> ${esc(sv("r2"))||"—"}</li>
+      <li><b>One thing I will build next:</b> ${esc(sv("r3"))||"—"}</li></ul>
+      <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">The shift</p>
+      <ul><li><b>I used to believe I could not:</b> ${esc(S.belief.b1)||"—"}</li><li><b>Now I believe:</b> ${esc(S.belief.b2)||"—"}</li></ul>
+      <p style="margin:12px 0 0;font-size:14px;"><b>Readiness:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p>
+      <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">Build one thing. Ship it. You stay in command.</p></div>
+    </div>`;
+}
+
+/* ---------- util ---------- */
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+let tT; function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");
+  clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("show"),1800);}
+
+/* ---------- download command card as PNG ---------- */
+function loadH2C(){
+  if(window.html2canvas || document.getElementById("h2clib")) return;
+  var s=document.createElement("script"); s.id="h2clib";
+  s.src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js";
+  document.head.appendChild(s);
+}
+function downloadCard(){
+  var el=document.getElementById("loglog"); if(!el) return;
+  function go(){
+    toast("Building your image…");
+    window.html2canvas(el,{scale:2,backgroundColor:"#f4f1ea",useCORS:true}).then(function(canvas){
+      var a=document.createElement("a");
+      a.download=(S.name?S.name.replace(/[^a-z0-9]+/gi,"_")+"_":"")+"Leading_with_AI_Card.png";
+      a.href=canvas.toDataURL("image/png"); a.click();
+    }).catch(function(){ toast("Could not build the image. Try Print instead."); });
+  }
+  if(window.html2canvas) go();
+  else { loadH2C(); var n=0,t=setInterval(function(){ n++;
+      if(window.html2canvas){ clearInterval(t); go(); }
+      else if(n>60){ clearInterval(t); toast("Image tool blocked. Use Print instead."); } },200); }
+}
+
+/* ---------- init ---------- */
+loadMqtt(); loadH2C();
+renderConnect();
+</script>
+</body>
+</html>

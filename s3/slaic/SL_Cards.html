@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading with AI · Take-home Cards</title>
+<style>
+  :root{
+    --ink:#1d2a2b;--ink-soft:#3c4f4d;--muted:#5d6b6a;--paper:#f4f1ea;--soft:#e8ede9;--line:#d6ddd6;
+    --accent:#2f7d72;--accent-d:#25655c;--amber:#b7791f;--rust:#9a3b3b;--dark:#16282a;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;}
+  .bar{position:sticky;top:0;background:var(--dark);color:#eaf1ee;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;z-index:10;}
+  .bar .b{font-family:var(--serif);font-size:16px;}
+  .bar .b b{color:var(--accent);}
+  .bar button{font-family:var(--sans);font-weight:700;font-size:13px;border:none;border-radius:99px;padding:9px 18px;background:var(--accent);color:#fff;cursor:pointer;}
+  .sheet{max-width:900px;margin:0 auto;padding:26px 22px 70px;}
+  .intro{color:var(--ink-soft);font-size:15px;margin:0 0 22px;max-width:640px;}
+  .cards{display:grid;gap:18px;}
+  @media(min-width:720px){.cards{grid-template-columns:1fr 1fr;}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;break-inside:avoid;box-shadow:0 6px 18px rgba(20,40,42,.05);}
+  .card.dark{background:linear-gradient(158deg,#16282a,#1d3335);color:#eaf1ee;border:none;}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
+  .card.dark .eyebrow{color:#9ec7bd;}
+  .card h2{font-family:var(--serif);font-size:21px;margin:6px 0 14px;}
+  .card.dark h2{color:#fff;}
+  .q{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 3px;font-weight:700;}
+  .card.dark .q{color:#9ec7bd;}
+  .line{border-bottom:1px solid var(--line);min-height:26px;}
+  .card.dark .line{border-color:#2c4946;}
+  .signoff{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-family:var(--serif);font-weight:700;font-size:17px;}
+  .card.dark .signoff{border-color:#2c4946;color:#fff;}
+  .signoff .a{color:var(--accent);}
+  .card.dark .signoff .a{color:#9ec7bd;}
+  .anchor{font-style:italic;color:var(--muted);font-size:14px;margin-top:4px;font-family:var(--sans);font-weight:400;}
+  .card.dark .anchor{color:#bcd4ce;}
+  .ps{display:grid;gap:8px;margin-top:6px;}
+  .ps .p{border:1px solid var(--line);border-radius:9px;padding:9px 12px;}
+  .ps .p b{color:var(--accent-d);}
+  .ps .p span{font-size:13px;color:var(--ink-soft);}
+  .matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+  .mc{border:1px solid var(--line);border-radius:10px;padding:12px;}
+  .mc.sec{border-color:var(--accent);}
+  .mc h3{font-family:var(--serif);font-size:15px;margin:0 0 6px;}
+  .mc ul{margin:0;padding-left:16px;font-size:13px;color:var(--ink-soft);}
+  .mc li{margin:3px 0;}
+  @media print{
+    .bar{display:none;}
+    body{background:#fff;}
+    .sheet{padding:0;max-width:none;}
+    .card{box-shadow:none;}
+    .cards{gap:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="b"><b>Leading</b> with AI · Take-home cards</div>
+  <button onclick="window.print()">Print / PDF</button>
+</div>
+<div class="sheet">
+  <p class="intro">Print one per leader, or two-up. Three cards: the one they fill, the postures to set, and the line that decides what data goes where. The companion app builds a richer version automatically; these are the paper fallback.</p>
+  <div class="cards">
+
+    <div class="card dark">
+      <div class="eyebrow">My command card</div>
+      <h2>Leading with AI</h2>
+      <div class="q">A skill I will make</div><div class="line"></div>
+      <div class="q">Where I prohibit AI, on principle</div><div class="line"></div>
+      <div class="q">One thing I will build next</div><div class="line"></div>
+      <div class="q">I used to believe I could not</div><div class="line"></div>
+      <div class="q">Now I believe</div><div class="line"></div>
+      <div class="signoff">Build one thing. <span class="a">Ship it.</span><div class="anchor">You stay in command.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Set the posture</div>
+      <h2>The 5 Ps · per task</h2>
+      <div class="ps">
+        <div class="p"><b>Prohibit</b> · <span>keep AI out. Sensitive, official, or the values call.</span></div>
+        <div class="p"><b>Polish</b> · <span>refine what you wrote. Never originate it.</span></div>
+        <div class="p"><b>Plan</b> · <span>think it through with you. You decide.</span></div>
+        <div class="p"><b>Produce</b> · <span>draft with you, on your standard.</span></div>
+        <div class="p"><b>Partner</b> · <span>co-author. You own and answer for it.</span></div>
+      </div>
+      <p class="anchor" style="margin-top:14px;">Postures, not a ladder. Set per task, by data and stakes. Partner does not beat Prohibit.</p>
+      <div class="signoff">What goes where.<div class="anchor">Decide the data, not the cleverness.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">The line that governs</div>
+      <h2>What data goes where</h2>
+      <div class="matrix">
+        <div class="mc">
+          <h3>Free Claude</h3>
+          <ul>
+            <li>Lesson ideas, drafts, public material</li>
+            <li>Building your own skill or tool</li>
+            <li>Learning the technology</li>
+            <li>No student or staff records</li>
+            <li>Nothing official or sensitive</li>
+          </ul>
+        </div>
+        <div class="mc sec">
+          <h3>Pair · AIBots</h3>
+          <ul>
+            <li>Cleared for Restricted and Sensitive Normal</li>
+            <li>Official school work</li>
+            <li>No provider logging of inputs</li>
+          </ul>
+        </div>
+      </div>
+      <p class="anchor" style="margin-top:14px;">A Project with a skill is, in concept, an AIBot with a knowledge base and a system prompt. The move transfers.</p>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Keep this</div>
+      <h2>Four lines to carry</h2>
+      <div class="q">The premise</div>
+      <p style="margin:3px 0 10px;font-size:14.5px;">You cannot govern what you have only been briefed on.</p>
+      <div class="q">The loop</div>
+      <p style="margin:3px 0 10px;font-size:14.5px;">A tool answers once. An agent runs a loop, and that is what you govern.</p>
+      <div class="q">The mirror</div>
+      <p style="margin:3px 0 10px;font-size:14.5px;">A skill reflects whoever made it. Build with many; govern the blind spots.</p>
+      <div class="q">What stays yours</div>
+      <p style="margin:3px 0 10px;font-size:14.5px;">AI absorbs the technical. The cultural and human forces stay yours.</p>
+      <div class="signoff">Human agency in an agentic age.<div class="anchor">Which goals are worth pursuing, and for whom, stays ours.</div></div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
