@@ -4,7 +4,7 @@ Working pack for continuing the parent workshop build in Claude Code. Open this 
 (`Desktop/Harman/Beatty/AI Confident Workshop/Parents/`) and start from here.
 
 > First prompt to use in Code:
-> *"Read HANDOFF.md. Confirm you can run the two HTML files. Part B (Build-Off teams + voting) is done; start Task 9 (printable docs)."*
+> *"Read HANDOFF.md. Confirm you can run the two HTML files. Part B (Build-Off) and Task 9 (printable docs) are done; the remaining work is day-of / hosting (swap the broker, host on Pages, venue Wi-Fi pre-flight)."*
 
 ---
 
@@ -90,11 +90,9 @@ Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ w
 - Kopi-level Explorer Rooms, guardrails (incl. the memory one), "Build-Off" rename + framing.
 - **Part B — Build-Off teams + voting.** Create-then-vote replaces the manual +/- scoreboard. Audience `hold` view has two phases: *name your team* (`send({type:"team", name})`) and *vote* (team buttons from the presenter broadcast → `send({type:"vote", team})`, one per device, changeable). Presenter collects unique names (`addTeamName`, case-insensitive dedupe), has an **Open voting / Back to naming** toggle (`toggleVoting` → `broadcastBuildoff`), and shows a **live tally in fixed order with the leader highlighted — no auto-sort**. Facilitator fallback kept: add-by-hand input + per-team manual `＋` vote + click-name-to-rename (`renameTeam` remaps votes). State: `teams[]`, `votes{voter→team}`, `manualVotes{team→n}`, `boPhase`.
 
-## 5. State: TODO (in priority order)
+- **Task 9 — printable docs.** `AI_Confident_Parents_Cards.html` is now the **3-card Learning Log** (Walking in: name + confidence + question · In the room: the 5 reflexes as a tick-and-note checklist · Walking out: the 5-P charter + W·So·Now + confidence in→out), mirroring the Audience log, prints 2-up on A4 — the no-laptop backup. `AI_Confident_Parents_Facilitation_Plan.html` run-of-show is **re-aligned to the 26 deck stages**, stage-numbered to the Presenter's "Stage N" counter and grouped into the five movements (Frame 1–4 · Head 5–9 · Hands 10–14 · Break 15 · Build-Off 16–18 · Heart 19–21 · Reflect &amp; Charter 22–26); the old "Prompt Olympics" section is now the **Build-Off run sheet** (create-then-vote). Cues live in the plan, not on the projected deck.
 
-### Task 9 — printable docs (align to the build)
-- Rebuild `AI_Confident_Parents_Cards.html` as the **3-card learning log** mirroring the Audience log (Walking in / In the room: understood + to note / Walking out: charter + W·So·Now + confidence). Print 2-up on A4. This is the no-laptop / backup artefact.
-- Re-align `AI_Confident_Parents_Facilitation_Plan.html` to the **26 deck stages** as the printed script. Facilitator cues live **here**, not on the projected deck (decided).
+## 5. State: TODO (in priority order)
 
 ### Day-of / hosting
 - Swap `MQTT_URL` (both files) to your own free broker (HiveMQ Cloud / EMQX / Ably) and set a unique room code.

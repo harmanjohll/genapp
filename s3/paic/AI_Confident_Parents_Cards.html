@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Confident · Reflection &amp; Take-Home Cards</title>
+<title>AI Confident · Learning Log (print)</title>
 <style>
   :root{
     --navy:#16233f;--navy-2:#1f3358;--ink:#1b2435;
@@ -13,80 +13,14 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.5;}
-  .page{max-width:1180px;margin:0 auto;padding:36px 26px 60px;}
-  .head{text-align:center;margin-bottom:30px;}
+  .page{max-width:1100px;margin:0 auto;padding:36px 26px 60px;}
+  .head{text-align:center;margin-bottom:24px;}
   .head .eyebrow{letter-spacing:.3em;text-transform:uppercase;font-size:11px;font-weight:800;color:var(--red);}
-  .head h1{font-family:var(--serif);font-size:40px;margin:8px 0 6px;color:var(--navy);}
+  .head h1{font-family:var(--serif);font-size:38px;margin:8px 0 6px;color:var(--navy);}
   .head h1 .bot{color:var(--gold);}
-  .head p{color:var(--muted);max-width:620px;margin:0 auto;font-size:15px;}
+  .head p{color:var(--muted);max-width:640px;margin:0 auto;font-size:15px;}
   .head .hint{margin-top:14px;font-size:12.5px;color:var(--muted);}
   .head .hint b{color:var(--navy);}
-
-  .sectitle{display:flex;align-items:center;gap:14px;margin:34px 0 16px;}
-  .sectitle span{font-family:var(--serif);font-size:22px;color:var(--navy);white-space:nowrap;}
-  .sectitle:before,.sectitle:after{content:"";height:1px;background:var(--line);flex:1;}
-
-  .deck{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
-  @media(max-width:980px){.deck{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:640px){.deck{grid-template-columns:1fr;}}
-
-  .card{position:relative;border-radius:16px;padding:22px 22px 20px;min-height:300px;
-    display:flex;flex-direction:column;overflow:hidden;
-    box-shadow:0 8px 22px rgba(22,35,63,.10);border:1px solid var(--line);background:var(--paper);}
-  .card .corner{position:absolute;top:14px;right:16px;font-size:11px;font-weight:800;letter-spacing:.12em;
-    text-transform:uppercase;opacity:.65;}
-  .card .num{font-family:var(--serif);font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;}
-  .card h3{font-family:var(--serif);font-size:23px;line-height:1.15;margin:6px 0 10px;color:var(--navy);}
-  .card p{font-size:13.5px;margin:0 0 10px;color:var(--ink);}
-  .card .grow{flex:1;}
-  .card .write{border-top:1px dashed #b9ac90;margin-top:auto;padding-top:10px;}
-  .lines{margin-top:8px;}
-  .lines .ln{border-bottom:1px solid #c9bda3;height:22px;}
-  .foot{font-size:10.5px;color:var(--muted);letter-spacing:.06em;margin-top:12px;text-transform:uppercase;}
-
-  /* reflection style */
-  .reflect{background:linear-gradient(180deg,#fffdf8,#f6f1e7);border-top:5px solid var(--gold);}
-  .reflect .num{color:var(--red);}
-  .reflect .corner{color:var(--gold);}
-
-  /* takehome variants */
-  .dark{background:linear-gradient(160deg,#16233f,#1f3358);color:#eef2f9;border-color:#2b4063;border-top:5px solid var(--gold);}
-  .dark h3{color:#fff;}
-  .dark p{color:#d7deec;}
-  .dark .num{color:var(--gold-soft);}
-  .dark .corner{color:var(--gold-soft);}
-  .dark .foot{color:#9fb0cc;}
-  .dark .write{border-top-color:#3a4f73;}
-  .dark .lines .ln{border-bottom-color:#3a4f73;}
-
-  .take{background:linear-gradient(180deg,#fffdf8,#f4eedf);border-top:5px solid var(--navy);}
-  .take .num{color:var(--navy);}
-  .take .corner{color:var(--navy);}
-
-  ul.tick{list-style:none;padding:0;margin:4px 0 0;}
-  ul.tick li{font-size:13px;padding-left:22px;position:relative;margin-bottom:7px;}
-  ul.tick li:before{content:"";position:absolute;left:0;top:3px;width:13px;height:13px;border:1.5px solid var(--gold);border-radius:4px;}
-  .dark ul.tick li:before{border-color:var(--gold-soft);}
-
-  ul.q{list-style:none;padding:0;margin:4px 0 0;}
-  ul.q li{font-size:13px;margin-bottom:8px;padding-left:16px;position:relative;}
-  ul.q li:before{content:"›";position:absolute;left:0;color:var(--gold);font-weight:800;}
-  .dark ul.q li:before{color:var(--gold-soft);}
-
-  .pole{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:9px;}
-  .pole b{color:var(--navy);}
-  .dark .pole b{color:#fff;}
-  .pole .amp{color:var(--gold);font-weight:800;font-style:italic;}
-  .dark .pole .amp{color:var(--gold-soft);}
-
-  .big3 .item{display:flex;gap:12px;margin-bottom:12px;}
-  .big3 .n{font-family:var(--serif);font-size:30px;line-height:1;color:var(--gold-soft);}
-  .big3 .t b{color:#fff;font-size:14.5px;}
-  .big3 .t span{display:block;font-size:12px;color:#cdd6e6;margin-top:2px;}
-
-  .clear .row{display:flex;gap:10px;margin-bottom:8px;font-size:12.5px;}
-  .clear .row .L{font-family:var(--serif);font-weight:800;color:var(--gold);font-size:16px;width:18px;flex:none;}
-  .clear .row b{color:var(--navy);}
 
   .controls{text-align:center;margin:8px 0 26px;}
   .controls button{font-family:var(--sans);font-size:13px;background:var(--navy);color:#fff;border:none;
@@ -94,15 +28,58 @@
   .controls button:hover{background:var(--navy-2);}
   .controls .note{font-size:12px;color:var(--muted);margin-top:8px;}
 
+  .deck{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  @media(max-width:760px){.deck{grid-template-columns:1fr;}}
+
+  .card{position:relative;border-radius:16px;padding:24px 24px 20px;min-height:330px;
+    display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 8px 22px rgba(22,35,63,.10);border:1px solid var(--line);background:var(--paper);}
+  .card .corner{position:absolute;top:15px;right:18px;font-size:11px;font-weight:800;letter-spacing:.12em;
+    text-transform:uppercase;opacity:.7;}
+  .card .num{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--gold);}
+  .card h3{font-family:var(--serif);font-size:24px;line-height:1.12;margin:5px 0 6px;color:var(--navy);}
+  .card .lede{font-size:13px;color:var(--muted);margin:0 0 12px;}
+  .card .grow{flex:1;}
+  .foot{font-size:10.5px;color:var(--muted);letter-spacing:.06em;margin-top:14px;text-transform:uppercase;}
+
+  .ql{font-size:13px;font-weight:700;color:var(--navy);margin:12px 0 4px;}
+  .ql .tag{color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:11px;margin-right:6px;}
+  .lines .ln{border-bottom:1px solid #c9bda3;height:24px;}
+  .lines.tight .ln{height:21px;}
+
+  /* confidence rings */
+  .scale{display:flex;gap:9px;margin:6px 0 2px;}
+  .scale .dot{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-family:var(--serif);font-size:16px;color:var(--navy);}
+  .scalelab{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+  /* card 2 reflex checklist */
+  ul.reflex{list-style:none;padding:0;margin:6px 0 0;}
+  ul.reflex li{font-size:12.5px;padding-left:24px;position:relative;margin-bottom:11px;color:var(--ink);}
+  ul.reflex li:before{content:"";position:absolute;left:0;top:2px;width:14px;height:14px;
+    border:1.5px solid var(--gold);border-radius:4px;}
+  ul.reflex li b{color:var(--navy);}
+  ul.reflex .note{border-bottom:1px solid #c9bda3;height:18px;margin-top:5px;}
+
+  /* card variants */
+  .in{background:linear-gradient(180deg,#fffdf8,#f6f1e7);border-top:5px solid var(--gold);}
+  .room{background:linear-gradient(180deg,#fffdf8,#f4eedf);border-top:5px solid var(--navy);}
+  .room .num{color:var(--navy);}
+  .out{background:linear-gradient(160deg,#16233f,#1f3358);color:#eef2f9;border-color:#2b4063;border-top:5px solid var(--gold);}
+  .out h3{color:#fff;} .out .lede{color:#cdd6e6;} .out .num{color:var(--gold-soft);} .out .foot{color:#9fb0cc;}
+  .out .ql{color:#fff;} .out .ql .tag{color:var(--gold-soft);}
+  .out .lines .ln{border-bottom-color:#3a4f73;}
+  .out .pchip{display:inline-block;font-family:var(--serif);font-weight:800;color:var(--navy);background:var(--gold-soft);
+    border-radius:6px;padding:0 7px;font-size:12px;margin-right:7px;}
+
   @media print{
     @page{size:A4;margin:10mm;}
     body{background:#fff;}
     .page{padding:0;max-width:none;}
     .controls,.head .hint{display:none;}
     .deck{grid-template-columns:repeat(2,1fr);gap:8mm;}
-    .card{break-inside:avoid;box-shadow:none;min-height:118mm;}
-    .sectitle{break-after:avoid;}
-    .head{margin-bottom:10mm;}
+    .card{break-inside:avoid;box-shadow:none;min-height:120mm;}
+    .head{margin-bottom:8mm;}
   }
 </style>
 </head>
@@ -110,184 +87,81 @@
 <div class="page">
   <div class="head">
     <div class="eyebrow">South 3 Cluster · Parenting &amp; Thriving Together 2026</div>
-    <h1><span class="bot">AI</span> Confident · Reflection &amp; Take-Home Cards</h1>
-    <p>Four cards to think with during the morning. Eight to carry home and use at the dinner table. Cut along the edges, keep the ones that matter to your family.</p>
-    <div class="hint"><b>For facilitators:</b> print one deck per parent. Reflection cards (gold) are used at the four debrief moments. Take-home cards (navy) go in the bag.</div>
+    <h1><span class="bot">AI</span> Confident · Your Learning Log</h1>
+    <p>The same three cards as the on-screen companion, to fill in by hand. No laptop needed. Walk in, work through the room, walk out with something to keep.</p>
+    <div class="hint"><b>For facilitators:</b> this is the paper backup for the Audience companion. Print one per parent, two cards per A4 page. Turn on "Background graphics" for full colour.</div>
   </div>
 
   <div class="controls">
-    <button onclick="window.print()">Print this deck</button>
-    <div class="note">Prints two cards per A4 page. Set your printer to "Background graphics" on for full colour.</div>
+    <button onclick="window.print()">Print this log</button>
+    <div class="note">Prints two cards per A4 page. Three cards, so the third sits on its own.</div>
   </div>
 
-  <!-- ===================== REFLECTION ===================== -->
-  <div class="sectitle"><span>Reflection cards · use in the room</span></div>
   <div class="deck">
 
-    <div class="card reflect">
-      <div class="corner">Reflect</div>
-      <div class="num">Card 1 · after Block 1</div>
-      <h3>Where did the intelligence come from?</h3>
-      <p>You watched the same tool give a generic answer, then a perfect one, once a human added the context.</p>
-      <div class="grow"></div>
-      <div class="write">
-        <p style="font-size:12.5px;margin:0;color:var(--muted);">One thing only <b>you</b> could have added to that prompt:</p>
-        <div class="lines"><div class="ln"></div><div class="ln"></div></div>
+    <!-- ============ CARD 1 · WALKING IN ============ -->
+    <div class="card in">
+      <div class="corner">Keep this</div>
+      <div class="num">Card 1 · Walking in</div>
+      <h3>Where you are starting from.</h3>
+      <p class="lede">No wrong answer. The most experienced person in any AI room was a beginner eighteen months ago.</p>
+
+      <div class="ql">Your name</div>
+      <div class="lines tight"><div class="ln"></div></div>
+
+      <div class="ql">How confident are you with AI right now? Ring one.</div>
+      <div class="scale">
+        <div class="dot">1</div><div class="dot">2</div><div class="dot">3</div><div class="dot">4</div><div class="dot">5</div>
       </div>
-      <div class="foot">AIR · the Intelligence is us</div>
+      <div class="scalelab"><span>1 · New to this</span><span>5 · Very comfortable</span></div>
+
+      <div class="ql">The question sitting at the back of your head</div>
+      <div class="lines"><div class="ln"></div><div class="ln"></div></div>
+
+      <div class="grow"></div>
+      <div class="foot">AIR · the intelligence is us</div>
     </div>
 
-    <div class="card reflect">
-      <div class="corner">Reflect</div>
-      <div class="num">Card 2 · after Explorer Rooms</div>
-      <h3>What surprised you?</h3>
-      <p>You put your hands on the tools. Something was easier than you feared. Something gave you pause.</p>
+    <!-- ============ CARD 2 · IN THE ROOM ============ -->
+    <div class="card room">
+      <div class="corner">Work through</div>
+      <div class="num">Card 2 · In the room</div>
+      <h3>Five quick reads.</h3>
+      <p class="lede">One reflex from each. Tick the box when it lands. Jot anything you want to take home.</p>
+      <ul class="reflex">
+        <li><b>Confident is not correct.</b> Teach one move: "How do you know that?"<div class="note"></div></li>
+        <li><b>Coach, don't police.</b> Ask them to show you what they changed, and why.<div class="note"></div></li>
+        <li><b>The postcard test.</b> No names, photos, school, or address.<div class="note"></div></li>
+        <li><b>Make, don't take.</b> Build something to learn with, don't lift the answer.<div class="note"></div></li>
+        <li><b>An agreeable bot is not a friend.</b> Keep the real conversation open at home.<div class="note"></div></li>
+      </ul>
       <div class="grow"></div>
-      <div class="write">
-        <p style="font-size:12.5px;margin:0;color:var(--muted);">Easier than I expected · and one thing I'd want my child beside me for:</p>
-        <div class="lines"><div class="ln"></div><div class="ln"></div></div>
-      </div>
       <div class="foot">Sit beside, not in front</div>
     </div>
 
-    <div class="card reflect">
-      <div class="corner">Reflect</div>
-      <div class="num">Card 3 · after Prompt Olympics</div>
-      <h3>Same tool, different result. Why?</h3>
-      <p>Every team had the same machine and the same minutes. The results were not the same. The gap was human.</p>
-      <div class="grow"></div>
-      <div class="write">
-        <p style="font-size:12.5px;margin:0;color:var(--muted);">The one move that made the winning prompt win:</p>
-        <div class="lines"><div class="ln"></div><div class="ln"></div></div>
-      </div>
-      <div class="foot">The output is only as good as the human</div>
-    </div>
+    <!-- ============ CARD 3 · WALKING OUT ============ -->
+    <div class="card out">
+      <div class="corner">Stick on the fridge</div>
+      <div class="num">Card 3 · Walking out</div>
+      <h3>Our Family AI Charter.</h3>
+      <p class="lede">Your own words. Five short lines. Sign it together.</p>
 
-    <div class="card reflect">
-      <div class="corner">Reflect</div>
-      <div class="num">Card 4 · after the Heart block</div>
-      <h3>One line for our home.</h3>
-      <p>Not a rulebook. One boundary you will hold, and one conversation you will start this week.</p>
-      <div class="grow"></div>
-      <div class="write">
-        <p style="font-size:12.5px;margin:0;color:var(--muted);">The line we won't cross · the talk I'll open:</p>
-        <div class="lines"><div class="ln"></div><div class="ln"></div></div>
-      </div>
-      <div class="foot">Protect what AI cannot grow</div>
-    </div>
+      <div class="ql"><span class="pchip">Plan</span>In our home, AI is for…</div>
+      <div class="lines tight"><div class="ln"></div></div>
+      <div class="ql"><span class="pchip">Prohibit</span>In our home, AI is never for…</div>
+      <div class="lines tight"><div class="ln"></div></div>
+      <div class="ql"><span class="pchip">Partner</span>One thing we will build together this week…</div>
+      <div class="lines tight"><div class="ln"></div></div>
+      <div class="ql"><span class="pchip">Polish</span>We will revisit this charter when…</div>
+      <div class="lines tight"><div class="ln"></div></div>
+      <div class="ql"><span class="pchip">Produce</span>When we are unsure, we…</div>
+      <div class="lines tight"><div class="ln"></div></div>
 
-  </div>
+      <div class="ql">What · So what · Now what</div>
+      <div class="lines tight"><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
 
-  <!-- ===================== TAKE HOME ===================== -->
-  <div class="sectitle"><span>Take-home cards · for the dinner table</span></div>
-  <div class="deck">
+      <div class="ql">Confidence&nbsp;&nbsp;Walking in <b>___</b> &nbsp;→&nbsp; Walking out <b>___</b> &nbsp;/ 5</div>
 
-    <!-- T1 three learnings -->
-    <div class="card dark big3">
-      <div class="corner">Keep this one</div>
-      <div class="num">The anchor</div>
-      <h3>Three things to remember.</h3>
-      <div class="item"><div class="n">1</div><div class="t"><b>The intelligence comes from us.</b><span>AI predicts, it does not understand. Your context, your judgement, your values do the real work.</span></div></div>
-      <div class="item"><div class="n">2</div><div class="t"><b>Sit beside, not in front, not away.</b><span>Not banning, not handing over. Explore together, agree the rules, be willing to get it wrong out loud.</span></div></div>
-      <div class="item"><div class="n">3</div><div class="t"><b>Protect what AI cannot grow.</b><span>The effort, the struggle, the relationship. Learn beyond AI so your child adds human value.</span></div></div>
-      <div class="foot">Head · Hands · Heart</div>
-    </div>
-
-    <!-- T2 charter -->
-    <div class="card take">
-      <div class="corner">Fill it in</div>
-      <div class="num">Our Family AI Charter</div>
-      <h3>What our household agrees.</h3>
-      <p style="font-size:12.5px;color:var(--muted);">Write it together. Three lines is enough. Stick it on the fridge.</p>
-      <p style="margin:2px 0 0;font-size:12px;"><b>In our home, AI is for…</b></p>
-      <div class="lines"><div class="ln"></div></div>
-      <p style="margin:8px 0 0;font-size:12px;"><b>In our home, AI is never for…</b></p>
-      <div class="lines"><div class="ln"></div></div>
-      <p style="margin:8px 0 0;font-size:12px;"><b>When we're unsure, we…</b></p>
-      <div class="lines"><div class="ln"></div></div>
-      <div class="foot" style="margin-top:12px;">Signed by everyone who lives here</div>
-    </div>
-
-    <!-- T3 build this -->
-    <div class="card take">
-      <div class="corner">Try this</div>
-      <div class="num">Build it with your child this week</div>
-      <h3>"Look what we made."</h3>
-      <p style="font-size:12.5px;color:var(--muted);">The fastest way to confidence is one shared win. Pick one.</p>
-      <ul class="tick">
-        <li>A revision quiz on a topic they're stuck on</li>
-        <li>Plan a family day out on a real budget</li>
-        <li>A silly poem or game about your family</li>
-        <li>Drop a topic into NotebookLM and ask it questions together</li>
-        <li>Ask AI for the <i>other</i> side of an argument they hold</li>
-      </ul>
-      <div class="foot">Then tell them where you learned it</div>
-    </div>
-
-    <!-- T4 conversation starters -->
-    <div class="card dark">
-      <div class="corner">Ask, don't police</div>
-      <div class="num">Conversation starters</div>
-      <h3>Six questions, not one inspection.</h3>
-      <ul class="q">
-        <li>Show me something cool you made with AI?</li>
-        <li>What's it good at? What does it get wrong?</li>
-        <li>How do you know when to trust what it says?</li>
-        <li>Has it ever said something that felt off?</li>
-        <li>What would you never use it for?</li>
-        <li>Want to build something together this weekend?</li>
-      </ul>
-      <div class="foot">The door stays open</div>
-    </div>
-
-    <!-- T5 polarities -->
-    <div class="card take">
-      <div class="corner">Hold both</div>
-      <div class="num">Tensions, not rules</div>
-      <h3>It's rarely ban or allow.</h3>
-      <p style="font-size:12.5px;color:var(--muted);">Manage the dial, watch it over time.</p>
-      <div class="pole"><b>Protect</b> <span class="amp">&amp;</span> <b>Prepare</b></div>
-      <div class="pole"><b>Guide</b> <span class="amp">&amp;</span> <b>Release</b></div>
-      <div class="pole"><b>Efficiency</b> <span class="amp">&amp;</span> <b>Effort</b></div>
-      <div class="pole"><b>Trust</b> <span class="amp">&amp;</span> <b>Verify</b></div>
-      <div class="pole"><b>Speed</b> <span class="amp">&amp;</span> <b>Depth</b></div>
-      <div class="foot" style="margin-top:8px;">Both/and beats either/or</div>
-    </div>
-
-    <!-- T6 guardrails -->
-    <div class="card take">
-      <div class="corner" style="color:var(--red);">Know these</div>
-      <div class="num" style="color:var(--red);">Guardrails</div>
-      <h3>Four to settle early.</h3>
-      <ul class="tick" style="margin-top:2px;">
-        <li><b>Companion chatbots.</b> Built to keep talking. A wellbeing question, not a tech one.</li>
-        <li><b>Privacy is a habit.</b> No names, photos, address, or secrets. If you wouldn't put it on a postcard, don't paste it.</li>
-        <li><b>Confident, not correct.</b> Teach one reflex: "how do you know that?" then check.</li>
-        <li><b>Protect the effort.</b> If they can't explain what they handed in, AI did too much.</li>
-      </ul>
-      <div class="foot">Care, not alarm</div>
-    </div>
-
-    <!-- T7 CLEAR -->
-    <div class="card dark clear">
-      <div class="corner">Pocket guide</div>
-      <div class="num">Better prompts in 5 letters</div>
-      <h3>Be CLEAR with it.</h3>
-      <div class="row"><span class="L">C</span><div><b style="color:#fff;">Context.</b> Who is this for, what's the situation.</div></div>
-      <div class="row"><span class="L">L</span><div><b style="color:#fff;">Limits.</b> What it should not do.</div></div>
-      <div class="row"><span class="L">E</span><div><b style="color:#fff;">Expectations.</b> What a good answer looks like.</div></div>
-      <div class="row"><span class="L">A</span><div><b style="color:#fff;">Architecture.</b> Ask for steps, lists, structure.</div></div>
-      <div class="row"><span class="L">R</span><div><b style="color:#fff;">Roadmap.</b> "Plan first, then build. Ask me before you start."</div></div>
-      <div class="foot">Start with C and R. The rest follows.</div>
-    </div>
-
-    <!-- T8 posture -->
-    <div class="card dark">
-      <div class="corner">The posture</div>
-      <div class="num">Perfectly imperfect</div>
-      <h3>Confident, not certain.</h3>
-      <p>You do not need to be the expert in the room. You need to be the grown-up who is willing to learn out loud, to get it wrong, and to stay curious next to your child.</p>
-      <p>The most experienced person in any AI room was a beginner eighteen months ago. So are you. So is your teenager. Sit in that together.</p>
       <div class="grow"></div>
       <div class="foot">We learn for life, together</div>
     </div>
