@@ -50,6 +50,16 @@
   .join .url{font-size:22px;margin-top:10px;color:var(--ink);font-weight:300;}
   .join .url b{font-weight:700;}
   .join .hint{color:var(--muted);font-size:15px;margin-top:18px;}
+  .hmw{display:flex;flex-direction:column;gap:10px;margin:10px 0 26px;max-width:1040px;}
+  .hmwq{font-size:clamp(19px,2.4vw,29px);font-weight:600;line-height:1.24;letter-spacing:-.01em;padding-left:22px;border-left:3px solid var(--gold);}
+  .joinband{display:flex;align-items:center;gap:34px;flex-wrap:wrap;border:1px solid var(--line);border-radius:18px;padding:24px 34px;}
+  .qr{text-align:center;}
+  .qrbox{width:118px;height:118px;border:2px dashed var(--gold);border-radius:12px;display:grid;place-items:center;color:var(--gold);font-weight:800;letter-spacing:.16em;font-size:19px;background:rgba(255,255,255,.02);}
+  .qrcap{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-top:8px;}
+  .joininfo .jlabel{color:var(--muted);text-transform:uppercase;letter-spacing:.2em;font-size:12px;}
+  .joininfo .jurl{font-size:21px;font-weight:300;margin-top:4px;}
+  .joininfo .jurl b{font-weight:700;}
+  .joininfo .code{font-size:clamp(40px,6.5vw,68px);color:var(--gold);font-weight:800;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums;}
 
   /* quiz */
   .qcard{background:transparent;border:none;padding:0;}
@@ -129,6 +139,24 @@
   .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
   .chip{border:1px solid var(--line);border-radius:99px;padding:12px 22px;font-size:clamp(16px,1.9vw,21px);font-weight:400;}
   .chip b{color:var(--gold);font-weight:700;}
+  .flipgrid{display:grid;gap:16px;margin-top:16px;}
+  .flipgrid.cols3{grid-template-columns:repeat(3,1fr);}
+  .flipgrid.cols5{grid-template-columns:repeat(5,1fr);}
+  @media(max-width:900px){.flipgrid.cols3,.flipgrid.cols5{grid-template-columns:repeat(2,1fr);}}
+  .flip{perspective:1200px;cursor:pointer;min-height:236px;}
+  .flip-in{position:relative;width:100%;min-height:236px;transition:transform .5s;transform-style:preserve-3d;}
+  .flip.flipped .flip-in{transform:rotateY(180deg);}
+  .flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:center;}
+  .flip-back{background:rgba(232,177,60,.07);transform:rotateY(180deg);}
+  .flip .n{font-size:30px;color:var(--gold);font-weight:800;line-height:1;}
+  .flip h3{margin:8px 0 8px;font-size:22px;font-weight:700;}
+  .flip>.flip-in>.flip-front>p{color:var(--muted);font-size:15px;margin:0;line-height:1.45;}
+  .flipicon{color:var(--gold);margin-bottom:10px;}
+  .flipicon svg{width:34px;height:34px;}
+  .flipex{margin:0;padding-left:18px;}
+  .flipex li{font-size:15px;color:var(--ink);margin-bottom:7px;line-height:1.35;}
+  .fliphint{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-top:auto;padding-top:12px;}
+  .flip:focus{outline:2px solid var(--gold);outline-offset:3px;}
   .polar{display:flex;flex-direction:column;gap:12px;margin-top:8px;max-width:780px;}
   .polar .row{display:flex;align-items:center;gap:16px;font-size:clamp(20px,2.6vw,28px);font-weight:600;border:1px solid var(--line);border-radius:14px;padding:16px 24px;}
   .polar .amp{color:var(--gold);font-weight:800;font-style:italic;}
@@ -183,7 +211,7 @@
     <button class="btn ghost sm" id="reset">⟳ New session</button>
     <button class="btn ghost" id="prev">◀ Back</button>
   </div>
-  <div class="label">Stage <b id="stagei">1</b> · <span id="stagelbl"></span></div>
+  <div class="label">Slide <b id="stagei">1</b> · <span id="stagelbl"></span></div>
   <div class="rail" id="rail"></div>
   <div class="right">
     <button class="btn ghost" id="reveal" style="display:none;">Reveal answer</button>
@@ -201,19 +229,20 @@ const me = Math.random().toString(36).slice(2,9);
 let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase();
 
 const QUIZ = [
-  {icon:"🎯",tag:"True or false",claim:"AI usually gives correct, reliable answers.",options:["True","False"],answer:1,
-   why:"<b>False.</b> AI is confident, not correct. A wrong fact stated plainly is a <b>hallucination</b>. It is how the tool works, not a fault."},
+  {icon:"🎯",tag:"Best assumption",claim:"Your teen quotes a confident, detailed 'fact' from AI for a project. The safest assumption is:",
+   options:["It's reliable, AI is trained on everything","It's right because it sounds sure and detailed","It could be invented, check before it's used","It's only wrong on hard or obscure topics"],answer:2,
+   why:"<b>It could be invented.</b> AI is confident, not correct. A wrong fact stated plainly is a <b>hallucination</b>. It is how the tool works, not a fault."},
   {icon:"📝",tag:"Best response",claim:"Your teen pastes a whole essay and asks AI to 'make it better'. The healthiest reply is to:",
-   options:["Ban AI for homework","Let it go, it reads better now","Ask them to show what changed, and why","Quietly rewrite it yourself"],answer:2,
+   options:["Ban AI for schoolwork from now on","Accept it, the writing is clearly stronger","Ask them to show what changed, and why","Fix it yourself before the teacher sees"],answer:2,
    why:"<b>Show me what changed.</b> Coaching beats policing. The learning lives in the choices a child can explain."},
   {icon:"🔒",tag:"Choose the safe one",claim:"Which is safe to type into a chatbot?",
    options:["Your child's full name and school","A clear photo of your child","Your home address","A maths problem, no personal details"],answer:3,
    why:"<b>The maths problem.</b> What you paste can be stored. If you would not put it on a postcard, do not paste it."},
-  {icon:"🛠️",tag:"True or false",claim:"A child who builds their own revision quiz with AI learns more than one who asks for the answers.",
-   options:["True","False"],answer:0,
-   why:"<b>True.</b> Making stretches thinking. Copying skips it. Building a tool means understanding the topic first."},
+  {icon:"🛠️",tag:"Which builds the most learning?",claim:"Your child has a science test on Friday. Which way of using AI builds the most learning?",
+   options:["Ask AI for the answers to the practice paper","Have AI summarise the chapter to reread","Build a quiz with AI, then sit the quiz","Have AI write model answers to memorise"],answer:2,
+   why:"<b>Build a quiz, then sit it.</b> Making stretches thinking. Copying, summarising, and memorising skip it. Building a tool means understanding the topic first."},
   {icon:"💬",tag:"What is this?",claim:"Your teen says an AI companion is their best listener, nightly. This is:",
-   options:["Sweet and harmless","A wellbeing signal worth a gentle talk","Proof AI is dangerous, confiscate it","Nothing to do with you"],answer:1,
+   options:["Sweet, and good they have someone","A wellbeing signal worth a gentle talk","Proof AI is dangerous, take the phone","Normal for their age, leave it be"],answer:1,
    why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open."}
 ];
 
@@ -406,17 +435,31 @@ function renderStage(){
   else if(s.id==="wall"){ host.innerHTML=stageWall(); wireWall(); }
   else if(s.id==="buildoff"){ host.innerHTML=stageOly(); wireOly(); }
   else host.innerHTML=renderContent(s.id);
+  wireFlips();   // wire any flip tiles present on this slide (promise, AIR, 5 Ps)
 }
 
 /* ---------- stage renderers ---------- */
 function stageWelcome(){
   return `<span class="eyebrow">South 3 Cluster · Parenting &amp; Thriving Together 2026</span>
     <h1>AI Confident</h1>
-    <p class="sub">Raising children who use artificial intelligence wisely. Three hours, together.</p>
-    <div class="join"><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">Join on your laptop</div>
-      <div class="url">Open <b>Audience.html</b>, then enter</div>
-      <div class="code">${ROOM||"—"}</div>
-      <div class="hint">Your screen will follow this one. We move together.</div></div>`;
+    <p class="sub">Confident and present, as our children grow up with AI.</p>
+    <div class="hmw">
+      <div class="hmwq">How might we raise children who use AI wisely?</div>
+      <div class="hmwq">How might we sit beside our children as they learn with AI?</div>
+      <div class="hmwq">How might we build with our children, not just police them?</div>
+      <div class="hmwq">How might we keep the real conversation open when AI is always ready to listen?</div>
+      <div class="hmwq">How might we protect what AI cannot grow: the effort, the struggle, the relationship?</div>
+      <div class="hmwq">How might we agree what's okay with AI at home?</div>
+    </div>
+    <div class="joinband">
+      <!-- Swap this box for <img src="qr.png" width="118" height="118"> once the QR is ready -->
+      <div class="qr"><div class="qrbox">QR</div><div class="qrcap">Scan to join</div></div>
+      <div class="joininfo">
+        <div class="jlabel">Or open on your laptop</div>
+        <div class="jurl">Open <b>Audience.html</b>, then enter</div>
+        <div class="code">${ROOM||"—"}</div>
+      </div>
+    </div>`;
 }
 function stageQuiz(q){
   const Q=QUIZ[q], votes=qVotes[q], total=Object.keys(votes).length, rev=!!revealed[q];
@@ -463,8 +506,14 @@ function stageReflect(){
 function stageWall(){
   return `<span class="eyebrow">Live · what our families agree</span>
     <h1>Our Rules Wall</h1>
-    <p class="sub">Parents build a Family Charter on the 5 Ps. Lines appear here as they share them.</p>
-    <div class="chips" style="margin-bottom:16px;"><span class="chip"><b>P</b>lan</span><span class="chip"><b>P</b>rohibit</span><span class="chip"><b>P</b>artner</span><span class="chip"><b>P</b>olish</span><span class="chip"><b>P</b>roduce</span></div>
+    <p class="sub">Parents build a Family Charter on the 5 Ps. Tap a P for examples. Lines appear below as families share them.</p>
+    <div class="flipgrid cols5" style="margin-bottom:16px;">
+      ${flipTile('<div class="n">P</div><h3>Plan</h3>','compass',["In our home, AI is for...","e.g. homework help we can explain"])}
+      ${flipTile('<div class="n">P</div><h3>Prohibit</h3>','shield',["In our home, AI is never for...","e.g. passing off work as our own"])}
+      ${flipTile('<div class="n">P</div><h3>Partner</h3>','tool',["One thing we build together this week","e.g. a revision game or family quiz"])}
+      ${flipTile('<div class="n">P</div><h3>Polish</h3>','star',["We revisit this charter when...","e.g. each new school year"])}
+      ${flipTile('<div class="n">P</div><h3>Produce</h3>','rocket',["When we are unsure, we...","e.g. ask each other, check a second source"])}
+    </div>
     <div class="wallctl">
       <select id="wcat"><option>Plan</option><option>Prohibit</option><option>Partner</option><option>Polish</option><option>Produce</option></select>
       <input id="winput" placeholder="Type a rule a parent calls out, then Enter">
@@ -542,6 +591,20 @@ function renderLead(){
 }
 function renderContent(id){ const c=CONTENT[id]||{};
   return `${c.icon&&ICONS[c.icon]?`<div class="slideicon">${ICONS[c.icon]}</div>`:""}<span class="eyebrow">${c.e||""}</span><h1>${c.t||""}</h1>${c.h||""}`; }
+/* flip tile · front shows the headline, tap to reveal icon + plain examples on the back */
+function flipTile(front, icon, lines){
+  return `<div class="flip" tabindex="0" role="button" aria-label="Tap to flip">
+    <div class="flip-in">
+      <div class="flip-face flip-front">${front}<div class="fliphint">Tap to flip</div></div>
+      <div class="flip-face flip-back">${ICONS[icon]?`<div class="flipicon">${ICONS[icon]}</div>`:""}<ul class="flipex">${lines.map(l=>`<li>${l}</li>`).join("")}</ul></div>
+    </div></div>`;
+}
+function wireFlips(){
+  document.querySelectorAll("#stage .flip").forEach(f=>{
+    f.onclick=()=>f.classList.toggle("flipped");
+    f.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); f.classList.toggle("flipped"); } };
+  });
+}
 const SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
 const ICONS = {
   compass:SVG+'<circle cx="12" cy="12" r="9"/><polygon points="16 8 13 13 8 16 11 11"/></svg>',
@@ -562,15 +625,20 @@ const ICONS = {
 };
 const CONTENT = {
   "frame-why":{icon:"compass", e:"Why we're here", t:"We're not here to panic. We're here to think, together.",
-    h:`<div class="quote">If AI can generate answers, we must <b>ask better questions</b>. If it can optimise systems, we must <b>uphold values</b>. If it can accelerate progress, we must <b>decide its direction</b>.</div><div class="src">Minister for Education · March 2026</div>`},
+    h:`<div class="quote">If AI can generate answers, we must <b>ask better questions</b>. If it can optimise systems, we must <b>uphold values</b>. If it can accelerate progress, we must <b>decide its direction</b>.</div><div class="src">Minister for Education Desmond Lee · MOE Committee of Supply · 3 March 2026</div>`},
   "frame-promise":{icon:"target", e:"The promise", t:"Three things you'll leave with.",
-    h:`<div class="closegrid">
-      <div class="cc"><div class="n">1</div><h3>Head</h3><p>The intelligence has to come from us. AI predicts; it does not understand.</p></div>
-      <div class="cc"><div class="n">2</div><h3>Hands</h3><p>Sit beside, not in front, not away. Explore together, agree the rules.</p></div>
-      <div class="cc"><div class="n">3</div><h3>Heart</h3><p>Protect what AI cannot grow. The effort, the struggle, the relationship.</p></div></div>`},
+    h:`<div class="flipgrid cols3">
+      ${flipTile('<div class="n">1</div><h3>Head</h3><p>The intelligence has to come from us. AI predicts, it does not understand.</p>','spark',["Ask: how do you know that?","Give it your context, not just a question","Check anything that matters against a second source"])}
+      ${flipTile('<div class="n">2</div><h3>Hands</h3><p>Sit beside, not in front, not away. Explore together, agree the rules.</p>','tool',["Sit at the same screen, not across the room","Ask them to show you what they did","Build one small thing together this week"])}
+      ${flipTile('<div class="n">3</div><h3>Heart</h3><p>Protect what AI cannot grow. The effort, the struggle, the relationship.</p>','heart',["Notice when a bot starts to replace a friend","Keep the dinner-table conversation open","Protect the struggle that grows a mind"])}
+    </div>`},
   "head-intro":{icon:"spark", e:"What AI actually is", t:"The intelligence has to come from us.",
     h:`<p class="body-txt">AI predicts the next words from patterns it has seen. It does not know your child. Give it your context, your judgement, your values, or it returns the average answer.</p>
-      <div class="chips"><span class="chip"><b>A</b>ugmentation</span><span class="chip"><b>I</b>ntelligence</span><span class="chip"><b>R</b>esponsibility</span></div>`},
+      <div class="flipgrid cols3">
+      ${flipTile('<div class="n">A</div><h3>Augmentation</h3>','spark',["AI helps you decide","It should not decide for you"])}
+      ${flipTile('<div class="n">I</div><h3>Intelligence</h3>','search',["The understanding comes from you","Give context, or get the average answer"])}
+      ${flipTile('<div class="n">R</div><h3>Responsibility</h3>','shield',["The choices stay yours","And so does the work"])}
+      </div>`},
   "reflex-correct":{icon:"search", e:"Reflex 1 of 5", t:"Confident is not correct.",
     h:`<p class="body-txt">AI states wrong facts with a straight face. Teach one move: <b>"How do you know that?"</b> Then check anything that matters against a second source.</p>`},
   "reflex-coach":{icon:"bubble", e:"Reflex 2 of 5", t:"Coach, don't police.",
