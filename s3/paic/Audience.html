@@ -265,7 +265,7 @@ function renderConnect(){
     <p class="lede">This is yours for the morning, and yours to keep. Type the room code on the screen, then follow along.</p>
     <div class="card">
       <label class="f" for="room">Room code</label>
-      <input type="text" id="room" placeholder="e.g. BTY-AI" autocomplete="off">
+      <input type="text" id="room" placeholder="e.g. BTY-AI-K7QX" autocomplete="off">
       <label class="f" for="name">Your name (optional, for your printout)</label>
       <input type="text" id="name" placeholder="optional" autocomplete="off">
       <div style="margin-top:16px;"><button class="btn gold" id="join">Join the room</button></div>
@@ -505,6 +505,7 @@ function renderLog(){
       <button class="btn gold" onclick="downloadCard()">Download my card (.png)</button>
       <button class="btn ghost" onclick="window.print()">Print / PDF</button>
       <span class="hint">The image saves all three cards.</span></div>
+    <div id="loglog">
     <div class="logcard"><div class="ttl">Card 1 · Walking in</div><h3>${esc(who)}</h3>
       <p style="margin:4px 0 0;font-size:14px;"><b>Confidence in:</b> ${S.confIn??"—"} / 5</p>
       ${sv("question")?`<p style="margin:6px 0 0;font-size:14px;"><b>My question:</b> ${esc(sv("question"))}</p>`:""}</div>
@@ -519,6 +520,7 @@ function renderLog(){
       <ul><li><b>What:</b> ${esc(sv("r1"))||"—"}</li><li><b>So what:</b> ${esc(sv("r2"))||"—"}</li>
       <li><b>Now what:</b> ${esc(sv("r3"))||"—"}</li></ul>
       <p style="margin:12px 0 0;font-size:14px;"><b>Confidence:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p></div>
+    </div>
     </div>`;
 }
 
