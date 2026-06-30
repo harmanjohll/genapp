@@ -34,6 +34,8 @@
   .dot.on{background:var(--accent);}
   .dot.off{background:var(--rust);}
   .roomcode{font-size:14px;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.04em;}
+  .netbanner{background:var(--amber);color:#1a1206;font-weight:600;font-size:14px;
+    padding:11px 32px;text-align:center;letter-spacing:.01em;}
 
   .stage{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:48px 40px;}
   h1{font-family:var(--serif);font-size:clamp(40px,6vw,70px);margin:0 0 14px;line-height:1.02;font-weight:700;letter-spacing:-.02em;}
@@ -201,6 +203,8 @@
   </div>
 </div>
 
+<div class="netbanner" id="netbanner" style="display:none;"></div>
+
 <div class="stage" id="stage"></div>
 
 <div class="deck">
@@ -218,8 +222,15 @@
 
 <script>
 /* ===== CONFIG · must match Audience_SL.html exactly ===== */
-const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker — swap for your own for the day
-const TOPIC_NS = "leadai";                              // namespace · must match Audience_SL.html
+/* Day of the session, point both files at your own broker. For sync that works
+   on any network (mobile data, locked down venue wifi), use a host that serves
+   WSS on port 443; non standard ports like 8884 are often blocked. If the broker
+   needs a login, set MQTT_USER and MQTT_PASS. These four lines must match
+   Audience_SL.html byte for byte. */
+const MQTT_URL  = "wss://broker.hivemq.com:8884/mqtt";  // TODO: swap for your own 443 endpoint
+const TOPIC_NS  = "leadai-bty";                          // unique token; harder to guess than "leadai"
+const MQTT_USER = "";                                    // broker username, if required
+const MQTT_PASS = "";                                    // broker password, if required
 /* ======================================================= */
 
 const me = Math.random().toString(36).slice(2,9);
@@ -300,25 +311,31 @@ const RLAB = {r1:"Skill",r2:"Prohibit",r3:"Build next"};
 
 /* ---------- sync (MQTT over WebSocket) ---------- */
 let client=null, wsOpen=false;
-let SID="s"+Math.random().toString(36).slice(2,8);
+/* Persist the session id so an accidental presenter reload resumes the same run
+   (leaders keep following, aggregates rebuild from their re-sends) rather than
+   orphaning every connected screen. "New session" still mints a fresh id. */
+let SID=(function(){ try{ var k=localStorage.getItem("sl_sid"); if(k) return k; }catch(e){}
+  var v="s"+Math.random().toString(36).slice(2,8); try{localStorage.setItem("sl_sid",v);}catch(e){} return v; })();
 function loadMqtt(){
   if(window.mqtt || document.getElementById("mqttlib")) return;
   var s=document.createElement("script"); s.id="mqttlib";
   s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
-  s.onerror=function(){ setConn(false); };
+  s.onerror=function(){ cdnBlocked=true; setConn(false); };
   document.head.appendChild(s);
 }
 function whenMqttReady(cb,tries){ tries=tries||0;
   if(typeof mqtt!=="undefined"){ cb(); }
   else if(tries<60){ setTimeout(function(){whenMqttReady(cb,tries+1);},200); }
-  else { setConn(false); }
+  else { cdnBlocked=true; setConn(false); }
 }
 function topic(){ return TOPIC_NS+"/"+ROOM+"/bus"; }
 function connect(){
   if(!ROOM){ ROOM="BTY-SL"; }
   document.getElementById("rc").textContent="Room "+ROOM;
-  client = mqtt.connect(MQTT_URL, {clientId:"pres_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30});
-  client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic()); broadcastStage(); });
+  const opts={clientId:"pres_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30};
+  if(MQTT_USER){ opts.username=MQTT_USER; opts.password=MQTT_PASS; }
+  client = mqtt.connect(MQTT_URL, opts);
+  client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic()); broadcastStage(); send({type:"reqmine"}); });
   client.on("reconnect", ()=>setConn(false));
   client.on("offline", ()=>{ wsOpen=false; setConn(false); });
   client.on("close", ()=>{ wsOpen=false; setConn(false); });
@@ -330,7 +347,7 @@ function seen(id){ if(id) roster.set(id, Date.now()); }
 function onMsg(raw){
   let d; try{ d=JSON.parse(raw);}catch(e){ return; }
   if(!d || d.from===me) return;
-  if(d.type==="join"){ broadcastStage(); return; }
+  if(d.type==="join" || d.type==="req"){ seen(d.from); broadcastStage(); updateMeters(); return; }
   if(d.sid!==SID) return;
   seen(d.from);
   if(d.type==="confidence"){
@@ -362,13 +379,30 @@ function feedHTML(channel,title,labels){
   return `<div class="feed"><div class="feedtitle">${title} · ${items.length}</div>`+
     items.map(it=>`<div class="feeditem">${labels&&labels[it.key]?`<span class="ftag">${labels[it.key]}</span>`:""}${esc(it.text)}</div>`).join("")+`</div>`;
 }
+let cdnBlocked=false, lastOnline=0, startTime=Date.now();
 function setConn(on){ document.getElementById("dot").className="dot "+(on?"on":"off");
-  document.getElementById("lbl").textContent=on?"live":"reconnecting"; }
+  document.getElementById("lbl").textContent=on?"live":"reconnecting";
+  if(on) lastOnline=Date.now();
+  updateNetBanner(); }
+function updateNetBanner(){
+  const dot=document.getElementById("dot"); if(!dot) return;
+  const off=dot.classList.contains("off");
+  const b=document.getElementById("netbanner"); if(!b) return;
+  const ref=lastOnline||startTime;
+  if(off && Date.now()-ref>15000){
+    b.textContent = cdnBlocked
+      ? "Sync library blocked on this network. Leaders can still follow the main screen; use the printed card."
+      : "Live sync is not connecting here. Leaders can still follow the main screen; use the printed card.";
+    b.style.display="";
+  } else { b.style.display="none"; }
+}
 
 setInterval(()=>{
   const now=Date.now();
   for(const [id,t] of roster){ if(now-t>11000) roster.delete(id); }
   updateMeters();
+  if(wsOpen) broadcastStage();   // safety beacon: a desynced or join-lost leader converges within a few seconds
+  updateNetBanner();
 },3000);
 
 /* ---------- meters ---------- */
@@ -388,7 +422,7 @@ function curId(){ return STAGES[si].id; }
 function stageHasQ(q){ const s=STAGES[si]; return s.aud==="quiz" && s.q===q; }
 function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="";
   if(s.aud==="watch"){ const c=(typeof CONTENT!=="undefined"&&CONTENT[s.id])||{}; title=c.t||""; eyebrow=c.e||""; }
-  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), title:title, eyebrow:eyebrow}); }
+  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), rev:(s.aud==="quiz"?!!revealed[s.q]:false), title:title, eyebrow:eyebrow}); }
 function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); }
 document.getElementById("next").onclick=()=>move(1);
 document.getElementById("prev").onclick=()=>move(-1);
@@ -398,6 +432,7 @@ document.getElementById("reset").onclick=resetSession;
 function resetSession(){
   if(!confirm("Start a new session? This clears all responses and resets every connected screen.")) return;
   SID="s"+Math.random().toString(36).slice(2,8);
+  try{localStorage.setItem("sl_sid",SID);}catch(e){}
   roster.clear();
   for(const k in submissions) submissions[k]=new Set();
   for(let i=0;i<qVotes.length;i++) qVotes[i]={};
@@ -546,7 +581,7 @@ function renderLead(){
   if(!teams.length){ host.innerHTML='<p class="sub">Add trios to begin.</p>'; return; }
   sorted.forEach((t,i)=>{ const idx=teams.indexOf(t); const d=document.createElement("div"); d.className="team";
     d.innerHTML=`<div class="rank">${i+1}</div><div class="nm">${esc(t.name)}</div>
-      <div class="pm"><button data-i="${idx}" data-d="-1">–</button><button data-i="${idx}" data-d="1">+</button></div>
+      <div class="pm"><button data-i="${idx}" data-d="-1">−</button><button data-i="${idx}" data-d="1">+</button></div>
       <div class="sc">${t.score}</div>`; host.appendChild(d); });
   host.querySelectorAll(".pm button").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i,dd=+b.dataset.d;
     teams[i].score=Math.max(0,teams[i].score+dd); renderLead(); });
@@ -594,7 +629,7 @@ const CONTENT = {
         <div class="mcard secure"><h3>Pair and AIBots</h3><div class="ssub">GovTech, for official work</div>
           <ul class="uselist"><li><span class="mk yes">✓</span><span>Cleared for Restricted and Sensitive Normal</span></li><li><span class="mk yes">✓</span><span>Official school work</span></li><li><span class="mk yes">✓</span><span>No provider logging of your inputs</span></li></ul></div>
       </div>
-      <p class="quote" style="margin-top:18px">Get your hands dirty, and then you understand both the potential and the limits. <b>— V. Balakrishnan, 2026</b></p>`},
+      <p class="quote" style="margin-top:18px">Get your hands dirty, and then you understand both the potential and the limits. <b>V. Balakrishnan, 2026</b></p>`},
   "forces":{e:"Five forces", t:"What AI takes. What it cannot.",
     h:`<p class="body-txt" style="font-size:clamp(16px,2vw,20px)">Sergiovanni's five forces. The bottom two make a school run. The top three make it good.</p>
       <div class="ladder">

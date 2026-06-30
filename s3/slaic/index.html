@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading with AI</title>
+<style>
+  :root{
+    --ink:#1d2a2b;--ink-soft:#3c4f4d;--muted:#5d6b6a;--paper:#f4f1ea;--soft:#e8ede9;--card:#fbfaf6;--line:#d6ddd6;
+    --accent:#2f7d72;--accent-d:#25655c;--amber:#b7791f;--rust:#9a3b3b;--dark:#16282a;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;}
+  a{color:inherit;text-decoration:none;}
+  header{background:var(--dark);color:#eaf1ee;padding:56px 22px 48px;}
+  .wrap{max-width:780px;margin:0 auto;padding:0 22px;}
+  header .wrap{padding:0 22px;}
+  .kick{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;}
+  header h1{font-family:var(--serif);font-size:clamp(34px,6vw,52px);margin:10px 0 10px;font-weight:700;letter-spacing:-.01em;}
+  header p{color:#cfe0db;max-width:600px;margin:0;font-size:18px;line-height:1.5;}
+  section{padding:30px 0;border-bottom:1px solid var(--line);}
+  h2{font-family:var(--serif);font-size:23px;margin:0 0 4px;position:relative;padding-bottom:12px;}
+  h2::after{content:"";position:absolute;left:0;bottom:0;width:40px;height:3px;background:var(--accent);border-radius:2px;}
+  .lede{color:var(--ink-soft);font-size:16px;margin:12px 0 16px;}
+  .links{display:grid;gap:12px;}
+  @media(min-width:620px){.links.two{grid-template-columns:1fr 1fr;}}
+  .tile{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;transition:border-color .15s,box-shadow .15s;box-shadow:0 6px 16px rgba(20,40,42,.05);}
+  .tile:hover{border-color:var(--accent);box-shadow:0 10px 22px rgba(20,40,42,.08);}
+  .tile .t{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--ink);}
+  .tile .d{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.45;}
+  .tile .go{font-size:13px;color:var(--accent-d);font-weight:700;margin-top:10px;letter-spacing:.02em;}
+  .leaders{background:linear-gradient(158deg,#16282a,#1d3335);color:#eaf1ee;border:none;}
+  .leaders .t,.leaders .d{color:#eaf1ee;}
+  .leaders .d{color:#bcd4ce;}
+  .room{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:14px 0 4px;}
+  .room .lbl{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#9ec7bd;font-weight:700;}
+  .room .code{font-family:var(--serif);font-size:clamp(34px,8vw,52px);color:#9ec7bd;font-weight:800;letter-spacing:.04em;}
+  .cta{display:inline-block;margin-top:8px;background:#9ec7bd;color:#0b1a18;font-weight:800;
+    border-radius:99px;padding:13px 26px;font-size:15px;letter-spacing:.02em;}
+  .note{font-size:13.5px;color:var(--muted);font-style:italic;margin-top:18px;line-height:1.5;}
+  footer{padding:26px 22px 60px;color:var(--muted);font-size:13px;}
+  footer .wrap{max-width:780px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kick">A working session for school leaders</div>
+    <h1>Leading with AI</h1>
+    <p>Forty minutes. We model it, we govern it, we each build one thing. You leave having built, not just heard about it. You stay in command.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>For leaders</h2>
+    <p class="lede">Open this on your own device. Any network works, including your mobile data; you do not need the room wifi. Your screen follows the main screen, and your card is yours to keep.</p>
+    <div class="tile leaders">
+      <div class="t">Join the session</div>
+      <div class="room"><span class="lbl">Room</span><span class="code">BTY-SL</span></div>
+      <div class="d">Tap below, confirm the room code matches the main screen, then follow along.</div>
+      <a class="cta" href="./Audience_SL.html?room=BTY-SL">Open the companion</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>For the facilitator</h2>
+    <p class="lede">Open the console on the main screen and drive the deck. Keep the run sheet to hand for the clock and the Relay script.</p>
+    <div class="links two">
+      <a class="tile" href="./Presenter_SL.html">
+        <div class="t">Presenter console</div>
+        <div class="d">Drives the deck and aggregates the room live. Open this on the main screen.</div>
+        <div class="go">Open console</div>
+      </a>
+      <a class="tile" href="./SL_Facilitation_Plan.html">
+        <div class="t">Facilitation plan</div>
+        <div class="d">The run sheet: clock, the Relay, tensions, guardrails, pre flight.</div>
+        <div class="go">Open run sheet</div>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Take home</h2>
+    <p class="lede">The deep reference each leader carries home, and a paper card if the live sync cannot reach a device.</p>
+    <div class="links two">
+      <a class="tile" href="./leadai.html">
+        <div class="t">The full reference</div>
+        <div class="d">The scrollytelling session: the whole argument, to read at your own pace.</div>
+        <div class="go">Open the reference</div>
+      </a>
+      <a class="tile" href="./SL_Cards.html">
+        <div class="t">Printable cards</div>
+        <div class="d">The paper fallback for the card the companion builds. Print one per leader.</div>
+        <div class="go">Open the cards</div>
+      </a>
+    </div>
+    <p class="note">If the live sync cannot reach a device on the day, leaders can still follow the main screen, and the printed cards carry the same close. The session does not depend on every screen being connected.</p>
+  </section>
+
+</div>
+
+<footer><div class="wrap">Leading with AI · a working session for school leaders.</div></footer>
+</body>
+</html>

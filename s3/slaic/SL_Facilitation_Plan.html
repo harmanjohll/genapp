@@ -104,7 +104,7 @@
         <p>Mixed experience per trio works best. The confident leader becomes the Maker; the cautious one makes a sharp Governor.</p>
       </div>
     </div>
-    <p class="note">The sync uses a public MQTT broker over WebSocket. It needs venue wifi. Test the join on the day, on the venue network, before leaders arrive.</p>
+    <p class="note">The sync uses an MQTT broker over WebSocket, so leaders can join from any network, including their own mobile data; they do not all need the venue wifi. Still, test a real join on the day, before leaders arrive, to confirm the broker is reachable from the room.</p>
   </section>
 
   <section>
@@ -206,7 +206,7 @@
     <ul class="check">
       <li>Open <b>Presenter_SL.html</b> on the main screen. Confirm the room code reads <b>BTY-SL</b> (or set your own with <code style="font-family:ui-monospace,monospace">?room=</code>).</li>
       <li>On a spare device, open <b>Audience_SL.html</b>, join the room, and confirm the connected count climbs and the screen follows when you press Next.</li>
-      <li>Test on the <b>venue wifi</b>, not your own hotspot. If the broker is blocked, the live beats will not sync.</li>
+      <li>Test a real join from <b>a phone on mobile data</b>, not only the venue wifi. If the connected count does not climb, the broker is blocked on that network; fall back to the printed cards.</li>
       <li>Have your <b>two paid accounts</b> ready for the agent, connector, and loop demos in See it and Watch it run.</li>
       <li>Pre-load one worked <b>house-voice SKILL.md</b> so the Relay has a fallback if a Maker stalls.</li>
       <li>Seat the room in <b>trios</b>. Put up the room code before the doors open.</li>
