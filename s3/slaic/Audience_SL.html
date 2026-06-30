@@ -40,6 +40,7 @@
   input[type=text],textarea{width:100%;font-family:var(--sans);font-size:15px;padding:12px 14px;
     border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);resize:vertical;}
   textarea{min-height:64px;}
+  .qline{margin-bottom:12px;}
   input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,125,114,.16);}
 
   .scale{display:flex;gap:8px;margin:6px 0 4px;}
@@ -157,19 +158,19 @@ const S = { room:"", name:"", confIn:null, confOut:null,
 
 const QUIZ = [
   { tag:"What makes it new", claim:"An agent differs from a chatbot because it…",
-    options:["Gives longer, fuller answers","Runs a loop: plans, acts, checks its own work, repeats","Uses a larger model","Is right more often"], answer:1,
+    options:["It uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","It remembers everything you have ever told it","It is always connected to the live internet"], answer:1,
     why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. You govern a process that keeps running when you are not watching.",
     note:"An agent runs a loop; you govern the process, not one answer." },
   { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
-    options:["Approve, it saves real time","Approve once names are stripped","Decline; records stay on the government platform","Approve as a one-subject pilot"], answer:2,
+    options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"], answer:2,
     why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Student and staff records stay on Pair and AIBots. Free Claude is for open work only.",
     note:"Decide what data goes where. Records stay on Pair and AIBots." },
   { tag:"Spot the risk", claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
-    options:["It will take too long to write","One person's voice and blind spots pass as the whole school's","Staff will refuse to use it","The licensing cost"], answer:1,
+    options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"], answer:1,
     why:"<b>A skill reflects whoever made it.</b> One voice can pass as the whole school's, and what we never write down is never captured. Build it with many, and govern the blind spots.",
     note:"A skill reflects its maker. Build it with many; govern the blind spots." },
   { tag:"What stays yours", claim:"Across Sergiovanni's five forces, which must a leader never delegate to AI?",
-    options:["Technical: timetabling and logistics","Managerial: rosters and routing","Cultural: what the school believes and stands for","Administrative paperwork around people"], answer:2,
+    options:["Technical: timetabling and logistics","Human: relationships and morale","Cultural: what the school believes and stands for","Educational: teaching and curriculum"], answer:2,
     why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what you notice and what you stand for, stay yours. Treating them as optional is the category error.",
     note:"AI absorbs the technical. The cultural and symbolic stay yours." },
   { tag:"True or false", claim:"Partner is the most advanced posture; aim to move every task there.",
@@ -224,7 +225,7 @@ function heartbeat(){
   else send({type:"hb"});
 }
 function shareChannel(key){
-  if(key==="question") return "question";
+  if(key.indexOf("question")===0) return "question";  // question1, question2, question3
   if(key==="r1"||key==="r2"||key==="r3") return "reflect";
   return "charter"; // the 5 Ps
 }
@@ -258,6 +259,7 @@ function onMsg(raw){
 function resetAudience(){
   S.confIn=null; S.confOut=null;
   S.quiz={}; S.reveal={}; S.share={}; S.belief={b1:"",b2:""};
+  inQKeys=["question1"]; inSubmitted=false;
   curStageKey=""; curView="welcome";
   renderWaiting("New session. Waiting for the facilitator to begin.");
 }
@@ -274,13 +276,11 @@ function updateNetBanner(){
   const off=dot.classList.contains("off");
   const ref=lastOnline||startTime;
   if(S.room && off && Date.now()-ref>15000){
-    b.innerHTML = (cdnBlocked
-      ? "We cannot load the live sync on this network. Follow the main screen; your card is on paper at your table. "
-      : "We cannot reach the live sync here. Follow the main screen; your card is on paper at your table. ")
-      + '<button class="btn sm" id="netretry">Try again</button>';
+    // Reconnect is automatic; no button, so a participant cannot accidentally reset mid-session.
+    b.textContent = cdnBlocked
+      ? "We cannot load the live sync on this network. Keep this open; follow the main screen, and your card is on paper at your table."
+      : "Reconnecting. Keep this open; follow the main screen, and your card is on paper at your table.";
     b.style.display="";
-    const r=document.getElementById("netretry");
-    if(r) r.onclick=()=>{ b.style.display="none"; lastOnline=Date.now(); whenMqttReady(connect); };
   } else { b.style.display="none"; }
 }
 setInterval(updateNetBanner,3000);
@@ -365,6 +365,7 @@ function schedulePublish(key,channel){ clearTimeout(pubT[key]); pubT[key]=setTim
 function publishShare(key,channel){ const st=shareState(key); send({type:"share",channel:channel,key:key,text:st.text,on:!!st.on}); }
 
 /* ---------- READINESS IN ---------- */
+let inQKeys=["question1"], inSubmitted=false;
 function renderIn(){
   V().innerHTML=`<div class="view">
     <span class="eyebrow">Walking in</span>
@@ -373,13 +374,38 @@ function renderIn(){
     <div class="card">
       <div class="scale" id="sc"></div>
       <div class="lab"><span>1 · Just starting</span><span>5 · Well underway</span></div>
-      <label class="f" for="sf-question">The leadership question on your mind tonight</label>
-      ${shareHTML("question","What are you weighing as a leader on AI?")}
-      <div id="inflag"></div>
+      <label class="f">The leadership questions on your mind today</label>
+      <p class="hint" style="margin:0 0 10px">Add up to three. Shared with the room by default; tap a toggle to keep one private.</p>
+      <div id="qwrap"></div>
+      <button class="btn ghost sm" id="qadd" style="margin-top:2px;">+ Add another question</button>
+      <div style="margin-top:14px;"><button class="btn" id="qsubmit">Submit my questions</button><span id="inflag"></span></div>
     </div></div>`;
-  wireShare("question","question");
-  buildScale("sc","confIn",()=>{ send({type:"confidence",phase:"in",value:S.confIn});
-    document.getElementById("inflag").innerHTML='<div class="doneflag">✓ Readiness shared. Thank you.</div>'; });
+  buildScale("sc","confIn",()=>{ send({type:"confidence",phase:"in",value:S.confIn}); });
+  renderInQuestions();
+  document.getElementById("qadd").onclick=()=>{ if(inQKeys.length>=3) return;
+    inQKeys.push("question"+(inQKeys.length+1)); renderInQuestions(); };
+  document.getElementById("qsubmit").onclick=()=>{ inSubmitted=true;
+    inQKeys.forEach(k=>{ if(sv(k)) publishShare(k,"question"); });
+    document.getElementById("inflag").innerHTML=' <span class="doneflag">✓ Shared. Thank you.</span>'; };
+}
+function renderInQuestions(){
+  const wrap=document.getElementById("qwrap"); if(!wrap) return;
+  wrap.innerHTML=inQKeys.map((k,i)=>{ const st=shareState(k);
+    return `<div class="qline">
+      <textarea id="sf-${k}" placeholder="${i===0?'What are you weighing as a leader on AI?':'Another question…'}">${esc(st.text)}</textarea>
+      <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${k}">${st.on?'Shared with the room':'Private'}</button>
+        <span class="sharehint">${st.on?'tap to keep private':'tap to share'}</span></div>
+    </div>`; }).join("");
+  inQKeys.forEach(wireInQuestion);
+  const add=document.getElementById("qadd"); if(add) add.style.display=inQKeys.length>=3?"none":"";
+}
+function wireInQuestion(k){
+  const ta=document.getElementById("sf-"+k), tg=document.getElementById("tg-"+k);
+  if(ta) ta.oninput=()=>{ shareState(k).text=ta.value.trim(); if(inSubmitted) schedulePublish(k,"question"); };
+  if(tg) tg.onclick=()=>{ const st=shareState(k); st.on=!st.on;
+    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
+    const hint=tg.nextElementSibling; if(hint) hint.textContent=st.on?'tap to keep private':'tap to share';
+    if(inSubmitted) publishShare(k,"question"); };  // live Share/Private update on the presenter
 }
 
 /* ---------- QUIZ ---------- */
@@ -531,7 +557,8 @@ function renderLog(){
       <span class="hint">The image saves all three cards.</span></div>
     <div class="logcard"><div class="ttl">Card 1 · Walking in</div><h3>${esc(who)}</h3>
       <p style="margin:4px 0 0;font-size:14px;"><b>Readiness in:</b> ${S.confIn??"—"} / 5</p>
-      ${sv("question")?`<p style="margin:6px 0 0;font-size:14px;"><b>My question:</b> ${esc(sv("question"))}</p>`:""}</div>
+      ${(function(){ const qs=["question1","question2","question3"].map(k=>sv(k)).filter(Boolean);
+        return qs.length?`<p style="margin:6px 0 2px;font-size:14px;"><b>My question${qs.length>1?'s':''}:</b></p><ul style="margin:0;padding-left:18px;font-size:14px;">${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>`:""; })()}</div>
     <div class="logcard"><div class="ttl">Card 2 · The reads</div><h3>What landed, what to revisit</h3>
       <p style="margin:6px 0 2px;font-size:13px;font-weight:700;color:var(--green);">Read it right</p>
       <ul class="good">${good.length?good.map(g=>`<li>${esc(g)}</li>`).join(""):"<li>—</li>"}</ul>
