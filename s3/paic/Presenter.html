@@ -55,6 +55,7 @@
   .joinband{display:flex;align-items:center;gap:34px;flex-wrap:wrap;border:1px solid var(--line);border-radius:18px;padding:24px 34px;}
   .qr{text-align:center;}
   .qrbox{width:118px;height:118px;border:2px dashed var(--gold);border-radius:12px;display:grid;place-items:center;color:var(--gold);font-weight:800;letter-spacing:.16em;font-size:19px;background:rgba(255,255,255,.02);}
+  .qrimg{width:118px;height:118px;border-radius:10px;background:#fff;display:block;}
   .qrcap{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-top:8px;}
   .joininfo .jlabel{color:var(--muted);text-transform:uppercase;letter-spacing:.2em;font-size:12px;}
   .joininfo .jurl{font-size:21px;font-weight:300;margin-top:4px;}
@@ -452,8 +453,8 @@ function stageWelcome(){
       <div class="hmwq">How might we agree what's okay with AI at home?</div>
     </div>
     <div class="joinband">
-      <!-- Swap this box for <img src="qr.png" width="118" height="118"> once the QR is ready -->
-      <div class="qr"><div class="qrbox">QR</div><div class="qrcap">Scan to join</div></div>
+      <!-- To use the branded GO.gov.sg QR, replace qr.png at this path -->
+      <div class="qr"><img class="qrimg" src="qr.png" alt="QR code, scan to join the room" width="118" height="118"><div class="qrcap">Scan to join · go.gov.sg/s3paic</div></div>
       <div class="joininfo">
         <div class="jlabel">Or open on your laptop</div>
         <div class="jurl">Open <b>Audience.html</b>, then enter</div>
