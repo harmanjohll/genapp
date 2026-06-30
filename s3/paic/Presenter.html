@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Confident · Presenter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000C53;--surface:#0b1a6e;
+    --line:rgba(255,255,255,.16);--line-2:rgba(255,255,255,.28);
+    --ink:#f4f4f6;--muted:#aab3d4;
+    --gold:#e8b13c;--gold-dim:#6f6a36;--red:#f0664a;
+    --sans:'Inter','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
+    min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+  ::selection{background:var(--gold);color:#0b0b0d;}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20;}
+  .top .brand{font-size:15px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;}
+  .top .brand b{color:var(--gold);font-weight:800;}
+  .meters{display:flex;align-items:center;gap:22px;}
+  .meter{display:flex;align-items:center;gap:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px;}
+  .meter b{color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums;}
+  .submeter{padding:6px 14px;border:1px solid var(--line);border-radius:99px;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted);}
+  .submeter b{font-variant-numeric:tabular-nums;}
+  .submeter.full{background:var(--gold);color:#0b0b0d;border-color:var(--gold);font-weight:700;}
+  .submeter.full b{color:#0b0b0d;}
+  .dot{width:9px;height:9px;border-radius:50%;background:#4a4a52;}
+  .dot.on{background:var(--gold);}
+  .dot.off{background:var(--red);}
+  .roomcode{font-size:14px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.04em;}
+
+  .stage{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:48px 40px;}
+  h1{font-size:clamp(44px,6.4vw,76px);margin:0 0 14px;line-height:.98;font-weight:800;letter-spacing:-.03em;}
+  .eyebrow{text-transform:uppercase;font-size:12px;font-weight:600;letter-spacing:.28em;color:var(--muted);}
+  .sub{color:var(--muted);font-size:20px;margin:14px 0 30px;font-weight:400;max-width:680px;line-height:1.4;}
+  .big{font-weight:800;}
+
+  /* join */
+  .join{background:transparent;border:1px solid var(--line);border-radius:18px;padding:54px;text-align:center;}
+  .join>div:first-child{color:var(--muted);text-transform:uppercase;letter-spacing:.2em;font-size:12px;}
+  .join .code{font-size:clamp(56px,10vw,104px);color:var(--gold);letter-spacing:.04em;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+  .join .url{font-size:22px;margin-top:10px;color:var(--ink);font-weight:300;}
+  .join .url b{font-weight:700;}
+  .join .hint{color:var(--muted);font-size:15px;margin-top:18px;}
+
+  /* quiz */
+  .qcard{background:transparent;border:none;padding:0;}
+  .qhead{display:flex;align-items:center;gap:16px;}
+  .qicon{display:none;}
+  .qtag{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--gold);}
+  .claim{font-size:clamp(28px,4vw,48px);line-height:1.06;margin:14px 0 30px;font-weight:700;letter-spacing:-.02em;max-width:880px;}
+  .qopts{display:grid;gap:12px;}
+  .qopt{display:flex;align-items:center;gap:18px;border:1px solid var(--line);border-radius:14px;padding:20px 24px;font-size:clamp(18px,2.2vw,24px);background:transparent;transition:border-color .2s;}
+  .qopt .mk{font-weight:800;color:var(--muted);width:24px;}
+  .qopt .bar{margin-left:auto;height:10px;border-radius:6px;background:var(--gold);width:0;transition:width .5s;}
+  .qopt .pct{font-size:16px;color:var(--muted);min-width:48px;text-align:right;font-variant-numeric:tabular-nums;}
+  .qopt.correct{border-color:var(--gold);background:rgba(232,177,60,.08);}
+  .qopt.correct .mk{color:var(--gold);}
+  .why{margin-top:24px;border-left:2px solid var(--gold);padding:6px 0 6px 22px;font-size:20px;display:none;color:var(--muted);max-width:760px;line-height:1.5;}
+  .why.show{display:block;}
+  .why b{color:var(--ink);font-weight:700;}
+
+  /* confidence */
+  .confgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+  .confbox{background:var(--bg);padding:48px 30px;text-align:center;}
+  .confbox .num{font-size:clamp(72px,13vw,150px);line-height:1;color:var(--gold);font-weight:800;font-variant-numeric:tabular-nums;}
+  .confbox .lbl{font-size:13px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;}
+  .confbox .n{font-size:13px;color:var(--muted);margin-top:12px;font-variant-numeric:tabular-nums;}
+  .movehint{text-align:center;font-size:24px;margin-top:34px;color:var(--ink);font-weight:600;letter-spacing:-.01em;}
+
+  /* reflect */
+  .beat{background:transparent;border:1px solid var(--line);border-radius:16px;padding:26px 30px;margin-bottom:14px;}
+  .beat .w{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);}
+  .beat .w.a,.beat .w.b,.beat .w.c{color:var(--gold);}
+  .beat .qx{font-size:clamp(22px,2.8vw,30px);margin-top:8px;font-weight:600;letter-spacing:-.01em;line-height:1.2;}
+
+  /* wall */
+  .wallctl{display:flex;gap:10px;margin:8px 0 22px;flex-wrap:wrap;}
+  .wallctl input{flex:1;min-width:280px;font-size:17px;padding:15px 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:#fff;font-family:var(--sans);}
+  .wallctl input:focus{outline:none;border-color:var(--gold);}
+  .wallctl select{font-size:15px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:#fff;font-family:var(--sans);}
+  .wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+  .tile{background:var(--surface) !important;border:1px solid var(--line);border-radius:14px;padding:18px 20px;color:var(--ink);animation:pop .3s ease;}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  .tile .cat{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold);}
+  .tile .txt{font-size:18px;margin-top:6px;line-height:1.3;font-weight:400;color:var(--ink);}
+  .wallcount{font-size:14px;color:var(--muted);margin-top:18px;text-transform:uppercase;letter-spacing:.08em;}
+
+  /* olympics */
+  .wsw-band{display:flex;gap:28px;margin:16px 0 0;flex-wrap:wrap;}
+  .wsw-band span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted);}
+  .wsw-band .a,.wsw-band .b,.wsw-band .c{color:var(--muted);}
+  .lead{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
+  .team{display:flex;align-items:center;gap:18px;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 22px;}
+  .team .rank{font-size:28px;color:var(--gold);width:42px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .team .nm{font-size:22px;font-weight:600;flex:1;}
+  .team .sc{font-size:34px;color:var(--gold);min-width:56px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums;}
+  .team .pm button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:transparent;color:#fff;font-size:20px;cursor:pointer;}
+  .team .pm button:hover{border-color:var(--gold);}
+  .addteam{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .addteam input{flex:1;min-width:200px;font-size:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:#fff;font-family:var(--sans);}
+
+  /* close */
+  .closegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;}
+  .cc{background:transparent;border:1px solid var(--line);border-radius:16px;padding:28px;}
+  .cc .n{font-size:30px;color:var(--gold);font-weight:800;}
+  .cc h3{margin:10px 0 8px;font-size:22px;font-weight:700;letter-spacing:-.01em;}
+  .cc p{color:var(--muted);font-size:15px;margin:0;line-height:1.5;}
+
+  /* content slides */
+  .body-txt{font-size:clamp(19px,2.4vw,26px);color:var(--ink);font-weight:300;max-width:880px;line-height:1.4;margin:0 0 20px;}
+  .body-txt b{font-weight:700;color:var(--gold);}
+  .quote{font-size:clamp(26px,3.6vw,42px);font-weight:300;line-height:1.22;max-width:1000px;margin:6px 0 16px;letter-spacing:-.01em;}
+  .quote b{color:var(--gold);font-weight:600;}
+  .src{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.16em;}
+  .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+  .chip{border:1px solid var(--line);border-radius:99px;padding:12px 22px;font-size:clamp(16px,1.9vw,21px);font-weight:400;}
+  .chip b{color:var(--gold);font-weight:700;}
+  .polar{display:flex;flex-direction:column;gap:12px;margin-top:8px;max-width:780px;}
+  .polar .row{display:flex;align-items:center;gap:16px;font-size:clamp(20px,2.6vw,28px);font-weight:600;border:1px solid var(--line);border-radius:14px;padding:16px 24px;}
+  .polar .amp{color:var(--gold);font-weight:800;font-style:italic;}
+  .gl{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px;}
+  .gl .g{border:1px solid var(--line);border-radius:16px;padding:22px 26px;}
+  .gl .g .h{font-size:clamp(18px,2.2vw,23px);font-weight:700;margin-bottom:6px;}
+  .gl .g .h b{color:var(--gold);}
+  .gl .g p{color:var(--muted);font-size:16px;margin:0;line-height:1.45;}
+  .slideicon{color:var(--gold);margin-bottom:12px;line-height:0;}
+  .slideicon svg{width:52px;height:52px;}
+  .feed{margin-top:22px;}
+  .feedtitle{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:10px;}
+  .feeditem{font-size:clamp(16px,1.9vw,20px);line-height:1.35;padding:12px 0;border-top:1px solid var(--line);color:var(--ink);}
+  .feeditem:first-of-type{border-top:none;}
+  .ftag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-right:10px;}
+
+  .btn{font-family:var(--sans);font-size:14px;font-weight:700;border:none;border-radius:99px;padding:13px 26px;cursor:pointer;background:var(--gold);color:#0b0b0d;text-transform:uppercase;letter-spacing:.04em;transition:opacity .2s;}
+  .btn:hover{opacity:.88;}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-2);}
+  .btn.ghost:hover{border-color:var(--gold);opacity:1;}
+  .btn.sm{padding:10px 16px;font-size:12px;}
+  .btn:disabled{opacity:.3;cursor:default;}
+
+  /* deck nav */
+  .deck{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:16px 32px;border-top:1px solid var(--line);background:var(--bg);}
+  .deck .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+  .deck .label b{color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums;}
+  .deck .right{display:flex;gap:10px;align-items:center;}
+  .rail{display:flex;gap:6px;}
+  .rail .s{width:24px;height:4px;border-radius:99px;background:var(--line-2);}
+  .rail .s.done{background:var(--gold-dim);}
+  .rail .s.now{background:var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand"><b>AI</b> Confident · Presenter</div>
+  <div class="meters">
+    <span class="roomcode" id="rc"></span>
+    <span class="meter"><span class="dot off" id="dot"></span><span id="lbl">set room</span></span>
+    <span class="meter">👥 <b id="nconn">0</b>&nbsp;connected</span>
+    <span class="submeter" id="submeter" style="display:none;"><b id="subcount">0 / 0</b>&nbsp;submitted</span>
+  </div>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="deck">
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="btn ghost sm" id="reset">⟳ New session</button>
+    <button class="btn ghost" id="prev">◀ Back</button>
+  </div>
+  <div class="label">Stage <b id="stagei">1</b> · <span id="stagelbl"></span></div>
+  <div class="rail" id="rail"></div>
+  <div class="right">
+    <button class="btn ghost" id="reveal" style="display:none;">Reveal answer</button>
+    <button class="btn" id="next">Next ▶</button>
+  </div>
+</div>
+
+<script>
+/* ===== CONFIG · must match Audience.html exactly ===== */
+const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker — swap for your own for the day
+/* ===================================================== */
+
+const me = Math.random().toString(36).slice(2,9);
+let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase();
+
+const QUIZ = [
+  {icon:"🎯",tag:"True or false",claim:"AI usually gives correct, reliable answers.",options:["True","False"],answer:1,
+   why:"<b>False.</b> AI is confident, not correct. A wrong fact stated plainly is a <b>hallucination</b>. It is how the tool works, not a fault."},
+  {icon:"📝",tag:"Best response",claim:"Your teen pastes a whole essay and asks AI to 'make it better'. The healthiest reply is to:",
+   options:["Ban AI for homework","Let it go, it reads better now","Ask them to show what changed, and why","Quietly rewrite it yourself"],answer:2,
+   why:"<b>Show me what changed.</b> Coaching beats policing. The learning lives in the choices a child can explain."},
+  {icon:"🔒",tag:"Choose the safe one",claim:"Which is safe to type into a chatbot?",
+   options:["Your child's full name and school","A clear photo of your child","Your home address","A maths problem, no personal details"],answer:3,
+   why:"<b>The maths problem.</b> What you paste can be stored. If you would not put it on a postcard, do not paste it."},
+  {icon:"🛠️",tag:"True or false",claim:"A child who builds their own revision quiz with AI learns more than one who asks for the answers.",
+   options:["True","False"],answer:0,
+   why:"<b>True.</b> Making stretches thinking. Copying skips it. Building a tool means understanding the topic first."},
+  {icon:"💬",tag:"What is this?",claim:"Your teen says an AI companion is their best listener, nightly. This is:",
+   options:["Sweet and harmless","A wellbeing signal worth a gentle talk","Proof AI is dangerous, confiscate it","Nothing to do with you"],answer:1,
+   why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open."}
+];
+
+/* ---------- deck stages ---------- */
+const STAGES = [
+  {id:"welcome",      aud:"welcome", sub:null,     label:"Welcome"},
+  {id:"frame-why",    aud:"watch",   sub:null,     label:"Why we're here"},
+  {id:"frame-promise",aud:"watch",   sub:null,     label:"The promise · three learnings"},
+  {id:"in",           aud:"in",      sub:"in",     label:"Confidence · walking in"},
+  {id:"head-intro",   aud:"watch",   sub:null,     label:"What AI actually is"},
+  {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Quick read 1 · is AI right?"},
+  {id:"reflex-correct",   aud:"watch", sub:null,   label:"Reflex · confident is not correct"},
+  {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Quick read 2 · the essay"},
+  {id:"reflex-coach",     aud:"watch", sub:null,   label:"Reflex · coach, don't police"},
+  {id:"hands-rooms",  aud:"watch",   sub:null,     label:"Explorer Rooms · hands on"},
+  {id:"q2", aud:"quiz", q:2, sub:"q2", label:"Quick read 3 · what's safe to type"},
+  {id:"reflex-postcard",  aud:"watch", sub:null,   label:"Reflex · the postcard test"},
+  {id:"q3", aud:"quiz", q:3, sub:"q3", label:"Quick read 4 · build or copy"},
+  {id:"reflex-make",      aud:"watch", sub:null,   label:"Reflex · make, don't take"},
+  {id:"break",        aud:"watch",   sub:null,     label:"Break · 10 minutes"},
+  {id:"buildoff",     aud:"hold",    sub:null,     label:"The Build-Off"},
+  {id:"q4", aud:"quiz", q:4, sub:"q4", label:"Quick read 5 · the AI 'friend'"},
+  {id:"reflex-companion", aud:"watch", sub:null,   label:"Reflex · an agreeable bot is not a friend"},
+  {id:"heart-intro",  aud:"watch",   sub:null,     label:"What stays human"},
+  {id:"heart-polar",  aud:"watch",   sub:null,     label:"Hold both · polarities"},
+  {id:"heart-guard",  aud:"watch",   sub:null,     label:"Guardrails for home"},
+  {id:"reflect",      aud:"reflect", sub:"reflect",label:"Reflection · What · So what · Now what"},
+  {id:"wall",         aud:"charter", sub:"charter",label:"Family Charter · the 5 Ps"},
+  {id:"out",          aud:"out",     sub:"out",    label:"Confidence · walking out"},
+  {id:"close-3",      aud:"watch",   sub:null,     label:"Three things to remember"},
+  {id:"close-end",    aud:"log",     sub:null,     label:"Close · your card"}
+];
+let si=0;
+
+/* ---------- state ---------- */
+const roster = new Map();                 // id -> lastSeen
+const submissions = {};                   // subkey -> Set(id)
+STAGES.forEach(s=>{ if(s.sub) submissions[s.sub]=new Set(); });
+const qVotes = QUIZ.map(()=>({}));        // q -> id->answer
+const revealed = {};
+const confIn={}, confOut={};
+const rules=[]; const teams=[];
+const shared = {question:{}, reflect:{}, charter:{}};   // channel -> (from/key) -> {key,text}
+const PSCAT = {plan:"Plan",prohibit:"Prohibit",partner:"Partner",polish:"Polish",produce:"Produce"};
+const RLAB = {r1:"What",r2:"So what",r3:"Now what"};
+
+/* ---------- sync (MQTT over WebSocket) ---------- */
+let client=null, wsOpen=false;
+let SID="s"+Math.random().toString(36).slice(2,8);   // session id · changes on New session
+function loadMqtt(){
+  if(window.mqtt || document.getElementById("mqttlib")) return;
+  var s=document.createElement("script"); s.id="mqttlib";
+  s.src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js";
+  s.onerror=function(){ setConn(false); };
+  document.head.appendChild(s);
+}
+function whenMqttReady(cb,tries){ tries=tries||0;
+  if(typeof mqtt!=="undefined"){ cb(); }
+  else if(tries<60){ setTimeout(function(){whenMqttReady(cb,tries+1);},200); }
+  else { setConn(false); }
+}
+function topic(){ return "aiconf/"+ROOM+"/bus"; }
+function connect(){
+  if(!ROOM){ ROOM="BTY-AI"; }
+  document.getElementById("rc").textContent="Room "+ROOM;
+  client = mqtt.connect(MQTT_URL, {clientId:"pres_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30});
+  client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic()); broadcastStage(); });
+  client.on("reconnect", ()=>setConn(false));
+  client.on("offline", ()=>{ wsOpen=false; setConn(false); });
+  client.on("close", ()=>{ wsOpen=false; setConn(false); });
+  client.on("error", ()=>setConn(false));
+  client.on("message", (t,payload)=>onMsg(payload.toString()));
+}
+function send(o){ o.from=me; o.room=ROOM; o.sid=SID; if(client && wsOpen){ try{client.publish(topic(), JSON.stringify(o));}catch(e){} } }
+function seen(id){ if(id) roster.set(id, Date.now()); }
+function onMsg(raw){
+  let d; try{ d=JSON.parse(raw);}catch(e){ return; }
+  if(!d || d.from===me) return;
+  if(d.type==="join"){ broadcastStage(); return; }   // sync the newcomer; they'll echo our SID next
+  if(d.sid!==SID) return;                              // ignore anything outside this session (ghosts, cross-talk)
+  seen(d.from);
+  if(d.type==="confidence"){
+    (d.phase==="in"?confIn:confOut)[d.from]=d.value;
+    submissions[d.phase==="in"?"in":"out"].add(d.from);
+    if(curId()==="in"||curId()==="out") renderStage();
+  } else if(d.type==="quiz"){
+    qVotes[d.q][d.from]=d.answer; submissions["q"+d.q]&&submissions["q"+d.q].add(d.from);
+    if(stageHasQ(d.q)) renderStage();
+  } else if(d.type==="rule"){
+    rules.push({cat:d.category||"",text:d.text}); submissions["charter"].add(d.from);
+    if(curId()==="wall") renderWallTiles();   // append only; never rebuild the input (keeps your typing)
+  } else if(d.type==="submitted"){
+    if(submissions[d.step]) submissions[d.step].add(d.from);
+  } else if(d.type==="share"){
+    const slot=shared[d.channel];
+    if(slot){ const k=d.from+"/"+d.key;
+      if(d.on && d.text) slot[k]={key:d.key,text:d.text}; else delete slot[k];
+      const id=curId();
+      if((d.channel==="question"&&id==="in")||(d.channel==="reflect"&&id==="reflect")) renderStage();
+      else if(d.channel==="charter"&&id==="wall") renderWallTiles();
+    }
+  }
+  updateMeters();
+}
+function feedHTML(channel,title,labels){
+  const items=Object.values(shared[channel]||{});
+  if(!items.length) return "";
+  return `<div class="feed"><div class="feedtitle">${title} · ${items.length}</div>`+
+    items.map(it=>`<div class="feeditem">${labels&&labels[it.key]?`<span class="ftag">${labels[it.key]}</span>`:""}${esc(it.text)}</div>`).join("")+`</div>`;
+}
+function setConn(on){ document.getElementById("dot").className="dot "+(on?"on":"off");
+  document.getElementById("lbl").textContent=on?"live":"reconnecting"; }
+
+/* presence prune only · no constant rebroadcast (sync happens on change + on join) */
+setInterval(()=>{
+  const now=Date.now();
+  for(const [id,t] of roster){ if(now-t>11000) roster.delete(id); }
+  updateMeters();
+},3000);
+
+/* ---------- meters ---------- */
+function activeN(){ return roster.size; }
+function updateMeters(){
+  document.getElementById("nconn").textContent=activeN();
+  const s=STAGES[si], m=document.getElementById("submeter");
+  if(s.sub){ m.style.display="";
+    const got=submissions[s.sub].size, n=activeN();
+    document.getElementById("subcount").textContent=got+" / "+n;
+    m.classList.toggle("full", n>0 && got>=n);
+  } else { m.style.display="none"; }
+}
+
+/* ---------- deck ---------- */
+function curId(){ return STAGES[si].id; }
+function stageHasQ(q){ const s=STAGES[si]; return s.aud==="quiz" && s.q===q; }
+function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="";
+  if(s.aud==="watch"){ const c=(typeof CONTENT!=="undefined"&&CONTENT[s.id])||{}; title=c.t||""; eyebrow=c.e||""; }
+  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), title:title, eyebrow:eyebrow}); }
+function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); }
+document.getElementById("next").onclick=()=>move(1);
+document.getElementById("prev").onclick=()=>move(-1);
+document.getElementById("reveal").onclick=()=>{ const s=STAGES[si];
+  if(s.aud==="quiz"){ revealed[s.q]=true; send({type:"reveal",q:s.q}); renderStage(); } };
+document.getElementById("reset").onclick=resetSession;
+function resetSession(){
+  if(!confirm("Start a new session? This clears all responses and resets every connected screen.")) return;
+  SID="s"+Math.random().toString(36).slice(2,8);   // new session id · old tabs can no longer count
+  roster.clear();
+  for(const k in submissions) submissions[k]=new Set();
+  for(let i=0;i<qVotes.length;i++) qVotes[i]={};
+  for(const k in revealed) delete revealed[k];
+  for(const k in confIn) delete confIn[k];
+  for(const k in confOut) delete confOut[k];
+  for(const ch in shared) shared[ch]={};
+  rules.length=0;
+  teams.length=0; ["Table 1","Table 2","Table 3","Table 4","Table 5","Table 6"].forEach(function(n){teams.push({name:n,score:0});});
+  si=0;
+  send({type:"reset"}); broadcastStage();
+  renderStage(); updateMeters();
+}
+
+function renderRail(){ const r=document.getElementById("rail"); r.innerHTML="";
+  STAGES.forEach((_,i)=>{ const d=document.createElement("div");
+    d.className="s"+(i<si?" done":i===si?" now":""); r.appendChild(d); }); }
+
+function renderStage(){
+  const s=STAGES[si], host=document.getElementById("stage");
+  document.getElementById("stagei").textContent=si+1;
+  document.getElementById("stagelbl").textContent=s.label;
+  document.getElementById("prev").disabled = si===0;
+  document.getElementById("next").disabled = si===STAGES.length-1;
+  document.getElementById("reveal").style.display = (s.aud==="quiz" && !revealed[s.q]) ? "" : "none";
+  renderRail(); updateMeters();
+
+  if(s.id==="welcome") host.innerHTML=stageWelcome();
+  else if(s.aud==="quiz") host.innerHTML=stageQuiz(s.q);
+  else if(s.id==="in") host.innerHTML=stageConf("in");
+  else if(s.id==="out") host.innerHTML=stageConf("out");
+  else if(s.id==="reflect") host.innerHTML=stageReflect();
+  else if(s.id==="wall"){ host.innerHTML=stageWall(); wireWall(); }
+  else if(s.id==="buildoff"){ host.innerHTML=stageOly(); wireOly(); }
+  else host.innerHTML=renderContent(s.id);
+}
+
+/* ---------- stage renderers ---------- */
+function stageWelcome(){
+  return `<span class="eyebrow">South 3 Cluster · Parenting &amp; Thriving Together 2026</span>
+    <h1>AI Confident</h1>
+    <p class="sub">Raising children who use artificial intelligence wisely. Three hours, together.</p>
+    <div class="join"><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">Join on your laptop</div>
+      <div class="url">Open <b>Audience.html</b>, then enter</div>
+      <div class="code">${ROOM||"—"}</div>
+      <div class="hint">Your screen will follow this one. We move together.</div></div>`;
+}
+function stageQuiz(q){
+  const Q=QUIZ[q], votes=qVotes[q], total=Object.keys(votes).length, rev=!!revealed[q];
+  const counts=Q.options.map((_,k)=>Object.values(votes).filter(v=>v===k).length);
+  return `<span class="eyebrow">Predict, then reveal together</span>
+    <div class="qcard">
+      <div class="qhead"><div class="qicon">${Q.icon}</div><div><div class="qtag">${Q.tag} · ${q+1} of ${QUIZ.length}</div></div></div>
+      <div class="claim">${Q.claim}</div>
+      <div class="qopts">${Q.options.map((o,k)=>{ const pct=total?Math.round(counts[k]/total*100):0;
+        return `<div class="qopt ${rev&&k===Q.answer?'correct':''}"><span class="mk">${String.fromCharCode(65+k)}</span><span>${o}</span>
+          <span class="bar" style="width:${rev?Math.max(pct*1.6,4):0}px"></span><span class="pct">${rev?pct+"%":""}</span></div>`;}).join("")}</div>
+      <div class="why ${rev?'show':''}">${Q.why}</div>
+    </div>`;
+}
+function stageConf(phase){
+  const map=phase==="in"?confIn:confOut, v=Object.values(map);
+  const a=v.length?(v.reduce((x,y)=>x+y,0)/v.length):null;
+  const ai=Object.values(confIn), aIn=ai.length?(ai.reduce((x,y)=>x+y,0)/ai.length):null;
+  let mh="";
+  if(phase==="out" && aIn && a){ const dd=(a-aIn).toFixed(1);
+    mh = a>aIn ? `The room moved up ${dd}. That movement is the morning.` : a===aIn ? "Steady and honest." : ""; }
+  return `<span class="eyebrow">${phase==="in"?"Walking in":"Walking out"}</span>
+    <h1>${phase==="in"?"How confident is the room?":"And now? The room, again."}</h1>
+    <p class="sub">Parents rate themselves one to five on their own screens. This updates live.</p>
+    <div class="confgrid">
+      <div class="confbox"><div class="lbl">${phase==="in"?"Walking in":"Walking in"}</div>
+        <div class="num">${aIn?aIn.toFixed(1):"—"}</div><div class="n">${Object.keys(confIn).length} responses</div></div>
+      <div class="confbox"><div class="lbl">Walking out</div>
+        <div class="num">${Object.values(confOut).length?(Object.values(confOut).reduce((x,y)=>x+y,0)/Object.values(confOut).length).toFixed(1):"—"}</div>
+        <div class="n">${Object.keys(confOut).length} responses</div></div>
+    </div>${mh?`<div class="movehint">${mh}</div>`:""}
+    ${phase==="in"?feedHTML("question","Questions from the room"):""}`;
+}
+function stageReflect(){
+  return `<span class="eyebrow">What · So what · Now what</span>
+    <h1>Three honest questions.</h1>
+    <p class="sub">Parents write on their screens. Shared lines appear below; take a few aloud.</p>
+    <div class="chips" style="margin-bottom:18px;"><span class="chip"><b>R</b>ules</span><span class="chip"><b>R</b>eflection</span><span class="chip"><b>R</b>esponsibility</span></div>
+    <div class="beat"><div class="w a">What</div><div class="qx">Where did the intelligence come from? Name one thing only you could have added.</div></div>
+    <div class="beat"><div class="w b">So what</div><div class="qx">Same tool, same minutes, different result. What did the human do?</div></div>
+    <div class="beat"><div class="w c">Now what</div><div class="qx">One line for our home. The boundary you will hold, the talk you will open this week.</div></div>
+    ${feedHTML("reflect","Shared reflections",RLAB)}`;
+}
+function stageWall(){
+  return `<span class="eyebrow">Live · what our families agree</span>
+    <h1>Our Rules Wall</h1>
+    <p class="sub">Parents build a Family Charter on the 5 Ps. Lines appear here as they share them.</p>
+    <div class="chips" style="margin-bottom:16px;"><span class="chip"><b>P</b>lan</span><span class="chip"><b>P</b>rohibit</span><span class="chip"><b>P</b>artner</span><span class="chip"><b>P</b>olish</span><span class="chip"><b>P</b>roduce</span></div>
+    <div class="wallctl">
+      <select id="wcat"><option>Plan</option><option>Prohibit</option><option>Partner</option><option>Polish</option><option>Produce</option></select>
+      <input id="winput" placeholder="Type a rule a parent calls out, then Enter">
+      <button class="btn" id="waddbtn">Add to wall</button>
+      <button class="btn ghost sm" id="wclear">Clear</button>
+    </div>
+    <div class="wall" id="wall"></div>
+    <div class="wallcount" id="wallcount"></div>`;
+}
+function wireWall(){
+  renderWallTiles();
+  document.getElementById("waddbtn").onclick=addRuleManual;
+  document.getElementById("wclear").onclick=()=>{ if(confirm("Clear the wall?")){rules.length=0; for(const k in shared.charter) delete shared.charter[k]; renderWallTiles();} };
+  document.getElementById("winput").addEventListener("keydown",e=>{ if(e.key==="Enter") addRuleManual(); });
+}
+function addRuleManual(){ const i=document.getElementById("winput"),t=i.value.trim(); if(!t)return;
+  rules.push({cat:document.getElementById("wcat").value,text:t}); i.value=""; renderWallTiles(); }
+const TILECOLORS=["#f3d488","#bfe3cf","#cdd9f2","#f4ccc3","#e7dcc2","#d8cdb8","#f0d9b5","#c9e0e6"];
+function renderWallTiles(){
+  const w=document.getElementById("wall"); if(!w) return; w.innerHTML="";
+  const fromShare=Object.values(shared.charter||{}).map(it=>({cat:PSCAT[it.key]||"",text:it.text}));
+  const all=fromShare.concat(rules);
+  all.forEach((r,i)=>{ const t=document.createElement("div"); t.className="tile";
+    t.style.background=TILECOLORS[i%TILECOLORS.length];
+    t.innerHTML=`<div class="cat">${esc(r.cat)}</div><div class="txt">${esc(r.text)}</div>`; w.appendChild(t); });
+  const c=document.getElementById("wallcount");
+  if(c) c.textContent = all.length ? all.length+" line"+(all.length>1?"s":"")+" and counting" : "No lines yet. The first one breaks the ice.";
+}
+function stageOly(){
+  return `<span class="eyebrow">The signature challenge</span>
+    <h1>The Build-Off</h1>
+    <p class="sub">Teams build something with AI, then the room votes for the one that makes them smile. Make it, show it, vote.</p>
+    <div class="wsw-band"><span class="a">Make · 10 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
+    <p class="sub" style="margin-top:14px;font-size:15px;">Teams appear below as they name themselves. Voting and team names arrive in the next update; for now, tap <b style="color:var(--gold)">+</b> to tally votes by hand.</p>
+    <div class="lead" id="lead"></div>
+    <div class="addteam"><input id="teamname" placeholder="Add a team name, then Enter"><button class="btn" id="addteambtn">Add team</button></div>`;
+}
+function wireOly(){
+  renderLead();
+  document.getElementById("addteambtn").onclick=addTeam;
+  document.getElementById("teamname").addEventListener("keydown",e=>{ if(e.key==="Enter") addTeam(); });
+}
+function addTeam(){ const i=document.getElementById("teamname"),n=i.value.trim(); if(!n)return;
+  teams.push({name:n,score:0}); i.value=""; renderLead(); }
+function renderLead(){
+  const host=document.getElementById("lead"); if(!host) return;
+  const sorted=[...teams].sort((a,b)=>b.score-a.score); host.innerHTML="";
+  if(!teams.length){ host.innerHTML='<p class="sub">Add teams to begin.</p>'; return; }
+  sorted.forEach((t,i)=>{ const idx=teams.indexOf(t); const d=document.createElement("div"); d.className="team";
+    d.innerHTML=`<div class="rank">${i+1}</div><div class="nm">${esc(t.name)}</div>
+      <div class="pm"><button data-i="${idx}" data-d="-1">–</button><button data-i="${idx}" data-d="1">+</button></div>
+      <div class="sc">${t.score}</div>`; host.appendChild(d); });
+  host.querySelectorAll(".pm button").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i,dd=+b.dataset.d;
+    teams[i].score=Math.max(0,teams[i].score+dd); renderLead(); });
+}
+function renderContent(id){ const c=CONTENT[id]||{};
+  return `${c.icon&&ICONS[c.icon]?`<div class="slideicon">${ICONS[c.icon]}</div>`:""}<span class="eyebrow">${c.e||""}</span><h1>${c.t||""}</h1>${c.h||""}`; }
+const SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">';
+const ICONS = {
+  compass:SVG+'<circle cx="12" cy="12" r="9"/><polygon points="16 8 13 13 8 16 11 11"/></svg>',
+  target:SVG+'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>',
+  spark:SVG+'<path d="M12 3l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>',
+  coffee:SVG+'<path d="M4 9h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2M14 3v2"/></svg>',
+  pause:SVG+'<rect x="7" y="6" width="3.2" height="12" rx="1"/><rect x="13.8" y="6" width="3.2" height="12" rx="1"/></svg>',
+  heart:SVG+'<path d="M12 20s-7-4.5-7-10a3.8 3.8 0 0 1 7-2 3.8 3.8 0 0 1 7 2c0 5.5-7 10-7 10z"/></svg>',
+  scales:SVG+'<path d="M12 4v16M7 20h10M5 7h14l-2.5-2M5 7l3 6M19 7l-3 6"/><path d="M4 13a4 3 0 0 0 8 0M12 13a4 3 0 0 0 8 0"/></svg>',
+  shield:SVG+'<path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  search:SVG+'<circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg>',
+  bubble:SVG+'<path d="M4 5h16v10H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>',
+  postcard:SVG+'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M13 10h5M13 13h5"/><path d="M6 10l3 3M9 10l-3 3"/></svg>',
+  tool:SVG+'<path d="M14.5 6.5a3.5 3.5 0 0 0-4.7 4.6L4 17l3 3 5.9-5.8a3.5 3.5 0 0 0 4.6-4.7l-2.3 2.3-2-2z"/></svg>',
+  chat:SVG+'<path d="M4 5h16v10H9l-4 4z"/><path d="M12 8.4a1.6 1.6 0 0 1 2.7-1 1.6 1.6 0 0 1 0 2.1L12 12 9.3 9.5a1.6 1.6 0 0 1 0-2.1 1.6 1.6 0 0 1 2.7 1z"/></svg>',
+  star:SVG+'<path d="M12 3l2.5 5.6 6.1.5-4.6 4 1.4 6L12 16l-5.4 3.1 1.4-6-4.6-4 6.1-.5z"/></svg>',
+  rocket:SVG+'<path d="M12 3c3 1.2 5 4.2 5 8l-2.5 2.5h-5L7 11c0-3.8 2-6.8 5-8z"/><circle cx="12" cy="9" r="1.5"/><path d="M9.5 16l-2 4M14.5 16l2 4"/></svg>'
+};
+const CONTENT = {
+  "frame-why":{icon:"compass", e:"Why we're here", t:"We're not here to panic. We're here to think, together.",
+    h:`<div class="quote">If AI can generate answers, we must <b>ask better questions</b>. If it can optimise systems, we must <b>uphold values</b>. If it can accelerate progress, we must <b>decide its direction</b>.</div><div class="src">Minister for Education · March 2026</div>`},
+  "frame-promise":{icon:"target", e:"The promise", t:"Three things you'll leave with.",
+    h:`<div class="closegrid">
+      <div class="cc"><div class="n">1</div><h3>Head</h3><p>The intelligence has to come from us. AI predicts; it does not understand.</p></div>
+      <div class="cc"><div class="n">2</div><h3>Hands</h3><p>Sit beside, not in front, not away. Explore together, agree the rules.</p></div>
+      <div class="cc"><div class="n">3</div><h3>Heart</h3><p>Protect what AI cannot grow. The effort, the struggle, the relationship.</p></div></div>`},
+  "head-intro":{icon:"spark", e:"What AI actually is", t:"The intelligence has to come from us.",
+    h:`<p class="body-txt">AI predicts the next words from patterns it has seen. It does not know your child. Give it your context, your judgement, your values, or it returns the average answer.</p>
+      <div class="chips"><span class="chip"><b>A</b>ugmentation</span><span class="chip"><b>I</b>ntelligence</span><span class="chip"><b>R</b>esponsibility</span></div>`},
+  "reflex-correct":{icon:"search", e:"Reflex 1 of 5", t:"Confident is not correct.",
+    h:`<p class="body-txt">AI states wrong facts with a straight face. Teach one move: <b>"How do you know that?"</b> Then check anything that matters against a second source.</p>`},
+  "reflex-coach":{icon:"bubble", e:"Reflex 2 of 5", t:"Coach, don't police.",
+    h:`<p class="body-txt">Banning drives it underground. Ask your child to <b>show you how they used it</b>. The learning lives in the choices they can explain.</p>`},
+  "reflex-postcard":{icon:"postcard", e:"Reflex 3 of 5", t:"The postcard test.",
+    h:`<p class="body-txt">Don't type anything you would not write on a <b>postcard</b> for strangers to read. No names, photos, school, or address.</p>`},
+  "reflex-make":{icon:"tool", e:"Reflex 4 of 5", t:"Make, don't take.",
+    h:`<p class="body-txt">The healthy use is <b>building</b> something to learn with, a quiz or a game, not lifting a ready-made answer.</p>`},
+  "reflex-companion":{icon:"chat", e:"Reflex 5 of 5", t:"An agreeable bot is not a friend.",
+    h:`<p class="body-txt">AI companions are designed to keep your child talking, always agreeing. Notice it, and <b>keep the real conversation open</b> at home.</p>`},
+  "hands-rooms":{icon:"coffee", e:"Hands on · 45 minutes", t:"Explorer Rooms. At your own pace.",
+    h:`<div class="closegrid">
+      <div class="cc"><div class="n">☕</div><h3>Kopi-O Kosong</h3><p>New to AI. One calm first try with Claude. Ask it to explain something your child is learning.</p></div>
+      <div class="cc"><div class="n">☕</div><h3>Kopi-C</h3><p>Some experience. Compare two tools, then drop a school newsletter into NotebookLM and ask it questions.</p></div>
+      <div class="cc"><div class="n">☕</div><h3>Kopi Gao</h3><p>Confident. Build a family quiz or revision game with your child. Make, don't take.</p></div></div>`},
+  "break":{icon:"pause", e:"Break", t:"Ten minutes.",
+    h:`<p class="body-txt">Coffee. We form teams for the Build-Off when you're back.</p>`},
+  "heart-intro":{icon:"heart", e:"What stays human", t:"Protect what AI cannot grow.",
+    h:`<p class="body-txt">Learn beyond AI. The effort that builds a mind. The struggle that earns confidence. The relationship at the table. AI amplifies a human; it does not replace one.</p>`},
+  "heart-polar":{icon:"scales", e:"Hold both", t:"It's rarely ban or allow.",
+    h:`<div class="polar">
+      <div class="row">Protect <span class="amp">&amp;</span> Prepare</div>
+      <div class="row">Guide <span class="amp">&amp;</span> Release</div>
+      <div class="row">Efficiency <span class="amp">&amp;</span> Effort</div>
+      <div class="row">Trust <span class="amp">&amp;</span> Verify</div>
+      <div class="row">Speed <span class="amp">&amp;</span> Depth</div></div>`},
+  "heart-guard":{icon:"shield", e:"Guardrails for home", t:"Four to settle early.",
+    h:`<div class="gl">
+      <div class="g"><div class="h"><b>Companion chatbots.</b></div><p>Built to keep a young person talking. A wellbeing question, not a tech one. Keep the conversation, not the confiscation.</p></div>
+      <div class="g"><div class="h"><b>Privacy is a habit.</b></div><p>No names, photos, address, or secrets. The postcard test. Check what AI remembers about your child, and clear it.</p></div>
+      <div class="g"><div class="h"><b>Confident, not correct.</b></div><p>Teach one reflex: "How do you know that?" Then check a second source.</p></div>
+      <div class="g"><div class="h"><b>Protect the effort.</b></div><p>If they cannot explain what they handed in, AI did too much.</p></div></div>`},
+  "close-3":{icon:"star", e:"Before you leave", t:"Three things to remember.",
+    h:`<div class="closegrid">
+      <div class="cc"><div class="n">1</div><h3>The intelligence comes from us.</h3><p>AI predicts, it does not understand. Your context, judgement, and values do the real work.</p></div>
+      <div class="cc"><div class="n">2</div><h3>Sit beside, not in front.</h3><p>Not banning, not handing over. Explore together, agree the rules, get it wrong out loud.</p></div>
+      <div class="cc"><div class="n">3</div><h3>Protect what AI cannot grow.</h3><p>The effort, the struggle, the relationship. Learn beyond AI so your child adds human value.</p></div></div>`},
+  "close-end":{icon:"rocket", e:"Go well", t:"Build something with your child this week.",
+    h:`<p class="body-txt">Then tell them where you learned it. Open your laptop now and save your card.</p>
+      <div class="quote" style="font-size:clamp(20px,2.6vw,30px)">We learn for life, <b>together</b>.</div>`}
+};
+
+/* ---------- util ---------- */
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+
+/* ---------- init ---------- */
+if(!ROOM) ROOM="BTY-AI";
+["Table 1","Table 2","Table 3","Table 4","Table 5","Table 6"].forEach(function(n){teams.push({name:n,score:0});});
+loadMqtt(); renderStage(); whenMqttReady(connect);
+</script>
+</body>
+</html>
