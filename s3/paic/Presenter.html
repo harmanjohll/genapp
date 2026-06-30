@@ -100,11 +100,16 @@
   .wsw-band .a,.wsw-band .b,.wsw-band .c{color:var(--muted);}
   .lead{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
   .team{display:flex;align-items:center;gap:18px;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 22px;}
-  .team .rank{font-size:28px;color:var(--gold);width:42px;font-weight:800;font-variant-numeric:tabular-nums;}
-  .team .nm{font-size:22px;font-weight:600;flex:1;}
+  .team .nm{font-size:22px;font-weight:600;min-width:160px;cursor:pointer;}
+  .team .nm:hover{color:var(--gold);}
+  .team .bar{flex:1;height:14px;border-radius:8px;background:rgba(255,255,255,.07);overflow:hidden;}
+  .team .bar span{display:block;height:100%;background:var(--gold);width:0;transition:width .5s;}
   .team .sc{font-size:34px;color:var(--gold);min-width:56px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums;}
-  .team .pm button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:transparent;color:#fff;font-size:20px;cursor:pointer;}
-  .team .pm button:hover{border-color:var(--gold);}
+  .team.winner{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+  .team .vbtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:transparent;color:#fff;font-size:18px;cursor:pointer;}
+  .team .vbtn:hover{border-color:var(--gold);}
+  .bo-controls{display:flex;gap:14px;margin-top:20px;flex-wrap:wrap;align-items:center;}
+  .bo-phase{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted);}
   .addteam{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
   .addteam input{flex:1;min-width:200px;font-size:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:#fff;font-family:var(--sans);}
 
@@ -249,7 +254,11 @@ STAGES.forEach(s=>{ if(s.sub) submissions[s.sub]=new Set(); });
 const qVotes = QUIZ.map(()=>({}));        // q -> id->answer
 const revealed = {};
 const confIn={}, confOut={};
-const rules=[]; const teams=[];
+const rules=[];
+let teams=[];                              // [{name}] · unique, insertion order (no auto-sort)
+const votes={};                            // voterId -> team name (one vote per device, changeable)
+const manualVotes={};                      // team name -> count (facilitator fallback for no-laptop tables)
+let boPhase="name";                        // Build-Off phase: "name" (signing up) | "vote"
 const shared = {question:{}, reflect:{}, charter:{}};   // channel -> (from/key) -> {key,text}
 const PSCAT = {plan:"Plan",prohibit:"Prohibit",partner:"Partner",polish:"Polish",produce:"Produce"};
 const RLAB = {r1:"What",r2:"So what",r3:"Now what"};
@@ -309,6 +318,10 @@ function onMsg(raw){
       if((d.channel==="question"&&id==="in")||(d.channel==="reflect"&&id==="reflect")) renderStage();
       else if(d.channel==="charter"&&id==="wall") renderWallTiles();
     }
+  } else if(d.type==="team"){
+    if(addTeamName(d.name)){ if(boPhase==="vote") broadcastBuildoff(); if(curId()==="buildoff") renderLead(); }
+  } else if(d.type==="vote"){
+    if(d.team){ votes[d.from]=d.team; if(curId()==="buildoff") renderLead(); }
   }
   updateMeters();
 }
@@ -345,7 +358,9 @@ function curId(){ return STAGES[si].id; }
 function stageHasQ(q){ const s=STAGES[si]; return s.aud==="quiz" && s.q===q; }
 function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="";
   if(s.aud==="watch"){ const c=(typeof CONTENT!=="undefined"&&CONTENT[s.id])||{}; title=c.t||""; eyebrow=c.e||""; }
-  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), title:title, eyebrow:eyebrow}); }
+  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), title:title, eyebrow:eyebrow});
+  if(s.id==="buildoff") broadcastBuildoff(); }   // latecomers + lockstep get the current Build-Off phase/teams
+function broadcastBuildoff(){ send({type:"buildoff", phase:boPhase, teams:teams.map(t=>t.name)}); }
 function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); }
 document.getElementById("next").onclick=()=>move(1);
 document.getElementById("prev").onclick=()=>move(-1);
@@ -363,7 +378,7 @@ function resetSession(){
   for(const k in confOut) delete confOut[k];
   for(const ch in shared) shared[ch]={};
   rules.length=0;
-  teams.length=0; ["Table 1","Table 2","Table 3","Table 4","Table 5","Table 6"].forEach(function(n){teams.push({name:n,score:0});});
+  teams=[]; for(const k in votes) delete votes[k]; for(const k in manualVotes) delete manualVotes[k]; boPhase="name";
   si=0;
   send({type:"reset"}); broadcastStage();
   renderStage(); updateMeters();
@@ -482,27 +497,47 @@ function stageOly(){
     <h1>The Build-Off</h1>
     <p class="sub">Teams build something with AI, then the room votes for the one that makes them smile. Make it, show it, vote.</p>
     <div class="wsw-band"><span class="a">Make · 10 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
-    <p class="sub" style="margin-top:14px;font-size:15px;">Teams appear below as they name themselves. Voting and team names arrive in the next update; for now, tap <b style="color:var(--gold)">+</b> to tally votes by hand.</p>
     <div class="lead" id="lead"></div>
-    <div class="addteam"><input id="teamname" placeholder="Add a team name, then Enter"><button class="btn" id="addteambtn">Add team</button></div>`;
+    <div class="bo-controls"><span class="bo-phase" id="bophase"></span><button class="btn" id="votebtn"></button></div>
+    <div class="addteam"><input id="teamname" placeholder="Add a team by hand (no laptop), then Enter"><button class="btn ghost" id="addteambtn">Add team</button></div>`;
 }
 function wireOly(){
-  renderLead();
+  renderLead(); updateBoControls();
   document.getElementById("addteambtn").onclick=addTeam;
   document.getElementById("teamname").addEventListener("keydown",e=>{ if(e.key==="Enter") addTeam(); });
+  document.getElementById("votebtn").onclick=toggleVoting;
 }
-function addTeam(){ const i=document.getElementById("teamname"),n=i.value.trim(); if(!n)return;
-  teams.push({name:n,score:0}); i.value=""; renderLead(); }
+function updateBoControls(){
+  const p=document.getElementById("bophase"), b=document.getElementById("votebtn"); if(!p||!b) return;
+  if(boPhase==="name"){ p.textContent="Naming · parents are signing up their teams"; b.textContent="Open voting ▶"; }
+  else { p.textContent="Voting open · live tally"; b.textContent="◀ Back to naming"; }
+}
+function toggleVoting(){ boPhase = boPhase==="vote" ? "name" : "vote"; broadcastBuildoff(); updateBoControls(); renderLead(); }
+function addTeam(){ const i=document.getElementById("teamname");
+  if(addTeamName(i.value)){ i.value=""; if(boPhase==="vote") broadcastBuildoff(); renderLead(); } i.focus(); }
+function addTeamName(n){ n=(n||"").trim(); if(!n) return false;
+  if(teams.some(t=>t.name.toLowerCase()===n.toLowerCase())) return false;   // dedupe, case-insensitive
+  teams.push({name:n}); return true; }
+function teamVotes(name){ let c=manualVotes[name]||0; for(const v in votes){ if(votes[v]===name) c++; } return c; }
+function renameTeam(i){ const old=teams[i].name, nn=prompt("Rename team", old); if(nn===null) return;
+  const n=nn.trim(); if(!n || teams.some((t,j)=>j!==i && t.name.toLowerCase()===n.toLowerCase())) return;
+  teams[i].name=n;
+  if(manualVotes[old]!=null){ manualVotes[n]=(manualVotes[n]||0)+manualVotes[old]; delete manualVotes[old]; }
+  for(const v in votes){ if(votes[v]===old) votes[v]=n; }
+  if(boPhase==="vote") broadcastBuildoff(); renderLead(); }
 function renderLead(){
-  const host=document.getElementById("lead"); if(!host) return;
-  const sorted=[...teams].sort((a,b)=>b.score-a.score); host.innerHTML="";
-  if(!teams.length){ host.innerHTML='<p class="sub">Add teams to begin.</p>'; return; }
-  sorted.forEach((t,i)=>{ const idx=teams.indexOf(t); const d=document.createElement("div"); d.className="team";
-    d.innerHTML=`<div class="rank">${i+1}</div><div class="nm">${esc(t.name)}</div>
-      <div class="pm"><button data-i="${idx}" data-d="-1">–</button><button data-i="${idx}" data-d="1">+</button></div>
-      <div class="sc">${t.score}</div>`; host.appendChild(d); });
-  host.querySelectorAll(".pm button").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i,dd=+b.dataset.d;
-    teams[i].score=Math.max(0,teams[i].score+dd); renderLead(); });
+  const host=document.getElementById("lead"); if(!host) return; host.innerHTML="";
+  if(!teams.length){ host.innerHTML='<p class="sub">Teams appear here as parents name themselves. Or add one by hand below.</p>'; return; }
+  const counts=teams.map(t=>teamVotes(t.name)), max=Math.max(1,...counts), top=Math.max(...counts);
+  teams.forEach((t,i)=>{ const v=counts[i], isLead=boPhase==="vote" && v>0 && v===top;     // fixed order, highlight leader
+    const d=document.createElement("div"); d.className="team"+(isLead?" winner":"");
+    d.innerHTML=`<div class="nm" data-i="${i}" title="Click to rename">${esc(t.name)}</div>
+      <div class="bar"><span style="width:${Math.round(v/max*100)}%"></span></div>
+      <button class="vbtn" data-i="${i}" title="Add a vote by hand">＋</button>
+      <div class="sc">${v}</div>`; host.appendChild(d); });
+  host.querySelectorAll(".nm").forEach(el=>el.onclick=()=>renameTeam(+el.dataset.i));
+  host.querySelectorAll(".vbtn").forEach(b=>b.onclick=()=>{ const name=teams[+b.dataset.i].name;
+    manualVotes[name]=(manualVotes[name]||0)+1; renderLead(); });
 }
 function renderContent(id){ const c=CONTENT[id]||{};
   return `${c.icon&&ICONS[c.icon]?`<div class="slideicon">${ICONS[c.icon]}</div>`:""}<span class="eyebrow">${c.e||""}</span><h1>${c.t||""}</h1>${c.h||""}`; }
@@ -582,7 +617,6 @@ function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">"
 
 /* ---------- init ---------- */
 if(!ROOM) ROOM="BTY-AI";
-["Table 1","Table 2","Table 3","Table 4","Table 5","Table 6"].forEach(function(n){teams.push({name:n,score:0});});
 loadMqtt(); renderStage(); whenMqttReady(connect);
 </script>
 </body>

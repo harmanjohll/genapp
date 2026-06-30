@@ -4,7 +4,7 @@ Working pack for continuing the parent workshop build in Claude Code. Open this 
 (`Desktop/Harman/Beatty/AI Confident Workshop/Parents/`) and start from here.
 
 > First prompt to use in Code:
-> *"Read HANDOFF.md. Confirm you can run the two HTML files, then start Part B (Build-Off teams + voting)."*
+> *"Read HANDOFF.md. Confirm you can run the two HTML files. Part B (Build-Off teams + voting) is done; start Task 9 (printable docs)."*
 
 ---
 
@@ -60,7 +60,7 @@ The files need **internet** (they pull `mqtt`, `html2canvas`, and Google Fonts f
 
 ### Message types (the wire protocol)
 `join`, `hb` (heartbeat, presence), `stage`, `reveal`, `confidence` (phase in/out), `quiz` (q + answer), `rule` (facilitator-typed wall line), `submitted` (step), `share` (channel + key + text + on), `reset`.
-*Part B will add:* `team` (name), `vote` (team), and a presenter-driven `buildoff` (phase + teams).
+*Part B (done):* `team` (audience names a team), `vote` (audience picks a team), and a presenter-driven `buildoff` (`phase` ∈ name/vote + `teams`), broadcast on stage entry and on every `join` so latecomers get the current phase.
 
 ### Stages (Presenter `STAGES` array — 26)
 Welcome → Why we're here → The promise → **Confidence in** → What AI is (AIR) → **Q1** → reflex → **Q2** → reflex → Explorer Rooms → **Q3** → reflex → **Q4** → reflex → Break → **Build-Off** → **Q5** → reflex → What stays human → Polarities → Guardrails → **Reflection** → **Charter (5Ps)** → **Confidence out** → Three things → Close.
@@ -88,15 +88,9 @@ Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ w
 - Reflections (What/So what/Now what + 3Rs) and Family Charter (5Ps) with the **unified default-on share toggle**; shared lines surface live on the Presenter.
 - Learning log on the Audience: "Walking in / In the room (understood vs note) / Walking out", with **Print** and **Download .png** (html2canvas).
 - Kopi-level Explorer Rooms, guardrails (incl. the memory one), "Build-Off" rename + framing.
+- **Part B — Build-Off teams + voting.** Create-then-vote replaces the manual +/- scoreboard. Audience `hold` view has two phases: *name your team* (`send({type:"team", name})`) and *vote* (team buttons from the presenter broadcast → `send({type:"vote", team})`, one per device, changeable). Presenter collects unique names (`addTeamName`, case-insensitive dedupe), has an **Open voting / Back to naming** toggle (`toggleVoting` → `broadcastBuildoff`), and shows a **live tally in fixed order with the leader highlighted — no auto-sort**. Facilitator fallback kept: add-by-hand input + per-team manual `＋` vote + click-name-to-rename (`renameTeam` remaps votes). State: `teams[]`, `votes{voter→team}`, `manualVotes{team→n}`, `boPhase`.
 
 ## 5. State: TODO (in priority order)
-
-### Part B — Build-Off teams + voting (the next build)
-Replace the manual +/- scoreboard with create-then-vote.
-- **Audience** (the `hold`/buildoff view): a "name your team" field → `send({type:"team", name})`; then a voting view showing team buttons (from a presenter broadcast) → `send({type:"vote", team})` (one vote per device, changeable).
-- **Presenter** (`stageOly`/`renderLead`): collect unique team names from `team` messages; a "Open voting" control that broadcasts `{type:"buildoff", phase:"vote", teams:[...]}`; tally `vote` messages per team and show live bars. **Do not auto-sort** (fixed order, highlight the leader) — the auto-reorder was disliked.
-- Keep facilitator add/rename as a fallback. Title is "The Build-Off" (user may still rename — it's a placeholder pending colleagues' input).
-- Remember the `sid` filter and the `join`-reply pattern so latecomers get the current phase.
 
 ### Task 9 — printable docs (align to the build)
 - Rebuild `AI_Confident_Parents_Cards.html` as the **3-card learning log** mirroring the Audience log (Walking in / In the room: understood + to note / Walking out: charter + W·So·Now + confidence). Print 2-up on A4. This is the no-laptop / backup artefact.

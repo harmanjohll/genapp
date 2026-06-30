@@ -140,7 +140,8 @@ const MQTT_URL = "wss://broker.hivemq.com:8884/mqtt";  // public test broker —
 
 const me = Math.random().toString(36).slice(2,9);
 const S = { room:"", name:"", confIn:null, confOut:null,
-            quiz:{}, reveal:{}, share:{} };   // share: keyed {text,on} for question / r1-3 / charter Ps
+            quiz:{}, reveal:{}, share:{},     // share: keyed {text,on} for question / r1-3 / charter Ps
+            buildoff:{phase:"name",teams:[],myTeam:null,myVote:null} };   // Build-Off: name then vote
 
 const QUIZ = [
   { icon:"🎯", tag:"True or false", claim:"AI usually gives correct, reliable answers.",
@@ -214,11 +215,19 @@ function onMsg(raw){
   } else if(d.type==="reveal"){
     if(d.sid && d.sid!==mySid) return;
     S.reveal[d.q]=true; if(curView==="quiz"&&curQ===d.q) renderQuiz();
+  } else if(d.type==="buildoff"){
+    if(d.sid && d.sid!==mySid) return;
+    const prev=S.buildoff.phase;
+    S.buildoff.phase=d.phase||"name"; S.buildoff.teams=d.teams||[];
+    // re-render on a phase change, or in vote phase when the team list updates;
+    // never on a same-phase "name" echo (that would wipe a parent mid-type)
+    if(curView==="hold" && (S.buildoff.phase!==prev || S.buildoff.phase==="vote")) renderHold();
   }
 }
 function resetAudience(){
   S.confIn=null; S.confOut=null;
   S.quiz={}; S.reveal={}; S.share={};
+  S.buildoff={phase:"name",teams:[],myTeam:null,myVote:null};
   curStageKey=""; curView="welcome";
   renderWaiting("New session. Waiting for the facilitator to begin.");
 }
@@ -396,10 +405,49 @@ function renderCharter(){
     document.getElementById("cflag").innerHTML=' <span class="doneflag">✓ Charter set</span>'; };
 }
 
-/* ---------- HOLD (Olympics) ---------- */
+/* ---------- HOLD · the Build-Off (name your team, then vote) ---------- */
 function renderHold(){
-  V().innerHTML=`<div class="view hold"><div style="font-size:46px;">🏆</div>
-    <h2>The Build-Off</h2><p class="lede">Build something with your team, then we vote. Eyes on the big screen.</p></div>`;
+  const bo=S.buildoff;
+  if(bo.phase==="vote"){
+    if(!bo.teams.length){
+      V().innerHTML=`<div class="view hold"><div style="font-size:46px;">🗳️</div>
+        <h2>Voting opens in a moment</h2>
+        <p class="lede">Eyes on the big screen. The teams are about to appear here.</p></div>`;
+      return;
+    }
+    V().innerHTML=`<div class="view">
+      <span class="eyebrow">The Build-Off · vote</span>
+      <h2>Which one makes you smile?</h2>
+      <p class="lede">One vote. Tap another to change it, right up until we close.</p>
+      <div id="votes"></div></div>`;
+    const host=document.getElementById("votes");
+    bo.teams.forEach(name=>{
+      const b=document.createElement("button");
+      b.className="opt"+(bo.myVote===name?" picked":"");
+      b.textContent=name;
+      b.onclick=()=>{ bo.myVote=name; send({type:"vote",team:name}); renderHold(); };
+      host.appendChild(b);
+    });
+    return;
+  }
+  // name phase
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">The Build-Off</span>
+    <h2>Name your team.</h2>
+    <p class="lede">Build something with AI at your table. Give your team a name so the room can cheer it on, then eyes on the big screen.</p>
+    <div class="card">
+      <label class="f" for="bo-team">Your team name</label>
+      <input type="text" id="bo-team" placeholder="e.g. The Kopi Coders" autocomplete="off" value="${esc(bo.myTeam||"")}">
+      <div class="sendrow"><button class="btn" id="bo-send">${bo.myTeam?"Update name":"Send team name"}</button></div>
+      <div id="bo-flag">${bo.myTeam?`<div class="doneflag">✓ Team in: ${esc(bo.myTeam)}</div>`:""}</div>
+    </div></div>`;
+  const inp=document.getElementById("bo-team");
+  function submit(){ const n=inp.value.trim(); if(!n){ toast("Type a team name first"); return; }
+    bo.myTeam=n; send({type:"team",name:n});
+    document.getElementById("bo-flag").innerHTML=`<div class="doneflag">✓ Team in: ${esc(n)}</div>`;
+    document.getElementById("bo-send").textContent="Update name"; }
+  document.getElementById("bo-send").onclick=submit;
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter") submit(); });
 }
 function renderWatch(title,eyebrow){
   V().innerHTML=`<div class="view" style="text-align:center;padding-top:26px;">
