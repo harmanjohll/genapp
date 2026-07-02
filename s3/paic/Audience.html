@@ -175,7 +175,15 @@ const QUIZ = [
     options:["Sweet, and good they have someone","A wellbeing signal worth a gentle talk","Proof AI is dangerous, take the phone","Normal for their age, leave it be"],
     answer:1,
     why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open.",
-    note:"An AI that always agrees is not a real friend. Companions are built to keep your child talking." }
+    note:"An AI that always agrees is not a real friend. Companions are built to keep your child talking." },
+  { icon:"📞", tag:"Staying safe · scams", claim:"Your child gets a voice note that sounds exactly like you, urgently asking for a login or money. The safest family habit is:",
+    options:["Trust it, it sounds just like me","Only worry about this with strangers, not familiar voices","Agree a family code word for anything urgent or money-related","Reply and ask them a question first"], answer:2,
+    why:"<b>Agree a family code word.</b> AI can clone a voice from seconds of audio. A code word beats “it sounded real.” Verify any urgent or money ask on another channel.",
+    note:"AI can fake a familiar voice. Agree a family code word; verify urgent or money asks." },
+  { icon:"🛡️", tag:"Staying safe · fakes", claim:"A classmate uses AI to make a fake, explicit image of another student. This is:",
+    options:["A harmless prank","Something to report: real harm, and now unlawful","Only a problem if it spreads widely","Not something a parent can act on"], answer:1,
+    why:"<b>Report it.</b> AI-faked intimate images are real harm, not a joke. From 29 June 2026, victims in Singapore can report to the new <b>Online Safety Commission</b>, which can order fast takedowns. Keep talking with your child about respect online.",
+    note:"AI-faked images are real harm. Report to the Online Safety Commission (from 29 Jun 2026)." }
 ];
 const PS = [
   { p:"P", icon:"🧭", name:"Plan", q:"In our home, AI is for…", ph:"e.g. homework help we can explain, planning, making things together", key:"plan" },
@@ -202,6 +210,7 @@ function whenMqttReady(cb,tries){ tries=tries||0;
 function topic(){ return "aiconf/"+S.room+"/bus"; }
 function connect(){
   if(!S.room || typeof mqtt==="undefined"){ setConn(false); return; }
+  setTimeout(function(){ if(!wsOpen) toast("Can't reach the live sync on this network. Keep this open; the facilitator's screen leads. It may reconnect on its own."); }, 12000);
   client = mqtt.connect(MQTT_URL, {clientId:"aud_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30});
   client.on("connect", ()=>{ wsOpen=true; setConn(true); client.subscribe(topic());
     send({type:"join"}); clearInterval(hb);
