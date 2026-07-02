@@ -56,6 +56,26 @@
   .qr{text-align:center;}
   .qrbox{width:118px;height:118px;border:2px dashed var(--gold);border-radius:12px;display:grid;place-items:center;color:var(--gold);font-weight:800;letter-spacing:.16em;font-size:19px;background:rgba(255,255,255,.02);}
   .qrimg{width:118px;height:118px;border-radius:10px;background:#fff;display:block;}
+  .wtwo{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:14px;align-items:start;}
+  @media(max-width:900px){.wtwo{grid-template-columns:1fr;gap:24px;}}
+  .coltitle{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:14px;}
+  .eq .hmwq{margin-bottom:16px;}
+  .plan .prow{display:flex;gap:16px;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+  .plan .pt{font-variant-numeric:tabular-nums;font-weight:700;color:var(--gold);min-width:62px;font-size:18px;}
+  .plan .pd{font-size:16px;color:#fff;font-weight:300;}
+  .plan .prow.hl{background:rgba(232,177,60,.10);border-radius:10px;padding:9px 12px;margin:2px -12px;border-bottom:none;}
+  .plan .prow.hl .pd{font-weight:600;}
+  .joinrow{display:flex;align-items:center;gap:16px;margin-top:18px;}
+  .joinrow .qrimg.sm{width:96px;height:96px;}
+  .joinrow .jlabel{color:var(--muted);text-transform:uppercase;letter-spacing:.14em;font-size:11px;}
+  .joinrow .code{font-size:clamp(26px,3.6vw,40px);color:var(--gold);font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;}
+  .onramp{display:flex;flex-direction:column;gap:6px;margin:16px 0 6px;}
+  .onramp span{font-size:15px;color:var(--muted);}
+  .onramp b{color:var(--gold);font-weight:700;}
+  .demo{max-width:1000px;}
+  .demoline{font-size:clamp(20px,2.6vw,30px);font-weight:300;line-height:1.25;margin-top:16px;border-left:3px solid var(--gold);padding-left:20px;}
+  .demoline b{color:var(--gold);font-weight:700;}
+  .connbanner{position:fixed;left:50%;bottom:74px;transform:translateX(-50%);background:var(--gold);color:#1a1a1a;font-weight:700;font-size:14px;padding:10px 20px;border-radius:10px;z-index:60;display:none;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:80vw;text-align:center;}
   .qrcap{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.16em;margin-top:8px;}
   .joininfo .jlabel{color:var(--muted);text-transform:uppercase;letter-spacing:.2em;font-size:12px;}
   .joininfo .jurl{font-size:21px;font-weight:300;margin-top:4px;}
@@ -252,7 +272,13 @@ const QUIZ = [
    why:"<b>Build a quiz, then sit it.</b> Making stretches thinking. Copying, summarising, and memorising skip it. Building a tool means understanding the topic first."},
   {icon:"💬",tag:"What is this?",claim:"Your teen says an AI companion is their best listener, nightly. This is:",
    options:["Sweet, and good they have someone","A wellbeing signal worth a gentle talk","Proof AI is dangerous, take the phone","Normal for their age, leave it be"],answer:1,
-   why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open."}
+   why:"<b>A wellbeing signal.</b> Companions are built to keep a young person talking, agreeable by design. Keep the conversation open."},
+  {icon:"📞",tag:"Staying safe · scams",claim:"Your child gets a voice note that sounds exactly like you, urgently asking for a login or money. The safest family habit is:",
+   options:["Trust it, it sounds just like me","Only worry about this with strangers, not familiar voices","Agree a family code word for anything urgent or money-related","Reply and ask them a question first"],answer:2,
+   why:"<b>Agree a family code word.</b> AI can clone a voice from seconds of audio. A code word beats “it sounded real.” Verify any urgent or money ask on another channel."},
+  {icon:"🛡️",tag:"Staying safe · fakes",claim:"A classmate uses AI to make a fake, explicit image of another student. This is:",
+   options:["A harmless prank","Something to report: real harm, and now unlawful","Only a problem if it spreads widely","Not something a parent can act on"],answer:1,
+   why:"<b>Report it.</b> AI-faked intimate images are real harm, not a joke. From 29 June 2026, victims in Singapore can report to the new <b>Online Safety Commission</b>, which can order fast takedowns. Keep talking with your child about respect online."}
 ];
 
 /* ---------- deck stages ---------- */
@@ -262,6 +288,7 @@ const STAGES = [
   {id:"frame-promise",aud:"watch",   sub:null,     label:"The promise · three learnings"},
   {id:"in",           aud:"in",      sub:"in",     label:"Confidence · walking in"},
   {id:"head-intro",   aud:"watch",   sub:null,     label:"What AI actually is"},
+  {id:"demo-air",     aud:"watch",   sub:null,     label:"Live demo · give it your context"},
   {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Quick read 1 · is AI right?"},
   {id:"reflex-correct",   aud:"watch", sub:null,   label:"Reflex · confident is not correct"},
   {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Quick read 2 · the essay"},
@@ -272,12 +299,13 @@ const STAGES = [
   {id:"reflex-make",      aud:"watch", sub:null,   label:"Reflex · make, don't take"},
   {id:"q4", aud:"quiz", q:4, sub:"q4", label:"Quick read 5 · the AI 'friend'"},
   {id:"reflex-companion", aud:"watch", sub:null,   label:"Reflex · an agreeable bot is not a friend"},
-  {id:"hands-rooms",  aud:"watch",   sub:null,     label:"Explorer Rooms · hands on"},
   {id:"howto-clear",  aud:"watch",   sub:null,     label:"How to prompt · be CLEAR"},
-  {id:"howto-demo",   aud:"watch",   sub:null,     label:"Thin prompt vs rich prompt"},
-  {id:"buildoff",     aud:"hold",    sub:null,     label:"Kopi &amp; Build"},
+  {id:"howto-demo",   aud:"watch",   sub:null,     label:"Live demo · thin vs rich prompt"},
+  {id:"buildoff",     aud:"hold",    sub:null,     label:"Explore &amp; Build"},
   {id:"heart-intro",  aud:"watch",   sub:null,     label:"What stays human"},
   {id:"heart-polar",  aud:"watch",   sub:null,     label:"Hold both · polarities"},
+  {id:"q5", aud:"quiz", q:5, sub:"q5", label:"Staying safe · the voice"},
+  {id:"q6", aud:"quiz", q:6, sub:"q6", label:"Staying safe · a fake image"},
   {id:"heart-guard",  aud:"watch",   sub:null,     label:"Guardrails for home"},
   {id:"reflect",      aud:"reflect", sub:"reflect",label:"Reflection · What · So what · Now what"},
   {id:"wall",         aud:"charter", sub:"charter",label:"Family Charter · the 5 Ps"},
@@ -363,7 +391,7 @@ function onMsg(raw){
   } else if(d.type==="vote"){
     if(d.team){ votes[d.from]=d.team; if(curId()==="buildoff") renderLead(); }
   }
-  updateMeters();
+  updateMeters(); saveSession();
 }
 function feedHTML(channel,title,labels){
   const items=Object.values(shared[channel]||{});
@@ -371,14 +399,50 @@ function feedHTML(channel,title,labels){
   return `<div class="feed"><div class="feedtitle">${title} · ${items.length}</div>`+
     items.map(it=>`<div class="feeditem">${labels&&labels[it.key]?`<span class="ftag">${labels[it.key]}</span>`:""}${esc(it.text)}</div>`).join("")+`</div>`;
 }
+let connTimer=null;
+function ensureBanner(){ let b=document.getElementById("connbanner");
+  if(!b){ b=document.createElement("div"); b.id="connbanner"; b.className="connbanner"; document.body.appendChild(b); }
+  return b; }
 function setConn(on){ document.getElementById("dot").className="dot "+(on?"on":"off");
-  document.getElementById("lbl").textContent=on?"live":"reconnecting"; }
+  document.getElementById("lbl").textContent=on?"live":"reconnecting";
+  const b=ensureBanner();
+  if(on){ b.style.display="none"; clearTimeout(connTimer); connTimer=null; }
+  else if(!connTimer){ connTimer=setTimeout(()=>{
+    b.textContent="Live sync not connected. The deck still works, ask parents to follow this screen.";
+    b.style.display="block"; connTimer=null; },10000); }
+}
+
+/* ---------- session persistence · reload recovery (additive; happy path unchanged) ---------- */
+const SS_KEY="paic_pres_v1";
+function saveSession(){
+  try{ const subs={}; for(const k in submissions) subs[k]=[...submissions[k]];
+    localStorage.setItem(SS_KEY, JSON.stringify({t:Date.now(),SID,si,ROOM,teams,votes,manualVotes,boPhase,rules,shared,confIn,confOut,qVotes,revealed,subs}));
+  }catch(e){}
+}
+function restoreSession(){
+  try{ const raw=localStorage.getItem(SS_KEY); if(!raw) return false;
+    const d=JSON.parse(raw); if(!d || (Date.now()-(d.t||0))>3*3600*1000) return false;   // ignore >3h old
+    if(d.ROOM && !new URLSearchParams(location.search).get("room")) ROOM=d.ROOM;
+    SID=d.SID||SID; si=Math.min(d.si||0, STAGES.length-1);
+    teams=Array.isArray(d.teams)?d.teams:[]; boPhase=d.boPhase||"name";
+    Object.assign(votes,d.votes||{}); Object.assign(manualVotes,d.manualVotes||{});
+    if(Array.isArray(d.rules)){ rules.length=0; d.rules.forEach(r=>rules.push(r)); }
+    if(d.shared) for(const ch in d.shared){ if(shared[ch]) shared[ch]=d.shared[ch]; }
+    Object.assign(confIn,d.confIn||{}); Object.assign(confOut,d.confOut||{});
+    if(Array.isArray(d.qVotes)) d.qVotes.forEach((v,i)=>{ if(v && qVotes[i]) qVotes[i]=v; });
+    if(d.revealed) Object.assign(revealed,d.revealed);
+    if(d.subs) for(const k in d.subs){ if(submissions[k]) d.subs[k].forEach(x=>submissions[k].add(x)); }
+    return true;
+  }catch(e){ return false; }
+}
+function showResumed(){ const b=ensureBanner(); b.textContent="Resumed your session.";
+  b.style.display="block"; setTimeout(()=>{ if(wsOpen) b.style.display="none"; },2500); }
 
 /* presence prune only · no constant rebroadcast (sync happens on change + on join) */
 setInterval(()=>{
   const now=Date.now();
   for(const [id,t] of roster){ if(now-t>11000) roster.delete(id); }
-  updateMeters();
+  updateMeters(); saveSession();
 },3000);
 
 /* ---------- meters ---------- */
@@ -401,14 +465,15 @@ function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="";
   send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), title:title, eyebrow:eyebrow});
   if(s.id==="buildoff") broadcastBuildoff(); }   // latecomers + lockstep get the current Build-Off phase/teams
 function broadcastBuildoff(){ send({type:"buildoff", phase:boPhase, teams:teams.map(t=>t.name)}); }
-function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); }
+function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); saveSession(); }
 document.getElementById("next").onclick=()=>move(1);
 document.getElementById("prev").onclick=()=>move(-1);
 document.getElementById("reveal").onclick=()=>{ const s=STAGES[si];
-  if(s.aud==="quiz"){ revealed[s.q]=true; send({type:"reveal",q:s.q}); renderStage(); } };
+  if(s.aud==="quiz"){ revealed[s.q]=true; send({type:"reveal",q:s.q}); renderStage(); saveSession(); } };
 document.getElementById("reset").onclick=resetSession;
 function resetSession(){
   if(!confirm("Start a new session? This clears all responses and resets every connected screen.")) return;
+  try{localStorage.removeItem(SS_KEY);}catch(e){}
   SID="s"+Math.random().toString(36).slice(2,8);   // new session id · old tabs can no longer count
   roster.clear();
   for(const k in submissions) submissions[k]=new Set();
@@ -453,21 +518,26 @@ function stageWelcome(){
   return `<span class="eyebrow">South 3 Cluster · Parenting &amp; Thriving Together 2026</span>
     <h1>AI Confident</h1>
     <p class="sub">Confident and present, as our children grow up with AI.</p>
-    <div class="hmw">
-      <div class="hmwq">How might we raise children who use AI wisely?</div>
-      <div class="hmwq">How might we sit beside our children as they learn with AI?</div>
-      <div class="hmwq">How might we build with our children, not just police them?</div>
-      <div class="hmwq">How might we keep the real conversation open when AI is always ready to listen?</div>
-      <div class="hmwq">How might we protect what AI cannot grow: the effort, the struggle, the relationship?</div>
-      <div class="hmwq">How might we agree what's okay with AI at home?</div>
-    </div>
-    <div class="joinband">
-      <!-- To use the branded GO.gov.sg QR, replace qr.png at this path -->
-      <div class="qr"><img class="qrimg" src="qr.png" alt="QR code, scan to join the room" width="118" height="118"><div class="qrcap">Scan to join · go.gov.sg/s3paic</div></div>
-      <div class="joininfo">
-        <div class="jlabel">Or open on your laptop</div>
-        <div class="jurl">Open <b>Audience.html</b>, then enter</div>
-        <div class="code">${ROOM||"—"}</div>
+    <div class="wtwo">
+      <div class="eq">
+        <div class="coltitle">Our essential questions</div>
+        <div class="hmwq">How might we raise children who use AI wisely?</div>
+        <div class="hmwq">How might we sit beside them as they learn with AI?</div>
+        <div class="hmwq">How might we keep the real conversation open when AI is always ready to listen?</div>
+      </div>
+      <div class="plan">
+        <div class="coltitle">Our morning · 8:30 to 11:30</div>
+        <div class="prow"><span class="pt">8:30</span><span class="pd">Why we're here, and how confident you feel</span></div>
+        <div class="prow"><span class="pt">8:50</span><span class="pd">What AI really is, in five quick reads</span></div>
+        <div class="prow"><span class="pt">9:20</span><span class="pd">Hands on: explore, and learn to prompt</span></div>
+        <div class="prow hl"><span class="pt">9:35</span><span class="pd">Explore &amp; Build over kopi, then vote</span></div>
+        <div class="prow"><span class="pt">10:50</span><span class="pd">Staying safe, and what stays human</span></div>
+        <div class="prow"><span class="pt">11:15</span><span class="pd">Your family charter, and a card to keep</span></div>
+        <!-- To use the branded GO.gov.sg QR, replace qr.png at this path -->
+        <div class="joinrow">
+          <img class="qrimg sm" src="qr.png" alt="QR code, scan to join" width="96" height="96">
+          <div><div class="jlabel">Scan to join · go.gov.sg/s3paic</div><div class="code">${ROOM||"—"}</div></div>
+        </div>
       </div>
     </div>`;
 }
@@ -553,10 +623,15 @@ function renderWallTiles(){
   if(c) c.textContent = all.length ? all.length+" line"+(all.length>1?"s":"")+" and counting" : "No lines yet. The first one breaks the ice.";
 }
 function stageOly(){
-  return `<span class="eyebrow">The signature challenge · grab a kopi</span>
-    <h1>Kopi &amp; Build</h1>
-    <p class="sub">Refreshments are out. Take a drink, then build something with AI at your table, using CLEAR. The room votes for the one that makes them smile.</p>
-    <div class="wsw-band"><span class="a">Kopi + Make · 10 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
+  return `<span class="eyebrow">Explore &amp; build · grab a kopi</span>
+    <h1>Explore &amp; Build</h1>
+    <p class="sub">Kopi is out. Explore at your own pace, then build something with AI using CLEAR. Whatever makes your table smile. The room votes at the end.</p>
+    <div class="onramp">
+      <span><b>New?</b> One calm first chat with Claude.</span>
+      <span><b>Some experience?</b> Compare two tools, or drop in a newsletter.</span>
+      <span><b>Confident?</b> Build a family quiz or game with your child.</span>
+    </div>
+    <div class="wsw-band"><span class="a">Explore + build · ~60 min</span><span class="b">Show · 5 min</span><span class="c">Vote</span></div>
     <div class="lead" id="lead"></div>
     <div class="bo-controls"><span class="bo-phase" id="bophase"></span><button class="btn" id="votebtn"></button></div>
     <div class="addteam"><input id="teamname" placeholder="Add a team by hand (no laptop), then Enter"><button class="btn ghost" id="addteambtn">Add team</button></div>`;
@@ -659,11 +734,11 @@ const CONTENT = {
     h:`<p class="body-txt">The healthy use is <b>building</b> something to learn with, a quiz or a game, not lifting a ready-made answer.</p>`},
   "reflex-companion":{icon:"chat", e:"Reflex 5 of 5", t:"An agreeable bot is not a friend.",
     h:`<p class="body-txt">AI companions are designed to keep your child talking, always agreeing. Notice it, and <b>keep the real conversation open</b> at home.</p>`},
-  "hands-rooms":{icon:"coffee", e:"Hands on · 45 minutes", t:"Explorer Rooms. At your own pace.",
-    h:`<div class="closegrid">
-      <div class="cc"><div class="n">☕</div><h3>Kopi-O Kosong</h3><p>New to AI. One calm first try with Claude. Ask it to explain something your child is learning.</p></div>
-      <div class="cc"><div class="n">☕</div><h3>Kopi-C</h3><p>Some experience. Compare two tools, then drop a school newsletter into NotebookLM and ask it questions.</p></div>
-      <div class="cc"><div class="n">☕</div><h3>Kopi Gao</h3><p>Confident. Build a family quiz or revision game with your child. Make, don't take.</p></div></div>`},
+  "demo-air":{icon:"spark", e:"▶ Live demo · switch to Claude", t:"Give it your context.",
+    h:`<div class="demo">
+      <p class="body-txt">On the projector, in the Claude app: ask for "a birthday message for my teenager". Watch it come out warm and generic, nobody's child. Then add the name, the in-joke, the rough week, and run it again.</p>
+      <div class="demoline">The machine supplies the words. You supply the meaning. That is the <b>I</b> in AIR.</div>
+      <p class="sub" style="font-size:14px;margin-top:12px;">No network? Use the saved before/after screenshots.</p></div>`},
   "howto-clear":{icon:"compass", e:"How to prompt", t:"Be CLEAR with AI.",
     h:`<p class="body-txt">Five small moves take a prompt from average to genuinely useful. Tap each one.</p>
       <div class="flipgrid cols5">
@@ -673,12 +748,12 @@ const CONTENT = {
       ${flipTile('<div class="n">A</div><h3>Arrange</h3>','tool',["Lay your ask out in clear steps","A short list beats a long paragraph"])}
       ${flipTile('<div class="n">R</div><h3>Roadmap</h3>','rocket',["Ask it to plan before doing","“Plan first, then do it. Ask me before you start.”","The single best move"])}
       </div>`},
-  "howto-demo":{icon:"spark", e:"Watch the difference", t:"Thin prompt vs rich prompt.",
+  "howto-demo":{icon:"spark", e:"▶ Live demo · switch to Claude", t:"Thin prompt vs rich prompt.",
     h:`<div class="vsgrid">
       <div class="vscard thin"><div class="vstag">Thin</div><p class="vsp">“Help my son with his history essay.”</p><div class="vsout">Generic. It writes a bland essay nobody owns.</div></div>
       <div class="vscard rich"><div class="vstag">Rich · with context</div><p class="vsp">“You are helping my 14-year-old who finds history dry and writes in short, flat sentences. The topic is why Singapore separated from Malaysia. Do not write it for him. Ask him three questions first, then suggest one way to make his opening more gripping. Keep it encouraging.”</p><div class="vsout">Specific. It coaches your child, in your words.</div></div>
       </div>
-      <p class="body-txt" style="margin-top:18px;">Same tool, same minutes. The difference is the context, and the context is <b>you</b>.</p>`},
+      <p class="body-txt" style="margin-top:18px;">Type both into Claude live. Same tool, same minutes; the difference is the context, and the context is <b>you</b>. No network? These two cards are your fallback.</p>`},
   "heart-intro":{icon:"heart", e:"What stays human", t:"Protect what AI cannot grow.",
     h:`<p class="body-txt">Learn beyond AI. The effort that builds a mind. The struggle that earns confidence. The relationship at the table. AI amplifies a human; it does not replace one.</p>`},
   "heart-polar":{icon:"scales", e:"Hold both", t:"It's rarely ban or allow.",
@@ -688,12 +763,13 @@ const CONTENT = {
       <div class="row">Efficiency <span class="amp">&amp;</span> Effort</div>
       <div class="row">Trust <span class="amp">&amp;</span> Verify</div>
       <div class="row">Speed <span class="amp">&amp;</span> Depth</div></div>`},
-  "heart-guard":{icon:"shield", e:"Guardrails for home", t:"Four to settle early.",
+  "heart-guard":{icon:"shield", e:"Guardrails for home", t:"Five to settle early.",
     h:`<div class="gl">
       <div class="g"><div class="h"><b>Companion chatbots.</b></div><p>Built to keep a young person talking. A wellbeing question, not a tech one. Keep the conversation, not the confiscation.</p></div>
       <div class="g"><div class="h"><b>Privacy is a habit.</b></div><p>No names, photos, address, or secrets. The postcard test. Check what AI remembers about your child, and clear it.</p></div>
       <div class="g"><div class="h"><b>Confident, not correct.</b></div><p>Teach one reflex: "How do you know that?" Then check a second source.</p></div>
-      <div class="g"><div class="h"><b>Protect the effort.</b></div><p>If they cannot explain what they handed in, AI did too much.</p></div></div>`},
+      <div class="g"><div class="h"><b>Protect the effort.</b></div><p>If they cannot explain what they handed in, AI did too much.</p></div>
+      <div class="g"><div class="h"><b>Fakes and scams.</b></div><p>AI can clone a voice or fake an image. Agree a family code word. Fake or intimate images can be reported to Singapore's new Online Safety Commission (from 29 June 2026).</p></div></div>`},
   "close-3":{icon:"star", e:"Before you leave", t:"Three things to remember.",
     h:`<div class="closegrid">
       <div class="cc"><div class="n">1</div><h3>The intelligence comes from us.</h3><p>AI predicts, it does not understand. Your context, judgement, and values do the real work.</p></div>
@@ -709,7 +785,8 @@ function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">"
 
 /* ---------- init ---------- */
 if(!ROOM) ROOM=ROOM_DEFAULT;
-loadMqtt(); renderStage(); whenMqttReady(connect);
+const _resumed=restoreSession();
+loadMqtt(); renderStage(); whenMqttReady(()=>{ connect(); if(_resumed) showResumed(); });
 </script>
 </body>
 </html>

@@ -22,9 +22,9 @@ A self-contained **live workshop system**, two single HTML files that talk to ea
 
 | File | Role |
 |---|---|
-| `Presenter.html` | The deck + facilitator control. Projected. You drive it Back/Next. 27 slides. |
+| `Presenter.html` | The deck + facilitator control. Projected. You drive it Back/Next. 29 slides. |
 | `Audience.html` | Each parent's companion on their own laptop. Follows the deck in lockstep, and becomes their printable / downloadable take-home card. |
-| `AI_Confident_Parents_Facilitation_Plan.html` | The run-of-show / script (timings, what to say). A **separate** reference, not projected. Aligned to the 27 deck slides. |
+| `AI_Confident_Parents_Facilitation_Plan.html` | The run-of-show / script (timings, what to say). A **separate** reference, not projected. Aligned to the 29 deck slides. |
 | `AI_Confident_Parents_Cards.html` | Printable reflection + take-home cards. Older structure; to be rebuilt as the 3-card learning log (see TODO). |
 | `S3 PSG Collab_Brochure_23 june.pptx` | Reference: the cluster brochure with the parent-workshop synopsis. |
 | `archive/` | Superseded PPTX iterations. Ignore unless you need history. |
@@ -62,9 +62,9 @@ The files need **internet** (they pull `mqtt`, `html2canvas`, and Google Fonts f
 `join`, `hb` (heartbeat, presence), `stage`, `reveal`, `confidence` (phase in/out), `quiz` (q + answer), `rule` (facilitator-typed wall line), `submitted` (step), `share` (channel + key + text + on), `reset`.
 *Part B (done):* `team` (audience names a team), `vote` (audience picks a team), and a presenter-driven `buildoff` (`phase` ∈ name/vote + `teams`), broadcast on stage entry and on every `join` so latecomers get the current phase.
 
-### Stages (Presenter `STAGES` array — 27)
-Welcome → Why we're here → The promise → **Confidence in** → What AI is (AIR) → **Q1** → reflex → **Q2** → reflex → **Q3** → reflex → **Q4** → reflex → **Q5** → reflex → Explorer Rooms → How to prompt (CLEAR) → Thin vs rich prompt → **Kopi & Build** → What stays human → Polarities → Guardrails → **Reflection** → **Charter (5Ps)** → **Confidence out** → Three things → Close.
-(The 5 quick-read quizzes now run as one round after "What AI is"; the standalone break is gone — refreshments come out during **Kopi & Build**.)
+### Stages (Presenter `STAGES` array — 29)
+Welcome (essential questions + plan) → Why we're here → The promise → **Confidence in** → What AI is (AIR) → **▶ demo** → **Q1** → reflex → **Q2** → reflex → **Q3** → reflex → **Q4** → reflex → **Q5** → reflex → How to prompt (CLEAR) → **▶ demo** (thin vs rich) → **Explore & Build** → What stays human → Polarities → **Q6 (scam)** → **Q7 (fake image)** → Guardrails → **Reflection** → **Charter (5Ps)** → **Confidence out** → Three things → Close.
+Notes: the 5 quick reads run as one round after "What AI is"; Explorer Rooms is folded into the one **Explore & Build** block (kopi out, no standalone break); two **▶ demo** signpost slides cue the facilitator to present live from the Claude app; two "staying safe" quizzes (scam, AI-faked image) sit before Guardrails and reference the new **Online Safety Commission** (from 29 Jun 2026). The Presenter persists its session to `localStorage` so a reload recovers (same SID/slide/tallies); **New session** clears it.
 Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ welcome/in/quiz/reflect/charter/hold/watch/out/log. Content slides render from the `CONTENT` map (+ `ICONS` monoline SVGs).
 
 ### Share component (default-on, opt-out)
@@ -82,7 +82,7 @@ Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ w
 
 ## 4. State: DONE
 
-- 27-slide lockstep deck (5 quick-read quizzes as one round + reflexes), a CLEAR prompting block, monoline metaphor icons.
+- 29-slide lockstep deck (5 quick reads as one round, 2 safety quizzes, a CLEAR block, 2 live-demo signposts), Presenter reload-recovery, monoline metaphor icons.
 - Sync hardened: dynamic MQTT load, session IDs, audience locks to one presenter, mirrored content slides, **New session** reset (resets every connected screen).
 - Quiz: tap-to-answer, changeable until the facilitator reveals; live vote bars + reveal pushed to all.
 - Confidence bookends (live room average + delta).
