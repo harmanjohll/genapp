@@ -96,6 +96,14 @@
   .delta{font-family:var(--serif);font-size:42px;color:var(--navy);text-align:center;margin:8px 0;}
   .delta .up{color:var(--green);}
 
+  .buildhelp{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--paper);font-size:13.5px;}
+  .buildhelp .bh-row b{color:var(--navy);}
+  .buildhelp .bh-row span b{color:var(--gold);}
+  .buildhelp .bh-sub{font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .buildhelp .bh-stuck{margin-top:10px;}
+  .buildhelp .bh-stuck b{color:var(--navy);}
+  .buildhelp ul{margin:6px 0 0;padding-left:18px;}
+  .buildhelp li{margin-bottom:5px;color:var(--ink);}
   .hold{text-align:center;padding:50px 0;}
   .hold .ring{width:54px;height:54px;border-radius:50%;border:4px solid #e4dac4;border-top-color:var(--gold);
     margin:0 auto 18px;animation:spin 1s linear infinite;}
@@ -458,6 +466,14 @@ function renderHold(){
       <input type="text" id="bo-team" placeholder="e.g. The Kopi Coders" autocomplete="off" value="${esc(bo.myTeam||"")}">
       <div class="sendrow"><button class="btn" id="bo-send">${bo.myTeam?"Update name":"Send team name"}</button></div>
       <div id="bo-flag">${bo.myTeam?`<div class="doneflag">✓ Team in: ${esc(bo.myTeam)}</div>`:""}</div>
+    </div>
+    <div class="buildhelp">
+      <div class="bh-row"><b>Prompt with CLEAR:</b> <span><b>C</b>ontext · <b>L</b>imits · <b>E</b>xpectations · <b>A</b>rrange · <b>R</b>oadmap</span></div>
+      <div class="bh-sub">Roadmap is the big one: "Plan first, then build. Ask me before you start."</div>
+      <div class="bh-stuck"><b>Stuck?</b>
+        <ul><li>Tell it what is wrong: "This assumes my child knows X. They don't. Try again."</li>
+        <li>Ask it to ask you: "Ask me three questions first."</li>
+        <li>Read your context aloud. Most stuck moments are a thin brief.</li></ul></div>
     </div></div>`;
   const inp=document.getElementById("bo-team");
   function submit(){ const n=inp.value.trim(); if(!n){ toast("Type a team name first"); return; }
