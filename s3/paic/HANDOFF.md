@@ -24,7 +24,7 @@ A self-contained **live workshop system**, two single HTML files that talk to ea
 |---|---|
 | `Presenter.html` | The deck + facilitator control. Projected. You drive it Back/Next. 30 slides. |
 | `Audience.html` | Each parent's companion on their own laptop. Follows the deck in lockstep, and becomes their printable / downloadable take-home card. |
-| `AI_Confident_Parents_Facilitation_Plan.html` | The run-of-show / script (timings, what to say). A **separate** reference, not projected. Aligned to the 29 deck slides. |
+| `AI_Confident_Parents_Facilitation_Plan.html` | The run-of-show / script (timings, what to say). A **separate** reference, not projected. Aligned to the 30 deck slides. |
 | `AI_Confident_Parents_Cards.html` | Printable reflection + take-home cards. Older structure; to be rebuilt as the 3-card learning log (see TODO). |
 | `S3 PSG Collab_Brochure_23 june.pptx` | Reference: the cluster brochure with the parent-workshop synopsis. |
 | `archive/` | Superseded PPTX iterations. Ignore unless you need history. |
@@ -82,7 +82,7 @@ Bold = interactive. Each stage object: `{id, aud, q?, sub?, label}`. `aud` ∈ w
 
 ## 4. State: DONE
 
-- 29-slide lockstep deck (5 quick reads as one round, 2 safety quizzes, a CLEAR block, 2 live-demo signposts), Presenter reload-recovery, monoline metaphor icons.
+- 30-slide lockstep deck (5 quick reads as one round, 2 safety quizzes, a CLEAR block, 2 live-demo signposts, a closing feedback-QR slide), space-optimised for projection, Presenter reload-recovery, monoline metaphor icons.
 - Sync hardened: dynamic MQTT load, session IDs, audience locks to one presenter, mirrored content slides, **New session** reset (resets every connected screen).
 - Quiz: tap-to-answer, changeable until the facilitator reveals; live vote bars + reveal pushed to all.
 - Confidence bookends (live room average + delta).
