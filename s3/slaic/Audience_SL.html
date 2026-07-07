@@ -154,7 +154,7 @@ const MQTT_PASS = "";                                    // broker password, if 
 
 const me = Math.random().toString(36).slice(2,9);
 const S = { room:"", name:"", confIn:null, confOut:null,
-            quiz:{}, reveal:{}, share:{}, belief:{b1:"",b2:""} };
+            quiz:{}, reveal:{}, share:{}, dvote:{}, belief:{b1:"",b2:""} };
 
 const QUIZ = [
   { tag:"What makes it new", claim:"An agent differs from a chatbot because it…",
@@ -177,6 +177,22 @@ const QUIZ = [
     options:["True","False"], answer:1,
     why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for.",
     note:"Postures, not a ladder. The right posture fits the task." }
+];
+const DILEMMAS = [
+ {tag:"Modelling vs mandating", claim:"The fastest way to get staff using AI well is to\u2026",
+  options:["Mandate it in appraisal goals","Model it yourself, in the open","Fund the keen few and let it spread","Wait until the policy is signed"]},
+ {tag:"The efficiency trap", claim:"AI hands your teachers back two hours a week. You protect that time first for\u2026",
+  options:["Planning together","Time with students","Rest","New initiatives"]},
+ {tag:"What you would never delegate", claim:"The one leadership act you would never hand to AI, even done well, is\u2026",
+  options:["The condolence note","The hard appraisal conversation","The assembly message","The difficult no"]},
+ {tag:"The uneven room", claim:"You are ahead of most of your staff on AI. Your job now is to\u2026",
+  options:["Set the bar high","Meet them where they are","Pair the keen with the wary","Slow down to keep everyone together"]},
+ {tag:"Govern vs trust", claim:"A teacher used free AI on something they should not have, then caught it themselves. You\u2026",
+  options:["Reinforce the rule firmly","Thank them for noticing, and open it up","Quietly log it","Review the policy with them"]},
+ {tag:"Monday's signal", claim:"To show the school what you value in an AI age, the clearest single move is\u2026",
+  options:["Prohibit AI somewhere sacred","Build something in the open","Share a mistake AI helped you catch","Protect a no-AI space for people"]},
+ {tag:"What you are really governing", claim:"The thing you most need to keep your hand on is\u2026",
+  options:["Which tools staff use","What data goes where","What stays human","How fast you move"]}
 ];
 const PS = [
   { p:"P", name:"Prohibit", q:"We will keep AI out of…", ph:"e.g. student records, anything official or sensitive", key:"prohibit" },
@@ -259,7 +275,7 @@ function onMsg(raw){
 function resetAudience(){
   S.confIn=null; S.confOut=null;
   S.quiz={}; S.reveal={}; S.share={}; S.belief={b1:"",b2:""};
-  inQKeys=["question1"]; inSubmitted=false;
+  inQKeys=["question1"]; inSubmitted=false; S.dvote={};
   curStageKey=""; curView="welcome";
   renderWaiting("New session. Waiting for the facilitator to begin.");
 }
@@ -286,7 +302,7 @@ function updateNetBanner(){
 setInterval(updateNetBanner,3000);
 
 /* ---------- VIEW ROUTER (lockstep) ---------- */
-let curView="connect", curQ=0, curStageKey="", renderedKey=null;
+let curView="connect", curQ=0, curD=0, curStageKey="", renderedKey=null;
 function gotoStage(m){
   const sameKey=(m.key===curStageKey);
   const viewEmpty=!V().firstChild;
@@ -300,6 +316,7 @@ function gotoStage(m){
   switch(m.id){
     case "in": curView="in"; renderIn(); break;
     case "quiz": curView="quiz"; curQ=m.q||0; renderQuiz(); break;
+    case "dilemma": curView="dilemma"; curD=m.d||0; renderDilemma(); break;
     case "reflect": curView="reflect"; renderReflect(); break;
     case "charter": curView="charter"; renderCharter(); break;
     case "hold": curView="hold"; renderHold(); break;
@@ -442,6 +459,23 @@ function renderQuiz(){
   }
 }
 
+/* ---------- DILEMMA (no wrong answer) ---------- */
+function renderDilemma(){
+  const D=DILEMMAS[curD], picked=S.dvote[curD];
+  V().innerHTML=`<div class="view">
+    <span class="eyebrow">Where do you stand</span>
+    <div class="card">
+      <div class="qtag">${D.tag}</div>
+      <div class="claim">${D.claim}</div>
+      <div id="dopts">${D.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
+      <div class="waitmark">No wrong answer here. Tap where you stand; you can change it anytime.</div>
+    </div></div>`;
+  V().querySelectorAll(".opt").forEach(btn=>{ const k=+btn.dataset.k;
+    if(picked===k) btn.classList.add("picked");
+    btn.onclick=()=>{ S.dvote[curD]=k; send({type:"dvote",di:curD,pick:k}); renderDilemma(); };
+  });
+}
+
 /* ---------- REFLECTION ---------- */
 function renderReflect(){
   V().innerHTML=`<div class="view">
@@ -573,6 +607,7 @@ function renderLog(){
       <ul><li><b>I used to believe I could not:</b> ${esc(S.belief.b1)||"—"}</li><li><b>Now I believe:</b> ${esc(S.belief.b2)||"—"}</li></ul>
       <p style="margin:12px 0 0;font-size:14px;"><b>Readiness:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p>
       <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">Build one thing. Ship it. You stay in command.</p></div>
+    <p style="text-align:center;font-family:var(--serif);font-size:17px;color:var(--accent-d);margin:4px 0 0;">Share your ideas, and what you will build. We learn and lead together.</p>
     </div>`;
 }
 
