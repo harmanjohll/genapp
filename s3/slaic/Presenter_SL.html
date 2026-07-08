@@ -17,6 +17,13 @@
   body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
     min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
   @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+  @keyframes revealUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .stack .layer,.matrix .mcard,.flipcol .fliptile,.flipgrid .fliptile,.frameq,.ladder .rung,.cc{animation:revealUp .5s ease both;}
+  .stack .layer:nth-child(1),.matrix .mcard:nth-child(1),.flipcol .fliptile:nth-child(1),.flipgrid .fliptile:nth-child(1),.frameq:nth-child(1),.cc:nth-child(1){animation-delay:.04s}
+  .stack .layer:nth-child(2),.matrix .mcard:nth-child(2),.flipcol .fliptile:nth-child(2),.flipgrid .fliptile:nth-child(2),.frameq:nth-child(2),.cc:nth-child(2){animation-delay:.13s}
+  .stack .layer:nth-child(3),.matrix .mcard:nth-child(3),.flipcol .fliptile:nth-child(3),.flipgrid .fliptile:nth-child(3),.frameq:nth-child(3),.cc:nth-child(3){animation-delay:.22s}
+  .stack .layer:nth-child(4),.matrix .mcard:nth-child(4),.flipcol .fliptile:nth-child(4),.flipgrid .fliptile:nth-child(4),.frameq:nth-child(4){animation-delay:.31s}
+  .stack .layer:nth-child(5),.flipcol .fliptile:nth-child(5){animation-delay:.40s}
   ::selection{background:var(--accent);color:#0b1a18;}
 
   .top{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;
