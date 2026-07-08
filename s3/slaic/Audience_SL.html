@@ -180,7 +180,12 @@ const QUIZ = [
   { tag:"True or false", claim:"Partner is the most advanced posture; aim to move every task there.",
     options:["True","False"], answer:1,
     why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for.",
-    note:"Postures, not a ladder. The right posture fits the task." }
+    note:"Postures, not a ladder. The right posture fits the task." },
+  { tag:"A clear breach",
+    claim:"A teacher pasted a class list with named wellbeing notes into a free public chatbot to draft support plans. It is done. The strongest first move is…",
+    options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in your HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it yourself; there is no need to escalate"], answer:1,
+    why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in your HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call.",
+    note:"A breach is a reporting duty. Log it and escalate.", solo:true }
 ];
 const DILEMMAS = [
  {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
@@ -433,7 +438,7 @@ function renderQuiz(){
   V().innerHTML=`<div class="view">
     <span class="eyebrow">Predict, then reveal together</span>
     <div class="card">
-      <div class="qhead"><div><div class="qtag">${q.tag} · ${curQ+1} of ${QUIZ.length}</div></div></div>
+      <div class="qhead"><div><div class="qtag">${q.tag}${q.solo?"":` · ${curQ+1} of 5`}</div></div></div>
       <div class="claim">${q.claim}</div>
       <div id="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
       <div id="rev"></div>
@@ -481,18 +486,18 @@ function renderDilemma(){
 /* ---------- REFLECTION ---------- */
 function renderReflect(){
   V().innerHTML=`<div class="view">
-    <span class="eyebrow">Lines to carry out</span>
-    <h2>Three honest lines.</h2>
-    <p class="lede">These feed your command card at the end. Each line is shared with the room by default; tap a toggle to keep one private.</p>
-    <div class="beat"><div class="wsw">Skill</div>
-      <div class="qx">What in my work could become a skill?</div>
-      ${shareHTML("r1","A task I repeat that AI could hold…")}</div>
-    <div class="beat"><div class="wsw">Prohibit</div>
-      <div class="qx">Where would I prohibit AI, on principle?</div>
-      ${shareHTML("r2","On principle, never…")}</div>
-    <div class="beat"><div class="wsw">Build next</div>
-      <div class="qx">One thing I will build next.</div>
-      ${shareHTML("r3","I will build…")}</div>
+    <span class="eyebrow">Your keepsake · what you will stand for</span>
+    <h2>What. So what. What next.</h2>
+    <p class="lede">Hold the frames from today: PILOT, the 5 Ps, the five forces. Then, in your own words. This becomes your card. Shared with the room by default; tap Private to keep one to yourself.</p>
+    <div class="beat"><div class="wsw">What · noticing</div>
+      <div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div>
+      ${shareHTML("r1","I am noticing…")}</div>
+    <div class="beat"><div class="wsw">So what · meaning</div>
+      <div class="qx">What does it mean for how you will lead this change?</div>
+      ${shareHTML("r2","So for me, it means…")}</div>
+    <div class="beat"><div class="wsw">What next · one move</div>
+      <div class="qx">One thing you will do, or stand for, next.</div>
+      ${shareHTML("r3","Next, I will…")}</div>
     <div class="belief">
       <div class="bl">The shift (yours to keep)</div>
       <input type="text" id="b1" placeholder="I used to believe I could not..." value="${esc(S.belief.b1)}">
@@ -603,12 +608,12 @@ function renderLog(){
     <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>Our command charter · the 5 Ps</h3>
       ${charterLines||"<p style='font-size:14px;'>—</p>"}
       <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">My lines</p>
-      <ul><li><b>A skill I will make:</b> ${esc(sv("r1"))||"—"}</li><li><b>Where I prohibit AI:</b> ${esc(sv("r2"))||"—"}</li>
-      <li><b>One thing I will build next:</b> ${esc(sv("r3"))||"—"}</li></ul>
+      <ul><li><b>What I am noticing:</b> ${esc(sv("r1"))||"—"}</li><li><b>So what it means:</b> ${esc(sv("r2"))||"—"}</li>
+      <li><b>What I will do next:</b> ${esc(sv("r3"))||"—"}</li></ul>
       <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">The shift</p>
       <ul><li><b>I used to believe I could not:</b> ${esc(S.belief.b1)||"—"}</li><li><b>Now I believe:</b> ${esc(S.belief.b2)||"—"}</li></ul>
       <p style="margin:12px 0 0;font-size:14px;"><b>Readiness:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p>
-      <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">Build one thing. Ship it. You stay in command.</p></div>
+      <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">What you will stand for, and how you will show up, leading change in an AI age.</p></div>
     <p style="text-align:center;font-family:var(--serif);font-size:17px;color:var(--accent-d);margin:4px 0 0;">Share your ideas, and what you will build. We learn and lead together.</p>
     </div>`;
 }
