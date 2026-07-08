@@ -58,13 +58,19 @@
   .qopts{display:grid;gap:12px;}
   .qopt{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;border:1px solid var(--line);border-radius:14px;padding:20px 24px;font-size:clamp(18px,2.2vw,26px);background:transparent;transition:border-color .2s;}
   .qopt .mk{font-weight:800;color:var(--muted);width:24px;}
-  .qopt .bar{flex-basis:100%;height:8px;border-radius:6px;background:var(--accent);width:0;transition:width .6s;}
+  .qopt .bar{flex-basis:100%;height:9px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden;}
+  .qopt .bar i{display:block;height:100%;background:var(--accent);width:0;border-radius:6px;transition:width .6s;}
   .qopt .pct{margin-left:auto;font-size:18px;color:var(--muted);min-width:56px;text-align:right;font-variant-numeric:tabular-nums;}
   .qopt.correct{border-color:var(--accent);background:rgba(158,199,189,.10);}
   .qopt.correct .mk{color:var(--accent);}
   .why{margin-top:26px;border-left:4px solid var(--accent);padding:10px 0 10px 26px;font-size:clamp(20px,2.5vw,30px);display:none;color:var(--muted);max-width:1050px;line-height:1.42;}
   .why.show{display:block;}
   .why b{color:var(--ink);font-weight:700;}
+  .whynot{margin-top:22px;max-width:1050px;}
+  .whynot .wntitle{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--rust);margin-bottom:10px;}
+  .whynot .wnrow{font-size:clamp(16px,1.9vw,22px);color:var(--muted);line-height:1.4;padding:8px 0;border-top:1px solid var(--line);display:flex;gap:12px;}
+  .whynot .wnk{font-weight:800;color:var(--muted);flex:none;}
+  .whynot .rd, .why .rd{color:var(--rust);font-weight:800;}
 
   /* readiness */
   .confgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
@@ -329,6 +335,26 @@ const QUIZ = [
    answer:1,
    why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in your HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call."}
 ];
+/* ---------- Why-Not: why each wrong option misses (key word in red) ---------- */
+const BADS = [
+  {0:"Size is <b class='rd'>not</b> the difference. A huge model with no loop still answers once.",
+   2:"Memory is a feature, <b class='rd'>not</b> autonomy. Recall does not make it act, check, and retry.",
+   3:"A connection is <b class='rd'>not</b> agency. A search tool fetches; it does not run a goal."},
+  {0:"Stripping names is <b class='rd'>not</b> enough. A full cohort can be re-identified, and it is still official data.",
+   1:"Deleting the chat does <b class='rd'>not</b> undo the exposure. A public tool may already have logged it.",
+   3:"A smaller breach is <b class='rd'>still</b> a breach. Scale does not change where the data belongs."},
+  {0:"Technical is exactly what AI <b class='rd'>can</b> absorb. Hand over the logistics.",
+   1:"AI clears the admin here; relationships stay ours, but this is <b class='rd'>not</b> the force it most threatens.",
+   3:"AI assists teaching and we judge, but the <b class='rd'>deepest</b> non-delegable is the cultural, symbolic core."},
+  {0:"Going out of date is a maintenance issue, <b class='rd'>not</b> the core risk of a single author.",
+   2:"Trust matters, but the deeper risk is one voice passing as <b class='rd'>everyone's</b>.",
+   3:"A real concern, but separate. The mirror risk is <b class='rd'>whose</b> judgement the skill encodes."},
+  {0:"<b class='rd'>False</b>. Postures are per task; Partner does not beat Prohibit."},
+  {0:"Quietly deleting <b class='rd'>hides</b> a breach that must be logged and reported.",
+   2:"Waiting <b class='rd'>lets</b> the exposure stand. A breach is a duty to act now.",
+   3:"This is <b class='rd'>not</b> yours to absorb. Policy is to escalate and bring in the right people."}
+];
+
 
 const DILEMMAS = [
  {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
@@ -613,8 +639,9 @@ function stageQuiz(q){
       <div class="qhead"><div><div class="qtag">${Q.tag}${Q.solo?"":` · ${q+1} of 5`}</div></div></div>
       <div class="claim">${Q.claim}</div>
       <div class="qopts">${Q.options.map((o,k)=>{ const pct=total?Math.round(counts[k]/total*100):0;
-        return `<div class="qopt ${rev&&k===Q.answer?'correct':''}"><span class="mk">${String.fromCharCode(65+k)}</span><span>${o}</span>${rev?`<span class="pct">${pct}%</span><span class="bar" style="width:${Math.max(pct,3)}%"></span>`:""}</div>`;}).join("")}</div>
+        return `<div class="qopt ${rev&&k===Q.answer?'correct':''}"><span class="mk">${String.fromCharCode(65+k)}</span><span>${o}</span>${rev?`<span class="pct">${pct}%</span><span class="bar"><i style="width:${pct}%"></i></span>`:""}</div>`;}).join("")}</div>
       <div class="why ${rev?'show':''}">${Q.why}</div>
+      ${rev?`<div class="whynot"><div class="wntitle">Why-Not · why the others miss</div>${Q.options.map((o,k)=>(k!==Q.answer&&BADS[q]&&BADS[q][k])?`<div class="wnrow"><span class="wnk">${String.fromCharCode(65+k)}</span><span>${BADS[q][k]}</span></div>`:"").join("")}</div>`:""}
     </div>`;
 }
 function stageDilemma(d){
@@ -626,7 +653,7 @@ function stageDilemma(d){
       <div class="claim">${D.claim}</div>
       <div class="qopts">${D.options.map((o,k)=>{ const pct=total?Math.round(counts[k]/total*100):0;
         return `<div class="qopt"><span class="mk">${String.fromCharCode(65+k)}</span><span>${o}</span>
-          <span class="pct">${total?pct+"%":""}</span><span class="bar" style="width:${total?Math.max(pct,3):0}%"></span></div>`;}).join("")}</div>
+          <span class="pct">${total?pct+"%":""}</span><span class="bar"><i style="width:${total?pct:0}%"></i></span></div>`;}).join("")}</div>
       <div class="why show" style="border-left-color:var(--amber)">${D.talk}</div>
     </div>`;
 }
