@@ -62,6 +62,12 @@
   .opt .mark{font-weight:800;margin-right:8px;}
   .why{border-left:3px solid var(--accent);background:#fff;padding:12px 15px;border-radius:0 10px 10px 0;font-size:14.5px;margin-top:8px;}
   .why b{color:var(--ink);}
+  .whynot{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 15px;}
+  .whynot .wntitle{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--rust);margin-bottom:8px;}
+  .whynot .wnrow{font-size:13.5px;color:var(--ink-soft);line-height:1.4;padding:6px 0;border-top:1px solid var(--line);}
+  .whynot .wnrow:first-of-type{border-top:none;}
+  .whynot .wnrow b{margin-right:6px;color:var(--muted);}
+  .whynot .rd, .why .rd{color:var(--rust);font-weight:800;}
   .verdict{font-weight:800;font-size:13px;margin-bottom:4px;}
   .verdict.ok{color:var(--green);}.verdict.no{color:var(--rust);}
   .waitmark{font-size:13px;color:var(--muted);margin-top:12px;font-style:italic;}
@@ -84,6 +90,10 @@
   .sharetoggle.on{background:var(--soft);border-color:var(--accent);color:var(--ink);}
   .sharetoggle.on:before{background:var(--green);}
   .sharehint{font-size:11.5px;color:var(--muted);}
+  .sharetog{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;margin-top:10px;}
+  .sharetog .seg{border:none;background:#fff;color:var(--muted);font-size:12.5px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:var(--sans);transition:.12s;}
+  .sharetog .seg[data-v="1"].on{background:var(--accent);color:#fff;}
+  .sharetog .seg[data-v="0"].on{background:var(--ink-soft);color:#fff;}
 
   .belief{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:6px;}
   .belief .bl{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:8px;color:var(--ink);}
@@ -163,7 +173,7 @@ const QUIZ = [
     note:"An agent runs a loop; you govern the process, not one answer." },
   { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
     options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"], answer:2,
-    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Student and staff records stay on Pair and AIBots. Free Claude is for open work only.",
+    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified.",
     note:"Decide what data goes where. Records stay on Pair and AIBots." },
   { tag:"Spot the risk", claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
     options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"], answer:1,
@@ -176,10 +186,34 @@ const QUIZ = [
   { tag:"True or false", claim:"Partner is the most advanced posture; aim to move every task there.",
     options:["True","False"], answer:1,
     why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for.",
-    note:"Postures, not a ladder. The right posture fits the task." }
+    note:"Postures, not a ladder. The right posture fits the task." },
+  { tag:"A clear breach",
+    claim:"A teacher pasted a class list with named wellbeing notes into a free public chatbot to draft support plans. It is done. The strongest first move is…",
+    options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in your HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it yourself; there is no need to escalate"], answer:1,
+    why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in your HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call.",
+    note:"A breach is a reporting duty. Log it and escalate.", solo:true }
 ];
+const BADS = [
+  {0:"Size is <b class='rd'>not</b> the difference. A huge model with no loop still answers once.",
+   2:"Memory is a feature, <b class='rd'>not</b> autonomy. Recall does not make it act, check, and retry.",
+   3:"A connection is <b class='rd'>not</b> agency. A search tool fetches; it does not run a goal."},
+  {0:"Stripping names is <b class='rd'>not</b> enough. A full cohort can be re-identified, and it is still official data.",
+   1:"Deleting the chat does <b class='rd'>not</b> undo the exposure. A public tool may already have logged it.",
+   3:"A smaller breach is <b class='rd'>still</b> a breach. Scale does not change where the data belongs."},
+  {0:"Technical is exactly what AI <b class='rd'>can</b> absorb. Hand over the logistics.",
+   1:"AI clears the admin here; relationships stay ours, but this is <b class='rd'>not</b> the force it most threatens.",
+   3:"AI assists teaching and we judge, but the <b class='rd'>deepest</b> non-delegable is the cultural, symbolic core."},
+  {0:"Going out of date is a maintenance issue, <b class='rd'>not</b> the core risk of a single author.",
+   2:"Trust matters, but the deeper risk is one voice passing as <b class='rd'>everyone's</b>.",
+   3:"A real concern, but separate. The mirror risk is <b class='rd'>whose</b> judgement the skill encodes."},
+  {0:"<b class='rd'>False</b>. Postures are per task; Partner does not beat Prohibit."},
+  {0:"Quietly deleting <b class='rd'>hides</b> a breach that must be logged and reported.",
+   2:"Waiting <b class='rd'>lets</b> the exposure stand. A breach is a duty to act now.",
+   3:"This is <b class='rd'>not</b> yours to absorb. Policy is to escalate and bring in the right people."}
+];
+
 const DILEMMAS = [
- {tag:"Modelling vs mandating", claim:"The fastest way to get staff using AI well is to\u2026",
+ {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
   options:["Mandate it in appraisal goals","Model it yourself, in the open","Fund the keen few and let it spread","Wait until the policy is signed"]},
  {tag:"The efficiency trap", claim:"AI hands your teachers back two hours a week. You protect that time first for\u2026",
   options:["Planning together","Time with students","Rest","New initiatives"]},
@@ -339,7 +373,7 @@ function renderConnect(){
     <p class="lede">This is yours for the session, and yours to keep. Type the room code on the screen, then follow along.</p>
     <div class="card">
       <label class="f" for="room">Room code</label>
-      <input type="text" id="room" placeholder="e.g. BTY-SL" autocomplete="off">
+      <input type="text" id="room" placeholder="e.g. S3-SL" autocomplete="off">
       <label class="f" for="name">Your name (optional, for your card)</label>
       <input type="text" id="name" placeholder="optional" autocomplete="off">
       <div style="margin-top:16px;"><button class="btn" id="join">Join the room</button></div>
@@ -365,18 +399,18 @@ function renderWaiting(msg){
 let pubT={};
 function shareState(key){ return S.share[key]||(S.share[key]={text:"",on:true}); }
 function sv(key){ const st=S.share[key]; return st?st.text:""; }
+function shareTog(key,st){ return `<div class="sharetog" id="tg-${key}">
+    <button type="button" class="seg ${st.on?'':'on'}" data-v="0">Private</button>
+    <button type="button" class="seg ${st.on?'on':''}" data-v="1">Shared with the room</button></div>`; }
 function shareHTML(key,placeholder){ const st=shareState(key);
-  return `<textarea id="sf-${key}" placeholder="${placeholder}">${esc(st.text)}</textarea>
-    <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${key}">${st.on?'Shared with the room':'Private'}</button>
-    <span class="sharehint" id="th-${key}">${st.on?'tap to keep private':'tap to share'}</span></div>`; }
+  return `<textarea id="sf-${key}" placeholder="${placeholder}">${esc(st.text)}</textarea>${shareTog(key,st)}`; }
 function wireShare(key,channel){
-  const ta=document.getElementById("sf-"+key), tg=document.getElementById("tg-"+key), th=document.getElementById("th-"+key);
+  const ta=document.getElementById("sf-"+key), tg=document.getElementById("tg-"+key);
   if(!ta||!tg) return;
   ta.oninput=()=>{ shareState(key).text=ta.value.trim(); schedulePublish(key,channel); };
-  tg.onclick=()=>{ const st=shareState(key); st.on=!st.on;
-    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
-    if(th) th.textContent=st.on?'tap to keep private':'tap to share';
-    publishShare(key,channel); };
+  tg.querySelectorAll(".seg").forEach(b=>b.onclick=()=>{ const on=b.dataset.v==="1"; shareState(key).on=on;
+    tg.querySelectorAll(".seg").forEach(x=>x.classList.toggle("on",(x.dataset.v==="1")===on));
+    publishShare(key,channel); });
 }
 function schedulePublish(key,channel){ clearTimeout(pubT[key]); pubT[key]=setTimeout(()=>publishShare(key,channel),600); }
 function publishShare(key,channel){ const st=shareState(key); send({type:"share",channel:channel,key:key,text:st.text,on:!!st.on}); }
@@ -410,8 +444,7 @@ function renderInQuestions(){
   wrap.innerHTML=inQKeys.map((k,i)=>{ const st=shareState(k);
     return `<div class="qline">
       <textarea id="sf-${k}" placeholder="${i===0?'What are you weighing as a leader on AI?':'Another question…'}">${esc(st.text)}</textarea>
-      <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${k}">${st.on?'Shared with the room':'Private'}</button>
-        <span class="sharehint">${st.on?'tap to keep private':'tap to share'}</span></div>
+      ${shareTog(k,st)}
     </div>`; }).join("");
   inQKeys.forEach(wireInQuestion);
   const add=document.getElementById("qadd"); if(add) add.style.display=inQKeys.length>=3?"none":"";
@@ -419,10 +452,9 @@ function renderInQuestions(){
 function wireInQuestion(k){
   const ta=document.getElementById("sf-"+k), tg=document.getElementById("tg-"+k);
   if(ta) ta.oninput=()=>{ shareState(k).text=ta.value.trim(); if(inSubmitted) schedulePublish(k,"question"); };
-  if(tg) tg.onclick=()=>{ const st=shareState(k); st.on=!st.on;
-    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
-    const hint=tg.nextElementSibling; if(hint) hint.textContent=st.on?'tap to keep private':'tap to share';
-    if(inSubmitted) publishShare(k,"question"); };  // live Share/Private update on the presenter
+  if(tg) tg.querySelectorAll(".seg").forEach(b=>b.onclick=()=>{ const on=b.dataset.v==="1"; shareState(k).on=on;
+    tg.querySelectorAll(".seg").forEach(x=>x.classList.toggle("on",(x.dataset.v==="1")===on));
+    if(inSubmitted) publishShare(k,"question"); });  // live Share/Private update on the presenter
 }
 
 /* ---------- QUIZ ---------- */
@@ -431,7 +463,7 @@ function renderQuiz(){
   V().innerHTML=`<div class="view">
     <span class="eyebrow">Predict, then reveal together</span>
     <div class="card">
-      <div class="qhead"><div><div class="qtag">${q.tag} · ${curQ+1} of ${QUIZ.length}</div></div></div>
+      <div class="qhead"><div><div class="qtag">${q.tag}${q.solo?"":` · ${curQ+1} of 5`}</div></div></div>
       <div class="claim">${q.claim}</div>
       <div id="opts">${q.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
       <div id="rev"></div>
@@ -451,7 +483,8 @@ function renderQuiz(){
   const r=document.getElementById("rev");
   if(rev){
     const ok=picked===q.answer;
-    r.innerHTML=`<div class="why"><div class="verdict ${ok?'ok':'no'}">${ok?'You read it right.':'Worth a second look.'}</div>${q.why}</div>`;
+    r.innerHTML=`<div class="why"><div class="verdict ${ok?'ok':'no'}">${ok?'You read it right.':'Worth a second look.'}</div>${q.why}</div>`
+      +(BADS[curQ]?`<div class="whynot"><div class="wntitle">Why-Not · why the others miss</div>${q.options.map((o,k)=>(k!==q.answer&&BADS[curQ][k])?`<div class="wnrow"><b>${String.fromCharCode(65+k)}</b> <span>${BADS[curQ][k]}</span></div>`:"").join("")}</div>`:"");
   } else if(picked!=null){
     r.innerHTML=`<div class="waitmark">Answer in. Tap another to change it, up until we reveal together.</div>`;
   } else {
@@ -468,7 +501,7 @@ function renderDilemma(){
       <div class="qtag">${D.tag}</div>
       <div class="claim">${D.claim}</div>
       <div id="dopts">${D.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
-      <div class="waitmark">No wrong answer here. Tap where you stand; you can change it anytime.</div>
+      <div class="waitmark">Share your views. This is what you feel, and is personal.</div>
     </div></div>`;
   V().querySelectorAll(".opt").forEach(btn=>{ const k=+btn.dataset.k;
     if(picked===k) btn.classList.add("picked");
@@ -479,18 +512,18 @@ function renderDilemma(){
 /* ---------- REFLECTION ---------- */
 function renderReflect(){
   V().innerHTML=`<div class="view">
-    <span class="eyebrow">Lines to carry out</span>
-    <h2>Three honest lines.</h2>
-    <p class="lede">These feed your command card at the end. Each line is shared with the room by default; tap a toggle to keep one private.</p>
-    <div class="beat"><div class="wsw">Skill</div>
-      <div class="qx">What in my work could become a skill?</div>
-      ${shareHTML("r1","A task I repeat that AI could hold…")}</div>
-    <div class="beat"><div class="wsw">Prohibit</div>
-      <div class="qx">Where would I prohibit AI, on principle?</div>
-      ${shareHTML("r2","On principle, never…")}</div>
-    <div class="beat"><div class="wsw">Build next</div>
-      <div class="qx">One thing I will build next.</div>
-      ${shareHTML("r3","I will build…")}</div>
+    <span class="eyebrow">Your keepsake · what you will stand for</span>
+    <h2>What. So what. What next.</h2>
+    <p class="lede">Hold the frames from today: PILOT, the 5 Ps, the five forces. Then, in your own words. This becomes your card. Shared with the room by default; tap Private to keep one to yourself.</p>
+    <div class="beat"><div class="wsw">What · noticing</div>
+      <div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div>
+      ${shareHTML("r1","I am noticing…")}</div>
+    <div class="beat"><div class="wsw">So what · meaning</div>
+      <div class="qx">What does it mean for how you will lead this change?</div>
+      ${shareHTML("r2","So for me, it means…")}</div>
+    <div class="beat"><div class="wsw">What next · one move</div>
+      <div class="qx">One thing you will do, or stand for, next.</div>
+      ${shareHTML("r3","Next, I will…")}</div>
     <div class="belief">
       <div class="bl">The shift (yours to keep)</div>
       <input type="text" id="b1" placeholder="I used to believe I could not..." value="${esc(S.belief.b1)}">
@@ -601,12 +634,12 @@ function renderLog(){
     <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>Our command charter · the 5 Ps</h3>
       ${charterLines||"<p style='font-size:14px;'>—</p>"}
       <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">My lines</p>
-      <ul><li><b>A skill I will make:</b> ${esc(sv("r1"))||"—"}</li><li><b>Where I prohibit AI:</b> ${esc(sv("r2"))||"—"}</li>
-      <li><b>One thing I will build next:</b> ${esc(sv("r3"))||"—"}</li></ul>
+      <ul><li><b>What I am noticing:</b> ${esc(sv("r1"))||"—"}</li><li><b>So what it means:</b> ${esc(sv("r2"))||"—"}</li>
+      <li><b>What I will do next:</b> ${esc(sv("r3"))||"—"}</li></ul>
       <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">The shift</p>
       <ul><li><b>I used to believe I could not:</b> ${esc(S.belief.b1)||"—"}</li><li><b>Now I believe:</b> ${esc(S.belief.b2)||"—"}</li></ul>
       <p style="margin:12px 0 0;font-size:14px;"><b>Readiness:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p>
-      <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">Build one thing. Ship it. You stay in command.</p></div>
+      <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">What you will stand for, and how you will show up, leading change in an AI age.</p></div>
     <p style="text-align:center;font-family:var(--serif);font-size:17px;color:var(--accent-d);margin:4px 0 0;">Share your ideas, and what you will build. We learn and lead together.</p>
     </div>`;
 }
