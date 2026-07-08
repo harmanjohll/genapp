@@ -84,6 +84,10 @@
   .sharetoggle.on{background:var(--soft);border-color:var(--accent);color:var(--ink);}
   .sharetoggle.on:before{background:var(--green);}
   .sharehint{font-size:11.5px;color:var(--muted);}
+  .sharetog{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;margin-top:10px;}
+  .sharetog .seg{border:none;background:#fff;color:var(--muted);font-size:12.5px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:var(--sans);transition:.12s;}
+  .sharetog .seg[data-v="1"].on{background:var(--accent);color:#fff;}
+  .sharetog .seg[data-v="0"].on{background:var(--ink-soft);color:#fff;}
 
   .belief{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:6px;}
   .belief .bl{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:8px;color:var(--ink);}
@@ -163,7 +167,7 @@ const QUIZ = [
     note:"An agent runs a loop; you govern the process, not one answer." },
   { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
     options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"], answer:2,
-    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Student and staff records stay on Pair and AIBots. Free Claude is for open work only.",
+    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified.",
     note:"Decide what data goes where. Records stay on Pair and AIBots." },
   { tag:"Spot the risk", claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
     options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"], answer:1,
@@ -179,7 +183,7 @@ const QUIZ = [
     note:"Postures, not a ladder. The right posture fits the task." }
 ];
 const DILEMMAS = [
- {tag:"Modelling vs mandating", claim:"The fastest way to get staff using AI well is to\u2026",
+ {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
   options:["Mandate it in appraisal goals","Model it yourself, in the open","Fund the keen few and let it spread","Wait until the policy is signed"]},
  {tag:"The efficiency trap", claim:"AI hands your teachers back two hours a week. You protect that time first for\u2026",
   options:["Planning together","Time with students","Rest","New initiatives"]},
@@ -339,7 +343,7 @@ function renderConnect(){
     <p class="lede">This is yours for the session, and yours to keep. Type the room code on the screen, then follow along.</p>
     <div class="card">
       <label class="f" for="room">Room code</label>
-      <input type="text" id="room" placeholder="e.g. BTY-SL" autocomplete="off">
+      <input type="text" id="room" placeholder="e.g. S3-SL" autocomplete="off">
       <label class="f" for="name">Your name (optional, for your card)</label>
       <input type="text" id="name" placeholder="optional" autocomplete="off">
       <div style="margin-top:16px;"><button class="btn" id="join">Join the room</button></div>
@@ -365,18 +369,18 @@ function renderWaiting(msg){
 let pubT={};
 function shareState(key){ return S.share[key]||(S.share[key]={text:"",on:true}); }
 function sv(key){ const st=S.share[key]; return st?st.text:""; }
+function shareTog(key,st){ return `<div class="sharetog" id="tg-${key}">
+    <button type="button" class="seg ${st.on?'':'on'}" data-v="0">Private</button>
+    <button type="button" class="seg ${st.on?'on':''}" data-v="1">Shared with the room</button></div>`; }
 function shareHTML(key,placeholder){ const st=shareState(key);
-  return `<textarea id="sf-${key}" placeholder="${placeholder}">${esc(st.text)}</textarea>
-    <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${key}">${st.on?'Shared with the room':'Private'}</button>
-    <span class="sharehint" id="th-${key}">${st.on?'tap to keep private':'tap to share'}</span></div>`; }
+  return `<textarea id="sf-${key}" placeholder="${placeholder}">${esc(st.text)}</textarea>${shareTog(key,st)}`; }
 function wireShare(key,channel){
-  const ta=document.getElementById("sf-"+key), tg=document.getElementById("tg-"+key), th=document.getElementById("th-"+key);
+  const ta=document.getElementById("sf-"+key), tg=document.getElementById("tg-"+key);
   if(!ta||!tg) return;
   ta.oninput=()=>{ shareState(key).text=ta.value.trim(); schedulePublish(key,channel); };
-  tg.onclick=()=>{ const st=shareState(key); st.on=!st.on;
-    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
-    if(th) th.textContent=st.on?'tap to keep private':'tap to share';
-    publishShare(key,channel); };
+  tg.querySelectorAll(".seg").forEach(b=>b.onclick=()=>{ const on=b.dataset.v==="1"; shareState(key).on=on;
+    tg.querySelectorAll(".seg").forEach(x=>x.classList.toggle("on",(x.dataset.v==="1")===on));
+    publishShare(key,channel); });
 }
 function schedulePublish(key,channel){ clearTimeout(pubT[key]); pubT[key]=setTimeout(()=>publishShare(key,channel),600); }
 function publishShare(key,channel){ const st=shareState(key); send({type:"share",channel:channel,key:key,text:st.text,on:!!st.on}); }
@@ -410,8 +414,7 @@ function renderInQuestions(){
   wrap.innerHTML=inQKeys.map((k,i)=>{ const st=shareState(k);
     return `<div class="qline">
       <textarea id="sf-${k}" placeholder="${i===0?'What are you weighing as a leader on AI?':'Another question…'}">${esc(st.text)}</textarea>
-      <div class="sharerow"><button type="button" class="sharetoggle ${st.on?'on':''}" id="tg-${k}">${st.on?'Shared with the room':'Private'}</button>
-        <span class="sharehint">${st.on?'tap to keep private':'tap to share'}</span></div>
+      ${shareTog(k,st)}
     </div>`; }).join("");
   inQKeys.forEach(wireInQuestion);
   const add=document.getElementById("qadd"); if(add) add.style.display=inQKeys.length>=3?"none":"";
@@ -419,10 +422,9 @@ function renderInQuestions(){
 function wireInQuestion(k){
   const ta=document.getElementById("sf-"+k), tg=document.getElementById("tg-"+k);
   if(ta) ta.oninput=()=>{ shareState(k).text=ta.value.trim(); if(inSubmitted) schedulePublish(k,"question"); };
-  if(tg) tg.onclick=()=>{ const st=shareState(k); st.on=!st.on;
-    tg.classList.toggle("on",st.on); tg.textContent=st.on?'Shared with the room':'Private';
-    const hint=tg.nextElementSibling; if(hint) hint.textContent=st.on?'tap to keep private':'tap to share';
-    if(inSubmitted) publishShare(k,"question"); };  // live Share/Private update on the presenter
+  if(tg) tg.querySelectorAll(".seg").forEach(b=>b.onclick=()=>{ const on=b.dataset.v==="1"; shareState(k).on=on;
+    tg.querySelectorAll(".seg").forEach(x=>x.classList.toggle("on",(x.dataset.v==="1")===on));
+    if(inSubmitted) publishShare(k,"question"); });  // live Share/Private update on the presenter
 }
 
 /* ---------- QUIZ ---------- */
@@ -468,7 +470,7 @@ function renderDilemma(){
       <div class="qtag">${D.tag}</div>
       <div class="claim">${D.claim}</div>
       <div id="dopts">${D.options.map((o,k)=>`<button class="opt" data-k="${k}"><span class="mark">${String.fromCharCode(65+k)}</span>${o}</button>`).join("")}</div>
-      <div class="waitmark">No wrong answer here. Tap where you stand; you can change it anytime.</div>
+      <div class="waitmark">Share your views. This is what you feel, and is personal.</div>
     </div></div>`;
   V().querySelectorAll(".opt").forEach(btn=>{ const k=+btn.dataset.k;
     if(picked===k) btn.classList.add("picked");
