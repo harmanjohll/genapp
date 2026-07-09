@@ -15,7 +15,7 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 | `index.html` | Landing page. One URL for the room; links Presenter, Audience, the run sheet, the reference, the cards. | Active. |
 | `Presenter_SL.html` | Facilitator console. Drives the deck, aggregates live responses. | Active. |
 | `Audience_SL.html` | Participant companion. Follows the console, collects each leader's input, builds their card. | Active. |
-| `SL_Facilitation_Plan.html` | Run sheet: clock, the Relay script, tensions, guardrails, pre flight. | Active. |
+| `SL_Facilitation_Plan.html` | Run sheet: clock, the hands-on brief, tensions, guardrails, pre flight. | Active; predates the round 4 cut of the Relay, so its Relay beats read as the generic hands-on build now. |
 | `SL_Cards.html` | Printable cards (paper fallback for the card the app builds). | Active. |
 
 ## Architecture (how the pair works)
@@ -35,9 +35,9 @@ MQTT_USER = ""                                     // broker username, if the br
 MQTT_PASS = ""                                     // broker password, if the broker needs auth
 ```
 
-Default room is `BTY-SL`. Override with `?room=XYZ` on either URL.
+Default room is `S3-SL`. Override with `?room=XYZ` on either URL.
 
-Message types on the bus: `stage` (carries `rev` for quiz stages), `reveal`, `reset`, `reqmine` (presenter to room); `join`, `hb`, `req`, `confidence`, `quiz`, `share`, `submitted` (room to presenter). `req` asks the presenter to resend the current stage; `reqmine` asks every leader to resend their own answers (used after a presenter reload so aggregates rebuild). The presenter's `aud` id on each stage maps 1:1 to a case in the Audience router: `welcome, in, quiz, reflect, charter, hold, watch, out, log`. If you add a stage type, add both sides.
+Message types on the bus: `stage` (carries `rev` for quiz stages), `reveal`, `reset`, `reqmine` (presenter to room); `join`, `hb`, `req`, `confidence`, `quiz`, `dvote`, `share`, `submitted` (room to presenter). `req` asks the presenter to resend the current stage; `reqmine` asks every leader to resend their own answers (used after a presenter reload so aggregates rebuild). The presenter's `aud` id on each stage maps 1:1 to a case in the Audience router: `welcome, in, quiz, dilemma, reflect, charter, watch, out, log`. If you add a stage type, add both sides.
 
 Reliability notes: the presenter rebroadcasts the current stage on a low cadence (a beacon) so a desynced leader reconverges within a few seconds; the Audience render is idempotent (it skips no-op rebroadcasts, re-renders if its view was lost). The presenter persists its session id in `localStorage`, so an accidental reload resumes the same run rather than orphaning every screen; "New session" still mints a fresh id and clears everything.
 
@@ -47,14 +47,14 @@ Verified at handoff: both script blocks pass `node --check`; the four constants 
 
 - **Writing rules (hard).** No hyphens, en dashes, or em dashes anywhere in copy; use commas, colons, semicolons, or rephrase. No AI tells. "Beattyian" and "Beattyians" always capitalised. Match the register of `leadai.html`: lean, declarative, a point of view.
 - **Theme.** Shared tokens with `leadai.html` so the live session and the take home read as one piece. Presenter is the dark variant (`--bg:#13242a`, accent `--accent:#9ec7bd`); Audience and the print pieces use the paper variant (`--paper:#f4f1ea`, accent `--accent:#2f7d72`), serif Georgia throughout.
-- **Content is downstream of `leadai.html`.** Every beat in the deck traces to a section there: frame, premise, PILOT, loop, agent, govern, forces, HEART, mirror, 5Ps, flash, build, the Relay, close. If you change a message, change it in the deck, not in `leadai.html`.
+- **Content is downstream of `leadai.html`.** Every beat in the deck traces to a section there: frame, premise, PILOT, loop, agent (including the ported `#w-agent` loop animation), govern, forces, HEART, mirror, 5Ps, flash, build, the hands-on, close. If you change a message, change it in the deck, not in `leadai.html`.
 - **BTY institutional facts** (mission, frameworks, theme history, the footer band) live in the `bty-context` skill. Use it for any BTY facing peripheral.
 
 ## Done
 
 - The four part system built and wired.
 - Five reads pitched at leader level: agent vs chatbot, the cohort records data boundary, what stays yours across Sergiovanni's forces, the one voice skill risk, postures not a ladder.
-- Live interactions: readiness poll with a walking in to walking out delta; Command Charter on the 5 Ps; reflection plus belief shift feeding a downloadable command card; the Relay tally.
+- Live interactions: readiness poll with a walking in to walking out delta; Command Charter on the 5 Ps; a dilemma vote; reflection feeding a downloadable command card; the agent loop animation on the presenter (tap to step, Replay to auto-run).
 
 ## Next (backlog, roughly ordered)
 

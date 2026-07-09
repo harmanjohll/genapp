@@ -18,12 +18,12 @@
     min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
   @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
   @keyframes revealUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-  .stack .layer,.matrix .mcard,.flipcol .fliptile,.flipgrid .fliptile,.frameq,.ladder .rung,.cc{animation:revealUp .5s ease both;}
-  .stack .layer:nth-child(1),.matrix .mcard:nth-child(1),.flipcol .fliptile:nth-child(1),.flipgrid .fliptile:nth-child(1),.frameq:nth-child(1),.cc:nth-child(1){animation-delay:.04s}
-  .stack .layer:nth-child(2),.matrix .mcard:nth-child(2),.flipcol .fliptile:nth-child(2),.flipgrid .fliptile:nth-child(2),.frameq:nth-child(2),.cc:nth-child(2){animation-delay:.13s}
-  .stack .layer:nth-child(3),.matrix .mcard:nth-child(3),.flipcol .fliptile:nth-child(3),.flipgrid .fliptile:nth-child(3),.frameq:nth-child(3),.cc:nth-child(3){animation-delay:.22s}
-  .stack .layer:nth-child(4),.matrix .mcard:nth-child(4),.flipcol .fliptile:nth-child(4),.flipgrid .fliptile:nth-child(4),.frameq:nth-child(4){animation-delay:.31s}
-  .stack .layer:nth-child(5),.flipcol .fliptile:nth-child(5){animation-delay:.40s}
+  .matrix .mcard,.flipcol .fliptile,.flipgrid .fliptile,.frameq,.ladder .rung,.cc{animation:revealUp .5s ease both;}
+  .matrix .mcard:nth-child(1),.flipcol .fliptile:nth-child(1),.flipgrid .fliptile:nth-child(1),.frameq:nth-child(1),.cc:nth-child(1){animation-delay:.04s}
+  .matrix .mcard:nth-child(2),.flipcol .fliptile:nth-child(2),.flipgrid .fliptile:nth-child(2),.frameq:nth-child(2),.cc:nth-child(2){animation-delay:.13s}
+  .matrix .mcard:nth-child(3),.flipcol .fliptile:nth-child(3),.flipgrid .fliptile:nth-child(3),.frameq:nth-child(3),.cc:nth-child(3){animation-delay:.22s}
+  .matrix .mcard:nth-child(4),.flipcol .fliptile:nth-child(4),.flipgrid .fliptile:nth-child(4),.frameq:nth-child(4){animation-delay:.31s}
+  .flipcol .fliptile:nth-child(5){animation-delay:.40s}
   ::selection{background:var(--accent);color:#0b1a18;}
 
   .top{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;
@@ -65,8 +65,8 @@
   .qopts{display:grid;gap:12px;}
   .qopt{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;border:1px solid var(--line);border-radius:14px;padding:20px 24px;font-size:clamp(18px,2.2vw,26px);background:transparent;transition:border-color .2s;}
   .qopt .mk{font-weight:800;color:var(--muted);width:24px;}
-  .qopt .bar{flex-basis:100%;height:9px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden;}
-  .qopt .bar i{display:block;height:100%;background:var(--accent);width:0;border-radius:6px;transition:width .6s;}
+  .qopt .bar{flex-basis:100%;height:4px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;}
+  .qopt .bar i{display:block;height:100%;background:var(--accent);width:0;border-radius:3px;transition:width .6s;}
   .qopt .pct{margin-left:auto;font-size:18px;color:var(--muted);min-width:56px;text-align:right;font-variant-numeric:tabular-nums;}
   .qopt.correct{border-color:var(--accent);background:rgba(158,199,189,.10);}
   .qopt.correct .mk{color:var(--accent);}
@@ -104,27 +104,6 @@
   .tile .txt{font-size:18px;margin-top:6px;line-height:1.3;font-weight:500;}
   .wallcount{font-size:14px;color:var(--muted);margin-top:18px;text-transform:uppercase;letter-spacing:.08em;}
 
-  /* relay */
-  .wsw-band{display:flex;gap:28px;margin:16px 0 0;flex-wrap:wrap;}
-  .wsw-band span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--muted);}
-  .lead{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
-  .team{display:flex;align-items:center;gap:18px;background:transparent;border:1px solid var(--line);border-radius:14px;padding:16px 22px;}
-  .team .rank{font-family:var(--serif);font-size:28px;color:var(--accent);width:42px;font-weight:800;font-variant-numeric:tabular-nums;}
-  .team .nm{font-size:22px;font-weight:600;flex:1;}
-  .team .sc{font-family:var(--serif);font-size:34px;color:var(--accent);min-width:56px;text-align:right;font-weight:800;font-variant-numeric:tabular-nums;}
-  .team .pm button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:transparent;color:#fff;font-size:20px;cursor:pointer;}
-  .team .pm button:hover{border-color:var(--accent);}
-  .addteam{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-  .addteam input{flex:1;min-width:200px;font-size:16px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:#fff;font-family:var(--sans);}
-  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px;}
-  @media(max-width:820px){.roles{grid-template-columns:1fr;}}
-  .role{border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:12px;padding:16px;}
-  .role.opt{border-top-color:var(--amber);}
-  .role .rl{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;}
-  .role.opt .rl{color:var(--amber);}
-  .role .rn{font-family:var(--serif);font-weight:700;font-size:20px;margin:3px 0 8px;}
-  .role p{font-size:14.5px;color:var(--muted);margin:0;line-height:1.45;}
-
   /* content slides */
   .closegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;}
   .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
@@ -157,11 +136,6 @@
   .polar{display:flex;flex-direction:column;gap:12px;margin-top:8px;max-width:820px;}
   .polar .row{display:flex;align-items:center;gap:16px;font-size:clamp(20px,2.6vw,28px);font-weight:600;border:1px solid var(--line);border-radius:14px;padding:16px 24px;}
   .polar .amp{color:var(--accent);font-weight:800;font-style:italic;}
-  .stack{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
-  .layer{border:1px solid var(--line);border-radius:11px;padding:14px 18px;display:flex;gap:16px;align-items:baseline;}
-  .layer.you{border-color:var(--accent);background:rgba(158,199,189,.07);}
-  .layer .ln{font-family:var(--serif);font-weight:700;font-size:18px;min-width:130px;color:#fff;}
-  .layer .lg{font-size:15px;color:var(--muted);}
   .matrix{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
   @media(max-width:820px){.matrix{grid-template-columns:1fr;}}
   .mcard{border:1px solid var(--line);border-radius:14px;padding:20px;}
@@ -262,6 +236,41 @@
   .fliptile.fttakes .fs{color:var(--rust);font-weight:700;}
   .fliptile .fl:last-child{margin-top:6px;}
   @media (prefers-reduced-motion: reduce){.fliptile .inner{transition:none;}}
+  /* kicker: the one-line takeaway on a slide; never smaller than the setup around it */
+  .kicker{font-size:clamp(18px,2.2vw,24px);font-weight:700;line-height:1.35;}
+  /* one icon per text-only slide, matching the flip-card slides */
+  .slideicon{font-size:clamp(30px,3.4vw,44px);line-height:1;margin:2px 0 16px;}
+
+  /* ===== agent loop diagram · ported from leadai.html #w-agent ===== */
+  #agent-widget{--ag-accent:#2f7d72;--ag-dark:#16282a;--ag-line:#d6ddd6;--ag-muted:#5d6b6a;--ag-ink:#1d2a2b;margin-top:6px;}
+  #agent-widget .agwrap{width:100%;max-width:1100px;overflow:hidden;margin:0 auto;}
+  #agent-widget .agcanvas{position:relative;background:linear-gradient(180deg,#fbfaf7,#ecefe8);border:1px solid var(--ag-line);border-radius:14px;cursor:pointer;}
+  #agent-widget .edge{position:absolute;inset:0;width:900px;height:560px;pointer-events:none;}
+  #agent-widget .node{position:absolute;transform:translate(-50%,-50%);background:#fff;border:1.5px solid var(--ag-line);border-radius:12px;padding:.7em .9em;text-align:center;transition:box-shadow .3s,border-color .3s,opacity .3s;min-width:120px;}
+  #agent-widget .node .t{font-family:var(--serif);font-weight:700;font-size:17px;color:var(--ag-ink);}
+  #agent-widget .node .s{font-size:12px;color:var(--ag-muted);margin-top:.15em;}
+  #agent-widget .node.lit{border-color:var(--ag-accent);box-shadow:0 0 0 4px rgba(47,125,114,.16),0 8px 24px rgba(47,125,114,.18);}
+  #agent-widget #nHarness{background:var(--ag-dark);border-color:var(--ag-dark);min-width:190px;padding:.9em;}
+  #agent-widget #nHarness .t{color:#fff;}#agent-widget #nHarness .s{color:#9bb0ab;}
+  #agent-widget #nOutput{background:#f1f6f2;border-color:#cfe0d4;opacity:0;}
+  #agent-widget #nOutput.show{opacity:1;}
+  #agent-widget .promptbox{min-width:300px;max-width:380px;}
+  #agent-widget .promptbox .p{font-size:14px;color:var(--ag-ink);line-height:1.35;}
+  #agent-widget .tags{display:flex;gap:.3em;justify-content:center;margin-top:.5em;flex-wrap:wrap;}
+  #agent-widget .tags span{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ag-accent);background:#e8ede9;border-radius:999px;padding:.2em .6em;}
+  #agent-widget .ring2{position:absolute;left:450px;top:260px;width:188px;height:188px;border-radius:50%;border:2.5px dashed var(--ag-accent);transform:translate(-50%,-50%);opacity:0;transition:opacity .3s;}
+  #agent-widget .ring2.on{opacity:.65;animation:agspin 3.4s linear infinite;}
+  #agent-widget .agpass{position:absolute;left:450px;top:332px;transform:translate(-50%,-50%);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ag-accent);opacity:0;transition:opacity .3s;}
+  #agent-widget .agpass.on{opacity:1;}
+  #agent-widget .agcheck{position:absolute;left:560px;top:226px;transform:translate(-50%,-50%);font-size:12.5px;font-weight:700;border-radius:999px;padding:.25em .7em;opacity:0;transition:opacity .3s;}
+  #agent-widget .agcheck.on{opacity:1;}
+  #agent-widget .agcheck.fail{background:#f7e3dd;color:#b1452b;}#agent-widget .agcheck.pass{background:#e3f0e7;color:#3f7d54;}
+  #agent-widget .pulse2{position:absolute;left:450px;top:70px;width:18px;height:18px;border-radius:50%;background:var(--ag-accent);transform:translate(-50%,-50%);transition:left .65s cubic-bezier(.5,.05,.3,1),top .65s cubic-bezier(.5,.05,.3,1);box-shadow:0 0 0 6px rgba(47,125,114,.2),0 0 18px rgba(47,125,114,.5);z-index:5;}
+  #agent-widget .excap{font-size:clamp(17px,2vw,22px);color:var(--ink);font-style:italic;min-height:1.5em;margin:14px auto 0;max-width:1100px;text-align:center;}
+  #agent-widget .agrow{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:10px auto 0;max-width:1100px;}
+  #agent-widget .agbeat{font-size:12px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-variant-numeric:tabular-nums;}
+  #agent-widget .agctl{display:flex;gap:10px;}
+  @keyframes agspin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -313,24 +322,24 @@ let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase();
 const QUIZ = [
   {tag:"What makes it new",
    claim:"An agent differs from a chatbot because it…",
-   options:["It uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","It remembers everything you have ever told it","It is always connected to the live internet"],
+   options:["Uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","Remembers everything we have told it","Stays connected to the live internet"],
    answer:1,
-   why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. You govern a process that keeps running when you are not watching, not a single answer."},
+   why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. We govern a process that keeps running when we are not watching, not a single answer."},
   {tag:"Your call",
-   claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
+   claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
    options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"],
    answer:2,
    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified."},
   {tag:"Spot the risk",
-   claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
+   claim:"We ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
    options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"],
    answer:1,
    why:"<b>A skill reflects whoever made it.</b> One voice can pass as the whole school's, and what we never write down is never captured. Build it with many, and govern the blind spots."},
   {tag:"What stays yours",
-   claim:"Across Sergiovanni's five forces, which must a leader never delegate to AI?",
+   claim:"Across Sergiovanni's five forces, which must we never delegate to AI?",
    options:["Technical: timetabling and logistics","Human: relationships and morale","Cultural: what the school believes and stands for","Educational: teaching and curriculum"],
    answer:2,
-   why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what you notice and what you stand for, stay yours. Treating them as optional is the category error."},
+   why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what we notice and what we stand for, stay ours. Treating them as optional is the category error."},
   {tag:"True or false",
    claim:"Partner is the most advanced posture; aim to move every task there.",
    options:["True","False"],
@@ -338,9 +347,9 @@ const QUIZ = [
    why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for."},
   {tag:"A clear breach", solo:true,
    claim:"A teacher pasted a class list with named wellbeing notes into a free public chatbot to draft support plans. It is done. The strongest first move is…",
-   options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in your HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it yourself; there is no need to escalate"],
+   options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in our HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it alone; no need to escalate"],
    answer:1,
-   why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in your HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call."}
+   why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in our HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call."}
 ];
 /* ---------- Why-Not: why each wrong option misses (key word in red) ---------- */
 const BADS = [
@@ -359,32 +368,14 @@ const BADS = [
   {0:"<b class='rd'>False</b>. Postures are per task; Partner does not beat Prohibit."},
   {0:"Quietly deleting <b class='rd'>hides</b> a breach that must be logged and reported.",
    2:"Waiting <b class='rd'>lets</b> the exposure stand. A breach is a duty to act now.",
-   3:"This is <b class='rd'>not</b> yours to absorb. Policy is to escalate and bring in the right people."}
+   3:"This is <b class='rd'>not</b> ours to absorb. Policy is to escalate and bring in the right people."}
 ];
 
 
 const DILEMMAS = [
  {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
-  options:["Mandate it in appraisal goals","Model it yourself, in the open","Fund the keen few and let it spread","Wait until the policy is signed"],
-  talk:"No wrong answer. But the room watches what you do, not what you say. Going first is itself the policy."},
- {tag:"The efficiency trap", claim:"AI hands your teachers back two hours a week. You protect that time first for\u2026",
-  options:["Planning together","Time with students","Rest","New initiatives"],
-  talk:"AI clears the admin so you have more hours for people, not fewer. What you protect the time for is the signal."},
- {tag:"What you would never delegate", claim:"The one leadership act you would never hand to AI, even done well, is\u2026",
-  options:["The condolence note","The hard appraisal conversation","The assembly message","The difficult no"],
-  talk:"Some things have no AI version. Naming the line is the symbolic force in action."},
- {tag:"The uneven room", claim:"You are ahead of most of your staff on AI. Your job now is to\u2026",
-  options:["Set the bar high","Meet them where they are","Pair the keen with the wary","Slow down to keep everyone together"],
-  talk:"If you are ahead, your job is to bring people with you, not to assume they sit where you sit."},
- {tag:"Govern vs trust", claim:"A teacher used free AI on something they should not have, then caught it themselves. You\u2026",
-  options:["Reinforce the rule firmly","Thank them for noticing, and open it up","Quietly log it","Review the policy with them"],
-  talk:"Coach, do not police. You govern by setting conditions, and by how you respond when someone tests them."},
- {tag:"Monday's signal", claim:"To show the school what you value in an AI age, the clearest single move is\u2026",
-  options:["Prohibit AI somewhere sacred","Build something in the open","Share a mistake AI helped you catch","Protect a no-AI space for people"],
-  talk:"Every one of these is a signal. What you notice tells the school what counts."},
- {tag:"What you are really governing", claim:"The thing you most need to keep your hand on is\u2026",
-  options:["Which tools staff use","What data goes where","What stays human","How fast you move"],
-  talk:"We govern by deciding what data goes where and what stays human, not by picking the cleverest tool."}
+  options:["Mandate it in appraisal goals","Model it ourselves, in the open","Fund the keen few and let it spread","Wait until the policy is signed"],
+  talk:"Share your views. This is what you feel, and is personal."}
 ];
 
 /* ---------- deck stages ---------- */
@@ -400,7 +391,7 @@ const STAGES = [
   {id:"quiztime",      aud:"watch",   sub:null,        label:"Quiz time · predict first"},
   {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Read 1 · predict: agent vs chatbot"},
   {id:"loop",          aud:"watch",   sub:null,        label:"A tool answers once. An agent loops."},
-  {id:"agent",         aud:"watch",   sub:null,        label:"What an agent is · five layers"},
+  {id:"agent",         aud:"watch",   sub:null,        label:"How an agent works · the loop"},
   {id:"govern",        aud:"watch",   sub:null,        label:"Govern it · what goes where"},
   {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Read · the data boundary"},
   {id:"breach",        aud:"quiz",   q:5, sub:"q5",   label:"A clear breach · report it"},
@@ -435,7 +426,7 @@ const qVotes = QUIZ.map(()=>({}));
 const dVotes = DILEMMAS.map(()=>({}));
 const revealed = {};
 const confIn={}, confOut={};
-const rules=[]; const teams=[];
+const rules=[];
 const shared = {question:{}, reflect:{}, charter:{}};
 const PSCAT = {prohibit:"Prohibit",polish:"Polish",plan:"Plan",produce:"Produce",partner:"Partner"};
 const RLAB = {r1:"Noticing",r2:"So what",r3:"What next"};
@@ -575,18 +566,17 @@ function resetSession(){
   for(const k in confOut) delete confOut[k];
   for(const ch in shared) shared[ch]={};
   rules.length=0;
-  teams.length=0; defaultTeams().forEach(function(n){teams.push({name:n,score:0});});
   si=0;
   send({type:"reset"}); broadcastStage();
   renderStage(); updateMeters();
 }
-function defaultTeams(){ return ["Trio 1","Trio 2","Trio 3","Trio 4","Trio 5","Trio 6"]; }
 
 function renderRail(){ const r=document.getElementById("rail"); r.innerHTML="";
   STAGES.forEach((_,i)=>{ const d=document.createElement("div");
     d.className="s"+(i<si?" done":i===si?" now":""); r.appendChild(d); }); }
 
 function renderStage(){
+  if(agTimer){ clearInterval(agTimer); agTimer=null; }   // never leave the loop demo running off-slide
   const s=STAGES[si], host=document.getElementById("stage");
   document.getElementById("stagei").textContent=si+1;
   document.getElementById("stagelbl").textContent=s.label;
@@ -602,7 +592,7 @@ function renderStage(){
   else if(s.id==="out") host.innerHTML=stageConf("out");
   else if(s.id==="reflect") host.innerHTML=stageReflect();
   else if(s.id==="wall"){ host.innerHTML=stageWall(); wireWall(); }
-  else if(s.id==="relay"){ host.innerHTML=stageRelay(); wireRelay(); }
+  else if(s.id==="agent"){ host.innerHTML=renderContent("agent"); wireAgent(); }
   else if(s.id==="close-end") host.innerHTML=stageCloseEnd();
   else host.innerHTML=renderContent(s.id);
 }
@@ -627,7 +617,7 @@ function stageCloseEnd(){
 function stageWelcome(){
   return `<span class="eyebrow">A working session for school leaders</span>
     <h1>Leading with AI</h1>
-    <p class="sub">How might we use AI with confidence, govern it with care, and keep schools that think?</p>
+    <p class="sub">How might we use AI with confidence, govern it with care, and keep schools thinking?</p>
     <div class="join"><div style="font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);">Join on your device</div>
       <div class="joinrow">
         <div class="qrslot" id="qrslot"><img src="qr.svg" alt="Scan to join the session" width="180" height="180"></div>
@@ -670,7 +660,7 @@ function stageConf(phase){
   if(phase==="out" && aIn!=null && a!=null){ const dd=(a-aIn).toFixed(1);
     mh = a>aIn ? `The room moved up ${dd}. That movement is the session.` : a===aIn ? "Steady and honest." : ""; }
   return `<span class="eyebrow">${phase==="in"?"Walking in":"Walking out"}</span>
-    <h1>${phase==="in"?"How ready is the room?":"And now? The room, again."}</h1>
+    <h1>${phase==="in"?"How ready is the room?":"And now? Rate the room again."}</h1>
     <p class="sub">Leaders rate their school's readiness, one to five, on their own screens. This updates live.</p>
     <div class="confgrid">
       <div class="confbox"><div class="lbl">Walking in</div>
@@ -679,13 +669,13 @@ function stageConf(phase){
         <div class="num">${a!=null?a.toFixed(1):"—"}</div>
         <div class="n">${Object.keys(confOut).length} responses</div></div>
     </div>${mh?`<div class="movehint">${mh}</div>`:""}
-    ${phase==="in"?feedHTML("question","The leadership question on each mind"):""}`;
+    ${phase==="in"?feedHTML("question","What is on each leader's mind"):""}`;
 }
 function avg(map){ const v=Object.values(map); return v.length?(v.reduce((x,y)=>x+y,0)/v.length):null; }
 function stageReflect(){
   return `<span class="eyebrow">Your keepsake · what you will stand for</span>
     <h1>What. So what. What next.</h1>
-    <p class="sub">Hold the frames from today: PILOT, the 5 Ps, and Sergiovanni's five forces. Then, in your own words, on your screen. Shared lines appear below; take a few aloud. This becomes your command card.</p>
+    <p class="sub">Hold the frames from today: PILOT, the 5 Ps, and Sergiovanni's five forces. Then, in your own words. Shared lines appear below; we take a few aloud. This becomes your command card.</p>
     <div class="beat"><div class="w">What · noticing</div><div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div></div>
     <div class="beat"><div class="w">So what · meaning</div><div class="qx">What does it mean for how you will lead this change?</div></div>
     <div class="beat"><div class="w">What next · one move</div><div class="qx">One thing you will do, or stand for, next.</div></div>
@@ -724,40 +714,78 @@ function renderWallTiles(){
   const c=document.getElementById("wallcount");
   if(c) c.textContent = all.length ? all.length+" line"+(all.length>1?"s":"")+" and counting" : "No lines yet. The first one breaks the ice.";
 }
-function stageRelay(){
-  return `<span class="eyebrow">The signature build · twelve minutes</span>
-    <h1>The Relay.</h1>
-    <p class="sub">In threes. Maker builds a skill, User runs it, Governor stress-tests it. Maker instructs, User launches, Governor oversees. That is PILOT, in twelve minutes.</p>
-    <div class="roles">
-      <div class="role"><div class="rl">A · Co-Author</div><div class="rn">Maker</div><p>Build a reusable house-voice SKILL.md in six questions, then hand it on.</p></div>
-      <div class="role"><div class="rl">B · Co-Author</div><div class="rn">User</div><p>Run the skill on a real letter. Change one fact. Watch it adapt while holding the voice.</p></div>
-      <div class="role opt"><div class="rl">C · Govern</div><div class="rn">Governor</div><p>What is sensitive here? Argue the strongest case against sending it at all.</p></div>
-    </div>
-    <div class="wsw-band" style="margin-top:22px;"><span>Make · 8 min</span><span>Run · 3 min</span><span>Govern · ongoing</span></div>
-    <p class="sub" style="margin-top:14px;font-size:15px;">Tally a point for trios that ship a working skill another could use. Tap <b style="color:var(--accent)">+</b> by hand.</p>
-    <div class="lead" id="lead"></div>
-    <div class="addteam"><input id="teamname" placeholder="Add a trio name, then Enter"><button class="btn" id="addteambtn">Add trio</button></div>`;
-}
-function wireRelay(){
-  renderLead();
-  document.getElementById("addteambtn").onclick=addTeam;
-  document.getElementById("teamname").addEventListener("keydown",e=>{ if(e.key==="Enter") addTeam(); });
-}
-function addTeam(){ const i=document.getElementById("teamname"),n=i.value.trim(); if(!n)return;
-  teams.push({name:n,score:0}); i.value=""; renderLead(); }
-function renderLead(){
-  const host=document.getElementById("lead"); if(!host) return;
-  const sorted=[...teams].sort((a,b)=>b.score-a.score); host.innerHTML="";
-  if(!teams.length){ host.innerHTML='<p class="sub">Add trios to begin.</p>'; return; }
-  sorted.forEach((t,i)=>{ const idx=teams.indexOf(t); const d=document.createElement("div"); d.className="team";
-    d.innerHTML=`<div class="rank">${i+1}</div><div class="nm">${esc(t.name)}</div>
-      <div class="pm"><button data-i="${idx}" data-d="-1">−</button><button data-i="${idx}" data-d="1">+</button></div>
-      <div class="sc">${t.score}</div>`; host.appendChild(d); });
-  host.querySelectorAll(".pm button").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i,dd=+b.dataset.d;
-    teams[i].score=Math.max(0,teams[i].score+dd); renderLead(); });
-}
 function renderContent(id){ const c=CONTENT[id]||{};
   return `<span class="eyebrow">${c.e||""}</span><h1>${c.t||""}</h1>${c.h||""}`; }
+
+/* ---------- agent loop diagram · ported from leadai.html #w-agent ----------
+   Nine beats: a quick ask resolves in one model pass; a harder ask plans, pulls
+   data, drafts, checks itself, fails, loops, passes, then stops and delivers.
+   Tap the diagram (or Step) to advance; Replay auto-runs all nine. */
+let agTimer=null;
+function wireAgent(){
+  const C={nInput:[450,70],nHarness:[450,260],nCaps:[130,250],nConn:[770,250],nModel:[450,430],nOutput:[450,512]};
+  const Q="What is the capital of France?";
+  const G="Clean this survey. Keep themes backed by 3+ replies. Revise until all are. Output a one-page brief.";
+  const T=["goal","check","stop rule"];
+  const CAP=[
+    "A quick question arrives.",
+    "The model answers in a single pass. No tools, no loop.",
+    "A simple ask does not loop.",
+    "Now a goal, with a check and a finish line.",
+    "It plans the steps, then pulls our data through Connections. Pass 1 begins.",
+    "It drafts with the model.",
+    "It checks its own work against the goal. Not every theme is backed yet.",
+    "So it revises and goes round again. This pass holds.",
+    "Finish line met. It stops and delivers."
+  ];
+  const beats=[
+    {p:Q,tags:[],at:"nInput",lit:["nInput"],out:null,ring:false,pass:null,check:null},
+    {p:Q,tags:[],at:"nModel",lit:["nHarness","nModel"],out:null,ring:false,pass:null,check:null},
+    {p:Q,tags:[],at:"nOutput",lit:["nOutput"],out:"A direct answer.",ring:false,pass:null,check:null},
+    {p:G,tags:T,at:"nInput",lit:["nInput"],out:null,ring:false,pass:null,check:null},
+    {p:G,tags:T,at:"nConn",lit:["nHarness","nConn"],out:null,ring:true,pass:1,check:null},
+    {p:G,tags:T,at:"nModel",lit:["nModel"],out:null,ring:true,pass:1,check:null},
+    {p:G,tags:T,at:"nHarness",lit:["nHarness"],out:null,ring:true,pass:1,check:"fail"},
+    {p:G,tags:T,at:"nHarness",lit:["nHarness"],out:null,ring:true,pass:2,check:"pass"},
+    {p:G,tags:T,at:"nOutput",lit:["nOutput"],out:"An evidence-backed one-page brief.",ring:false,pass:null,check:null}
+  ];
+  const $=id=>document.getElementById(id);
+  const canvas=$("agcanvas"), wrap=$("agwrap"), pulse=$("agpulse"), ring=$("agring"),
+        pass=$("agpass"), check=$("agcheck"), outNode=$("nOutput"), cap=$("agcap"), beatn=$("agbeatn");
+  if(!canvas) return;
+  const reduce=window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function fit(){
+    const availH=Math.max(300, window.innerHeight - wrap.getBoundingClientRect().top - 200);
+    const s=Math.min(1, wrap.clientWidth/900, availH/560);
+    canvas.style.transform="scale("+s+")"; canvas.style.transformOrigin="top center";
+    canvas.style.margin="0 auto";
+    wrap.style.height=(560*s)+"px";
+  }
+  function clearLit(){ ["nInput","nHarness","nCaps","nConn","nModel","nOutput"].forEach(n=>{ const e=$(n); if(e) e.classList.remove("lit"); }); }
+  function paint(i){
+    const b=beats[i];
+    $("agprompt").textContent=b.p;
+    $("agtags").innerHTML=(b.tags||[]).map(t=>"<span>"+t+"</span>").join("");
+    clearLit(); (b.lit||[]).forEach(n=>{ const e=$(n); if(e) e.classList.add("lit"); });
+    const p=C[b.at]||C.nHarness; pulse.style.left=p[0]+"px"; pulse.style.top=p[1]+"px";
+    ring.classList.toggle("on", !!b.ring);
+    if(b.pass){ pass.textContent="Pass "+b.pass; pass.classList.add("on"); } else { pass.classList.remove("on"); }
+    if(b.check){ check.className="agcheck on "+b.check; check.textContent=b.check==="fail"?"check: not yet":"check: pass"; } else { check.className="agcheck"; }
+    if(b.out){ $("agout").textContent=b.out; outNode.classList.add("show"); } else { outNode.classList.remove("show"); }
+    if(cap) cap.textContent=CAP[i];
+    if(beatn) beatn.textContent="Beat "+(i+1)+" of "+beats.length+" · tap the diagram to step";
+  }
+  let bi=0;
+  function stopAuto(){ if(agTimer){ clearInterval(agTimer); agTimer=null; } }
+  window.__agFit=fit;
+  window.__agStep=function(){ stopAuto(); bi=(bi+1)%beats.length; paint(bi); };
+  fit();
+  if(reduce){ bi=beats.length-1; paint(bi); }   // static end state; no timer under reduced motion
+  else paint(0);
+  $("agstep").onclick=()=>window.__agStep();
+  $("agreplay").onclick=()=>{ stopAuto(); bi=0; paint(0);
+    if(!reduce){ agTimer=setInterval(()=>{ if(bi>=beats.length-1){ stopAuto(); return; } bi++; paint(bi); },1700); } };
+}
 function flipTile(word, sub, icon, lines, cls){
   const back=(lines||[]).map(l=>`<div class="fl">${l}</div>`).join("");
   return `<div class="fliptile ${cls||''}"><div class="inner">
@@ -767,58 +795,84 @@ function flipTile(word, sub, icon, lines, cls){
 }
 
 const CONTENT = {
-  "frame":{e:"The frame", t:"Leading in, with, and beyond AI.",
+  "frame":{e:"The frame", t:"Leading with, through, and in AI.",
     h:`<div style="margin-top:8px">
         <div class="frameq">How might we <b>partner</b> with AI?</div>
         <div class="frameq">How might we <b>govern</b> AI use?</div>
-        <div class="frameq">How might we lead schools that keep <b>thinking and learning</b>, ever more deeply?</div>
-        <div class="frameq">How might we embrace the <b>human heart</b> of all that we do?</div>
+        <div class="frameq">How might we keep schools <b>thinking</b>, ever more deeply?</div>
+        <div class="frameq">How might we hold the <b>human heart</b> of the work?</div>
       </div>
-      <p class="body-txt" style="font-size:clamp(15px,1.8vw,18px);color:var(--muted);margin-top:24px">You already lead people through change. This change is different: it acts on its own. Reading a brief and deciding is no longer enough.</p>`},
-  "premise":{e:"The premise", t:"You cannot govern what you have only been briefed on.",
-    h:`<p class="body-txt">A brief tells you what a tool did once. Building one shows you how it breaks, where it drifts, and what you must never allow it to do.</p>
-      <p class="src" style="margin-top:16px">About six in ten principals already use AI tools; fewer than one school in ten has an AI policy. We are governing a thing we have not yet learned to govern. Kaufman et al. 2025, RAND; UNESCO 2025.</p>`},
+      <p class="body-txt kicker" style="color:var(--muted);margin-top:24px;font-weight:400">We already lead people through change. This change is different: <b>it acts on its own.</b> Reading a brief and deciding is no longer enough.</p>`},
+  "premise":{e:"The premise", t:"We cannot govern what we have only been briefed on.",
+    h:`<div class="slideicon">🛠️</div>
+      <p class="body-txt">A brief tells us what a tool did once. <b>Building one shows us how it breaks</b>, where it drifts, and what we must never allow it to do.</p>
+      <p class="body-txt" style="font-size:clamp(20px,2.6vw,30px);margin-top:18px"><b>6 in 10</b> principals already use AI. Fewer than <b>1 in 10</b> schools has a policy.</p>
+      <p class="src" style="margin-top:10px">We are governing a thing we have not yet learned to govern. Kaufman et al. 2025, RAND; UNESCO 2025.</p>`},
   "cos":{e:"The national frame", t:"We know our key moves. Or do we?",
     h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">At COS 2026 the national frame named four moves, for students. The same shape, one level up, is ours to lead: for teachers, parents, the community. The words are easy. Living them is the test.</p>
       <div class="flipgrid g2">
-        ${flipTile("About","learn about AI","🧭",["Do we learn what AI is, or just fear what it might be?","About names limits, not only promise."])}
+        ${flipTile("About","learn about AI","🧭",["Do we learn what AI is, or just fear what it might be?","About means naming the limits, not just the promise."])}
         ${flipTile("Use","use AI","⚡",["Do we model it in the open, or ban it in the dark?","Use means showing the loop, not hiding it."])}
         ${flipTile("With","learn with AI","🤝",["Do we co-plan with it, or outsource our judgement?","With means it drafts; we decide."])}
         ${flipTile("Beyond","learn beyond AI","🌱",["Do we protect what AI cannot touch, or let it crowd them out?","Beyond means presence, noticing, the values call."])}
       </div>
       <p class="src">Jasmin Lau, Minister of State for Education, COS2026, 3 March 2026. Tap a card to turn it.</p>`},
   "pilot":{e:"PILOT as a frame", t:"We PILOT, and we stay in command.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">All the more, we need clarity of thought and metacognition: what is most needed, and what we want for our people.</p>
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">The more AI can do, the more our judgement matters: what is most needed, and what we want for our people.</p>
       <div class="flipcol">
-        ${flipTile("Plan","set the course","🧭",["Name the goal, the guardrails, and what done looks like. Lead, do not react."])}
-        ${flipTile("Instruct","load your skills","📋",["Give it your context, your voice, your non-negotiables."])}
-        ${flipTile("Launch","let the agents run","🚀",["Hand it the task; let the agents run, loop, and report back to you."])}
-        ${flipTile("Oversee","stay in command","👁️",["You judge the result, you own the call, and you answer for it."])}
+        ${flipTile("Plan","set the course","🧭",["Name the goal, the guardrails, and what done looks like. Lead, do not react. <i>e.g. a family FAQ by Friday, nothing sensitive in it.</i>"])}
+        ${flipTile("Instruct","load our skills","📋",["Give it our context, our voice, our non-negotiables. <i>e.g. the house-voice skill, built from our own letters.</i>"])}
+        ${flipTile("Launch","let the agents run","🚀",["Hand it the task; let the agents run, loop, and report back to us."])}
+        ${flipTile("Oversee","stay in command","👁️",["We judge the result, we own the call, and we answer for it."])}
         ${flipTile("Tune","raise the ceiling","🎚️",["Add a skill or a connector; raise the ceiling, then raise it again."])}
       </div>
-      <p class="body-txt" style="font-size:clamp(20px,2.8vw,34px);color:var(--accent);font-weight:800;text-align:center;margin-top:24px;letter-spacing:-.01em;">Don't just be in the loop. Lead the loop.</p>`},
+      <p class="body-txt" style="font-size:clamp(20px,2.8vw,34px);color:var(--accent);font-weight:800;text-align:center;margin-top:24px;letter-spacing:-.01em;">Don't just be in the loop. Lead the loop!</p>`},
   "aspects":{e:"Four aspects · silicon and skin", t:"Two for the machine. Two for the human.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">Inside the posture sit four aspects: two for how we work the tool, two for what the tool is for.</p>
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">Four aspects: two for how we work the tool, two for what the tool is for.</p>
       <div class="matrix">
         <div class="mcard machine"><div class="tone">Silicon</div><h3>Co-Author AI</h3><div class="ssub">the machine</div><p style="margin:0;color:var(--muted);font-size:16px;line-height:1.5">We learn from it; it learns from us. Feed our judgement back in. Push its boundary out.</p></div>
         <div class="mcard machine"><div class="tone">Silicon</div><h3>Govern AI</h3><div class="ssub">the machine</div><p style="margin:0;color:var(--muted);font-size:16px;line-height:1.5">Deploy, delegate, discern. Operate it and rule it. Discern is the verb that catches its bias.</p></div>
-        <div class="mcard human"><div class="tone">Skin</div><h3>Transform the Human</h3><div class="ssub">the human</div><p style="margin:0;color:var(--muted);font-size:16px;line-height:1.5">Supercharge thinking. Move the person past their own ceiling. The person is what changes, not the model.</p></div>
+        <div class="mcard human"><div class="tone">Skin</div><h3>Transform the Human</h3><div class="ssub">the human</div><p style="margin:0;color:var(--muted);font-size:16px;line-height:1.5">Stretch thinking. Move the person past their own ceiling. The person is what changes, not the model.</p></div>
         <div class="mcard human"><div class="tone">Skin</div><h3>Stay Human</h3><div class="ssub">the human</div><p style="margin:0;color:var(--muted);font-size:16px;line-height:1.5">Guard the part no model reaches: the noticing, the mentoring, the presence, the values.</p></div>
       </div>`},
   "loop":{e:"With AI · The loop", t:"A tool answers once. An agent runs a loop.",
-    h:`<p class="body-txt">It sets a goal, acts, <b>checks its own work</b>, and tries again until the work is done.</p>
-      <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--muted)">That is what you govern. Not one answer. A process that keeps running when you are not watching.</p>
-      <p class="body-txt" style="font-size:15px;color:var(--accent);margin-top:14px">A goal plus a check plus a stop rule is what makes it loop.</p>`},
-  "agent":{e:"With AI · The agent", t:"What an agent is. Five layers.",
-    h:`<div class="stack">
-      <div class="layer you"><span class="ln">You</span><span class="lg">Set the goal. Judge the result. Stay in command.</span></div>
-      <div class="layer"><span class="ln">Harness</span><span class="lg">Runs the loop. Plans, acts, checks, repeats.</span></div>
-      <div class="layer"><span class="ln">Capabilities</span><span class="lg">Skills, instructions, connectors, plugins.</span></div>
-      <div class="layer"><span class="ln">Connections</span><span class="lg">Your files, mail, calendar, the web. MCP and the API.</span></div>
-      <div class="layer"><span class="ln">Model</span><span class="lg">The engine that reasons.</span></div>
-    </div>
-    <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:14px">A Project bundles instructions, connectors, and skills for one scope. You sit on top, in command.</p>
-    <p class="body-txt" style="font-size:15px;color:var(--accent);margin-top:6px">Know the layers, and the magic turns into parts you can name.</p>`},
+    h:`<div class="slideicon">🔁</div>
+      <p class="body-txt">It sets a goal, acts, <b>checks its own work</b>, and tries again until the work is done.</p>
+      <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--muted)">That is what we govern. Not one answer. A process that keeps running when we are not watching.</p>
+      <p class="body-txt kicker" style="color:var(--accent);margin-top:16px">Goal, check, stop rule. That is what makes it loop.</p>`},
+  "agent":{e:"With AI · The agent", t:"How an agent works.",
+    h:`<div id="agent-widget">
+      <div class="agwrap" id="agwrap">
+        <div class="agcanvas" id="agcanvas" style="width:900px;height:560px">
+          <svg class="edge" viewBox="0 0 900 560" preserveAspectRatio="none">
+            <g stroke="#cfd6cb" stroke-width="1.5" fill="none">
+              <line x1="450" y1="225" x2="450" y2="102"/>
+              <line x1="360" y1="255" x2="205" y2="250"/>
+              <line x1="540" y1="255" x2="695" y2="250"/>
+              <line x1="450" y1="296" x2="450" y2="408"/>
+              <line x1="450" y1="296" x2="450" y2="490"/>
+            </g>
+          </svg>
+          <div class="node promptbox" id="nInput" style="left:450px;top:70px">
+            <div class="t">Input</div><div class="p" id="agprompt">What is the capital of France?</div><div class="tags" id="agtags"></div>
+          </div>
+          <div class="ring2" id="agring"></div>
+          <div class="agpass" id="agpass">Pass 1</div>
+          <div class="agcheck" id="agcheck"></div>
+          <div class="node" id="nHarness" style="left:450px;top:260px"><div class="t">Harness</div><div class="s">the agent runtime · runs the loop</div></div>
+          <div class="node" id="nCaps" style="left:130px;top:250px"><div class="t">Capabilities</div><div class="s">skills · our instructions</div></div>
+          <div class="node" id="nConn" style="left:770px;top:250px"><div class="t">Connections</div><div class="s">our data · files, mail, web</div></div>
+          <div class="node" id="nModel" style="left:450px;top:430px"><div class="t">Model</div><div class="s">the engine that reasons</div></div>
+          <div class="node" id="nOutput" style="left:450px;top:512px"><div class="t">Output</div><div class="s" id="agout">a direct answer</div></div>
+          <div class="pulse2" id="agpulse"></div>
+        </div>
+      </div>
+      <p class="excap" id="agcap">A quick question arrives.</p>
+      <div class="agrow">
+        <span class="agbeat" id="agbeatn">Beat 1 of 9 · tap the diagram to step</span>
+        <div class="agctl"><button class="btn ghost sm" id="agreplay" type="button">↻ Replay</button><button class="btn sm" id="agstep" type="button">Step ▶</button></div>
+      </div>
+    </div>`},
   "govern":{e:"Through AI · Govern it", t:"What goes where.",
     h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">We govern by deciding <b>what data goes where</b>, not by deciding which tool is cleverer.</p>
       <div class="matrix">
@@ -830,7 +884,7 @@ const CONTENT = {
       <p class="quote" style="margin-top:18px">Get your hands dirty, and then you understand both the potential and the limits.</p>
       <p class="src">Vivian Balakrishnan, Minister for Foreign Affairs, AI Engineer Singapore, 16 May 2026.</p>`},
   "forces":{e:"In the AI age · Five forces", t:"What AI takes. What it cannot.",
-    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Sergiovanni named five forces of leadership. With AI, each has become more critical, and more nuanced. Tap a force to turn it, and to ask the harder question.</p>
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Sergiovanni named five forces of leadership. With AI, each matters more and cuts finer.</p>
       <div class="flipcol">
         ${flipTile("Cultural","stays yours","🧭",["What does our school truly believe about learning?","Would AI change that, or only reveal it?","<b>Values and beliefs. The keeper of meaning stays yours.</b>"],"ftkeep")}
         ${flipTile("Symbolic","stays yours","👁️",["Are we intentional in our use of AI with students and staff?","Are we clear why we use it in some cases, and not in others?","<b>What we notice tells the school what matters and what counts.</b>"],"ftkeep")}
@@ -848,8 +902,8 @@ const CONTENT = {
         <div class="hvcol"><div class="hvh">VOICE</div>
           <div class="hvw">Values</div><div class="hvw lit">Ownership</div><div class="hvw">Inclusion</div><div class="hvw lit">Contribution</div><div class="hvw lit">Empowerment</div></div>
       </div>
-      <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">People engage with what they own, so staff must build the tool, not watch a demo. We used to share what we know; now we share what we can do.</p>
-      <p class="body-txt" style="font-size:15px;color:var(--accent);margin-top:6px">Most leaders here are ahead of their teachers. If you are ahead, your job is to bring people with you, not to assume they sit where you sit.</p>`},
+      <p class="body-txt" style="font-size:clamp(15px,1.9vw,19px);color:var(--muted);margin-top:16px">People engage with what they own, so staff must build the tool, not watch a demo. We used to share what we know; now we share what we can do.</p>
+      <p class="body-txt kicker" style="color:var(--accent);margin-top:10px">If we are ahead, our job is to bring people with us, not to assume they sit where we sit.</p>`},
   "mirror":{e:"Through AI · The mirror", t:"A skill reflects whoever made it.",
     h:`<p class="body-txt">It learns our best day and our blind spots alike. One voice can pass as the whole school's. And what we never write down is never captured.</p>
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:12px">A house-voice skill is apt for school communications, and should always be reviewed and refreshed. Build it with many hands.</p>`},
@@ -871,32 +925,36 @@ const CONTENT = {
         <figure class="shot"><div class="ph">What will you build?</div><figcaption><b>Yours next</b>One staff job, one tool. Built today, hosted this week.</figcaption></figure>
       </div>`},
   "wow":{e:"Watch it run", t:"No terminal. I asked. It built.",
-    h:`<p class="body-txt">I describe a chemistry clip. The agent writes the code, renders it, <b>checks the frames, fixes what broke</b>, and adds narration. I never opened a command line.</p>
+    h:`<div class="slideicon">🎬</div>
+      <p class="body-txt">I describe a chemistry clip. The agent writes the code, renders it, <b>checks the frames, fixes what broke</b>, and adds narration. I never opened a command line.</p>
       <div class="chips"><span class="chip">Plan</span><span class="chip">Write code</span><span class="chip">Render</span><span class="chip"><b>Check and fix</b></span><span class="chip">Narrate</span></div>
-      <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">The point is the leap. I stopped making each clip. I built the thing that makes them.</p>`},
+      <p class="body-txt kicker" style="margin-top:18px">The point is the leap. I stopped making each clip. <b style="color:var(--accent)">I built the thing that makes them.</b></p>`},
   "build":{e:"Get our hands dirty", t:"Now we build.",
-    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Free accounts are fine. Pick how far to take it, then how to work.</p>
+    h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Free accounts are fine. Pick how far to take it: a skill, a tool, or a dashboard.</p>
       <div class="closegrid">
-        <div class="cc"><div class="n">1</div><h3>A skill</h3><p>A house-voice skill from your website. Then every letter sounds like your school.</p></div>
-        <div class="cc"><div class="n">2</div><h3>A tool</h3><p>One staff job: a PD summary, a feedback helper, a duty-roster planner.</p></div>
-        <div class="cc"><div class="n">3</div><h3>A dashboard</h3><p>A hosted page anyone opens: a team second brain, a family FAQ.</p></div>
+        <div class="cc"><div class="n">✍️</div><h3>A skill</h3><p>A house-voice skill from our website. Then every letter sounds like our school.</p></div>
+        <div class="cc"><div class="n">🧰</div><h3>A tool</h3><p>One staff job: a PD summary, a feedback helper, a duty-roster planner.</p></div>
+        <div class="cc"><div class="n">📊</div><h3>A dashboard</h3><p>A hosted page anyone opens: a team second brain, a family FAQ.</p></div>
       </div>
-      <p class="body-txt" style="font-size:15px;color:var(--muted);margin-top:16px">Next: hands on, in threes. Maker, User, Governor.</p>
+      <p class="body-txt" style="font-size:clamp(15px,1.9vw,19px);color:var(--muted);margin-top:16px">Next: hands on, in threes. Maker, User, Governor.</p>
       <p class="src" style="margin-top:12px">Free covers every task today; the live-agent demos ran on a paid account. Plan your school's hands-on around free.</p>`},
   "arc":{e:"The arc", t:"With. Through. In.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">A vision, first: what we do, who we are, and who we are becoming, when there is AI. Today runs with it, through it, and in it.</p>
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">A vision first: what we do, who we are, and who we are becoming in an AI age. Today runs with it, through it, and in it.</p>
       <div class="flipcol">
         ${flipTile("With AI","build beside it","\ud83d\udd27",["We build with it and learn its grain before we judge it."])}
         ${flipTile("Through AI","lead through it","\ud83e\udded",["Every posture we set and every tool we ship carries our leadership into the staffroom."])}
-        ${flipTile("In the AI age","stay in command","\ud83d\udc64",["The parts no model reaches now mark a school out."])}
+        ${flipTile("In the AI age","stay in command","\ud83d\udc64",["The parts no model reaches now set a school apart."])}
       </div>
       <p class="fliphint">Tap a tile to turn it.</p>`},
-  "symbolic":{e:"In the AI age \u00b7 The force to watch", t:"What you notice tells the school what counts.",
-    h:`<p class="body-txt">Open Monday briefing with an AI draft, and the school learns that drafts are cheap and judgement is dear. Prohibit AI from the condolence letter, and the school learns what is sacred.</p>
-      <p class="body-txt" style="font-size:clamp(16px,2vw,21px);color:var(--muted)">Every posture you set is read as a signal. <b>The tool is technical. The choice is symbolic.</b></p>
-      <p class="src">Senior leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what you do, not what you say. CCL, via Partners for Educational Leadership, 2026.</p>`},
+  "symbolic":{e:"In the AI age \u00b7 The force to watch", t:"What we notice tells the school what counts.",
+    h:`<div class="slideicon">\ud83d\udc41\ufe0f</div>
+      <p class="body-txt">Open Monday briefing with an AI draft, and the school learns that drafts are cheap and judgement is dear. Prohibit AI from the condolence letter, and the school learns what is sacred.</p>
+      <p class="body-txt" style="font-size:clamp(16px,2vw,21px);color:var(--muted)">Every posture we set is read as a signal.</p>
+      <p class="body-txt" style="font-size:clamp(20px,2.6vw,30px);color:var(--accent);font-weight:800;margin-top:6px">The tool is technical. The choice is symbolic.</p>
+      <p class="src">Senior leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what we do, not what we say. CCL, via Partners for Educational Leadership, 2026.</p>`},
   "human":{e:"In the AI age \u00b7 The human part", t:"Some things have no AI version.",
-    h:`<p class="body-txt">A teacher who knows a child. A colleague who trusts you. A room that feels safe. <b>No model makes these.</b></p>
+    h:`<div class="slideicon">\ud83e\udef6</div>
+      <p class="body-txt">A teacher who knows a child. A colleague who trusts us. A room that feels safe. <b>No model makes these.</b></p>
       <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--muted)">The school that treats them as optional has made a category error.</p>
       <p class="body-txt" style="font-size:clamp(16px,2vw,21px);margin-top:14px">So we never automate the moments that hold people: the welcome, the hard news, the apology, the quiet noticing. <b>We protect, and we elevate, the human condition.</b> That is the work.</p>`},
   "brief":{e:"Prompting, at our altitude", t:"Be CLEAR. Prompt like we delegate.",
@@ -906,22 +964,19 @@ const CONTENT = {
         ${flipTile("L · Limits","the hard lines","⛔",["The never-dos: what it must never touch or send."])}
         ${flipTile("E · End state","what done looks like","🎯",["The goal, and how we will check it."])}
         ${flipTile("A · Act and check","let it loop","🔁",["Let the agent act, check its own work, and report back."])}
-        ${flipTile("R · Reserve the call","ours to make","🤝",["Do not pick for me. We will choose."])}
+        ${flipTile("R · Reserve the call","ours to make","🤝",["Do not choose for us. We will decide."])}
       </div>
       <p class="fliphint">CLEAR is PILOT, in one prompt. Tap a tile to turn it.</p>`},
-  "relay-debrief":{e:"Sixty seconds at your table", t:"The skill you shipped is a signal.",
-    h:`<p class="body-txt">Read the Maker's SKILL.md once more. What did it capture? What did it leave out?</p>
-      <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--muted)">One voice can pass as the whole school's, and what we never write down is never captured. That is the symbolic force, sitting in a file.</p>
-      <p class="body-txt"><b>Carry one line from it onto the charter.</b></p>`},
   "quiztime":{e:"Five quick reads", t:"Quiz time. Predict, then reveal.",
-    h:`<p class="body-txt" style="font-size:clamp(18px,2.4vw,27px)">Five leader-level reads coming up. Commit to an answer on your device first; we reveal the room, then the thinking, together. No prizes. The point is the reasoning.</p>
+    h:`<p class="body-txt" style="font-size:clamp(18px,2.4vw,27px)">Commit to an answer on your device first. We reveal the room, then the thinking, together. No prizes. The point is the reasoning.</p>
       <p class="body-txt" style="font-size:clamp(16px,2.1vw,22px);color:var(--accent);margin-top:16px;font-weight:700">Wrong answers teach the most. We will see why each one misses.</p>`},
   "handson":{e:"Hands on · twelve minutes", t:"We build. In threes.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">Enough talk. In your trio, build one small thing with AI now: a house-voice draft, a decision table, a first skill. <b>Maker</b> instructs, <b>User</b> runs it, <b>Governor</b> stress tests it and names the posture.</p>
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">Enough talk. In your trio, build one small thing with AI now: a house-voice draft, a decision table, a first skill. <b>Maker</b> instructs, <b>User</b> runs it, <b>Governor</b> stress-tests it and names the posture.</p>
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:14px">That is PILOT, in twelve minutes. Ship something a colleague could use unaided. We fix in the open.</p>`},
   "close":{e:"In the AI age · The close", t:"Human agency in an agentic age.",
-    h:`<p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. You cannot govern it on a brief, and today you have built one.</p>
-      <p class="body-txt" style="font-size:clamp(16px,2vw,20px);color:var(--accent);margin-top:10px">You built with it today. You governed through it. And you lead in it, still in command.</p>`}
+    h:`<div class="slideicon">🧭</div>
+      <p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. We cannot govern it from a brief. Today, we did the building.</p>
+      <p class="body-txt kicker" style="color:var(--accent);margin-top:14px">We built with it today. We governed through it. And we lead in it, still in command.</p>`}
 };
 
 /* ---------- util ---------- */
@@ -929,10 +984,14 @@ function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">"
 
 /* ---------- init ---------- */
 if(!ROOM) ROOM="S3-SL";
-defaultTeams().forEach(function(n){teams.push({name:n,score:0});});
-/* tap any flip tile (cos, pilot, postures) to turn it; one delegated listener survives re-renders */
+/* tap any flip tile (cos, pilot, postures) to turn it; one delegated listener survives re-renders.
+   On the agent slide, tapping the diagram steps the loop animation. */
 document.getElementById("stage").addEventListener("click", function(e){
-  const t=e.target.closest(".fliptile"); if(t) t.classList.toggle("flipped");
+  const t=e.target.closest(".fliptile"); if(t){ t.classList.toggle("flipped"); return; }
+  if(e.target.closest("#agcanvas") && typeof window.__agStep==="function") window.__agStep();
+});
+window.addEventListener("resize", function(){
+  if(typeof window.__agFit==="function" && document.getElementById("agcanvas")) window.__agFit();
 });
 loadMqtt(); renderStage(); whenMqttReady(connect);
 </script>
