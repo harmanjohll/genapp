@@ -83,12 +83,6 @@
   .pblock .pname{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
   .pblock .pq{font-size:14px;color:var(--ink);font-weight:700;}
   .sharerow{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;}
-  .sharetoggle{font-family:var(--sans);font-size:12.5px;font-weight:700;border:1.5px solid var(--line);
-    background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px 6px 12px;cursor:pointer;
-    display:inline-flex;align-items:center;gap:7px;}
-  .sharetoggle:before{content:"";width:9px;height:9px;border-radius:50%;background:#c2cabf;}
-  .sharetoggle.on{background:var(--soft);border-color:var(--accent);color:var(--ink);}
-  .sharetoggle.on:before{background:var(--green);}
   .sharehint{font-size:11.5px;color:var(--muted);}
   .sharetog{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;margin-top:10px;}
   .sharetog .seg{border:none;background:#fff;color:var(--muted);font-size:12.5px;font-weight:700;padding:8px 16px;cursor:pointer;font-family:var(--sans);transition:.12s;}
@@ -168,29 +162,29 @@ const S = { room:"", name:"", confIn:null, confOut:null,
 
 const QUIZ = [
   { tag:"What makes it new", claim:"An agent differs from a chatbot because it…",
-    options:["It uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","It remembers everything you have ever told it","It is always connected to the live internet"], answer:1,
-    why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. You govern a process that keeps running when you are not watching.",
-    note:"An agent runs a loop; you govern the process, not one answer." },
-  { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. You…",
+    options:["Uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","Remembers everything we have told it","Stays connected to the live internet"], answer:1,
+    why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. We govern a process that keeps running when we are not watching.",
+    note:"An agent runs a loop; we govern the process, not one answer." },
+  { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
     options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"], answer:2,
     why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified.",
     note:"Decide what data goes where. Records stay on Pair and AIBots." },
-  { tag:"Spot the risk", claim:"You ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
+  { tag:"Spot the risk", claim:"We ask one strong HOD to build the school's 'house voice' skill for all staff comms. The main risk is…",
     options:["The skill will quickly fall out of date","One person's voice and blind spots pass as the whole school's","Staff will not trust a tool they did not build","It may quietly leak sensitive data to the vendor"], answer:1,
     why:"<b>A skill reflects whoever made it.</b> One voice can pass as the whole school's, and what we never write down is never captured. Build it with many, and govern the blind spots.",
     note:"A skill reflects its maker. Build it with many; govern the blind spots." },
-  { tag:"What stays yours", claim:"Across Sergiovanni's five forces, which must a leader never delegate to AI?",
+  { tag:"What stays yours", claim:"Across Sergiovanni's five forces, which must we never delegate to AI?",
     options:["Technical: timetabling and logistics","Human: relationships and morale","Cultural: what the school believes and stands for","Educational: teaching and curriculum"], answer:2,
-    why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what you notice and what you stand for, stay yours. Treating them as optional is the category error.",
-    note:"AI absorbs the technical. The cultural and symbolic stay yours." },
+    why:"<b>The cultural force.</b> AI absorbs the technical and clears the admin. The cultural and symbolic, what we notice and what we stand for, stay ours. Treating them as optional is the category error.",
+    note:"AI absorbs the technical. The cultural and symbolic stay ours." },
   { tag:"True or false", claim:"Partner is the most advanced posture; aim to move every task there.",
     options:["True","False"], answer:1,
     why:"<b>False.</b> Postures, not a ladder. Set the posture per task, by data and stakes. Partner does not beat Prohibit. The right posture is the one the task calls for.",
     note:"Postures, not a ladder. The right posture fits the task." },
   { tag:"A clear breach",
     claim:"A teacher pasted a class list with named wellbeing notes into a free public chatbot to draft support plans. It is done. The strongest first move is…",
-    options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in your HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it yourself; there is no need to escalate"], answer:1,
-    why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in your HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call.",
+    options:["Delete the chat and remind the teacher quietly","Report it: log the breach and bring in our HOD ICT and the data protection officer","Wait and see if anything surfaces","Handle it alone; no need to escalate"], answer:1,
+    why:"<b>Report it.</b> This crosses the line: sensitive student data went to an uncleared tool. Policy is to escalate, not to absorb it. Log the breach, bring in our HOD ICT or EdTech and the data protection officer, and work with the GovTech or DXD partner. Our autonomy runs up to the data boundary; past it, a breach is a reporting duty, not a judgement call.",
     note:"A breach is a reporting duty. Log it and escalate.", solo:true }
 ];
 const BADS = [
@@ -209,24 +203,12 @@ const BADS = [
   {0:"<b class='rd'>False</b>. Postures are per task; Partner does not beat Prohibit."},
   {0:"Quietly deleting <b class='rd'>hides</b> a breach that must be logged and reported.",
    2:"Waiting <b class='rd'>lets</b> the exposure stand. A breach is a duty to act now.",
-   3:"This is <b class='rd'>not</b> yours to absorb. Policy is to escalate and bring in the right people."}
+   3:"This is <b class='rd'>not</b> ours to absorb. Policy is to escalate and bring in the right people."}
 ];
 
 const DILEMMAS = [
  {tag:"Modelling vs mandating", claim:"One way to get colleagues to experiment with AI safely and inventively is to\u2026",
-  options:["Mandate it in appraisal goals","Model it yourself, in the open","Fund the keen few and let it spread","Wait until the policy is signed"]},
- {tag:"The efficiency trap", claim:"AI hands your teachers back two hours a week. You protect that time first for\u2026",
-  options:["Planning together","Time with students","Rest","New initiatives"]},
- {tag:"What you would never delegate", claim:"The one leadership act you would never hand to AI, even done well, is\u2026",
-  options:["The condolence note","The hard appraisal conversation","The assembly message","The difficult no"]},
- {tag:"The uneven room", claim:"You are ahead of most of your staff on AI. Your job now is to\u2026",
-  options:["Set the bar high","Meet them where they are","Pair the keen with the wary","Slow down to keep everyone together"]},
- {tag:"Govern vs trust", claim:"A teacher used free AI on something they should not have, then caught it themselves. You\u2026",
-  options:["Reinforce the rule firmly","Thank them for noticing, and open it up","Quietly log it","Review the policy with them"]},
- {tag:"Monday's signal", claim:"To show the school what you value in an AI age, the clearest single move is\u2026",
-  options:["Prohibit AI somewhere sacred","Build something in the open","Share a mistake AI helped you catch","Protect a no-AI space for people"]},
- {tag:"What you are really governing", claim:"The thing you most need to keep your hand on is\u2026",
-  options:["Which tools staff use","What data goes where","What stays human","How fast you move"]}
+  options:["Mandate it in appraisal goals","Model it ourselves, in the open","Fund the keen few and let it spread","Wait until the policy is signed"]}
 ];
 const PS = [
   { p:"P", name:"Prohibit", q:"We will keep AI out of…", ph:"e.g. student records, anything official or sensitive", key:"prohibit" },
@@ -353,7 +335,6 @@ function gotoStage(m){
     case "dilemma": curView="dilemma"; curD=m.d||0; renderDilemma(); break;
     case "reflect": curView="reflect"; renderReflect(); break;
     case "charter": curView="charter"; renderCharter(); break;
-    case "hold": curView="hold"; renderHold(); break;
     case "watch": curView="watch"; renderWatch(m.title,m.eyebrow); break;
     case "out": curView="out"; renderOut(); break;
     case "log": curView="log"; renderLog(); break;
@@ -561,11 +542,6 @@ function renderCharter(){
     document.getElementById("cflag").innerHTML=' <span class="doneflag">✓ Charter set</span>'; };
 }
 
-/* ---------- HOLD (the Relay) ---------- */
-function renderHold(){
-  V().innerHTML=`<div class="view hold"><div style="font-size:46px;">🛠️</div>
-    <h2>The Relay</h2><p class="lede">In threes. Maker builds, User runs, Governor stress-tests. Eyes on the big screen for the brief.</p></div>`;
-}
 function renderWatch(title,eyebrow){
   V().innerHTML=`<div class="view" style="text-align:center;padding-top:26px;">
     ${eyebrow?`<span class="eyebrow">${esc(eyebrow)}</span>`:""}
