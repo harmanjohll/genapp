@@ -15,7 +15,7 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 | `index.html` | Landing page. One URL for the room; links Presenter, Audience, the run sheet, the reference, the cards. | Active. |
 | `Presenter_SL.html` | Facilitator console. Drives the deck, aggregates live responses. | Active. |
 | `Audience_SL.html` | Participant companion. Follows the console, collects each leader's input, builds their card. | Active. |
-| `SL_Facilitation_Plan.html` | Run sheet: clock, the hands-on brief, tensions, guardrails, pre flight. | Active; predates the round 4 cut of the Relay, so its Relay beats read as the generic hands-on build now. |
+| `SL_Facilitation_Plan.html` | Run sheet: clock, the hands-on build, the ship steps, tensions, guardrails, pre flight. | Active. |
 | `SL_Cards.html` | Printable cards (paper fallback for the card the app builds). | Active. |
 
 ## Architecture (how the pair works)

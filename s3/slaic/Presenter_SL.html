@@ -410,6 +410,7 @@ const STAGES = [
   {id:"build",         aud:"watch",   sub:null,        label:"Now we build · tiers"},
   {id:"brief",         aud:"watch",   sub:null,        label:"Prompt like you delegate"},
   {id:"handson",       aud:"watch",   sub:null,        label:"Hands on · we build"},
+  {id:"ship",          aud:"watch",   sub:null,        label:"Ship it · GitHub, five steps"},
   {id:"wall",          aud:"charter", sub:"charter",   label:"Command Charter · the 5 Ps"},
   {id:"reflect",       aud:"reflect", sub:"reflect",   label:"Reflection · skill, prohibit, build"},
   {id:"out",           aud:"out",     sub:"out",       label:"Readiness · walking out"},
@@ -973,6 +974,17 @@ const CONTENT = {
   "handson":{e:"Hands on · twelve minutes", t:"We build. In threes.",
     h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">Enough talk. In your trio, build one small thing with AI now: a house-voice draft, a decision table, a first skill. <b>Maker</b> instructs, <b>User</b> runs it, <b>Governor</b> stress-tests it and names the posture.</p>
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:14px">That is PILOT, in twelve minutes. Ship something a colleague could use unaided. We fix in the open.</p>`},
+  "ship":{e:"Out the door · GitHub", t:"Ship it. Five steps, no code.",
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)">A tool on your laptop helps you. A tool at a link helps your school. <b>GitHub hosts it free.</b></p>
+      <div class="gridc g5">
+        <div class="c"><b>1 · Ask Claude for one file</b><span>"Give me this as a single index.html I can host." Download it.</span></div>
+        <div class="c"><b>2 · Make a GitHub account</b><span>github.com, Sign up. Free.</span></div>
+        <div class="c"><b>3 · New repository</b><span>Name it, e.g. family-faq. Set it Public. Create.</span></div>
+        <div class="c"><b>4 · Upload and switch on</b><span>Add file → Upload → drop your index.html → Commit. Then Settings → Pages → Branch: main → Save.</span></div>
+        <div class="c"><b>5 · Share the link</b><span>Live in about a minute at your-name.github.io/family-faq.</span></div>
+      </div>
+      <p class="body-txt kicker" style="color:var(--accent);margin-top:22px">A public page is public data. Nothing sensitive goes in. The data line holds here too.</p>
+      <p class="body-txt" style="font-size:clamp(15px,1.9vw,19px);color:var(--muted);margin-top:8px">Built today. Live today. Fix it in the open.</p>`},
   "close":{e:"In the AI age · The close", t:"Human agency in an agentic age.",
     h:`<div class="slideicon">🧭</div>
       <p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. We cannot govern it from a brief. Today, we did the building.</p>
