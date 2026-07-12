@@ -465,7 +465,7 @@ function renderConnect(){
     <p class="lede">This is yours for the session, and yours to keep. Type the room code on the screen, then follow along.</p>
     <div class="card">
       <label class="f" for="room">Room code</label>
-      <input type="text" id="room" placeholder="e.g. S3-SL" autocomplete="off">
+      <input type="text" id="room" placeholder="e.g. S3SL" autocomplete="off">
       <label class="f" for="name">Your name (optional, for your card)</label>
       <input type="text" id="name" placeholder="optional" autocomplete="off">
       <div style="margin-top:16px;"><button class="btn" id="join">Join the room</button></div>
@@ -474,7 +474,9 @@ function renderConnect(){
   const u=new URLSearchParams(location.search);
   if(u.get("room")) document.getElementById("room").value=u.get("room");
   document.getElementById("join").onclick=()=>{
-    S.room=(document.getElementById("room").value||"").trim().toUpperCase().replace(/\s+/g,"-");
+    /* Hyphens/spaces are stripped so S3-SL, S3SL, and s3 sl all join the same
+       room; must match the presenter's normalization. */
+    S.room=(document.getElementById("room").value||"").trim().toUpperCase().replace(/[\s-]+/g,"");
     S.name=(document.getElementById("name").value||"").trim();
     if(!S.room){ toast("Enter the room code on screen"); return; }
     renderWaiting("You're in. Waiting for the facilitator to begin.");
