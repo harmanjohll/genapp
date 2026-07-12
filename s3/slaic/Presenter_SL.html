@@ -318,7 +318,9 @@ const MQTT_PASS = "";                                    // broker password, if 
 /* ======================================================= */
 
 const me = Math.random().toString(36).slice(2,9);
-let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase();
+/* Hyphens/spaces are stripped so ?room=S3-SL, ?room=S3SL, and ?room=s3 sl
+   all resolve to the one room; must match the audience's normalization. */
+let ROOM = (new URLSearchParams(location.search).get("room")||"").toUpperCase().replace(/[\s-]+/g,"");
 
 /* ---------- leader-level scenario reads ---------- */
 const QUIZ = [
@@ -455,7 +457,7 @@ function whenMqttReady(cb,tries){ tries=tries||0;
 }
 function topic(){ return TOPIC_NS+"/"+ROOM+"/bus"; }
 function connect(){
-  if(!ROOM){ ROOM="S3-SL"; }
+  if(!ROOM){ ROOM="S3SL"; }
   document.getElementById("rc").textContent="Room "+ROOM;
   const opts={clientId:"pres_"+me, clean:true, reconnectPeriod:2500, connectTimeout:8000, keepalive:30};
   if(MQTT_USER){ opts.username=MQTT_USER; opts.password=MQTT_PASS; }
@@ -1001,7 +1003,7 @@ const CONTENT = {
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 
 /* ---------- init ---------- */
-if(!ROOM) ROOM="S3-SL";
+if(!ROOM) ROOM="S3SL";
 /* tap any flip tile (cos, pilot, postures) to turn it; one delegated listener survives re-renders.
    On the agent slide, tapping the diagram steps the loop animation. */
 document.getElementById("stage").addEventListener("click", function(e){

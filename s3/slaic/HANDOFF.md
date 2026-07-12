@@ -35,7 +35,7 @@ MQTT_USER = ""                                     // broker username, if the br
 MQTT_PASS = ""                                     // broker password, if the broker needs auth
 ```
 
-Default room is `S3-SL`. Override with `?room=XYZ` on either URL.
+Default room is `S3SL`. Override with `?room=XYZ` on either URL; room codes are matched with hyphens and spaces stripped and uppercased, so `S3-SL`, `S3SL`, and `s3 sl` are all the same room, both when typed on the Audience join screen and when read from a `?room=` link.
 
 Message types on the bus: `stage` (carries `rev` for quiz stages; for `watch` stages also `h`, the slide's HTML, and on the agent slide `ab`, the current animation beat), `reveal`, `reset`, `reqmine` (presenter to room); `join`, `hb`, `req`, `confidence`, `quiz`, `dvote`, `share`, `submitted` (room to presenter). `req` asks the presenter to resend the current stage; `reqmine` asks every leader to resend their own answers (used after a presenter reload so aggregates rebuild). The presenter's `aud` id on each stage maps 1:1 to a case in the Audience router: `welcome, in, quiz, dilemma, reflect, charter, watch, out, log`. If you add a stage type, add both sides.
 
@@ -95,4 +95,4 @@ Tell Claude Code the repo name and whether you want a top level folder or a dedi
 
 ## Run locally
 
-Open any file directly in a browser. For the live pair, open `Presenter_SL.html` in one tab and `Audience_SL.html` in another, join `S3-SL`, and drive with Next. No server needed; the broker is remote.
+Open any file directly in a browser. For the live pair, open `Presenter_SL.html` in one tab and `Audience_SL.html` in another, join `S3SL`, and drive with Next. No server needed; the broker is remote.
