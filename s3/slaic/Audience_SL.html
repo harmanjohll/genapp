@@ -109,6 +109,111 @@
     margin:0 auto 18px;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
+  /* ===== mirror: watch slides rendered from the presenter's broadcast content ===== */
+  .mirror h2{font-size:clamp(24px,6.4vw,34px);line-height:1.1;}
+  .mirror .mbody{margin-top:12px;}
+  .mirror .mhint{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;margin-top:24px;text-align:center;}
+  .mirror .body-txt{font-size:clamp(16px,4.4vw,20px);color:var(--ink);line-height:1.45;margin:0 0 14px;font-weight:400;}
+  .mirror .body-txt b{color:var(--accent-d);font-weight:700;}
+  .mirror .kicker{font-size:clamp(17px,4.8vw,22px);font-weight:700;line-height:1.35;}
+  .mirror .slideicon{font-size:34px;line-height:1;margin:2px 0 12px;}
+  .mirror .frameq{font-family:var(--serif);font-size:clamp(18px,5vw,24px);line-height:1.25;margin:12px 0;font-weight:700;color:var(--ink);}
+  .mirror .frameq b{color:var(--accent-d);}
+  .mirror .src{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em;line-height:1.6;display:block;margin-top:10px;}
+  .mirror .quote{font-family:var(--serif);font-size:clamp(19px,5.4vw,26px);font-style:italic;line-height:1.3;margin:8px 0 10px;}
+  .mirror .quote b{color:var(--accent-d);font-style:normal;}
+  .mirror .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .mirror .chip{border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:14px;background:#fff;}
+  .mirror .chip b{color:var(--accent-d);}
+  .mirror .flipgrid,.mirror .closegrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px;}
+  @media(min-width:480px){.mirror .flipgrid.g2{grid-template-columns:1fr 1fr;}}
+  .mirror .flipcol{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+  .mirror .fliptile{position:relative;cursor:pointer;}
+  .mirror .fliptile .inner{position:relative;display:grid;transition:transform .55s;transform-style:preserve-3d;}
+  .mirror .fliptile.flipped .inner{transform:rotateY(180deg);}
+  .mirror .fliptile .face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;display:flex;flex-direction:column;justify-content:center;min-height:74px;}
+  .mirror .fliptile .back{transform:rotateY(180deg);background:var(--soft);border-color:var(--accent);}
+  .mirror .fliptile .fw{font-family:var(--serif);font-weight:800;font-size:clamp(17px,4.8vw,22px);color:var(--ink);}
+  .mirror .fliptile .fs{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .mirror .fliptile .fi{font-size:22px;margin-bottom:6px;line-height:1;}
+  .mirror .fliptile .fl{font-size:13.5px;color:var(--ink);line-height:1.4;margin:2px 0;}
+  .mirror .fliptile.ftkeep .front{border-left:5px solid var(--accent);}
+  .mirror .fliptile.ftaids .front{border-left:5px solid var(--amber);}
+  .mirror .fliptile.fttakes .front{border-left:5px solid var(--rust);}
+  .mirror .fliptile.ftkeep .fs{color:var(--accent-d);font-weight:700;}
+  .mirror .fliptile.ftaids .fs{color:var(--amber);font-weight:700;}
+  .mirror .fliptile.fttakes .fs{color:var(--rust);font-weight:700;}
+  .mirror .fliphint{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-top:12px;}
+  .mirror .matrix{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;}
+  @media(min-width:560px){.mirror .matrix{grid-template-columns:1fr 1fr;}}
+  .mirror .mcard{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;}
+  .mirror .mcard h3{margin:0 0 4px;font-size:17px;font-family:var(--serif);}
+  .mirror .mcard .ssub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+  .mirror .mcard.secure{border-color:var(--accent);}
+  .mirror .mcard.machine{border-color:#aab6bd;background:linear-gradient(160deg,rgba(140,160,175,.10),rgba(140,160,175,.02));}
+  .mirror .mcard.human{border-color:#c19b74;background:linear-gradient(160deg,rgba(184,142,104,.12),rgba(184,142,104,.03));}
+  .mirror .mcard .tone{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:5px;color:var(--muted);}
+  .mirror .mcard.human .tone{color:#a97b4f;}
+  .mirror .uselist{list-style:none;margin:0;padding:0;font-size:13.5px;}
+  .mirror .uselist li{display:flex;gap:8px;align-items:flex-start;padding:4px 0;color:var(--ink);}
+  .mirror .uselist .mk{flex:none;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;margin-top:2px;}
+  .mirror .mk.yes{background:var(--accent);}
+  .mirror .mk.no{background:var(--rust);}
+  .mirror .hv{display:flex;align-items:center;justify-content:center;gap:clamp(12px,5vw,30px);margin-top:14px;flex-wrap:wrap;}
+  .mirror .hvcol{display:flex;flex-direction:column;gap:6px;text-align:center;}
+  .mirror .hvh{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:4px;}
+  .mirror .hvw{font-family:var(--serif);font-size:clamp(17px,4.8vw,24px);font-weight:700;color:var(--ink);line-height:1.15;}
+  .mirror .hvw.lit{color:var(--accent-d);}
+  .mirror .hvthrough{font-family:var(--serif);font-style:italic;font-size:clamp(19px,5.4vw,26px);color:var(--accent-d);}
+  .mirror .gridc{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px;}
+  @media(min-width:560px){.mirror .gridc.g5,.mirror .gridc.g4{grid-template-columns:1fr 1fr;}}
+  .mirror .gridc .c{border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-align:center;background:#fff;}
+  .mirror .gridc .c b{display:block;font-family:var(--serif);font-size:15px;margin-bottom:4px;color:var(--ink);}
+  .mirror .gridc .c span{font-size:13px;color:var(--muted);line-height:1.45;}
+  .mirror .cc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;}
+  .mirror .cc .n{font-size:24px;}
+  .mirror .cc h3{margin:8px 0 6px;font-size:17px;font-family:var(--serif);}
+  .mirror .cc p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.5;}
+  .mirror .shots{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px;}
+  .mirror .shot{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;}
+  .mirror .shot img{width:100%;height:150px;object-fit:cover;object-position:top center;display:block;}
+  .mirror .shot figcaption{padding:10px 12px;font-size:12.5px;color:var(--muted);line-height:1.45;}
+  .mirror .shot figcaption b{color:var(--accent-d);display:block;font-family:var(--serif);font-size:15px;margin-bottom:2px;}
+  .mirror .shot .ph{height:150px;display:grid;place-items:center;border-bottom:1px solid var(--line);text-align:center;padding:0 14px;
+    font-family:var(--serif);font-size:17px;color:var(--accent-d);
+    background:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(47,125,114,.05) 12px,rgba(47,125,114,.05) 24px);}
+  @media (prefers-reduced-motion: reduce){.mirror .fliptile .inner{transition:none;}}
+
+  /* agent loop diagram · same block as the presenter, light palette; presenter drives the beats */
+  #agent-widget{--ag-accent:#2f7d72;--ag-dark:#16282a;--ag-line:#d6ddd6;--ag-muted:#5d6b6a;--ag-ink:#1d2a2b;margin-top:6px;}
+  #agent-widget .agwrap{width:100%;overflow:hidden;margin:0 auto;}
+  #agent-widget .agcanvas{position:relative;background:linear-gradient(180deg,#fbfaf7,#ecefe8);border:1px solid var(--ag-line);border-radius:14px;}
+  #agent-widget .edge{position:absolute;inset:0;width:900px;height:560px;pointer-events:none;}
+  #agent-widget .node{position:absolute;transform:translate(-50%,-50%);background:#fff;border:1.5px solid var(--ag-line);border-radius:12px;padding:.7em .9em;text-align:center;transition:box-shadow .3s,border-color .3s,opacity .3s;min-width:120px;}
+  #agent-widget .node .t{font-family:var(--serif);font-weight:700;font-size:17px;color:var(--ag-ink);}
+  #agent-widget .node .s{font-size:12px;color:var(--ag-muted);margin-top:.15em;}
+  #agent-widget .node.lit{border-color:var(--ag-accent);box-shadow:0 0 0 4px rgba(47,125,114,.16),0 8px 24px rgba(47,125,114,.18);}
+  #agent-widget #nHarness{background:var(--ag-dark);border-color:var(--ag-dark);min-width:190px;padding:.9em;}
+  #agent-widget #nHarness .t{color:#fff;}#agent-widget #nHarness .s{color:#9bb0ab;}
+  #agent-widget #nOutput{background:#f1f6f2;border-color:#cfe0d4;opacity:0;}
+  #agent-widget #nOutput.show{opacity:1;}
+  #agent-widget .promptbox{min-width:300px;max-width:380px;}
+  #agent-widget .promptbox .p{font-size:14px;color:var(--ag-ink);line-height:1.35;}
+  #agent-widget .tags{display:flex;gap:.3em;justify-content:center;margin-top:.5em;flex-wrap:wrap;}
+  #agent-widget .tags span{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ag-accent);background:#e8ede9;border-radius:999px;padding:.2em .6em;}
+  #agent-widget .ring2{position:absolute;left:450px;top:260px;width:188px;height:188px;border-radius:50%;border:2.5px dashed var(--ag-accent);transform:translate(-50%,-50%);opacity:0;transition:opacity .3s;}
+  #agent-widget .ring2.on{opacity:.65;animation:agspin 3.4s linear infinite;}
+  #agent-widget .agpass{position:absolute;left:450px;top:332px;transform:translate(-50%,-50%);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ag-accent);opacity:0;transition:opacity .3s;}
+  #agent-widget .agpass.on{opacity:1;}
+  #agent-widget .agcheck{position:absolute;left:560px;top:226px;transform:translate(-50%,-50%);font-size:12.5px;font-weight:700;border-radius:999px;padding:.25em .7em;opacity:0;transition:opacity .3s;}
+  #agent-widget .agcheck.on{opacity:1;}
+  #agent-widget .agcheck.fail{background:#f7e3dd;color:#b1452b;}#agent-widget .agcheck.pass{background:#e3f0e7;color:#3f7d54;}
+  #agent-widget .pulse2{position:absolute;left:450px;top:70px;width:18px;height:18px;border-radius:50%;background:var(--ag-accent);transform:translate(-50%,-50%);transition:left .65s cubic-bezier(.5,.05,.3,1),top .65s cubic-bezier(.5,.05,.3,1);box-shadow:0 0 0 6px rgba(47,125,114,.2),0 0 18px rgba(47,125,114,.5);z-index:5;}
+  #agent-widget .excap{font-size:clamp(15px,4.2vw,19px);color:var(--ink);font-style:italic;min-height:1.5em;margin:12px auto 0;text-align:center;}
+  #agent-widget .agrow{display:none;}
+  @keyframes agspin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
   .log .logcard{border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px;background:#fff;}
   .log .logcard h3{font-family:var(--serif);margin:0 0 4px;color:var(--ink);font-size:20px;}
   .log .ttl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--accent-d);}
@@ -325,7 +430,11 @@ function gotoStage(m){
   // Re-render on a new stage, or when our view was lost (tab discarded, DOM
   // cleared) while module state survived. Skip a true no-op so the periodic
   // beacon never re-renders or scroll jumps a leader who is already in sync.
-  if(sameKey && renderedKey===m.key && !viewEmpty) return;
+  if(sameKey && renderedKey===m.key && !viewEmpty){
+    // same slide, but the agent loop beat may have moved: repaint without a re-render
+    if(m.id==="watch" && m.key==="agent" && typeof m.ab==="number") audAgentPaint(m.ab);
+    return;
+  }
   curStageKey=m.key;
   for(const k in pubT){ clearTimeout(pubT[k]); } pubT={};   // drop pending publishes from the old view
   if(m.id==="quiz" && m.q!=null && m.rev) S.reveal[m.q]=true;
@@ -335,7 +444,7 @@ function gotoStage(m){
     case "dilemma": curView="dilemma"; curD=m.d||0; renderDilemma(); break;
     case "reflect": curView="reflect"; renderReflect(); break;
     case "charter": curView="charter"; renderCharter(); break;
-    case "watch": curView="watch"; renderWatch(m.title,m.eyebrow); break;
+    case "watch": curView="watch"; renderWatch(m); break;
     case "out": curView="out"; renderOut(); break;
     case "log": curView="log"; renderLog(); break;
     case "welcome": curView="welcome"; renderWaiting("We are about to begin."); break;
@@ -542,12 +651,91 @@ function renderCharter(){
     document.getElementById("cflag").innerHTML=' <span class="doneflag">✓ Charter set</span>'; };
 }
 
-function renderWatch(title,eyebrow){
+function renderWatch(m){
+  const title=m&&m.title, eyebrow=m&&m.eyebrow, h=m&&m.h;
+  if(h){
+    // Mirror the presenter's slide, restyled for the phone. Content is sanitized:
+    // it arrives over a public broker, so scripts and event handlers are stripped.
+    V().innerHTML=`<div class="view mirror">
+      ${eyebrow?`<span class="eyebrow">${esc(eyebrow)}</span>`:""}
+      ${title?`<h2 style="margin-top:6px;">${esc(title)}</h2>`:""}
+      <div class="mbody" id="mbody"></div>
+      <p class="mhint">Mirrored from the main screen</p></div>`;
+    document.getElementById("mbody").innerHTML=sanitizeHTML(h);
+    if(m.key==="agent"){ audAgentFit(); audAgentPaint(typeof m.ab==="number"?m.ab:0); }
+    return;
+  }
   V().innerHTML=`<div class="view" style="text-align:center;padding-top:26px;">
     ${eyebrow?`<span class="eyebrow">${esc(eyebrow)}</span>`:""}
     ${title?`<h2 style="margin-top:8px;">${esc(title)}</h2>`:""}
     <p class="lede" style="margin-top:14px;">Eyes on the main screen, please.</p>
     <div style="font-size:26px;letter-spacing:.3em;color:var(--accent);margin-top:6px;">• • •</div></div>`;
+}
+/* Strip anything executable from mirrored slide HTML: it travels over a public
+   MQTT broker, so a forged message must not be able to run code on this phone. */
+function sanitizeHTML(html){
+  const doc=new DOMParser().parseFromString("<div>"+html+"</div>","text/html");
+  doc.querySelectorAll("script,iframe,object,embed,form,link,meta,base").forEach(n=>n.remove());
+  doc.querySelectorAll("*").forEach(el=>{
+    [...el.attributes].forEach(a=>{
+      const n=a.name.toLowerCase(), v=(a.value||"").trim().toLowerCase();
+      if(n.startsWith("on")) el.removeAttribute(a.name);
+      else if((n==="href"||n==="src"||n==="xlink:href") && v.indexOf("javascript:")===0) el.removeAttribute(a.name);
+    });
+  });
+  return doc.body.firstChild.innerHTML;
+}
+/* ---------- agent loop mirror · paint-only ----------
+   Beat data must match wireAgent in Presenter_SL.html. The presenter drives;
+   this only paints the beat it broadcasts (stage msg field `ab`). */
+const AG_C={nInput:[450,70],nHarness:[450,260],nCaps:[130,250],nConn:[770,250],nModel:[450,430],nOutput:[450,512]};
+const AG_Q="What is the capital of France?";
+const AG_G="Clean this survey. Keep themes backed by 3+ replies. Revise until all are. Output a one-page brief.";
+const AG_T=["goal","check","stop rule"];
+const AG_CAP=[
+  "A quick question arrives.",
+  "The model answers in a single pass. No tools, no loop.",
+  "A simple ask does not loop.",
+  "Now a goal, with a check and a finish line.",
+  "It plans the steps, then pulls our data through Connections. Pass 1 begins.",
+  "It drafts with the model.",
+  "It checks its own work against the goal. Not every theme is backed yet.",
+  "So it revises and goes round again. This pass holds.",
+  "Finish line met. It stops and delivers."
+];
+const AG_BEATS=[
+  {p:AG_Q,tags:[],at:"nInput",lit:["nInput"],out:null,ring:false,pass:null,check:null},
+  {p:AG_Q,tags:[],at:"nModel",lit:["nHarness","nModel"],out:null,ring:false,pass:null,check:null},
+  {p:AG_Q,tags:[],at:"nOutput",lit:["nOutput"],out:"A direct answer.",ring:false,pass:null,check:null},
+  {p:AG_G,tags:AG_T,at:"nInput",lit:["nInput"],out:null,ring:false,pass:null,check:null},
+  {p:AG_G,tags:AG_T,at:"nConn",lit:["nHarness","nConn"],out:null,ring:true,pass:1,check:null},
+  {p:AG_G,tags:AG_T,at:"nModel",lit:["nModel"],out:null,ring:true,pass:1,check:null},
+  {p:AG_G,tags:AG_T,at:"nHarness",lit:["nHarness"],out:null,ring:true,pass:1,check:"fail"},
+  {p:AG_G,tags:AG_T,at:"nHarness",lit:["nHarness"],out:null,ring:true,pass:2,check:"pass"},
+  {p:AG_G,tags:AG_T,at:"nOutput",lit:["nOutput"],out:"An evidence-backed one-page brief.",ring:false,pass:null,check:null}
+];
+function audAgentFit(){
+  const wrap=document.getElementById("agwrap"), canvas=document.getElementById("agcanvas");
+  if(!wrap||!canvas) return;
+  const s=Math.min(1, wrap.clientWidth/900);
+  canvas.style.transform="scale("+s+")"; canvas.style.transformOrigin="top left";
+  canvas.style.marginLeft=Math.max(0,(wrap.clientWidth-900*s)/2)+"px";
+  wrap.style.height=(560*s)+"px";
+}
+function audAgentPaint(i){
+  const b=AG_BEATS[i]; if(!b) return;
+  const $=id=>document.getElementById(id);
+  if(!$("agcanvas")) return;
+  $("agprompt").textContent=b.p;
+  $("agtags").innerHTML=(b.tags||[]).map(t=>"<span>"+t+"</span>").join("");
+  ["nInput","nHarness","nCaps","nConn","nModel","nOutput"].forEach(n=>{const e=$(n); if(e) e.classList.remove("lit");});
+  (b.lit||[]).forEach(n=>{const e=$(n); if(e) e.classList.add("lit");});
+  const p=AG_C[b.at]||AG_C.nHarness; $("agpulse").style.left=p[0]+"px"; $("agpulse").style.top=p[1]+"px";
+  $("agring").classList.toggle("on", !!b.ring);
+  const pass=$("agpass"); if(b.pass){ pass.textContent="Pass "+b.pass; pass.classList.add("on"); } else pass.classList.remove("on");
+  const check=$("agcheck"); if(b.check){ check.className="agcheck on "+b.check; check.textContent=b.check==="fail"?"check: not yet":"check: pass"; } else check.className="agcheck";
+  const out=$("nOutput"); if(b.out){ $("agout").textContent=b.out; out.classList.add("show"); } else out.classList.remove("show");
+  const cap=$("agcap"); if(cap) cap.textContent=AG_CAP[i];
 }
 
 /* ---------- READINESS OUT ---------- */
@@ -649,6 +837,11 @@ function downloadCard(){
 }
 
 /* ---------- init ---------- */
+/* mirrored flip tiles turn on tap; one delegated listener survives re-renders */
+document.getElementById("view").addEventListener("click", function(e){
+  const t=e.target.closest(".mirror .fliptile"); if(t) t.classList.toggle("flipped");
+});
+window.addEventListener("resize", function(){ if(document.getElementById("agcanvas")) audAgentFit(); });
 loadMqtt(); loadH2C();
 renderConnect();
 </script>

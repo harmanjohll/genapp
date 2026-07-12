@@ -546,9 +546,12 @@ function updateMeters(){
 /* ---------- deck ---------- */
 function curId(){ return STAGES[si].id; }
 function stageHasQ(q){ const s=STAGES[si]; return s.aud==="quiz" && s.q===q; }
-function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="";
-  if(s.aud==="watch"){ const c=(typeof CONTENT!=="undefined"&&CONTENT[s.id])||{}; title=c.t||""; eyebrow=c.e||""; }
-  send({type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), d:(s.d!=null?s.d:null), rev:(s.aud==="quiz"?!!revealed[s.q]:false), title:title, eyebrow:eyebrow}); }
+function broadcastStage(){ const s=STAGES[si]; let title="",eyebrow="",h=null;
+  if(s.aud==="watch"){ const c=(typeof CONTENT!=="undefined"&&CONTENT[s.id])||{}; title=c.t||""; eyebrow=c.e||""; h=c.h||null; }
+  const msg={type:"stage", id:s.aud, key:s.id, q:(s.q!=null?s.q:null), d:(s.d!=null?s.d:null), rev:(s.aud==="quiz"?!!revealed[s.q]:false), title:title, eyebrow:eyebrow};
+  if(h) msg.h=h;                          // watch slides mirror their content on the phones
+  if(s.id==="agent") msg.ab=agBeatNow;    // phones follow the loop animation beat
+  send(msg); }
 function move(d){ si=Math.max(0,Math.min(STAGES.length-1, si+d)); broadcastStage(); renderStage(); }
 document.getElementById("next").onclick=()=>move(1);
 document.getElementById("prev").onclick=()=>move(-1);
@@ -722,7 +725,7 @@ function renderContent(id){ const c=CONTENT[id]||{};
    Nine beats: a quick ask resolves in one model pass; a harder ask plans, pulls
    data, drafts, checks itself, fails, loops, passes, then stops and delivers.
    Tap the diagram (or Step) to advance; Replay auto-runs all nine. */
-let agTimer=null;
+let agTimer=null, agBeatNow=0;
 function wireAgent(){
   const C={nInput:[450,70],nHarness:[450,260],nCaps:[130,250],nConn:[770,250],nModel:[450,430],nOutput:[450,512]};
   const Q="What is the capital of France?";
@@ -758,8 +761,8 @@ function wireAgent(){
   function fit(){
     const availH=Math.max(300, window.innerHeight - wrap.getBoundingClientRect().top - 200);
     const s=Math.min(1, wrap.clientWidth/900, availH/560);
-    canvas.style.transform="scale("+s+")"; canvas.style.transformOrigin="top center";
-    canvas.style.margin="0 auto";
+    canvas.style.transform="scale("+s+")"; canvas.style.transformOrigin="top left";
+    canvas.style.marginLeft=Math.max(0,(wrap.clientWidth-900*s)/2)+"px";
     wrap.style.height=(560*s)+"px";
   }
   function clearLit(){ ["nInput","nHarness","nCaps","nConn","nModel","nOutput"].forEach(n=>{ const e=$(n); if(e) e.classList.remove("lit"); }); }
@@ -775,6 +778,7 @@ function wireAgent(){
     if(b.out){ $("agout").textContent=b.out; outNode.classList.add("show"); } else { outNode.classList.remove("show"); }
     if(cap) cap.textContent=CAP[i];
     if(beatn) beatn.textContent="Beat "+(i+1)+" of "+beats.length+" · tap the diagram to step";
+    agBeatNow=i; broadcastStage();   // phones mirror the beat
   }
   let bi=0;
   function stopAuto(){ if(agTimer){ clearInterval(agTimer); agTimer=null; } }
