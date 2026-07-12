@@ -252,10 +252,12 @@
 /* ===== CONFIG · must match Presenter_SL.html exactly ===== */
 /* Day of the session, point both files at your own broker. For sync that works
    on any network (mobile data, locked down venue wifi), use a host that serves
-   WSS on port 443; non standard ports like 8884 are often blocked. If the broker
-   needs a login, set MQTT_USER and MQTT_PASS. These four lines must match
-   Presenter_SL.html byte for byte. */
-const MQTT_URL  = "wss://broker.hivemq.com:8884/mqtt";  // TODO: swap for your own 443 endpoint
+   WSS on port 443; non standard ports like 8884 are often blocked. The default
+   below is the public Eclipse broker on standard 443, which passes through most
+   phone and venue firewalls and needs no account. For a private room with auth,
+   swap in a managed 443 endpoint and set MQTT_USER and MQTT_PASS. These four
+   lines must match Presenter_SL.html byte for byte. */
+const MQTT_URL  = "wss://mqtt.eclipseprojects.io/mqtt";  // public broker, WSS on 443 (firewall friendly, no login)
 const TOPIC_NS  = "leadai-bty";                          // unique token; harder to guess than "leadai"
 const MQTT_USER = "";                                    // broker username, if required
 const MQTT_PASS = "";                                    // broker password, if required

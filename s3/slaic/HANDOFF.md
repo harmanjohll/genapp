@@ -29,7 +29,7 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 Both files must agree exactly on these four constants (byte for byte):
 
 ```
-MQTT_URL  = "wss://broker.hivemq.com:8884/mqtt"   // swap for your own 443 endpoint
+MQTT_URL  = "wss://mqtt.eclipseprojects.io/mqtt"  // public broker, WSS on 443 (firewall friendly, no login)
 TOPIC_NS  = "leadai-bty"                           // topic = leadai-bty/<ROOM>/bus
 MQTT_USER = ""                                     // broker username, if the broker needs auth
 MQTT_PASS = ""                                     // broker password, if the broker needs auth
@@ -61,7 +61,7 @@ Verified at handoff: both script blocks pass `node --check`; the four constants 
 ## Next (backlog, roughly ordered)
 
 1. **Host on GitHub Pages** (steps below). `index.html` now exists in this folder and links every piece, so the room URL is the folder itself.
-2. **Provision the port 443 broker (the one open item that needs an account).** The code is ready: both files read `MQTT_URL`, `TOPIC_NS`, `MQTT_USER`, `MQTT_PASS`, and pass auth to `mqtt.connect`. You still need to stand up a broker that serves WSS on **port 443** (non standard ports like 8884 are blocked on many mobile and corporate networks, which defeats the "any network" goal). Options: a managed MQTT service that natively serves `wss://host:443/mqtt`, or a small broker fronted by Cloudflare on 443. Scope the credential to `leadai-bty/<NS>/#`, set the four constants in both files, and confirm reachability with the cross network test below. Rotate the credential after the event.
+2. **Broker now defaults to a 443 endpoint.** Both files use `wss://mqtt.eclipseprojects.io/mqtt`, the public Eclipse broker on standard **port 443**, so it passes through most phone and venue firewalls with no account. This replaces the old `broker.hivemq.com:8884`, which was blocked on many mobile and corporate networks. Trade-off: it is a shared public broker (no auth, best-effort uptime), so the room namespace (`TOPIC_NS`/`ROOM`) is the only privacy, and the printed cards remain the fallback if it is unreachable or flaky on the day. For a private, guaranteed room, swap `MQTT_URL` for a managed 443 service (HiveMQ Cloud, EMQX Cloud) and set `MQTT_USER`/`MQTT_PASS`; scope the credential to `leadai-bty/<NS>/#` and rotate after the event. Keep the four constants byte-identical across both files. **Reachability still needs the cross-network test below** — a code default cannot prove a given network allows it.
 3. **Rehearse across networks.** Confirm a join from a phone on mobile data (not only the venue wifi), and from a second carrier. Confirm the two CDN scripts (`mqtt`, `html2canvas`) load; if a network blocks them, the new connection failure UX says so honestly and points at the paper card.
 4. Optional: a presenter side export of the wall and reflections.
 
@@ -95,4 +95,4 @@ Tell Claude Code the repo name and whether you want a top level folder or a dedi
 
 ## Run locally
 
-Open any file directly in a browser. For the live pair, open `Presenter_SL.html` in one tab and `Audience_SL.html` in another, join `BTY-SL`, and drive with Next. No server needed; the broker is remote.
+Open any file directly in a browser. For the live pair, open `Presenter_SL.html` in one tab and `Audience_SL.html` in another, join `S3-SL`, and drive with Next. No server needed; the broker is remote.
