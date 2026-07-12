@@ -29,7 +29,7 @@ A live, two device workshop. A facilitator drives a console on the main screen; 
 Both files must agree exactly on these four constants (byte for byte):
 
 ```
-MQTT_URL  = "wss://mqtt.eclipseprojects.io/mqtt"  // public broker, WSS on 443 (firewall friendly, no login)
+MQTT_URL  = "wss://broker.hivemq.com:8884/mqtt"  // public test broker, matches the working s3/paic config
 TOPIC_NS  = "leadai-bty"                           // topic = leadai-bty/<ROOM>/bus
 MQTT_USER = ""                                     // broker username, if the broker needs auth
 MQTT_PASS = ""                                     // broker password, if the broker needs auth
@@ -61,7 +61,7 @@ Verified at handoff: both script blocks pass `node --check`; the four constants 
 ## Next (backlog, roughly ordered)
 
 1. **Host on GitHub Pages** (steps below). `index.html` now exists in this folder and links every piece, so the room URL is the folder itself.
-2. **Broker now defaults to a 443 endpoint.** Both files use `wss://mqtt.eclipseprojects.io/mqtt`, the public Eclipse broker on standard **port 443**, so it passes through most phone and venue firewalls with no account. This replaces the old `broker.hivemq.com:8884`, which was blocked on many mobile and corporate networks. Trade-off: it is a shared public broker (no auth, best-effort uptime), so the room namespace (`TOPIC_NS`/`ROOM`) is the only privacy, and the printed cards remain the fallback if it is unreachable or flaky on the day. For a private, guaranteed room, swap `MQTT_URL` for a managed 443 service (HiveMQ Cloud, EMQX Cloud) and set `MQTT_USER`/`MQTT_PASS`; scope the credential to `leadai-bty/<NS>/#` and rotate after the event. Keep the four constants byte-identical across both files. **Reachability still needs the cross-network test below** — a code default cannot prove a given network allows it.
+2. **Broker: HiveMQ public test broker, matching the working `s3/paic` session.** Both files use `wss://broker.hivemq.com:8884/mqtt`, byte-identical, no auth. This is the same broker the sibling `s3/paic` project runs on, which is proven to connect in the browser, so slaic uses it too. (History: an earlier round switched this to `wss://mqtt.eclipseprojects.io/mqtt` on a mistaken "port 8884 is blocked" theory; that Eclipse broker failed the WSS handshake in the browser and was reverted. If a specific venue genuinely blocks 8884, move to a managed service on 443, e.g. HiveMQ Cloud or EMQX Cloud, and set `MQTT_USER`/`MQTT_PASS`; keep the four constants byte-identical across both files.) It is a shared public broker (best-effort uptime), so the room namespace (`TOPIC_NS`/`ROOM`) is the only privacy and the printed cards remain the fallback. Confirm reachability with the cross-network test below.
 3. **Rehearse across networks.** Confirm a join from a phone on mobile data (not only the venue wifi), and from a second carrier. Confirm the two CDN scripts (`mqtt`, `html2canvas`) load; if a network blocks them, the new connection failure UX says so honestly and points at the paper card.
 4. Optional: a presenter side export of the wall and reflections.
 
