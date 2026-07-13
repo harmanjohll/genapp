@@ -234,6 +234,20 @@
     .log .logcard{break-inside:avoid;box-shadow:none;}
     .app{padding:0;max-width:none;}
   }
+
+  /* ===== round 12: bigger mirror type + new layouts ===== */
+  .mirror .body-txt{font-size:clamp(17px,4.6vw,21px);margin-bottom:16px;}
+  .mirror .fliptile .fw{font-size:clamp(18px,5vw,23px);}
+  .mirror .fliptile .fl{font-size:clamp(14px,3.8vw,17px);}
+  .mirror .flipcol{gap:12px;}
+  .mirror .quote{font-size:clamp(18px,5vw,24px);}
+  .mirror .quad{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px;}
+  .mirror .quad .qcell{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;}
+  .mirror .quad .qcell .qh{font-family:var(--serif);font-weight:800;font-size:clamp(16px,4.4vw,20px);color:var(--accent-d);margin-bottom:6px;}
+  .mirror .quad .qcell p{margin:0;font-size:clamp(14px,3.8vw,17px);color:var(--ink);line-height:1.5;}
+  .mirror .quad .shot img{height:150px;}
+  .mirror .pentagon{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+  .mirror .pentagon .prow{display:flex;flex-direction:column;gap:10px;}
 </style>
 </head>
 <body>
@@ -513,8 +527,8 @@ let inQKeys=["question1"], inSubmitted=false;
 function renderIn(){
   V().innerHTML=`<div class="view">
     <span class="eyebrow">Walking in</span>
-    <h2>How ready is your school to lead with AI?</h2>
-    <p class="lede">No wrong answer. One is just starting; five is well underway. Rate the school, not yourself.</p>
+    <h2>How ready are we?</h2>
+    <p class="lede">Rate your own readiness, or the readiness of your school. One is just starting; five is well underway.</p>
     <div class="card">
       <div class="scale" id="sc"></div>
       <div class="lab"><span>1 · Just starting</span><span>5 · Well underway</span></div>
@@ -605,9 +619,9 @@ function renderDilemma(){
 /* ---------- REFLECTION ---------- */
 function renderReflect(){
   V().innerHTML=`<div class="view">
-    <span class="eyebrow">Your keepsake · what you will stand for</span>
-    <h2>What. So what. What next.</h2>
-    <p class="lede">Hold the frames from today: PILOT, the 5 Ps, the five forces. Then, in your own words. This becomes your card. Shared with the room by default; tap Private to keep one to yourself.</p>
+    <span class="eyebrow">Your keepsake</span>
+    <h2>Takeaways and reflections.</h2>
+    <p class="lede">Consider the frames and learning from today. What are your takeaways and reflections? Share them with the room, and log them onto your card. Shared by default; tap Private to keep one to yourself.</p>
     <div class="beat"><div class="wsw">What · noticing</div>
       <div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div>
       ${shareHTML("r1","I am noticing…")}</div>
@@ -634,9 +648,9 @@ function renderReflect(){
 /* ---------- COMMAND CHARTER ---------- */
 function renderCharter(){
   V().innerHTML=`<div class="view">
-    <span class="eyebrow">Our command charter · the 5 Ps</span>
-    <h2>What we will hold.</h2>
-    <p class="lede">A posture per line, in your own words. Postures, not a ladder. Each line is shared to the room wall by default; tap a toggle to keep one private.</p>
+    <span class="eyebrow">My charter · the 5 Ps</span>
+    <h2>My charter.</h2>
+    <p class="lede">We set the posture, not a ladder, on AI use. A posture per line, in your own words. Each line is shared to the room wall by default; tap a toggle to keep one private.</p>
     <div id="ch"></div>
     <button class="btn" id="cdone">I'm done</button><span id="cflag"></span>
     <p class="hint">Sharing is anonymous. Only the words appear on the wall, never your name.</p></div>`;
@@ -745,7 +759,7 @@ function audAgentPaint(i){
 function renderOut(){
   V().innerHTML=`<div class="view">
     <span class="eyebrow">Walking out</span>
-    <h2>And now? Rate your school again.</h2>
+    <h2>How ready are we now?</h2>
     <div class="card">
       <div class="scale" id="sc"></div>
       <div class="lab"><span>1 · Just starting</span><span>5 · Well underway</span></div>
@@ -798,7 +812,7 @@ function renderLog(){
       <ul class="good">${good.length?good.map(g=>`<li>${esc(g)}</li>`).join(""):"<li>—</li>"}</ul>
       <p style="margin:10px 0 2px;font-size:13px;font-weight:700;color:var(--rust);">Worth revisiting</p>
       <ul class="note">${note.length?note.map(n=>`<li>${esc(n)}</li>`).join(""):"<li>Nothing flagged. Strong read.</li>"}</ul></div>
-    <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>Our command charter · the 5 Ps</h3>
+    <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>My charter · the 5 Ps</h3>
       ${charterLines||"<p style='font-size:14px;'>—</p>"}
       <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">My lines</p>
       <ul><li><b>What I am noticing:</b> ${esc(sv("r1"))||"—"}</li><li><b>So what it means:</b> ${esc(sv("r2"))||"—"}</li>
