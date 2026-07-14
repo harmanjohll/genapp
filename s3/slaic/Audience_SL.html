@@ -813,15 +813,15 @@ function renderLog(){
     <span class="eyebrow">Your command card · keep this</span>
     <h2>Leading with AI.</h2>
     <div id="printbar" style="margin:6px 0 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <button class="btn" onclick="window.print()">Save as PDF · deck + my responses</button>
+      <button class="btn" onclick="window.print()">Save as PDF · my takeaways + responses</button>
       <button class="btn ghost" onclick="downloadCard()">Download image (.png)</button>
-      <span class="hint">Save as PDF for a crisp copy on any phone. The image is a quick share.</span></div>
+      <span class="hint">Save as PDF for a crisp copy on any phone. The image is a quick share. The full deck to read is <a href="leadai.html" style="color:var(--accent-d);text-decoration:underline;">the reference</a>.</span></div>
     <div class="logcard"><div class="ttl">Card 0 · The frames</div><h3>What to carry from today</h3>
       <p style="margin:6px 0 3px;font-size:13.5px;"><b>PILOT:</b> Plan, Instruct, Launch, Oversee, Tune. Don't just be in the loop; lead the loop.</p>
       <p style="margin:3px 0;font-size:13.5px;"><b>The 5 Ps:</b> Prohibit, Polish, Plan, Produce, Partner. Postures, not a ladder; set per task.</p>
       <p style="margin:3px 0;font-size:13.5px;"><b>Five forces:</b> Cultural and Symbolic stay ours; Educational, we judge; Human and Technical, AI assists.</p>
       <p style="margin:3px 0;font-size:13.5px;"><b>HEART through VOICE:</b> engagement through ownership. Some things have no AI version.</p>
-      <p style="margin:6px 0 0;font-size:13.5px;color:var(--accent-d);font-family:var(--serif);">You cannot govern what you have only been briefed on. Get your hands dirty.</p></div>
+      <p style="margin:6px 0 0;font-size:13.5px;color:var(--accent-d);font-family:var(--serif);">We cannot govern what we have only been briefed on. Get your hands dirty.</p></div>
     <div class="logcard"><div class="ttl">Card 1 · Walking in</div><h3>${esc(who)}</h3>
       <p style="margin:4px 0 0;font-size:14px;"><b>Readiness in:</b> ${S.confIn??"—"} / 5</p>
       ${(function(){ const qs=["question1","question2","question3"].map(k=>sv(k)).filter(Boolean);
@@ -860,16 +860,18 @@ function downloadCard(){
   var el=document.getElementById("loglog"); if(!el) return;
   function go(){
     toast("Building your image…");
-    window.html2canvas(el,{scale:Math.min(4,Math.max(2,(window.devicePixelRatio||1)*1.5)),backgroundColor:"#f4f1ea",useCORS:true,logging:false}).then(function(canvas){
+    // iOS Safari caps a canvas at ~4096px/dimension; clamp scale so a tall card never renders blank
+    var __sc=Math.max(1.5, Math.min(Math.min(4,Math.max(2,(window.devicePixelRatio||1)*1.5)), 3900/el.offsetHeight, 3900/el.offsetWidth));
+    window.html2canvas(el,{scale:__sc,backgroundColor:"#f4f1ea",useCORS:true,logging:false}).then(function(canvas){
       var a=document.createElement("a");
       a.download=(S.name?S.name.replace(/[^a-z0-9]+/gi,"_")+"_":"")+"Leading_with_AI_Card.png";
       a.href=canvas.toDataURL("image/png"); a.click();
-    }).catch(function(){ toast("Could not build the image. Try Print instead."); });
+    }).catch(function(){ toast("Could not build the image. Use Save as PDF instead."); });
   }
   if(window.html2canvas) go();
   else { loadH2C(); var n=0,t=setInterval(function(){ n++;
       if(window.html2canvas){ clearInterval(t); go(); }
-      else if(n>60){ clearInterval(t); toast("Image tool blocked. Use Print instead."); } },200); }
+      else if(n>60){ clearInterval(t); toast("Image tool blocked. Use Save as PDF instead."); } },200); }
 }
 
 /* ---------- init ---------- */
