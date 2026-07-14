@@ -120,7 +120,7 @@
   .cc .n{font-family:var(--serif);font-size:30px;color:var(--accent);font-weight:800;}
   .cc h3{margin:10px 0 8px;font-size:21px;font-weight:700;letter-spacing:-.01em;}
   .cc p{color:var(--muted);font-size:15px;margin:0;line-height:1.5;}
-  .body-txt{font-size:clamp(19px,2.4vw,27px);color:var(--ink);font-weight:300;max-width:900px;line-height:1.42;margin:0 0 20px;}
+  .body-txt{font-size:clamp(19px,2.4vw,27px);color:var(--ink);font-weight:300;max-width:1180px;line-height:1.42;margin:0 0 20px;}
   .body-txt b{font-weight:700;color:var(--accent);}
   .quote{font-family:var(--serif);font-size:clamp(26px,3.6vw,42px);font-weight:400;line-height:1.22;max-width:1000px;margin:6px 0 16px;letter-spacing:-.01em;font-style:italic;}
   .quote b{color:var(--accent);font-style:normal;font-weight:700;}
@@ -314,14 +314,19 @@
   #agent-widget .node .s{font-size:13px;}
 
   /* true pentagon: one P at each vertex; stacks vertically on phones */
-  .pentagon5{position:relative;width:100%;max-width:880px;margin:16px auto 0;height:min(50vh,430px);}
-  .pentagon5 .fliptile{position:absolute;width:min(30%,264px);transform:translate(-50%,-50%);}
-  .pentagon5 .fliptile .inner{min-height:104px;}
-  .pentagon5 .p-apex{left:50%;top:12%;}
-  .pentagon5 .p-ur{left:84%;top:47%;}
-  .pentagon5 .p-lr{left:71%;top:86%;}
-  .pentagon5 .p-ll{left:29%;top:86%;}
-  .pentagon5 .p-ul{left:16%;top:47%;}
+  .pentagon5{position:relative;width:100%;max-width:960px;margin:14px auto 0;height:min(54vh,486px);}
+  .pentagon5 .fliptile{position:absolute;width:min(30%,244px);transform:translate(-50%,-50%);}
+  .pentagon5 .fliptile .inner{min-height:120px;}
+  .pentagon5 .fliptile .face{padding:13px 16px;}
+  .pentagon5 .fliptile .fw{font-size:clamp(18px,2vw,23px);}
+  .pentagon5 .fliptile .fs{font-size:12.5px;margin-top:3px;}
+  .pentagon5 .fliptile .fi{font-size:22px;margin-bottom:5px;}
+  .pentagon5 .fliptile .fl{font-size:12.5px;margin:2px 0;line-height:1.32;}
+  .pentagon5 .p-apex{left:50%;top:9%;}
+  .pentagon5 .p-ur{left:86%;top:43%;}
+  .pentagon5 .p-lr{left:71%;top:85%;}
+  .pentagon5 .p-ll{left:29%;top:85%;}
+  .pentagon5 .p-ul{left:14%;top:43%;}
   @media(max-width:900px){.pentagon5{position:static;height:auto;display:flex;flex-direction:column;gap:12px;max-width:520px;}.pentagon5 .fliptile{position:static;transform:none;width:100%;}}
 </style>
 </head>
@@ -447,7 +452,6 @@ const STAGES = [
   {id:"q0", aud:"quiz", q:0, sub:"q0", label:"Read 1 · predict: agent vs chatbot"},
   {id:"loop",          aud:"watch",   sub:null,        label:"A tool answers once. An agent loops."},
   {id:"agent",         aud:"watch",   sub:null,        label:"How an agent works · the loop"},
-  {id:"govern",        aud:"watch",   sub:null,        label:"Get your hands dirty"},
   {id:"q1", aud:"quiz", q:1, sub:"q1", label:"Read · the data boundary"},
   {id:"forces",        aud:"watch",   sub:null,        label:"Five forces · what AI takes"},
   {id:"q2", aud:"quiz", q:2, sub:"q2", label:"Read · the one-voice risk"},
@@ -457,10 +461,8 @@ const STAGES = [
   {id:"flash",         aud:"watch",   sub:null,        label:"See it · built, free, hosted"},
   {id:"build",         aud:"watch",   sub:null,        label:"Let's build something"},
   {id:"ship",          aud:"watch",   sub:null,        label:"Ship it · GitHub, five steps"},
-  {id:"wall",          aud:"charter", sub:"charter",   label:"My charter · the 5 Ps"},
-  {id:"reflect",       aud:"reflect", sub:"reflect",   label:"Reflection · takeaways"},
+  {id:"wall",          aud:"charter", sub:"charter",   label:"My charter · postures and the line I carry"},
   {id:"out",           aud:"out",     sub:"out",       label:"Readiness · walking out"},
-  {id:"close",         aud:"watch",   sub:null,        label:"Human agency in an agentic age"},
   {id:"heart",         aud:"watch",   sub:null,        label:"HEART · through VOICE · the human part"},
   {id:"close-end",     aud:"log",     sub:null,        label:"Close · your command card"}
 ];
@@ -477,7 +479,6 @@ const confIn={}, confOut={};
 const rules=[];
 const shared = {question:{}, reflect:{}, charter:{}};
 const PSCAT = {prohibit:"Prohibit",polish:"Polish",plan:"Plan",produce:"Produce",partner:"Partner"};
-const RLAB = {r1:"Noticing",r2:"So what",r3:"What next"};
 
 /* ---------- sync (MQTT over WebSocket) ---------- */
 let client=null, wsOpen=false;
@@ -641,7 +642,6 @@ function renderStage(){
   else if(s.aud==="dilemma") host.innerHTML=stageDilemma(s.d);
   else if(s.id==="in") host.innerHTML=stageConf("in");
   else if(s.id==="out") host.innerHTML=stageConf("out");
-  else if(s.id==="reflect") host.innerHTML=stageReflect();
   else if(s.id==="wall"){ host.innerHTML=stageWall(); wireWall(); }
   else if(s.id==="agent"){ host.innerHTML=renderContent("agent"); wireAgent(); }
   else if(s.id==="close-end") host.innerHTML=stageCloseEnd();
@@ -724,19 +724,10 @@ function stageConf(phase){
     ${phase==="in"?feedHTML("question","What is on each leader's mind"):""}`;
 }
 function avg(map){ const v=Object.values(map); return v.length?(v.reduce((x,y)=>x+y,0)/v.length):null; }
-function stageReflect(){
-  return `<span class="eyebrow">Your keepsake</span>
-    <h1>Takeaways and reflections.</h1>
-    <p class="sub">Consider the frames and learning from today. What might be some takeaways and reflections? Share them with the room, and log them onto your card.</p>
-    <div class="beat"><div class="w">What · noticing</div><div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div></div>
-    <div class="beat"><div class="w">So what · meaning</div><div class="qx">What does it mean for how you will lead this change?</div></div>
-    <div class="beat"><div class="w">What next · one move</div><div class="qx">One thing you will do, or stand for, next.</div></div>
-    ${feedHTML("reflect","Shared lines",RLAB)}`;
-}
 function stageWall(){
   return `<span class="eyebrow">Live · my charter</span>
     <h1>My charter.</h1>
-    <p class="sub">We set the posture, not a ladder, on AI use. Lines appear here as they are shared.</p>
+    <p class="sub">Consider what we are noticing from today. Set your postures, and the one line you will carry. Both appear here as they are shared.</p>
     <div class="chips" style="margin-bottom:16px;"><span class="chip"><b>P</b>rohibit</span><span class="chip"><b>P</b>olish</span><span class="chip"><b>P</b>lan</span><span class="chip"><b>P</b>roduce</span><span class="chip"><b>P</b>artner</span></div>
     <div class="wallctl">
       <select id="wcat"><option>Prohibit</option><option>Polish</option><option>Plan</option><option>Produce</option><option>Partner</option></select>
@@ -745,7 +736,8 @@ function stageWall(){
       <button class="btn ghost sm" id="wclear">Clear</button>
     </div>
     <div class="wall" id="wall"></div>
-    <div class="wallcount" id="wallcount"></div>`;
+    <div class="wallcount" id="wallcount"></div>
+    ${feedHTML("reflect","The lines we will carry")}`;
 }
 function wireWall(){
   renderWallTiles();
@@ -926,12 +918,6 @@ const CONTENT = {
         <div class="agctl"><button class="btn ghost sm" id="agreplay" type="button">↻ Replay</button><button class="btn sm" id="agstep" type="button">Step ▶</button></div>
       </div>
     </div>`},
-  "govern":{e:"Through AI · Govern it", t:"Get your hands dirty.",
-    h:`<div style="max-width:1040px;margin:0 auto;text-align:center">
-      <p class="quote" style="font-style:italic;margin:10px auto 0">My approach to all this has been to <b>learn by doing</b>. It is not enough to sit down and read, to take the headlines and the summaries. If you are interested in anything, <b>get your hands dirty</b>. And because the barriers to entry have come down so dramatically, everyone should embark on their own experiments.</p>
-      <p class="body-txt" style="font-size:clamp(21px,2.8vw,34px);color:var(--accent);font-weight:800;margin:28px auto 0;line-height:1.24;max-width:920px">You cannot govern a technology you have only been briefed on. Get your hands dirty, and then you understand both the potential, the limits, and the problems.</p>
-      <p class="src" style="margin-top:18px">After Vivian Balakrishnan, Minister for Foreign Affairs, at AI Engineer Singapore, 16 May 2026.</p>
-    </div>`},
   "forces":{e:"In the AI age · Five forces", t:"What AI takes. What it cannot.",
     h:`<p class="body-txt" style="font-size:clamp(16px,2vw,21px)">Sergiovanni named five forces of leadership. With AI, each matters more and cuts finer.</p>
       <div class="flipcol">
@@ -951,9 +937,9 @@ const CONTENT = {
         <div class="hvcol"><div class="hvh">VOICE</div>
           <div class="hvw">Values</div><div class="hvw lit">Ownership</div><div class="hvw">Inclusion</div><div class="hvw lit">Contribution</div><div class="hvw lit">Empowerment</div></div>
       </div>
-      <div class="slideicon" style="margin-top:26px">🫶</div>
-      <p class="body-txt" style="font-size:clamp(17px,2.2vw,24px)"><b>Some things have no AI version.</b> A teacher who knows a child. A colleague who trusts us. A room that feels safe. No model can ever do these.</p>
-      <p class="body-txt kicker" style="color:var(--accent);margin-top:10px">How we work may shift. It is our chance to protect, and elevate, the human condition.</p>`},
+      <p class="body-txt" style="font-size:clamp(16px,2.1vw,23px);margin-top:18px">🫶 <b>Some things have no AI version.</b> A teacher who knows a child. A colleague who trusts us. A room that feels safe. No model can ever do these.</p>
+      <p class="body-txt" style="font-size:clamp(16px,2.1vw,23px);margin-top:10px">Agentic AI pursues goals. <b>Human agency decides which are worth pursuing</b>, why, and for whom. That stays ours.</p>
+      <p class="body-txt kicker" style="color:var(--accent);margin-top:10px">We built with it today. We governed through it. We lead in it, still in command.</p>`},
   "mirror":{e:"Through AI · The mirror", t:"A skill reflects whoever made it.",
     h:`<p class="body-txt">It learns our best day and our blind spots alike. One voice can pass as the whole school's. And what we never write down is never captured.</p>
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:12px">A house-voice skill is apt for school communications, and should always be reviewed and refreshed. Build it with many hands.</p>`},
@@ -968,11 +954,11 @@ const CONTENT = {
       </div>
       <p class="fliphint">Tap a card to turn it.</p>`},
   "flash":{e:"See it", t:"Built. Free. Hosted.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.1vw,23px)">Colleagues built these on free accounts, in a browser. One I built live, with no terminal at all.</p>
+    h:`<p class="body-txt" style="font-size:clamp(17px,2.1vw,23px)">We cannot govern what we have only been briefed on. Colleagues got their hands dirty and built these, on free accounts, in a browser. One I built live with no terminal: I described a chemistry clip, and the agent wrote the code, <b>checked its own frames, and fixed what broke.</b></p>
       <div class="quad">
         <figure class="shot"><img src="cocher.png" alt="Co-Cher app"><figcaption><b>Co-Cher</b>A lesson and CCE design helper, built on the frameworks. A teacher made it.</figcaption></figure>
         <figure class="shot"><img src="sgsl.png" alt="SgSL app"><figcaption><b>SgSL</b>A Singapore Sign Language reader. Still rough, and that is the point. Ship, then fix in the open.</figcaption></figure>
-        <div class="qcell"><div class="qh">🎬 Watch it run</div><p>I described a chemistry clip. The agent wrote the code, rendered it, <b>checked the frames, fixed what broke</b>, and narrated it. No command line. I stopped making each clip; I built the thing that makes them.</p></div>
+        <figure class="shot"><img src="weekbrief.png" alt="Weekly Staff Brief app"><figcaption><b>Weekly Staff Brief</b>The week ahead, one clean page. Built from a plain description, no design tools.</figcaption></figure>
         <div class="qcell ph2"><div class="qh">✨ What will you build?</div><p>One staff job, one tool. Built today, hosted this week.</p></div>
       </div>`},
   "wow":{e:"Watch it run", t:"No terminal. I asked. It built.",
@@ -1001,7 +987,7 @@ const CONTENT = {
       <p class="body-txt">Open Monday briefing with an AI draft, and the school learns that drafts are cheap and judgement is dear. Prohibit AI from the condolence letter, and the school learns what is sacred.</p>
       <p class="body-txt" style="font-size:clamp(16px,2vw,21px);color:var(--muted)">Every posture we set is read as a signal.</p>
       <p class="body-txt" style="font-size:clamp(20px,2.6vw,30px);color:var(--accent);font-weight:800;margin-top:6px">The tool is technical. The choice is symbolic.</p>
-      <p class="src">Senior leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what we do, not what we say. Center for Creative Leadership, via Partners for Educational Leadership: School Leadership in the AI Era.</p>`},
+      <p class="body-txt" style="font-size:clamp(18px,2.4vw,26px);margin-top:22px">Leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what we do, not what we say.</p>`},
   "human":{e:"In the AI age \u00b7 The human part", t:"Some things have no AI version.",
     h:`<div class="slideicon">\ud83e\udef6</div>
       <p class="body-txt">A teacher who knows a child. A colleague who trusts us. A room that feels safe. <b>No model makes these.</b></p>
@@ -1035,11 +1021,7 @@ const CONTENT = {
         ${flipTile("5 &middot; Share the link","live in a minute","🔗",["your-name.github.io/family-faq"])}
       </div>
       <p class="body-txt kicker" style="color:var(--accent);margin-top:20px">A public page is public data. Nothing sensitive goes in. The data line holds here too.</p>
-      <p class="fliphint">Tap a step to see how.</p>`},
-  "close":{e:"In the AI age · The close", t:"Human agency in an agentic age.",
-    h:`<div class="slideicon">🧭</div>
-      <p class="body-txt">Agentic AI pursues goals on its own. <b>Human agency decides which goals are worth pursuing</b>, why, and for whom. No system settles that. It is, and stays, ours. We cannot govern it from a brief. Today, we did the building.</p>
-      <p class="body-txt kicker" style="color:var(--accent);margin-top:14px">We built with it today. We governed through it. And we lead in it, still in command.</p>`}
+      <p class="fliphint">Tap a step to see how.</p>`}
 };
 
 /* ---------- util ---------- */
