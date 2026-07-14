@@ -262,7 +262,7 @@
   #agent-widget .ring2.on{opacity:.65;animation:agspin 3.4s linear infinite;}
   #agent-widget .agpass{position:absolute;left:450px;top:332px;transform:translate(-50%,-50%);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ag-accent);opacity:0;transition:opacity .3s;}
   #agent-widget .agpass.on{opacity:1;}
-  #agent-widget .agcheck{position:absolute;left:560px;top:226px;transform:translate(-50%,-50%);font-size:12.5px;font-weight:700;border-radius:999px;padding:.25em .7em;opacity:0;transition:opacity .3s;}
+  #agent-widget .agcheck{position:absolute;left:606px;top:204px;transform:translate(-50%,-50%);font-size:13px;font-weight:700;border-radius:999px;padding:.28em .8em;opacity:0;transition:opacity .3s;z-index:6;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.14);}
   #agent-widget .agcheck.on{opacity:1;}
   #agent-widget .agcheck.fail{background:#f7e3dd;color:#b1452b;}#agent-widget .agcheck.pass{background:#e3f0e7;color:#3f7d54;}
   #agent-widget .pulse2{position:absolute;left:450px;top:70px;width:18px;height:18px;border-radius:50%;background:var(--ag-accent);transform:translate(-50%,-50%);transition:left .65s cubic-bezier(.5,.05,.3,1),top .65s cubic-bezier(.5,.05,.3,1);box-shadow:0 0 0 6px rgba(47,125,114,.2),0 0 18px rgba(47,125,114,.5);z-index:5;}
@@ -312,6 +312,17 @@
   /* agent nodes a touch larger */
   #agent-widget .node .t{font-size:19px;}
   #agent-widget .node .s{font-size:13px;}
+
+  /* true pentagon: one P at each vertex; stacks vertically on phones */
+  .pentagon5{position:relative;width:100%;max-width:880px;margin:16px auto 0;height:min(50vh,430px);}
+  .pentagon5 .fliptile{position:absolute;width:min(30%,264px);transform:translate(-50%,-50%);}
+  .pentagon5 .fliptile .inner{min-height:104px;}
+  .pentagon5 .p-apex{left:50%;top:12%;}
+  .pentagon5 .p-ur{left:84%;top:47%;}
+  .pentagon5 .p-lr{left:71%;top:86%;}
+  .pentagon5 .p-ll{left:29%;top:86%;}
+  .pentagon5 .p-ul{left:16%;top:47%;}
+  @media(max-width:900px){.pentagon5{position:static;height:auto;display:flex;flex-direction:column;gap:12px;max-width:520px;}.pentagon5 .fliptile{position:static;transform:none;width:100%;}}
 </style>
 </head>
 <body>
@@ -333,12 +344,12 @@
 <div class="deck">
   <div style="display:flex;gap:10px;align-items:center;">
     <button class="btn ghost sm" id="reset">⟳ New session</button>
-    <button class="btn ghost" id="prev">◀ Back</button>
   </div>
   <div class="label">Slide <b id="stagei">1</b> · <span id="stagelbl"></span></div>
   <div class="rail" id="rail"></div>
-  <div class="right">
+  <div class="right" style="gap:14px;">
     <button class="btn ghost" id="reveal" style="display:none;">Reveal answer</button>
+    <button class="btn ghost" id="prev">◀ Back</button>
     <button class="btn" id="next">Next ▶</button>
   </div>
 </div>
@@ -370,7 +381,7 @@ const QUIZ = [
    answer:1,
    why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. We govern a process that keeps running when we are not watching, not a single answer."},
   {tag:"Your call",
-   claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
+   claim:"A KP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
    options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"],
    answer:2,
    why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified."},
@@ -948,16 +959,12 @@ const CONTENT = {
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:12px">A house-voice skill is apt for school communications, and should always be reviewed and refreshed. Build it with many hands.</p>`},
   "postures":{e:"Through AI · The 5 Ps", t:"Postures, not a ladder.",
     h:`<p class="body-txt" style="font-size:clamp(17px,2.2vw,23px)">Set per task, by data and stakes. <b>Partner does not beat Prohibit.</b> The right posture is the one the task calls for.</p>
-      <div class="pentagon">
-        <div class="prow">${flipTile("Prohibit","keep AI out","⛔",["Sensitive, official, or the values call.","Some things AI never touches."])}</div>
-        <div class="prow">
-          ${flipTile("Polish","refine, not originate","✨",["We write it; AI sharpens it.","Never let it originate the message."])}
-          ${flipTile("Partner","co-author, we own","🤝",["We co-author with AI.","Highest trust, fullest ownership."])}
-        </div>
-        <div class="prow">
-          ${flipTile("Plan","think it through","🗺️",["Reason it out with us.","We decide."])}
-          ${flipTile("Produce","draft with us","📝",["It drafts on our standard.","We own and answer for it."])}
-        </div>
+      <div class="pentagon5">
+        ${flipTile("Prohibit","keep AI out","⛔",["Sensitive, official, or the values call.","Some things AI never touches."],"p-apex")}
+        ${flipTile("Polish","refine, not originate","✨",["We write it; AI sharpens it.","Never let it originate the message."],"p-ur")}
+        ${flipTile("Plan","think it through","🗺️",["Reason it out with us.","We decide."],"p-lr")}
+        ${flipTile("Produce","draft with us","📝",["It drafts on our standard.","We own and answer for it."],"p-ll")}
+        ${flipTile("Partner","co-author, we own","🤝",["We co-author with AI.","Highest trust, fullest ownership."],"p-ul")}
       </div>
       <p class="fliphint">Tap a card to turn it.</p>`},
   "flash":{e:"See it", t:"Built. Free. Hosted.",
@@ -994,7 +1001,7 @@ const CONTENT = {
       <p class="body-txt">Open Monday briefing with an AI draft, and the school learns that drafts are cheap and judgement is dear. Prohibit AI from the condolence letter, and the school learns what is sacred.</p>
       <p class="body-txt" style="font-size:clamp(16px,2vw,21px);color:var(--muted)">Every posture we set is read as a signal.</p>
       <p class="body-txt" style="font-size:clamp(20px,2.6vw,30px);color:var(--accent);font-weight:800;margin-top:6px">The tool is technical. The choice is symbolic.</p>
-      <p class="src">Senior leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what we do, not what we say. CCL, via Partners for Educational Leadership, 2026.</p>`},
+      <p class="src">Senior leaders create safety by going first: using AI in the open, showing the learning, admitting the adjustments. The room watches what we do, not what we say. Center for Creative Leadership, via Partners for Educational Leadership: School Leadership in the AI Era.</p>`},
   "human":{e:"In the AI age \u00b7 The human part", t:"Some things have no AI version.",
     h:`<div class="slideicon">\ud83e\udef6</div>
       <p class="body-txt">A teacher who knows a child. A colleague who trusts us. A room that feels safe. <b>No model makes these.</b></p>
@@ -1024,7 +1031,7 @@ const CONTENT = {
         ${flipTile("1 &middot; One file","ask Claude","📄",["'Give me this as a single index.html I can host.' Download it."])}
         ${flipTile("2 &middot; Account","github.com","👤",["Sign up. It is free."])}
         ${flipTile("3 &middot; Repository","new, public","📁",["Name it, e.g. family-faq. Set it Public. Create."])}
-        ${flipTile("4 &middot; Upload, switch on","GitHub Pages","⚙️",["Add file, Upload, drop the index.html, Commit.","Then Settings, Pages, Branch: main, Save."])}
+        ${flipTile("4 &middot; Upload, switch on","GitHub Pages","⚙️",["Add file, Upload, drop the index.html, Commit.","Then Settings, Pages. <b>Source: Deploy from a branch. Branch: main, folder: / (root).</b> Save."])}
         ${flipTile("5 &middot; Share the link","live in a minute","🔗",["your-name.github.io/family-faq"])}
       </div>
       <p class="body-txt kicker" style="color:var(--accent);margin-top:20px">A public page is public data. Nothing sensitive goes in. The data line holds here too.</p>
