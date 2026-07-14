@@ -206,7 +206,7 @@
   #agent-widget .ring2.on{opacity:.65;animation:agspin 3.4s linear infinite;}
   #agent-widget .agpass{position:absolute;left:450px;top:332px;transform:translate(-50%,-50%);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ag-accent);opacity:0;transition:opacity .3s;}
   #agent-widget .agpass.on{opacity:1;}
-  #agent-widget .agcheck{position:absolute;left:560px;top:226px;transform:translate(-50%,-50%);font-size:12.5px;font-weight:700;border-radius:999px;padding:.25em .7em;opacity:0;transition:opacity .3s;}
+  #agent-widget .agcheck{position:absolute;left:606px;top:204px;transform:translate(-50%,-50%);font-size:13px;font-weight:700;border-radius:999px;padding:.28em .8em;opacity:0;transition:opacity .3s;z-index:6;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.14);}
   #agent-widget .agcheck.on{opacity:1;}
   #agent-widget .agcheck.fail{background:#f7e3dd;color:#b1452b;}#agent-widget .agcheck.pass{background:#e3f0e7;color:#3f7d54;}
   #agent-widget .pulse2{position:absolute;left:450px;top:70px;width:18px;height:18px;border-radius:50%;background:var(--ag-accent);transform:translate(-50%,-50%);transition:left .65s cubic-bezier(.5,.05,.3,1),top .65s cubic-bezier(.5,.05,.3,1);box-shadow:0 0 0 6px rgba(47,125,114,.2),0 0 18px rgba(47,125,114,.5);z-index:5;}
@@ -248,6 +248,19 @@
   .mirror .quad .shot img{height:150px;}
   .mirror .pentagon{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
   .mirror .pentagon .prow{display:flex;flex-direction:column;gap:10px;}
+
+  /* true pentagon: stacks vertically on the phone */
+  .pentagon5{display:flex;flex-direction:column;gap:12px;margin:14px auto 0;max-width:520px;}
+  .pentagon5 .fliptile{width:100%;}
+  /* clean, colour-accurate print -> Save as PDF (crisp vector, no app chrome) */
+  @media print{
+    @page{margin:12mm;}
+    html,body{background:#fff !important;}
+    .statusbar,.netbanner,.toast,#printbar,button.btn{display:none !important;}
+    .app{max-width:100% !important;padding:0 !important;}
+    .log .logcard{break-inside:avoid;page-break-inside:avoid;box-shadow:none;border:1px solid #cfd6cb;margin-bottom:10px;}
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+  }
 </style>
 </head>
 <body>
@@ -285,7 +298,7 @@ const QUIZ = [
     options:["Uses a bigger model and more training data","Runs a loop: plans, acts, checks its own work, repeats","Remembers everything we have told it","Stays connected to the live internet"], answer:1,
     why:"<b>It runs a loop.</b> A tool answers once. An agent sets a goal, acts, checks against it, and goes round again until done. We govern a process that keeps running when we are not watching.",
     note:"An agent runs a loop; we govern the process, not one answer." },
-  { tag:"Your call", claim:"A VP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
+  { tag:"Your call", claim:"A KP wants to paste the whole cohort's exam records into free Claude to surface weak topics. The right call is…",
     options:["Approve once the names are stripped out","Approve if the chat is deleted afterwards","Decline; the records stay on the government platform","Approve as a small one-subject pilot"], answer:2,
     why:"<b>Decline.</b> We govern by deciding what data goes where, not which tool is cleverer. Records stay on Pair and AIBots. Stripping names is fine for open material like survey themes, but a whole cohort of exam records is official data: it stays on the cleared platform either way, and a full cohort can be re-identified.",
     note:"Decide what data goes where. Records stay on Pair and AIBots." },
@@ -793,16 +806,22 @@ function buildScale(host,key,cb){
 /* ---------- COMMAND CARD ---------- */
 function renderLog(){
   const good=[],note=[];
-  QUIZ.forEach((q,i)=>{ if(S.quiz[i]===q.answer) good.push(q.note); else note.push(q.note); });
+  QUIZ.forEach((q,i)=>{ if(S.quiz[i]==null) return; if(S.quiz[i]===q.answer) good.push(q.note); else note.push(q.note); });
   const who=S.name?(S.name+"'s command card"):"My command card";
   const charterLines=PS.map(p=>sv(p.key)?`<div class="pillrow"><span class="pill"><b>${p.name}:</b> ${esc(sv(p.key))}</span></div>`:"").join("");
   V().innerHTML=`<div class="view log" id="loglog">
     <span class="eyebrow">Your command card · keep this</span>
     <h2>Leading with AI.</h2>
     <div id="printbar" style="margin:6px 0 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <button class="btn" onclick="downloadCard()">Download my card (.png)</button>
-      <button class="btn ghost" onclick="window.print()">Print / PDF</button>
-      <span class="hint">The image saves all three cards.</span></div>
+      <button class="btn" onclick="window.print()">Save as PDF · deck + my responses</button>
+      <button class="btn ghost" onclick="downloadCard()">Download image (.png)</button>
+      <span class="hint">Save as PDF for a crisp copy on any phone. The image is a quick share.</span></div>
+    <div class="logcard"><div class="ttl">Card 0 · The frames</div><h3>What to carry from today</h3>
+      <p style="margin:6px 0 3px;font-size:13.5px;"><b>PILOT:</b> Plan, Instruct, Launch, Oversee, Tune. Don't just be in the loop; lead the loop.</p>
+      <p style="margin:3px 0;font-size:13.5px;"><b>The 5 Ps:</b> Prohibit, Polish, Plan, Produce, Partner. Postures, not a ladder; set per task.</p>
+      <p style="margin:3px 0;font-size:13.5px;"><b>Five forces:</b> Cultural and Symbolic stay ours; Educational, we judge; Human and Technical, AI assists.</p>
+      <p style="margin:3px 0;font-size:13.5px;"><b>HEART through VOICE:</b> engagement through ownership. Some things have no AI version.</p>
+      <p style="margin:6px 0 0;font-size:13.5px;color:var(--accent-d);font-family:var(--serif);">You cannot govern what you have only been briefed on. Get your hands dirty.</p></div>
     <div class="logcard"><div class="ttl">Card 1 · Walking in</div><h3>${esc(who)}</h3>
       <p style="margin:4px 0 0;font-size:14px;"><b>Readiness in:</b> ${S.confIn??"—"} / 5</p>
       ${(function(){ const qs=["question1","question2","question3"].map(k=>sv(k)).filter(Boolean);
@@ -841,7 +860,7 @@ function downloadCard(){
   var el=document.getElementById("loglog"); if(!el) return;
   function go(){
     toast("Building your image…");
-    window.html2canvas(el,{scale:2,backgroundColor:"#f4f1ea",useCORS:true}).then(function(canvas){
+    window.html2canvas(el,{scale:Math.min(4,Math.max(2,(window.devicePixelRatio||1)*1.5)),backgroundColor:"#f4f1ea",useCORS:true,logging:false}).then(function(canvas){
       var a=document.createElement("a");
       a.download=(S.name?S.name.replace(/[^a-z0-9]+/gi,"_")+"_":"")+"Leading_with_AI_Card.png";
       a.href=canvas.toDataURL("image/png"); a.click();
