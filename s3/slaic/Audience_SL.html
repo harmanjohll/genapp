@@ -242,12 +242,13 @@
   .mirror .quad .qcell .qh{font-family:var(--serif);font-weight:800;font-size:clamp(16px,4.4vw,20px);color:var(--accent-d);margin-bottom:6px;}
   .mirror .quad .qcell p{margin:0;font-size:clamp(14px,3.8vw,17px);color:var(--ink);line-height:1.5;}
   .mirror .quad .shot img{height:150px;}
-  .mirror .pentagon{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
-  .mirror .pentagon .prow{display:flex;flex-direction:column;gap:10px;}
-
-  /* true pentagon: stacks vertically on the phone */
-  .pentagon5{display:flex;flex-direction:column;gap:12px;margin:14px auto 0;max-width:520px;}
-  .pentagon5 .fliptile{width:100%;}
+  /* flash trio and 5 Ps: both stack to one column on the phone */
+  .mirror .trio{display:flex;flex-direction:column;gap:14px;margin-top:12px;}
+  .mirror .trio .shot img{height:clamp(200px,52vw,260px);}
+  .mirror .buildq{text-align:center;font-family:var(--serif);font-weight:800;color:var(--accent-d);font-size:clamp(22px,6vw,30px);margin:18px 0 0;}
+  .mirror .penta5{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
+  .mirror .penta5 .fliptile{width:100%;}
+  .mirror .penta5 .fliptile .inner{min-height:0;}
   /* clean, colour-accurate print -> Save as PDF (crisp vector, no app chrome) */
   @media print{
     @page{margin:12mm;}
@@ -341,9 +342,9 @@ const DILEMMAS = [
 ];
 const PS = [
   { p:"P", name:"Prohibit", q:"We will keep AI out of…", ph:"e.g. student records, anything official or sensitive", key:"prohibit" },
-  { p:"P", name:"Polish",   q:"AI may polish, never originate…", ph:"e.g. the values message, the hard conversation", key:"polish" },
-  { p:"P", name:"Plan",     q:"A planning loop I will hand to an agent…", ph:"e.g. timetable gaps, duty rosters, PD logistics", key:"plan" },
-  { p:"P", name:"Produce",  q:"Something we will build and ship…", ph:"e.g. a feedback helper, a PD summary tool", key:"produce" },
+  { p:"P", name:"Polish",   q:"Where AI sharpens my thinking, sparring or as a persona…", ph:"e.g. pressure-test an argument, a philosopher's critique", key:"polish" },
+  { p:"P", name:"Plan",     q:"Reasoning I will think through with AI: options, risks, sequence…", ph:"e.g. a rollout, a review cycle, a tough decision", key:"plan" },
+  { p:"P", name:"Produce",  q:"Something we will make and ship…", ph:"e.g. a tool, a dashboard, a game, an applet, code", key:"produce" },
   { p:"P", name:"Partner",  q:"Where staff co-author with AI, and own it…", ph:"e.g. lesson design, comms drafts", key:"partner" }
 ];
 
@@ -486,18 +487,20 @@ function renderConnect(){
     <p class="lede">This is yours for the session, and yours to keep. Type the room code on the screen, then follow along.</p>
     <div class="card">
       <label class="f" for="room">Room code</label>
-      <input type="text" id="room" placeholder="e.g. S3SL" autocomplete="off">
+      <input type="text" id="room" value="S3SL" placeholder="e.g. S3SL" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
       <label class="f" for="name">Your name (optional, for your card)</label>
       <input type="text" id="name" placeholder="optional" autocomplete="off">
       <div style="margin-top:16px;"><button class="btn" id="join">Join the room</button></div>
       <p class="hint">Nothing here is stored anywhere. Your answers live on your screen and print at the end.</p>
     </div></div>`;
   const u=new URLSearchParams(location.search);
-  if(u.get("room")) document.getElementById("room").value=u.get("room");
+  /* Default room is S3SL; a ?room= link overrides it. Always reflect the real
+     default in the field so a phone's remembered autofill cannot show a stale code. */
+  document.getElementById("room").value=u.get("room")||"S3SL";
   document.getElementById("join").onclick=()=>{
     /* Hyphens/spaces are stripped so S3-SL, S3SL, and s3 sl all join the same
-       room; must match the presenter's normalization. */
-    S.room=(document.getElementById("room").value||"").trim().toUpperCase().replace(/[\s-]+/g,"");
+       room; must match the presenter's normalization. Empty falls back to S3SL. */
+    S.room=(document.getElementById("room").value||"S3SL").trim().toUpperCase().replace(/[\s-]+/g,"") || "S3SL";
     S.name=(document.getElementById("name").value||"").trim();
     if(!S.room){ toast("Enter the room code on screen"); return; }
     renderWaiting("You're in. Waiting for the facilitator to begin.");

@@ -304,32 +304,25 @@
   /* flash: three built apps across, then a boxless prompt line */
   .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px;}
   @media(max-width:820px){.trio{grid-template-columns:1fr;}}
-  .trio .shot img{height:clamp(230px,26vh,300px);}
-  .trio .shot figcaption{padding:16px 18px;font-size:16px;line-height:1.5;}
-  .trio .shot figcaption b{font-size:21px;margin-bottom:5px;}
+  .trio .shot img{height:clamp(240px,37vh,480px);}
+  .trio .shot figcaption{padding:14px 16px;font-size:15.5px;line-height:1.45;}
+  .trio .shot figcaption b{font-size:20px;margin-bottom:4px;}
   .buildq{text-align:center;font-family:var(--serif);font-weight:800;color:var(--accent);
-    font-size:clamp(24px,3.2vw,40px);letter-spacing:-.01em;margin:30px 0 0;}
+    font-size:clamp(26px,3.4vw,44px);letter-spacing:-.01em;margin:30px 0 0;}
   /* agent nodes a touch larger */
   #agent-widget .node .t{font-size:19px;}
   #agent-widget .node .s{font-size:13px;}
 
-  /* true pentagon: five tiles at equal points on a circle; stacks on phones.
-     Positions computed for a 940x500 box (both projector resolutions cap here),
-     so left%/top% land on a real circle of radius 214 centred at (470,250). */
-  .pentagon5{position:relative;width:min(96%,940px);margin:6px auto 0;height:min(58vh,500px);}
-  .pentagon5 .fliptile{position:absolute;width:min(21vw,190px);transform:translate(-50%,-50%);}
-  .pentagon5 .fliptile .inner{min-height:138px;}
-  .pentagon5 .fliptile .face{padding:16px 18px;}
-  .pentagon5 .fliptile .fw{font-size:clamp(21px,2.4vw,27px);}
-  .pentagon5 .fliptile .fs{font-size:14px;margin-top:4px;}
-  .pentagon5 .fliptile .fi{font-size:25px;margin-bottom:6px;}
-  .pentagon5 .fliptile .fl{font-size:14px;margin:3px 0;line-height:1.34;}
-  .pentagon5 .p-apex{left:50%;top:7.2%;}
-  .pentagon5 .p-ur{left:71.65%;top:36.78%;}
-  .pentagon5 .p-lr{left:63.38%;top:84.62%;}
-  .pentagon5 .p-ll{left:36.62%;top:84.62%;}
-  .pentagon5 .p-ul{left:28.35%;top:36.78%;}
-  @media(max-width:900px){.pentagon5{position:static;height:auto;display:flex;flex-direction:column;gap:12px;max-width:520px;}.pentagon5 .fliptile{position:static;transform:none;width:100%;}}
+  /* 5 Ps: five big verticals across; equal, unordered (postures, not a ladder);
+     stacks on phones. */
+  .penta5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:14px;max-width:1180px;}
+  @media(max-width:900px){.penta5{grid-template-columns:1fr;max-width:520px;margin-left:auto;margin-right:auto;}}
+  .penta5 .fliptile .inner{min-height:clamp(300px,44vh,420px);}
+  .penta5 .fliptile .face{padding:22px 20px;}
+  .penta5 .fliptile .fw{font-size:clamp(23px,2.7vw,32px);}
+  .penta5 .fliptile .fs{font-size:clamp(15px,1.7vw,19px);margin-top:6px;}
+  .penta5 .fliptile .fi{font-size:32px;margin-bottom:10px;}
+  .penta5 .fliptile .fl{font-size:clamp(15px,1.6vw,18px);margin:6px 0;line-height:1.4;}
 </style>
 </head>
 <body>
@@ -947,16 +940,16 @@ const CONTENT = {
       <p class="body-txt" style="font-size:clamp(15px,1.9vw,20px);color:var(--muted);margin-top:12px">A house-voice skill is apt for school communications, and should always be reviewed and refreshed. Build it with many hands.</p>`},
   "postures":{e:"Through AI · The 5 Ps", t:"Postures, not a ladder.",
     h:`<p class="body-txt" style="font-size:clamp(15px,1.8vw,20px);margin:0 0 6px">Set per task, by data and stakes. <b>Partner does not beat Prohibit.</b> The right posture is the one the task calls for.</p>
-      <div class="pentagon5">
-        ${flipTile("Prohibit","keep AI out","⛔",["Sensitive, official, or the values call.","Some things AI never touches."],"p-apex")}
-        ${flipTile("Polish","refine, not originate","✨",["We write it; AI sharpens it.","Never let it originate the message."],"p-ur")}
-        ${flipTile("Plan","think it through","🗺️",["Reason it out with us.","We decide."],"p-lr")}
-        ${flipTile("Produce","draft with us","📝",["It drafts on our standard.","We own and answer for it."],"p-ll")}
-        ${flipTile("Partner","co-author, we own","🤝",["We co-author with AI.","Highest trust, fullest ownership."],"p-ul")}
+      <div class="penta5">
+        ${flipTile("Prohibit","keep AI out","⛔",["Sensitive, official, or the values call.","Some things AI never touches."])}
+        ${flipTile("Polish","sharpen the thinking","✨",["Spar with AI to pressure-test an idea.","Summon personas: a philosopher, a critic, a devil's advocate."])}
+        ${flipTile("Plan","think it through","🗺️",["Reason across options, tradeoffs, risks, and sequence.","AI maps the ground; we choose the route."])}
+        ${flipTile("Produce","make the thing","🛠️",["A document, a tool, a game, an applet, code.","It produces on our standard; we own it."])}
+        ${flipTile("Partner","co-author, we own","🤝",["We co-create with AI and stand behind it.","Highest trust, fullest ownership."])}
       </div>
       <p class="fliphint">Tap a card to turn it.</p>`},
   "flash":{e:"See it", t:"Built. Free. Hosted.",
-    h:`<p class="body-txt" style="font-size:clamp(17px,2.1vw,23px)">We cannot govern what we have only been briefed on. Colleagues got their hands dirty and built these, on free accounts, in a browser. One I built live with no terminal: I described a chemistry clip, and the agent wrote the code, <b>checked its own frames, and fixed what broke.</b></p>
+    h:`<p class="body-txt" style="font-size:clamp(16px,1.9vw,21px);margin:0 0 4px">We cannot govern what we have only been briefed on. Colleagues got their hands dirty and built these, on free accounts, in a browser. <b>One I built live, no terminal at all.</b></p>
       <div class="trio">
         <figure class="shot"><img src="cocher.png" alt="Co-Cher app"><figcaption><b>Co-Cher</b>A lesson and CCE design helper, built on the frameworks. A teacher made it.</figcaption></figure>
         <figure class="shot"><img src="sgsl.png" alt="SgSL app"><figcaption><b>SgSL</b>A Singapore Sign Language reader. Still rough, and that is the point. Ship, then fix in the open.</figcaption></figure>
