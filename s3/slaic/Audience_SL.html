@@ -89,10 +89,6 @@
   .sharetog .seg[data-v="1"].on{background:var(--accent);color:#fff;}
   .sharetog .seg[data-v="0"].on{background:var(--ink-soft);color:#fff;}
 
-  .belief{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:6px;}
-  .belief .bl{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:8px;color:var(--ink);}
-  .belief input{margin-bottom:8px;}
-
   button.btn{font-family:var(--sans);font-size:15px;font-weight:700;border:none;border-radius:12px;
     padding:13px 22px;cursor:pointer;background:var(--accent);color:#fff;transition:.15s;}
   button.btn:hover{background:var(--accent-d);}
@@ -291,7 +287,7 @@ const MQTT_PASS = "";                                    // broker password, if 
 
 const me = Math.random().toString(36).slice(2,9);
 const S = { room:"", name:"", confIn:null, confOut:null,
-            quiz:{}, reveal:{}, share:{}, dvote:{}, belief:{b1:"",b2:""} };
+            quiz:{}, reveal:{}, share:{}, dvote:{} };
 
 const QUIZ = [
   { tag:"What makes it new", claim:"An agent differs from a chatbot because it…",
@@ -423,7 +419,7 @@ function onMsg(raw){
 }
 function resetAudience(){
   S.confIn=null; S.confOut=null;
-  S.quiz={}; S.reveal={}; S.share={}; S.belief={b1:"",b2:""};
+  S.quiz={}; S.reveal={}; S.share={};
   inQKeys=["question1"]; inSubmitted=false; S.dvote={};
   curStageKey=""; curView="welcome";
   renderWaiting("New session. Waiting for the facilitator to begin.");
@@ -470,7 +466,6 @@ function gotoStage(m){
     case "in": curView="in"; renderIn(); break;
     case "quiz": curView="quiz"; curQ=m.q||0; renderQuiz(); break;
     case "dilemma": curView="dilemma"; curD=m.d||0; renderDilemma(); break;
-    case "reflect": curView="reflect"; renderReflect(); break;
     case "charter": curView="charter"; renderCharter(); break;
     case "watch": curView="watch"; renderWatch(m); break;
     case "out": curView="out"; renderOut(); break;
@@ -630,42 +625,17 @@ function renderDilemma(){
 }
 
 /* ---------- REFLECTION ---------- */
-function renderReflect(){
-  V().innerHTML=`<div class="view">
-    <span class="eyebrow">Your keepsake</span>
-    <h2>Takeaways and reflections.</h2>
-    <p class="lede">Consider the frames and learning from today. What are your takeaways and reflections? Share them with the room, and log them onto your card. Shared by default; tap Private to keep one to yourself.</p>
-    <div class="beat"><div class="wsw">What · noticing</div>
-      <div class="qx">Across PILOT, the 5 Ps, and the forces, what are you noticing?</div>
-      ${shareHTML("r1","I am noticing…")}</div>
-    <div class="beat"><div class="wsw">So what · meaning</div>
-      <div class="qx">What does it mean for how you will lead this change?</div>
-      ${shareHTML("r2","So for me, it means…")}</div>
-    <div class="beat"><div class="wsw">What next · one move</div>
-      <div class="qx">One thing you will do, or stand for, next.</div>
-      ${shareHTML("r3","Next, I will…")}</div>
-    <div class="belief">
-      <div class="bl">The shift (yours to keep)</div>
-      <input type="text" id="b1" placeholder="I used to believe I could not..." value="${esc(S.belief.b1)}">
-      <input type="text" id="b2" placeholder="Now I believe..." value="${esc(S.belief.b2)}">
-    </div>
-    <button class="btn" id="rdone" style="margin-top:14px;">I'm done</button><span id="rflag"></span></div>`;
-  wireShare("r1","reflect"); wireShare("r2","reflect"); wireShare("r3","reflect");
-  document.getElementById("b1").oninput=e=>S.belief.b1=e.target.value;
-  document.getElementById("b2").oninput=e=>S.belief.b2=e.target.value;
-  document.getElementById("rdone").onclick=()=>{ ["r1","r2","r3"].forEach(k=>publishShare(k,"reflect"));
-    send({type:"submitted",step:"reflect"});
-    document.getElementById("rflag").innerHTML=' <span class="doneflag">✓ Noted</span>'; };
-}
-
-/* ---------- COMMAND CHARTER ---------- */
+/* ---------- COMMAND CHARTER (postures + one line to carry) ---------- */
 function renderCharter(){
   V().innerHTML=`<div class="view">
-    <span class="eyebrow">My charter · the 5 Ps</span>
+    <span class="eyebrow">Your keepsake · my charter</span>
     <h2>My charter.</h2>
-    <p class="lede">We set the posture, not a ladder, on AI use. A posture per line, in your own words. Each line is shared to the room wall by default; tap a toggle to keep one private.</p>
+    <p class="lede">Consider what you are noticing from today. Set your postures, and the one line you will carry. A posture per line, in your own words. Each is shared to the room wall by default; tap a toggle to keep one private.</p>
     <div id="ch"></div>
-    <button class="btn" id="cdone">I'm done</button><span id="cflag"></span>
+    <div class="beat" style="margin-top:16px;"><div class="wsw">The one line I will carry</div>
+      <div class="qx">One thing you will do, or stand for, next.</div>
+      ${shareHTML("r1","The line I will carry is…")}</div>
+    <button class="btn" id="cdone" style="margin-top:14px;">I'm done</button><span id="cflag"></span>
     <p class="hint">Sharing is anonymous. Only the words appear on the wall, never your name.</p></div>`;
   const host=document.getElementById("ch");
   PS.forEach(p=>{
@@ -676,7 +646,9 @@ function renderCharter(){
     host.appendChild(d);
   });
   PS.forEach(p=>wireShare(p.key,"charter"));
+  wireShare("r1","reflect");
   document.getElementById("cdone").onclick=()=>{ PS.forEach(p=>publishShare(p.key,"charter"));
+    publishShare("r1","reflect");
     send({type:"submitted",step:"charter"});
     document.getElementById("cflag").innerHTML=' <span class="doneflag">✓ Charter set</span>'; };
 }
@@ -831,13 +803,10 @@ function renderLog(){
       <ul class="good">${good.length?good.map(g=>`<li>${esc(g)}</li>`).join(""):"<li>—</li>"}</ul>
       <p style="margin:10px 0 2px;font-size:13px;font-weight:700;color:var(--rust);">Worth revisiting</p>
       <ul class="note">${note.length?note.map(n=>`<li>${esc(n)}</li>`).join(""):"<li>Nothing flagged. Strong read.</li>"}</ul></div>
-    <div class="logcard"><div class="ttl">Card 3 · The plan and the shift</div><h3>My charter · the 5 Ps</h3>
+    <div class="logcard"><div class="ttl">Card 3 · My charter</div><h3>Postures, and the line I carry</h3>
       ${charterLines||"<p style='font-size:14px;'>—</p>"}
-      <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">My lines</p>
-      <ul><li><b>What I am noticing:</b> ${esc(sv("r1"))||"—"}</li><li><b>So what it means:</b> ${esc(sv("r2"))||"—"}</li>
-      <li><b>What I will do next:</b> ${esc(sv("r3"))||"—"}</li></ul>
-      <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">The shift</p>
-      <ul><li><b>I used to believe I could not:</b> ${esc(S.belief.b1)||"—"}</li><li><b>Now I believe:</b> ${esc(S.belief.b2)||"—"}</li></ul>
+      <p style="margin:12px 0 2px;font-size:13px;font-weight:700;color:var(--ink);">The line I will carry</p>
+      <ul><li>${esc(sv("r1"))||"—"}</li></ul>
       <p style="margin:12px 0 0;font-size:14px;"><b>Readiness:</b> ${S.confIn??"—"} → ${S.confOut??"—"} / 5</p>
       <p style="margin:10px 0 0;font-family:var(--serif);font-size:16px;color:var(--accent-d);">What you will stand for, and how you will show up, leading change in an AI age.</p></div>
     <p style="text-align:center;font-family:var(--serif);font-size:17px;color:var(--accent-d);margin:4px 0 0;">Share your ideas, and what you will build. We learn and lead together.</p>
