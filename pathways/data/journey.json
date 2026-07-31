@@ -1,0 +1,133 @@
+{
+  "_meta": {
+    "source": "Written for this app. Stage structure follows the actual shape of the Singapore education and training system; choices are written so that none is the correct answer.",
+    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+    "accessed": "2026-07-31",
+    "units": "years of age",
+    "notes": "No choice in this file is scored as right or wrong, and no combination of choices produces a failure. Every stage advances. The ledger records what a player accumulated, not how well they did. Doors never go to zero: the engine asserts this and the dev sweep checks it."
+  },
+  "ledger": [
+    { "id": "skills", "label": "Things I can do", "icon": "▲" },
+    { "id": "network", "label": "People who know me", "icon": "●" },
+    { "id": "portfolio", "label": "Things I made", "icon": "◆" },
+    { "id": "doors", "label": "Doors open to me", "icon": "◇" }
+  ],
+  "stages": [
+    {
+      "id": "s_sec3",
+      "age": 15,
+      "title": "Sec 3",
+      "situation": "New subjects, new classes, and for the first time some of your friends are in different rooms from you. The year is longer than it looks.",
+      "choices": [
+        { "label": "Go hard at the subjects you are already good at", "gain": { "skills": 2 }, "disp": { "persistence": 1 }, "outcome": "You get noticeably better at the things you were already decent at. It feels good and it is a narrower year than it could have been." },
+        { "label": "Put real effort into the subject you find hardest", "gain": { "skills": 1 }, "disp": { "persistence": 2 }, "outcome": "It is a slog. By the end of the year you are still not top of the class and you are no longer afraid of it, which turns out to matter more." },
+        { "label": "Join something outside the classroom and take it seriously", "gain": { "network": 1, "portfolio": 1 }, "disp": { "curiosity": 1, "risk": 1 }, "outcome": "It costs you time you would have spent studying. You end the year knowing three adults who would vouch for you." }
+      ]
+    },
+    {
+      "id": "s_sec4",
+      "age": 16,
+      "title": "Sec 4",
+      "situation": "The exam year. Everyone around you has an opinion about what you should do next, and most of them have only ever seen one route.",
+      "choices": [
+        { "label": "Focus entirely on the results", "gain": { "skills": 2 }, "disp": { "persistence": 1 }, "outcome": "A clean, narrow year. You go into the exams as ready as you were going to be." },
+        { "label": "Study, and also go and look at what is actually out there", "gain": { "skills": 1, "doors": 2 }, "disp": { "curiosity": 2 }, "outcome": "You lose a few weekends to open houses. You now know about four courses you had never heard of, one of which you cannot stop thinking about." },
+        { "label": "Apply through the Early Admissions Exercise", "gain": { "doors": 2, "portfolio": 1 }, "disp": { "optimism": 2, "risk": 1 }, "outcome": "You have to write down what you want and say it to a stranger. Whatever the outcome, you have now said it out loud once." }
+      ]
+    },
+    {
+      "id": "s_results",
+      "age": 17,
+      "title": "Results",
+      "situation": "The envelope. Whatever is in it, this is the moment that feels like a verdict and is not one.",
+      "choices": [
+        { "label": "Take the route your results point at most directly", "gain": { "doors": 1 }, "disp": { "persistence": 1 }, "outcome": "Straightforward, and there is nothing wrong with straightforward. You start in September." },
+        { "label": "Take a longer route toward something you actually want", "gain": { "doors": 2 }, "disp": { "flexibility": 2, "optimism": 1 }, "outcome": "It will take you a year or two more than your friends. You have chosen the destination rather than the shortest available road." },
+        { "label": "Take a fifth year to widen what is available", "gain": { "doors": 2, "skills": 1 }, "disp": { "persistence": 2 }, "outcome": "One more year in the same uniform. Some of your friends do not understand it. In ten years nobody can tell." }
+      ]
+    },
+    {
+      "id": "s_post1",
+      "age": 18,
+      "title": "First year after secondary",
+      "situation": "Nobody is checking whether you did the reading. The course is harder than school in a different way, and the people are from everywhere.",
+      "choices": [
+        { "label": "Keep your head down and do the work", "gain": { "skills": 2 }, "disp": { "persistence": 1 }, "outcome": "Solid marks, few surprises. You are on track." },
+        { "label": "Get involved in something beyond the course", "gain": { "network": 2, "portfolio": 1 }, "disp": { "curiosity": 1, "risk": 1 }, "outcome": "Your marks dip slightly. You now know people two years ahead of you who tell you things the handbook does not." },
+        { "label": "Start something of your own on the side", "gain": { "portfolio": 2, "skills": 1 }, "disp": { "risk": 2 }, "outcome": "Most of your weekends go. You have something to show that is entirely yours." }
+      ]
+    },
+    {
+      "id": "s_post2",
+      "age": 20,
+      "title": "Finishing",
+      "situation": "The end is visible. The choice now is what you do with the qualification you are about to hold.",
+      "choices": [
+        { "label": "Go straight into work", "gain": { "skills": 2, "network": 1 }, "disp": { "risk": 1 }, "outcome": "You are earning while others are still studying. The learning continues, it just happens on someone's payroll." },
+        { "label": "Keep studying, further up", "gain": { "doors": 2, "skills": 1 }, "disp": { "persistence": 2 }, "outcome": "More years, more debt of time, a wider set of roles at the end of it." },
+        { "label": "Take a work study route and do both", "gain": { "skills": 2, "network": 2 }, "disp": { "persistence": 2, "risk": 1 }, "outcome": "Employed and studying at once. It is genuinely hard and you finish with both." }
+      ]
+    },
+    {
+      "id": "s_first_job",
+      "age": 23,
+      "title": "Early working years",
+      "situation": "You are in it now. The work is not what the course described, and nobody warned you how much of a job is other people.",
+      "choices": [
+        { "label": "Get very good at the specific thing you were hired for", "gain": { "skills": 3 }, "disp": { "persistence": 2 }, "outcome": "You become the person they come to for that. Deep and narrow." },
+        { "label": "Learn how the whole place works, not just your part", "gain": { "network": 2, "doors": 2 }, "disp": { "curiosity": 2 }, "outcome": "You are not the best at any one task and you can see how the pieces fit, which is rarer." },
+        { "label": "Keep building the thing on the side", "gain": { "portfolio": 2, "skills": 1 }, "disp": { "risk": 1, "curiosity": 1 }, "outcome": "Two lives at once, tiring and interesting. The side thing is starting to be known." }
+      ]
+    },
+    {
+      "id": "s_crossroads",
+      "age": 26,
+      "title": "The first real crossroads",
+      "situation": "You could stay on this road for another decade and it would be fine. Something in you is asking whether fine is the plan.",
+      "choices": [
+        { "label": "Stay and go deeper", "gain": { "skills": 2, "network": 1 }, "disp": { "persistence": 2 }, "outcome": "Mastery is a real thing and it takes years. You are choosing to spend them." },
+        { "label": "Move sideways into an adjacent field", "gain": { "doors": 2, "skills": 1 }, "disp": { "flexibility": 2, "risk": 1 }, "outcome": "Most of what you know still applies. You are a beginner again in the parts that do not, which is uncomfortable and short lived." },
+        { "label": "Upgrade formally, part time, while working", "gain": { "skills": 2, "doors": 2 }, "disp": { "persistence": 2 }, "outcome": "Two years of evenings. A qualification you did not have at nineteen." }
+      ]
+    },
+    {
+      "id": "s_build",
+      "age": 30,
+      "title": "Building something",
+      "situation": "You have enough experience now that people ask your opinion. That is a kind of power and it is easy to spend badly.",
+      "choices": [
+        { "label": "Take responsibility for other people's work", "gain": { "network": 2, "skills": 1 }, "disp": { "risk": 1, "persistence": 1 }, "outcome": "Managing is a different job than doing, and you have to learn it from scratch." },
+        { "label": "Stay hands on and become genuinely expert", "gain": { "skills": 3 }, "disp": { "persistence": 2 }, "outcome": "You keep doing the work rather than talking about it. Fewer meetings, more craft." },
+        { "label": "Start your own thing", "gain": { "portfolio": 3, "doors": 1 }, "disp": { "risk": 3, "optimism": 2 }, "outcome": "Everything now depends on you, which is the terrifying part and the point." }
+      ]
+    },
+    {
+      "id": "s_shift",
+      "age": 35,
+      "title": "The ground moves",
+      "situation": "Your field is not what it was when you entered it. Some of what you were paid for is now done differently, or by something else.",
+      "choices": [
+        { "label": "Learn the new tools early", "gain": { "skills": 3, "doors": 2 }, "disp": { "curiosity": 2, "flexibility": 1 }, "outcome": "You are ahead of the curve rather than under it. The change becomes an advantage." },
+        { "label": "Move to the part of the field this did not touch", "gain": { "doors": 1, "skills": 1 }, "disp": { "flexibility": 2 }, "outcome": "A sensible sidestep. The work is still there and it is quieter." },
+        { "label": "Retrain properly, into something else", "gain": { "doors": 3, "skills": 2 }, "disp": { "risk": 2, "optimism": 2 }, "outcome": "You use what the system provides for this and you start again on purpose. It is not a fall. It is a decision." }
+      ]
+    },
+    {
+      "id": "s_long",
+      "age": 42,
+      "title": "Looking back and forward",
+      "situation": "You are perhaps halfway through your working life. There is a lot of it left.",
+      "choices": [
+        { "label": "Use the mid career support and do the thing you always meant to", "gain": { "doors": 3, "skills": 2, "portfolio": 1 }, "disp": { "risk": 2, "optimism": 2 }, "outcome": "A $4,000 credit, an allowance while you study, and up to 90 percent off a full time diploma. You are the oldest in the room and it does not matter." },
+        { "label": "Teach what you know to people coming up", "gain": { "network": 3, "portfolio": 1 }, "disp": { "persistence": 1, "optimism": 1 }, "outcome": "You tell them the real version, including the parts that went badly. It is more useful to them than the tidy one." },
+        { "label": "Keep going, and keep learning inside the work", "gain": { "skills": 2, "network": 1 }, "disp": { "curiosity": 2 }, "outcome": "No dramatic move. Steady, deliberate, and still curious, which is rarer at forty two than it sounds." }
+      ]
+    }
+  ],
+  "endingFrames": [
+    { "id": "wide", "when": "doors", "title": "You kept the map wide open.", "body": "You ended up with more available to you than you started with. That is not luck. It is what happens when someone keeps looking." },
+    { "id": "deep", "when": "skills", "title": "You got genuinely good at something.", "body": "Depth is its own kind of freedom. People who are properly skilled at a thing are rarely short of options." },
+    { "id": "known", "when": "network", "title": "People know who you are.", "body": "Most of what happens to people at work comes through someone who thought of them. You gave a lot of people the chance to think of you." },
+    { "id": "made", "when": "portfolio", "title": "You made things.", "body": "There is a record of what you can do that does not depend on anyone's grading. That record opened doors that no aggregate could have." }
+  ]
+}

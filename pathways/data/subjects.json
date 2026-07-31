@@ -1,0 +1,335 @@
+{
+  "_meta": {
+    "source": "MOE Full Subject-Based Banding subject offerings and SEAB syllabus lists, cross-read against school Sec 2 subject selection briefings",
+    "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+    "accessed": "2026-07-31",
+    "units": "subject levels G1, G2, G3",
+    "notes": "Schools do not all offer every subject, and not every subject is offered at every level in every school. Availability here is the national picture, not a promise about any one school. Items marked provisional could not be read from a primary MOE or SEAB page in the session that built this file. See OPEN_QUESTIONS.md."
+  },
+  "levelInfo": {
+    "G1": {
+      "label": "G1",
+      "name": "General 1",
+      "plain": "Builds the foundation of a subject with a lot of hands on, practical work. Closest to what used to be called Normal Technical.",
+      "grading": "Graded A to E, like the old N(T) Level.",
+      "status": "confirmed"
+    },
+    "G2": {
+      "label": "G2",
+      "name": "General 2",
+      "plain": "Covers the subject in real depth at a steadier pace. Closest to what used to be called Normal Academic.",
+      "grading": "Graded 1 to 6, like the old N(A) Level.",
+      "status": "confirmed"
+    },
+    "G3": {
+      "label": "G3",
+      "name": "General 3",
+      "plain": "The most demanding version of the subject, covering the most ground fastest. Closest to what used to be called Express.",
+      "grading": "Graded A1 to 9, like the old O Level.",
+      "status": "confirmed"
+    }
+  },
+  "movement": {
+    "headline": "Your levels are not fixed.",
+    "body": "Students move subjects up and down a level during secondary school. It happens at the end of Sec 1, at the end of Sec 2, and for some subjects into Sec 3. Schools look at how you did across the year, not one paper. If you want to move a subject up, the conversation to have is with the teacher who teaches it, and the term to have it in is the one you are in now.",
+    "status": "confirmed"
+  },
+  "groups": [
+    { "id": "core", "label": "Everyone takes these", "note": "English, your Mother Tongue and Mathematics are compulsory. The choice is the level, not whether." },
+    { "id": "maths_extra", "label": "More Mathematics", "note": "Optional, and only worth taking if you actually like the subject." },
+    { "id": "science", "label": "Science", "note": "You take at least one. How many and in what shape is the choice." },
+    { "id": "humanities", "label": "Humanities", "note": "You take at least one. At G2 and G3 this normally means Social Studies plus one elective." },
+    { "id": "elective", "label": "Electives", "note": "Where your school's offer matters most. Ask what yours actually runs." }
+  ],
+  "subjects": [
+    {
+      "id": "el",
+      "name": "English Language",
+      "group": "core",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": true,
+      "doing": "You read things you did not choose, work out what the writer is really doing, and then write and speak clearly enough that someone else can follow you.",
+      "likeIf": "you notice when something is worded to persuade you, and you like being the one who can explain it back.",
+      "showsUp": ["Every post secondary route asks for it, without exception", "Nursing, law, teaching, communications, anything client facing", "Every job interview you will ever sit"],
+      "status": "confirmed"
+    },
+    {
+      "id": "mtl",
+      "name": "Mother Tongue Language",
+      "group": "core",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": true,
+      "doing": "You read, write and hold conversations in Chinese, Malay or Tamil, including about things that are not easy to say.",
+      "likeIf": "you like being able to move between two worlds, or you want to talk properly with your grandparents.",
+      "showsUp": ["Counts as the language in the JC aggregate", "Regional business, media, translation, social work", "Any workplace that serves Singapore as it actually is"],
+      "status": "confirmed"
+    },
+    {
+      "id": "hmtl",
+      "name": "Higher Mother Tongue",
+      "group": "core",
+      "levels": ["G3"],
+      "compulsory": false,
+      "doing": "The same language taken further, with more literature and harder writing.",
+      "likeIf": "the language is a strength and you want to keep it that way.",
+      "showsUp": ["Can count toward JC admission", "Language teaching, media, translation", "Universities in the region"],
+      "status": "provisional"
+    },
+    {
+      "id": "maths",
+      "name": "Mathematics",
+      "group": "core",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": true,
+      "doing": "You learn to handle number, shape, chance and change, and to notice when an answer is nonsense.",
+      "likeIf": "you like a problem that has a definite answer and a route you can check.",
+      "showsUp": ["Almost every polytechnic and ITE course sets a Mathematics requirement", "Engineering, finance, data, trades, logistics", "Reading a payslip, a loan, or a news chart without being fooled"],
+      "status": "confirmed"
+    },
+    {
+      "id": "amaths",
+      "name": "Additional Mathematics",
+      "group": "maths_extra",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "A second, harder Mathematics running alongside the first. Calculus, trigonometry, algebra taken much further.",
+      "likeIf": "Mathematics is the subject you would do anyway, not the one you are enduring.",
+      "showsUp": ["Expected for JC science and some engineering routes", "Engineering and computing diplomas", "Makes first year of a technical course much less painful"],
+      "caution": "Taking this to look strong, while it drags three other subjects down, is a bad trade. Take it because you like it.",
+      "status": "provisional"
+    },
+    {
+      "id": "science_g1",
+      "name": "Science",
+      "group": "science",
+      "levels": ["G1"],
+      "compulsory": false,
+      "doing": "One combined science, taught with your hands as much as your head. You build, test, measure and find out why it did not work.",
+      "likeIf": "you would rather find out by doing it than by reading about it.",
+      "showsUp": ["Nitec engineering, facility and health science courses", "Aerospace, electrical, precision engineering trades", "Any job where you have to work out why the machine stopped"],
+      "status": "provisional"
+    },
+    {
+      "id": "physics",
+      "name": "Physics",
+      "group": "science",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You work out why things move, heat up, light up and fall over, and then prove it with a measurement.",
+      "likeIf": "you take things apart, or you want to know what is actually happening inside them.",
+      "showsUp": ["Engineering diplomas and degrees", "Aviation, marine, energy, built environment", "Anything with a motor, a circuit or a structure in it"],
+      "status": "confirmed"
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "group": "science",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You find out what things are made of and what happens when you put them together, mostly by putting them together.",
+      "likeIf": "you like a practical where the result is visible and you have to explain it.",
+      "showsUp": ["Pharmaceutical and chemical engineering, food science", "Nursing and the allied health routes", "Singapore's chemicals industry on Jurong Island"],
+      "status": "confirmed"
+    },
+    {
+      "id": "biology",
+      "name": "Biology",
+      "group": "science",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You study living things at every scale, from a cell to an ecosystem, and how they go wrong.",
+      "likeIf": "you are curious about bodies, disease, food or the environment.",
+      "showsUp": ["Nursing, biomedical science, veterinary and health routes", "Food science, environmental and marine work", "Any conversation with a doctor about your own body"],
+      "status": "confirmed"
+    },
+    {
+      "id": "combined_science",
+      "name": "Combined Science",
+      "group": "science",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "Two sciences in one subject, usually Physics with Chemistry or Chemistry with Biology. Broader than one science, lighter than two.",
+      "likeIf": "you want to keep science open without giving it two of your subject slots.",
+      "showsUp": ["Meets the science requirement for most polytechnic courses", "Health, engineering and applied science diplomas", "Keeps several doors open while you decide"],
+      "caution": "Some polytechnic and JC courses ask specifically for a single science. Check the course, not the rumour.",
+      "status": "provisional"
+    },
+    {
+      "id": "humanities_g1",
+      "name": "Humanities",
+      "group": "humanities",
+      "levels": ["G1"],
+      "compulsory": false,
+      "doing": "You look at how Singapore and the world got to be the way they are, and practise arguing about it with evidence.",
+      "likeIf": "you have opinions about why things are unfair and want better reasons for them.",
+      "showsUp": ["Service, retail, hospitality and community roles", "Any work where you deal with people who are not like you", "Understanding the news well enough to argue back"],
+      "status": "provisional"
+    },
+    {
+      "id": "social_studies",
+      "name": "Social Studies",
+      "group": "humanities",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You examine how Singapore is governed, how societies hold together or come apart, and how to weigh evidence you did not choose.",
+      "likeIf": "you want to understand why policy is the way it is rather than just complain about it.",
+      "showsUp": ["Paired with a humanities elective at G2 and G3", "Public service, law, social work, journalism", "Voting, and knowing what you are voting about"],
+      "note": "At G2 and G3, Social Studies is normally taken together with one humanities elective as a single Humanities subject.",
+      "status": "confirmed"
+    },
+    {
+      "id": "history",
+      "name": "History",
+      "group": "humanities",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You work from sources that disagree with each other and build an argument that holds up.",
+      "likeIf": "you like an argument, and you want to know who benefits from the version you were told.",
+      "showsUp": ["Law, policy, heritage, teaching, journalism", "Any degree that grades you on essays", "Reading a headline and asking who wrote it and why"],
+      "status": "confirmed"
+    },
+    {
+      "id": "geography",
+      "name": "Geography",
+      "group": "humanities",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You study why people, water, weather, money and cities end up where they do, with fieldwork and real data.",
+      "likeIf": "you like maps, patterns, and being outside collecting something.",
+      "showsUp": ["Urban planning, environmental science, logistics", "Climate and sustainability work, which is growing fast here", "Understanding why your neighbourhood floods"],
+      "status": "confirmed"
+    },
+    {
+      "id": "literature",
+      "name": "Literature in English",
+      "group": "humanities",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You read novels, plays and poems closely enough to say something about them that is not obvious.",
+      "likeIf": "you have ever argued about what a film really meant.",
+      "showsUp": ["Law, teaching, communications, media, publishing", "Any degree that grades you on essays", "Being the person in the room who reads people well"],
+      "status": "confirmed"
+    },
+    {
+      "id": "art",
+      "name": "Art",
+      "group": "elective",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": false,
+      "doing": "You make work, defend it, and learn to look at other people's work properly.",
+      "likeIf": "you already make things in your own time.",
+      "showsUp": ["Design, media and animation diplomas", "NAFA and LASALLE under the University of the Arts Singapore", "Portfolio based admission, where what you have made counts"],
+      "status": "confirmed"
+    },
+    {
+      "id": "dt",
+      "name": "Design and Technology",
+      "group": "elective",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": false,
+      "doing": "You are given a real problem, and you design, build and test a thing that solves it.",
+      "likeIf": "you would rather be holding a tool than a highlighter.",
+      "showsUp": ["Engineering, product design and built environment diplomas", "ITE engineering and facility technology courses", "Making the thing, not just the slide about the thing"],
+      "status": "confirmed"
+    },
+    {
+      "id": "nfs",
+      "name": "Nutrition and Food Science",
+      "group": "elective",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You study what food is made of and what it does in a body, then cook and test it.",
+      "likeIf": "you cook, or you want to know what is actually in what you eat.",
+      "showsUp": ["Food science, nutrition and culinary diplomas", "Hospitality, health promotion, food manufacturing", "Singapore's food security and alternative protein work"],
+      "status": "provisional"
+    },
+    {
+      "id": "fce",
+      "name": "Food and Consumer Education",
+      "group": "elective",
+      "levels": ["G1"],
+      "compulsory": false,
+      "doing": "You plan, cost, prepare and evaluate real meals, and learn to run a household budget.",
+      "likeIf": "you want skills you will use next week, not in ten years.",
+      "showsUp": ["ITE culinary, hospitality and food service courses", "Working kitchens across Singapore", "Feeding yourself properly for the rest of your life"],
+      "status": "provisional"
+    },
+    {
+      "id": "music",
+      "name": "Music",
+      "group": "elective",
+      "levels": ["G1", "G2", "G3"],
+      "compulsory": false,
+      "doing": "You perform, compose, and learn to hear what is going on inside a piece of music.",
+      "likeIf": "you already play, write or produce something.",
+      "showsUp": ["Music and audio production diplomas", "NAFA, LASALLE and the Yong Siew Toh Conservatory", "Sound design, live events, teaching"],
+      "status": "confirmed"
+    },
+    {
+      "id": "poa",
+      "name": "Principles of Accounts",
+      "group": "elective",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You learn how money moving through a business is recorded, and how to read whether it is doing well.",
+      "likeIf": "you like things to balance and you are patient about detail.",
+      "showsUp": ["Accountancy, banking and business diplomas", "Running your own thing without being cheated", "Finance, which is a very large employer here"],
+      "status": "confirmed"
+    },
+    {
+      "id": "computing",
+      "name": "Computing",
+      "group": "elective",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You write programs, work with data, and learn why software breaks.",
+      "likeIf": "you like building something that does not exist yet and debugging it at midnight.",
+      "showsUp": ["Information technology, cybersecurity and data diplomas", "Every industry, because software is in all of them now", "Making your own tools instead of waiting for one"],
+      "status": "confirmed"
+    },
+    {
+      "id": "ebs",
+      "name": "Elements of Business Skills",
+      "group": "elective",
+      "levels": ["G1"],
+      "compulsory": false,
+      "doing": "You learn how a small business actually runs: serving customers, handling money, keeping records.",
+      "likeIf": "you want to work with people and you like being useful straight away.",
+      "showsUp": ["ITE business, retail and service courses", "Retail, hospitality and service work across Singapore", "Running a stall, a shop or a service of your own"],
+      "status": "provisional"
+    },
+    {
+      "id": "ess",
+      "name": "Exercise and Sports Science",
+      "group": "elective",
+      "levels": ["G3"],
+      "compulsory": false,
+      "doing": "You study how the body performs, trains and recovers, and test it on real athletes, including yourself.",
+      "likeIf": "sport is a serious part of your life and you want to understand it properly.",
+      "showsUp": ["Sport and exercise science diplomas", "Coaching, physiotherapy, sports management", "Republic Polytechnic and the Singapore Sports School routes"],
+      "status": "provisional"
+    },
+    {
+      "id": "drama",
+      "name": "Drama",
+      "group": "elective",
+      "levels": ["G2", "G3"],
+      "compulsory": false,
+      "doing": "You devise, rehearse and perform work, and learn to analyse why a piece of theatre lands.",
+      "likeIf": "you are willing to be watched while you get it wrong.",
+      "showsUp": ["Performing arts and media diplomas", "LASALLE, NAFA, School of the Arts", "Teaching, events, and any job that needs presence"],
+      "status": "provisional"
+    },
+    {
+      "id": "electronics",
+      "name": "Electronics",
+      "group": "elective",
+      "levels": ["G1"],
+      "compulsory": false,
+      "doing": "You build and fault find real circuits, and learn what each component is doing.",
+      "likeIf": "you like a soldering iron and a problem that can be traced.",
+      "showsUp": ["ITE electronics and electrical engineering courses", "Semiconductor and precision engineering, both large here", "Fixing things other people throw away"],
+      "status": "provisional"
+    }
+  ]
+}

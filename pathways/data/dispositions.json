@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "source": "Krumboltz, J. D. (2009), The Happenstance Learning Theory, Journal of Career Assessment 17(2)",
+    "url": "https://doi.org/10.1177/1069072708328861",
+    "accessed": "2026-07-31",
+    "units": "not applicable",
+    "notes": "The five dispositions come from planned happenstance theory, which holds that unplanned events shape careers more than plans do, and that certain dispositions determine whether a person can turn an unplanned event into an opportunity. In this app they are the currency of the Journey mode: chance cards check dispositions, never grades. That is the whole argument, expressed as a game mechanic."
+  },
+  "dispositions": [
+    {
+      "id": "curiosity",
+      "label": "Curiosity",
+      "short": "You go and find out.",
+      "body": "Exploring things you were not assigned. Asking the question in front of people. Looking up the thing you did not understand instead of letting it go.",
+      "buildsWhen": "You choose the option that teaches you something over the option that is safe."
+    },
+    {
+      "id": "persistence",
+      "label": "Persistence",
+      "short": "You stay with the hard thing.",
+      "body": "Continuing after the first setback, and the second. Not the same as never struggling. It is specifically about what you do the week after it goes badly.",
+      "buildsWhen": "You go back to something that already went wrong once."
+    },
+    {
+      "id": "flexibility",
+      "label": "Flexibility",
+      "short": "You change your mind when the facts change.",
+      "body": "Adjusting the plan when you learn something new, without treating it as a failure of the original plan.",
+      "buildsWhen": "You let go of a plan you were attached to because you found out something real."
+    },
+    {
+      "id": "optimism",
+      "label": "Optimism",
+      "short": "You think it might work.",
+      "body": "Seeing a new opportunity as possible rather than as something for other people. This is the one that most often decides whether someone applies at all.",
+      "buildsWhen": "You put yourself forward for something you are not sure you will get."
+    },
+    {
+      "id": "risk",
+      "label": "Risk taking",
+      "short": "You act without being certain.",
+      "body": "Doing the thing before you feel ready, because you will never feel ready and the window is now.",
+      "buildsWhen": "You say yes to something uncomfortable."
+    }
+  ],
+  "framing": {
+    "headline": "These are the things that actually move a life.",
+    "body": "Grades open specific doors at specific moments, and they matter at those moments. Across forty years of working life, what repeatedly decides what happens to people is whether they noticed the chance, and whether they were the kind of person who could use it."
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "_meta": {
+    "source": "Route structures assembled from MOE post secondary admissions pages, polytechnic and ITE course listings, and SkillsFuture work study programme information",
+    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+    "accessed": "2026-07-31",
+    "units": "years",
+    "notes": "Futures are deliberately stated as wants rather than job titles. Research on adolescent career development, in particular Gottfredson's work on circumscription, shows that teenagers rule out whole fields early on grounds of perceived prestige and gender fit, long before they know anything about them. Naming a job invites that. Naming a want does not. Every future carries at least three structurally different routes, presented in no particular order, because the absence of a ranking is the content."
+  },
+  "futures": [
+    {
+      "id": "make",
+      "want": "I want to make things people actually use",
+      "looksLike": "Products, buildings, software, furniture, food, clothes. Something that exists at the end of the week that did not exist at the start.",
+      "routes": [
+        { "label": "Polytechnic first", "steps": ["Polytechnic diploma in design, engineering or product development", "Work in a studio or a firm", "Degree later if you want one"], "years": 3, "note": "You are making things from the first semester and you have a portfolio before you are twenty." },
+        { "label": "ITE first", "steps": ["Nitec or Higher Nitec in a making trade", "Work, with real tools and real clients", "Polytechnic diploma as an upgrader if you want it"], "years": 2, "note": "The fastest route to being genuinely skilled with your hands, and the one employers in the trades take most seriously." },
+        { "label": "Junior College first", "steps": ["A Levels", "Degree in engineering, architecture or computing"], "years": 2, "note": "The longest run up before you touch anything, and the widest theoretical base when you get there." },
+        { "label": "Arts route", "steps": ["Portfolio", "NAFA or LASALLE diploma", "Degree at the University of the Arts Singapore or straight into practice"], "years": 3, "note": "Admission turns on what you have made, not on an aggregate." }
+      ],
+      "thisTerm": [
+        "Make one thing this month that nobody asked you to make.",
+        "Find out whether your school runs Design and Technology or Computing at the level you could take.",
+        "Ask your Art or D and T teacher what a portfolio actually looks like."
+      ]
+    },
+    {
+      "id": "hands",
+      "want": "I want to be really good with my hands",
+      "looksLike": "Aircraft, cars, electrical systems, kitchens, hair, machines, buildings. Work where skill is visible and being good at it is not a matter of opinion.",
+      "routes": [
+        { "label": "ITE, the direct route", "steps": ["Nitec or Higher Nitec in your trade", "Work, often before your friends have finished studying"], "years": 2, "note": "Trained on the equipment the industry actually uses. Employers recruit directly from ITE for exactly this." },
+        { "label": "ITE, then further", "steps": ["Higher Nitec", "Polytechnic diploma as an upgrader, GPA 2.5 minimum and guaranteed at 3.5", "Technical or work study degree if you want it"], "years": 5, "note": "Each step is a qualification that stands on its own. You can stop at any of them and start again later." },
+        { "label": "Polytechnic engineering", "steps": ["Polytechnic diploma in an engineering field", "Industry, or a degree"], "years": 3, "note": "More theory alongside the practical work, and a broader first job market." },
+        { "label": "Work study from the start", "steps": ["A job with an employer", "A SkillsFuture Work Study qualification earned alongside it"], "years": 3, "note": "Paid from day one and qualified at the end." }
+      ],
+      "thisTerm": [
+        "Go to an ITE or polytechnic open house and put your hands on the equipment.",
+        "Find one person who does the work you are curious about and ask them what the bad days are like.",
+        "Fix something at home that is broken."
+      ]
+    },
+    {
+      "id": "people",
+      "want": "I want to be there when people are struggling",
+      "looksLike": "Nursing, social work, teaching, counselling, paramedics, community work, early childhood. Work where the point is another person.",
+      "routes": [
+        { "label": "Polytechnic health or social sciences", "steps": ["Diploma in nursing, social work or health sciences", "Practice, with a degree route open"], "years": 3, "note": "Clinical placements from early on. You are with real patients or real families well before you graduate." },
+        { "label": "ITE first", "steps": ["Nitec or Higher Nitec in health or community care", "Work in a care setting", "Polytechnic diploma as an upgrader"], "years": 2, "note": "Care sector employers hire from ITE and support upgrading, because the demand is real and growing." },
+        { "label": "Junior College, then a degree", "steps": ["A Levels", "Degree in medicine, psychology, social work or education"], "years": 2, "note": "The route to the professions that require a degree to enter at all." },
+        { "label": "Later, as a second career", "steps": ["Work in something else first", "Mid career diploma or degree, subsidised up to 90 percent from age 40"], "years": 2, "note": "A very large number of people come into care work in their thirties and forties, and bring something to it that a twenty two year old cannot." }
+      ],
+      "thisTerm": [
+        "Volunteer somewhere that is not comfortable for you.",
+        "Ask a nurse, teacher or social worker you know what they wish someone had told them.",
+        "Notice whether you are still interested after the third week."
+      ]
+    },
+    {
+      "id": "own",
+      "want": "I want to run my own thing",
+      "looksLike": "A shop, a studio, a service, a business, a stall, a practice. Something with your name on the risk.",
+      "routes": [
+        { "label": "Learn the trade first", "steps": ["ITE or polytechnic in the field itself", "Work for someone else and learn how it really runs", "Start your own"], "years": 5, "note": "Almost everyone who runs a good business learned it inside someone else's first." },
+        { "label": "Business and accounts route", "steps": ["Principles of Accounts and business subjects at school", "Polytechnic business diploma", "Work, then your own"], "years": 3, "note": "Knowing how money moves through a business is the difference between a business and an expensive hobby." },
+        { "label": "Degree route", "steps": ["JC or polytechnic", "Business or engineering degree", "Industry, then your own"], "years": 6, "note": "Slower to the starting line, wider network when you get there." },
+        { "label": "Start now, small", "steps": ["Sell or make something while still at school", "Keep the records", "Scale it or learn from it"], "years": 0, "note": "The only route on this list that does not require anyone's permission." }
+      ],
+      "thisTerm": [
+        "Sell one thing to one person who is not your relative.",
+        "Work out what it cost you to make and whether you actually made money.",
+        "Find out whether your school offers Principles of Accounts."
+      ]
+    },
+    {
+      "id": "how",
+      "want": "I want to work out how things work",
+      "looksLike": "Research, data, software, laboratories, engineering, medicine. Work where the reward is understanding something nobody has explained to you yet.",
+      "routes": [
+        { "label": "Junior College, then research", "steps": ["A Levels with sciences", "Science or engineering degree", "Research, industry or postgraduate work"], "years": 2, "note": "The most direct route into research, and the one that asks most of your G3 subjects." },
+        { "label": "Polytechnic applied science", "steps": ["Diploma in applied science, engineering or data", "Industry lab work, or a degree with exemptions"], "years": 3, "note": "You are in a real lab in your first year rather than your fourth." },
+        { "label": "Computing route", "steps": ["Computing at school if offered", "Polytechnic IT or data diploma, or JC then a degree", "Work in a field that did not exist twenty years ago"], "years": 3, "note": "The one field where what you have built counts nearly as much as what you were graded." },
+        { "label": "ITE, then up", "steps": ["Higher Nitec in a technical field", "Polytechnic diploma", "Degree, often part time while working"], "years": 5, "note": "Longer, and people complete it every year." }
+      ],
+      "thisTerm": [
+        "Pick one thing you use daily and find out how it actually works.",
+        "Build or break something and write down why it did what it did.",
+        "Ask your science teacher what they would study if they started again."
+      ]
+    },
+    {
+      "id": "decide",
+      "want": "I want to be in the room where decisions get made",
+      "looksLike": "Policy, law, management, public service, journalism, community leadership. Work where the job is judgement.",
+      "routes": [
+        { "label": "Humanities route", "steps": ["History, Geography, Literature or Social Studies at G3", "JC, then law, policy or social sciences"], "years": 2, "note": "These subjects teach you to build an argument from evidence that disagrees with itself. That is the actual skill." },
+        { "label": "Polytechnic, then degree", "steps": ["Diploma in business, media or social sciences", "Degree with exemptions, often at SUSS or SIT"], "years": 3, "note": "You arrive with practical experience that people who came straight through do not have." },
+        { "label": "Through the work", "steps": ["Any route into an organisation", "Take responsibility earlier than is comfortable", "Qualifications later, if they are needed"], "years": 0, "note": "A lot of people who run things did not plan to. They were the ones who took the job nobody wanted." },
+        { "label": "Later, deliberately", "steps": ["A first career", "Mid career degree or professional qualification"], "years": 3, "note": "The SkillsFuture Level Up Programme exists for exactly this move." }
+      ],
+      "thisTerm": [
+        "Take a position on something at school and argue it in front of people who disagree.",
+        "Read one news story and then find who else reported it differently.",
+        "Volunteer for the committee, not the audience."
+      ]
+    },
+    {
+      "id": "unknown",
+      "want": "I honestly do not know yet",
+      "looksLike": "Most people at your age, including the ones who sound certain.",
+      "isBreadthTour": true,
+      "routes": [
+        { "label": "Keep the widest set of subjects you can genuinely carry", "steps": ["Choose levels you can sustain", "Avoid closing off a whole area you have never tried"], "years": 0, "note": "Not the same as taking everything at the highest level. A combination you are drowning in closes more doors than it opens." },
+        { "label": "Go and try things", "steps": ["Open houses", "CCAs outside your usual", "One thing a term that you would not have chosen"], "years": 0, "note": "You cannot decide between options you have never encountered. Most fourteen year olds are choosing from a list of about six jobs they have seen on television." },
+        { "label": "Pick a direction, not a destination", "steps": ["Choose the next step only", "Reassess with actual information at the end of it"], "years": 0, "note": "You are allowed to decide the next two years without deciding the next forty." }
+      ],
+      "thisTerm": [
+        "Go to one open house for a route you have already dismissed.",
+        "Ask three adults what they actually do all day. Not their job title, their day.",
+        "Write down what you were doing the last time you lost track of time."
+      ]
+    }
+  ]
+}

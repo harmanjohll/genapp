@@ -1,0 +1,192 @@
+{
+  "_meta": {
+    "source": "Written for this app, grounded in Krumboltz planned happenstance theory and in the structure of the Singapore education and training system",
+    "url": "https://doi.org/10.1177/1069072708328861",
+    "accessed": "2026-07-31",
+    "units": "not applicable",
+    "notes": "Chance cards are the engine of the Journey mode. Each fires at a life stage, and whether the player can use it is checked against dispositions, never against grades. A chance the player cannot use is never framed as a punishment. It is framed as something that happened while they were not looking, and it is always replayable. No card removes an option permanently. Situations and setbacks are written to be recognisable to a Singaporean student without being about any real person."
+  },
+  "cards": [
+    {
+      "id": "teacher_notices",
+      "minAge": 15, "maxAge": 16,
+      "type": "encounter",
+      "title": "A teacher stops you after class",
+      "body": "She says your last piece of work was the best thing she read that week, and asks whether you have thought about taking the subject further.",
+      "requires": { "disposition": "optimism", "min": 1 },
+      "ifTaken": "You say yes, and she spends twenty minutes telling you what the subject actually leads to. You leave with two things you had never heard of.",
+      "ifMissed": "You say something polite and leave. She does not bring it up again, because teachers assume you know when you are not interested.",
+      "gain": { "network": 1, "curiosity": 1 }
+    },
+    {
+      "id": "level_up_offer",
+      "minAge": 15, "maxAge": 16,
+      "type": "opportunity",
+      "title": "Your school offers you a subject at a higher level",
+      "body": "Your results in one subject were strong enough that the school is offering to move it up a level next year. It will be harder and it will take more of your time.",
+      "requires": { "disposition": "risk", "min": 1 },
+      "ifTaken": "You take it. The first term is genuinely difficult and by the third you have caught up.",
+      "ifMissed": "You decline, which is a completely reasonable thing to do. The offer usually comes round again.",
+      "gain": { "skills": 1, "doors": 1 }
+    },
+    {
+      "id": "failed_paper",
+      "minAge": 15, "maxAge": 17,
+      "type": "setback",
+      "title": "You fail a paper badly",
+      "body": "Not a near miss. A genuinely bad result in a subject you thought you were fine in.",
+      "requires": { "disposition": "persistence", "min": 1 },
+      "ifTaken": "You work out what actually went wrong instead of deciding you are bad at the subject. It takes a term to recover and you recover.",
+      "ifMissed": "You avoid the subject for a while. It stays uncomfortable for longer than it needed to.",
+      "onwardMoves": ["Ask the teacher to go through the paper with you", "Move the subject to a level you can actually work at, which is not a defeat"],
+      "gain": { "persistence": 1 }
+    },
+    {
+      "id": "open_house",
+      "minAge": 15, "maxAge": 17,
+      "type": "opportunity",
+      "title": "An open house you were not planning to attend",
+      "body": "A friend is going to a polytechnic and ITE open house and asks if you want to come. You had already decided that route was not for you.",
+      "requires": { "disposition": "curiosity", "min": 1 },
+      "ifTaken": "You go. You see a course you did not know existed and you find yourself asking questions for forty minutes.",
+      "ifMissed": "You stay home. You continue choosing between the four options you already knew about.",
+      "gain": { "doors": 2, "curiosity": 1 }
+    },
+    {
+      "id": "eae_window",
+      "minAge": 16, "maxAge": 17,
+      "type": "opportunity",
+      "title": "The Early Admissions Exercise opens",
+      "body": "You can apply for a course on the strength of your interest and aptitude, before your results come out. It asks you to talk about what you have done and why you want this.",
+      "requires": { "disposition": "optimism", "min": 2 },
+      "ifTaken": "You apply. Whether or not you get it, you have had to say out loud what you actually want, which turns out to be the hard part.",
+      "ifMissed": "You decide there is no point, because your results are not strong enough. The exercise was specifically designed not to work that way.",
+      "gain": { "doors": 2, "portfolio": 1 }
+    },
+    {
+      "id": "results_short",
+      "minAge": 16, "maxAge": 17,
+      "type": "setback",
+      "title": "Your results come out and you are short",
+      "body": "Not by much. By enough. The course you had in mind is not available to you this round.",
+      "requires": { "disposition": "flexibility", "min": 1 },
+      "ifTaken": "You take a route you had not been considering, because you looked properly at what it actually leads to rather than at what it sounds like.",
+      "ifMissed": "You take the nearest thing to your original plan without looking at the alternatives. It works out, more slowly.",
+      "onwardMoves": ["A fifth year, if you are eligible, to take subjects at a more demanding level", "A foundation year inside the polytechnic", "The ITE route, which reaches the same diploma by a different road"],
+      "gain": { "flexibility": 1 }
+    },
+    {
+      "id": "wrong_course",
+      "minAge": 17, "maxAge": 19,
+      "type": "setback",
+      "title": "Three months in, you know it is the wrong course",
+      "body": "Not too hard. Just not what you thought it was, and not what you want to spend three years on.",
+      "requires": { "disposition": "flexibility", "min": 2 },
+      "ifTaken": "You talk to someone, transfer or finish the year and switch. It costs you time and it does not cost you the decade.",
+      "ifMissed": "You finish it. The diploma is still a diploma and you find your way sideways afterwards, which large numbers of people do.",
+      "onwardMoves": ["Transfer within the institution", "Finish and switch field at the next step, which is extremely common", "Use it as the base for something adjacent"],
+      "gain": { "flexibility": 1, "persistence": 1 }
+    },
+    {
+      "id": "internship_offer",
+      "minAge": 18, "maxAge": 21,
+      "type": "opportunity",
+      "title": "An internship nobody else applied for",
+      "body": "It is not glamorous and it is at a company you have never heard of. Your lecturer mentions it once.",
+      "requires": { "disposition": "risk", "min": 2 },
+      "ifTaken": "You take it. The company is small enough that you do real work, and the person supervising you remembers your name for the next ten years.",
+      "ifMissed": "You wait for a better one. Better ones are more competitive.",
+      "gain": { "network": 2, "skills": 1, "portfolio": 1 }
+    },
+    {
+      "id": "someone_asks",
+      "minAge": 20, "maxAge": 26,
+      "type": "encounter",
+      "title": "Someone asks whether you can do something you have never done",
+      "body": "At work. In front of people. You could say yes and work it out, or say no and stay safe.",
+      "requires": { "disposition": "risk", "min": 2 },
+      "ifTaken": "You say yes. The first attempt is rough. You are now the person who does that thing.",
+      "ifMissed": "You say no, honestly, and someone else becomes the person who does that thing.",
+      "gain": { "skills": 2, "network": 1 }
+    },
+    {
+      "id": "upgrade_window",
+      "minAge": 21, "maxAge": 28,
+      "type": "opportunity",
+      "title": "Your employer will pay for you to upgrade",
+      "body": "Part time, alongside the job. It will cost you your evenings for two years.",
+      "requires": { "disposition": "persistence", "min": 2 },
+      "ifTaken": "You do it. The two years are hard and at the end you hold a qualification you did not have at nineteen.",
+      "ifMissed": "You do not. The offer tends to come round again, and the SkillsFuture routes are there regardless of your employer.",
+      "gain": { "skills": 2, "doors": 2 }
+    },
+    {
+      "id": "retrenched",
+      "minAge": 28, "maxAge": 45,
+      "type": "setback",
+      "title": "Your role disappears",
+      "body": "Not because of you. The work moved, or the company did, or the technology did.",
+      "requires": { "disposition": "optimism", "min": 2 },
+      "ifTaken": "You treat it as a switch rather than an ending, and use the support that exists for exactly this.",
+      "ifMissed": "You look for the same job elsewhere for a while before widening. You get there, later.",
+      "onwardMoves": ["SkillsFuture Career Transition Programme, built for exactly this", "From age 40, a $4,000 credit and a monthly training allowance while you retrain full time", "A subsidised full time diploma, at up to 90 percent off, at any age"],
+      "gain": { "flexibility": 1, "optimism": 1 }
+    },
+    {
+      "id": "old_colleague",
+      "minAge": 25, "maxAge": 45,
+      "type": "encounter",
+      "title": "Someone you worked with years ago calls",
+      "body": "They are building something and they thought of you. They thought of you because of how you were to work with, not because of your qualifications.",
+      "requires": { "disposition": "curiosity", "min": 2 },
+      "ifTaken": "You take the call, and then the meeting. It changes the next five years.",
+      "ifMissed": "You are busy. They call someone else who is also good.",
+      "gain": { "network": 2, "doors": 2 }
+    },
+    {
+      "id": "field_changes",
+      "minAge": 30, "maxAge": 50,
+      "type": "setback",
+      "title": "Your whole field changes underneath you",
+      "body": "The tools you built a career on are being replaced. Some of what you do can now be done in seconds by something else.",
+      "requires": { "disposition": "curiosity", "min": 3 },
+      "ifTaken": "You learn the new tools early, while it is still a choice rather than an emergency, and end up more valuable than before.",
+      "ifMissed": "You learn them later, under more pressure. You still learn them.",
+      "onwardMoves": ["Short courses using SkillsFuture Credit, on your own terms", "A full reskilling with a training allowance from age 40", "Move to the part of the field the change did not touch"],
+      "gain": { "curiosity": 1, "flexibility": 1 }
+    },
+    {
+      "id": "second_career",
+      "minAge": 38, "maxAge": 52,
+      "type": "opportunity",
+      "title": "You could start again, properly",
+      "body": "There is a thing you have wanted to do for years. From 40 the state will pay most of the cost and give you an allowance while you study.",
+      "requires": { "disposition": "risk", "min": 3 },
+      "ifTaken": "You enrol. You are the oldest person in some of the rooms and it turns out that is not the problem you thought it would be.",
+      "ifMissed": "You keep going as you are, which is a real and reasonable choice. The programme does not expire.",
+      "gain": { "skills": 2, "doors": 3, "portfolio": 1 }
+    },
+    {
+      "id": "teach_someone",
+      "minAge": 24, "maxAge": 55,
+      "type": "encounter",
+      "title": "A younger person asks you how you got here",
+      "body": "They are where you were. They think their result decided everything.",
+      "requires": { "disposition": "persistence", "min": 2 },
+      "ifTaken": "You tell them the real version, including the parts that went badly. They believe you because it does not sound like a speech.",
+      "ifMissed": "You give them the tidy version. It is less useful to them than the real one would have been.",
+      "gain": { "network": 1, "portfolio": 1 }
+    },
+    {
+      "id": "small_side_thing",
+      "minAge": 16, "maxAge": 40,
+      "type": "opportunity",
+      "title": "A small thing on the side",
+      "body": "Something you make, fix, sell, run or organise that nobody is grading. It takes your weekends.",
+      "requires": { "disposition": "curiosity", "min": 1 },
+      "ifTaken": "You keep at it. Years later it is the thing on your record that people ask about first.",
+      "ifMissed": "You let it go when it gets busy, which is what usually happens.",
+      "gain": { "portfolio": 2, "skills": 1 }
+    }
+  ]
+}
