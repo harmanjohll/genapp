@@ -42,32 +42,42 @@ export function renderNow(container, data, ctx) {
   lastReaches = reaches;
   const lev = lever(reaches);
 
+  // Two panes on anything tablet sized and up, which is every school
+  // Chromebook. The whole loop of this mode is tap a level, watch the doors
+  // change, and in one column those two things are hundreds of pixels apart, so
+  // the consequence lands somewhere the student cannot see. Side by side, it is
+  // direct manipulation. On a phone the pips in the sticky bar do the same job.
   host.innerHTML = `
     <div class="wrap">
       ${st.seenIntro ? '' : `<p class="firstrun"><span>${esc(c.firstRun)}</span>
         <button class="x" data-action="dismiss" type="button" aria-label="Dismiss">✕</button></p>`}
 
-      <div class="pulsebar" id="pulsebar">
-        <p class="count"><strong id="count">${reaches.filter((r) => r.state === 'open').length}</strong>
-          <span>${esc(c.openNow)}</span></p>
-        <p class="live" id="live" role="status" aria-live="polite" aria-atomic="true">${esc(leverLine(lev, data.copy))}</p>
-      </div>
-
-      <section class="section" aria-labelledby="doors-h">
-        <h2 id="doors-h" class="h-sm">${esc(c.doorsHead)}</h2>
-        <ul class="doors" id="doors">${reaches.map((r) => doorRow(r, lev)).join('')}</ul>
-      </section>
-
-      <section class="section" aria-labelledby="subj-h">
-        <div class="subj-head">
-          <h2 id="subj-h" class="h-sm">${esc(c.subjectsHead)}</h2>
-          <p class="micro mute">${esc(c.subjectsHint)}</p>
+      <div class="now-grid">
+        <div class="pane-doors">
+          <div class="pulsebar" id="pulsebar">
+            <p class="count"><strong id="count">${reaches.filter((r) => r.state === 'open').length}</strong>
+              <span>${esc(c.openNow)}</span></p>
+            <p class="live" id="live" role="status" aria-live="polite" aria-atomic="true">${esc(leverLine(lev, data.copy))}</p>
+            ${pips(reaches)}
+          </div>
+          <section aria-labelledby="doors-h">
+            <h2 id="doors-h" class="h-sm">${esc(c.doorsHead)}</h2>
+            <ul class="doors" id="doors">${reaches.map((r) => doorRow(r, lev)).join('')}</ul>
+          </section>
         </div>
-        ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan)).join('')}
-        <p class="micro mute">${esc(data.subjects.movement.headline)} ${esc(data.subjects.movement.body)}</p>
-      </section>
 
-      <div id="tail">${tail(st, reaches, data)}</div>
+        <div class="pane-subj">
+          <section aria-labelledby="subj-h">
+            <div class="subj-head">
+              <h2 id="subj-h" class="h-sm">${esc(c.subjectsHead)}</h2>
+              <p class="micro mute">${esc(c.subjectsHint)}</p>
+            </div>
+            ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan)).join('')}
+            <p class="micro mute">${esc(data.subjects.movement.headline)} ${esc(data.subjects.movement.body)}</p>
+          </section>
+          <div id="tail">${tail(st, reaches, data)}</div>
+        </div>
+      </div>
     </div>`;
 
   bindGlossary(host);
@@ -100,6 +110,26 @@ function rowStatus(r, lev) {
   const dup = lev && r.moves.some((m) => m.hard && m.short === lev.short);
   if (r.state === 'open' || !dup) return r.status.text;
   return STATES[r.state].label;
+}
+
+/**
+ * Eight pips in the sticky bar, one per destination, coloured by state.
+ *
+ * Phone only. On a phone the subject list runs well past the fold, so a student
+ * taps a level chip and the thing that changed is off screen above them. The
+ * pips ride along in the sticky bar so the consequence is always visible.
+ *
+ * They carry state, which is four labelled buckets, not distance. Order matches
+ * the list exactly, and never changes.
+ */
+function pips(reaches) {
+  return `
+    <ul class="pips" aria-label="All eight at a glance">
+      ${reaches.map((r) => `
+        <li><button class="pip" type="button" data-state="${r.state}"
+              data-action="dest" data-id="${r.id}" aria-haspopup="dialog"
+              aria-label="${esc(r.railName)}, ${esc(STATES[r.state].label)}"></button></li>`).join('')}
+    </ul>`;
 }
 
 function doorRow(r, lev) {
@@ -262,6 +292,12 @@ function onLevel(btn) {
       li.classList.remove('moved');
       void li.offsetWidth;
       li.classList.add('moved');
+    }
+    const pip = host.querySelector(`.pip[data-id="${r.id}"]`);
+    if (pip && pip.dataset.state !== r.state) {
+      pip.dataset.state = r.state;
+      pip.setAttribute('aria-label', `${r.railName}, ${STATES[r.state].label}`);
+      pip.classList.remove('lit'); void pip.offsetWidth; pip.classList.add('lit');
     }
   });
 
