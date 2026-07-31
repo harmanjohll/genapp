@@ -104,8 +104,22 @@ li { margin-bottom: var(--s-1); }
   font-size: var(--t-small);
 }
 
+/* Keyboard users scrolling under the sticky header.
+   Without this, tabbing to a row scrolls it flush to the viewport top, which
+   is underneath the header, so the focused control is invisible. */
+.srow, .door, .choice, .future-btn, .btn, .lchip, .pip {
+  scroll-margin-top: calc(var(--head-h, 68px) + var(--s-5));
+  scroll-margin-bottom: calc(var(--ribbon-h) + var(--s-4));
+}
+
 @media print {
   body { background: #fff; padding: 0; }
-  .site-head, .ribbon, .modebar, .no-print { display: none !important; }
+  .site-head, .ribbon, .modebar, .pips, .pulsebar, .no-print { display: none !important; }
   .card, .panel { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  /* The two pane layout is a screen affordance. On paper it is one column. */
+  .now-grid { display: block; }
+  .pane-doors { position: static; max-height: none; overflow: visible; }
+  .srows { display: block; }
+  .grp { position: static; }
+  dialog.sheet { display: none; }
 }

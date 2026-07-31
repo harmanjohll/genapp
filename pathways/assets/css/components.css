@@ -47,20 +47,98 @@
   min-width: var(--tap); min-height: var(--tap); color: var(--accent-dk); font-size: 1rem;
 }
 
+/* ---------- layout ----------
+   The loop of this mode is: tap a level, watch the doors change. In one column
+   those two things are hundreds of pixels apart, so the consequence lands off
+   screen. Side by side it becomes direct manipulation.
+
+   Breakpoints, by the devices this actually runs on:
+     up to 699    phone. One column, doors first, state pips ride the sticky bar.
+     700 to 899   tablet portrait. Still one column, but roomier and the popup
+                  becomes a centred dialog rather than a bottom sheet.
+     900 up       tablet landscape and every school Chromebook. Two panes.
+     1400 up      wide. The subject list goes to two columns rather than
+                  stretching a 26 row list across a metre of glass. */
+.now-grid { display: grid; gap: var(--s-6); align-items: start; }
+
+@media (min-width: 900px) {
+  .now-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 400px);
+    column-gap: var(--s-7);
+  }
+  .pane-subj  { grid-column: 1; grid-row: 1; min-width: 0; }
+  .pane-doors {
+    grid-column: 2; grid-row: 1;
+    position: sticky; top: calc(var(--head-h, 68px) + var(--s-4));
+    max-height: calc(100dvh - var(--head-h, 68px) - var(--ribbon-h) - var(--s-5));
+    overflow-y: auto; overscroll-behavior: contain;
+    padding-right: var(--s-2);
+  }
+  .pane-doors .pulsebar { position: static; box-shadow: none; margin-top: 0; }
+  /* Redundant here: the full list is permanently visible beside the subjects.
+     Needs the extra specificity because the base .pips rule is declared further
+     down the file and would otherwise win on source order. */
+  .pane-doors .pips { display: none; }
+  /* The page still scrolls as a whole here, only the doors pane is pinned, so
+     the group headings clear the site header and nothing else. Below 900 they
+     also have to clear the sticky summary bar. */
+  .grp { top: calc(var(--head-h, 68px) + var(--s-2)); }
+}
+
+/* Tablet portrait: still one column, but a destination row stretched across
+   800px puts the name and its status a long way apart. Cap the eye travel. */
+@media (min-width: 700px) and (max-width: 899px) {
+  .pane-doors { max-width: 660px; }
+}
+
+/* Two columns of subjects on a wide screen. Grid rather than CSS multicol,
+   because the group headings are sticky and sticky does not survive multicol. */
+@media (min-width: 1400px) {
+  /* Only lists long enough to be worth splitting. A group of one subject in a
+     two column grid sits at half width under full width groups, which reads as
+     broken. Browsers without :has() simply keep one column, which is fine. */
+  .srows:has(> li:nth-child(5)) {
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-6);
+  }
+}
+
 .pulsebar {
   position: sticky; top: var(--head-h, 68px); z-index: 40;
-  margin: var(--s-4) 0 var(--s-5);
+  margin: var(--s-4) 0;
   padding: var(--s-3) var(--s-4);
   background: var(--surface); border: 1px solid var(--rule-soft);
   border-radius: var(--r-md); box-shadow: var(--shadow-sm);
 }
 .pulsebar .count { margin: 0; display: flex; align-items: baseline; gap: var(--s-2); }
 .pulsebar .count strong {
-  font-family: var(--display); font-size: 1.9rem; line-height: 1; color: var(--accent);
+  font-family: var(--display); font-size: 2.1rem; line-height: 1; color: var(--accent);
   display: inline-block;
 }
 .pulsebar .count span { font-size: var(--t-small); color: var(--ink-mute); }
 .pulsebar .live { margin: var(--s-1) 0 0; font-size: var(--t-small); color: var(--ink-soft); min-height: 1.4em; }
+
+/* Eight pips, one per destination, coloured by state. Phone and tablet portrait
+   only, where the doors list scrolls out of sight above the subject list.
+   They carry state, which is four labelled buckets, not distance, and their
+   order matches the list exactly and never changes. */
+.pips { display: flex; gap: 5px; list-style: none; margin: var(--s-3) 0 0; padding: 0; }
+.pips li { flex: 1 1 0; }
+.pip { display: block; width: 100%; height: var(--tap); padding: 0; border: none; background: none; cursor: pointer; position: relative; }
+/* The touch target extends past the box, so a short pip still gets a full 44px
+   without spending 12px of a phone's vertical budget on empty space. */
+.pip::before { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }
+.pip::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  height: 6px; border-radius: 3px; background: var(--rule);
+  transition: background var(--dur-fast) var(--ease), height var(--dur-fast) var(--ease);
+}
+.pip[data-state="open"]::after         { background: var(--open); height: 10px; }
+.pip[data-state="within-reach"]::after { background: var(--within); }
+.pip[data-state="longer-route"]::after { background: var(--longer); }
+.pip[data-state="other-route"]::after  { background: var(--other); }
+.pip.lit::after { animation: pipLit 700ms var(--ease); }
+@keyframes pipLit { 0% { transform: translateY(-50%) scaleY(2.6); } 100% { transform: translateY(-50%) scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .pip.lit::after { animation: none; } }
 .pop { animation: pop 200ms var(--ease); }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
 
@@ -167,6 +245,11 @@
 .ask-q { font-family: var(--display); font-size: 1.05rem; margin: var(--s-2) 0 var(--s-3); }
 
 /* ---------- sheet ---------- */
+/* Bottom sheet on a phone, because that is where the thumb is and a centred
+   dialog on a small screen puts the close button out of reach.
+   Centred dialog from tablet portrait up, because a full width bar pinned to
+   the bottom of a 1366px screen is a phone pattern wearing the wrong clothes. */
+/* Phone base: a bottom sheet. */
 dialog.sheet {
   border: none; padding: 0; margin: auto auto 0; max-width: 560px; width: 100%;
   max-height: 86dvh; background: var(--surface); color: var(--ink);
@@ -176,11 +259,28 @@ dialog.sheet {
 dialog.sheet::backdrop { background: rgba(20, 24, 31, 0.42); }
 dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
-@media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--rule); margin: var(--s-3) auto var(--s-1); }
 .sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto; max-height: calc(86dvh - 120px); }
 .sheet-body:focus { outline: none; }
 .sheet-foot { padding: var(--s-3) var(--s-5) var(--s-5); border-top: 1px solid var(--rule-soft); }
+
+/* Tablet portrait and up: a centred dialog sized to its content.
+   Must come after the base rules, or the phone animation and the grab handle
+   win on every screen size. */
+@media (min-width: 700px) {
+  dialog.sheet {
+    margin: auto; max-height: 80dvh;
+    width: min(560px, calc(100vw - 64px));
+    border-radius: var(--r-lg);
+  }
+  dialog.sheet[open] { animation: modalIn 200ms var(--ease); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
+  .sheet-grab { display: none; }
+  .sheet-body { max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
+  .sheet-foot { padding: var(--s-3) var(--s-6) var(--s-5); }
+}
+
+@media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
 .sheet-head { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
 .sheet-head h2 { margin-right: auto; }
 .full { font-size: var(--t-small); color: var(--ink-mute); margin-bottom: var(--s-3); }
@@ -234,15 +334,24 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
   height: calc(var(--ribbon-h) + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(255, 255, 255, 0.95); border-top: 1px solid var(--rule);
+  /* Opaque. It was 95 percent and page text bled through it as you scrolled. */
+  background: var(--paper); border-top: 1px solid var(--rule);
 }
 .ribbon-inner { position: relative; height: var(--ribbon-h); padding: var(--s-5) var(--gutter) 0; }
-.ribbon-track { position: relative; height: 24px; border-radius: var(--r-pill); overflow: visible; background: var(--paper-warm); }
-.ribbon-band { position: absolute; top: 0; bottom: 0; }
+.ribbon-track { position: relative; height: 26px; border-radius: var(--r-pill); background: var(--paper-warm); }
+.ribbon-band { position: absolute; top: 0; bottom: 0; overflow: hidden; }
 .ribbon-band:first-child { border-radius: var(--r-pill) 0 0 var(--r-pill); }
+.ribbon-band:last-of-type { border-radius: 0 var(--r-pill) var(--r-pill) 0; }
 .ribbon-band.school { background: var(--band-school); }
 .ribbon-band.work { background: var(--band-work); }
-.ribbon-band-label { position: absolute; top: -15px; left: 0; font-size: 10px; color: var(--ink-mute); white-space: nowrap; }
+/* Labels sit inside their band. They used to float above the track, where they
+   collided with the "You are here" marker at the left hand end, which is
+   exactly where every student in this app is. */
+.ribbon-band-label {
+  position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
+  font-size: 10px; line-height: 1; color: var(--ink-soft); white-space: nowrap;
+  pointer-events: none;
+}
 .ribbon-mark { position: absolute; top: -10px; bottom: -10px; width: var(--tap); transform: translateX(-50%); background: none; border: none; padding: 0; cursor: pointer; }
 .ribbon-mark::after {
   content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
@@ -253,7 +362,18 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 .ribbon-you-label { position: absolute; top: 4px; font-size: 10px; font-weight: 700; color: var(--accent-dk); transform: translateX(-50%); white-space: nowrap; }
 
 /* ---------- journey ---------- */
+/* Prose gets a measure. Without one, a paragraph on a 1366px Chromebook runs to
+   about 160 characters a line, which is roughly twice what anyone tracks
+   comfortably and considerably worse for a weak reader. */
+.turn > p, .chance p, .diff-verdict p, .thisterm > p, .panel > p, .ask-q, .story p { max-width: 66ch; }
+
 .turn { display: grid; gap: var(--s-4); }
+/* Choices side by side once there is room, so all three are comparable at a
+   glance rather than stacked down a column. */
+@media (min-width: 860px) {
+  .turn .grid[role="group"] { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .choice { display: flex; align-items: center; min-height: 92px; }
+}
 .turn-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
 .turn-age { font-family: var(--display); font-size: 2rem; font-weight: 600; color: var(--accent); line-height: 1; }
 .choice {
@@ -323,6 +443,66 @@ body[data-board="true"] .srows, body[data-board="true"] .ask, body[data-board="t
   .panel, .card { padding: var(--s-4); }
   .turn-age { font-size: 1.6rem; }
   .ribbon-band-label { display: none; }
+}
+
+/* Phone chrome.
+   The header wrapped to three rows and, with the sticky summary under it, ate
+   nearly a third of a 640px screen before any content. The mode bar becomes a
+   full width segmented control instead, which is both shorter and a much
+   better thumb target. */
+@media (max-width: 700px) {
+  .site-head { padding: var(--s-2) 0; }
+  .brand { font-size: 0.98rem; }
+  .modebar { width: 100%; }
+  .modebar button { flex: 1 1 0; padding: var(--s-2) var(--s-1); min-width: 0; }
+
+  /* The header scrolls away on a phone. Pinned, it plus the summary bar held
+     about 30 percent of an 812px screen, and more like 37 percent on a 640px
+     one, before any content. The summary is what has to stay: it is the live
+     consequence of the last tap. Switching mode is a scroll to the top, which
+     is a fair trade for a third of the screen back. */
+  .site-head { position: static; }
+  .pulsebar { top: 0; margin-top: var(--s-3); }
+  .grp { position: static; }
+
+  .pulsebar { padding: var(--s-3); }
+  .pulsebar .count strong { font-size: 1.8rem; }
+  /* 32px clears the 24px minimum, and every pip has a 56px equivalent in the
+     doors list directly below, which is the documented exception. */
+  .pip { height: 32px; }
+  .pips { margin-top: var(--s-2); }
+}
+
+/* Touch devices.
+   On a touch screen :hover latches after a tap and stays until you tap
+   something else, so every control a student has touched looks half selected.
+   Neutralised rather than removed, because a mouse still gets the affordance. */
+@media (hover: none) {
+  .btn:hover { background: var(--ink); }
+  .btn.accent:hover { background: var(--accent); }
+  .btn.ghost:hover { background: transparent; }
+  .modebar button:hover { background: var(--surface); }
+  .modebar button[aria-current="true"]:hover { background: var(--ink); }
+  .door-hit:hover { background: none; }
+  .lchip:hover { background: var(--surface); }
+  .srow-name:hover { text-decoration-color: var(--rule); }
+  .future-btn:hover, .choice:hover { border-color: var(--rule); background: var(--surface); }
+  .gloss:hover { border-bottom-color: var(--ink-faint); color: inherit; }
+  .ribbon-mark:hover::after { background: var(--ink-soft); width: 3px; }
+}
+
+/* Kill the 300ms tap delay without disabling pinch zoom. */
+button, .lchip, .pip, summary, select { touch-action: manipulation; }
+
+/* Short viewports: a phone held sideways, and small laptops with the browser
+   chrome eating the height. The ribbon is the first thing to give way, because
+   it is context rather than a control. */
+@media (max-height: 500px) {
+  .ribbon { display: none; }
+  body { padding-bottom: var(--s-5); }
+  .site-head { position: static; }
+  .pulsebar { position: static; }
+  @media (min-width: 900px) { .pane-doors { max-height: none; position: static; } }
 }
 
 /* ---------- teacher: school offer picker and parent note ---------- */

@@ -69,6 +69,21 @@ Nothing was thrown away. The writing moved into sheets that open on demand.
 
 `engine/copy-budget.js` enforces per field word caps, scans every student facing string for hyphens and dashes, and measures first paint off the live DOM. It counts every visible label including each G1/G2/G3 chip, so the budget cannot be met by moving prose into labels.
 
+## Layout
+
+The loop of the main mode is: tap a level, watch the doors change. In one column those two things are hundreds of pixels apart, so the consequence lands off screen and the tool stops feeling live.
+
+| Width | Layout | Popup | Live feedback |
+| --- | --- | --- | --- |
+| to 699 | One column, doors above subjects. Header scrolls away, summary stays pinned | Bottom sheet | Eight state pips ride the sticky summary |
+| 700 to 899 | One column, roomier, destination rows capped for eye travel | Centred dialog | Pips |
+| 900 up | **Two panes.** Subjects left, doors pinned right | Centred dialog | The whole list is permanently visible |
+| 1400 up | Two panes, subject groups of five or more split into two columns | Centred dialog | Whole list |
+
+Also handled: short viewports (a phone held sideways) drop the ribbon and unpin everything; touch devices get `:hover` neutralised so controls do not latch after a tap; keyboard focus gets `scroll-margin` so a focused row never lands under the sticky header.
+
+Verified at 375, 430, 740x360, 834, 1112, 1366 and 1680: no horizontal overflow anywhere, focus enters and returns from every popup, zero contrast failures, every control 44px effective.
+
 ## Structure
 
 ```
