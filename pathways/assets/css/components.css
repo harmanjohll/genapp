@@ -79,10 +79,6 @@
      Needs the extra specificity because the base .pips rule is declared further
      down the file and would otherwise win on source order. */
   .pane-doors .pips { display: none; }
-  /* The page still scrolls as a whole here, only the doors pane is pinned, so
-     the group headings clear the site header and nothing else. Below 900 they
-     also have to clear the sticky summary bar. */
-  .grp { top: var(--s-2); }
 }
 
 /* Tablet portrait: still one column, but a destination row stretched across
@@ -92,7 +88,7 @@
 }
 
 /* Two columns of subjects on a wide screen. Grid rather than CSS multicol,
-   because the group headings are sticky and sticky does not survive multicol. */
+   which fragments rows across columns unpredictably. */
 @media (min-width: 1400px) {
   /* Only lists long enough to be worth splitting. A group of one subject in a
      two column grid sits at half width under full width groups, which reads as
@@ -176,10 +172,15 @@
 /* ---------- subject rows ---------- */
 .subj-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
 .h-sm { font-family: var(--display); font-size: 1.2rem; }
+/* Not sticky. They were, to help scanning under a sticky header, and when the
+   header stopped being sticky they became headings pinned in the middle of the
+   viewport with nothing above them, sitting on top of the subject rows. The
+   media query that was meant to place them lost to this rule on source order
+   anyway, which is the same trap the pips fell into. */
 .grp {
   font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--ink-mute); font-weight: 700; margin: var(--s-5) 0 var(--s-2);
-  position: sticky; top: 158px; background: var(--paper); padding: var(--s-2) 0; z-index: 20;
+  padding: var(--s-2) 0;
 }
 .srows { list-style: none; margin: 0; padding: 0; }
 .srow {
@@ -485,7 +486,6 @@ body[data-board="true"] .srows, body[data-board="true"] .ask, body[data-board="t
   .modebar button { flex: 1 1 0; padding: var(--s-2) var(--s-1); min-width: 0; }
 
   .pulsebar { margin-top: var(--s-3); }
-  .grp { position: static; }
   /* The summary bar is the only pinned thing here, so focus scrolling has to
      clear it. */
   --scroll-pad: 168px;
