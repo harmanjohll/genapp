@@ -4,93 +4,38 @@
     "url": "https://www.skillsfuture.gov.sg/",
     "accessed": "2026-07-31",
     "units": "Singapore dollars, ages in years",
-    "notes": "This file supplies the Long View ribbon. Its job is to make visible how small the secondary school band is compared with everything after it. Figures are current as at the accessed date and several are provisional, having been read from search summaries rather than primary pages."
+    "notes": "Supplies the Long View ribbon. Its job is proportion: secondary school is the small band on the left. Markers are spaced at least four years apart so no two tap targets overlap at 375px. Several figures are provisional."
   },
-  "ribbon": {
-    "from": 12,
-    "to": 65,
-    "caption": "This is a life. The part everyone is anxious about is the small band on the left."
-  },
+  "ribbon": { "from": 12, "to": 65, "youLabel": "You are here" },
   "bands": [
-    { "id": "sec", "from": 13, "to": 16, "label": "Secondary school", "tone": "school" },
-    { "id": "postsec", "from": 17, "to": 20, "label": "Post secondary", "tone": "school" },
-    { "id": "early", "from": 21, "to": 29, "label": "Finding your feet at work", "tone": "work" },
-    { "id": "mid", "from": 30, "to": 44, "label": "Building something", "tone": "work" },
-    { "id": "later", "from": 45, "to": 65, "label": "Still going, often somewhere new", "tone": "work" }
+    { "id": "sec", "from": 13, "to": 16, "label": "School", "tone": "school" },
+    { "id": "postsec", "from": 17, "to": 20, "label": "After school", "tone": "school" },
+    { "id": "early", "from": 21, "to": 29, "label": "Finding your feet", "tone": "work" },
+    { "id": "mid", "from": 30, "to": 44, "label": "Building", "tone": "work" },
+    { "id": "later", "from": 45, "to": 65, "label": "Often somewhere new", "tone": "work" }
   ],
   "markers": [
-    {
-      "age": 14,
-      "title": "You choose subject levels",
-      "body": "The decision that feels enormous right now. It sets your next two years and it is adjustable. Students move levels up and down at the end of Sec 1, Sec 2 and Sec 3.",
-      "status": "confirmed"
-    },
-    {
-      "age": 16,
-      "title": "You sit the SEC",
-      "body": "One certificate, showing every subject and the level you took it at. The first cohort sits it in 2027.",
-      "sourceRef": "seab_sec",
-      "status": "confirmed"
-    },
-    {
-      "age": 17,
-      "title": "Post secondary starts",
-      "body": "JC, MI, polytechnic, PFP or ITE. Whichever it is, it is a beginning and not a verdict. Every one of them has onward routes attached.",
-      "status": "confirmed"
-    },
-    {
-      "age": 21,
-      "title": "First real job, for most people",
-      "body": "By this point almost nobody is asking about your Sec 2 subject combination. Within a few years of starting work, almost nobody is asking about your diploma or degree either. They ask what you have done.",
-      "status": "provisional"
-    },
-    {
-      "age": 25,
-      "title": "SkillsFuture Credit becomes yours",
-      "body": "Every Singaporean gets SkillsFuture Credit from age 25, topped up periodically, to spend on courses you choose. It is not tied to your employer and not tied to what you studied.",
-      "url": "https://www.skillsfuture.gov.sg/",
-      "status": "provisional"
-    },
-    {
-      "age": 28,
-      "title": "A lot of people change direction here",
-      "body": "Early career switches are ordinary in Singapore, not a sign that something went wrong. Work study routes at Diploma, Post Diploma and Degree level exist precisely to make them possible without stopping work.",
-      "status": "provisional"
-    },
-    {
-      "age": 33,
-      "title": "The part nobody plans for",
-      "body": "Industries change underneath people. Roles disappear and new ones appear that did not exist when you were in Sec 2. The people who handle it best are not the ones who picked correctly at fourteen. They are the ones who kept learning.",
-      "status": "provisional"
-    },
-    {
-      "age": 40,
-      "title": "SkillsFuture Level Up Programme",
-      "body": "At 40 you receive a $4,000 SkillsFuture Credit top up for a substantial reskilling, plus a monthly training allowance worth half your average income, between $300 and $3,000, while you study full time. More than 36,000 Singaporeans have used the credit since May 2024.",
-      "url": "https://www.skillsfuture.gov.sg/",
-      "status": "provisional"
-    },
-    {
-      "age": 41,
-      "title": "A full time diploma, subsidised, at any age",
-      "body": "From AY2025 the Mid Career Enhanced Subsidy covers up to 90 percent of fees for a full time diploma at ITE, the polytechnics, NAFA and LASALLE. People start diplomas in their forties and fifties. It is a normal thing that happens.",
-      "status": "provisional"
-    },
-    {
-      "age": 46,
-      "title": "Part time training now carries an allowance too",
-      "body": "From 1 March 2026 the Mid Career Training Allowance was extended to selected part time training at a flat $300 a month, so you can keep working while you retrain.",
-      "status": "provisional"
-    },
-    {
-      "age": 55,
-      "title": "Still learning, still hiring",
-      "body": "Retirement and re employment ages have been rising. The working life this system is preparing you for is longer than the one your parents were preparing for.",
-      "status": "provisional"
-    }
-  ],
-  "closing": {
-    "headline": "Count the years after school.",
-    "body": "Four years of secondary school. Two or three after that. Then forty more, in which almost everything that will actually define your working life happens. The subject combination is worth thinking about carefully. It is not worth being frightened of."
-  }
+    { "age": 14, "title": "You choose subject levels",
+      "body": "The bit that feels enormous. It is adjustable, and students change levels every year.", "status": "confirmed" },
+    { "age": 16, "title": "You sit the SEC",
+      "body": "One certificate, every subject and the level you took it at. First sat in 2027.", "status": "confirmed" },
+    { "age": 18, "title": "After school starts",
+      "body": "JC, MI, poly, a foundation year or ITE. Every one of them has roads leading on.", "status": "confirmed" },
+    { "age": 22, "title": "First real job, for most people",
+      "body": "By now nobody asks about your Sec 2 subjects. Within a few years they stop asking about your diploma too.", "status": "provisional" },
+    { "age": 26, "title": "SkillsFuture Credit is yours",
+      "body": "From 25, credit to spend on courses you pick. Not tied to your employer or to what you studied.",
+      "url": "https://www.skillsfuture.gov.sg/", "status": "provisional" },
+    { "age": 31, "title": "A lot of people change direction",
+      "body": "Early switches are ordinary here. Work study routes exist so you can move without stopping work.", "status": "provisional" },
+    { "age": 36, "title": "The part nobody plans for",
+      "body": "Industries change under people. The ones who handle it are not those who chose right at fourteen.", "status": "provisional" },
+    { "age": 41, "title": "SkillsFuture Level Up",
+      "body": "At 40: a $4,000 credit, plus half your income as a monthly allowance while you study full time. Over 36,000 have used it since May 2024.",
+      "url": "https://www.skillsfuture.gov.sg/", "status": "provisional" },
+    { "age": 48, "title": "A subsidised diploma, at any age",
+      "body": "Up to 90 percent off a full time diploma at ITE, the polys, NAFA or LASALLE. People start in their forties and fifties.", "status": "provisional" },
+    { "age": 56, "title": "Still learning, still hiring",
+      "body": "Retirement and re employment ages keep rising. Your working life will be longer than your parents' was.", "status": "provisional" }
+  ]
 }

@@ -1,11 +1,12 @@
 // Entry point. Loads data, mounts the shell, renders the active mode.
 
 import { loadAll } from './data-loader.js';
-import { getState, subscribe, setMode, MODES } from './state.js';
+import { getState, subscribe, setMode, setYear, MODES, YEARS, currentYear } from './state.js';
 import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
 import { runInvariantSweep } from './engine/reach.js';
+import { runCopyBudget } from './engine/copy-budget.js';
 import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
 import { renderAim } from './modes/mode-aim.js';
@@ -16,7 +17,12 @@ const head = document.getElementById('site-head');
 
 let data = null;
 let ctx = null;
-let teacherMode = new URLSearchParams(location.search).get('mode') === 'teacher';
+const params = new URLSearchParams(location.search);
+
+// The teacher layer is reachable by URL only. It was in the student header, and
+// thirty five students find a button labelled Teacher in about ninety seconds.
+let teacherMode = params.get('mode') === 'teacher';
+if (params.get('board') === '1') document.body.dataset.board = 'true';
 
 init();
 
@@ -27,19 +33,18 @@ async function init() {
     console.error(e);
     app.innerHTML = `
       <div class="wrap"><div class="section"><div class="notice">
-        <strong>The data files could not be loaded.</strong>
-        <p style="margin:8px 0 0">This app reads its data over HTTP, so it needs a server rather than a file opened directly. From the repository root run <code>python3 -m http.server 8000</code> and open <code>http://localhost:8000/pathways/</code>.</p>
+        <strong>This did not load.</strong>
+        <p style="margin:8px 0 0">Check the connection and refresh the page. Nothing you did caused this.</p>
       </div></div></div>`;
     return;
   }
 
   initGlossary(data.glossary);
 
-  const routesById = Object.fromEntries(data.progressions.routes.map((r) => [r.id, r]));
   ctx = {
     subjects: data.subjects.subjects,
     destinations: data.pathways.destinations,
-    routesById,
+    routesById: Object.fromEntries(data.progressions.routes.map((r) => [r.id, r])),
     pathwaysMeta: data.pathways._meta,
     yearId: getState().year,
   };
@@ -48,58 +53,74 @@ async function init() {
   renderHead();
   paint();
 
-  subscribe(() => {
+  subscribe((_st, evt) => {
     ctx.yearId = getState().year;
+    // The plan path updates itself in place, so a repaint here would undo it.
+    if (evt && evt.kind === 'plan') return;
     updateRibbon();
     renderHead();
     paint();
   });
 
-  if (new URLSearchParams(location.search).get('dev') === '1') {
+  if (params.get('dev') === '1') {
     runInvariantSweep(ctx);
+    runCopyBudget(data);
   }
 }
 
 function renderHead() {
   const st = getState();
+  const y = currentYear();
   head.innerHTML = `
     <div class="wrap">
-      <div class="brand">The Long Game<span>Pathways for Singapore secondary students</span></div>
+      <div class="brand">${esc(data.copy.chrome.brand)}</div>
+      <label class="yearsel">
+        <span class="sr-only">Which year are you in</span>
+        <select data-action-change="year">
+          ${YEARS.map((v) => `<option value="${v.id}"${v.id === y.id ? ' selected' : ''}>${esc(v.label)}</option>`).join('')}
+        </select>
+      </label>
       <nav class="modebar" aria-label="Modes">
         ${Object.values(MODES).map((m) => `
           <button type="button" data-action="mode" data-mode="${m.id}"
-                  aria-current="${!teacherMode && st.mode === m.id}"
-                  title="${esc(m.tagline)}">${esc(m.label)}</button>`).join('')}
-        <button type="button" data-action="glossary" title="What all the letters mean">Aa</button>
-        <button type="button" data-action="teacher" aria-current="${teacherMode}" title="Facilitation notes for teachers">Teacher</button>
+                  aria-current="${!teacherMode && st.mode === m.id}">${esc(m.label)}</button>`).join('')}
+        <button type="button" data-action="glossary"
+                aria-label="What the letters mean">${esc(data.copy.chrome.glossaryBtn)}</button>
       </nav>
     </div>`;
 
   onAction(head, {
     mode: (btn) => {
       teacherMode = false;
-      document.body.dataset.teacher = 'false';
       if (btn.dataset.mode !== 'journey') resetJourney();
       setMode(btn.dataset.mode);
-      paint();
-      renderHead();
     },
     glossary: () => openFullList(),
-    teacher: () => {
-      teacherMode = !teacherMode;
-      document.body.dataset.teacher = String(teacherMode);
-      renderHead();
-      paint();
-    },
+  });
+
+  const sel = head.querySelector('select');
+  if (sel) sel.addEventListener('change', (e) => setYear(e.target.value));
+
+  measureHead();
+}
+
+/**
+ * The header wraps to two rows at 375px, so its height is not a constant. The
+ * sticky pulse bar and the sticky group headings both offset from it, and with
+ * a hardcoded value the pulse bar hid behind the header on a phone.
+ */
+function measureHead() {
+  requestAnimationFrame(() => {
+    const h = head.offsetHeight || 68;
+    document.documentElement.style.setProperty('--head-h', `${h}px`);
   });
 }
 
+window.addEventListener('resize', measureHead);
+
 function paint() {
   const st = getState();
-  window.scrollTo({ top: window.scrollY > 400 ? 0 : window.scrollY });
-
   if (teacherMode) { renderTeacher(app, data, ctx, paint); return; }
-
   switch (st.mode) {
     case 'journey': renderJourney(app, data, ctx, paint); break;
     case 'aim':     renderAim(app, data, ctx, paint); break;

@@ -10,11 +10,9 @@ body {
   font-size: var(--t-body);
   line-height: var(--lh-body);
   color: var(--ink);
+  /* Flat. Two fixed attachment radial gradients used to live here; they cost a
+     repaint on every scroll on mid range Android and bought nothing. */
   background: var(--paper);
-  background-image:
-    radial-gradient(ellipse 70% 50% at 12% -8%, rgba(194, 94, 58, 0.06), transparent 60%),
-    radial-gradient(ellipse 60% 45% at 92% 4%, rgba(74, 95, 165, 0.05), transparent 62%);
-  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   padding-bottom: calc(var(--ribbon-h) + env(safe-area-inset-bottom, 0px));
 }
@@ -88,17 +86,15 @@ li { margin-bottom: var(--s-1); }
 #app { min-height: 60vh; }
 
 .site-head {
-  padding: var(--s-5) 0 var(--s-3);
+  padding: var(--s-3) 0;
   border-bottom: 1px solid var(--rule-soft);
-  background: rgba(251, 248, 243, 0.86);
-  backdrop-filter: blur(8px);
+  background: var(--paper);
   position: sticky; top: 0; z-index: 60;
 }
 .site-head .wrap {
-  display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap;
+  display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
 }
-.brand { font-family: var(--display); font-size: 1.12rem; font-weight: 600; margin-right: auto; }
-.brand span { color: var(--ink-mute); font-family: var(--body); font-size: var(--t-small); font-weight: 400; display: block; }
+.brand { font-family: var(--display); font-size: 1.05rem; font-weight: 600; margin-right: auto; }
 
 .site-foot {
   margin-top: var(--s-8);

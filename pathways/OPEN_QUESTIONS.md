@@ -62,9 +62,15 @@ Working title is *The Long Game*, folder slug `pathways`. It lives in `index.htm
 - **Reach is structural, not predictive.** The alternative was asking students for predicted grades, which would have made the tool more precise and considerably more harmful.
 - **A folder, not a single file.** This departs from the `frontend-design` skill's single file rule. The data has to be separately maintainable and independently citable, and three modes in one file would not survive a year of edits. There are still zero external dependencies and zero runtime network calls.
 - **Doors never decrease in Journey mode.** A deliberate asymmetry. Setbacks cost time in the narrative and never cost options in the ledger.
+- **The sliding distance rail was designed, reviewed and killed.** It encoded how far each destination was as a dot's position on a track. Two independent reviews found the same fatal flaw: position is a continuous ranking, and combined with a non monotone distance function it meant a student entering an honest G1 plan watched three doors slide away from them. The distance function is fixed and enforced now, but the rail is not coming back, because a continuous measure of how far a child is from something is a ranking whatever you call it. What replaced it is a fixed alphabetical list plus the lever line.
+- **html2canvas was deleted.** 198 KB, 62 percent of the payload, to photograph one card. Replaced with about sixty lines of Canvas 2D that draws the card deliberately.
+- **First paint counts every visible label,** including each G1/G2/G3 chip glyph. A budget that excluded labels could be met by moving prose into labels.
 
 ## 5. Things worth building next
 
-- A parent view. Parents drive a lot of subject combination decisions and are working from a system that no longer exists.
-- Per school subject availability, since the national list overstates what any one school actually runs.
 - A short pre and post question set, so a teacher can see whether a class's beliefs about the system actually shifted.
+- A predict then reveal card. Ask "how many of these eight stay reachable whatever you take?", let them guess, then show the answer. The thesis lands harder as a surprise the student produced than as a sentence they skimmed.
+- A compare tray, so two destinations can be held side by side rather than opened one at a time.
+- An anonymous question box. A student will type "what if I fail" into it. That is the value and also the risk: it would sit in `localStorage` where no adult ever sees it, so it must either be labelled plainly as read by nobody, or not shipped in a school.
+
+Already done, from the classroom review: per school subject availability (teacher layer), a parent note (teacher layer), a projector view (`?board=1`), a plan that survives a shared Chromebook (`?p=` link), and a Journey run that survives a refresh.

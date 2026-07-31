@@ -51,12 +51,22 @@ export function evaluate(test, plan, ctx) {
     case 'subjectAtLevel': {
       const have = subjectLevel(plan, test.subject);
       if (have && meets(have, test.min)) return { satisfied: true, distance: 0 };
-      // Not taking it at all counts as one move. Taking it lower counts as the
-      // number of level steps between here and there.
-      const distance = have
-        ? levelValue(test.min) - levelValue(have)
-        : 1;
-      return { satisfied: false, distance: Math.max(1, distance), shortfall: 1 };
+      // Distance is level steps from where you actually are, with "not taking
+      // it" counted as step zero.
+      //
+      // This must be monotone. An earlier version charged 1 move for a subject
+      // you were not taking and 2 for the same subject held at G1, which meant
+      // a student entering an honest G1 plan watched destinations get FURTHER
+      // AWAY as they told the truth about themselves. On a screen where
+      // distance is visible, that is the app telling its most vulnerable users
+      // that owning their situation cost them something. It never can.
+      //
+      // assertMonotone() in reach.js now enforces this for every rule type.
+      return {
+        satisfied: false,
+        distance: levelValue(test.min) - levelValue(have),
+        shortfall: 1,
+      };
     }
 
     case 'countAtLevel': {
@@ -111,6 +121,27 @@ export function moveFor(rule, res, ctx) {
   if (t.type === 'totalSubjects') {
     return `Take ${res.shortfall} more subject${res.shortfall === 1 ? '' : 's'}.`;
   }
+  return rule.label;
+}
+
+/**
+ * The same move, short enough for a list row. Max four words.
+ * Rows need this because "Add English Language at G3 or above." truncated to
+ * four words reads "Add English Language at", which is not a sentence.
+ */
+export function moveShortFor(rule, res, ctx) {
+  const t = rule.test;
+  if (t.type === 'subjectAtLevel') {
+    const subj = ctx.subjects.find((s) => s.id === t.subject);
+    const name = subj ? (subj.shortName || subj.name) : t.subject;
+    return `${name} to ${t.min}`;
+  }
+  if (t.type === 'countAtLevel') {
+    const n = res.shortfall;
+    return n === 1 ? `One more at ${t.level}` : `${n} more at ${t.level}`;
+  }
+  if (t.type === 'groupAtLevel') return `A ${t.group} at ${t.min}`;
+  if (t.type === 'totalSubjects') return `${res.shortfall} more subjects`;
   return rule.label;
 }
 

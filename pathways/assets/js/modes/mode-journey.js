@@ -10,7 +10,7 @@ import { decorate, bindGlossary } from '../components/glossary.js';
 import {
   createRun, stagesFor, currentStage, applyChoice, resolveChance, finish, diffRuns,
 } from '../engine/journey.js';
-import { getState, saveRun, clearRuns, currentYear } from '../state.js';
+import { getState, saveRun, clearRuns, setLiveRun, currentYear } from '../state.js';
 
 let run = null;
 let stages = [];
@@ -20,6 +20,14 @@ export function renderJourney(host, data, ctx, repaint) {
   rerender = repaint;
   const st = getState();
   const j = data.journey;
+
+  // A run in progress survives a refresh, a tab discard and a Chromebook going
+  // to sleep. It used to live only in this module variable, so a third of a
+  // class would lose ten stages of work to a locked screen.
+  if (!run && st.liveRun) {
+    run = st.liveRun;
+    stages = stagesFor(j.stages, run.startAge);
+  }
 
   if (!run) {
     host.innerHTML = `<div class="wrap">${intro(data, st)}</div>`;
@@ -56,7 +64,7 @@ export function renderJourney(host, data, ctx, repaint) {
     host.innerHTML = `<div class="wrap">${chanceView(card, run, data)}</div>`;
     bindGlossary(host);
     onAction(host, {
-      continue: () => { resolveChance(run, card); rerender(); },
+      continue: () => { resolveChance(run, card); setLiveRun(run); rerender(); },
     });
     return;
   }
@@ -66,6 +74,7 @@ export function renderJourney(host, data, ctx, repaint) {
   onAction(host, {
     choose: (btn) => {
       applyChoice(run, stage, Number(btn.dataset.i), data.chances.cards);
+      setLiveRun(run);
       rerender();
     },
   });
@@ -82,37 +91,23 @@ export function resetJourney() { run = null; }
 
 // --------------------------------------------------------------------------
 
+// Twenty two words and one tap to play. The five disposition cards that used to
+// sit here were a hundred words of theory in front of something playable, and
+// dispositions mean nothing until you have watched one decide something. They
+// now surface where they are earned, on the first chance card.
 function intro(data, st) {
   const canCompare = st.runs.length >= 2;
-  const saved = st.runs.length
-    ? `<p class="small mute">You have ${st.runs.length} saved ${st.runs.length === 1 ? 'story' : 'stories'}.</p>`
-    : '';
   return `
     <div class="section" style="margin-top:var(--s-6)">
       <p class="caps">Journey</p>
       <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Play it forward.</h1>
-      <p class="lede" style="max-width:56ch;margin-top:var(--s-4)">
-        You start where you are now and move a few years at a time, out to about forty two.
-        You make choices. Things turn up that you did not plan for, some good and some not.
-        Nothing you pick ends the game, because that is not how it works.
+      <p class="lede" style="max-width:34ch;margin-top:var(--s-4)">
+        You choose. Things turn up. Nothing ends it.
       </p>
-      <div class="callout" style="margin-top:var(--s-5)">
-        <p><strong>${esc(data.dispositions.framing.headline)}</strong></p>
-        <p class="small" style="margin-bottom:0">${esc(data.dispositions.framing.body)}</p>
-      </div>
-      <div class="grid three" style="margin-top:var(--s-5)">
-        ${data.dispositions.dispositions.map((d) => `
-          <div class="card">
-            <h3>${esc(d.label)}</h3>
-            <p class="small mute" style="margin-bottom:var(--s-2)">${esc(d.short)}</p>
-            <p class="micro faint" style="margin:0">Builds when ${esc(d.buildsWhen.charAt(0).toLowerCase() + d.buildsWhen.slice(1))}</p>
-          </div>`).join('')}
-      </div>
-      ${saved}
       <div class="btn-row" style="margin-top:var(--s-5)">
         <button class="btn accent" type="button" data-action="start">Start from age ${currentYear().age}</button>
-        ${canCompare ? '<button class="btn ghost" type="button" data-action="compare">Compare your last two stories</button>' : ''}
-        ${st.runs.length ? '<button class="btn ghost" type="button" data-action="clearruns">Clear saved stories</button>' : ''}
+        ${canCompare ? '<button class="btn ghost" type="button" data-action="compare">Compare two stories</button>' : ''}
+        ${st.runs.length ? '<button class="btn ghost" type="button" data-action="clearruns">Clear</button>' : ''}
       </div>
     </div>`;
 }
@@ -200,10 +195,12 @@ function ledgerView(run, data) {
 
   return `
     <div class="section" style="margin-top:var(--s-5)">
-      <p class="caps">What you are carrying</p>
       <div class="ledger">${items}</div>
-      <div class="disp-bars" style="margin-top:var(--s-4)">${bars}</div>
-      <p class="micro faint" style="margin-top:var(--s-2)">No score, and nothing to lose. Doors open to you never goes down.</p>
+      <details style="margin-top:var(--s-3)">
+        <summary class="small mute">What you are carrying</summary>
+        <div class="disp-bars" style="margin-top:var(--s-3)">${bars}</div>
+        <p class="micro faint">${esc(data.dispositions.framing.body)}</p>
+      </details>
     </div>`;
 }
 
