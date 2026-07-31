@@ -25,7 +25,9 @@ For a given plan and destination, `reach()` returns one of four states.
 
 There is no fifth state. `locked` is not in the data model and cannot be returned.
 
-Distance is the number of discrete moves that would satisfy the unmet rules. Adding a subject you are not taking is one move. Raising a subject one level is one move per level. Being short on a count is one move per subject short. Distance is always finite, which is another way of saying no requirement is modelled as unreachable.
+Distance is the number of discrete moves that would satisfy the unmet rules, measured in level steps from where the student actually is, with "not taking it" counted as step zero. It is always finite, which is another way of saying no requirement is modelled as unreachable.
+
+**Distance is never shown to a student.** It orders nothing on screen and is not encoded as position, length or colour. It exists to pick the state, to rank the lever, and to be asserted against in the monotonicity sweep.
 
 ### Structural rules versus performance rules
 
@@ -36,6 +38,16 @@ This is the central distinction and it is what keeps the tool honest.
 **Performance rules are never evaluated by anything.** Aggregates like L1R4, ELR2B2 and ELMAB3 depend on examination grades. This app does not have them, does not ask for them, and does not predict them. They are displayed as information about what a destination asks for at the end, with an explicit note on the card that no one is being measured against them.
 
 The alternative design, asking for predicted grades, would produce a more precise tool. It would also hand a fourteen year old a number that looks like a forecast of their life, generated from a guess, and there is a reasonable amount of evidence that deterministic feedback of that kind produces foreclosure rather than motivation. The precision is not worth it.
+
+### The monotonicity invariant
+
+Adding a subject, or raising one a level, must never increase the distance to any destination.
+
+The first version of this engine violated it. `subjectAtLevel` charged one move for a subject the student was not taking, and two for the same subject held at G1 when G3 was needed. A student on a mostly G1 plan therefore entered an honest picture of themselves and watched three destinations get further away. Nothing in the interface said so, because distance was not displayed, but the state buckets shifted and every downstream feature inherited the artifact.
+
+The fix was to measure from where the student is rather than from an idealised empty plan. `monotonicityFailures()` now sweeps every subject at every level it is offered at, from an empty plan and several seeded ones, and fails the build if any addition or raise increases any distance.
+
+This is the invariant that makes the app's central promise a property of arithmetic rather than a claim in body copy.
 
 ### The no dead end invariant
 
@@ -68,15 +80,16 @@ The proportion is doing the work. It is the cheapest anti determinism device in 
 - **No score prediction.** Stated above, and load bearing.
 - **No eligibility ruling.** The app describes reach and names moves. It does not adjudicate anyone's future.
 - **No personality verdict.** No quiz that returns a type and points it at a pathway. Interest inventories have their place and a type that arrives at fourteen and sticks is not it.
-- **No ranking of pathways.** JC, polytechnic, PFP, ITE and the arts institutions are presented beside each other. Ordering on any given screen is by reach distance, never by prestige.
-- **No red, no padlocks, no greyed out cards, no opacity 0.38.**
+- **No ranking of pathways.** JC, polytechnic, PFP, ITE and the arts institutions are presented beside each other, in a fixed alphabetical order that never changes as a student taps. Alphabetical is chosen precisely because it is visibly arbitrary: any order derived from the student's plan would be read as a ranking.
+- **No red, no padlocks, no greyed out cards, no opacity 0.38, no disabled controls.**
+- **No distance on screen.** Not as a number, a bar, a dot on a track, or a sort order. A continuous measure of how far a child is from something is a ranking whatever it is called.
 - **No data collection.** No account, no server, no analytics, no cookies. State is in `localStorage` on the student's own device.
 
 ## Sources and freshness
 
 Every data file declares `_meta` with `source`, `url`, `accessed`, `units` and `notes`, following the convention set by `ecdm/`. Individual rules additionally carry `status`, one of `confirmed`, `provisional` or `not_yet_published`, and anything provisional renders a badge next to itself on screen.
 
-The loader takes the oldest `accessed` date across all ten files and raises a stale data banner past 90 days. Admission criteria change annually. A tool that quietly serves last year's thresholds to someone making a decision is worse than no tool.
+The loader takes the oldest `accessed` date across all eleven files and raises a stale data banner past 90 days. Admission criteria change annually. A tool that quietly serves last year's thresholds to someone making a decision is worse than no tool.
 
 The build's own verification gap is documented in `OPEN_QUESTIONS.md` and stated on screen in the footer and in the teacher layer.
 

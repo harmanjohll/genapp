@@ -16,7 +16,7 @@
 // frightened. A padlock is a claim about a person's future that no aggregate
 // entitles anyone to make.
 
-import { evaluate, moveFor, moveTiming, meets, subjectLevel } from './rules.js';
+import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js';
 
 export const STATES = {
   'open':         { label: 'Open now',        order: 0 },
@@ -65,9 +65,11 @@ export function reach(plan, destination, ctx) {
     .filter(({ res }) => !res.satisfied)
     .map(({ rule, res }) => ({
       label: moveFor(rule, res, { ...ctx, plan }),
+      short: moveShortFor(rule, res, { ...ctx, plan }),
       when: timing.when,
       who: timing.who,
       soft: !!rule.soft,
+      hard: !rule.soft,
     }));
 
   const routes = resolveRoutes(destination, state, ctx);
@@ -75,7 +77,9 @@ export function reach(plan, destination, ctx) {
   return {
     id: destination.id,
     name: destination.name,
+    railName: destination.railName || destination.name,
     state,
+    status: statusLine(destination, state, moves),
     distance,
     met,
     gap,
@@ -86,9 +90,55 @@ export function reach(plan, destination, ctx) {
     feels: destination.feels,
     duration: destination.duration,
     leadsTo: destination.leadsTo,
-    status: destination.status,
+    dataStatus: destination.status,
     asOf: (ctx.pathwaysMeta && ctx.pathwaysMeta.accessed) || null,
   };
+}
+
+/**
+ * The one line a list row shows. Four or five words.
+ *
+ * "Open now" is a strong claim and it is not always true. Three destinations
+ * need it qualified, and the qualification is the honest part:
+ *   arts  is open on a portfolio, not on a plan
+ *   sec5  is decided by SEC results, not by a subject plan
+ *   jc    can be structurally open with Mathematics at G3 still unmet, because
+ *         that rule is soft and OPEN_QUESTIONS flags it as an unverified guess
+ * A row with no room for the qualifier prints a verdict the data does not support.
+ */
+function statusLine(destination, state, moves) {
+  if (state === 'open') {
+    const softGap = moves.find((m) => m.soft);
+    if (softGap) return { text: `Open, ${softGap.short} usually needed`, tone: 'open' };
+    return { text: destination.openLabel || 'Open now', tone: 'open' };
+  }
+  const hard = moves.filter((m) => m.hard);
+  const top = hard[0] || moves[0];
+  return { text: top ? `Next, ${top.short}` : 'A road in', tone: state };
+}
+
+/**
+ * The lever: the single move that opens or advances the most destinations.
+ *
+ * A student with a low plan otherwise sees the same move repeated down every
+ * row, which reads as a wall. Collapsed into one line it reads as an action.
+ * This is the highest value line on the screen and it is why the destination
+ * list does not need to show distance at all.
+ */
+export function lever(reaches) {
+  const tally = new Map();
+  reaches.forEach((r) => {
+    if (r.state === 'open') return;
+    const seen = new Set();
+    r.moves.filter((m) => m.hard).forEach((m) => {
+      if (seen.has(m.short)) return;
+      seen.add(m.short);
+      if (!tally.has(m.short)) tally.set(m.short, { ...m, opens: [] });
+      tally.get(m.short).opens.push(r.railName);
+    });
+  });
+  const ranked = [...tally.values()].sort((a, b) => b.opens.length - a.opens.length);
+  return ranked[0] || null;
 }
 
 function resolveRoutes(destination, state, ctx) {
@@ -161,8 +211,16 @@ export function runInvariantSweep(ctx) {
       if (r.state !== 'open' && r.moves.length === 0) {
         failures.push({ planIndex, dest: dest.id, why: 'not open and nothing a student could do' });
       }
+      if (!r.status || !r.status.text) {
+        failures.push({ planIndex, dest: dest.id, why: 'row has no status line' });
+      }
+      if (!dest.railName || dest.railName.length > 22) {
+        failures.push({ planIndex, dest: dest.id, why: 'railName missing or over 22 characters' });
+      }
     });
   });
+
+  failures.push(...monotonicityFailures(ctx));
 
   const ok = failures.length === 0;
   const style = ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700';
@@ -175,6 +233,68 @@ export function runInvariantSweep(ctx) {
     console.error(`${failures.length} invariant failures. A student would have been shown a dead end.`);
   }
   return { ok, checks, plans: plans.length, failures };
+}
+
+/**
+ * THE MONOTONICITY INVARIANT
+ *
+ * Adding a subject, or raising one a level, must never increase the distance to
+ * any destination.
+ *
+ * This is the property that makes "no door moves away from you" true rather
+ * than merely promised. Without it a student on a mostly G1 plan can enter an
+ * honest picture of themselves and watch destinations recede, which is the
+ * cruellest thing this app could possibly do and it would do it silently, in
+ * arithmetic, underneath copy that says the opposite.
+ *
+ * Checked over every subject at every level it is offered at, from a spread of
+ * starting plans.
+ */
+function monotonicityFailures(ctx) {
+  const out = [];
+  const starts = [{}, ...seedPlans(ctx.subjects)];
+
+  starts.forEach((start, si) => {
+    const before = ctx.destinations.map((d) => reach(start, d, { ...ctx, plan: start }));
+
+    ctx.subjects.forEach((s) => {
+      s.levels.forEach((lv) => {
+        const have = start[s.id];
+        // Only additions and raises. Removing or lowering may legitimately
+        // increase distance, because the student undid something.
+        if (have && LEVEL_ORDER(lv) <= LEVEL_ORDER(have)) return;
+
+        const after = { ...start, [s.id]: lv };
+        ctx.destinations.forEach((d, di) => {
+          const a = reach(after, d, { ...ctx, plan: after });
+          if (a.distance > before[di].distance) {
+            out.push({
+              planIndex: `seed${si}`,
+              dest: d.id,
+              why: `distance rose ${before[di].distance} to ${a.distance} on adding ${s.id} at ${lv}`,
+            });
+          }
+        });
+      });
+    });
+  });
+  return out;
+}
+
+function LEVEL_ORDER(lv) { return { G1: 1, G2: 2, G3: 3 }[lv] || 0; }
+
+function seedPlans(subjects) {
+  const seeds = [];
+  ['G1', 'G2', 'G3'].forEach((lv) => {
+    const p = {};
+    subjects.filter((s) => s.levels.includes(lv)).slice(0, 5).forEach((s) => { p[s.id] = lv; });
+    if (Object.keys(p).length) seeds.push(p);
+  });
+  // A realistic mixed plan, which is the normal case under Full SBB.
+  const mixed = {};
+  subjects.slice(0, 8).forEach((s, i) => { mixed[s.id] = s.levels[i % s.levels.length]; });
+  seeds.push(mixed);
+  return seeds;
 }
 
 /** A spread of plan states from empty to full, including deliberately awkward ones. */

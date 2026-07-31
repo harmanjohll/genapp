@@ -1,24 +1,27 @@
-// Glossary. Every acronym in this system is a small barrier to entry, and the
-// students who ask what they mean are usually not the ones who most need to.
+// Glossary. Every acronym in this system is a barrier, and the students who ask
+// what they mean are not the ones who most need to.
 //
-// Any text can be run through decorate() and known terms become tappable.
+// Entries are kept a little longer than the rest of the copy budget on purpose:
+// they carry the explanation load for the weakest readers, so cutting them
+// hardest would cut exactly the students they exist for.
 
-import { el, esc, onAction } from './dom.js';
+import { esc, onAction } from './dom.js';
+import { openSheet } from './sheet.js';
 
 let terms = [];
-let dialog = null;
 let byTerm = new Map();
+let sorted = [];
 
 export function initGlossary(glossaryData) {
-  terms = glossaryData.terms;
+  terms = (glossaryData && glossaryData.terms) || [];
   byTerm = new Map(terms.map((t) => [t.term.toLowerCase(), t]));
+  // Longest first, so "Higher Nitec" wins over "Nitec".
+  sorted = terms.slice().sort((a, b) => b.term.length - a.term.length);
 }
 
 /** Wrap known acronyms in plain text so they can be tapped. Escapes first. */
 export function decorate(text) {
   let out = esc(text);
-  // Longest first, so "Higher Nitec" wins over "Nitec".
-  const sorted = terms.slice().sort((a, b) => b.term.length - a.term.length);
   sorted.forEach((t) => {
     const safe = t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const re = new RegExp(`(?<![\\w>-])(${safe})(?![\\w<-])`, 'g');
@@ -27,46 +30,24 @@ export function decorate(text) {
   return out;
 }
 
-/** Attach glossary handling to a container that may contain decorated text. */
 export function bindGlossary(container) {
-  onAction(container, {
-    gloss: (btn) => open(btn.dataset.term),
-  });
+  onAction(container, { gloss: (btn) => open(btn.dataset.term, btn) });
 }
 
-export function open(term) {
+export function open(term, trigger) {
   const t = byTerm.get(String(term).toLowerCase());
   if (!t) return;
-  ensureDialog();
-  dialog.innerHTML = `
-    <div class="sheet-body">
-      <button class="btn ghost small close" data-action="close" type="button">Close</button>
-      <h2>${esc(t.term)}</h2>
-      <p class="full">${esc(t.full)}</p>
-      <p>${esc(t.plain)}</p>
-    </div>`;
-  onAction(dialog, { close: () => dialog.close() });
-  dialog.showModal();
+  openSheet(`
+    <h2 id="sheet-title">${esc(t.term)}</h2>
+    <p class="full">${esc(t.full)}</p>
+    <p>${esc(t.plain)}</p>`, trigger);
 }
 
-export function openFullList() {
-  ensureDialog();
+export function openFullList(trigger) {
   const items = terms.map((t) => `
     <dt>${esc(t.term)} <span class="mute small">${esc(t.full)}</span></dt>
     <dd>${esc(t.plain)}</dd>`).join('');
-  dialog.innerHTML = `
-    <div class="sheet-body">
-      <button class="btn ghost small close" data-action="close" type="button">Close</button>
-      <h2>What the letters mean</h2>
-      <p class="mute small">The system runs on acronyms. Nobody is born knowing them.</p>
-      <dl class="glossary-list">${items}</dl>
-    </div>`;
-  onAction(dialog, { close: () => dialog.close() });
-  dialog.showModal();
-}
-
-function ensureDialog() {
-  if (dialog) return;
-  dialog = el('dialog', { class: 'sheet' });
-  document.body.appendChild(dialog);
+  openSheet(`
+    <h2 id="sheet-title">What the letters mean</h2>
+    <dl class="glossary-list">${items}</dl>`, trigger);
 }

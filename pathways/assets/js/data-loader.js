@@ -1,27 +1,58 @@
 // Loads every data file and reports on freshness.
-// Follows the ecdm convention: every JSON file declares a _meta block with
-// source, url, accessed, units and notes. The oldest accessed date across all
-// files drives a stale data banner.
 //
-// Criteria in this domain change annually. A tool that quietly serves last
-// year's thresholds to a fourteen year old is worse than no tool.
+// Every JSON file declares a _meta block with source, url, accessed, units and
+// notes. The oldest accessed date drives a stale data banner, because admission
+// criteria change annually and a tool quietly serving last year's thresholds is
+// worse than no tool.
+//
+// Resilience matters more here than it looks. Thirty five devices hitting one
+// school access point at 8:32am is exactly when a fetch times out, and the old
+// version failed the whole app on any single failure and then showed a
+// fourteen year old a message about running python3. Each file now retries, and
+// a file that still will not load degrades to an empty object rather than
+// taking the lesson down.
 
 const FILES = [
-  'subjects', 'pathways', 'progressions', 'lifelong',
+  'subjects', 'pathways', 'progressions', 'lifelong', 'copy',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
 ];
 
+const REQUIRED = ['subjects', 'pathways', 'progressions', 'copy', 'glossary'];
 const STALE_DAYS = 90;
 
+async function fetchOne(name, tries = 3) {
+  let lastErr;
+  for (let i = 0; i < tries; i += 1) {
+    try {
+      const res = await fetch(`./data/${name}.json`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      return await res.json();
+    } catch (e) {
+      lastErr = e;
+      if (i < tries - 1) await new Promise((r) => setTimeout(r, 300 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 export async function loadAll() {
-  const entries = await Promise.all(
+  const settled = await Promise.all(
     FILES.map(async (name) => {
-      const res = await fetch(`./data/${name}.json`, { cache: 'no-cache' });
-      if (!res.ok) throw new Error(`Could not load data/${name}.json (${res.status})`);
-      return [name, await res.json()];
+      try { return [name, await fetchOne(name), null]; }
+      catch (e) { return [name, null, e]; }
     })
   );
-  const data = Object.fromEntries(entries);
+
+  const missing = settled.filter(([, v]) => v === null).map(([n]) => n);
+  const fatal = missing.filter((n) => REQUIRED.includes(n));
+  if (fatal.length) {
+    const err = new Error(`missing: ${fatal.join(', ')}`);
+    err.missing = fatal;
+    throw err;
+  }
+
+  const data = Object.fromEntries(settled.map(([n, v]) => [n, v || {}]));
+  data._missing = missing;
   data._freshness = freshness(data);
   data._provisionalCount = countProvisional(data);
   return data;
@@ -38,19 +69,11 @@ function freshness(data) {
   }
   if (!oldest) return { known: false, stale: false };
   const days = Math.floor((Date.now() - oldest.date.getTime()) / 86400000);
-  return {
-    known: true,
-    days,
-    accessed: oldest.accessed,
-    file: oldest.name,
-    stale: days > STALE_DAYS,
-    staleDays: STALE_DAYS,
-  };
+  return { known: true, days, accessed: oldest.accessed, file: oldest.name, stale: days > STALE_DAYS, staleDays: STALE_DAYS };
 }
 
-// Walks the loaded data and counts anything flagged provisional, so the app can
-// state plainly, up front, how much of what it is showing has not been read
-// from a primary source.
+// Counts anything flagged provisional, so the app can state plainly how much of
+// what it shows has not been read from a primary source.
 function countProvisional(data) {
   let n = 0;
   const walk = (node) => {

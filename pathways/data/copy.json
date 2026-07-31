@@ -1,0 +1,66 @@
+{
+  "_meta": {
+    "source": "Authored for this app",
+    "url": "",
+    "accessed": "2026-07-31",
+    "units": "words",
+    "notes": "Every string the interface says in its own voice, in one file so the copy budget can be linted. Templates use {braces}. Keep each under its cap in engine/copy-budget.js."
+  },
+  "chrome": {
+    "brand": "The Long Game",
+    "modes": { "now": "Now", "journey": "Journey", "aim": "Aim" },
+    "glossaryBtn": "Aa",
+    "firstRun": "Nothing here can be closed to you.",
+    "openNow": "open now",
+    "doorsHead": "Where this could lead",
+    "doorsMore": "{n} more",
+    "doorsLess": "Show fewer",
+    "subjectsHead": "Your subjects",
+    "subjectsHint": "Tap a level. Tap again to undo.",
+    "breadth": "Looked at {n} of {total}.",
+    "close": "Close",
+    "perfHead": "What it asks for at the end",
+    "perfNote": "This app does not know your grades and never guesses them.",
+    "metHead": "Where you are",
+    "moveHead": "What would move this",
+    "roadHead": "Another road in",
+    "compare": "Compare",
+    "compareHead": "Two roads",
+    "compareRows": ["How long", "What it is like", "Where you are", "One move", "Another road"],
+    "askHead": "Take one question to a person",
+    "askCopy": "Copy",
+    "askCopied": "Copied",
+    "levelsMove": "Levels move. Students change them every year.",
+    "shareHead": "Carry this to another device",
+    "shareHint": "Copy the link. It holds your plan and nothing else.",
+    "undo": "Undo",
+    "cleared": "Cleared.",
+    "footer": "A thinking tool, not official advice. Check with your ECG counsellor.",
+    "provisional": "{n} figures here are unverified.",
+    "stale": "Last checked {days} days ago. Criteria change."
+  },
+  "pulse": {
+    "opened": "{dest} is open now.",
+    "nearer": "{dest} is closer now.",
+    "firstPick": "{subject} at {level}. {open} open now.",
+    "removed": "{subject} off the list. {dest} still has a road in.",
+    "noChange": "{subject} at {level}. Nothing shifted, and that is normal.",
+    "lever": "{move} would move {n}.",
+    "leverOne": "{move} would move {n}.",
+    "allOpen": "All eight open. Which two years do you actually want?",
+    "rest": "Two are open before you pick anything."
+  },
+  "load": {
+    "chip": "{n} subjects, {g3} at G3",
+    "heavy": "That is a heavy load. Four done well beats seven done thinly, at every admission point.",
+    "solid": "A normal load. Is there one in there you took for the look of it?",
+    "spread": "A balanced spread. Depth usually serves people better than a thin layer.",
+    "early": "Still early. Check you have not ruled out something you never tried."
+  },
+  "ask": {
+    "move": "Ask your {who}: what would it take to move my {subject} up?",
+    "dest": "Ask your ECG counsellor: what is {dest} actually like day to day?",
+    "aim": "Ask an adult who does this: what are the bad days like?",
+    "open": "Ask your form teacher: which of these would suit how I learn?"
+  }
+}

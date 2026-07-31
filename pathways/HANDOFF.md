@@ -19,6 +19,10 @@ These are not style preferences and breaking one breaks the design.
 - **Performance rules are never evaluated.** If you find yourself writing code that reads a `performance` entry and compares it to anything, stop.
 - **Doors never decrease** in the Journey ledger. `DOORS_FLOOR` in `engine/journey.js`.
 - **`--g1`, `--g2`, `--g3` are used for subject levels and nothing else**, and they must stay equal in visual weight. The moment one reads as better than another, the app is teaching what it was built to stop teaching.
+- **Adding a subject or raising a level must never increase any distance.** Enforced by the monotonicity sweep. If you add a rule type to `rules.js`, its distance function must be non increasing as the plan grows.
+- **Distance is never rendered.** Not as a number, a bar, a position, or a sort order.
+- **The doors list never re-sorts.** Fixed alphabetical by `railName`. Re-sorting on every tap is disorienting and reintroduces a ranking.
+- **Every setback chance card keeps its `onwardMoves`, with the amounts intact.** The specific dollar figures are the reason a setback reads as survivable rather than frightening.
 - **Profile cards and typical path cards must remain visibly different.** Different border, different marker, different label. A student must never mistake a pattern for a person.
 
 ## Annual update cadence
@@ -51,7 +55,11 @@ No test framework. The checks that matter:
 
 ```bash
 python3 -m http.server 8000     # from the repo root
-# http://localhost:8000/pathways/?dev=1   → console must say PASS
+# http://localhost:8000/pathways/?dev=1
+#   → "Reach invariant: PASS"   (dead ends, row status, railName, monotonicity)
+#   → "Copy budget: PASS"       (field caps, dashes, first paint)
 ```
+
+Both must say PASS. The copy budget also catches the no dashes rule automatically, which was previously maintained by hand across nine thousand words.
 
 Then, manually: 375px viewport, a keyboard only pass with every control reachable and visibly focused, and a read of every new string against the copy rules above.
