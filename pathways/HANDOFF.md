@@ -22,6 +22,9 @@ These are not style preferences and breaking one breaks the design.
 - **Adding a subject or raising a level must never increase any distance.** Enforced by the monotonicity sweep. If you add a rule type to `rules.js`, its distance function must be non increasing as the plan grows.
 - **Distance is never rendered.** Not as a number, a bar, a position, or a sort order.
 - **The doors list never re-sorts.** Fixed alphabetical by `railName`. Re-sorting on every tap is disorienting and reintroduces a ranking.
+- **Every resolved stage, on every path, offers at least 4 choices, and every age offers at least 8 eligible chance cards.** Enforced by `runJourneySweep()`. Adding a path family means adding a variant to every branched stage.
+- **The branches converge from age 34.** Do not add late variants. The merge is the argument.
+- **Nothing is pinned to the top of the page.** The header scrolls away. If you pin something there again, re run the clipping sweep first.
 - **Every setback chance card keeps its `onwardMoves`, with the amounts intact.** The specific dollar figures are the reason a setback reads as survivable rather than frightening.
 - **Profile cards and typical path cards must remain visibly different.** Different border, different marker, different label. A student must never mistake a pattern for a person.
 
@@ -57,9 +60,10 @@ No test framework. The checks that matter:
 python3 -m http.server 8000     # from the repo root
 # http://localhost:8000/pathways/?dev=1
 #   → "Reach invariant: PASS"   (dead ends, row status, railName, monotonicity)
+#   → "Journey sweep: PASS"     (every stage resolves per path, 4+ choices, 8+ cards)
 #   → "Copy budget: PASS"       (field caps, dashes, first paint)
 ```
 
-Both must say PASS. The copy budget also catches the no dashes rule automatically, which was previously maintained by hand across nine thousand words.
+All three must say PASS. The copy budget also catches the no dashes rule automatically, which was previously maintained by hand across nine thousand words.
 
 Then, manually: 375px viewport, a keyboard only pass with every control reachable and visibly focused, and a read of every new string against the copy rules above.

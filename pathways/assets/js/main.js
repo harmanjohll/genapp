@@ -7,6 +7,7 @@ import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
 import { runInvariantSweep } from './engine/reach.js';
 import { runCopyBudget } from './engine/copy-budget.js';
+import { runJourneySweep } from './engine/journey.js';
 import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
 import { renderAim } from './modes/mode-aim.js';
@@ -64,6 +65,7 @@ async function init() {
 
   if (params.get('dev') === '1') {
     runInvariantSweep(ctx);
+    runJourneySweep(data);
     runCopyBudget(data);
   }
 }
@@ -100,23 +102,12 @@ function renderHead() {
 
   const sel = head.querySelector('select');
   if (sel) sel.addEventListener('change', (e) => setYear(e.target.value));
-
-  measureHead();
 }
 
-/**
- * The header wraps to two rows at 375px, so its height is not a constant. The
- * sticky pulse bar and the sticky group headings both offset from it, and with
- * a hardcoded value the pulse bar hid behind the header on a phone.
- */
-function measureHead() {
-  requestAnimationFrame(() => {
-    const h = head.offsetHeight || 68;
-    document.documentElement.style.setProperty('--head-h', `${h}px`);
-  });
-}
-
-window.addEventListener('resize', measureHead);
+// measureHead() used to live here, writing the header's height to --head-h so
+// every other pinned element could offset from it. The header is no longer
+// pinned, so nothing offsets from it, and the measurement, its
+// requestAnimationFrame and its resize listener all went with it.
 
 function paint() {
   const st = getState();

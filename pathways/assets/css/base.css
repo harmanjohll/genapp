@@ -85,11 +85,15 @@ li { margin-bottom: var(--s-1); }
 /* app shell */
 #app { min-height: 60vh; }
 
+/* Not sticky, at any width.
+   Pinned, it covered between 23 and 68 pixels of content at every scroll
+   position measured, on every viewport. The summary bar is the thing that has
+   to stay visible, because it is the live consequence of the last tap. The
+   header is navigation, and navigation can be scrolled back to. */
 .site-head {
   padding: var(--s-3) 0;
   border-bottom: 1px solid var(--rule-soft);
   background: var(--paper);
-  position: sticky; top: 0; z-index: 60;
 }
 .site-head .wrap {
   display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
@@ -108,8 +112,8 @@ li { margin-bottom: var(--s-1); }
    Without this, tabbing to a row scrolls it flush to the viewport top, which
    is underneath the header, so the focused control is invisible. */
 .srow, .door, .choice, .future-btn, .btn, .lchip, .pip {
-  scroll-margin-top: calc(var(--head-h, 68px) + var(--s-5));
-  scroll-margin-bottom: calc(var(--ribbon-h) + var(--s-4));
+  scroll-margin-top: var(--scroll-pad, 24px);
+  scroll-margin-bottom: calc(var(--ribbon-h) + var(--s-5));
 }
 
 @media print {

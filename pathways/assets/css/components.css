@@ -69,8 +69,8 @@
   .pane-subj  { grid-column: 1; grid-row: 1; min-width: 0; }
   .pane-doors {
     grid-column: 2; grid-row: 1;
-    position: sticky; top: calc(var(--head-h, 68px) + var(--s-4));
-    max-height: calc(100dvh - var(--head-h, 68px) - var(--ribbon-h) - var(--s-5));
+    position: sticky; top: var(--s-4);
+    max-height: calc(100dvh - var(--ribbon-h) - var(--s-7));
     overflow-y: auto; overscroll-behavior: contain;
     padding-right: var(--s-2);
   }
@@ -82,7 +82,7 @@
   /* The page still scrolls as a whole here, only the doors pane is pinned, so
      the group headings clear the site header and nothing else. Below 900 they
      also have to clear the sticky summary bar. */
-  .grp { top: calc(var(--head-h, 68px) + var(--s-2)); }
+  .grp { top: var(--s-2); }
 }
 
 /* Tablet portrait: still one column, but a destination row stretched across
@@ -103,7 +103,7 @@
 }
 
 .pulsebar {
-  position: sticky; top: var(--head-h, 68px); z-index: 40;
+  position: sticky; top: 0; z-index: 40;
   margin: var(--s-4) 0;
   padding: var(--s-3) var(--s-4);
   background: var(--surface); border: 1px solid var(--rule-soft);
@@ -179,7 +179,7 @@
 .grp {
   font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--ink-mute); font-weight: 700; margin: var(--s-5) 0 var(--s-2);
-  position: sticky; top: calc(var(--head-h, 68px) + 66px); background: var(--paper); padding: var(--s-2) 0; z-index: 20;
+  position: sticky; top: 158px; background: var(--paper); padding: var(--s-2) 0; z-index: 20;
 }
 .srows { list-style: none; margin: 0; padding: 0; }
 .srow {
@@ -336,9 +336,31 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
   padding-bottom: env(safe-area-inset-bottom, 0px);
   /* Opaque. It was 95 percent and page text bled through it as you scrolled. */
   background: var(--paper); border-top: 1px solid var(--rule);
+  transition: height var(--dur-fast) var(--ease);
 }
-.ribbon-inner { position: relative; height: var(--ribbon-h); padding: var(--s-5) var(--gutter) 0; }
-.ribbon-track { position: relative; height: 26px; border-radius: var(--r-pill); background: var(--paper-warm); }
+.ribbon[data-open="true"] {
+  height: calc(var(--ribbon-h-open) + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -6px 24px rgba(20, 24, 31, 0.10);
+}
+@media (prefers-reduced-motion: reduce) { .ribbon { transition: none; } }
+
+.ribbon-inner { position: relative; height: var(--ribbon-h); padding: 6px var(--gutter) 0; }
+.ribbon[data-open="true"] .ribbon-inner { height: var(--ribbon-h-open); padding-top: var(--s-5); }
+
+/* Collapsed, one control covers the whole strip. */
+.ribbon-toggle {
+  position: absolute; inset: 0; width: 100%;
+  background: none; border: none; padding: 0; cursor: pointer;
+}
+.ribbon-close {
+  position: absolute; top: 2px; right: var(--gutter);
+  min-width: var(--tap); min-height: 32px;
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-mute); font-size: 1.1rem; line-height: 1;
+}
+
+.ribbon-track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--paper-warm); transition: height var(--dur-fast) var(--ease); }
+.ribbon[data-open="true"] .ribbon-track { height: 26px; }
 .ribbon-band { position: absolute; top: 0; bottom: 0; overflow: hidden; }
 .ribbon-band:first-child { border-radius: var(--r-pill) 0 0 var(--r-pill); }
 .ribbon-band:last-of-type { border-radius: 0 var(--r-pill) var(--r-pill) 0; }
@@ -350,8 +372,9 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 .ribbon-band-label {
   position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
   font-size: 10px; line-height: 1; color: var(--ink-soft); white-space: nowrap;
-  pointer-events: none;
+  pointer-events: none; opacity: 0;
 }
+.ribbon[data-open="true"] .ribbon-band-label { opacity: 1; }
 .ribbon-mark { position: absolute; top: -10px; bottom: -10px; width: var(--tap); transform: translateX(-50%); background: none; border: none; padding: 0; cursor: pointer; }
 .ribbon-mark::after {
   content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
@@ -359,7 +382,12 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 }
 .ribbon-mark:hover::after { background: var(--accent); width: 5px; }
 .ribbon-you { position: absolute; top: -3px; bottom: -3px; width: 3px; background: var(--accent); transform: translateX(-50%); border-radius: 2px; pointer-events: none; }
-.ribbon-you-label { position: absolute; top: 4px; font-size: 10px; font-weight: 700; color: var(--accent-dk); transform: translateX(-50%); white-space: nowrap; }
+/* Inside the ribbon, not above it. It used to render 5px past the ribbon's own
+   top border, so a red label floated loose over the subject list. */
+.ribbon-you-label {
+  position: absolute; top: var(--s-2); font-size: 10px; font-weight: 700;
+  color: var(--accent-dk); transform: translateX(-50%); white-space: nowrap;
+}
 
 /* ---------- journey ---------- */
 /* Prose gets a measure. Without one, a paragraph on a 1366px Chromebook runs to
@@ -456,14 +484,11 @@ body[data-board="true"] .srows, body[data-board="true"] .ask, body[data-board="t
   .modebar { width: 100%; }
   .modebar button { flex: 1 1 0; padding: var(--s-2) var(--s-1); min-width: 0; }
 
-  /* The header scrolls away on a phone. Pinned, it plus the summary bar held
-     about 30 percent of an 812px screen, and more like 37 percent on a 640px
-     one, before any content. The summary is what has to stay: it is the live
-     consequence of the last tap. Switching mode is a scroll to the top, which
-     is a fair trade for a third of the screen back. */
-  .site-head { position: static; }
-  .pulsebar { top: 0; margin-top: var(--s-3); }
+  .pulsebar { margin-top: var(--s-3); }
   .grp { position: static; }
+  /* The summary bar is the only pinned thing here, so focus scrolling has to
+     clear it. */
+  --scroll-pad: 168px;
 
   .pulsebar { padding: var(--s-3); }
   .pulsebar .count strong { font-size: 1.8rem; }
@@ -500,7 +525,6 @@ button, .lchip, .pip, summary, select { touch-action: manipulation; }
 @media (max-height: 500px) {
   .ribbon { display: none; }
   body { padding-bottom: var(--s-5); }
-  .site-head { position: static; }
   .pulsebar { position: static; }
   @media (min-width: 900px) { .pane-doors { max-height: none; position: static; } }
 }
@@ -515,3 +539,27 @@ button, .lchip, .pip, summary, select { touch-action: manipulation; }
   border-radius: 0 var(--r-md) var(--r-md) 0; font-size: var(--t-small);
 }
 code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-warm); padding: 1px 5px; border-radius: var(--r-sm); }
+
+/* ---------- journey: path, hints, timeline ---------- */
+.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.turn-meta .caps { margin: 0; }
+/* Which route this run is on. Neutral ink, never a colour that could rank one
+   family above another. */
+.path-chip {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  padding: 3px var(--s-3); border-radius: var(--r-pill);
+  background: var(--paper-warm); color: var(--ink-soft); border: 1px solid var(--rule);
+  white-space: nowrap;
+}
+.choice .hint {
+  display: block; margin-top: var(--s-2);
+  font-size: var(--t-micro); font-weight: 600; color: var(--ink-mute);
+  text-transform: lowercase; letter-spacing: 0.02em;
+}
+.choice:hover .hint { color: var(--accent-dk); }
+.story-tl { margin-top: var(--s-4); }
+.story-tl summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; }
+.story-tl ol { margin: var(--s-2) 0 0; padding-left: 1.4em; font-size: var(--t-small); }
+.story-tl li { margin-bottom: var(--s-2); }
+.story-tl strong { display: inline-block; min-width: 2em; color: var(--accent-dk); }
+@media (hover: none) { .choice:hover .hint { color: var(--ink-mute); } }
