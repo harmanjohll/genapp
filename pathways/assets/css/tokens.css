@@ -92,7 +92,15 @@
   /* layout */
   --gutter: clamp(16px, 4vw, 40px);
   --max:    1280px;
-  --ribbon-h: 84px;
+  /* The ribbon sits collapsed by default and expands on tap. Collapsed it was
+     84px of fixed overlay covering up to 84px of real content at every scroll
+     position. The coloured bands are the proportion argument; the labels and
+     markers were annotation, and annotation can wait for a tap. */
+  /* 26 rather than 22, so the collapsed strip is itself a legal tap target at
+     the 24px minimum. The toggle fills it edge to edge. */
+  --ribbon-h:      26px;
+  --ribbon-h-open: 88px;
+  --scroll-pad:    24px;
 
   --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.06);
   --shadow:    0 2px 14px rgba(20, 24, 31, 0.08);

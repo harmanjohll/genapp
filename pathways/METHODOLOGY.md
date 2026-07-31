@@ -61,7 +61,11 @@ Where a destination's authors did not supply a specific onward route, the engine
 
 ### Journey mode
 
-A turn engine over eleven life stages from age 15 to 42. Each turn is a situation, a choice among genuinely available options, and then a chance card.
+A turn engine over fourteen life stages from age 15 to 55. Each turn is a situation, four or five genuinely available choices, and then a chance card.
+
+**Paths.** A choice at 17 puts the player on one of four families, and every stage after that resolves a variant against it. The first version had ten stages that ran identically whether the player went to Junior College, polytechnic or ITE, which meant nothing chosen at seventeen changed anything seen at eighteen. That, rather than the word count, was why the mode felt hollow.
+
+The branches are deliberately not spread evenly. Fully branched at 18, 19, 21 and 24; the situation only at 27 and 30; shared from 34. The convergence is an argument: by the mid thirties the route stops deciding what is available, and structuring the content that way states it more convincingly than prose could.
 
 Chance cards implement planned happenstance, from Krumboltz (2009). Whether a player can use a chance is checked against five dispositions accumulated through their choices: curiosity, persistence, flexibility, optimism and risk taking. **Chances never check grades.** That substitution is the argument of the mode, expressed as a mechanic rather than as a paragraph.
 

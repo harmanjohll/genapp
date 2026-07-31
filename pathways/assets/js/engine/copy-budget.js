@@ -24,9 +24,17 @@ const CAPS = {
   'futures.futures[].looksLike': 12,
   'futures.futures[].routes[].note': 14,
   'futures.futures[].thisTerm[]': 12,
-  'journey.stages[].situation': 18,
+  'journey.stages[].situation': 22,
   'journey.stages[].choices[].label': 9,
-  'journey.stages[].choices[].outcome': 20,
+  'journey.stages[].choices[].outcome': 22,
+  'journey.stages[].choices[].hint': 5,
+  // Path variants are the bulk of the student facing copy in this mode, so they
+  // are linted on exactly the same caps as the base stage they override.
+  'journey.stages[].variants.*.situation': 24,
+  'journey.stages[].variants.*.choices[].label': 9,
+  'journey.stages[].variants.*.choices[].outcome': 22,
+  'journey.stages[].variants.*.choices[].hint': 5,
+  'chances.cards[].onwardMoves[]': 16,
   'chances.cards[].body': 28,
   'chances.cards[].ifTaken': 22,
   'chances.cards[].ifMissed': 24,
@@ -51,7 +59,7 @@ const CAPS = {
 // NOW measures 245 on an empty plan and about 265 once a student has picked a
 // combination, because status lines lengthen as destinations come into reach.
 // The cap covers the filled case.
-const FIRST_PAINT = { now: 270, journey: 120, aim: 120 };
+const FIRST_PAINT = { now: 270, journey: 220, aim: 120 };
 
 // Fields that are maintainer facing, not student facing.
 const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName']);
@@ -136,6 +144,14 @@ function valuesAt(data, path) {
     const next = [];
     cursor.forEach(({ value, where }) => {
       if (value == null) return;
+      // '*' walks every key of an object, so variant blocks keyed by path can be
+      // linted without naming each family here.
+      if (key === '*') {
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          Object.entries(value).forEach(([k, v]) => next.push({ value: v, where: `${where}.${k}` }));
+        }
+        return;
+      }
       const v = key ? value[key] : value;
       if (v == null) return;
       if (isArr && Array.isArray(v)) {

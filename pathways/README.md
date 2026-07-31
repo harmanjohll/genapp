@@ -16,7 +16,7 @@ python3 -m http.server 8000
 
 | URL | What it does |
 | --- | --- |
-| `?dev=1` | Runs the reach invariant sweep and the copy budget check, printing both to the console |
+| `?dev=1` | Runs the reach invariant, the Journey sweep and the copy budget check, printing all three to the console |
 | `?mode=teacher` | The facilitation layer. Deliberately not linked from the student header |
 | `?board=1` | Projector view: bigger type, thicker state bars, subject list hidden |
 | `?p=el3~maths2&y=sec3` | Loads a plan from a link, so a student can carry it to another device |
@@ -26,7 +26,7 @@ python3 -m http.server 8000
 Three modes over one engine and one saved plan.
 
 - **Now** — build the combination you are considering. Eight destinations, each showing what is met, what would move it, and a real road in another way.
-- **Journey** — play forward from where you are to about 42, with chances and setbacks. Then play again from the same start and compare.
+- **Journey** — play forward from where you are to 55, with chances and setbacks. **Your choice at 17 sets your route, and every stage after that is written for it**: a poly student gets studios and an internship, an ITE student gets a workshop and a GPA target, a JC student gets tutorials and A Levels. Then play again from the same start and compare.
 - **Aim** — start from a want, get three or more unranked roads, leave with three things to do this term.
 
 A Long View ribbon runs along the bottom of every mode, ages 12 to 65. School is the small band on the left. That proportion is the argument.
@@ -62,14 +62,36 @@ The screen a student lands on was 4,574 words and 33 phone screens before they h
 | Now, empty | 4,661 | 245 |
 | Now, with a plan | 4,016 | 265 |
 | Journey intro | 214 | 16 |
+| Journey turn | 107 | about 200 |
 | Aim chooser | 241 | 64 |
 | Aim detail | 356 | 89 |
 
 Nothing was thrown away. The writing moved into sheets that open on demand.
 
+Journey went the other way on purpose. It was capped at 120 words and had exactly three choices on every stage, which is why it felt hollow. NOW was the screen that needed cutting, not this one.
+
 `engine/copy-budget.js` enforces per field word caps, scans every student facing string for hyphens and dashes, and measures first paint off the live DOM. It counts every visible label including each G1/G2/G3 chip, so the budget cannot be met by moving prose into labels.
 
+## Journey paths
+
+Four families, set by a choice at 17, resolved against every stage after it.
+
+| Ages | Branching |
+| --- | --- |
+| 15 to 17 | Shared. Nobody has taken a route yet |
+| **18, 19, 21, 24** | **Fully branched.** `academic`, `applied`, `hands`, `arts`. Four different pages |
+| 27, 30 | Situation reskinned per family, choices shared |
+| 34 onward | Shared again |
+
+The convergence is the point. By your mid thirties the route you took at seventeen has stopped deciding what is available to you, and letting the content merge says that better than a sentence would. A student who plays as an ITE student and again as a JC student sees completely different pages in their late teens and identical ones at fifty five.
+
+14 stages, ages 15 to 55, 4 or 5 choices each, 24 path variants, 43 chance cards. Every age has at least 8 eligible cards on every path, so a replay does not repeat the first run. All of it is asserted by `runJourneySweep()`.
+
 ## Layout
+
+Nothing is pinned to the top of the page. The header scrolls away on every device: measured across five viewports and four scroll positions, a sticky header covered between 23 and 68 pixels of content at every single position.
+
+The ribbon sits collapsed at 26px and expands to 88px on tap or keyboard focus. At 88px fixed it covered up to 84px of the page, and its label rendered 5px above its own border, so a red label floated loose over the subject list.
 
 The loop of the main mode is: tap a level, watch the doors change. In one column those two things are hundreds of pixels apart, so the consequence lands off screen and the tool stops feeling live.
 
@@ -80,7 +102,7 @@ The loop of the main mode is: tap a level, watch the doors change. In one column
 | 900 up | **Two panes.** Subjects left, doors pinned right | Centred dialog | The whole list is permanently visible |
 | 1400 up | Two panes, subject groups of five or more split into two columns | Centred dialog | Whole list |
 
-Also handled: short viewports (a phone held sideways) drop the ribbon and unpin everything; touch devices get `:hover` neutralised so controls do not latch after a tap; keyboard focus gets `scroll-margin` so a focused row never lands under the sticky header.
+Also handled: short viewports (a phone held sideways) drop the ribbon and unpin everything; touch devices get `:hover` neutralised so controls do not latch after a tap; keyboard focus gets `scroll-margin` so a focused row never lands under the pinned summary bar.
 
 Verified at 375, 430, 740x360, 834, 1112, 1366 and 1680: no horizontal overflow anywhere, focus enters and returns from every popup, zero contrast failures, every control 44px effective.
 

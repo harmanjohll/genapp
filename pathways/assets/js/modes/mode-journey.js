@@ -12,12 +12,16 @@ import {
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear } from '../state.js';
 
+// Path label lookup, so the turn page and the compare columns can name the
+// route a run is on.
+let PATHS = {};
 let run = null;
 let stages = [];
 let rerender = () => {};
 
 export function renderJourney(host, data, ctx, repaint) {
   rerender = repaint;
+  PATHS = Object.fromEntries((data.journey.paths || []).map((p) => [p.id, p]));
   const st = getState();
   const j = data.journey;
 
@@ -113,10 +117,14 @@ function intro(data, st) {
 }
 
 function turnView(stage, run, data) {
-  const n = stages.indexOf(stage) + 1;
+  const n = run.stepIndex + 1;
+  const p = run.path && PATHS[run.path];
   return `
     <div class="section" style="margin-top:var(--s-6)">
-      <p class="caps">Step ${n} of ${stages.length}</p>
+      <div class="turn-meta">
+        <p class="caps">Step ${n} of ${stages.length}</p>
+        ${p ? `<span class="path-chip">${esc(p.label)}</span>` : ''}
+      </div>
       <div class="turn">
         <div class="turn-head">
           <span class="turn-age">${stage.age}</span>
@@ -127,12 +135,26 @@ function turnView(stage, run, data) {
           ${stage.choices.map((c, i) => `
             <button class="choice" type="button" data-action="choose" data-i="${i}">
               <span class="label">${decorate(c.label)}</span>
+              ${c.hint ? `<span class="hint">${esc(c.hint)}</span>` : ''}
             </button>`).join('')}
         </div>
-        ${storySoFar(run)}
         ${ledgerView(run, data)}
+        ${storyTimeline(run)}
       </div>
     </div>`;
+}
+
+/** The whole run so far, collapsed. Replaces the single last line. */
+function storyTimeline(run) {
+  if (!run.steps.length) return '';
+  return `
+    <details class="story-tl">
+      <summary class="small mute">Your story so far</summary>
+      <ol>
+        ${run.steps.map((s) => `
+          <li><strong>${s.age}</strong> ${decorate(s.choice)}${s.chance ? ` <span class="mute">${esc(s.chance.taken ? '' : 'missed: ')}${decorate(s.chance.title)}</span>` : ''}</li>`).join('')}
+      </ol>
+    </details>`;
 }
 
 function chanceView(card, run, data) {
@@ -165,16 +187,6 @@ function chanceView(card, run, data) {
         <button class="btn" type="button" data-action="continue">Keep going</button>
       </div>
       ${ledgerView(run, data)}
-    </div>`;
-}
-
-function storySoFar(run) {
-  if (!run.steps.length) return '';
-  const last = run.steps[run.steps.length - 1];
-  return `
-    <div class="card" style="background:var(--paper-warm)">
-      <p class="caps">Last time</p>
-      <p class="small" style="margin-bottom:0"><strong>Age ${last.age}.</strong> ${decorate(last.outcome)}${last.chance ? ` ${decorate(last.chance.text)}` : ''}</p>
     </div>`;
 }
 
@@ -222,7 +234,7 @@ function ending(run, data, st) {
 
   return `
     <div class="section" style="margin-top:var(--s-6)">
-      <p class="caps">Your story</p>
+      <p class="caps">Your story${run.path && PATHS[run.path] ? ` &middot; ${esc(PATHS[run.path].label)}` : ''}</p>
       <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">${esc(frame.title)}</h1>
       <p class="lede" style="max-width:56ch;margin-top:var(--s-3)">${esc(frame.body)}</p>
 
@@ -299,14 +311,14 @@ function showDiff(host, data, runs) {
         <h1 class="serif" style="font-size:var(--t-h1)">Same start. ${differing} different ${differing === 1 ? 'choice' : 'choices'}.</h1>
         <div class="diff" style="margin-top:var(--s-5)">
           <div class="diff-col">
-            <h3>${esc(a.label)}</h3>
+            <h3>${esc(a.label)}${a.path && PATHS[a.path] ? ` <span class="path-chip">${esc(PATHS[a.path].label)}</span>` : ''}</h3>
             ${rows}
             <div class="ledger" style="margin-top:var(--s-4)">
               ${data.journey.ledger.map((l) => `<div class="ledger-item"><span class="n">${a.ledger[l.id]}</span><span class="lbl">${esc(l.label)}</span></div>`).join('')}
             </div>
           </div>
           <div class="diff-col">
-            <h3>${esc(b.label)}</h3>
+            <h3>${esc(b.label)}${b.path && PATHS[b.path] ? ` <span class="path-chip">${esc(PATHS[b.path].label)}</span>` : ''}</h3>
             ${rowsB}
             <div class="ledger" style="margin-top:var(--s-4)">
               ${data.journey.ledger.map((l) => `<div class="ledger-item"><span class="n">${b.ledger[l.id]}</span><span class="lbl">${esc(l.label)}</span></div>`).join('')}
@@ -315,6 +327,9 @@ function showDiff(host, data, runs) {
         </div>
         <div class="diff-verdict">
           <h2>Both of those were fine.</h2>
+          ${a.path && b.path && a.path !== b.path && PATHS[a.path] && PATHS[b.path]
+            ? `<p>You went to ${esc(PATHS[a.path].label)} in one and ${esc(PATHS[b.path].label)} in the other, from identical results, and both of you are still going at fifty five.</p>`
+            : ''}
           <p>You began both stories at exactly the same age, in exactly the same place, with exactly the same results. They ended differently, and neither one is the wrong answer.</p>
           <p style="margin-bottom:0">Whatever happens at the end of Sec 4, that is the thing worth taking away. Your starting point set the first step. It did not write the rest.</p>
         </div>
