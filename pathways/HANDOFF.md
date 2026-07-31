@@ -1,0 +1,57 @@
+# Handoff
+
+Contracts worth preserving in this folder.
+
+## Copy rules
+
+1. **No hyphens, en dashes or em dashes anywhere in student facing copy.** House rule, same as `s3/slaic`. Use commas, colons and semicolons, or rephrase. This is why the app writes "post secondary", "mid career", "work study", "O Level".
+2. **Nothing states or implies that a student cannot do something.** No "you do not qualify", no "not eligible", no "closed", no "locked", no "unfortunately". If a destination is far away, the card says how far and what would move it.
+3. **Never lead a destination with its aggregate.** Order is: what it is actually like, then what it leads to, then what is met and not met, then what would move it, then, last, what it asks for at the end.
+4. **Setbacks always carry at least two onward moves.** Applies to every chance card of type `setback`.
+5. **Second person, short sentences, plain register.** No exhortation, no motivational voice, no exclamation marks.
+
+## Structural contracts
+
+These are not style preferences and breaking one breaks the design.
+
+- **`locked` must never exist** as a reach state, a CSS class, or a data value.
+- **Every destination that is not `open` must produce at least one route and at least one move.** Enforced by `runInvariantSweep()`. Run `?dev=1` after any edit to `data/pathways.json` or `data/progressions.json`.
+- **Performance rules are never evaluated.** If you find yourself writing code that reads a `performance` entry and compares it to anything, stop.
+- **Doors never decrease** in the Journey ledger. `DOORS_FLOOR` in `engine/journey.js`.
+- **`--g1`, `--g2`, `--g3` are used for subject levels and nothing else**, and they must stay equal in visual weight. The moment one reads as better than another, the app is teaching what it was built to stop teaching.
+- **Profile cards and typical path cards must remain visibly different.** Different border, different marker, different label. A student must never mistake a pattern for a person.
+
+## Annual update cadence
+
+Do this once a year, ideally in the month MOE publishes admission criteria for the coming intake.
+
+1. Work `OPEN_QUESTIONS.md` section 1 top to bottom against primary sources.
+2. Update the figure, set `status` to `confirmed`, and bump `accessed` in that file's `_meta`.
+3. Update the SkillsFuture amounts and take up figures in `data/lifelong.json`.
+4. Check `data/subjects.json` against the current SEAB syllabus list and against what your school actually runs.
+5. Run `?dev=1` and confirm the sweep still passes.
+6. Re read `data/journey.json` and `data/chances.json` for anything that has dated.
+
+If the oldest `accessed` date goes past 90 days the app tells users itself, which is the backstop, not the plan.
+
+## Adding a destination
+
+Add to `data/pathways.json` → `destinations`, with:
+
+- `structural`, rules the engine can evaluate from subjects and levels. Mark anything advisory as `soft: true` so it shows in the checklist without affecting reach state.
+- `performance`, whatever it asks for at the end, with `status` and a `sourceRef`.
+- `routesIfNotHere`, ids from `data/progressions.json`. Leave it empty only if the destination is genuinely always open, and the engine will substitute the universal routes anyway.
+- `feels`, which is the most important field and the one people skip. What is it actually like to be there.
+
+Then run `?dev=1`.
+
+## Testing
+
+No test framework. The checks that matter:
+
+```bash
+python3 -m http.server 8000     # from the repo root
+# http://localhost:8000/pathways/?dev=1   → console must say PASS
+```
+
+Then, manually: 375px viewport, a keyboard only pass with every control reachable and visibly focused, and a read of every new string against the copy rules above.

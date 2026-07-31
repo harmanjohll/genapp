@@ -1,0 +1,107 @@
+/* Design tokens.
+   All identity lives here. A school skin is a change to this file, not a rebuild.
+   Fonts are system stacks on purpose: this app makes zero external network calls. */
+
+:root {
+  /* ink and paper */
+  --ink:        #14181F;
+  --ink-soft:   #39414D;
+  /* Both of these clear 4.5:1 against paper, paper-warm and white.
+     Nothing in this app is decorative text: every muted label is content a
+     student is expected to read. */
+  --ink-mute:   #5A6370;
+  --ink-faint:  #626B78;
+  --paper:      #FBF8F3;
+  --paper-warm: #F5F0E7;
+  --surface:    #FFFFFF;
+  --rule:       #E3DCD0;
+  --rule-soft:  #EFE9DF;
+
+  /* Subject levels.
+     Three hues of deliberately equal weight. Not a traffic light.
+     A level is a level of a subject, not a ranking of a person, and the
+     colour must never imply otherwise. Never reuse these for anything else. */
+  --g1:       #2E7D74;
+  --g1-wash:  rgba(46, 125, 116, 0.10);
+  --g2:       #4A5FA5;
+  --g2-wash:  rgba(74, 95, 165, 0.10);
+  --g3:       #8A4F7D;
+  --g3-wash:  rgba(138, 79, 125, 0.10);
+
+  /* Reach states.
+     Note the absence of red. Nothing in this app is a failure state,
+     so nothing in this app gets a failure colour. */
+  --open:         #2F7D5B;
+  --open-wash:    rgba(47, 125, 91, 0.10);
+  --within:       #8A5F19;
+  --within-wash:  rgba(168, 116, 31, 0.12);
+  --longer:       #33689E;
+  --longer-wash:  rgba(51, 104, 158, 0.10);
+  --other:        #6E5AA0;
+  --other-wash:   rgba(110, 90, 160, 0.10);
+
+  /* signal */
+  --accent:      #C25E3A;
+  --accent-dk:   #A44A2A;
+  --accent-wash: rgba(194, 94, 58, 0.10);
+  --flag:        #7D5F2A;
+  --flag-wash:   rgba(138, 106, 47, 0.12);
+
+  /* ribbon */
+  --band-school: #C9BBA6;
+  --band-work:   #A9BFC9;
+
+  /* type */
+  --display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --body:    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-hero:  clamp(2rem, 6.5vw, 3.6rem);
+  --t-h1:    clamp(1.5rem, 4vw, 2.1rem);
+  --t-h2:    clamp(1.15rem, 2.6vw, 1.4rem);
+  --t-h3:    1.02rem;
+  --t-body:  1rem;
+  --t-small: 0.87rem;
+  --t-micro: 0.75rem;
+
+  --lh-hero: 1.08;
+  --lh-h:    1.22;
+  --lh-body: 1.6;
+
+  /* spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+  --s-9: 104px;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur:  420ms;
+  --dur-fast: 180ms;
+
+  /* layout */
+  --gutter: clamp(16px, 4vw, 40px);
+  --max:    1140px;
+  --ribbon-h: 84px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.06);
+  --shadow:    0 2px 14px rgba(20, 24, 31, 0.08);
+  --shadow-lg: 0 8px 34px rgba(20, 24, 31, 0.12);
+
+  /* touch */
+  --tap: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-fast: 0ms; }
+}

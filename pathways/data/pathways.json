@@ -1,0 +1,167 @@
+{
+  "_meta": {
+    "source": "MOE post secondary admissions pages, MOE press releases on admission criteria changes for the first SEC cohort, ITE and polytechnic admissions pages",
+    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+    "accessed": "2026-07-31",
+    "units": "aggregate points, lower is better",
+    "notes": "Criteria below apply to the first SEC cohort entering post secondary in 2028. Structural rules are evaluated by the app. Performance rules are shown for information and are never evaluated, because this app does not predict anyone's grades. Everything marked provisional was read from search summaries rather than the primary MOE page, because the network policy of the session that built this file blocked moe.gov.sg. See OPEN_QUESTIONS.md."
+  },
+  "sources": {
+    "moe_sec": { "title": "Curriculum for secondary schools, Full SBB and the SEC examination", "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb", "accessed": "2026-07-31" },
+    "moe_pse": { "title": "Post secondary admissions, explore pathways", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways", "accessed": "2026-07-31" },
+    "moe_pfp": { "title": "Polytechnic Foundation Programme, eligibility criteria", "url": "https://www.moe.gov.sg/post-secondary/admissions/pfp/eligibility-criteria", "accessed": "2026-07-31" },
+    "moe_ite_upgraders": { "title": "Changes to admissions requirements for ITE upgraders applying to polytechnics from AY2027", "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027", "accessed": "2026-07-31" },
+    "moe_dpp": { "title": "Direct Entry Scheme to Polytechnic Programme, overview", "url": "https://www.moe.gov.sg/post-secondary/admissions/dpp", "accessed": "2026-07-31" },
+    "seab_sec": { "title": "Secondary Education Certificate", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "accessed": "2026-07-31" }
+  },
+  "destinations": [
+    {
+      "id": "jc",
+      "name": "Junior College",
+      "short": "JC",
+      "duration": "2 years",
+      "feels": "Fast, essay heavy and mostly academic. You narrow to a few subjects and go deep, then sit A Levels. Strong on argument and abstraction, light on hands on work.",
+      "leadsTo": "A Levels, then university here or overseas.",
+      "structural": [
+        { "id": "jc_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
+        { "id": "jc_g3", "label": "At least five subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 5 }, "status": "provisional" },
+        { "id": "jc_maths", "label": "Mathematics at G3", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G3" }, "status": "provisional", "soft": true }
+      ],
+      "performance": [
+        { "label": "L1R4 aggregate of 16 or better", "note": "One language plus four relevant subjects, counted at G3. This replaced the old L1R5 of 20. We do not guess your grades, so this is here as information, not as a test.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["Direct School Admission, on talent in sport, art, music, or a specific academic area, decided before results"],
+      "routesIfNotHere": ["poly_to_uni", "ite_to_poly_to_uni", "sec5_then_jc"],
+      "status": "provisional"
+    },
+    {
+      "id": "mi",
+      "name": "Millennia Institute",
+      "short": "MI",
+      "duration": "3 years",
+      "feels": "The same A Levels as JC, spread over three years instead of two. More room to breathe, and a broader intake. The only centralised institute in Singapore.",
+      "leadsTo": "A Levels, then university here or overseas.",
+      "structural": [
+        { "id": "mi_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
+        { "id": "mi_g3", "label": "At least five subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 5 }, "status": "provisional" }
+      ],
+      "performance": [
+        { "label": "L1R4 aggregate of 16 or better", "note": "MI uses the same qualifying aggregate as JC, over three years rather than two.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["The extra year is the point, not a penalty. Some students choose MI over JC deliberately."],
+      "routesIfNotHere": ["poly_to_uni", "ite_to_poly_to_uni", "sec5_then_jc"],
+      "status": "provisional"
+    },
+    {
+      "id": "poly",
+      "name": "Polytechnic",
+      "short": "Poly",
+      "duration": "3 years",
+      "feels": "You pick a field on day one and work in it. Projects, labs, studios, industry attachments, a real internship. You leave with a diploma and something you can show people.",
+      "leadsTo": "A diploma, then work, or university with exemptions.",
+      "structural": [
+        { "id": "poly_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
+        { "id": "poly_g3", "label": "Four subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 4 }, "status": "provisional" },
+        { "id": "poly_maths", "label": "Mathematics at G2 or better", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" }
+      ],
+      "performance": [
+        { "label": "ELR2B2 net aggregate of 22 or better", "note": "English, two relevant subjects and two better subjects. From the 2028 intake one of the counted subjects may sit at G2 rather than G3, using its G2 equivalent grade. Courses set their own subject requirements on top of this.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["Early Admissions Exercise, which looks at your interest and aptitude for a specific course and can give you a place before your results come out"],
+      "routesIfNotHere": ["pfp_to_poly", "ite_to_poly", "sec5_then_poly"],
+      "status": "provisional"
+    },
+    {
+      "id": "pfp",
+      "name": "Polytechnic Foundation Programme",
+      "short": "PFP",
+      "duration": "1 year, then the 3 year diploma",
+      "feels": "A year inside the polytechnic, taught by polytechnic staff, building exactly the foundation your chosen diploma needs. You are already in the building.",
+      "leadsTo": "Straight into Year 1 of a polytechnic diploma.",
+      "structural": [
+        { "id": "pfp_el", "label": "English at G2 or better", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G2" }, "status": "provisional" },
+        { "id": "pfp_maths", "label": "Mathematics at G2 or better", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" },
+        { "id": "pfp_g2", "label": "At least five subjects at G2 or better", "test": { "type": "countAtLevel", "level": "G2", "min": 5 }, "status": "provisional" }
+      ],
+      "performance": [
+        { "label": "ELMAB3 aggregate of 12 or better", "note": "English, Mathematics and three best subjects, all computed at G2 equivalent grades. If you took subjects at G3 they are mapped down to their G2 equivalent for this.", "status": "provisional", "sourceRef": "moe_pfp" }
+      ],
+      "alsoIn": ["This is a full polytechnic route, not a remedial one. Students who take it graduate with the same diploma as everyone else."],
+      "routesIfNotHere": ["ite_to_poly"],
+      "status": "provisional"
+    },
+    {
+      "id": "hnitec",
+      "name": "ITE, Higher Nitec",
+      "short": "Higher Nitec",
+      "duration": "2 to 3 years",
+      "feels": "Hands on from the first week, in a workshop, kitchen, studio or lab. You are trained on the equipment the industry actually uses, by people who worked in it.",
+      "leadsTo": "A Higher Nitec, then work, a polytechnic diploma, or an ITE Technical Diploma.",
+      "structural": [
+        { "id": "hn_el", "label": "English at G2 or better", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G2" }, "status": "provisional" },
+        { "id": "hn_maths", "label": "Mathematics at G2 or better", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" },
+        { "id": "hn_count", "label": "At least five subjects at G2 or better", "test": { "type": "countAtLevel", "level": "G2", "min": 5 }, "status": "provisional" }
+      ],
+      "performance": [
+        { "label": "ELMAB3 aggregate of 19 or better for direct entry into Year 2", "note": "From AY2028 the requirement for direct Year 2 entry into Higher Nitec courses is set at G2. Students carrying a mix of G3 and G2 subjects can enter directly on this aggregate.", "status": "provisional", "sourceRef": "moe_pse" },
+        { "label": "The 3 year Higher Nitec route enters at Year 1", "note": "A longer version of the same qualification, with a broader entry. Same certificate at the end.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["ITE Early Admissions Exercise, which admits on interest and aptitude before results"],
+      "routesIfNotHere": ["nitec_to_hnitec"],
+      "status": "provisional"
+    },
+    {
+      "id": "nitec",
+      "name": "ITE, Nitec",
+      "short": "Nitec",
+      "duration": "2 years",
+      "feels": "The most practical route in the system. Small classes, a trade or a craft, and a qualification employers recognise immediately.",
+      "leadsTo": "A Nitec, then work, or Higher Nitec, and from there a polytechnic diploma.",
+      "structural": [
+        { "id": "n_el", "label": "English at G1 or better", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G1" }, "status": "provisional" },
+        { "id": "n_count", "label": "At least four subjects at G1 or better", "test": { "type": "countAtLevel", "level": "G1", "min": 4 }, "status": "provisional" }
+      ],
+      "performance": [
+        { "label": "Entry is broad by design", "note": "Nitec is built to take students from across the whole range of the cohort. Courses set their own subject requirements, and some are competitive because they are popular, not because they are hard to qualify for.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["ITE Early Admissions Exercise", "Traineeship and work study routes that pay you while you train"],
+      "routesIfNotHere": [],
+      "status": "provisional"
+    },
+    {
+      "id": "arts",
+      "name": "Arts institutions",
+      "short": "NAFA and LASALLE",
+      "duration": "3 years to a diploma",
+      "feels": "You are admitted on what you can make and what you might become, judged from a portfolio or an audition. Studio based, critique heavy, and relentless in a way that has nothing to do with exams.",
+      "leadsTo": "A diploma, then a degree at the University of the Arts Singapore or work in the industry.",
+      "structural": [
+        { "id": "arts_open", "label": "Open to students from any combination of levels", "test": { "type": "always" }, "status": "confirmed" }
+      ],
+      "performance": [
+        { "label": "Portfolio or audition carries the most weight", "note": "Academic results matter less here than anywhere else in the system. What you have actually made, and how you talk about it, is the thing being assessed.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["NAFA and LASALLE now sit under the University of the Arts Singapore", "Start building a portfolio now, whatever your levels are. Nothing about it depends on your band."],
+      "routesIfNotHere": [],
+      "status": "provisional"
+    },
+    {
+      "id": "sec5",
+      "name": "A fifth year at secondary",
+      "short": "Sec 5",
+      "duration": "1 more year",
+      "feels": "Same school, mostly the same people, one more year to take subjects at a more demanding level. Students who do this are not behind. They took a longer run up.",
+      "leadsTo": "A stronger SEC, and a wider set of post secondary options.",
+      "structural": [
+        { "id": "s5_open", "label": "Decided on your SEC results, not on your subject plan", "test": { "type": "always" }, "status": "confirmed" }
+      ],
+      "performance": [
+        { "label": "Three or more G3 passes, and not qualifying for JC, MI or Polytechnic Year 1", "note": "One of two routes into a fifth year.", "status": "provisional", "sourceRef": "moe_pse" },
+        { "label": "Or two or fewer G3 passes with a gross ELMAB3 of 21, or ELB3 of 14, or MAB3 of 14, computed at G2", "note": "Needs at least Grade 5 at G2 in every subject used in the aggregate.", "status": "provisional", "sourceRef": "moe_pse" }
+      ],
+      "alsoIn": ["This exists precisely so that one year does not decide everything. Using it is a normal thing to do."],
+      "routesIfNotHere": [],
+      "status": "provisional"
+    }
+  ]
+}
