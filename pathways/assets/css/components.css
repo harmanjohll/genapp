@@ -651,3 +651,53 @@ body[data-journey="true"] .site-foot { display: none; }
 /* footer doors */
 .footdoors { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
 .footdoors a { margin-right: var(--s-4); }
+
+/* ---------- the combination: Journey starts from what you take ---------- */
+/* The three level hues stay equal in weight here exactly as they are in NOW.
+   A chip that made G3 look like the good one would undo the whole app. */
+.combobox {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border: 1px solid var(--rule-soft); border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.subjchips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0 0; }
+/* Deliberately on --surface, not --paper-warm. The G1 teal reads 4.30 against
+   the warm tint and 4.88 against white, and the fix has to be the background
+   rather than the hue: darkening only G1 to pass would make one of three
+   equal weight levels visibly heavier than the other two. */
+.subjchips .subjchip {
+  display: inline-flex; align-items: center; gap: 0.35em;
+  padding: 0.28em 0.6em; border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); font-size: var(--t-small); line-height: 1.3;
+}
+.subjchip .lv { font-weight: 700; font-size: var(--t-micro); }
+.subjchip .lv-g1 { color: var(--g1); }
+.subjchip .lv-g2 { color: var(--g2); }
+.subjchip .lv-g3 { color: var(--g3); }
+.subjchip.more { color: var(--ink-mute); font-style: italic; }
+/* The want question waits until there is a combination to play forward. It is
+   dimmed and still fully readable: nothing here is disabled or taken away. */
+.wantbox.waiting { opacity: 0.62; }
+
+/* the picker, inside the sheet */
+.picker { margin-top: var(--s-3); }
+.pk-group { margin-bottom: var(--s-4); }
+.pk-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-3); padding: var(--s-2) 0; border-bottom: 1px solid var(--rule-soft);
+}
+.pk-name { font-size: var(--t-small); }
+.pk-lv { display: flex; gap: var(--s-2); flex: none; }
+.lvchip {
+  min-width: var(--tap); min-height: var(--tap);
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); cursor: pointer;
+  font-size: var(--t-small); font-weight: 650; color: var(--ink-mute);
+}
+.lvchip.on { border-width: 2px; }
+.lvchip.lv-g1.on { border-color: var(--g1); background: var(--g1-wash); color: var(--g1); }
+.lvchip.lv-g2.on { border-color: var(--g2); background: var(--g2-wash); color: var(--g2); }
+.lvchip.lv-g3.on { border-color: var(--g3); background: var(--g3-wash); color: var(--g3); }
+.diff-combo { display: flex; flex-wrap: wrap; gap: var(--s-1); font-size: var(--t-micro); }
+.diff-combo .subjchip { padding: 0.15em 0.4em; font-size: var(--t-micro); }
+@media (hover: hover) { .lvchip:hover { background: var(--paper-warm); } }

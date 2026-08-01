@@ -22,6 +22,15 @@
 // MEMORY. Choices set flags; cards can require flags; late stage outcomes can
 // vary on path or flag. The story finally refers to what you did.
 //
+// THE COMBINATION. A run starts from the subjects the student actually picked
+// in Mode NOW, so the two halves of the app finally talk to each other. The
+// combination is a starting position, never a starting personality: it adds
+// choices and biases which chances turn up, and it touches nothing else. It
+// cannot set a path, cannot open or withhold a door, and cannot reach the
+// ending. A student taking mostly G1 must be able to play exactly as large a
+// game as anyone else, which is the monotonicity rule the subject engine
+// already lives under, applied to the story. The sweep asserts it.
+//
 // The old rules stand: no failure state, every stage advances, no choice is
 // scored right or wrong, and asks check dispositions, never grades.
 
@@ -30,11 +39,14 @@ const DISP_KEYS = ['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'
 const TRACKS = ['skills', 'network', 'portfolio'];
 const TRACK_CAP = 24;
 export const POINTS_PER_TURN = 2;
+/** At most this many subject choices join a turn, so the list stays readable. */
+export const SUBJECT_CHOICE_CAP = 2;
 
-export function createRun(startAge, label, want) {
+export function createRun(startAge, label, want, plan) {
   return {
     label: label || 'Story',
     startAge,
+    plan: { ...(plan || {}) },   // { subjectId: 'G1'|'G2'|'G3' }, the combination played
     want: want || null,          // { id, label } or null for "not sure yet"
     seed: Math.floor(Math.random() * 1e9),
     stepIndex: 0,
@@ -68,13 +80,27 @@ export function currentStage(run, stages) {
   return s ? resolveStage(s, run.path) : null;
 }
 
+/** True if the run's combination includes any of the given subject ids. */
+export function takesSubject(run, spec) {
+  if (!run.plan) return false;
+  const ids = Array.isArray(spec) ? spec : [spec];
+  return ids.some((id) => !!run.plan[id]);
+}
+
 /**
- * Choices visible to this run at this stage: the authored set, plus any
- * appended choice the player unlocked by holding a door. Never fewer than
- * authored, never a removal.
+ * Choices visible to this run at this stage: the authored set, plus any choice
+ * the player unlocked by holding a door, plus up to SUBJECT_CHOICE_CAP that
+ * their combination opens. Everything here appends. Nothing a student picked
+ * can take a choice away from them, which is why the base set is computed
+ * without reference to the plan at all.
  */
 export function visibleChoices(stage, run) {
-  return (stage.choices || []).filter((c) => !c.needsDoor || run.doors.includes(c.needsDoor));
+  const all = stage.choices || [];
+  const base = all.filter((c) => !c.needsSubject && (!c.needsDoor || run.doors.includes(c.needsDoor)));
+  const subject = all
+    .filter((c) => c.needsSubject && takesSubject(run, c.needsSubject))
+    .slice(0, SUBJECT_CHOICE_CAP);
+  return [...base, ...subject];
 }
 
 /** Spend the turn's points on one or more choices. */
@@ -226,7 +252,12 @@ function pickChance(run, stage, cards) {
   if (!pool.length) return null;
   // Flag payoffs and band matches are rarer and better; prefer them.
   const rich = pool.filter((c) => c.requiresFlag || c.when);
-  const pickFrom = rich.length && lcg(run.seed + run.stepIndex * 31) % 3 !== 0 ? rich : pool;
+  let pickFrom = rich.length && lcg(run.seed + run.stepIndex * 31) % 3 !== 0 ? rich : pool;
+  // Subjects bias which chances turn up and never which exist. A preference
+  // over the pool cannot shrink it, so the minimum pool guarantee and every
+  // door remain reachable on any combination, including none at all.
+  const fitting = pickFrom.filter((c) => c.subjects && takesSubject(run, c.subjects));
+  if (fitting.length && lcg(run.seed + run.stepIndex * 53) % 3 !== 0) pickFrom = fitting;
   return pickFrom[lcg(run.seed + run.stepIndex * 7919) % pickFrom.length];
 }
 
@@ -286,7 +317,17 @@ export function diffRuns(a, b) {
     wants: [a.want, b.want],
     reflections: [a.reflection, b.reflection],
     paths: [a.pathLabel, b.pathLabel],
+    plans: [a.plan || {}, b.plan || {}],
+    // Subjects held in one story and not the other. The comparison this mode
+    // exists for is what the two runs share despite starting differently.
+    sameCombination: sameKeys(a.plan, b.plan),
   };
+}
+
+function sameKeys(x, y) {
+  const ax = Object.keys(x || {}).sort().join(',');
+  const bx = Object.keys(y || {}).sort().join(',');
+  return ax === bx;
 }
 
 // --------------------------------------------------------------------------
@@ -299,6 +340,8 @@ export function runJourneySweep(data) {
   const doorIds = new Set(Object.keys(j.doorsCatalog || {}));
   const flagIds = new Set(j.flags || []);
   const stageList = j.stages;
+  const allSubjects = (data.subjects && data.subjects.subjects) || [];
+  const subjectIds = new Set(allSubjects.map((s) => s.id));
 
   // 1. Every stage resolves for every path with a sane choice set.
   const paths = [null, ...PATHS];
@@ -307,7 +350,17 @@ export function runJourneySweep(data) {
       const r = resolveStage(stage, path);
       const fmt = r.format || 'turn';
       if (fmt === 'reflect') return;
-      const base = (r.choices || []).filter((c) => !c.needsDoor);
+      // Base excludes needsSubject as well as needsDoor: the authored minimum
+      // has to hold for a student whose combination matches nothing, or the
+      // subject choices would be quietly propping up a thin stage.
+      const base = (r.choices || []).filter((c) => !c.needsDoor && !c.needsSubject);
+      (r.choices || []).forEach((c) => {
+        if (!c.needsSubject) return;
+        const ids = Array.isArray(c.needsSubject) ? c.needsSubject : [c.needsSubject];
+        ids.forEach((id) => {
+          if (!subjectIds.has(id)) failures.push({ stage: stage.id, path, why: `unknown subject ${id}` });
+        });
+      });
       if (fmt === 'fork') {
         if (base.length < 2) failures.push({ stage: stage.id, path, why: 'fork with fewer than 2 choices' });
         return;
@@ -339,6 +392,9 @@ export function runJourneySweep(data) {
       failures.push({ card: c.id, why: 'setback without onwardMoves' });
     }
     if (c.requiresFlag && !flagIds.has(c.requiresFlag)) failures.push({ card: c.id, why: `unknown requiresFlag ${c.requiresFlag}` });
+    (c.subjects || []).forEach((id) => {
+      if (!subjectIds.has(id)) failures.push({ card: c.id, why: `unknown subject tag ${id}` });
+    });
   });
 
   // 3. The pool can never starve: for a fresh run (no flags, no bands) on every
@@ -358,49 +414,127 @@ export function runJourneySweep(data) {
   // completes, and endings are not a single function of column.
   const frames = new Set();
   const strategies = [() => 0, (n) => n - 1, (i) => i % 2];
+  let simCount = 0;
+
+  // mode 'full'    strategy indexes the whole visible list
+  // mode 'base'    strategy indexes only the choices every combination sees, so
+  //                two runs with different plans make the same decisions and any
+  //                difference in outcome is caused by the plan rather than by
+  //                the plan having shifted what "the last choice" means
+  // mode 'subject' always takes a subject choice when one is offered, which is
+  //                the only way the new content gets played by the sweep at all
+  function playSim(stageList2, cards2, pi, si, strat, plan, mode) {
+    const local = [];
+    simCount += 1;
+    const run = createRun(stageList2[0].age, 'sim', null, plan);
+    run.seed = 12345 + pi * 7 + si * 13;
+    const stages = stagesFor(stageList2, run.startAge);
+    let guard = 0;
+    let doorsPrev = 0;
+    while (!run.done && guard++ < 200) {
+      const stage = currentStage(run, stages);
+      if (!stage) { finish(run, data); break; }
+      if ((stage.format || 'turn') === 'reflect') { applyReflection(run, stage, ''); continue; }
+      if (run.pending) {
+        const card = cards2.find((c) => c.id === run.pending.cardId);
+        respondToChance(run, card, si % Math.max(1, (card.responses || []).length));
+      } else {
+        const pool = visibleChoices(stage, run);
+        const baseN = pool.filter((c) => !c.needsSubject).length;
+        const span = mode === 'base' ? baseN : pool.length;
+        if ((stage.format || 'turn') === 'fork') {
+          const idx = stage.id === 's_results' ? Math.min(pi, span - 1) : strat(span);
+          applyChoices(run, stage, [Math.max(0, Math.min(span - 1, idx))], cards2);
+        } else {
+          const subjectIdx = pool.findIndex((c) => c.needsSubject);
+          const first = mode === 'subject' && subjectIdx >= 0
+            ? subjectIdx
+            : Math.max(0, Math.min(span - 1, strat(span)));
+          const picks = [first];
+          if ((pool[first].cost || 1) === 1) {
+            const second = pool.findIndex((c, i) => i !== first && i < span && (c.cost || 1) === 1);
+            if (second >= 0) picks.push(second);
+          }
+          applyChoices(run, stage, picks, cards2);
+        }
+      }
+      if (run.doors.length < doorsPrev) local.push('doors shrank');
+      doorsPrev = run.doors.length;
+    }
+    if (!run.done) local.push('run did not complete');
+    if (run.done && run.doors.length < 3) local.push(`only ${run.doors.length} doors by the end`);
+    TRACKS.forEach((k) => { if (run.ledger[k] > TRACK_CAP) local.push(`${k} over cap`); });
+    return { run, local };
+  }
+
   PATHS.forEach((path, pi) => {
     strategies.forEach((strat, si) => {
-      const run = createRun(stageList[0].age, 'sim', null);
-      run.seed = 12345 + pi * 7 + si * 13;
-      const stages = stagesFor(stageList, run.startAge);
-      let guard = 0;
-      let doorsPrev = 0;
-      while (!run.done && guard++ < 200) {
-        const stage = currentStage(run, stages);
-        if (!stage) { finish(run, data); break; }
-        if ((stage.format || 'turn') === 'reflect') { applyReflection(run, stage, ''); continue; }
-        if (run.pending) {
-          const card = cards.find((c) => c.id === run.pending.cardId);
-          respondToChance(run, card, si % Math.max(1, (card.responses || []).length));
-        } else {
-          const pool = visibleChoices(stage, run);
-          if ((stage.format || 'turn') === 'fork') {
-            const idx = stage.id === 's_results' ? Math.min(pi, pool.length - 1) : strat(pool.length);
-            applyChoices(run, stage, [Math.max(0, Math.min(pool.length - 1, idx))], cards);
-          } else {
-            const first = Math.max(0, Math.min(pool.length - 1, strat(pool.length)));
-            const picks = [first];
-            if ((pool[first].cost || 1) === 1) {
-              const second = pool.findIndex((c, i) => i !== first && (c.cost || 1) === 1);
-              if (second >= 0) picks.push(second);
-            }
-            applyChoices(run, stage, picks, cards);
-          }
-        }
-        if (run.doors.length < doorsPrev) failures.push({ path, strat: si, why: 'doors shrank' });
-        doorsPrev = run.doors.length;
-      }
-      if (!run.done) failures.push({ path, strat: si, why: 'run did not complete' });
-      if (run.done && run.doors.length < 3) failures.push({ path, strat: si, why: `only ${run.doors.length} doors by the end` });
+      const { run, local } = playSim(stageList, cards, pi, si, strat, null, 'full');
+      local.forEach((why) => failures.push({ path, strat: si, why }));
       if (run.done) frames.add(`${run.topDisposition}`);
-      TRACKS.forEach((k) => { if (run.ledger[k] > TRACK_CAP) failures.push({ path, strat: si, why: `${k} over cap` }); });
     });
   });
   if (frames.size < 2) failures.push({ why: 'every simulated strategy produced the same top disposition' });
 
+  // 5. Every combination plays as large a game as no combination at all.
+  // Subjects append choices and bias the deck, so a plan can only ever add.
+  // This asserts it rather than trusting it: for the same seed and the same
+  // strategy, no combination may finish with fewer doors than an empty plan,
+  // and none may fail to finish. A G1 heavy plan is in the fixtures precisely
+  // because that is the student the app exists for.
+  const byLevel = (lv) => Object.fromEntries(
+    allSubjects.filter((s) => (s.levels || []).includes(lv)).map((s) => [s.id, lv])
+  );
+  // Each subject is seeded at a level it is actually offered at, so a fixture
+  // can never assert something the subject list says is impossible.
+  const pick = (ids) => Object.fromEntries(
+    ids
+      .map((id) => allSubjects.find((s) => s.id === id))
+      .filter(Boolean)
+      .map((s) => [s.id, (s.levels || ['G2'])[(s.levels || []).length - 1] || 'G2'])
+  );
+  const combos = [
+    { id: 'empty', plan: null },
+    { id: 'all_g1', plan: byLevel('G1') },
+    { id: 'all_g2', plan: byLevel('G2') },
+    { id: 'all_g3', plan: byLevel('G3') },
+    { id: 'science_lean', plan: pick(['el', 'maths', 'amaths', 'physics', 'chemistry', 'hum_ss_geog']) },
+    { id: 'arts_lean', plan: pick(['el', 'maths', 'art', 'literature', 'hum_ss_lit']) },
+    { id: 'applied_lean', plan: pick(['el', 'maths', 'computing', 'dt', 'hum_ss_hist']) },
+    { id: 'thin', plan: pick(['el']) },
+  ];
+  const baseline = {};
+  PATHS.forEach((path, pi) => {
+    strategies.forEach((strat, si) => {
+      combos.forEach((combo) => {
+        const { run, local } = playSim(stageList, cards, pi, si, strat, combo.plan, 'base');
+        local.forEach((why) => failures.push({ combo: combo.id, path, strat: si, why }));
+        const key = `${pi}:${si}`;
+        if (combo.id === 'empty') { baseline[key] = run.doors.length; return; }
+        if (run.doors.length < baseline[key]) {
+          failures.push({
+            combo: combo.id, path, strat: si,
+            why: `same choices, ${run.doors.length} doors against ${baseline[key]} on an empty plan`,
+          });
+        }
+      });
+    });
+  });
+
+  // 6. The subject choices are actually playable. A run that takes every
+  // subject choice it is offered must still finish and still hold doors,
+  // otherwise the new content is a trap for the students most drawn to it.
+  combos.filter((c) => c.plan).forEach((combo) => {
+    PATHS.forEach((path, pi) => {
+      const { run, local } = playSim(stageList, cards, pi, 0, strategies[0], combo.plan, 'subject');
+      local.forEach((why) => failures.push({ combo: combo.id, path, mode: 'subject', why }));
+      if (run.done && !run.steps.length) failures.push({ combo: combo.id, path, why: 'empty run' });
+    });
+  });
+
   const ok = failures.length === 0;
   console.log(
-    `%cJourney sweep: ${ok ? 'PASS' : 'FAIL'} (${stageList.length} stages x ${paths.length} paths, ${cards.length} cards, ${strategies.length * PATHS.length} sims)`,
+    `%cJourney sweep: ${ok ? 'PASS' : 'FAIL'} (${stageList.length} stages x ${paths.length} paths, ${cards.length} cards, ${simCount} sims over ${combos.length} combinations)`,
     ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700'
   );
   if (!ok) { console.table(failures.slice(0, 50)); console.error(`${failures.length} journey sweep failures`); }

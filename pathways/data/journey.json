@@ -50,7 +50,7 @@
       "id": "s_sec3",
       "age": 15,
       "title": "Sec 3",
-      "situation": "New subjects, new classes, and some of your friends are now in different rooms from you.",
+      "situation": "New subjects, new classes, and some friends are now in different rooms. This year you take {subjects}.",
       "choices": [
         {
           "label": "Go hard at what you are good at",
@@ -99,6 +99,115 @@
           "outcome": "The first term is hard and by the third you have caught up. Nobody stopped you asking.",
           "cost": 1,
           "sets": "asked_up"
+        },
+        {
+          "label": "Live in the lab this year",
+          "needsSubject": [
+            "science_g1",
+            "sci_pc",
+            "sci_pb",
+            "sci_cb",
+            "physics",
+            "chemistry",
+            "biology"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "The practicals stop being a chore. You start guessing what the experiment will do before you run it."
+        },
+        {
+          "label": "Chase one question past the syllabus",
+          "needsSubject": [
+            "hum_ss_geog",
+            "hum_ss_hist",
+            "hum_ss_lit",
+            "geography",
+            "history",
+            "literature"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "curiosity": 2
+          },
+          "outcome": "You read well past what the paper wants. One argument you build this year stays with you."
+        },
+        {
+          "label": "Sit with the hard Maths",
+          "needsSubject": [
+            "amaths"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "outcome": "It is slow, and then suddenly it is not. You stop believing you are bad at this."
+        },
+        {
+          "label": "Build something small and ship it",
+          "needsSubject": [
+            "computing",
+            "electronics"
+          ],
+          "cost": 1,
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "sets": "built_side",
+          "outcome": "Twelve people use it. Two send you bugs. You fix them, which is the whole job in miniature."
+        },
+        {
+          "label": "Make one piece worth showing",
+          "needsSubject": [
+            "art",
+            "higher_art",
+            "music",
+            "higher_music",
+            "drama"
+          ],
+          "cost": 1,
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "outcome": "It takes far longer than you thought. It ends up in a folder you can hand to someone."
+        },
+        {
+          "label": "Finish one real thing properly",
+          "needsSubject": [
+            "dt",
+            "electronics",
+            "nfs",
+            "ess",
+            "poa",
+            "economics",
+            "ebs"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "outcome": "Not a mock up. Something that works, that somebody else uses, with your name on it."
         }
       ]
     },
@@ -157,6 +266,115 @@
           "outcome": "Nobody grades it. Years later it is the thing people ask you about first.",
           "cost": 1,
           "sets": "built_side"
+        },
+        {
+          "label": "Keep the practicals going anyway",
+          "needsSubject": [
+            "science_g1",
+            "sci_pc",
+            "sci_pb",
+            "sci_cb",
+            "physics",
+            "chemistry",
+            "biology"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "Revision eats the year. The hours you keep in the lab are the ones you still remember."
+        },
+        {
+          "label": "Write one essay for yourself",
+          "needsSubject": [
+            "hum_ss_geog",
+            "hum_ss_hist",
+            "hum_ss_lit",
+            "geography",
+            "history",
+            "literature"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "Nobody marks it. It is the first thing you write that actually sounds like you."
+        },
+        {
+          "label": "Push the Maths past the paper",
+          "needsSubject": [
+            "amaths"
+          ],
+          "cost": 1,
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "You go a chapter beyond what is examined. Two years later that chapter turns up again."
+        },
+        {
+          "label": "Keep building through the exam year",
+          "needsSubject": [
+            "computing",
+            "electronics"
+          ],
+          "cost": 1,
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "sets": "built_side",
+          "outcome": "Less sleep, more made. You walk into next year holding something you can actually show."
+        },
+        {
+          "label": "Put the portfolio together properly",
+          "needsSubject": [
+            "art",
+            "higher_art",
+            "music",
+            "higher_music",
+            "drama"
+          ],
+          "cost": 1,
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "outcome": "You pick six pieces and cut the rest. Choosing turns out to be harder than making was."
+        },
+        {
+          "label": "Enter one thing outside school",
+          "needsSubject": [
+            "dt",
+            "electronics",
+            "nfs",
+            "ess",
+            "poa",
+            "economics",
+            "ebs"
+          ],
+          "cost": 1,
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "outcome": "A competition, a market stall, a real client. You do not win. You do get seen."
         }
       ]
     },
