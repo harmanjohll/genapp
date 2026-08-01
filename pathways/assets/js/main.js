@@ -12,6 +12,7 @@ import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
 import { renderAim } from './modes/mode-aim.js';
 import { renderTeacher } from './modes/mode-teacher.js';
+import { renderParent } from './modes/mode-parent.js';
 
 const app = document.getElementById('app');
 const head = document.getElementById('site-head');
@@ -22,7 +23,7 @@ const params = new URLSearchParams(location.search);
 
 // The teacher layer is reachable by URL only. It was in the student header, and
 // thirty five students find a button labelled Teacher in about ninety seconds.
-let teacherMode = params.get('mode') === 'teacher';
+let extraMode = ['teacher', 'parent'].includes(params.get('mode')) ? params.get('mode') : null;
 if (params.get('board') === '1') document.body.dataset.board = 'true';
 
 init();
@@ -51,6 +52,7 @@ async function init() {
   };
 
   mountRibbon(document.body, data.lifelong);
+  mountFooterDoors();
   renderHead();
   paint();
 
@@ -85,7 +87,7 @@ function renderHead() {
       <nav class="modebar" aria-label="Modes">
         ${Object.values(MODES).map((m) => `
           <button type="button" data-action="mode" data-mode="${m.id}"
-                  aria-current="${!teacherMode && st.mode === m.id}">${esc(m.label)}</button>`).join('')}
+                  aria-current="${!extraMode && st.mode === m.id}">${esc(m.label)}</button>`).join('')}
         <button type="button" data-action="glossary"
                 aria-label="What the letters mean">${esc(data.copy.chrome.glossaryBtn)}</button>
       </nav>
@@ -93,7 +95,7 @@ function renderHead() {
 
   onAction(head, {
     mode: (btn) => {
-      teacherMode = false;
+      extraMode = null;
       if (btn.dataset.mode !== 'journey') resetJourney();
       setMode(btn.dataset.mode);
     },
@@ -111,10 +113,27 @@ function renderHead() {
 
 function paint() {
   const st = getState();
-  if (teacherMode) { renderTeacher(app, data, ctx, paint); return; }
+  if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
+  if (extraMode === 'parent') { renderParent(app, data); return; }
   switch (st.mode) {
     case 'journey': renderJourney(app, data, ctx, paint); break;
     case 'aim':     renderAim(app, data, ctx, paint); break;
     default:        renderNow(app, data, ctx); break;
   }
+}
+
+
+// The three doors, quietly, in the footer. Parents arrive on their child's
+// phone, so the parent page cannot be URL only the way the teacher page is.
+function mountFooterDoors() {
+  const foot = document.querySelector('.site-foot .wrap');
+  if (!foot || !data.copy.footerDoors) return;
+  const f = data.copy.footerDoors;
+  const div = document.createElement('div');
+  div.className = 'footdoors';
+  div.innerHTML = `<p class="caps">${esc(f.head)}</p>
+    <p class="small"><a href="./">${esc(f.students)}</a>
+    <a href="./?mode=parent">${esc(f.parents)}</a>
+    <a href="./?mode=teacher">${esc(f.teachers)}</a></p>`;
+  foot.appendChild(div);
 }

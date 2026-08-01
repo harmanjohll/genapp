@@ -8,7 +8,11 @@
   },
   "chrome": {
     "brand": "The Long Game",
-    "modes": { "now": "Now", "journey": "Journey", "aim": "Aim" },
+    "modes": {
+      "now": "Now",
+      "journey": "Journey",
+      "aim": "Aim"
+    },
     "glossaryBtn": "Aa",
     "firstRun": "Nothing here can be closed to you.",
     "openNow": "open now",
@@ -26,7 +30,13 @@
     "roadHead": "Another road in",
     "compare": "Compare",
     "compareHead": "Two roads",
-    "compareRows": ["How long", "What it is like", "Where you are", "One move", "Another road"],
+    "compareRows": [
+      "How long",
+      "What it is like",
+      "Where you are",
+      "One move",
+      "Another road"
+    ],
     "askHead": "Take one question to a person",
     "askCopy": "Copy",
     "askCopied": "Copied",
@@ -37,7 +47,11 @@
     "cleared": "Cleared.",
     "footer": "A thinking tool, not official advice. Check with your ECG counsellor.",
     "provisional": "{n} figures here are unverified.",
-    "stale": "Last checked {days} days ago. Criteria change."
+    "stale": "Last checked {days} days ago. Criteria change.",
+    "availDisclaimer": "Schools offer different subsets of these.",
+    "availMore": "Your school's list is the real one.",
+    "selTag": "selected schools",
+    "conflictNote": "{a} repeats the {b} half of your Humanities pair. Schools ask for a different elective. Worth checking."
   },
   "pulse": {
     "opened": "{dest} is open now.",
@@ -62,5 +76,46 @@
     "dest": "Ask your ECG counsellor: what is {dest} actually like day to day?",
     "aim": "Ask an adult who does this: what are the bad days like?",
     "open": "Ask your form teacher: which of these would suit how I learn?"
+  },
+  "thisYear": {
+    "sec1": "This year is for looking around. Levels move at the end of it.",
+    "sec2": "The subject combination exercise lands this year. Build it here first, then talk to people.",
+    "sec3": "Settle into the combination and go deep. Moving a level is still a conversation away.",
+    "sec4": "Early Admissions opens before results. What you have made and done counts now.",
+    "sec5": "This year widens what comes next. Aim it at something specific."
+  },
+  "journey": {
+    "wantPrompt": "Before you start. What do you want by twenty five?",
+    "wantHint": "You can change your mind later. People do.",
+    "points": "Spend your year",
+    "pointsLeft": "{n} left",
+    "justThis": "Just this, and let the year breathe",
+    "liveIt": "Live it",
+    "asks": "This one asks for {disp}. You have {have}.",
+    "stretchChip": "a stretch for you right now",
+    "metChip": "you have the footing for this",
+    "continue": "Keep going",
+    "sameAgain": "Same as last story",
+    "recapHint": "You played this part before. Keep it or change it.",
+    "reflectSkip": "Keep it to yourself",
+    "doorsHead": "Doors you hold",
+    "carryHead": "What you are carrying",
+    "storyHead": "Your story so far",
+    "endWant": "At {age} you said: {want}.",
+    "endWantUnsure": "At {age} you said you were not sure yet. That was honest, and it worked.",
+    "endPath": "You went the {path} way.",
+    "playAgain": "Play it again, differently",
+    "compareCta": "Put two stories side by side",
+    "pickTwo": "Pick two stories",
+    "sharedDoors": "You both hold",
+    "onlyDoors": "Only this story holds",
+    "verdictHead": "Both of those were fine.",
+    "verdict": "Same start, different choices. Neither story is the wrong one. Your starting point set the first step. It did not write the rest."
+  },
+  "footerDoors": {
+    "head": "This tool has three doors",
+    "students": "Students, you are in it.",
+    "parents": "Parents, a short guide to the system as it is now.",
+    "teachers": "Teachers, running this with a class."
   }
 }

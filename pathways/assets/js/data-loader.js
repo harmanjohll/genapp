@@ -13,7 +13,7 @@
 // taking the lesson down.
 
 const FILES = [
-  'subjects', 'pathways', 'progressions', 'lifelong', 'copy',
+  'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
 ];
 

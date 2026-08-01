@@ -81,7 +81,7 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="panel">
             <h2>Only show what your school runs</h2>
-            <p class="small mute">The list carries all ${subjects.length} subjects nationally. Most schools run about fifteen. Untick the rest so nobody plans around a subject they cannot take here. Saved on this device.</p>
+            <p class="small mute">The list carries all ${subjects.length} subjects nationally. Most schools run about fifteen. Untick the rest so nobody plans around a subject they cannot take here. Saved on this device. Start from your school's real list on <a href="https://www.moe.gov.sg/schoolfinder" target="_blank" rel="noopener">MOE SchoolFinder</a>.</p>
             <div class="offer-grid">
               ${subjects.map((s) => `
                 <label class="offer-item">
@@ -107,6 +107,7 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="panel">
             <h2>For the class chat, before the lesson</h2>
+            <p class="small">There is also a fuller page for parents at <code>?mode=parent</code>, linked from the app footer.</p>
             <p class="small">Feel free to send this to parents as it is.</p>
             <blockquote class="parent-note">
               This week we are using a tool that helps students see what their subject

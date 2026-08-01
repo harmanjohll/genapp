@@ -424,13 +424,21 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 .disp-bars { display: grid; gap: var(--s-2); }
 .disp-row { display: grid; grid-template-columns: 6.5em 1fr auto; gap: var(--s-3); align-items: center; font-size: var(--t-small); }
 .disp-track { height: 8px; background: var(--paper-warm); border-radius: var(--r-pill); overflow: hidden; }
-.disp-fill { height: 100%; background: var(--accent); border-radius: var(--r-pill); transition: width var(--dur) var(--ease); }
+/* display block is load bearing: as an inline span inside a grid blockified
+   track, width 100 percent resolves against a zero width inline box and the
+   bar renders invisible. The game's only disposition feedback was blank for
+   every student until this line. */
+.disp-fill { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); transition: width var(--dur) var(--ease); }
 
-.diff { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.diff-col { border: 1px solid var(--rule); border-radius: var(--r-lg); padding: var(--s-4); background: var(--surface); }
-.diff-line { font-size: var(--t-small); padding: var(--s-2) 0; border-bottom: 1px dashed var(--rule-soft); }
-.diff-line:last-child { border-bottom: none; }
-.diff-line.differs { background: var(--accent-wash); border-radius: var(--r-sm); padding-left: var(--s-2); padding-right: var(--s-2); }
+/* Side by side at every width, including 375px, because side by side is the
+   entire point of the screen. One row per age, shared age gutter, both
+   stories on the same row so the eye compares without scrolling. */
+.diff { display: grid; grid-template-columns: 2.6rem 1fr 1fr; gap: 0 var(--s-2); align-items: start; }
+.diff-age { font-size: var(--t-micro); font-weight: 700; color: var(--ink-faint); padding-top: var(--s-2); }
+.diff-cell { font-size: var(--t-small); padding: var(--s-2); border-bottom: 1px dashed var(--rule-soft); min-width: 0; overflow-wrap: break-word; }
+.diff-cell.differs { background: var(--accent-wash); border-radius: var(--r-sm); }
+.diff-head { font-weight: 700; padding: var(--s-2); font-size: var(--t-small); }
+.diff-want { font-size: var(--t-micro); color: var(--ink-mute); padding: 0 var(--s-2) var(--s-2); }
 .diff-verdict { margin-top: var(--s-5); padding: var(--s-5); border: 2px solid var(--accent); border-radius: var(--r-lg); background: var(--accent-wash); }
 .diff-verdict h2 { color: var(--accent-dk); }
 
@@ -563,3 +571,83 @@ code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-warm
 .story-tl li { margin-bottom: var(--s-2); }
 .story-tl strong { display: inline-block; min-width: 2em; color: var(--accent-dk); }
 @media (hover: none) { .choice:hover .hint { color: var(--ink-mute); } }
+
+/* ---------- journey v3 ---------- */
+/* Two panes on a laptop, mirroring Mode NOW: the scene on the left at a
+   readable measure, what you are carrying pinned on the right. On a phone the
+   rail follows the scene. The footer leaves during play: a disclaimer under a
+   game screen reads like small print under a memory. */
+.journey-grid { display: grid; gap: var(--s-6); align-items: start; }
+@media (min-width: 900px) {
+  .journey-grid { grid-template-columns: minmax(0, 1fr) clamp(280px, 26vw, 360px); column-gap: var(--s-7); }
+  .j-rail { position: sticky; top: var(--s-4); }
+}
+body[data-journey="true"] .site-foot { display: none; }
+.j-scene { margin-top: var(--s-5); }
+.j-sit { max-width: 58ch; }
+.j-rail { padding-top: var(--s-5); }
+.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.pathchip { background: var(--other-wash); color: var(--other); border-radius: var(--r-pill); padding: 1px var(--s-3); font-weight: 700; }
+.wantline { color: var(--ink-faint); text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+/* points */
+.pointsrow { display: flex; align-items: center; gap: var(--s-3); margin: var(--s-4) 0 var(--s-3); }
+.pts { color: var(--accent); font-size: 1.1rem; letter-spacing: 3px; }
+
+/* selectable choices */
+.choice.sel { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); align-items: start; }
+.choice.sel .c-cost { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; padding-top: 3px; }
+.choice.sel .c-label { font-weight: 650; }
+.choice.sel .c-chips { grid-column: 2; display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.gchip { font-size: var(--t-micro); background: var(--paper-warm); border-radius: var(--r-pill); padding: 1px var(--s-2); color: var(--ink-mute); }
+.choice.sel[aria-pressed="true"], .choice.sel.on { border-color: var(--accent); background: var(--accent-wash); }
+.choice.sel[data-dim="true"] { opacity: 0.75; } /* still tappable, never disabled */
+.j-choices { gap: var(--s-3); }
+
+/* chance */
+.askline { margin-top: var(--s-3); font-weight: 650; color: var(--ink-soft); }
+.choice.resp { display: block; }
+.choice.resp .c-note { display: block; font-size: var(--t-micro); color: var(--flag); margin-top: var(--s-1); }
+.chance-out { padding: var(--s-5) 0; }
+.delta { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+.dchip { background: var(--open-wash); color: var(--open); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-small); font-weight: 650; }
+
+/* forks: one big decision, full bleed */
+.fork { margin-top: var(--s-6); }
+.fork .turn-age { font-size: clamp(3rem, 12vw, 6rem); }
+.fork-choices { display: grid; gap: var(--s-3); margin-top: var(--s-5); }
+@media (min-width: 860px) { .fork-choices { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+.fork-c { min-height: 110px; display: flex; flex-direction: column; gap: var(--s-2); justify-content: center; }
+
+/* reflect */
+.reflect { margin-top: var(--s-6); max-width: 60ch; }
+.rfree input {
+  width: 100%; margin-top: var(--s-3); padding: var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-md); font: inherit;
+}
+
+/* rail bits */
+.doorchips { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: 0; margin: var(--s-2) 0 0; list-style: none; }
+.doorchips span { background: var(--open-wash); color: var(--open); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-micro); font-weight: 650; }
+.j-log { list-style: none; padding: 0; margin: var(--s-2) 0 0; }
+.j-log li { padding: 2px 0; border-bottom: 1px dashed var(--rule-soft); }
+.j-prev { margin-top: var(--s-5); background: var(--paper-warm); }
+.wantbox { margin-top: var(--s-5); }
+.want-q { font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
+.chipsel { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.chip-btn {
+  min-height: var(--tap); padding: var(--s-2) var(--s-4); font: inherit; font-size: var(--t-small);
+  border: 1.5px solid var(--rule); border-radius: var(--r-pill); background: var(--surface); cursor: pointer;
+}
+.chip-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-wash); font-weight: 650; }
+
+/* selected schools tag + conflict caution in NOW */
+.seltag { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--longer); background: var(--longer-wash); border-radius: var(--r-pill); padding: 1px var(--s-2); }
+.avail-line { margin: 0 0 var(--s-3); }
+.avail-line button { font-size: var(--t-small); }
+.grp-note { font-size: var(--t-micro); color: var(--ink-mute); margin: calc(-1 * var(--s-1)) 0 var(--s-2); }
+
+/* footer doors */
+.footdoors { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
+.footdoors a { margin-right: var(--s-4); }

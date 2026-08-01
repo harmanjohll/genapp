@@ -18,6 +18,7 @@ python3 -m http.server 8000
 | --- | --- |
 | `?dev=1` | Runs the reach invariant, the Journey sweep and the copy budget check, printing all three to the console |
 | `?mode=teacher` | The facilitation layer. Deliberately not linked from the student header |
+| `?mode=parent` | A calm printable page for parents: what changed since their day, the decision calendar, conversations that help. Linked from the footer |
 | `?board=1` | Projector view: bigger type, thicker state bars, subject list hidden |
 | `?p=el3~maths2&y=sec3` | Loads a plan from a link, so a student can carry it to another device |
 
@@ -26,8 +27,12 @@ python3 -m http.server 8000
 Three modes over one engine and one saved plan.
 
 - **Now** — build the combination you are considering. Eight destinations, each showing what is met, what would move it, and a real road in another way.
-- **Journey** — play forward from where you are to 55, with chances and setbacks. **Your choice at 17 sets your route, and every stage after that is written for it**: a poly student gets studios and an internship, an ITE student gets a workshop and a GPA target, a JC student gets tutorials and A Levels. Then play again from the same start and compare.
+- **Journey** — a played game from Sec 3 to 48. Say what you want by twenty five, spend two attention points a turn, answer chance cards that ask something of you, and watch named doors collect. **Your choice at 17 sets your route, and every stage after that is written for it**: a poly student gets studios and an internship, an ITE student gets a workshop and a GPA target, a JC student gets tutorials and A Levels. Then play again from the same start and compare two runs side by side.
 - **Aim** — start from a want, get three or more unranked roads, leave with three things to do this term.
+
+The subject list matches the 2027 SEC: one Combined Humanities pair (Social Studies with Geography, History or Literature) is part of every G2 and G3 package, sciences at G2 come as named pairs, pure sciences are G3 only, and subjects a school may not run carry a "selected schools" tag. One line under the list says the quiet part out loud: schools offer different subsets of these, and your school's list is the real one.
+
+Beyond students, the app carries a page for parents (`?mode=parent`, printable) and one for teachers (`?mode=teacher`), both linked from the footer.
 
 A Long View ribbon runs along the bottom of every mode, ages 12 to 65. School is the small band on the left. That proportion is the argument.
 
@@ -41,7 +46,7 @@ Structural, not editorial. There is no `locked` state in the data model, `reach(
 
 Adding a subject, or raising one a level, can never increase the distance to any destination. This one is easy to break by accident and it was broken: an earlier version charged one move for a subject you were not taking and two for the same subject held at G1, so a student entering an honest G1 plan watched Junior College, Millennia Institute and Polytechnic all recede. Silently, in arithmetic, underneath copy saying the opposite.
 
-Both are checked rather than promised. `?dev=1` runs 744 destination evaluations over 93 generated plan states, plus a monotonicity sweep over every subject at every level from several starting plans. It fails loudly in the console.
+Both are checked rather than promised. `?dev=1` runs 808 destination evaluations over 101 generated plan states, plus a monotonicity sweep over every subject at every level from several starting plans. It fails loudly in the console.
 
 ## What it deliberately does not do
 
@@ -72,20 +77,29 @@ Journey went the other way on purpose. It was capped at 120 words and had exactl
 
 `engine/copy-budget.js` enforces per field word caps, scans every student facing string for hyphens and dashes, and measures first paint off the live DOM. It counts every visible label including each G1/G2/G3 chip, so the budget cannot be met by moving prose into labels.
 
-## Journey paths
+## Journey, the game
+
+Before turn one you pick a want: what do you want by twenty five, with "Not sure yet" as a first class answer. The ending opens by answering it.
+
+Each turn gives two attention points. Every choice costs 1 or 2 and shows what it grows, so you spend the turn on one big thing or two small things. Nothing is subtracted from any stat and the budget resets every turn: the only cost is the thing you did not do.
+
+Chance cards are decisions in two beats. The situation arrives with what it asks for, "This one asks for Risk taking. You have 1 of 2", and two or three responses. A response you do not have the footing for stays fully tappable and routes to a stretch outcome: you do it anyway, it goes roughly, and it builds the very disposition it asked for. Then the outcome lands.
+
+Doors are named, never counted. Early Admissions, a portfolio, the poly to uni road, work study: a Set that only ever adds, drawn as chips. Choices set flags, callback cards name what you did stages ago, and late stage outcomes vary by the route you took, so the run remembers you.
 
 Four families, set by a choice at 17, resolved against every stage after it.
 
-| Ages | Branching |
+| Ages | Shape |
 | --- | --- |
-| 15 to 17 | Shared. Nobody has taken a route yet |
-| **18, 19, 21, 24** | **Fully branched.** `academic`, `applied`, `hands`, `arts`. Four different pages |
-| 27, 30 | Situation reskinned per family, choices shared |
+| 15, 16 | Shared turns. Nobody has taken a route yet |
+| **17, 27, 43** | **Forks.** Single pick, the age huge |
+| 18 to 30 | Branched per family: `academic`, `applied`, `hands`, `arts` |
 | 34 onward | Shared again |
+| 38 | A reflection turn. Name one thing you would do differently, never scored, surfaced verbatim on the compare screen |
 
-The convergence is the point. By your mid thirties the route you took at seventeen has stopped deciding what is available to you, and letting the content merge says that better than a sentence would. A student who plays as an ITE student and again as a JC student sees completely different pages in their late teens and identical ones at fifty five.
+The convergence is the point. By your mid thirties the route you took at seventeen has stopped deciding what is available to you, and letting the content merge says that better than a sentence would.
 
-14 stages, ages 15 to 55, 4 or 5 choices each, 24 path variants, 43 chance cards. Every age has at least 8 eligible cards on every path, so a replay does not repeat the first run. All of it is asserted by `runJourneySweep()`.
+13 stages, ages 15 to 48, 53 chance cards including 10 callbacks. Every age has at least 8 eligible cards on every path, every card has at least 2 responses, and 12 fixed strategy simulations play end to end with at least 3 doors each. All of it is asserted by `runJourneySweep()`.
 
 ## Layout
 
@@ -120,8 +134,8 @@ pathways/
 │   │   ├── main.js · state.js · data-loader.js
 │   │   ├── engine/      rules.js · reach.js · journey.js · pulse.js · copy-budget.js
 │   │   ├── components/  dom.js · sheet.js · timeline-ribbon.js · glossary.js
-│   │   └── modes/       mode-now.js · mode-journey.js · mode-aim.js · mode-teacher.js
-└── data/                     eleven JSON files, each with a _meta source block
+│   │   └── modes/       mode-now.js · mode-journey.js · mode-aim.js · mode-teacher.js · mode-parent.js
+└── data/                     twelve JSON files, each with a _meta source block
 ```
 
 Every number resolves to a file in `data/`, each declaring `_meta` with `source`, `url`, `accessed`, `units` and `notes`, following `ecdm/`. The loader retries each file and degrades rather than failing the whole app, because thirty five devices on one school access point is exactly when a fetch times out. A stale banner fires past 90 days.

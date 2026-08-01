@@ -72,6 +72,10 @@ export function renderNow(container, data, ctx) {
               <h2 id="subj-h" class="h-sm">${esc(c.subjectsHead)}</h2>
               <p class="micro mute">${esc(c.subjectsHint)}</p>
             </div>
+            <p class="small mute thisyear">${esc((data.copy.thisYear || {})[st.year] || '')}</p>
+            <p class="micro mute avail-line">${esc(c.availDisclaimer)}
+              <button class="gloss" type="button" data-action="avail">${esc(c.availMore)}</button></p>
+            <div id="conflict">${conflictNotice(st.plan, data)}</div>
             ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan)).join('')}
             <p class="micro mute">${esc(data.subjects.movement.headline)} ${esc(data.subjects.movement.body)}</p>
           </section>
@@ -147,6 +151,7 @@ function groupBlock(group, subjects, plan) {
   if (!list.length) return '';
   return `
     <h3 class="grp">${esc(group.label)}</h3>
+    ${group.note ? `<p class="grp-note">${esc(group.note)}</p>` : ''}
     <ul class="srows">${list.map((s) => subjectRow(s, plan[s.id])).join('')}</ul>`;
 }
 
@@ -160,7 +165,7 @@ function subjectRow(s, level) {
   return `
     <li class="srow" data-subject="${s.id}"${level ? ` data-level="${level}"` : ''}>
       <button class="srow-name" type="button" data-action="subject" data-id="${s.id}" aria-haspopup="dialog">
-        ${esc(s.name)}
+        ${esc(s.name)}${s.availability === 'selected' ? ' <span class="seltag">selected schools</span>' : ''}
       </button>
       <div class="srow-levels" role="group" aria-label="${esc(s.name)} level">${chips}</div>
     </li>`;
@@ -226,6 +231,23 @@ function askCard(st, reaches, data) {
     </div>`;
 }
 
+/**
+ * The anti duplication rule, as a caution rather than a lock: a pure humanities
+ * subject must differ from the elective half of the Humanities pair. Both rows
+ * stay fully selectable; the app just says what schools will say.
+ */
+function conflictNotice(plan, data) {
+  const byId = new Map(data.subjects.subjects.map((x) => [x.id, x]));
+  for (const s of data.subjects.subjects) {
+    if (s.conflictsWith && plan[s.id] && plan[s.conflictsWith]) {
+      const other = byId.get(s.conflictsWith);
+      const half = s.name.replace('Literature in English', 'Literature');
+      return `<p class="caution" style="margin-bottom:var(--s-3)">${esc(fill(data.copy.chrome.conflictNote, { a: half, b: (other.shortName || other.name) }))}</p>`;
+    }
+  }
+  return '';
+}
+
 function fill(tpl, vars) {
   return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
 }
@@ -240,6 +262,13 @@ function bindActions() {
     dest: (btn) => openDest(btn.dataset.id, btn),
     year: (btn) => setYear(btn.dataset.year),
     dismiss: (btn) => { markIntroSeen(); btn.closest('.firstrun').remove(); },
+    avail: (btn) => {
+      const av = DATA.subjects.availabilityNote;
+      openSheet(`
+        <h2 id="sheet-title">Whose list is real?</h2>
+        <p>${esc(av.sheet)}</p>
+        <p class="small"><a href="${esc(av.schoolfinder)}" target="_blank" rel="noopener">MOE SchoolFinder</a></p>`, btn);
+    },
     clear: () => onClear(),
     share: () => onShare(),
     copyask: (btn) => copyText(btn, btn.dataset.q),
@@ -311,6 +340,8 @@ function onLevel(btn) {
 
   const tailEl = host.querySelector('#tail');
   if (tailEl) tailEl.innerHTML = tail(getState(), reaches, DATA);
+  const confEl = host.querySelector('#conflict');
+  if (confEl) confEl.innerHTML = conflictNotice(getState().plan, DATA);
 }
 
 function onClear() {

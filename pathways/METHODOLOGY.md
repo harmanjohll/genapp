@@ -61,17 +61,29 @@ Where a destination's authors did not supply a specific onward route, the engine
 
 ### Journey mode
 
-A turn engine over fourteen life stages from age 15 to 55. Each turn is a situation, four or five genuinely available choices, and then a chance card.
+A turn engine over thirteen life stages from age 15 to 48. It went through three versions, and the third is the first one that is a game rather than a slideshow.
 
-**Paths.** A choice at 17 puts the player on one of four families, and every stage after that resolves a variant against it. The first version had ten stages that ran identically whether the player went to Junior College, polytechnic or ITE, which meant nothing chosen at seventeen changed anything seen at eighteen. That, rather than the word count, was why the mode felt hollow.
+The second version was measured before the rebuild: a full run was 29 taps and 14 of them were the single word "Keep going"; a 4,000 run Monte Carlo showed the ending was 100 percent predictable from which button column the player favoured; and the disposition bars, the mode's only feedback, had rendered at zero width since the mode shipped. Those numbers, not taste, drove the redesign.
 
-The branches are deliberately not spread evenly. Fully branched at 18, 19, 21 and 24; the situation only at 27 and 30; shared from 34. The convergence is an argument: by the mid thirties the route stops deciding what is available, and structuring the content that way states it more convincingly than prose could.
+**The want.** Before turn one the player answers "What do you want by twenty five?", with "Not sure yet" as a first class pick. The ending opens by answering it. This gives a run a spine without giving it a score.
 
-Chance cards implement planned happenstance, from Krumboltz (2009). Whether a player can use a chance is checked against five dispositions accumulated through their choices: curiosity, persistence, flexibility, optimism and risk taking. **Chances never check grades.** That substitution is the argument of the mode, expressed as a mechanic rather than as a paragraph.
+**Attention, not resources.** Two points per turn; every choice costs 1 or 2 and shows what it grows. Nothing is subtracted from any stat and the budget resets each turn. The design rejects resource management, where a fifteen year old could go bankrupt, in favour of the one scarcity that is actually true at fifteen: you cannot do everything this year. The cost of a choice is only ever the thing you did not do.
 
-A chance a player could not use is rendered as something that happened while they were not looking, with a replay hook. It is never scored as a loss. There is no failure state, no game over, and doors open to me has a floor and never decreases.
+**Chance cards as decisions.** Planned happenstance, from Krumboltz (2009), now interactive. Each card states what it asks for against five dispositions accumulated through choices, curiosity, persistence, flexibility, optimism, risk taking, and offers two or three authored responses. **Chances never check grades.** A response whose ask is unmet stays fully tappable and routes to a stretch outcome: doing it anyway without the footing goes roughly and builds that very disposition. Nothing is locked, a near miss is visible and motivating, and effort in the direction of a disposition is always rewarded, which is the mode's model of growth.
 
-The replay comparison is the point of the mode and arguably of the app. Two runs from the same start, side by side, both fine.
+**Named doors.** Doors used to be an integer with a floor. An integer is a score, and a floor is a promise defended in code review. Doors are now a Set of real named things, Early Admissions, a portfolio, the poly to uni road, that only ever adds and renders as chips. The invariant became structural, and the display became unreadable as a ranking across a classroom desk.
+
+**Memory.** Choices set flags, ten callback cards name what the player did stages ago, and late stage outcomes vary with the route taken, so the merged years still remember the player's particular life.
+
+**Paths and shape.** A fork at 17 sets one of four families and every stage after resolves a variant against it; forks at 27 and 43 render full bleed with the age huge; 38 is a quiet reflection turn whose answer is never scored and reappears verbatim on the compare screen, since the serious games literature is consistent that in play reflection is where the learning happens. Branches are deliberately uneven: fully branched through the twenties, shared from 34. The convergence is the argument: by the mid thirties the route stops deciding what is available.
+
+The replay comparison is the point of the mode and arguably of the app. Two runs from the same start, side by side, both fine, with different wants and different doors.
+
+### The subject list is the 2027 SEC, and it says where it is unsure
+
+The subject data was verified against the SEAB syllabus list and MOE subject pages as far as the build's network policy allowed. The big structural facts are modelled exactly: one Combined Humanities pair, Social Studies with Geography, History or Literature in English, is part of every G2 and G3 package and Social Studies never stands alone; sciences at G2 come only as named pairs while pure sciences are G3 only; pure Humanities subjects are additive beside the pair, with the anti duplication rule rendered as a caution and never a lock.
+
+Two honesty devices sit on top. Anything not read from a primary page carries a `provisional` badge. And because no national list can know a particular school's offer, subjects that only some schools run carry a "selected schools" tag, and a single line under the list says that schools offer different subsets and the school's own list is the real one, with MOE SchoolFinder linked behind it. The alternative, presenting the national list as if every student could pick from all of it, would set up a small disappointment at exactly the wrong moment.
 
 ### The Long View ribbon
 
@@ -93,7 +105,7 @@ The proportion is doing the work. It is the cheapest anti determinism device in 
 
 Every data file declares `_meta` with `source`, `url`, `accessed`, `units` and `notes`, following the convention set by `ecdm/`. Individual rules additionally carry `status`, one of `confirmed`, `provisional` or `not_yet_published`, and anything provisional renders a badge next to itself on screen.
 
-The loader takes the oldest `accessed` date across all eleven files and raises a stale data banner past 90 days. Admission criteria change annually. A tool that quietly serves last year's thresholds to someone making a decision is worse than no tool.
+The loader takes the oldest `accessed` date across all twelve files and raises a stale data banner past 90 days. Admission criteria change annually. A tool that quietly serves last year's thresholds to someone making a decision is worse than no tool.
 
 The build's own verification gap is documented in `OPEN_QUESTIONS.md` and stated on screen in the footer and in the teacher layer.
 

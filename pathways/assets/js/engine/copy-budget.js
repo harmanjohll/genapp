@@ -35,6 +35,12 @@ const CAPS = {
   'journey.stages[].variants.*.choices[].outcome': 22,
   'journey.stages[].variants.*.choices[].hint': 5,
   'chances.cards[].onwardMoves[]': 16,
+  'chances.cards[].responses[].label': 8,
+  'chances.cards[].responses[].outcome': 24,
+  'chances.cards[].responses[].stretch': 24,
+  'journey.wants[].label': 10,
+  'parent.sections[].body': 80,
+  'parent.sections[].items[]': 26,
   'chances.cards[].body': 28,
   'chances.cards[].ifTaken': 22,
   'chances.cards[].ifMissed': 24,
@@ -59,7 +65,10 @@ const CAPS = {
 // NOW measures 245 on an empty plan and about 265 once a student has picked a
 // combination, because status lines lengthen as destinations come into reach.
 // The cap covers the filled case.
-const FIRST_PAINT = { now: 270, journey: 220, aim: 120 };
+// NOW's floor rose when the subject list became true: five more rows, the
+// long official Humanities and Science pair names, two group notes, the year
+// line and the availability disclaimer. All of that is content, not chrome.
+const FIRST_PAINT = { now: 365, journey: 220, aim: 120 };
 
 // Fields that are maintainer facing, not student facing.
 const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName']);
