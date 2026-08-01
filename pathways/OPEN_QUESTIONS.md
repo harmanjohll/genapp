@@ -20,7 +20,14 @@ The app is honest about this on screen: anything unverified renders a `provision
 | SkillsFuture $4,000 Mid Career Credit at 40, 36,000 users since May 2024 | `lifelong.json`, `journey.json` | SkillsFuture Singapore | Update the take up figure annually. |
 | Mid Career Training Allowance, 50 percent of income, $300 to $3,000, part time extension from 1 March 2026 at $300 | `lifelong.json` | SkillsFuture Singapore | Update annually. |
 | MCES up to 90 percent for full time diplomas from AY2025 | `lifelong.json`, `stories.json` | SkillsFuture Singapore | Update annually. |
-| Subject availability by level | `subjects.json` | SEAB syllabus list and your own school's offer | Several subjects are marked provisional. Combined Science shapes, A Maths at G2, and the G1 subjects are the least certain. |
+| Combined Science pair to syllabus code mapping | `subjects.json` → `sci_pc`, `sci_pb`, `sci_cb` | SEAB 2027 SEC syllabus list, codes in the K34x range | The three pairs themselves are confirmed. The app shows no syllabus codes, so a wrong mapping cannot bite, but confirm before ever adding codes to the rows. |
+| Economics at SEC, code K343 | `subjects.json` → `economics` | SEAB syllabus list for the 2027 SEC | New subject, marked provisional and "selected schools". If it is not offered at SEC after all, delete the row. |
+| Drama, Design and Technology, and Music at G2 | `subjects.json` | SEAB syllabus list | Listed and marked provisional. The G3 versions are solid; the G2 versions were reconstructed from search summaries. |
+| Exercise and Sports Science SEC code and level span | `subjects.json` → `ess` | SEAB | Marked provisional, "selected schools". |
+| Higher Art and Higher Music school gating | `subjects.json` | MOE AEP and MEP pages | Modelled as G3 at selected schools. Confirm the programme names have not changed. |
+| Per school subject availability | the `availability: "selected"` tags | MOE SchoolFinder and your own school's offer | The tags say "selected schools", never which ones. The disclaimer under the subject list, and the sheet behind it, carry the SchoolFinder link. |
+
+Since the last pass, one big item moved from this table to confirmed: **Combined Humanities**. One of Humanities (Social Studies, Geography), (Social Studies, History) or (Social Studies, Literature in English) is compulsory for every G2 and G3 student, Social Studies is never standalone, pure Humanities subjects are additive with an anti duplication rule, SEC codes K229 to K231 and K335 to K339. The app now models exactly that.
 
 Also unverified: whether Mathematics at G3 is a hard JC requirement or merely expected. It is currently modelled as `soft`, so it appears in the checklist but does not affect reach state. That is the cautious direction, and it is a guess.
 

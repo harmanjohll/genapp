@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "MOE Full Subject-Based Banding subject offerings and SEAB syllabus lists, cross-read against school Sec 2 subject selection briefings",
-    "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+    "source": "SEAB SEC 2027 syllabus listings (G1/G2/G3 school candidates), MOE course and applied subject pages, school Sec 3 option booklets. K codes verified by syllabus PDF title where marked confirmed.",
+    "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
     "accessed": "2026-07-31",
     "units": "subject levels G1, G2, G3",
-    "notes": "The national picture, not a promise about any one school. Schools run maybe fifteen of these. Teachers can trim the list to their own offer in the teacher layer. Items marked provisional could not be read from a primary MOE or SEAB page. See OPEN_QUESTIONS.md."
+    "notes": "The national picture, not a promise about any one school. Schools run subsets, and the subjects marked selected are offered only at schools approved to run them. Teachers can trim the list to their school in the teacher layer. No syllabus codes are shown to students: the Combined Science pair to code mapping is unverified and the app never needs it. Items marked provisional could not be verified against a primary SEAB PDF title. Third languages (MOELC, PSLE gated) and MTL B (performance triggered) are deliberately not planner rows; see the availability sheet."
   },
   "levelInfo": {
     "G1": { "label": "G1", "name": "General 1", "plain": "The foundation, with a lot of practical work.", "grading": "Graded A to E.", "status": "confirmed" },
@@ -16,11 +16,17 @@
     "body": "Students change them every year.",
     "status": "confirmed"
   },
+  "availabilityNote": {
+    "line": "Schools offer different subsets of these. Your school's list is the real one.",
+    "sheet": "Not every school runs every subject, and that is normal. Subjects tagged selected schools are approved at some schools only. A school's own subject list can also change between cohorts. Check yours on MOE SchoolFinder, at open house, or with your form teacher. Third languages run separately at the MOE Language Centre for eligible students, and MTL B exists for students who find Mother Tongue very heavy going; both are conversations with your school.",
+    "schoolfinder": "https://www.moe.gov.sg/schoolfinder",
+    "status": "confirmed"
+  },
   "groups": [
     { "id": "core", "label": "Everyone takes these" },
     { "id": "maths_extra", "label": "More Mathematics" },
-    { "id": "science", "label": "Science" },
-    { "id": "humanities", "label": "Humanities" },
+    { "id": "science", "label": "Science", "note": "At G2, science comes as a pair. Single sciences are G3." },
+    { "id": "humanities", "label": "Humanities", "note": "At G2 and G3, one Humanities pair is part of the package. Single subjects can come on top." },
     { "id": "elective", "label": "Electives" }
   ],
   "subjects": [
@@ -37,6 +43,7 @@
     { "id": "hmtl", "name": "Higher Mother Tongue", "shortName": "Higher MTL", "group": "core", "levels": ["G3"], "compulsory": false,
       "doing": "The same language, taken further, with harder writing.",
       "likeIf": "the language is already a strength",
+      "note": "Offered on strength in the language, usually beside a mostly G3 load. Ask your school.",
       "showsUp": ["Can count for JC", "Teaching, media", "Universities in the region"], "status": "provisional" },
 
     { "id": "maths", "name": "Mathematics", "shortName": "Maths", "group": "core", "levels": ["G1","G2","G3"], "compulsory": true,
@@ -48,113 +55,138 @@
       "doing": "A second, harder Mathematics. Calculus and trigonometry taken further.",
       "likeIf": "Maths is what you would do anyway",
       "showsUp": ["JC science routes", "Engineering diplomas", "An easier first year"],
-      "caution": "Worth taking because you like it, not to look strong.", "status": "provisional" },
+      "caution": "Worth taking because you like it, not to look strong.", "status": "confirmed" },
 
     { "id": "science_g1", "name": "Science", "group": "science", "levels": ["G1"], "compulsory": false,
       "doing": "Build it, test it, measure it, find out why it broke.",
       "likeIf": "you would rather find out by doing it",
-      "showsUp": ["Nitec engineering", "Aerospace and electrical", "Fixing what stopped"], "status": "provisional" },
+      "showsUp": ["Nitec engineering", "Aerospace and electrical", "Fixing what stopped"], "status": "confirmed" },
 
-    { "id": "physics", "name": "Physics", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "sci_pc", "name": "Science (Physics, Chemistry)", "shortName": "Sci (Phy, Chem)", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+      "doing": "Two sciences in one subject: forces and circuits beside reactions.",
+      "likeIf": "you want science broad, with a technical lean",
+      "showsUp": ["Engineering diplomas", "Most poly courses", "Keeps both doors open"], "status": "confirmed" },
+
+    { "id": "sci_pb", "name": "Science (Physics, Biology)", "shortName": "Sci (Phy, Bio)", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+      "doing": "Two sciences in one subject: machines beside living things.",
+      "likeIf": "you like both the lab and the field",
+      "showsUp": ["Health and engineering", "Sport science", "An unusual, honest mix"], "status": "confirmed" },
+
+    { "id": "sci_cb", "name": "Science (Chemistry, Biology)", "shortName": "Sci (Chem, Bio)", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+      "doing": "Two sciences in one: what things are made of, alive and not.",
+      "likeIf": "bodies, food and medicine pull at you",
+      "showsUp": ["Nursing, allied health", "Food science", "Most poly health courses"], "status": "confirmed" },
+
+    { "id": "physics", "name": "Physics", "group": "science", "levels": ["G3"], "compulsory": false,
       "doing": "Work out why things move, heat up and fall over.",
       "likeIf": "you take things apart to see inside",
       "showsUp": ["Engineering", "Aviation and marine", "Anything with a motor"], "status": "confirmed" },
 
-    { "id": "chemistry", "name": "Chemistry", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "chemistry", "name": "Chemistry", "group": "science", "levels": ["G3"], "compulsory": false,
       "doing": "Find out what things are made of, and what reacts with what.",
       "likeIf": "you like a practical with a visible result",
       "showsUp": ["Pharma and food science", "Nursing, allied health", "Jurong Island"], "status": "confirmed" },
 
-    { "id": "biology", "name": "Biology", "group": "science", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "biology", "name": "Biology", "group": "science", "levels": ["G3"], "compulsory": false,
       "doing": "Study living things, from one cell up to a whole forest.",
       "likeIf": "you are curious about bodies and disease",
       "showsUp": ["Nursing, biomedical", "Food and marine science", "Your own health"], "status": "confirmed" },
 
-    { "id": "combined_science", "name": "Combined Science", "group": "science", "levels": ["G2","G3"], "compulsory": false,
-      "doing": "Two sciences in one subject. Broader than one, lighter than two.",
-      "likeIf": "you want to keep science open",
-      "showsUp": ["Most poly courses", "Health and engineering", "Keeps doors wide"],
-      "caution": "Some courses ask for a single science. Check the course, not the rumour.", "status": "provisional" },
+    { "id": "hum_ss_geog", "name": "Humanities (Social Studies, Geography)", "shortName": "Hum (SS, Geog)", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "coreHumanities": true,
+      "doing": "How Singapore is governed, beside where people and water go.",
+      "likeIf": "you want the map and the argument",
+      "showsUp": ["Half is Social Studies", "Urban planning, climate work", "Reading the news properly"], "status": "confirmed" },
 
-    { "id": "humanities_g1", "name": "Humanities", "group": "humanities", "levels": ["G1"], "compulsory": false,
-      "doing": "Look at how Singapore and the world got to be this way.",
-      "likeIf": "you argue about what is unfair",
-      "showsUp": ["Service and community roles", "Working with people", "Reading the news properly"], "status": "provisional" },
-
-    { "id": "social_studies", "name": "Social Studies", "group": "humanities", "levels": ["G2","G3"], "compulsory": false,
-      "doing": "Examine how Singapore is governed, and weigh evidence you did not choose.",
-      "likeIf": "you want reasons, not just complaints",
-      "showsUp": ["Public service, law", "Social work, journalism", "Knowing what you vote"],
-      "note": "At G2 and G3 this is normally taken with one humanities elective.", "status": "confirmed" },
-
-    { "id": "history", "name": "History", "group": "humanities", "levels": ["G2","G3"], "compulsory": false,
-      "doing": "Work from sources that disagree and build an argument that holds.",
+    { "id": "hum_ss_hist", "name": "Humanities (Social Studies, History)", "shortName": "Hum (SS, Hist)", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "coreHumanities": true,
+      "doing": "How Singapore is governed, beside sources that disagree about the past.",
       "likeIf": "you want to know who benefits from the story",
-      "showsUp": ["Law, policy, journalism", "Any essay degree", "Reading a headline twice"], "status": "confirmed" },
+      "showsUp": ["Half is Social Studies", "Law, policy, journalism", "Reading a headline twice"], "status": "confirmed" },
 
-    { "id": "geography", "name": "Geography", "group": "humanities", "levels": ["G2","G3"], "compulsory": false,
-      "doing": "Study why people, water, weather and money end up where they do.",
-      "likeIf": "you like maps, patterns and fieldwork",
+    { "id": "hum_ss_lit", "name": "Humanities (Social Studies, Literature in English)", "shortName": "Hum (SS, Lit)", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "coreHumanities": true,
+      "doing": "How Singapore is governed, beside reading closely enough to say something new.",
+      "likeIf": "you have argued about what a film meant",
+      "showsUp": ["Half is Social Studies", "Law, teaching, media", "Reading people well"], "status": "confirmed" },
+
+    { "id": "geography", "name": "Geography", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "conflictsWith": "hum_ss_geog",
+      "doing": "The full subject: people, water, weather and money, with fieldwork.",
+      "likeIf": "you like maps, patterns and being outside",
       "showsUp": ["Urban planning, logistics", "Climate work, growing fast", "Why your street floods"], "status": "confirmed" },
 
-    { "id": "literature", "name": "Literature in English", "shortName": "Literature", "group": "humanities", "levels": ["G2","G3"], "compulsory": false,
-      "doing": "Read closely enough to say something that is not obvious.",
-      "likeIf": "you have argued about what a film meant",
-      "showsUp": ["Law, teaching, media", "Any essay degree", "Reading people well"], "status": "confirmed" },
+    { "id": "history", "name": "History", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "conflictsWith": "hum_ss_hist",
+      "doing": "The full subject: work from sources that disagree, build the argument.",
+      "likeIf": "you argue back at documentaries",
+      "showsUp": ["Law, policy, journalism", "Any essay degree", "Seeing patterns repeat"], "status": "confirmed" },
+
+    { "id": "literature", "name": "Literature in English", "shortName": "Literature", "group": "humanities", "levels": ["G2","G3"], "compulsory": false, "conflictsWith": "hum_ss_lit",
+      "doing": "The full subject: novels, plays and poems, read properly.",
+      "likeIf": "books do things to you",
+      "showsUp": ["Law, teaching, media", "Any essay degree", "Writing that lands"], "status": "confirmed" },
 
     { "id": "art", "name": "Art", "group": "elective", "levels": ["G1","G2","G3"], "compulsory": false,
       "doing": "Make work, defend it, and learn to look at other work properly.",
       "likeIf": "you already make things nobody asked for",
       "showsUp": ["Design and media", "NAFA and LASALLE", "Portfolio admission"], "status": "confirmed" },
 
+    { "id": "higher_art", "name": "Higher Art", "group": "elective", "levels": ["G3"], "compulsory": false, "availability": "selected",
+      "doing": "Art taken further, in the Art Elective Programme schools.",
+      "likeIf": "art is the centre, not the side",
+      "showsUp": ["AEP schools only", "Portfolio routes", "Art school admission"], "status": "provisional" },
+
     { "id": "dt", "name": "Design and Technology", "shortName": "Design and Tech", "group": "elective", "levels": ["G1","G2","G3"], "compulsory": false,
       "doing": "Given a real problem, design and build the thing that solves it.",
       "likeIf": "you would rather hold a tool than a highlighter",
-      "showsUp": ["Engineering, product design", "ITE engineering", "Making it, not describing"], "status": "confirmed" },
+      "showsUp": ["Engineering, product design", "ITE engineering", "Making, not describing"], "status": "provisional" },
 
-    { "id": "nfs", "name": "Nutrition and Food Science", "shortName": "Food Science", "group": "elective", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "nfs", "name": "Nutrition and Food Science", "shortName": "Food Science", "group": "elective", "levels": ["G1","G2","G3"], "compulsory": false,
       "doing": "Study what food is made of, and what it does in you.",
       "likeIf": "you cook, or want to know what you eat",
-      "showsUp": ["Food science, culinary", "Hospitality, health", "Food security work"], "status": "provisional" },
-
-    { "id": "fce", "name": "Food and Consumer Education", "shortName": "Food and Consumer", "group": "elective", "levels": ["G1"], "compulsory": false,
-      "doing": "Plan, cost, cook and evaluate real meals.",
-      "likeIf": "you want skills you will use next week",
-      "showsUp": ["ITE culinary, hospitality", "Working kitchens", "Feeding yourself well"], "status": "provisional" },
+      "showsUp": ["Food science, culinary", "Hospitality, health", "Food security work"], "status": "confirmed" },
 
     { "id": "music", "name": "Music", "group": "elective", "levels": ["G1","G2","G3"], "compulsory": false,
       "doing": "Perform, compose, and hear what is going on inside a piece.",
       "likeIf": "you already play, write or produce",
-      "showsUp": ["Music and audio production", "NAFA, LASALLE, Conservatory", "Sound and live events"], "status": "confirmed" },
+      "showsUp": ["Music and audio production", "NAFA, LASALLE, Conservatory", "Sound and live events"], "status": "provisional" },
+
+    { "id": "higher_music", "name": "Higher Music", "group": "elective", "levels": ["G3"], "compulsory": false, "availability": "selected",
+      "doing": "Music taken further, in the Music Elective Programme schools.",
+      "likeIf": "music is the centre, not the side",
+      "showsUp": ["MEP schools only", "Conservatory routes", "Composition and performance"], "status": "provisional" },
 
     { "id": "poa", "name": "Principles of Accounts", "shortName": "Accounts", "group": "elective", "levels": ["G2","G3"], "compulsory": false,
       "doing": "Learn how money moving through a business is recorded and read.",
       "likeIf": "you like things to balance",
       "showsUp": ["Accountancy, banking", "Running your own thing", "Finance, big here"], "status": "confirmed" },
 
-    { "id": "computing", "name": "Computing", "group": "elective", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "economics", "name": "Economics", "group": "elective", "levels": ["G3"], "compulsory": false, "availability": "selected",
+      "doing": "Why prices, wages and shortages happen, argued with evidence.",
+      "likeIf": "you ask why things cost what they cost",
+      "note": "New at SEC. Few schools run it yet. Ask yours.",
+      "showsUp": ["JC Economics, early", "Business and policy", "Reading the Budget"], "status": "provisional" },
+
+    { "id": "computing", "name": "Computing", "group": "elective", "levels": ["G1","G2","G3"], "compulsory": false, "availability": "selected",
       "doing": "Write programs, work with data, and find out why software breaks.",
       "likeIf": "you like building what does not exist yet",
+      "note": "Part of the G1 package from 2026. At G2 and G3, selected schools.",
       "showsUp": ["IT, cybersecurity, data", "Every industry now", "Making your own tools"], "status": "confirmed" },
 
     { "id": "ebs", "name": "Elements of Business Skills", "shortName": "Business Skills", "group": "elective", "levels": ["G1"], "compulsory": false,
       "doing": "Learn how a small business actually runs, day to day.",
       "likeIf": "you like people and being useful straight away",
-      "showsUp": ["ITE business, retail", "Retail and service work", "Running a stall"], "status": "provisional" },
+      "showsUp": ["ITE business, retail", "Retail and service work", "Running a stall"], "status": "confirmed" },
 
-    { "id": "ess", "name": "Exercise and Sports Science", "shortName": "Sports Science", "group": "elective", "levels": ["G3"], "compulsory": false,
+    { "id": "ess", "name": "Exercise and Sports Science", "shortName": "Sports Science", "group": "elective", "levels": ["G3"], "compulsory": false, "availability": "selected",
       "doing": "Study how the body performs, trains and recovers, and test it.",
       "likeIf": "sport is a serious part of your life",
       "showsUp": ["Sport science diplomas", "Coaching, physiotherapy", "Republic Poly, Sports School"], "status": "provisional" },
 
-    { "id": "drama", "name": "Drama", "group": "elective", "levels": ["G2","G3"], "compulsory": false,
+    { "id": "drama", "name": "Drama", "group": "elective", "levels": ["G2","G3"], "compulsory": false, "availability": "selected",
       "doing": "Devise, rehearse and perform work, and analyse why it lands.",
       "likeIf": "you will be watched while getting it wrong",
       "showsUp": ["Performing arts, media", "LASALLE, NAFA, SOTA", "Any job needing presence"], "status": "provisional" },
 
-    { "id": "electronics", "name": "Electronics", "group": "elective", "levels": ["G1"], "compulsory": false,
+    { "id": "electronics", "name": "Electronics", "group": "elective", "levels": ["G3"], "compulsory": false, "availability": "selected",
       "doing": "Build real circuits and find the fault when they stop.",
       "likeIf": "you like a soldering iron and a puzzle",
-      "showsUp": ["ITE electronics", "Semiconductors, big here", "Fixing what others bin"], "status": "provisional" }
+      "showsUp": ["Engineering diplomas", "Semiconductors, big here", "Fixing what others bin"], "status": "provisional" }
   ]
 }
