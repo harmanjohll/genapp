@@ -28,6 +28,8 @@ These are not style preferences and breaking one breaks the design.
 - **Every age offers at least 8 eligible chance cards on every path,** counting flag and band gates. Enforced by `runJourneySweep()`, which also plays 12 fixed strategy simulations end to end and asserts every one finishes with at least 3 doors.
 - **`conflictsWith` on a subject renders a caution, never a lock.** The anti duplication rule (pure History beside Humanities with History) is advice about what a school will allow, not something this app enforces.
 - **The branches converge from age 34.** Do not add late variants. The merge is the argument.
+- **The combination is a starting position, never a starting personality.** A run carries the subjects the student picked, and those subjects may do exactly two things: append choices (`needsSubject`, capped at two a turn) and bias which chance cards turn up (`card.subjects`, a preference over the pool and never a gate). They must never set a path, open or withhold a door, change the ending, or produce a label about the kind of person the student is. A named archetype is the thing this design refuses: a type handed to a fourteen year old sticks, and sticking is the whole problem.
+- **No combination may play a smaller game than no combination at all.** Enforced by the sweep across eight fixtures including an all G1 plan: with the same choices and the same seed, no plan may finish with fewer doors than an empty one. This is the subject engine's monotonicity rule applied to the story.
 - **The want is answered, never graded.** The ending opens by answering the thing the player said they wanted at 15. "Not sure yet" is a first class want with its own ending line, not a fallback.
 - **Nothing is pinned to the top of the page.** The header scrolls away. If you pin something there again, re run the clipping sweep first.
 - **Every setback chance card keeps its `onwardMoves`, with the amounts intact.** The specific dollar figures are the reason a setback reads as survivable rather than frightening.
@@ -67,7 +69,9 @@ python3 -m http.server 8000     # from the repo root
 #   → "Reach invariant: PASS"   (dead ends, row status, railName, monotonicity)
 #   → "Journey sweep: PASS"     (stages resolve per path, 2+ responses per card,
 #                                stretch on every needsAsk, 2+ one point choices
-#                                per turn, 8+ cards per age, 12 sims finish 3+ doors)
+#                                per turn, 8+ cards per age, 136 sims across 8
+#                                combinations, none playing a smaller game than
+#                                an empty plan)
 #   → "Copy budget: PASS"       (field caps, dashes, first paint)
 ```
 

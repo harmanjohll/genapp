@@ -79,7 +79,11 @@ Journey went the other way on purpose. It was capped at 120 words and had exactl
 
 ## Journey, the game
 
-Before turn one you pick a want: what do you want by twenty five, with "Not sure yet" as a first class answer. The ending opens by answering it.
+**It starts from your actual subjects.** Journey opens with your combination, taken straight from the plan you built in Now, or picked there and then if you have not built one yet. At fifteen the game says "this year you take Chemistry, Art and Computing", using your own list, and your subjects add choices and change which chances turn up.
+
+What they never do is decide anything. No archetypes, no "you are the practical one", no path set for you, no door opened or withheld. The combination is where you are standing, not who you are, and the sweep plays eight combinations including an all G1 plan to assert that none of them plays a smaller game than picking nothing at all.
+
+Then you pick a want: what do you want by twenty five, with "Not sure yet" as a first class answer. The ending opens by answering it.
 
 Each turn gives two attention points. Every choice costs 1 or 2 and shows what it grows, so you spend the turn on one big thing or two small things. Nothing is subtracted from any stat and the budget resets every turn: the only cost is the thing you did not do.
 
@@ -99,7 +103,7 @@ Four families, set by a choice at 17, resolved against every stage after it.
 
 The convergence is the point. By your mid thirties the route you took at seventeen has stopped deciding what is available to you, and letting the content merge says that better than a sentence would.
 
-13 stages, ages 15 to 48, 53 chance cards including 10 callbacks. Every age has at least 8 eligible cards on every path, every card has at least 2 responses, and 12 fixed strategy simulations play end to end with at least 3 doors each. All of it is asserted by `runJourneySweep()`.
+13 stages, ages 15 to 48, 53 chance cards including 10 callbacks. Every age has at least 8 eligible cards on every path, every card has at least 2 responses, and 136 simulations across 8 combinations play end to end with at least 3 doors each. All of it is asserted by `runJourneySweep()`.
 
 ## Layout
 

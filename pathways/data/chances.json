@@ -48,7 +48,17 @@
       "asks": {
         "disposition": "optimism",
         "min": 1
-      }
+      },
+      "subjects": [
+        "science_g1",
+        "sci_pc",
+        "sci_pb",
+        "sci_cb",
+        "physics",
+        "chemistry",
+        "biology",
+        "amaths"
+      ]
     },
     {
       "id": "level_up_offer",
@@ -505,7 +515,17 @@
       "asks": {
         "disposition": "risk",
         "min": 2
-      }
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama",
+        "dt",
+        "computing",
+        "ess"
+      ]
     },
     {
       "id": "small_side_thing",
@@ -552,7 +572,13 @@
       "asks": {
         "disposition": "curiosity",
         "min": 1
-      }
+      },
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt",
+        "art"
+      ]
     },
     {
       "id": "wrong_course",
@@ -652,7 +678,14 @@
       "asks": {
         "disposition": "risk",
         "min": 2
-      }
+      },
+      "subjects": [
+        "computing",
+        "ebs",
+        "poa",
+        "economics",
+        "ess"
+      ]
     },
     {
       "id": "someone_asks",
@@ -696,7 +729,12 @@
       "asks": {
         "disposition": "risk",
         "min": 2
-      }
+      },
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt"
+      ]
     },
     {
       "id": "upgrade_window",
@@ -1555,7 +1593,13 @@
       "asks": {
         "disposition": "risk",
         "min": 2
-      }
+      },
+      "subjects": [
+        "amaths",
+        "physics",
+        "chemistry",
+        "biology"
+      ]
     },
     {
       "id": "jc_useless",
@@ -1658,7 +1702,13 @@
       "asks": {
         "disposition": "risk",
         "min": 2
-      }
+      },
+      "subjects": [
+        "dt",
+        "art",
+        "computing",
+        "nfs"
+      ]
     },
     {
       "id": "poly_ceiling",
@@ -1976,7 +2026,14 @@
       "asks": {
         "disposition": "persistence",
         "min": 3
-      }
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama"
+      ]
     },
     {
       "id": "arts_commission",
@@ -2027,7 +2084,14 @@
       "asks": {
         "disposition": "risk",
         "min": 3
-      }
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama"
+      ]
     },
     {
       "id": "arts_steady",
@@ -2158,6 +2222,18 @@
           "label": "Pick the lighter option this term",
           "outcome": "A sensible term. The elective runs every year, and the name stays on the list where you can find it."
         }
+      ],
+      "subjects": [
+        "dt",
+        "electronics",
+        "nfs",
+        "ess",
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama",
+        "computing"
       ]
     },
     {
@@ -2200,6 +2276,14 @@
           "label": "Keep your answer small",
           "outcome": "You keep it modest and the interview stays pleasant. The bigger version keeps, for a day you feel like telling it."
         }
+      ],
+      "subjects": [
+        "hum_ss_geog",
+        "hum_ss_hist",
+        "hum_ss_lit",
+        "geography",
+        "history",
+        "literature"
       ]
     },
     {
@@ -2278,6 +2362,12 @@
           "label": "Keep it brief and move on",
           "outcome": "You give two tidy lines and the interview moves on. The thing sits quietly on your record, still yours."
         }
+      ],
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt",
+        "art"
       ]
     },
     {

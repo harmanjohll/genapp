@@ -12,11 +12,12 @@
 
 import { esc, onAction } from '../components/dom.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
+import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
   respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN,
 } from '../engine/journey.js';
-import { getState, saveRun, clearRuns, setLiveRun, currentYear } from '../state.js';
+import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
 let PATHS = {};
 let DOORS = {};
@@ -73,11 +74,83 @@ export function resetJourney() {
 
 function startRun(data, want) {
   const j = data.journey;
+  const st = getState();
   stages = stagesFor(j.stages, Math.max(15, currentYear().age));
-  const n = getState().runs.length + 1;
-  run = createRun(stages[0].age, `Story ${n}`, want);
+  const n = st.runs.length + 1;
+  // The run carries a copy of the plan, not a reference to it. A student who
+  // edits their subjects in NOW next week must not silently rewrite the story
+  // they already played, and the compare screen has to hold two combinations
+  // at once for the comparison to mean anything.
+  run = createRun(stages[0].age, `Story ${n}`, want, st.plan);
   picked = []; justResolved = null;
   setLiveRun(run);
+}
+
+/** The subjects in a plan, as data rows, in subject list order. */
+function planRows(data, plan) {
+  const all = (data.subjects && data.subjects.subjects) || [];
+  return all.filter((s) => plan && plan[s.id]).map((s) => ({ ...s, level: plan[s.id] }));
+}
+
+function subjectChips(rows, max) {
+  const shown = max ? rows.slice(0, max) : rows;
+  const rest = rows.length - shown.length;
+  return shown
+    .map((s) => `<span class="subjchip">${esc(s.shortName || s.name)}<b class="lv lv-${s.level.toLowerCase()}">${esc(s.level)}</b></span>`)
+    .join('') + (rest > 0 ? `<span class="subjchip more">and ${rest} more</span>` : '');
+}
+
+/**
+ * The picker lives in the sheet rather than on the page. Thirty one subject
+ * names and ninety level chips would be the loudest thing in the mode and
+ * would bury the one question the intro is actually asking. It writes to the
+ * same plan Mode NOW uses, so picking here fills that in too.
+ */
+function openPicker(data, trigger) {
+  const jc = data.copy.journey;
+  const groups = data.subjects.groups || [];
+  const all = data.subjects.subjects || [];
+
+  const paint = () => {
+    const plan = getState().plan;
+    const body = groups.map((g) => {
+      const rows = all.filter((s) => s.group === g.id);
+      if (!rows.length) return '';
+      return `
+        <div class="pk-group">
+          <p class="caps">${esc(g.label)}</p>
+          ${rows.map((s) => `
+            <div class="pk-row">
+              <span class="pk-name">${esc(s.shortName || s.name)}</span>
+              <span class="pk-lv">
+                ${(s.levels || []).map((lv) => `
+                  <button type="button" class="lvchip lv-${lv.toLowerCase()} ${plan[s.id] === lv ? 'on' : ''}"
+                    data-action="pklv" data-id="${esc(s.id)}" data-lv="${lv}" data-name="${esc(s.shortName || s.name)}"
+                    aria-pressed="${plan[s.id] === lv}">${lv}</button>`).join('')}
+              </span>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+    const n = Object.keys(plan).length;
+    return `
+      <h2 id="sheet-title">${esc(jc.comboPick)}</h2>
+      <p class="small mute">${esc(jc.comboSheet)}</p>
+      <div class="picker">${body}</div>
+      <div class="btn-row" style="margin-top:var(--s-4)">
+        <button class="btn accent" type="button" data-action="pkdone">${esc(jc.comboDone)}${n ? ` (${n})` : ''}</button>
+      </div>`;
+  };
+
+  const host = openSheet(paint(), trigger);
+  onSheetAction({
+    pklv: (btn) => {
+      const { id, lv, name } = btn.dataset;
+      const cur = getState().plan[id];
+      setSubjectLevel(id, cur === lv ? null : lv, name);
+      host.innerHTML = paint();
+    },
+    pkdone: () => { closeSheet(); rerender(); },
+  });
 }
 
 // --------------------------------------------------------------------------
@@ -86,6 +159,27 @@ function startRun(data, want) {
 function introScreen(host, data, st) {
   const jc = data.copy.journey;
   const wants = data.journey.wants || [];
+  const rows = planRows(data, st.plan);
+  const hasPlan = rows.length > 0;
+
+  // Combination first, want second. The order matters: the combination is a
+  // fact about this year and the want is a guess about ten years out, and
+  // asking for the guess first makes the fact feel like a consequence of it.
+  const comboBlock = `
+    <div class="combobox">
+      <p class="caps">${esc(jc.comboHead)}</p>
+      ${hasPlan ? `
+        <p class="chips subjchips">${subjectChips(rows)}</p>
+        <div class="btn-row" style="margin-top:var(--s-3)">
+          <button class="btn ghost small" type="button" data-action="pick">${esc(jc.comboChange)}</button>
+        </div>` : `
+        <p class="lede" style="margin:var(--s-2) 0">${esc(jc.comboPrompt)}</p>
+        <div class="btn-row">
+          <button class="btn accent" type="button" data-action="pick">${esc(jc.comboPick)}</button>
+        </div>`}
+      <p class="micro mute" style="margin-top:var(--s-3)">${esc(jc.comboNote)}</p>
+    </div>`;
+
   const runsList = st.runs.length ? `
     <div class="section">
       <p class="caps">${esc(jc.pickTwo)}</p>
@@ -103,15 +197,17 @@ function introScreen(host, data, st) {
         <p class="caps">Journey</p>
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">You choose. Things turn up. Nothing ends it.</p>
-        <div class="wantbox">
+        ${comboBlock}
+        <div class="wantbox ${hasPlan ? '' : 'waiting'}">
           <p class="want-q">${esc(jc.wantPrompt)}</p>
-          <p class="micro mute">${esc(jc.wantHint)}</p>
-          <div class="grid two" style="margin-top:var(--s-3)">
-            ${wants.map((w) => `
-              <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
-                <span class="want" style="font-size:1rem">${esc(w.label)}</span>
-              </button>`).join('')}
-          </div>
+          <p class="micro mute">${esc(hasPlan ? jc.wantHint : jc.comboGate)}</p>
+          ${hasPlan ? `
+            <div class="grid two" style="margin-top:var(--s-3)">
+              ${wants.map((w) => `
+                <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
+                  <span class="want" style="font-size:1rem">${esc(w.label)}</span>
+                </button>`).join('')}
+            </div>` : ''}
         </div>
         ${runsList}
         ${st.runs.length ? `<button class="btn ghost small" type="button" data-action="clearruns" style="margin-top:var(--s-4)">Clear stories</button>` : ''}
@@ -120,6 +216,7 @@ function introScreen(host, data, st) {
   focusH1(host);
   bindGlossary(host);
   onAction(host, {
+    pick: (btn) => openPicker(data, btn),
     want: (btn) => {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
       startRun(data, w && w.id !== 'unsure' ? { id: w.id, label: w.label } : null);
@@ -167,7 +264,7 @@ function turnScreen(host, stage, data) {
 
   host.innerHTML = shell(`
     ${turnMeta(stage)}
-    <p class="lede j-sit">${decorate(stage.situation)}</p>
+    <p class="lede j-sit">${situation(data, stage)}</p>
     <div class="pointsrow" role="status">
       <span class="caps">${esc(jc.points)}</span>
       <span class="pts" aria-label="${left} of ${POINTS_PER_TURN} points left">${'●'.repeat(left)}${'○'.repeat(spent)}</span>
@@ -214,7 +311,7 @@ function forkScreen(host, stage, data) {
     <div class="wrap">
       <div class="fork fade-up">
         ${turnMeta(stage)}
-        <p class="lede j-sit" style="max-width:44ch">${decorate(stage.situation)}</p>
+        <p class="lede j-sit" style="max-width:44ch">${situation(data, stage)}</p>
         <div class="fork-choices" role="group" aria-label="Your choice">
           ${pool.map((c, i) => `
             <button class="choice fork-c" type="button" data-action="fork" data-i="${i}">
@@ -351,6 +448,12 @@ function endingScreen(host, data, st) {
           <p class="caps">${esc(jc.doorsHead)}</p>
           <p class="chips doorchips">${run.doors.map((d) => `<span>${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
         </div>
+        ${planRows(data, run.plan).length ? `
+          <div class="section">
+            <p class="caps">${esc(jc.comboRail)}</p>
+            <p class="chips subjchips">${subjectChips(planRows(data, run.plan))}</p>
+            <p class="micro mute">${esc(jc.comboNote)}</p>
+          </div>` : ''}
         ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At thirty eight you wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
@@ -359,6 +462,7 @@ function endingScreen(host, data, st) {
           <div class="btn-row" style="margin-top:var(--s-3)">
             <button class="btn accent" type="button" data-action="again">${esc(jc.playAgain)}</button>
             ${st.runs.length >= 2 ? `<button class="btn" type="button" data-action="compare2">${esc(jc.compareCta)}</button>` : ''}
+            <button class="btn ghost" type="button" data-action="tonow">${esc(jc.seeInNow)}</button>
             <button class="btn ghost" type="button" data-action="done">Back</button>
           </div>
         </div>
@@ -369,6 +473,9 @@ function endingScreen(host, data, st) {
   onAction(host, {
     again: () => { run = null; rerender(); },
     compare2: () => showDiff(host, data, st.runs.slice(-2)),
+    // The loop closes here: the combination you just played forward is the one
+    // sitting in NOW, where you can see what it currently reaches.
+    tonow: () => { run = null; setMode('now'); },
     done: () => { run = null; rerender(); },
   });
 }
@@ -398,6 +505,9 @@ function showDiff(host, data, pair) {
           <div></div>
           <div class="diff-want">${d.wants[0] ? esc(d.wants[0].label) : 'Not sure yet'}</div>
           <div class="diff-want">${d.wants[1] ? esc(d.wants[1].label) : 'Not sure yet'}</div>
+          <div></div>
+          <div class="diff-combo">${subjectChips(planRows(data, d.plans[0]), 4) || '<span class="faint">·</span>'}</div>
+          <div class="diff-combo">${subjectChips(planRows(data, d.plans[1]), 4) || '<span class="faint">·</span>'}</div>
           ${rows}
         </div>
         <div class="section">
@@ -414,7 +524,7 @@ function showDiff(host, data, pair) {
           </div></div>` : ''}
         <div class="diff-verdict">
           <h2>${esc(jc.verdictHead)}</h2>
-          <p style="margin-bottom:0">${esc(jc.verdict)}</p>
+          <p style="margin-bottom:0">${esc(d.sameCombination ? jc.verdict : jc.verdictCombo)}</p>
         </div>
         <div class="btn-row" style="margin-top:var(--s-5)">
           <button class="btn ghost" type="button" data-action="back">Back</button>
@@ -452,8 +562,12 @@ function rail(data) {
     return `<div class="disp-row"><span>${esc(dispLabel(k))}</span>
       <span class="disp-track" role="img" aria-label="${esc(dispLabel(k))}, ${v}"><span class="disp-fill" style="width:${Math.round((v / max) * 100)}%"></span></span><span></span></div>`;
   }).join('');
+  const combo = planRows(data, run.plan);
   return `
-    <p class="caps">${esc(jc.doorsHead)}</p>
+    ${combo.length ? `
+      <p class="caps">${esc(jc.comboRail)}</p>
+      <p class="chips subjchips">${subjectChips(combo, 6)}</p>` : ''}
+    <p class="caps" ${combo.length ? 'style="margin-top:var(--s-4)"' : ''}>${esc(jc.doorsHead)}</p>
     <p class="chips doorchips">${run.doors.map((d) => `<span>${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">None yet. They come.</span>'}</p>
     <p class="caps" style="margin-top:var(--s-4)">${esc(jc.carryHead)}</p>
     <div class="disp-bars">${bars}</div>
@@ -522,6 +636,26 @@ function dispLabel(k) {
 
 function fill(tpl, vars) {
   return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
+}
+
+/**
+ * Name up to three of the student's own subjects, preferring the ones they
+ * chose over the ones everybody takes. A stage that says "you take Chemistry,
+ * Art and Computing" is the cheapest possible proof that the game is being
+ * played by this student rather than at them.
+ */
+function subjectsPhrase(data, r) {
+  const rows = planRows(data, r.plan);
+  const chosen = rows.filter((s) => !s.compulsory);
+  const use = (chosen.length ? chosen : rows).slice(0, 3).map((s) => s.shortName || s.name);
+  if (!use.length) return 'a combination you have not set yet';
+  if (use.length === 1) return use[0];
+  return `${use.slice(0, -1).join(', ')} and ${use[use.length - 1]}`;
+}
+
+/** Situation text, with the student's own subjects folded in where authored. */
+function situation(data, stage) {
+  return decorate(fill(stage.situation, { subjects: subjectsPhrase(data, run) }));
 }
 
 function focusH1(host) {

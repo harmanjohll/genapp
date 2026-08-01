@@ -75,6 +75,12 @@ The second version was measured before the rebuild: a full run was 29 taps and 1
 
 **Memory.** Choices set flags, ten callback cards name what the player did stages ago, and late stage outcomes vary with the route taken, so the merged years still remember the player's particular life.
 
+**The combination the student actually built.** A run starts from the subjects picked in Mode NOW, so the planning half and the playing half of the app finally refer to each other. At fifteen the game says "this year you take Chemistry, Art and Computing", using their own list.
+
+The design question here was whether to offer starting personas, and the answer is no. A persona tied to a subject combination is a personality verdict delivered before the first turn, and Gottfredson's circumscription is the reason not to hand one to a fourteen year old: an identity that arrives early narrows what a child will subsequently consider. So the combination is modelled as a position, not a person. It may append choices and bias which chances turn up. It may not set a path, open or withhold a door, or touch the ending.
+
+That restraint is checked rather than promised. The sweep plays eight fixture combinations, including an all G1 plan and a plan of one subject, across every path and strategy, and asserts that with identical choices no combination finishes with fewer doors than an empty plan. When the check first ran it failed on eight cases, which turned out to be the sweep's own fault rather than the game's: appending choices had shifted what a positional strategy landed on, so the two runs were not making the same decisions. The comparison now indexes only the choices every combination sees. A separate pass plays a run that takes every subject choice offered, so the new content is exercised rather than merely present.
+
 **Paths and shape.** A fork at 17 sets one of four families and every stage after resolves a variant against it; forks at 27 and 43 render full bleed with the age huge; 38 is a quiet reflection turn whose answer is never scored and reappears verbatim on the compare screen, since the serious games literature is consistent that in play reflection is where the learning happens. Branches are deliberately uneven: fully branched through the twenties, shared from 34. The convergence is the argument: by the mid thirties the route stops deciding what is available.
 
 The replay comparison is the point of the mode and arguably of the app. Two runs from the same start, side by side, both fine, with different wants and different doors.

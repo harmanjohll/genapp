@@ -110,7 +110,19 @@
     "sharedDoors": "You both hold",
     "onlyDoors": "Only this story holds",
     "verdictHead": "Both of those were fine.",
-    "verdict": "Same start, different choices. Neither story is the wrong one. Your starting point set the first step. It did not write the rest."
+    "verdict": "Same start, different choices. Neither story is the wrong one. Your starting point set the first step. It did not write the rest.",
+    "comboHead": "Your combination",
+    "comboPrompt": "Play forward from the subjects you are taking.",
+    "comboNone": "Nothing picked yet.",
+    "comboPick": "Pick your subjects",
+    "comboChange": "Change subjects",
+    "comboNote": "This is where your story starts. It does not decide where it ends.",
+    "comboGate": "Pick at least one subject, then choose what you want.",
+    "comboRail": "You take",
+    "comboSheet": "Tap a level. Nothing here is final, and you can change it any time.",
+    "comboDone": "That is my combination",
+    "seeInNow": "See this combination in Now",
+    "verdictCombo": "Different subjects, different first steps, and you are both holding doors. The combination started the story. It did not finish it."
   },
   "footerDoors": {
     "head": "This tool has three doors",
