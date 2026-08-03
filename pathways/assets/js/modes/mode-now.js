@@ -301,8 +301,14 @@ function subjectRow(s, level, yearId) {
 
 function tail(st, reaches, data) {
   const c = data.copy.chrome;
-  const n = Object.keys(st.plan).length;
-  const g3 = Object.values(st.plan).filter((l) => l === 'G3').length;
+  // Count the plan through the list on screen, not the raw store. The plan
+  // keeps levels for both phases, so after a year switch the raw count claims
+  // subjects the visible list does not show, and the chip reads as remembering
+  // a previous session. It was: the store is shared, the view is per year.
+  const visible = new Set(visibleSubjects(data, st).map((s) => s.id));
+  const counted = Object.entries(st.plan).filter(([id]) => visible.has(id));
+  const n = counted.length;
+  const g3 = counted.filter(([, l]) => l === 'G3').length;
   const L = data.copy.load;
   let verdict = '';
   if (n >= 3) {

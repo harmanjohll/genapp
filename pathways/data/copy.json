@@ -7,7 +7,7 @@
     "notes": "Every string the interface says in its own voice, in one file so the copy budget can be linted. Templates use {braces}. Keep each under its cap in engine/copy-budget.js."
   },
   "chrome": {
-    "brand": "Still Open",
+    "brand": "Paths",
     "modes": {
       "now": "Now",
       "journey": "Journey",
