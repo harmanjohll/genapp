@@ -28,6 +28,18 @@
 .modebar button:hover { background: var(--paper-warm); }
 .modebar button[aria-current="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
+/* The glossary opener is not a fourth mode and must not look like one. It sat
+   inside the Modes nav at identical weight, which made a reference lookup read
+   as a place you could go, and on a phone it was the same width as Journey.
+   Dashed border, no fill, and outside the nav landmark. */
+.glossbtn {
+  min-height: var(--tap); padding: var(--s-2) var(--s-3);
+  border: 1px dashed var(--rule); border-radius: var(--r-pill);
+  background: transparent; cursor: pointer;
+  font: inherit; font-size: var(--t-small); font-weight: 600; color: var(--ink-mute);
+}
+.glossbtn:hover { background: var(--paper-warm); color: var(--ink); }
+
 .yearsel select {
   min-height: var(--tap); padding: 0 var(--s-3);
   border: 1px solid var(--rule); border-radius: var(--r-pill);
@@ -604,43 +616,6 @@ body[data-journey="true"] .site-foot { display: none; }
 }
 .gchip .ic, .dchip .ic { margin-right: 0.3em; opacity: 0.9; }
 
-/* --- the figure ----------------------------------------------------------
-   Two copies exist in the DOM during a turn, one in the rail and one beside
-   the age, and exactly one is ever displayed. Cheaper than moving a node
-   between containers on every render, and it keeps both layouts declarative. */
-.figure { display: block; width: 100%; height: auto; color: var(--ink-soft); overflow: visible; }
-.fig-doors { color: var(--open); }
-.fig-door.is-new { transform-box: fill-box; transform-origin: center; animation: pop var(--dur) var(--ease); }
-
-.fig-wrap { display: none; }
-.fig-inline { width: 34px; flex: none; align-self: center; }
-.fig-hero { max-width: 150px; margin: var(--s-5) auto 0; }
-.diff-fig { max-width: 84px; padding: var(--s-2); }
-/* The forks are the loudest screens in the mode, with the age set enormous.
-   A thumbnail figure beside it reads as a typo, so it scales with the numeral. */
-.fork .fig-inline { width: clamp(38px, 6vw, 58px); }
-
-@media (min-width: 900px) {
-  .fig-wrap {
-    display: block; max-width: 168px; margin: 0 auto var(--s-5);
-    padding-bottom: var(--s-4); border-bottom: 1px solid var(--rule-soft);
-  }
-  /* Only hide the inline copy where the rail is actually drawing one. The fork
-     and reflection screens are full bleed with no rail, and without this scope
-     the figure vanished from them entirely on a laptop. */
-  .journey-grid .fig-inline { display: none; }
-  .fig-hero { max-width: 190px; }
-  .diff-fig { max-width: 104px; }
-}
-
-/* The figure never loops and never reacts to anything but the year and the
-   doors, so the only thing here that needs stopping is the single pop a newly
-   opened door makes. --dur is already 0ms under this query, but a keyframe at
-   zero duration is not a no-op, so it is named explicitly. */
-@media (prefers-reduced-motion: reduce) {
-  .fig-door.is-new { animation: none; }
-}
-
 .pathchip { background: var(--other-wash); color: var(--other); border-radius: var(--r-pill); padding: 1px var(--s-3); font-weight: 700; }
 .wantline { color: var(--ink-faint); text-transform: none; letter-spacing: 0; font-weight: 500; }
 
@@ -731,7 +706,23 @@ body[data-journey="true"] .site-foot { display: none; }
 .subjchip.more { color: var(--ink-mute); font-style: italic; }
 /* The want question waits until there is a combination to play forward. It is
    dimmed and still fully readable: nothing here is disabled or taken away. */
-.wantbox.waiting { opacity: 0.62; }
+/* Before a plan exists this box holds a question and no options. It used to
+   render at 0.62 opacity, which greyed out the only prose left on the screen
+   and made a two step start look like a page that had failed to load. The
+   waiting state now reads as the second step of a sequence: full contrast, and
+   a rule joining it to the combination card above that it is waiting on. */
+.wantbox.waiting {
+  border-left: 2px solid var(--rule); padding-left: var(--s-4);
+  margin-left: 1px;
+}
+.wantbox.waiting .want-q { color: var(--ink-soft); }
+.stepnum {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.35em; height: 1.35em; margin-right: var(--s-2);
+  border-radius: 50%; background: var(--ink); color: var(--paper);
+  font-size: var(--t-micro); font-weight: 700; font-family: var(--body);
+}
+.wantbox.waiting .stepnum { background: var(--ink-mute); }
 
 /* the picker, inside the sheet */
 .picker { margin-top: var(--s-3); }
