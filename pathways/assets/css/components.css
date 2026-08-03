@@ -182,6 +182,8 @@
   color: var(--ink-mute); font-weight: 700; margin: var(--s-5) 0 var(--s-2);
   padding: var(--s-2) 0;
 }
+h3.grp { display: flex; align-items: center; }
+.grp .ic { width: 1.25em; height: 1.25em; }
 .srows { list-style: none; margin: 0; padding: 0; }
 .srow {
   display: flex; align-items: center; gap: var(--s-2);
@@ -587,6 +589,58 @@ body[data-journey="true"] .site-foot { display: none; }
 .j-sit { max-width: 58ch; }
 .j-rail { padding-top: var(--s-5); }
 .turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+
+/* --- icons ---------------------------------------------------------------
+   Sized in em so an icon always matches the text it sits beside, and drawn in
+   currentColor so it inherits that text's contrast rather than needing its own
+   check. Every one is aria-hidden and sits next to words that already say the
+   thing, so none of this is load bearing. */
+.ic {
+  width: 1.05em; height: 1.05em; flex: none;
+  vertical-align: -0.16em; margin-right: 0.4em;
+}
+.gchip, .dchip, .doorchips span, .disp-row > span:first-child, .chance .kind {
+  display: inline-flex; align-items: center;
+}
+.gchip .ic, .dchip .ic { margin-right: 0.3em; opacity: 0.9; }
+
+/* --- the figure ----------------------------------------------------------
+   Two copies exist in the DOM during a turn, one in the rail and one beside
+   the age, and exactly one is ever displayed. Cheaper than moving a node
+   between containers on every render, and it keeps both layouts declarative. */
+.figure { display: block; width: 100%; height: auto; color: var(--ink-soft); overflow: visible; }
+.fig-doors { color: var(--open); }
+.fig-door.is-new { transform-box: fill-box; transform-origin: center; animation: pop var(--dur) var(--ease); }
+
+.fig-wrap { display: none; }
+.fig-inline { width: 34px; flex: none; align-self: center; }
+.fig-hero { max-width: 150px; margin: var(--s-5) auto 0; }
+.diff-fig { max-width: 84px; padding: var(--s-2); }
+/* The forks are the loudest screens in the mode, with the age set enormous.
+   A thumbnail figure beside it reads as a typo, so it scales with the numeral. */
+.fork .fig-inline { width: clamp(38px, 6vw, 58px); }
+
+@media (min-width: 900px) {
+  .fig-wrap {
+    display: block; max-width: 168px; margin: 0 auto var(--s-5);
+    padding-bottom: var(--s-4); border-bottom: 1px solid var(--rule-soft);
+  }
+  /* Only hide the inline copy where the rail is actually drawing one. The fork
+     and reflection screens are full bleed with no rail, and without this scope
+     the figure vanished from them entirely on a laptop. */
+  .journey-grid .fig-inline { display: none; }
+  .fig-hero { max-width: 190px; }
+  .diff-fig { max-width: 104px; }
+}
+
+/* The figure never loops and never reacts to anything but the year and the
+   doors, so the only thing here that needs stopping is the single pop a newly
+   opened door makes. --dur is already 0ms under this query, but a keyframe at
+   zero duration is not a no-op, so it is named explicitly. */
+@media (prefers-reduced-motion: reduce) {
+  .fig-door.is-new { animation: none; }
+}
+
 .pathchip { background: var(--other-wash); color: var(--other); border-radius: var(--r-pill); padding: 1px var(--s-3); font-weight: 700; }
 .wantline { color: var(--ink-faint); text-transform: none; letter-spacing: 0; font-weight: 500; }
 
@@ -701,3 +755,21 @@ body[data-journey="true"] .site-foot { display: none; }
 .diff-combo { display: flex; flex-wrap: wrap; gap: var(--s-1); font-size: var(--t-micro); }
 .diff-combo .subjchip { padding: 0.15em 0.4em; font-size: var(--t-micro); }
 @media (hover: hover) { .lvchip:hover { background: var(--paper-warm); } }
+
+/* ---------- lower secondary: movement and the common curriculum ---------- */
+.nextlv {
+  margin-left: var(--s-2); padding: 0.12em 0.42em;
+  border: 1px dashed var(--rule); border-radius: var(--r-sm);
+  font-size: var(--t-micro); color: var(--ink-mute); white-space: nowrap;
+}
+.everyone { font-size: var(--t-micro); color: var(--ink-mute); font-style: italic; }
+.juncture { margin-top: var(--s-3); }
+.grp-fold > summary.grp { cursor: pointer; list-style: revert; }
+.grp-fold[open] > summary.grp { margin-bottom: var(--s-2); }
+/* Surface rather than the warm tint, so the panel reads as a quiet aside next
+   to the student's own list rather than competing with it. The dashed border
+   carries the "this is an inference, not your plan" signal on its own. */
+.horizon { margin-top: var(--s-4); padding: var(--s-4);
+  border: 1px dashed var(--rule); border-radius: var(--r-lg); background: var(--surface); }
+.hz-moves { margin: var(--s-3) 0 0; padding-left: 1.1em; }
+.hz-moves li { margin-bottom: var(--s-2); }

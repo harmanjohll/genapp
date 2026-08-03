@@ -47,6 +47,161 @@
   ],
   "stages": [
     {
+      "id": "s_sec1",
+      "age": 13,
+      "title": "Sec 1",
+      "format": "turn",
+      "situation": "New school, new everything. Your class sits at different levels in different subjects, and that is the design.",
+      "choices": [
+        {
+          "label": "Find your feet first",
+          "cost": 1,
+          "outcome": "You spend a term working out how this place runs. Not wasted, and quieter than you wanted.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 2
+          }
+        },
+        {
+          "label": "Ask to move a subject up",
+          "cost": 1,
+          "outcome": "You ask. Nobody stopped you asking, which is the thing worth finding out this early.",
+          "disp": {
+            "risk": 2
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "asked_up",
+          "raise": {
+            "any": [
+              "el",
+              "maths",
+              "ls_science",
+              "mtl"
+            ]
+          },
+          "outcomeRaised": "You ask, and {subject} moves to {level}. The first term is hard. By the third you have caught up."
+        },
+        {
+          "label": "Go all in on one club",
+          "cost": 1,
+          "outcome": "Three afternoons a week. You are not the best there and you stop caring about that.",
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "sets": "took_stage"
+        },
+        {
+          "label": "Get properly good at one subject",
+          "cost": 1,
+          "outcome": "You pick the one you like and push. It becomes the thing people ask you about.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Look after the people around you",
+          "cost": 1,
+          "outcome": "You are the one who notices when someone goes quiet. It costs time you had.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "sets": "helped_someone"
+        }
+      ]
+    },
+    {
+      "id": "s_sec2",
+      "age": 14,
+      "title": "Sec 2",
+      "format": "turn",
+      "situation": "The combination exercise is this year. Where your levels land now is what you carry into Sec 3.",
+      "choices": [
+        {
+          "label": "Push the level you want up",
+          "cost": 1,
+          "outcome": "You go at it all year with the review in mind. A grind, and you know exactly why.",
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "asked_up",
+          "raise": {
+            "any": [
+              "ls_geography",
+              "ls_history",
+              "ls_literature",
+              "el",
+              "maths",
+              "ls_science"
+            ]
+          },
+          "outcomeRaised": "It works. {subject} moves to {level}, and that is the level you walk into Sec 3 holding."
+        },
+        {
+          "label": "Go and look at what Sec 3 offers",
+          "cost": 1,
+          "outcome": "Open house, option booklet, three teachers you cornered. You choose on information, not rumour.",
+          "disp": {
+            "curiosity": 2
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "looked_around"
+        },
+        {
+          "label": "Keep the levels and go deeper",
+          "cost": 1,
+          "outcome": "You stop chasing the level and get genuinely good where you are. That reads on paper too.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Build something nobody asked for",
+          "cost": 1,
+          "outcome": "It has nothing to do with school. It is the first thing that is properly yours.",
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "sets": "built_side"
+        },
+        {
+          "label": "Spend the year with your people",
+          "cost": 1,
+          "outcome": "Not a wasted year. You end it with friends who are still around at thirty.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "s_sec3",
       "age": 15,
       "title": "Sec 3",
@@ -2096,7 +2251,8 @@
     "eae_applied",
     "looked_around",
     "took_stage",
-    "helped_someone"
+    "helped_someone",
+    "moved_up"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",

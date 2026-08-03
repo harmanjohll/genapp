@@ -30,10 +30,20 @@ These are not style preferences and breaking one breaks the design.
 - **The branches converge from age 34.** Do not add late variants. The merge is the argument.
 - **The combination is a starting position, never a starting personality.** A run carries the subjects the student picked, and those subjects may do exactly two things: append choices (`needsSubject`, capped at two a turn) and bias which chance cards turn up (`card.subjects`, a preference over the pool and never a gate). They must never set a path, open or withhold a door, change the ending, or produce a label about the kind of person the student is. A named archetype is the thing this design refuses: a type handed to a fourteen year old sticks, and sticking is the whole problem.
 - **No combination may play a smaller game than no combination at all.** Enforced by the sweep across eight fixtures including an all G1 plan: with the same choices and the same seed, no plan may finish with fewer doors than an empty one. This is the subject engine's monotonicity rule applied to the story.
+- **Lower secondary subjects must never reach a `countAtLevel`.** `reach()` filters them out through `upperPlan()` before any rule runs. Lower secondary Science is ONE subject that becomes one to three upper secondary ones, and Geography and History are taken by everybody rather than chosen, so counting them would tell a Sec 1 student they already satisfy "four subjects at G3" before they have chosen a single upper secondary subject. Filtering at that one choke point is why the invariant sweep, the monotonicity sweep and all three modes agree.
+- **English, Mother Tongue and Maths carry `phase: "both"` and live under ONE key across all five years.** That is deliberate and load bearing: the English level a student raises at the end of Sec 1 is the same fact the polytechnic rule reads at Sec 4, with no translation layer in between. Do not split them into lower and upper rows.
+- **`raisableFrom` is the Humanities rule, encoded.** English, Mother Tongue, Maths and Science can be raised from Sec 1; the Humanities not until Sec 2. The UI must never offer a move the junctures do not allow, because a student will go and ask for it.
+- **The horizon is an inference and is labelled as one.** Projected rows carry no level chips and are never written to state. A tappable projected row would let a Sec 1 student build an upper secondary plan the engine then treats as real, which reopens the counting hole through the interface.
+- **The Humanities collapse in `project()` is highest level wins, declared order only as a tiebreak.** Picking by declared order first means a student holding History at G2 who then adds Geography at G1 watches the projected Humanities row drop, the count fall, and a door move away from them for telling the truth. `projectionSweep()` tests additions as well as raises for exactly this reason.
+- **A Journey raise only ever raises, never adds, and never rolls dice.** Adding a subject would be the app choosing a combination on a student's behalf. A probability roll would be the game simulating a school's judgement of a child. The deck carries the disappointment instead, in cards written for it.
 - **The want is answered, never graded.** The ending opens by answering the thing the player said they wanted at 15. "Not sure yet" is a first class want with its own ending line, not a fallback.
 - **Nothing is pinned to the top of the page.** The header scrolls away. If you pin something there again, re run the clipping sweep first.
 - **Every setback chance card keeps its `onwardMoves`, with the amounts intact.** The specific dollar figures are the reason a setback reads as survivable rather than frightening.
 - **Profile cards and typical path cards must remain visibly different.** Different border, different marker, different label. A student must never mistake a pattern for a person.
+- **The figure responds to age and doors, and to nothing else.** `figure()` takes exactly two inputs and there is no third argument to add. Not the ledger, not the dispositions, not whether the last card was a setback, not how near the want is. A figure that slumped after a bad turn would deliver a verdict faster and more memorably than any sentence in this app could, to exactly the child it exists to protect. It has no face for the same reason, and because one drawn person cannot stand in for a Singapore classroom.
+- **The figure's growth stops when growing stops.** Height finishes around eighteen, build around twenty five. Do not extend the curve to make the later stages feel different: the honest ways to distinguish forty eight from twenty one are props and posture, and both say something about how a life turned out. The later stages are told apart by what the figure stands on. This is also why the visible change is concentrated in the years a student's subject levels can actually move.
+- **Icons are decorative without exception.** Every one renders `aria-hidden` beside text that already carries the meaning, and `icon()` returns `''` for an unknown name rather than throwing, so a renamed door costs a glyph and never a screen. They draw in `currentColor` only: hard-code a fill and the icon stops inheriting the contrast of the text it sits beside, which is the whole reason there is no per-icon contrast test.
+- **The eight destinations have no icons, and neither do the three levels.** A mortar board against a spanner would encode the prestige ordering the destination list was built to refuse, and a glyph per level would rank three hues that must stay equal in weight. Both lists stay typographic. This is the same rule as `--g1/--g2/--g3`, applied to drawings.
 
 ## Annual update cadence
 
@@ -72,9 +82,14 @@ python3 -m http.server 8000     # from the repo root
 #                                per turn, 8+ cards per age, 136 sims across 8
 #                                combinations, none playing a smaller game than
 #                                an empty plan)
+#   → "Projection sweep: PASS" (reach after projection is monotone over adds and raises)
+#   → "Figure sweep: PASS"      (nobody shrinks, door marks only ever add and
+#                                always match the door count, and no digit
+#                                appears in the figure's accessible label at
+#                                any age)
 #   → "Copy budget: PASS"       (field caps, dashes, first paint)
 ```
 
-All three must say PASS. The copy budget also catches the no dashes rule automatically, which was previously maintained by hand across nine thousand words.
+All five must say PASS. The copy budget also catches the no dashes rule automatically, which was previously maintained by hand across nine thousand words. The figure sweep's numeral check is there because the accessible label is the one Journey surface where a number could reappear without anyone seeing it on screen.
 
 Then, manually: 375px viewport, a keyboard only pass with every control reachable and visibly focused, and a read of every new string against the copy rules above.

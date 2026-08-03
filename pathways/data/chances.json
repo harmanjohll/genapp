@@ -9,7 +9,7 @@
   "cards": [
     {
       "id": "teacher_notices",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 17,
       "type": "encounter",
       "title": "A teacher stops you after class",
@@ -31,7 +31,8 @@
             "optimism": 1
           },
           "needsAsk": true,
-          "stretch": "You do not quite believe her, but you stay. Awkward, one name, and the thought that she might be right."
+          "stretch": "You do not quite believe her, but you stay. Awkward, one name, and the thought that she might be right.",
+          "opens": "d_people"
         },
         {
           "label": "Say thanks and think it over",
@@ -62,7 +63,7 @@
     },
     {
       "id": "level_up_offer",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 17,
       "type": "opportunity",
       "title": "The school offers you a subject a level up",
@@ -106,7 +107,7 @@
     },
     {
       "id": "failed_paper",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 19,
       "type": "setback",
       "title": "You fail a paper badly",
@@ -155,7 +156,7 @@
     },
     {
       "id": "open_house",
-      "minAge": 15,
+      "minAge": 14,
       "maxAge": 18,
       "type": "opportunity",
       "title": "An open house you were not going to attend",
@@ -333,7 +334,7 @@
     },
     {
       "id": "parent_expects",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 19,
       "type": "setback",
       "title": "Your family has a route in mind",
@@ -377,7 +378,7 @@
     },
     {
       "id": "teacher_leaves",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 21,
       "type": "setback",
       "title": "The teacher who backed you leaves",
@@ -426,7 +427,7 @@
     },
     {
       "id": "money_tight",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 30,
       "type": "setback",
       "title": "Money gets tight at home",
@@ -471,7 +472,7 @@
     },
     {
       "id": "competition",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 24,
       "type": "opportunity",
       "title": "A competition you could enter",
@@ -495,7 +496,8 @@
           },
           "sets": "took_stage",
           "needsAsk": true,
-          "stretch": "You enter with less footing than the rest. The day is rough, you finish, and standing there gets easier to imagine."
+          "stretch": "You enter with less footing than the rest. The day is rough, you finish, and standing there gets easier to imagine.",
+          "opens": "d_portfolio"
         },
         {
           "label": "Enter with a team instead",
@@ -529,7 +531,7 @@
     },
     {
       "id": "small_side_thing",
-      "minAge": 15,
+      "minAge": 13,
       "maxAge": 45,
       "type": "opportunity",
       "title": "A small thing on the side",
@@ -658,7 +660,8 @@
             "risk": 1
           },
           "needsAsk": true,
-          "stretch": "You take it unsure it counts. The work is over your head for weeks, and you stop waiting for ready."
+          "stretch": "You take it unsure it counts. The work is over your head for weeks, and you stop waiting for ready.",
+          "opens": "d_workstudy"
         },
         {
           "label": "Ask the lecturer about the company",
@@ -711,7 +714,8 @@
             "risk": 1
           },
           "needsAsk": true,
-          "stretch": "You say yes with nothing behind it but nerve. The first attempt is rough twice over, and yes gets easier."
+          "stretch": "You say yes with nothing behind it but nerve. The first attempt is rough twice over, and yes gets easier.",
+          "opens": "d_people"
         },
         {
           "label": "Say yes if someone checks your work",
@@ -1573,7 +1577,8 @@
           },
           "disp": {
             "risk": 1
-          }
+          },
+          "opens": "d_people"
         },
         {
           "label": "Ask a scholar what it costs",
@@ -1682,7 +1687,8 @@
           "disp": {
             "risk": 1
           },
-          "sets": "built_side"
+          "sets": "built_side",
+          "opens": "d_portfolio"
         },
         {
           "label": "Bring in a classmate to share it",
@@ -2528,6 +2534,203 @@
         {
           "label": "Pass this round, warmly",
           "outcome": "You say not this year, and mean the year part. They keep your name on the list, where the others put it."
+        }
+      ]
+    },
+    {
+      "id": "ls_mixed_class",
+      "minAge": 13,
+      "maxAge": 14,
+      "type": "encounter",
+      "title": "Your class is at three different levels",
+      "body": "Same form class, different subject levels. Someone says it like it is a ranking. It is not one.",
+      "responses": [
+        {
+          "label": "Say so out loud",
+          "outcome": "You point out everyone is at a different level in something. It lands better than expected.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Let it go this time",
+          "outcome": "You say nothing. It sits with you, and it is why you are careful about it later.",
+          "disp": {
+            "flexibility": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_review_comes",
+      "minAge": 13,
+      "maxAge": 15,
+      "type": "opportunity",
+      "title": "The review comes round",
+      "body": "Your teacher says you could try a paper a level up. A real offer, and yours to take or leave.",
+      "asks": {
+        "disposition": "risk",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Take it",
+          "outcome": "You take it. Harder from the first week, and by the third term the pace is just the pace.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "sets": "moved_up",
+          "needsAsk": true,
+          "stretch": "You take it without feeling ready. A wall for a term, you scrape through, and harder stops frightening you."
+        },
+        {
+          "label": "Ask what it would take",
+          "outcome": "She tells you the actual bar. Knowing the number turns it from a mood into a plan.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Stay where you are",
+          "outcome": "You keep the level and your evenings. The review comes round again, because it always does.",
+          "disp": {
+            "flexibility": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_hums_not_yet",
+      "minAge": 13,
+      "maxAge": 13,
+      "type": "opportunity",
+      "title": "You want Geography moved up",
+      "body": "You ask. Humanities levels start moving at the end of Sec 2, not this year. It is the calendar, not you.",
+      "responses": [
+        {
+          "label": "Ask what to do meanwhile",
+          "outcome": "She gives you the bar for next year. You spend the year aiming at a number you know.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Work at it anyway",
+          "outcome": "Nobody marks the extra reading. You arrive at Sec 2 already ahead of the question.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_right_sizing",
+      "minAge": 14,
+      "maxAge": 16,
+      "type": "setback",
+      "title": "One subject is taking the whole week",
+      "body": "A level you carry is eating the time your other subjects need. The school raises easing it down.",
+      "onwardMoves": [
+        "A level eased now can be asked about again later.",
+        "The subject stays on your certificate either way.",
+        "Ask exactly what would need to change to hold it."
+      ],
+      "responses": [
+        {
+          "label": "Take the recalibration",
+          "outcome": "You move it down and your week comes back. The other subjects lift within a term.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 2
+          }
+        },
+        {
+          "label": "Ask for one more term",
+          "outcome": "They agree to look again at the end of term. You decide with evidence, not in a hurry.",
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_combination_form",
+      "minAge": 14,
+      "maxAge": 15,
+      "type": "opportunity",
+      "title": "The combination form comes home",
+      "body": "Choices, in boxes, due Friday. Everyone at home has an opinion and most left school long ago.",
+      "responses": [
+        {
+          "label": "Fill it in together",
+          "outcome": "You go through it properly with someone. The argument happens now instead of in Sec 3.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "sets": "looked_around"
+        },
+        {
+          "label": "Decide it yourself first",
+          "outcome": "You work out what you want before anyone tells you. Then you go and defend it.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_friend_moved_up",
+      "minAge": 13,
+      "maxAge": 15,
+      "type": "encounter",
+      "title": "Someone moved up and you did not",
+      "body": "They got the offer this round. You did not. It stings more than you would say out loud.",
+      "responses": [
+        {
+          "label": "Ask them how",
+          "outcome": "They tell you what actually changed. It is boring and repeatable, which is good news.",
+          "disp": {
+            "curiosity": 2
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Put your head down",
+          "outcome": "You go quiet and work. Nobody notices for two terms and then everybody does.",
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          }
         }
       ]
     }
