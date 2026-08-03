@@ -12,7 +12,6 @@
 
 import { esc, onAction } from '../components/dom.js';
 import { icon } from '../components/icons.js';
-import { figure } from '../components/figure.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import {
@@ -177,9 +176,15 @@ function introScreen(host, data, st) {
   // Combination first, want second. The order matters: the combination is a
   // fact about this year and the want is a guess about ten years out, and
   // asking for the guess first makes the fact feel like a consequence of it.
+  // With no plan yet these two blocks are a numbered sequence, not one live
+  // control beside a dead one. A student arriving from Mode NOW who has not set
+  // a level lands here, and the screen has to say "you are one step in" rather
+  // than looking like it rendered nothing.
+  const step = (n) => (hasPlan ? '' : `<span class="stepnum" aria-hidden="true">${n}</span>`);
+
   const comboBlock = `
     <div class="combobox">
-      <p class="caps">${esc(jc.comboHead)}</p>
+      <p class="caps">${step(1)}${esc(jc.comboHead)}</p>
       ${hasPlan ? `
         <p class="chips subjchips">${subjectChips(rows)}</p>
         <div class="btn-row" style="margin-top:var(--s-3)">
@@ -211,7 +216,7 @@ function introScreen(host, data, st) {
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">You choose. Things turn up. Nothing ends it.</p>
         ${comboBlock}
         <div class="wantbox ${hasPlan ? '' : 'waiting'}">
-          <p class="want-q">${esc(jc.wantPrompt)}</p>
+          <p class="want-q">${step(2)}${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(hasPlan ? jc.wantHint : jc.comboGate)}</p>
           ${hasPlan ? `
             <div class="grid two" style="margin-top:var(--s-3)">
@@ -455,7 +460,6 @@ function endingScreen(host, data, st) {
         <p class="caps">Your story</p>
         <h1 class="serif" tabindex="-1" style="font-size:var(--t-hero);line-height:var(--lh-hero)">${esc(wantLine)}</h1>
         ${pathLine ? `<p class="lede">${esc(pathLine)}</p>` : ''}
-        <div class="fig-hero">${figure({ age: currentAge(), doors: run.doors, doorLabels: doorLabelMap() })}</div>
         <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>You lived it steadily, which is a way of living it.</p>'}</div>
         <div class="section">
           <p class="caps">${esc(jc.doorsHead)}</p>
@@ -511,12 +515,6 @@ function showDiff(host, data, pair) {
     <div class="diff-cell ${r.differs ? 'differs' : ''}">${r.b ? esc(r.b.choices.join(' + ')) : '<span class="faint">·</span>'}</div>`).join('');
 
   const doorName = (id) => (DOORS[id] || {}).label || id;
-  const labels = doorLabelMap();
-  // Two people the same age, carrying different things, drawn identically.
-  // Nothing in the drawing says which one did better, because nothing in the
-  // app does.
-  const endAge = (r) => (r.steps && r.steps.length ? r.steps[r.steps.length - 1].age : 48);
-  const figCell = (r) => `<div class="diff-fig">${figure({ age: endAge(r), doors: r.doors || [], doorLabels: labels })}</div>`;
 
   host.innerHTML = `
     <div class="wrap">
@@ -527,9 +525,6 @@ function showDiff(host, data, pair) {
           <div></div>
           <div class="diff-head">${esc(a.label)}${d.paths[0] ? ` · ${esc(d.paths[0])}` : ''}</div>
           <div class="diff-head">${esc(b.label)}${d.paths[1] ? ` · ${esc(d.paths[1])}` : ''}</div>
-          <div></div>
-          ${figCell(a)}
-          ${figCell(b)}
           <div></div>
           <div class="diff-want">${d.wants[0] ? esc(d.wants[0].label) : 'Not sure yet'}</div>
           <div class="diff-want">${d.wants[1] ? esc(d.wants[1].label) : 'Not sure yet'}</div>
@@ -571,31 +566,10 @@ function turnMeta(stage) {
   const n = run.stepIndex + 1;
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
-  // On a phone the rail sits below the fold, so the figure is drawn again here,
-  // small, beside the age. Exactly one of the two is ever visible: see the
-  // .fig-wrap and .fig-inline rules in components.css.
-  const fig = `<div class="fig-inline">${figure({ age: stage.age, doors: run.doors, doorLabels: doorLabelMap() })}</div>`;
   return `
     <p class="turn-meta caps">Step ${n} of ${stages.length} ${label} ${want}</p>
-    <div class="turn-head">${fig}<span class="turn-age" aria-hidden="true">${stage.age}</span>
+    <div class="turn-head"><span class="turn-age" aria-hidden="true">${stage.age}</span>
       <h1 class="serif" tabindex="-1">${esc(stage.title)}</h1></div>`;
-}
-
-/**
- * The age the figure should be drawn at.
- *
- * Falls back to the last stage rather than the first, so the ending screen
- * shows a person at forty eight and not one who has snapped back to thirteen.
- */
-function currentAge() {
-  const s = stages[run.stepIndex] || stages[stages.length - 1];
-  return s ? s.age : 13;
-}
-
-function doorLabelMap() {
-  const out = {};
-  Object.keys(DOORS).forEach((k) => { out[k] = (DOORS[k] || {}).label || k; });
-  return out;
 }
 
 function rail(data) {
@@ -613,7 +587,6 @@ function rail(data) {
   }).join('');
   const combo = planRows(data, run.plan);
   return `
-    <div class="fig-wrap">${figure({ age: currentAge(), doors: run.doors, doorLabels: doorLabelMap() })}</div>
     ${combo.length ? `
       <p class="caps">${esc(jc.comboRail)}</p>
       <p class="chips subjchips">${subjectChips(combo, 6)}</p>` : ''}
