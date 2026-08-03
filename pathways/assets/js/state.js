@@ -45,6 +45,13 @@ function load() {
   } catch {
     base = initial();
   }
+  // The URL params are checked below, but the persisted values never were, and
+  // they are no more trustworthy: they were written by whatever revision of
+  // this app ran last, which may predate today's mode and year ids entirely.
+  if (!MODES[base.mode]) base.mode = 'now';
+  if (!YEARS.some((v) => v.id === base.year)) base.year = 'sec2';
+  ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
+  ['actions', 'runs', 'looked'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
     const params = new URLSearchParams(location.search);
     const m = params.get('mode');
@@ -91,9 +98,17 @@ export function subscribe(fn) {
 }
 
 export function setMode(id) {
-  if (!MODES[id] || state.mode === id) return;
-  state.mode = id;
-  persist(); syncUrl(); notify({ kind: 'mode' });
+  if (!MODES[id]) return;
+  // A tap on the mode you are already in still repaints. The early return that
+  // used to sit here made that tap do literally nothing, which is invisible
+  // when the screen is healthy and indistinguishable from a dead app when a
+  // paint has failed: the one gesture a person reaches for to unstick a screen
+  // is the tab itself.
+  if (state.mode !== id) {
+    state.mode = id;
+    persist(); syncUrl();
+  }
+  notify({ kind: 'mode' });
 }
 
 export function setYear(id) {
@@ -183,6 +198,66 @@ export function markIntroSeen() {
 
 export function currentYear() {
   return YEARS.find((y) => y.id === state.year) || YEARS[1];
+}
+
+// --- reconciling stored state with today's data ---------------------------
+// The storage key has never changed, but the data underneath it has: subject
+// ids were renamed against SEAB, the journey engine was rebuilt twice, chance
+// cards were rewritten. localStorage survives every deploy, so a student who
+// used an old revision carries a plan keyed by subjects that no longer exist
+// and a saved run shaped for an engine that no longer runs it. Resurrecting
+// that run threw during paint, the error was swallowed, and the mode showed
+// nothing, forever, on every device that had ever used the old version.
+// Nothing is migrated, because none of it can be: a run is a story told by a
+// particular engine against particular content. What no longer validates is
+// dropped, and the plan keeps every subject that still exists.
+
+function validRun(r, cardIds) {
+  if (!r || typeof r !== 'object') return false;
+  if (!Number.isFinite(r.startAge) || !Number.isFinite(r.stepIndex)) return false;
+  if (typeof r.done !== 'boolean') return false;
+  if (!Array.isArray(r.steps) || !Array.isArray(r.doors) || !Array.isArray(r.flags) || !Array.isArray(r.raises)) return false;
+  if (!r.ledger || typeof r.ledger !== 'object' || !['skills', 'network', 'portfolio'].every((k) => Number.isFinite(r.ledger[k]))) return false;
+  if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;
+  if (r.plan == null || typeof r.plan !== 'object' || Array.isArray(r.plan)) return false;
+  if (r.want != null && (typeof r.want !== 'object' || typeof r.want.label !== 'string')) return false;
+  if (r.pending != null && !(typeof r.pending === 'object' && cardIds.has(r.pending.cardId))) return false;
+  return true;
+}
+
+export function reconcile(data) {
+  const levelsById = Object.fromEntries(((data.subjects && data.subjects.subjects) || []).map((s) => [s.id, s.levels || []]));
+  const cardIds = new Set(((data.chances && data.chances.cards) || []).map((c) => c.id));
+  const before = { plan: Object.keys(state.plan).length, runs: state.runs.length, live: !!state.liveRun };
+
+  const prunePlan = (plan) => {
+    Object.keys(plan).forEach((id) => {
+      if (!levelsById[id] || !levelsById[id].includes(plan[id])) delete plan[id];
+    });
+  };
+  prunePlan(state.plan);
+  state.looked = state.looked.filter((id) => levelsById[id]);
+  Object.keys(state.guesses).forEach((id) => { if (!levelsById[id]) delete state.guesses[id]; });
+  if (state.offer) {
+    state.offer = state.offer.filter((id) => levelsById[id]);
+    if (!state.offer.length) state.offer = null;
+  }
+
+  state.runs = state.runs.filter((r) => validRun(r, cardIds));
+  state.runs.forEach((r) => prunePlan(r.plan));
+  if (state.liveRun && !validRun(state.liveRun, cardIds)) state.liveRun = null;
+  if (state.liveRun) prunePlan(state.liveRun.plan);
+
+  const dropped = {
+    plan: before.plan - Object.keys(state.plan).length,
+    runs: before.runs - state.runs.length,
+    live: before.live && !state.liveRun,
+  };
+  if (dropped.plan || dropped.runs || dropped.live) {
+    persist();
+    console.info('[state] dropped what no longer matches today\'s data:', dropped);
+  }
+  return dropped;
 }
 
 // --- carrying a plan between devices -------------------------------------

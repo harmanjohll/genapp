@@ -1,7 +1,7 @@
 // Entry point. Loads data, mounts the shell, renders the active mode.
 
 import { loadAll } from './data-loader.js';
-import { getState, subscribe, setMode, setYear, MODES, YEARS, currentYear } from './state.js';
+import { getState, subscribe, setMode, setYear, setLiveRun, reconcile, MODES, YEARS, currentYear } from './state.js';
 import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
@@ -43,6 +43,11 @@ async function init() {
   }
 
   initGlossary(data.glossary);
+
+  // Stored state was written by whatever revision ran last. Reconcile it with
+  // today's data before anything paints from it: a plan keyed by renamed
+  // subjects miscounts, and a saved run from an older engine kills the paint.
+  reconcile(data);
 
   ctx = {
     subjects: data.subjects.subjects,
@@ -115,12 +120,30 @@ function renderHead() {
 
 function paint() {
   const st = getState();
-  if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
-  if (extraMode === 'parent') { renderParent(app, data); return; }
-  switch (st.mode) {
-    case 'journey': renderJourney(app, data, ctx, paint); break;
-    case 'aim':     renderAim(app, data, ctx, paint); break;
-    default:        renderNow(app, data, ctx); break;
+  try {
+    if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
+    if (extraMode === 'parent') { renderParent(app, data); return; }
+    switch (st.mode) {
+      case 'journey': renderJourney(app, data, ctx, paint); break;
+      case 'aim':     renderAim(app, data, ctx, paint); break;
+      default:        renderNow(app, data, ctx); break;
+    }
+  } catch (e) {
+    // A paint that throws must never leave the last screen up with dead
+    // buttons. That is what a swallowed exception looks like from a phone:
+    // the app simply stops answering, and the person taps harder. Show what
+    // happened, offer the one repair that always works, and touch nothing
+    // the student typed in: the plan survives, only the stuck screen resets.
+    console.error('paint failed', e);
+    app.innerHTML = `
+      <div class="wrap"><div class="section" style="margin-top:var(--s-6)"><div class="notice">
+        <strong>This screen hit a snag.</strong>
+        <p style="margin:8px 0 0">Your subjects are safe. Start this screen fresh.</p>
+        <div class="btn-row" style="margin-top:var(--s-3)">
+          <button class="btn accent" type="button" data-action="recover">Start fresh</button>
+        </div>
+      </div></div></div>`;
+    onAction(app, { recover: () => { setLiveRun(null); resetJourney(); paint(); } });
   }
 }
 

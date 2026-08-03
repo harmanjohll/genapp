@@ -1,4 +1,4 @@
-# Still Open
+# Paths
 
 A pathways thinking tool for Singapore secondary students under Full Subject Based Banding.
 
