@@ -122,6 +122,32 @@ The proportion is doing the work. It is the cheapest anti determinism device in 
 - **No red, no padlocks, no greyed out cards, no opacity 0.38, no disabled controls.**
 - **No distance on screen.** Not as a number, a bar, a dot on a track, or a sort order. A continuous measure of how far a child is from something is a ranking whatever it is called.
 - **No data collection.** No account, no server, no analytics, no cookies. State is in `localStorage` on the student's own device.
+- **No expression on the figure.** See below.
+
+## The figure, and why it has no feelings
+
+Journey is a game played over fifteen stages from thirteen to forty eight, and until now it was entirely typographic. A character was the obvious thing to add and the most dangerous.
+
+Everything else in this app was built so that nothing evaluates the student. A character undoes that in one frame. A drawn person who looks disappointed after a setback is a judgement, and it lands faster and stays longer than any sentence, on exactly the child the app exists to protect. Valence is the failure mode: the moment the drawing can look pleased, it can look disappointed, and a fourteen year old will read the difference before they read a word.
+
+So the figure takes two inputs and has no third. It ages, and it shows the doors the run is holding. It is faceless, because one drawn person cannot stand in for a Singapore classroom and because a face is somewhere to put an opinion.
+
+What it gains from the restriction is that it makes the app's two real claims physical rather than asserted. The life is long: the figure visibly grows. Doors only ever add: the ground under it only ever widens, and there is no code path that takes a mark away.
+
+Two consequences worth stating because they look like bugs and are not:
+
+- **The figure at twenty one and the figure at forty eight are nearly the same drawing.** Growth finishes around eighteen and build around twenty five, and the honest ways to distinguish middle age from early adulthood are props and posture. A briefcase says something about how a life turned out; a stoop says something worse. So the later stages are told apart by what the figure stands on, not by what has happened to its body.
+- **The visible change is concentrated between thirteen and seventeen.** That is an accident of anatomy that happens to land in the right place: those are the years a Singapore student's subject levels can actually move, and they are the years this app is most trying to reach.
+
+The doors were drawn as a fan held in the figure's hand first. At ten doors it read as a scatter of specks. Moving them underfoot fixed the legibility and said the better thing: what a run gathers is ground to stand on.
+
+## Icons
+
+Twenty six of them, inline SVG, drawn in `currentColor` so each inherits the contrast of the text beside it instead of needing its own check. All decorative, all `aria-hidden`, all sitting next to words that already carry the meaning.
+
+The eight destinations have none, and this is the point of the set rather than an omission. A mortar board for Junior College against a spanner for ITE would encode the exact prestige ordering the destination list was built to refuse, and drawing them sympathetically does not fix it. The three subject levels have none for the same reason: they are three hues of deliberately equal weight and a glyph would rank them.
+
+Where icons do go, they occasionally say something the words deliberately do not. A choice that opens a door shows that door's icon while the label stays "opens a door", so a student can see that something specific is coming without being told what before they have chosen.
 
 ## Sources and freshness
 

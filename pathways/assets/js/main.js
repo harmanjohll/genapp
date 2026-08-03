@@ -9,6 +9,7 @@ import { runInvariantSweep } from './engine/reach.js';
 import { projectionSweep } from './engine/project.js';
 import { runCopyBudget } from './engine/copy-budget.js';
 import { runJourneySweep } from './engine/journey.js';
+import { runFigureSweep } from './components/figure.js';
 import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
 import { renderAim } from './modes/mode-aim.js';
@@ -70,6 +71,7 @@ async function init() {
     runInvariantSweep(ctx);
     projectionSweep(ctx);
     runJourneySweep(data);
+    runFigureSweep();
     runCopyBudget(data);
   }
 }

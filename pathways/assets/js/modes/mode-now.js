@@ -19,6 +19,7 @@
 //    rewards over committing a fourteen year old.
 
 import { esc, onAction, statusChip } from '../components/dom.js';
+import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import { reach, sortReaches, lever, STATES } from '../engine/reach.js';
@@ -186,11 +187,11 @@ function groupBlock(group, subjects, plan, yearId) {
   // loud that a third of the week is spent there.
   const body = `<ul class="srows">${list.map((s) => subjectRow(s, plan[s.id], yearId)).join('')}</ul>`;
   if (group.id === 'common') {
-    return `<details class="grp-fold"><summary class="grp">${esc(group.label)}</summary>
+    return `<details class="grp-fold"><summary class="grp">${icon(`g_${group.id}`)}${esc(group.label)}</summary>
       ${group.note ? `<p class="grp-note">${esc(group.note)}</p>` : ''}${body}</details>`;
   }
   return `
-    <h3 class="grp">${esc(group.label)}</h3>
+    <h3 class="grp">${icon(`g_${group.id}`)}${esc(group.label)}</h3>
     ${group.note ? `<p class="grp-note">${esc(group.note)}</p>` : ''}
     ${body}`;
 }

@@ -11,6 +11,8 @@
 // real bars now.
 
 import { esc, onAction } from '../components/dom.js';
+import { icon } from '../components/icons.js';
+import { figure } from '../components/figure.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import {
@@ -388,7 +390,7 @@ function chanceAsk(host, card, data) {
 
   host.innerHTML = shell(`
     <div class="chance ${card.type === 'setback' ? 'setback' : ''}">
-      <p class="kind">${esc(kind)}</p>
+      <p class="kind">${icon(`ch_${card.type}`)}${esc(kind)}</p>
       <h1 class="serif" tabindex="-1" style="margin:var(--s-2) 0 var(--s-3)">${esc(card.title)}</h1>
       <p>${decorate(card.body)}</p>
       ${asks}
@@ -426,12 +428,12 @@ function chanceOutcome(host, data) {
       <p class="caps">${esc(ch.title || '')}</p>
       <h1 class="serif" tabindex="-1" style="font-size:var(--t-h2)">${esc(ch.response || '')}</h1>
       <p class="lede" style="margin-top:var(--s-3)">${decorate(ch.text || '')}</p>
-      ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${esc(x)}</span>`).join('')}</p>` : ''}
+      ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
       <div class="btn-row" style="margin-top:var(--s-4)">
         <button class="btn" type="button" data-action="go">${esc(jc.continue)}</button>
       </div>
     </div>`, rail(data));
-  announce([ch.response, ...d].filter(Boolean).join('. '));
+  announce([ch.response, ...d.map((x) => x.text)].filter(Boolean).join('. '));
   focusH1(host);
   bindGlossary(host);
   onAction(host, { go: () => { justResolved = null; rerender(); } });
@@ -453,10 +455,11 @@ function endingScreen(host, data, st) {
         <p class="caps">Your story</p>
         <h1 class="serif" tabindex="-1" style="font-size:var(--t-hero);line-height:var(--lh-hero)">${esc(wantLine)}</h1>
         ${pathLine ? `<p class="lede">${esc(pathLine)}</p>` : ''}
+        <div class="fig-hero">${figure({ age: currentAge(), doors: run.doors, doorLabels: doorLabelMap() })}</div>
         <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>You lived it steadily, which is a way of living it.</p>'}</div>
         <div class="section">
           <p class="caps">${esc(jc.doorsHead)}</p>
-          <p class="chips doorchips">${run.doors.map((d) => `<span>${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
+          <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
         </div>
         ${(run.raises || []).length ? `
           <div class="section">
@@ -508,6 +511,12 @@ function showDiff(host, data, pair) {
     <div class="diff-cell ${r.differs ? 'differs' : ''}">${r.b ? esc(r.b.choices.join(' + ')) : '<span class="faint">·</span>'}</div>`).join('');
 
   const doorName = (id) => (DOORS[id] || {}).label || id;
+  const labels = doorLabelMap();
+  // Two people the same age, carrying different things, drawn identically.
+  // Nothing in the drawing says which one did better, because nothing in the
+  // app does.
+  const endAge = (r) => (r.steps && r.steps.length ? r.steps[r.steps.length - 1].age : 48);
+  const figCell = (r) => `<div class="diff-fig">${figure({ age: endAge(r), doors: r.doors || [], doorLabels: labels })}</div>`;
 
   host.innerHTML = `
     <div class="wrap">
@@ -519,6 +528,9 @@ function showDiff(host, data, pair) {
           <div class="diff-head">${esc(a.label)}${d.paths[0] ? ` · ${esc(d.paths[0])}` : ''}</div>
           <div class="diff-head">${esc(b.label)}${d.paths[1] ? ` · ${esc(d.paths[1])}` : ''}</div>
           <div></div>
+          ${figCell(a)}
+          ${figCell(b)}
+          <div></div>
           <div class="diff-want">${d.wants[0] ? esc(d.wants[0].label) : 'Not sure yet'}</div>
           <div class="diff-want">${d.wants[1] ? esc(d.wants[1].label) : 'Not sure yet'}</div>
           <div></div>
@@ -528,7 +540,7 @@ function showDiff(host, data, pair) {
         </div>
         <div class="section">
           <p class="caps">${esc(jc.sharedDoors)}</p>
-          <p class="chips doorchips">${d.shared.map((x) => `<span>${esc(doorName(x))}</span>`).join('') || '<span class="mute">·</span>'}</p>
+          <p class="chips doorchips">${d.shared.map((x) => `<span>${icon(x)}${esc(doorName(x))}</span>`).join('') || '<span class="mute">·</span>'}</p>
           ${d.onlyA.length ? `<p class="small mute">${esc(a.label)} also holds: ${d.onlyA.map(doorName).map(esc).join(', ')}</p>` : ''}
           ${d.onlyB.length ? `<p class="small mute">${esc(b.label)} also holds: ${d.onlyB.map(doorName).map(esc).join(', ')}</p>` : ''}
         </div>
@@ -559,10 +571,31 @@ function turnMeta(stage) {
   const n = run.stepIndex + 1;
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
+  // On a phone the rail sits below the fold, so the figure is drawn again here,
+  // small, beside the age. Exactly one of the two is ever visible: see the
+  // .fig-wrap and .fig-inline rules in components.css.
+  const fig = `<div class="fig-inline">${figure({ age: stage.age, doors: run.doors, doorLabels: doorLabelMap() })}</div>`;
   return `
     <p class="turn-meta caps">Step ${n} of ${stages.length} ${label} ${want}</p>
-    <div class="turn-head"><span class="turn-age" aria-hidden="true">${stage.age}</span>
+    <div class="turn-head">${fig}<span class="turn-age" aria-hidden="true">${stage.age}</span>
       <h1 class="serif" tabindex="-1">${esc(stage.title)}</h1></div>`;
+}
+
+/**
+ * The age the figure should be drawn at.
+ *
+ * Falls back to the last stage rather than the first, so the ending screen
+ * shows a person at forty eight and not one who has snapped back to thirteen.
+ */
+function currentAge() {
+  const s = stages[run.stepIndex] || stages[stages.length - 1];
+  return s ? s.age : 13;
+}
+
+function doorLabelMap() {
+  const out = {};
+  Object.keys(DOORS).forEach((k) => { out[k] = (DOORS[k] || {}).label || k; });
+  return out;
 }
 
 function rail(data) {
@@ -570,21 +603,22 @@ function rail(data) {
   const bars = ['skills', 'network', 'portfolio'].map((k) => {
     const lab = { skills: 'Can do', network: 'Know me', portfolio: 'Made' }[k];
     const pct = Math.round((run.ledger[k] / 24) * 100);
-    return `<div class="disp-row"><span>${lab}</span>
+    return `<div class="disp-row"><span>${icon(`t_${k}`)}${lab}</span>
       <span class="disp-track" role="img" aria-label="${lab}, ${run.ledger[k]} of 24"><span class="disp-fill" style="width:${pct}%"></span></span><span></span></div>`;
   }).join('');
   const dbars = Object.entries(run.disp).map(([k, v]) => {
     const max = Math.max(4, ...Object.values(run.disp));
-    return `<div class="disp-row"><span>${esc(dispLabel(k))}</span>
+    return `<div class="disp-row"><span>${icon(k)}${esc(dispLabel(k))}</span>
       <span class="disp-track" role="img" aria-label="${esc(dispLabel(k))}, ${v}"><span class="disp-fill" style="width:${Math.round((v / max) * 100)}%"></span></span><span></span></div>`;
   }).join('');
   const combo = planRows(data, run.plan);
   return `
+    <div class="fig-wrap">${figure({ age: currentAge(), doors: run.doors, doorLabels: doorLabelMap() })}</div>
     ${combo.length ? `
       <p class="caps">${esc(jc.comboRail)}</p>
       <p class="chips subjchips">${subjectChips(combo, 6)}</p>` : ''}
     <p class="caps" ${combo.length ? 'style="margin-top:var(--s-4)"' : ''}>${esc(jc.doorsHead)}</p>
-    <p class="chips doorchips">${run.doors.map((d) => `<span>${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">None yet. They come.</span>'}</p>
+    <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">None yet. They come.</span>'}</p>
     <p class="caps" style="margin-top:var(--s-4)">${esc(jc.carryHead)}</p>
     <div class="disp-bars">${bars}</div>
     <details style="margin-top:var(--s-3)"><summary class="small mute">How you tend to act</summary>
@@ -614,25 +648,33 @@ function lastStory() {
 function gainChips(c) {
   const chips = [];
   Object.entries(c.gain || {}).forEach(([k, v]) => {
-    const lab = { skills: '▲ Can do', network: '● Know me', portfolio: '◆ Made' }[k];
-    if (lab && v > 0) chips.push(lab);
+    const lab = { skills: 'Can do', network: 'Know me', portfolio: 'Made' }[k];
+    if (lab && v > 0) chips.push({ ic: `t_${k}`, text: lab });
   });
-  Object.entries(c.disp || {}).forEach(([k, v]) => { if (v > 0) chips.push(`+ ${dispLabel(k)}`); });
-  if (c.opens) chips.push(`◇ opens a door`);
-  return chips.slice(0, 3).map((x) => `<span class="gchip">${esc(x)}</span>`).join('');
+  Object.entries(c.disp || {}).forEach(([k, v]) => { if (v > 0) chips.push({ ic: k, text: `+ ${dispLabel(k)}` }); });
+  // The icon names which door, the words do not. A student sees that something
+  // specific opens without being told what before they have chosen it.
+  if (c.opens) chips.push({ ic: c.opens, text: 'opens a door' });
+  return chips.slice(0, 3)
+    .map((x) => `<span class="gchip">${icon(x.ic)}${esc(x.text)}</span>`).join('');
 }
 
 function snapshot() {
   return { doors: [...run.doors], disp: { ...run.disp }, ledger: { ...run.ledger } };
 }
+/** Returns [{ ic, text }]. Announced as text, rendered with the icon. */
 function delta(before) {
   const out = [];
-  run.doors.filter((d) => !before.doors.includes(d)).forEach((d) => out.push(`Door: ${(DOORS[d] || {}).label || d}`));
-  Object.keys(run.disp).forEach((k) => { const g = run.disp[k] - (before.disp[k] || 0); if (g > 0) out.push(`+${g} ${dispLabel(k)}`); });
+  run.doors.filter((d) => !before.doors.includes(d))
+    .forEach((d) => out.push({ ic: d, text: `Door: ${(DOORS[d] || {}).label || d}` }));
+  Object.keys(run.disp).forEach((k) => {
+    const g = run.disp[k] - (before.disp[k] || 0);
+    if (g > 0) out.push({ ic: k, text: `+${g} ${dispLabel(k)}` });
+  });
   Object.keys(run.ledger).forEach((k) => {
     const g = run.ledger[k] - (before.ledger[k] || 0);
     const lab = { skills: 'Can do', network: 'Know me', portfolio: 'Made' }[k];
-    if (g > 0) out.push(`+${g} ${lab}`);
+    if (g > 0) out.push({ ic: `t_${k}`, text: `+${g} ${lab}` });
   });
   return out;
 }
