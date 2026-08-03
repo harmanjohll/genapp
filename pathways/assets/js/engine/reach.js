@@ -30,7 +30,33 @@ export const STATES = {
 // impossible.
 const UNIVERSAL_ROUTES = ['work_study', 'later_degree'];
 
-export function reach(plan, destination, ctx) {
+/**
+ * The plan as the destination rules should see it: upper secondary only.
+ *
+ * Lower secondary subjects live in the same plan object, because English and
+ * Maths genuinely are the same subject at Sec 1 and Sec 4 and raising one at
+ * thirteen is exactly the fact the polytechnic rule reads at sixteen. But the
+ * lower secondary only rows must never reach a `countAtLevel`. Lower secondary
+ * Science is ONE subject that becomes one to three upper secondary ones, and
+ * Geography and History are taken by everybody rather than chosen, so counting
+ * them would tell a Sec 1 student they already satisfy "four subjects at G3"
+ * when they have not yet chosen a single upper secondary subject.
+ *
+ * Filtering here rather than at each call site means the invariant sweep, the
+ * monotonicity sweep and all three modes get the same answer. Monotonicity is
+ * unaffected: a filtered out subject contributes nothing either way, so adding
+ * one leaves every distance exactly where it was.
+ */
+export function upperPlan(plan, subjects) {
+  const lower = new Set((subjects || []).filter((s) => s.phase === 'lower').map((s) => s.id));
+  if (!lower.size) return plan;
+  const out = {};
+  Object.keys(plan || {}).forEach((id) => { if (!lower.has(id)) out[id] = plan[id]; });
+  return out;
+}
+
+export function reach(rawPlan, destination, ctx) {
+  const plan = upperPlan(rawPlan, ctx.subjects);
   const ruleResults = (destination.structural || []).map((rule) => {
     const res = evaluate(rule.test, plan, ctx);
     return { rule, res };
@@ -283,7 +309,8 @@ function monotonicityFailures(ctx) {
 
 function LEVEL_ORDER(lv) { return { G1: 1, G2: 2, G3: 3 }[lv] || 0; }
 
-function seedPlans(subjects) {
+function seedPlans(allSubjects) {
+  const subjects = allSubjects.filter((s) => (s.levels || []).length);
   const seeds = [];
   ['G1', 'G2', 'G3'].forEach((lv) => {
     const p = {};
@@ -298,7 +325,10 @@ function seedPlans(subjects) {
 }
 
 /** A spread of plan states from empty to full, including deliberately awkward ones. */
-function generatePlans(subjects) {
+function generatePlans(allSubjects) {
+  // Rows with no levels (the lower secondary common curriculum, which everyone
+  // takes and which is not banded) cannot appear in a generated plan at all.
+  const subjects = allSubjects.filter((s) => (s.levels || []).length);
   const ids = subjects.map((s) => s.id);
   const plans = [{}];
 

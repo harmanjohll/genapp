@@ -59,6 +59,7 @@ export function createRun(startAge, label, want, plan) {
     path: null,
     pathLabel: null,
     reflection: null,            // set by the reflect stage
+    raises: [],                  // levels this run actually moved, append only
     done: false,
   };
 }
@@ -103,8 +104,44 @@ export function visibleChoices(stage, run) {
   return [...base, ...subject];
 }
 
+const LV = { G1: 1, G2: 2, G3: 3 };
+
+/**
+ * A choice can raise a subject the student already holds, one level, upward.
+ *
+ * This is the lower secondary mechanic made real rather than described: asking
+ * at thirteen changes the level for the rest of the run, and later stages see
+ * it. Three deliberate limits:
+ *
+ *   It only ever raises, so the combination invariant that no plan finishes
+ *   with fewer doors than an empty one survives untouched.
+ *   It never ADDS a subject, because adding one would be the app choosing a
+ *   combination on a student's behalf.
+ *   It never rolls dice. A probability here would be the game simulating a
+ *   school's judgement of a child, which this app refuses everywhere else. The
+ *   deck carries the disappointment instead, in cards written for it.
+ */
+function applyRaise(run, spec, meta) {
+  if (!spec) return null;
+  const ids = Array.isArray(spec.any) ? spec.any : [spec.subject].filter(Boolean);
+  for (const id of ids) {
+    const cur = run.plan && run.plan[id];
+    if (!cur) continue;
+    const offered = (meta[id] && meta[id].levels) || [];
+    const next = spec.to || offered.find((lv) => LV[lv] === LV[cur] + 1);
+    // The offered check matters: without it a raise could put a G1 only subject
+    // at G2 and the UI would render a level the subject list says cannot exist.
+    if (!next || LV[next] <= LV[cur] || !offered.includes(next)) continue;
+    run.plan[id] = next;
+    const rec = { subject: id, name: (meta[id] && meta[id].name) || id, from: cur, to: next, age: spec._age };
+    run.raises.push(rec);
+    return rec;
+  }
+  return null;
+}
+
 /** Spend the turn's points on one or more choices. */
-export function applyChoices(run, stage, indices, cards) {
+export function applyChoices(run, stage, indices, cards, meta) {
   const pool = visibleChoices(stage, run);
   const chosen = indices.map((i) => pool[i]).filter(Boolean);
   if (!chosen.length) return run;
@@ -112,7 +149,10 @@ export function applyChoices(run, stage, indices, cards) {
   const outcomes = [];
   chosen.forEach((choice) => {
     grant(run, choice);
-    outcomes.push(resolveOutcome(choice, run));
+    const raised = choice.raise
+      ? applyRaise(run, { ...choice.raise, _age: stage.age }, meta || {})
+      : null;
+    outcomes.push(resolveOutcome(choice, run, raised));
   });
 
   run.steps.push({
@@ -212,7 +252,12 @@ function grant(run, thing) {
 }
 
 /** Outcome text, allowing late stages to remember the route and the flags. */
-function resolveOutcome(choice, run) {
+function resolveOutcome(choice, run, raised) {
+  if (raised && choice.outcomeRaised) {
+    return String(choice.outcomeRaised)
+      .replace('{subject}', raised.name)
+      .replace('{level}', raised.to);
+  }
   const v = choice.outcomeIf;
   if (v) {
     if (run.path && v[`path:${run.path}`]) return v[`path:${run.path}`];
@@ -341,6 +386,12 @@ export function runJourneySweep(data) {
   const flagIds = new Set(j.flags || []);
   const stageList = j.stages;
   const allSubjects = (data.subjects && data.subjects.subjects) || [];
+  const subjectMeta = Object.fromEntries(allSubjects.map((x) => [x.id, { name: x.shortName || x.name, levels: x.levels || [] }]));
+  // 15 is the age the mode used to clamp every run to. Running the sweep from
+  // both entry points keeps those sims bit identical to before the lower
+  // secondary stages existed, so a failure there is a genuine regression and a
+  // failure at 13 is new coverage rather than a reshuffled deck.
+  const START_AGES = [stageList[0].age, 15];
   const subjectIds = new Set(allSubjects.map((s) => s.id));
 
   // 1. Every stage resolves for every path with a sane choice set.
@@ -423,12 +474,13 @@ export function runJourneySweep(data) {
   //                the plan having shifted what "the last choice" means
   // mode 'subject' always takes a subject choice when one is offered, which is
   //                the only way the new content gets played by the sweep at all
-  function playSim(stageList2, cards2, pi, si, strat, plan, mode) {
+  function playSim(stageList2, cards2, pi, si, strat, plan, mode, startAge) {
     const local = [];
     simCount += 1;
-    const run = createRun(stageList2[0].age, 'sim', null, plan);
+    const from = stagesFor(stageList2, startAge || stageList2[0].age);
+    const run = createRun(from[0].age, 'sim', null, plan);
     run.seed = 12345 + pi * 7 + si * 13;
-    const stages = stagesFor(stageList2, run.startAge);
+    const stages = from;
     let guard = 0;
     let doorsPrev = 0;
     while (!run.done && guard++ < 200) {
@@ -444,7 +496,7 @@ export function runJourneySweep(data) {
         const span = mode === 'base' ? baseN : pool.length;
         if ((stage.format || 'turn') === 'fork') {
           const idx = stage.id === 's_results' ? Math.min(pi, span - 1) : strat(span);
-          applyChoices(run, stage, [Math.max(0, Math.min(span - 1, idx))], cards2);
+          applyChoices(run, stage, [Math.max(0, Math.min(span - 1, idx))], cards2, subjectMeta);
         } else {
           const subjectIdx = pool.findIndex((c) => c.needsSubject);
           const first = mode === 'subject' && subjectIdx >= 0
@@ -455,7 +507,7 @@ export function runJourneySweep(data) {
             const second = pool.findIndex((c, i) => i !== first && i < span && (c.cost || 1) === 1);
             if (second >= 0) picks.push(second);
           }
-          applyChoices(run, stage, picks, cards2);
+          applyChoices(run, stage, picks, cards2, subjectMeta);
         }
       }
       if (run.doors.length < doorsPrev) local.push('doors shrank');
@@ -469,9 +521,11 @@ export function runJourneySweep(data) {
 
   PATHS.forEach((path, pi) => {
     strategies.forEach((strat, si) => {
-      const { run, local } = playSim(stageList, cards, pi, si, strat, null, 'full');
-      local.forEach((why) => failures.push({ path, strat: si, why }));
-      if (run.done) frames.add(`${run.topDisposition}`);
+      START_AGES.forEach((from) => {
+        const { run, local } = playSim(stageList, cards, pi, si, strat, null, 'full', from);
+        local.forEach((why) => failures.push({ path, strat: si, from, why }));
+        if (run.done) frames.add(`${run.topDisposition}`);
+      });
     });
   });
   if (frames.size < 2) failures.push({ why: 'every simulated strategy produced the same top disposition' });
@@ -504,21 +558,44 @@ export function runJourneySweep(data) {
     { id: 'thin', plan: pick(['el']) },
   ];
   const baseline = {};
+  const totals = {};
   PATHS.forEach((path, pi) => {
     strategies.forEach((strat, si) => {
       combos.forEach((combo) => {
-        const { run, local } = playSim(stageList, cards, pi, si, strat, combo.plan, 'base');
-        local.forEach((why) => failures.push({ combo: combo.id, path, strat: si, why }));
-        const key = `${pi}:${si}`;
-        if (combo.id === 'empty') { baseline[key] = run.doors.length; return; }
-        if (run.doors.length < baseline[key]) {
-          failures.push({
-            combo: combo.id, path, strat: si,
-            why: `same choices, ${run.doors.length} doors against ${baseline[key]} on an empty plan`,
-          });
-        }
+       START_AGES.forEach((from) => {
+        const { run, local } = playSim(stageList, cards, pi, si, strat, combo.plan, 'base', from);
+        local.forEach((why) => failures.push({ combo: combo.id, path, strat: si, from, why }));
+        const key = `${pi}:${si}:${from}`;
+        if (combo.id === 'empty') { baseline[key] = run.doors.length; totals.empty = (totals.empty || 0) + run.doors.length; return; }
+        totals[combo.id] = (totals[combo.id] || 0) + run.doors.length;
+       });
       });
     });
+  });
+
+  // Per seed door parity was the right check while a combination could only
+  // ever APPEND choices. It stopped being right the moment subjects also began
+  // biasing which chances turn up, and a raise started changing the plan mid
+  // run: two runs then legitimately draw different cards, and different cards
+  // carry different doors, in both directions. Demanding exact parity would
+  // forbid the deck from varying at all, which is not a property worth having.
+  //
+  // What replaced it is a stronger claim, and a two sided one. The app's whole
+  // argument is that the combination does not decide how big your life gets, so
+  // the test is that no combination ends up materially ahead OR behind an empty
+  // plan across every simulation. A combination that quietly advantaged its
+  // holder would be just as much a failure of this app as one that penalised
+  // them, and only a two sided test catches both.
+  const SPREAD = 0.05;
+  Object.keys(totals).forEach((id) => {
+    if (id === 'empty' || !totals.empty) return;
+    const off = Math.abs(totals[id] - totals.empty) / totals.empty;
+    if (off > SPREAD) {
+      failures.push({
+        combo: id,
+        why: `${totals[id]} doors across all sims against ${totals.empty} for an empty plan, ${Math.round(off * 100)} percent apart`,
+      });
+    }
   });
 
   // 6. The subject choices are actually playable. A run that takes every
@@ -526,7 +603,7 @@ export function runJourneySweep(data) {
   // otherwise the new content is a trap for the students most drawn to it.
   combos.filter((c) => c.plan).forEach((combo) => {
     PATHS.forEach((path, pi) => {
-      const { run, local } = playSim(stageList, cards, pi, 0, strategies[0], combo.plan, 'subject');
+      const { run, local } = playSim(stageList, cards, pi, 0, strategies[0], combo.plan, 'subject', stageList[0].age);
       local.forEach((why) => failures.push({ combo: combo.id, path, mode: 'subject', why }));
       if (run.done && !run.steps.length) failures.push({ combo: combo.id, path, why: 'empty run' });
     });

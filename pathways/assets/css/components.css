@@ -701,3 +701,21 @@ body[data-journey="true"] .site-foot { display: none; }
 .diff-combo { display: flex; flex-wrap: wrap; gap: var(--s-1); font-size: var(--t-micro); }
 .diff-combo .subjchip { padding: 0.15em 0.4em; font-size: var(--t-micro); }
 @media (hover: hover) { .lvchip:hover { background: var(--paper-warm); } }
+
+/* ---------- lower secondary: movement and the common curriculum ---------- */
+.nextlv {
+  margin-left: var(--s-2); padding: 0.12em 0.42em;
+  border: 1px dashed var(--rule); border-radius: var(--r-sm);
+  font-size: var(--t-micro); color: var(--ink-mute); white-space: nowrap;
+}
+.everyone { font-size: var(--t-micro); color: var(--ink-mute); font-style: italic; }
+.juncture { margin-top: var(--s-3); }
+.grp-fold > summary.grp { cursor: pointer; list-style: revert; }
+.grp-fold[open] > summary.grp { margin-bottom: var(--s-2); }
+/* Surface rather than the warm tint, so the panel reads as a quiet aside next
+   to the student's own list rather than competing with it. The dashed border
+   carries the "this is an inference, not your plan" signal on its own. */
+.horizon { margin-top: var(--s-4); padding: var(--s-4);
+  border: 1px dashed var(--rule); border-radius: var(--r-lg); background: var(--surface); }
+.hz-moves { margin: var(--s-3) 0 0; padding-left: 1.1em; }
+.hz-moves li { margin-bottom: var(--s-2); }

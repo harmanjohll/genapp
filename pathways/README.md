@@ -46,7 +46,7 @@ Structural, not editorial. There is no `locked` state in the data model, `reach(
 
 Adding a subject, or raising one a level, can never increase the distance to any destination. This one is easy to break by accident and it was broken: an earlier version charged one move for a subject you were not taking and two for the same subject held at G1, so a student entering an honest G1 plan watched Junior College, Millennia Institute and Polytechnic all recede. Silently, in arithmetic, underneath copy saying the opposite.
 
-Both are checked rather than promised. `?dev=1` runs 808 destination evaluations over 101 generated plan states, plus a monotonicity sweep over every subject at every level from several starting plans. It fails loudly in the console.
+Both are checked rather than promised. `?dev=1` runs 904 destination evaluations over 113 generated plan states, plus a monotonicity sweep over every subject at every level from several starting plans. It fails loudly in the console.
 
 ## What it deliberately does not do
 
@@ -79,6 +79,8 @@ Journey went the other way on purpose. It was capped at 120 words and had exactl
 
 ## Journey, the game
 
+**It starts in the year you are actually in.** Pick Sec 1 and you play Sec 1, at thirteen, where the moves are about settling in and asking to move a level up. Pick Sec 4 and you start at sixteen. The year selector used to change one sentence; now it changes the game, the subject list and what the app thinks is worth telling you.
+
 **It starts from your actual subjects.** Journey opens with your combination, taken straight from the plan you built in Now, or picked there and then if you have not built one yet. At fifteen the game says "this year you take Chemistry, Art and Computing", using your own list, and your subjects add choices and change which chances turn up.
 
 What they never do is decide anything. No archetypes, no "you are the practical one", no path set for you, no door opened or withheld. The combination is where you are standing, not who you are, and the sweep plays eight combinations including an all G1 plan to assert that none of them plays a smaller game than picking nothing at all.
@@ -95,6 +97,7 @@ Four families, set by a choice at 17, resolved against every stage after it.
 
 | Ages | Shape |
 | --- | --- |
+| 13, 14 | Lower secondary. Asking to move a subject up actually raises it for the rest of the run |
 | 15, 16 | Shared turns. Nobody has taken a route yet |
 | **17, 27, 43** | **Forks.** Single pick, the age huge |
 | 18 to 30 | Branched per family: `academic`, `applied`, `hands`, `arts` |
@@ -103,7 +106,7 @@ Four families, set by a choice at 17, resolved against every stage after it.
 
 The convergence is the point. By your mid thirties the route you took at seventeen has stopped deciding what is available to you, and letting the content merge says that better than a sentence would.
 
-13 stages, ages 15 to 48, 53 chance cards including 10 callbacks. Every age has at least 8 eligible cards on every path, every card has at least 2 responses, and 136 simulations across 8 combinations play end to end with at least 3 doors each. All of it is asserted by `runJourneySweep()`.
+15 stages, ages 13 to 48, 53 chance cards including 10 callbacks. Every age has at least 8 eligible cards on every path, every card has at least 2 responses, and 136 simulations across 8 combinations play end to end with at least 3 doors each. All of it is asserted by `runJourneySweep()`.
 
 ## Layout
 

@@ -6,6 +6,7 @@ import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
 import { runInvariantSweep } from './engine/reach.js';
+import { projectionSweep } from './engine/project.js';
 import { runCopyBudget } from './engine/copy-budget.js';
 import { runJourneySweep } from './engine/journey.js';
 import { renderNow } from './modes/mode-now.js';
@@ -67,6 +68,7 @@ async function init() {
 
   if (params.get('dev') === '1') {
     runInvariantSweep(ctx);
+    projectionSweep(ctx);
     runJourneySweep(data);
     runCopyBudget(data);
   }

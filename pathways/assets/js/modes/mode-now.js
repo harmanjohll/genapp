@@ -22,6 +22,7 @@ import { esc, onAction, statusChip } from '../components/dom.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import { reach, sortReaches, lever, STATES } from '../engine/reach.js';
+import { project, horizonMoves } from '../engine/project.js';
 import { pulse, leverLine } from '../engine/pulse.js';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
@@ -32,12 +33,16 @@ let DATA = null;
 let CTX = null;
 let lastReaches = [];
 let host = null;
+// A lower secondary student can ask to see the Sec 3 list. Module local and
+// never persisted: it is a look, not a change of year.
+let showUpper = false;
 
 export function renderNow(container, data, ctx) {
   DATA = data; CTX = ctx; host = container;
   const st = getState();
   const c = data.copy.chrome;
-  const subjects = visibleSubjects(data, st);
+  const phase = yearPhase(st.year);
+  const subjects = visibleSubjects(data, st, showUpper);
   const reaches = computeReaches(st.plan);
   lastReaches = reaches;
   const lev = lever(reaches);
@@ -73,11 +78,14 @@ export function renderNow(container, data, ctx) {
               <p class="micro mute">${esc(c.subjectsHint)}</p>
             </div>
             <p class="small mute thisyear">${esc((data.copy.thisYear || {})[st.year] || '')}</p>
-            <p class="micro mute avail-line">${esc(c.availDisclaimer)}
-              <button class="gloss" type="button" data-action="avail">${esc(c.availMore)}</button></p>
+            ${phase === 'lower' && !showUpper
+              ? `<p class="micro mute">${esc(c.onTimetable)}</p>`
+              : `<p class="micro mute avail-line">${esc(c.availDisclaimer)}
+                  <button class="gloss" type="button" data-action="avail">${esc(c.availMore)}</button></p>`}
             <div id="conflict">${conflictNotice(st.plan, data)}</div>
-            ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan)).join('')}
-            <p class="micro mute">${esc(data.subjects.movement.headline)} ${esc(data.subjects.movement.body)}</p>
+            ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan, st.year)).join('')}
+            ${junctureLine(data, st, phase, showUpper)}
+            ${phase === 'lower' ? horizonPanel(data, st) : ''}
           </section>
           <div id="tail">${tail(st, reaches, data)}</div>
         </div>
@@ -95,9 +103,33 @@ function computeReaches(plan) {
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
-function visibleSubjects(data, st) {
+/** Sec 1 and Sec 2 are lower secondary. Everything from Sec 3 is upper. */
+export function yearPhase(yearId) {
+  return (yearId === 'sec1' || yearId === 'sec2') ? 'lower' : 'upper';
+}
+
+/**
+ * The list a student in this year actually sits in front of.
+ *
+ * Lower secondary is a different curriculum, not a smaller version of the same
+ * one: Science is one integrated subject, Geography and History are taken by
+ * everybody, and A Maths, Accounts and Electronics do not exist yet. Showing a
+ * Sec 1 student the Sec 3 option booklet was not merely noisy, it was wrong.
+ *
+ * English, Mother Tongue and Maths carry phase "both" and appear in both lists
+ * on the same key, which is the point: the English level raised at the end of
+ * Sec 1 is the same fact the polytechnic rule reads three years later.
+ *
+ * `showUpper` lets a lower secondary student deliberately look at the Sec 3
+ * list. Browsing a subject nobody has suggested to you is one of the few
+ * defences against deciding at thirteen what you are not the sort of person to
+ * do, so the swap is a sensible default and never a wall.
+ */
+function visibleSubjects(data, st, showUpper) {
   const all = data.subjects.subjects;
-  return st.offer ? all.filter((s) => st.offer.includes(s.id)) : all;
+  const want = (showUpper || yearPhase(st.year) === 'upper') ? 'upper' : 'lower';
+  const phased = all.filter((s) => (s.phase || 'upper') === want || s.phase === 'both');
+  return st.offer ? phased.filter((s) => st.offer.includes(s.id)) : phased;
 }
 
 /**
@@ -146,16 +178,109 @@ function doorRow(r, lev) {
     </li>`;
 }
 
-function groupBlock(group, subjects, plan) {
+function groupBlock(group, subjects, plan, yearId) {
   const list = subjects.filter((s) => s.group === group.id);
   if (!list.length) return '';
+  // The common curriculum is four rows nobody chooses. Inside a closed details
+  // it costs four words at first paint instead of forty, and it still says out
+  // loud that a third of the week is spent there.
+  const body = `<ul class="srows">${list.map((s) => subjectRow(s, plan[s.id], yearId)).join('')}</ul>`;
+  if (group.id === 'common') {
+    return `<details class="grp-fold"><summary class="grp">${esc(group.label)}</summary>
+      ${group.note ? `<p class="grp-note">${esc(group.note)}</p>` : ''}${body}</details>`;
+  }
   return `
     <h3 class="grp">${esc(group.label)}</h3>
     ${group.note ? `<p class="grp-note">${esc(group.note)}</p>` : ''}
-    <ul class="srows">${list.map((s) => subjectRow(s, plan[s.id])).join('')}</ul>`;
+    ${body}`;
 }
 
-function subjectRow(s, level) {
+/**
+ * Said once, under the list, not repeated down every row.
+ *
+ * At Sec 1 and Sec 2 this is the most useful sentence on the screen, because
+ * it names the window in which a student can change their own level. From Sec 3
+ * it says something different and quieter: the levels are largely settled and
+ * what you do with them is not. That correction matters. The line that used to
+ * sit here told Sec 3 students a level move was still a conversation away, and
+ * the research says the upward window has closed by then.
+ */
+function junctureLine(data, st, phase, upperShown) {
+  const j = data.subjects.junctures;
+  if (!j) return '';
+  const y = (j.years || {})[st.year] || {};
+  const parts = [y.up, y.note].filter(Boolean).map(esc).join(' ');
+  const school = phase === 'lower' ? `<br><span class="mute">${esc(j.schoolNote)}</span>` : '';
+  const peek = phase === 'lower' ? `
+    <button class="gloss" type="button" data-action="peek">${esc(upperShown
+      ? data.copy.chrome.backToMine : data.copy.chrome.seeUpper)}</button>` : '';
+  return `<p class="micro mute juncture">${parts}${school} ${peek}</p>
+    ${phase === 'lower' ? `<p class="micro mute">${esc((j.down || {}).line || '')}
+      <button class="gloss" type="button" data-action="downsheet">${esc(data.copy.chrome.availMore)}</button></p>` : ''}`;
+}
+
+/**
+ * What a Sec 3 combination built on these levels usually looks like, and what
+ * one move would change.
+ *
+ * Placed BELOW the student's own subject list on purpose. Their levels are the
+ * fact and this is the inference, and leading with the inference would repeat
+ * the mistake Journey already corrected by asking for the combination before
+ * the want. The projected rows carry no level chips because they are not the
+ * student's to set: a tappable projected row would let a Sec 1 student build an
+ * upper secondary plan the engine then treats as real.
+ */
+function horizonPanel(data, st) {
+  const j = data.subjects.junctures || {};
+  const pr = project(st.plan, DATA.subjects.subjects);
+  const byId = new Map(DATA.subjects.subjects.map((x) => [x.id, x]));
+  const c = data.copy.chrome;
+  if (!pr.rows.length) return '';
+
+  const chips = pr.rows.map((r) => {
+    const to = byId.get(r.to);
+    return `<span class="subjchip">${esc(to ? (to.shortName || to.name) : r.to)}<b class="lv lv-${r.level.toLowerCase()}">${esc(r.level)}</b></span>`;
+  }).join('');
+
+  const moves = horizonMoves(st.plan, { ...CTX, plan: st.plan }, st.year).slice(0, 2);
+  const moveLines = moves.map((m) => {
+    const what = m.opens.length
+      ? `${c.horizonOpens} ${m.opens.slice(0, 2).map(esc).join(', ')}`
+      : `${c.horizonNearer} ${m.nearer.slice(0, 2).map(esc).join(', ')}`;
+    return `<li><strong>${esc(m.name)} ${esc(m.from)} to ${esc(m.to)}.</strong> ${what}</li>`;
+  }).join('');
+
+  return `
+    <section class="horizon" aria-labelledby="hz-h">
+      <p class="caps" id="hz-h">${esc(c.horizonHead)} ${statusChip('provisional')}</p>
+      <p class="chips subjchips">${chips}</p>
+      <p class="micro mute">${esc(c.horizonNote)}</p>
+      ${moveLines ? `<ul class="small hz-moves">${moveLines}</ul>` : ''}
+    </section>`;
+}
+
+const LEVEL_UP = { G1: 'G2', G2: 'G3' };
+
+/**
+ * Two words, and only where a level can actually move.
+ *
+ * The when and the who are stated once above the list, not repeated down every
+ * row, for the same reason the lever line exists: the same sentence five times
+ * reads as a wall about the student rather than one thing they could do. The
+ * prose about what the next level is like lives in the subject sheet.
+ */
+function nextLevelTag(s, level, yearId) {
+  if (!level || !s.raisableFrom) return '';
+  if (!LEVEL_UP[level] || !(s.levels || []).includes(LEVEL_UP[level])) return '';
+  const order = { sec1: 1, sec2: 2, sec3: 3, sec4: 4, sec5: 5 };
+  // Humanities levels do not move until Sec 2. Saying otherwise at Sec 1 would
+  // send a thirteen year old to ask for something that is not on offer yet.
+  if ((order[yearId] || 9) < (order[s.raisableFrom] || 0)) return '';
+  if ((order[yearId] || 9) > 2) return '';
+  return `<span class="nextlv">Next ${LEVEL_UP[level]}</span>`;
+}
+
+function subjectRow(s, level, yearId) {
   const chips = ['G1', 'G2', 'G3'].map((lv) => {
     if (!s.levels.includes(lv)) return '<span class="lgap" aria-hidden="true"></span>';
     return `<button class="lchip" type="button" data-action="level" data-subject="${s.id}"
@@ -167,7 +292,9 @@ function subjectRow(s, level) {
       <button class="srow-name" type="button" data-action="subject" data-id="${s.id}" aria-haspopup="dialog">
         ${esc(s.name)}${s.availability === 'selected' ? ' <span class="seltag">selected schools</span>' : ''}
       </button>
-      <div class="srow-levels" role="group" aria-label="${esc(s.name)} level">${chips}</div>
+      <div class="srow-levels" role="group" aria-label="${esc(s.name)} level">${
+        s.commonCurriculum ? '<span class="everyone">everyone</span>' : chips
+      }${nextLevelTag(s, level, yearId)}</div>
     </li>`;
 }
 
@@ -269,6 +396,14 @@ function bindActions() {
         <p>${esc(av.sheet)}</p>
         <p class="small"><a href="${esc(av.schoolfinder)}" target="_blank" rel="noopener">MOE SchoolFinder</a></p>`, btn);
     },
+    peek: () => { showUpper = !showUpper; renderNow(host, DATA, CTX); },
+    downsheet: (btn) => {
+      const d = (DATA.subjects.junctures || {}).down || {};
+      openSheet(`
+        <h2 id="sheet-title">${esc(d.line || '')}</h2>
+        <p>${esc(d.body || '')}</p>
+        <p class="small mute">${esc((DATA.subjects.junctures || {}).schoolNote || '')}</p>`, btn);
+    },
     clear: () => onClear(),
     share: () => onShare(),
     copyask: (btn) => copyText(btn, btn.dataset.q),
@@ -294,6 +429,15 @@ function onLevel(btn) {
     row.querySelectorAll('.lchip').forEach((c) => {
       c.setAttribute('aria-pressed', String(c.dataset.level === next));
     });
+    // The next level tag has to be refreshed here as well as at render. This
+    // path deliberately skips a full repaint to keep focus and transitions, so
+    // anything derived from the level has to be updated by hand or it silently
+    // shows the state before the tap. The conflict notice below learned this
+    // the same way.
+    const levels = row.querySelector('.srow-levels');
+    const old = row.querySelector('.nextlv');
+    if (old) old.remove();
+    if (levels && s) levels.insertAdjacentHTML('beforeend', nextLevelTag(s, next, getState().year));
   }
 
   const reaches = computeReaches(getState().plan);

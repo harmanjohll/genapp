@@ -51,7 +51,14 @@
     "availDisclaimer": "Schools offer different subsets of these.",
     "availMore": "Your school's list is the real one.",
     "selTag": "selected schools",
-    "conflictNote": "{a} repeats the {b} half of your Humanities pair. Schools ask for a different elective. Worth checking."
+    "conflictNote": "{a} repeats the {b} half of your Humanities pair. Schools ask for a different elective. Worth checking.",
+    "onTimetable": "These are on your timetable already. Set them to what you are actually taking.",
+    "seeUpper": "See the Sec 3 list",
+    "backToMine": "Back to my year",
+    "horizonHead": "If Sec 3 started tomorrow",
+    "horizonNote": "A combination like this usually follows. Yours will be your own.",
+    "horizonOpens": "Opens",
+    "horizonNearer": "Brings closer"
   },
   "pulse": {
     "opened": "{dest} is open now.",
@@ -78,9 +85,9 @@
     "open": "Ask your form teacher: which of these would suit how I learn?"
   },
   "thisYear": {
-    "sec1": "This year is for looking around. Levels move at the end of it.",
-    "sec2": "The subject combination exercise lands this year. Build it here first, then talk to people.",
-    "sec3": "Settle into the combination and go deep. Moving a level is still a conversation away.",
+    "sec1": "Four subjects can move up at the end of this year. Asking is the whole mechanism.",
+    "sec2": "The big one. Where your levels land this year is what you carry into Sec 3.",
+    "sec3": "Your levels are largely set. What you build with them this year is not.",
     "sec4": "Early Admissions opens before results. What you have made and done counts now.",
     "sec5": "This year widens what comes next. Aim it at something specific."
   },
@@ -122,7 +129,8 @@
     "comboSheet": "Tap a level. Nothing here is final, and you can change it any time.",
     "comboDone": "That is my combination",
     "seeInNow": "See this combination in Now",
-    "verdictCombo": "Different subjects, different first steps, and you are both holding doors. The combination started the story. It did not finish it."
+    "verdictCombo": "Different subjects, different first steps, and you are both holding doors. The combination started the story. It did not finish it.",
+    "raisedHead": "What you moved"
   },
   "footerDoors": {
     "head": "This tool has three doors",

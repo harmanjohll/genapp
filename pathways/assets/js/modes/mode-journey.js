@@ -75,7 +75,11 @@ export function resetJourney() {
 function startRun(data, want) {
   const j = data.journey;
   const st = getState();
-  stages = stagesFor(j.stages, Math.max(15, currentYear().age));
+  // No clamp. A Sec 1 student plays Sec 1. The old floor of 15 silently aged a
+  // thirteen year old forward two years and then offered them, at the stage it
+  // called Sec 3, the chance to ask to move a level up: the one thing that was
+  // actually available in the year it had just skipped.
+  stages = stagesFor(j.stages, currentYear().age);
   const n = st.runs.length + 1;
   // The run carries a copy of the plan, not a reference to it. A student who
   // edits their subjects in NOW next week must not silently rewrite the story
@@ -84,6 +88,12 @@ function startRun(data, want) {
   run = createRun(stages[0].age, `Story ${n}`, want, st.plan);
   picked = []; justResolved = null;
   setLiveRun(run);
+}
+
+/** Name and offered levels per subject, so a raise cannot invent a level. */
+function subjectMeta(data) {
+  const all = (data.subjects && data.subjects.subjects) || [];
+  return Object.fromEntries(all.map((x) => [x.id, { name: x.shortName || x.name, levels: x.levels || [] }]));
 }
 
 /** The subjects in a plan, as data rows, in subject list order. */
@@ -298,7 +308,7 @@ function turnScreen(host, stage, data) {
 function commit(data) {
   if (!picked.length) return;
   const stage = currentStage(run, stages);
-  applyChoices(run, stage, picked, data.chances.cards);
+  applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data));
   announce(`Age ${stage.age} lived.`);
   picked = [];
   setLiveRun(run);
@@ -325,7 +335,7 @@ function forkScreen(host, stage, data) {
   bindGlossary(host);
   onAction(host, {
     fork: (btn) => {
-      applyChoices(run, stage, [Number(btn.dataset.i)], data.chances.cards);
+      applyChoices(run, stage, [Number(btn.dataset.i)], data.chances.cards, subjectMeta(data));
       announce(`Chosen. Age ${stage.age}.`);
       setLiveRun(run);
       rerender();
@@ -448,6 +458,12 @@ function endingScreen(host, data, st) {
           <p class="caps">${esc(jc.doorsHead)}</p>
           <p class="chips doorchips">${run.doors.map((d) => `<span>${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
         </div>
+        ${(run.raises || []).length ? `
+          <div class="section">
+            <p class="caps">${esc(jc.raisedHead)}</p>
+            <ul class="small raised">${run.raises.map((r) => `
+              <li>${esc(r.name)}, ${esc(r.from)} to ${esc(r.to)}, at ${r.age}.</li>`).join('')}</ul>
+          </div>` : ''}
         ${planRows(data, run.plan).length ? `
           <div class="section">
             <p class="caps">${esc(jc.comboRail)}</p>
