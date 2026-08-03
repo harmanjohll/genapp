@@ -7,7 +7,7 @@
     "notes": "Every string the interface says in its own voice, in one file so the copy budget can be linted. Templates use {braces}. Keep each under its cap in engine/copy-budget.js."
   },
   "chrome": {
-    "brand": "The Long Game",
+    "brand": "Still Open",
     "modes": {
       "now": "Now",
       "journey": "Journey",
@@ -49,7 +49,7 @@
     "provisional": "{n} figures here are unverified.",
     "stale": "Last checked {days} days ago. Criteria change.",
     "availDisclaimer": "Schools offer different subsets of these.",
-    "availMore": "Your school's list is the real one.",
+    "availMore": "Refer to the combinations your school offers.",
     "selTag": "selected schools",
     "conflictNote": "{a} repeats the {b} half of your Humanities pair. Schools ask for a different elective. Worth checking.",
     "onTimetable": "These are on your timetable already. Set them to what you are actually taking.",
@@ -124,7 +124,7 @@
     "comboPick": "Pick your subjects",
     "comboChange": "Change subjects",
     "comboNote": "This is where your story starts. It does not decide where it ends.",
-    "comboGate": "Pick at least one subject, then choose what you want.",
+    "comboGate": "Pick subjects above, or just start.",
     "comboRail": "You take",
     "comboSheet": "Tap a level. Nothing here is final, and you can change it any time.",
     "comboDone": "That is my combination",

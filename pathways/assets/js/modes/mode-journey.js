@@ -176,15 +176,20 @@ function introScreen(host, data, st) {
   // Combination first, want second. The order matters: the combination is a
   // fact about this year and the want is a guess about ten years out, and
   // asking for the guess first makes the fact feel like a consequence of it.
-  // With no plan yet these two blocks are a numbered sequence, not one live
-  // control beside a dead one. A student arriving from Mode NOW who has not set
-  // a level lands here, and the screen has to say "you are one step in" rather
-  // than looking like it rendered nothing.
-  const step = (n) => (hasPlan ? '' : `<span class="stepnum" aria-hidden="true">${n}</span>`);
+  //
+  // Neither one gates the other. Mode NOW renders a full screen from an empty
+  // plan, because an unset combination closes nothing, so a student can arrive
+  // here having seen counters and destinations without ever setting a level.
+  // Gating the wants behind the combination meant that student got a near empty
+  // screen whose only live control sent them back to the mode they just left:
+  // a loop with no exit that reads as the tap having done nothing. The run
+  // engine has always tolerated an empty plan (see line ~682), so the gate was
+  // never load bearing. The combination sits above as a refinement you can take
+  // or leave, and the wants are always live.
 
   const comboBlock = `
     <div class="combobox">
-      <p class="caps">${step(1)}${esc(jc.comboHead)}</p>
+      <p class="caps">${esc(jc.comboHead)}</p>
       ${hasPlan ? `
         <p class="chips subjchips">${subjectChips(rows)}</p>
         <div class="btn-row" style="margin-top:var(--s-3)">
@@ -215,16 +220,15 @@ function introScreen(host, data, st) {
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">You choose. Things turn up. Nothing ends it.</p>
         ${comboBlock}
-        <div class="wantbox ${hasPlan ? '' : 'waiting'}">
-          <p class="want-q">${step(2)}${esc(jc.wantPrompt)}</p>
+        <div class="wantbox">
+          <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(hasPlan ? jc.wantHint : jc.comboGate)}</p>
-          ${hasPlan ? `
-            <div class="grid two" style="margin-top:var(--s-3)">
-              ${wants.map((w) => `
-                <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
-                  <span class="want" style="font-size:1rem">${esc(w.label)}</span>
-                </button>`).join('')}
-            </div>` : ''}
+          <div class="grid two" style="margin-top:var(--s-3)">
+            ${wants.map((w) => `
+              <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
+                <span class="want" style="font-size:1rem">${esc(w.label)}</span>
+              </button>`).join('')}
+          </div>
         </div>
         ${runsList}
         ${st.runs.length ? `<button class="btn ghost small" type="button" data-action="clearruns" style="margin-top:var(--s-4)">Clear stories</button>` : ''}

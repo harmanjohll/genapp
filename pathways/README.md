@@ -1,4 +1,4 @@
-# The Long Game
+# Still Open
 
 A pathways thinking tool for Singapore secondary students under Full Subject Based Banding.
 
@@ -30,7 +30,7 @@ Three modes over one engine and one saved plan.
 - **Journey** — a played game from Sec 3 to 48. Say what you want by twenty five, spend two attention points a turn, answer chance cards that ask something of you, and watch named doors collect. **Your choice at 17 sets your route, and every stage after that is written for it**: a poly student gets studios and an internship, an ITE student gets a workshop and a GPA target, a JC student gets tutorials and A Levels. Then play again from the same start and compare two runs side by side.
 - **Aim** — start from a want, get three or more unranked roads, leave with three things to do this term.
 
-The subject list matches the 2027 SEC: one Combined Humanities pair (Social Studies with Geography, History or Literature) is part of every G2 and G3 package, sciences at G2 come as named pairs, pure sciences are G3 only, and subjects a school may not run carry a "selected schools" tag. One line under the list says the quiet part out loud: schools offer different subsets of these, and your school's list is the real one.
+The subject list matches the 2027 SEC: one Combined Humanities pair (Social Studies with Geography, History or Literature) is part of every G2 and G3 package, sciences at G2 come as named pairs, pure sciences are G3 only, and subjects a school may not run carry a "selected schools" tag. One line under the list says the quiet part out loud: schools offer different subsets of these, so refer to the combinations your school offers.
 
 Beyond students, the app carries a page for parents (`?mode=parent`, printable) and one for teachers (`?mode=teacher`), both linked from the footer.
 

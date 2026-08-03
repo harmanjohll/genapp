@@ -67,7 +67,7 @@ Alumni from your own school, suitably anonymised, would land harder with your st
 
 ## 3. Naming
 
-Working title is *The Long Game*, folder slug `pathways`. It lives in `index.html` `<title>`, the `<meta name="description">` and the `.brand` block in `main.js`. Alternatives considered: *Many Roads*, *Still Open*, *Long Runway*, *Where Next*.
+Title is *Still Open*, folder slug `pathways`. It lives in `index.html` `<title>` and the `chrome.brand` key in `copy.json`, which `main.js` renders into the `.brand` block. It was *The Long Game* until that read as a name about patience and strategy rather than about doors staying open, which is the one thing the app exists to say. Alternatives still on the table: *Many Roads*, *Long Runway*, *Where Next*.
 
 ## 4. Calls already made, and why
 
