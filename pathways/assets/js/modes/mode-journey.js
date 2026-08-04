@@ -476,7 +476,7 @@ function handStrip(data, stage) {
                   aria-pressed="${on}" ${full ? 'data-dim="true"' : ''}>
             <span class="ac-ic">${icon(m.ic)}</span>
             <span class="ac-label">${esc(m.label)}</span>
-            <span class="ac-tag">${esc(on ? jc.askStaged : jc.askTag)}</span>
+            ${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}
           </button>`;
         }).join('')}
       </div>` : `<p class="small mute">${esc(jc.handEmpty)}</p>`}

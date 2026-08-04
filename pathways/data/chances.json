@@ -2740,7 +2740,7 @@
       "maxAge": 18,
       "type": "opportunity",
       "title": "The counsellor remembers you",
-      "body": "You asked a real question last year, so when a taster day for a course you had never considered comes up, your name comes up with it.",
+      "body": "You asked a real question last year. So when a taster day comes up for a course you had never considered, your name comes up with it.",
       "ifTaken": "You go. It is not what you expected, in a useful way.",
       "ifMissed": "The day runs without you. The counsellor's door stays open.",
       "requiresFlag": "ecg_seen",

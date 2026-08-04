@@ -783,6 +783,26 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
+/* The class code: five characters a student can read across a room. */
+.classcode { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
+.code-big {
+  font-family: var(--display); font-size: 2.4rem; letter-spacing: 0.12em;
+  color: var(--accent); margin: var(--s-1) 0 var(--s-2);
+}
+.classbox {
+  width: 100%; min-height: 120px; padding: var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  font: inherit; font-size: var(--t-small); font-family: var(--mono, ui-monospace, monospace);
+}
+.kindbar { display: grid; grid-template-columns: 8rem 1fr auto; gap: var(--s-2); align-items: center; margin-bottom: var(--s-1); }
+.kindbar .track { height: 10px; border-radius: 5px; background: var(--rule); overflow: hidden; }
+.kindbar .fill { display: block; height: 100%; background: var(--accent); }
+.classpunch {
+  margin-top: var(--s-4); padding: var(--s-4);
+  border: 2px solid var(--accent); border-radius: var(--r-md); background: var(--accent-wash);
+}
+.classpunch strong { font-family: var(--display); font-size: var(--t-h3); color: var(--accent-dk); }
+
 /* What the year adds up to, shown before it is lived. */
 .yearsum {
   margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
@@ -839,10 +859,6 @@ body[data-journey="true"] .audstrip { display: none; }
 .askcard[disabled] { opacity: 0.45; cursor: not-allowed; }
 .ac-ic { color: var(--accent); }
 .ac-label { font-size: var(--t-small); font-weight: 600; line-height: 1.3; }
-.ac-tag {
-  padding: 0 7px; border-radius: 999px; align-self: flex-start;
-  background: var(--accent); color: var(--paper); font-size: var(--t-micro); font-weight: 700;
-}
 .pts-why { display: block; width: 100%; font-size: var(--t-micro); color: var(--ink-mute); margin-top: var(--s-1); }
 .pointsrow { flex-wrap: wrap; }
 @media (prefers-reduced-motion: reduce) { .askcard { transition: none; } .askcard:hover { transform: none; } }

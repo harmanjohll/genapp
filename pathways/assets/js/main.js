@@ -122,7 +122,7 @@ function paint() {
   const st = getState();
   try {
     if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
-    if (extraMode === 'parent') { renderParent(app, data); return; }
+    if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
     switch (st.mode) {
       case 'journey': renderJourney(app, data, ctx, paint); break;
       case 'aim':     renderAim(app, data, ctx, paint); break;

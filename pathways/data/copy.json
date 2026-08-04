@@ -59,7 +59,9 @@
     "horizonNote": "A combination like this usually follows. Yours will be your own.",
     "horizonOpens": "Opens",
     "horizonNearer": "Brings closer",
-    "breadthNudge": "Rule things out after you look, not before."
+    "breadthNudge": "Rule things out after you look, not before.",
+    "codeHead": "Your class code",
+    "codeHint": "Five characters. Read it out if your teacher asks. It carries no name and no grades, and it cannot be turned back into you."
   },
   "pulse": {
     "opened": "{dest} is open now.",
@@ -174,7 +176,6 @@
     "handEmpty": "You have asked everyone in your hand.",
     "handUsed": "You asked two people this year.",
     "playAsk": "Use this",
-    "askTag": "free",
     "commitTag": "takes real time",
     "pointsWhy": "{n} points this year. {why}",
     "whyFull": "Seven subjects or more is a fuller year.",
@@ -189,7 +190,6 @@
     "staleKeep": "Keep playing this one",
     "staleFresh": "Start fresh with my new subjects",
     "staleYear": "You were {old} when this story started. You are {new} now.",
-    "askStaged": "this year",
     "yearHead": "Your year at {age}",
     "yearDoing": "Doing:",
     "yearAsking": "Asking:",
@@ -216,7 +216,29 @@
     "reachNone": "Nothing set in Now yet. Set your subjects and this fills in.",
     "reachGo": "See it in Now",
     "movesHead": "Moves that serve this",
-    "movesBody": "Real things, this year. The asks are free.",
+    "movesBody": "Real things you can do this year.",
     "chooserLede": "Not a job title. A shape of life, and more than one road to it."
+  },
+  "teacher": {
+    "classHead": "What this room holds",
+    "classIntro": "Ask each student for their class code, one line each. Nothing is sent anywhere: this runs in your browser and disappears when you close the tab.",
+    "classPlaceholder": "A7303\nS520C\nR4130",
+    "classCount": "{n} students in.",
+    "classKinds": "Kinds in the room",
+    "classLoad": "Subject loads run from {lo} to {hi}.",
+    "classPunch": "Between you, this room already holds {n} of the {total} destinations.",
+    "classAll": "Between you, this room already holds every destination on the list.",
+    "classNote": "Nobody here holds all of them alone. That is the point worth saying out loud.",
+    "classNone": "No codes yet. Paste them above."
+  },
+  "parentLive": {
+    "head": "What is on this phone",
+    "none": "Nothing set on this device yet. The rest of this page still holds.",
+    "takes": "Your child has set {n} subjects for {year}.",
+    "opens": "With those levels, {n} of the {total} next steps are open to them right now.",
+    "lever": "One change would move {n} of them: {move}.",
+    "privacy": "Subjects only. What they wrote, what they wanted and the stories they played stay theirs, and this page does not show them.",
+    "askHead": "One thing worth asking tonight",
+    "askBody": "Ask them to show you this screen and talk you through it. Not to justify it. Just to show you."
   }
 }
