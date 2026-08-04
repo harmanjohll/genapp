@@ -3013,6 +3013,229 @@
           "outcome": "You watch how it works so the next window is not a mystery. Plenty of roads run through results season."
         }
       ]
+    },
+    {
+      "id": "late_parents",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "Your parents need you now",
+      "body": "The generation that raised you starts needing appointments, lifts and time. It arrives in the middle of everything else.",
+      "ifTaken": "You build the year around it. Work bends, and it turns out work can bend.",
+      "ifMissed": "You carry it quietly and it costs more than it had to.",
+      "onwardMoves": [
+        "Ask work for the flexible arrangement in writing",
+        "Split the load with a sibling on an actual schedule",
+        "Find out what the Agency for Integrated Care already funds"
+      ],
+      "responses": [
+        {
+          "label": "Ask for the flexible arrangement",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 2
+          },
+          "outcome": "You ask plainly and mostly get it. The people who say yes remember that you asked instead of quietly drowning."
+        },
+        {
+          "label": "Take the year at half speed",
+          "disp": {
+            "persistence": 2,
+            "optimism": 1
+          },
+          "outcome": "A slower year on purpose. Nothing in your field moved so fast that you could not catch it."
+        },
+        {
+          "label": "Share it out properly",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "One conversation nobody wanted to start, and the load stops being yours alone."
+        }
+      ]
+    },
+    {
+      "id": "late_youngboss",
+      "minAge": 38,
+      "maxAge": 55,
+      "type": "encounter",
+      "title": "Your new boss is younger than you",
+      "body": "By a decade. They are good at the parts you are not, and they know less than you about the parts that matter.",
+      "ifTaken": "You work out what each of you is for. It goes better than either of you expected.",
+      "ifMissed": "You are polite and distant, and neither of you learns anything.",
+      "responses": [
+        {
+          "label": "Say what you know, then let them lead",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 2
+          },
+          "outcome": "You stop auditioning for a job you already have. They start asking you things."
+        },
+        {
+          "label": "Learn the thing they are better at",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 2
+          },
+          "outcome": "Being taught at forty two is uncomfortable for about a fortnight, then it is just useful."
+        }
+      ]
+    },
+    {
+      "id": "late_letgo",
+      "minAge": 42,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "The role goes, and it is not about you",
+      "body": "The company restructures. Your work was fine. The box on the chart is gone anyway.",
+      "ifTaken": "You are between things, with twenty years of knowing how it works.",
+      "ifMissed": "You take the first thing offered and spend a year wishing you had waited a month.",
+      "onwardMoves": [
+        "Tell twenty people you are looking, by name, not by post",
+        "Check what the mid career credit covers before you spend savings",
+        "Take the interview you are not qualified for"
+      ],
+      "responses": [
+        {
+          "label": "Tell people by name, not by post",
+          "gain": {
+            "network": 3
+          },
+          "disp": {
+            "risk": 1
+          },
+          "outcome": "Twenty messages. Three replies that matter. One of them is the next thing, and it was never advertised."
+        },
+        {
+          "label": "Use the gap to retrain, deliberately",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 2,
+            "optimism": 1
+          },
+          "outcome": "You come out with a qualification and a story about why you changed. Both get used."
+        },
+        {
+          "label": "Take something steady while you think",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Rent paid, head clear. The thinking gets done, which is what the steady thing was for."
+        }
+      ]
+    },
+    {
+      "id": "late_oldcolleague",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "Someone you worked with is starting something",
+      "body": "They have money, a plan and one seat they trust. They thought of you because of how you were to work with, not what you knew.",
+      "ifTaken": "The reference you never wrote down turns out to be the one that mattered.",
+      "ifMissed": "They start it anyway. You stay in touch.",
+      "responses": [
+        {
+          "label": "Join early, before it is safe",
+          "gain": {
+            "portfolio": 2,
+            "network": 1
+          },
+          "disp": {
+            "risk": 3
+          },
+          "outcome": "Uncertain, fast, yours in a way employment never was. Whatever happens, you built something with your name inside it."
+        },
+        {
+          "label": "Help from where you are",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Evenings and weekends, on the parts you are best at. Real help, and no bridge burned."
+        }
+      ]
+    },
+    {
+      "id": "late_empty",
+      "minAge": 45,
+      "maxAge": 55,
+      "type": "chance",
+      "title": "The house gets quiet",
+      "body": "The people you organised twenty years around are living their own lives now. There is time in the week that used to be spoken for.",
+      "ifTaken": "You fill it on purpose rather than by accident.",
+      "ifMissed": "It fills itself with work, which is what usually happens.",
+      "responses": [
+        {
+          "label": "Give the time to something you choose",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 2
+          },
+          "outcome": "A thing that is yours, that nobody is paying for and nobody can take."
+        },
+        {
+          "label": "Put it into people coming up",
+          "gain": {
+            "network": 3
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "Four evenings a month with someone at the start. They will remember it at fifty."
+        }
+      ]
+    },
+    {
+      "id": "late_lastask",
+      "minAge": 46,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "A young one asks you the question you asked",
+      "body": "Fifteen years old, sitting where you sat, wanting to know whether the road you took is the right one.",
+      "ifTaken": "You give them the true answer instead of the tidy one.",
+      "ifMissed": "You say something encouraging and forgettable.",
+      "responses": [
+        {
+          "label": "Tell them the messy version",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "The false starts, the year that went nowhere, the door that opened late. They believe you, which the tidy version never earns."
+        },
+        {
+          "label": "Tell them nothing closed for you",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "You say it because it is true, and because at fifteen you did not believe anyone who said it. Say it anyway."
+        }
+      ]
     }
   ]
 }
