@@ -839,10 +839,6 @@ body[data-journey="true"] .audstrip { display: none; }
 .askcard[disabled] { opacity: 0.45; cursor: not-allowed; }
 .ac-ic { color: var(--accent); }
 .ac-label { font-size: var(--t-small); font-weight: 600; line-height: 1.3; }
-.ac-tag {
-  padding: 0 7px; border-radius: 999px; align-self: flex-start;
-  background: var(--accent); color: var(--paper); font-size: var(--t-micro); font-weight: 700;
-}
 .pts-why { display: block; width: 100%; font-size: var(--t-micro); color: var(--ink-mute); margin-top: var(--s-1); }
 .pointsrow { flex-wrap: wrap; }
 @media (prefers-reduced-motion: reduce) { .askcard { transition: none; } .askcard:hover { transform: none; } }

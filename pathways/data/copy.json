@@ -174,7 +174,6 @@
     "handEmpty": "You have asked everyone in your hand.",
     "handUsed": "You asked two people this year.",
     "playAsk": "Use this",
-    "askTag": "free",
     "commitTag": "takes real time",
     "pointsWhy": "{n} points this year. {why}",
     "whyFull": "Seven subjects or more is a fuller year.",
@@ -189,7 +188,6 @@
     "staleKeep": "Keep playing this one",
     "staleFresh": "Start fresh with my new subjects",
     "staleYear": "You were {old} when this story started. You are {new} now.",
-    "askStaged": "this year",
     "yearHead": "Your year at {age}",
     "yearDoing": "Doing:",
     "yearAsking": "Asking:",
@@ -216,7 +214,7 @@
     "reachNone": "Nothing set in Now yet. Set your subjects and this fills in.",
     "reachGo": "See it in Now",
     "movesHead": "Moves that serve this",
-    "movesBody": "Real things, this year. The asks are free.",
+    "movesBody": "Real things you can do this year.",
     "chooserLede": "Not a job title. A shape of life, and more than one road to it."
   }
 }

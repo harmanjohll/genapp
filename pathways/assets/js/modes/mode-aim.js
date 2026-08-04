@@ -129,7 +129,7 @@ function detail(f, st, data, ctx) {
             <button class="btn ${on ? 'accent' : 'ghost'} small" type="button" data-action="action"
                     data-text="${esc(m.label)}" aria-pressed="${on}">${on ? '\u2713' : '+'}</button>
             <span>${icon(m.ic)} ${esc(m.label)}</span>
-            <span class="${m.kind === 'ask' ? 'ac-tag' : 'mv-tag'}">${esc(m.kind === 'ask' ? jc.askTag : jc.commitTag)}</span>
+            ${m.kind === 'commit' ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}
           </li>`;
         }).join('')}
       </ul>
