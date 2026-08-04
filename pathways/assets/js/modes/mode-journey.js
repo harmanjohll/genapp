@@ -549,6 +549,23 @@ function ikigaiPanel(r, jc, small) {
     </div>`;
 }
 
+// Holland's hexagon has real opposites: Realistic across from Social,
+// Investigative from Enterprising, Artistic from Conventional. The replay
+// nudge uses them, so "try the opposite kind of life" is the hexagon
+// speaking, not a shuffle.
+const RIASEC_OPPOSITE = { R: 'S', S: 'R', I: 'E', E: 'I', A: 'C', C: 'A' };
+
+function contrastWant(data, r) {
+  if (!r.want) return null;
+  // Resolve the letter from data by id, not from the run: a run saved before
+  // the wants carried types still deserves the nudge.
+  const wants = data.journey.wants || [];
+  const played = wants.find((w) => w.id === r.want.id);
+  const letter = r.want.riasec || (played && played.riasec);
+  if (!letter) return null;
+  return wants.find((w) => w.riasec === RIASEC_OPPOSITE[letter]) || null;
+}
+
 /** The RIASEC kind behind a want id, in the student word. Codes stay off stage. */
 function wantKind(id) {
   const w = DATA && (DATA.journey.wants || []).find((x) => x.id === id);
@@ -629,6 +646,7 @@ function chanceOutcome(host, data) {
 
 function endingScreen(host, data, st) {
   const jc = data.copy.journey;
+  const contrast = contrastWant(data, run);
   const wantChanged = run.wantWas !== undefined
     && (run.wantWas ? run.wantWas.id : null) !== (run.want ? run.want.id : null);
   const wantLine = wantChanged && run.want
@@ -677,6 +695,11 @@ function endingScreen(host, data, st) {
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
           <h2>${esc(jc.playAgain)}</h2>
           <p class="small mute">Same start. A different want, or different years.</p>
+          ${contrast ? `
+            <p class="small" style="margin-top:var(--s-3)">${esc(fill(jc.tryContrast, { a: run.want.kind || wantKind(run.want.id) }))}</p>
+            <div class="btn-row" style="margin-top:var(--s-2)">
+              <button class="btn" type="button" data-action="againas">${esc(contrast.label)} <span class="kind-chip">${esc(contrast.kind)}</span></button>
+            </div>` : ''}
           <div class="btn-row" style="margin-top:var(--s-3)">
             <button class="btn accent" type="button" data-action="again">${esc(jc.playAgain)}</button>
             ${st.runs.length >= 2 ? `<button class="btn" type="button" data-action="compare2">${esc(jc.compareCta)}</button>` : ''}
@@ -690,6 +713,11 @@ function endingScreen(host, data, st) {
   bindGlossary(host);
   onAction(host, {
     again: () => { run = null; rerender(); },
+    againas: () => {
+      if (!contrast) return;
+      startRun(data, { id: contrast.id, label: contrast.label, riasec: contrast.riasec, kind: contrast.kind });
+      rerender();
+    },
     compare2: () => showDiff(host, data, st.runs.slice(-2)),
     // The loop closes here: the combination you just played forward is the one
     // sitting in NOW, where you can see what it currently reaches.
@@ -733,6 +761,13 @@ function showDiff(host, data, pair) {
           <p class="chips doorchips">${d.shared.map((x) => `<span>${icon(x)}${esc(doorName(x))}</span>`).join('') || '<span class="mute">·</span>'}</p>
           ${d.onlyA.length ? `<p class="small mute">${esc(a.label)} also holds: ${d.onlyA.map(doorName).map(esc).join(', ')}</p>` : ''}
           ${d.onlyB.length ? `<p class="small mute">${esc(b.label)} also holds: ${d.onlyB.map(doorName).map(esc).join(', ')}</p>` : ''}
+        </div>
+        <div class="section">
+          <p class="caps">${esc(jc.ikigaiCompareHead)}</p>
+          <div class="grid two iki-pair">
+            <div><p class="small mute">${esc(a.label)}</p>${ikigaiPanel(a, jc, true)}</div>
+            <div><p class="small mute">${esc(b.label)}</p>${ikigaiPanel(b, jc, true)}</div>
+          </div>
         </div>
         ${d.reflections.some(Boolean) ? `
           <div class="section"><p class="caps">At thirty eight you wrote</p>
