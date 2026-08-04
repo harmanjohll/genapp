@@ -2180,23 +2180,39 @@
   "wants": [
     {
       "id": "make",
-      "label": "Make things people use"
+      "label": "Make things people use",
+      "riasec": "A",
+      "kind": "Creators"
     },
     {
       "id": "hands",
-      "label": "Be really good with my hands"
+      "label": "Be really good with my hands",
+      "riasec": "R",
+      "kind": "Doers"
     },
     {
       "id": "people",
-      "label": "Be there when people are struggling"
+      "label": "Be there when people are struggling",
+      "riasec": "S",
+      "kind": "Helpers"
     },
     {
       "id": "own",
-      "label": "Run my own thing"
+      "label": "Run my own thing",
+      "riasec": "E",
+      "kind": "Persuaders"
     },
     {
       "id": "how",
-      "label": "Work out how things work"
+      "label": "Work out how things work",
+      "riasec": "I",
+      "kind": "Thinkers"
+    },
+    {
+      "id": "order",
+      "label": "Get every detail exactly right",
+      "riasec": "C",
+      "kind": "Organisers"
     },
     {
       "id": "unsure",

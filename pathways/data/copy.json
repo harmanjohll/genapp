@@ -158,7 +158,9 @@
     "ikigaiPay": "What can pay you",
     "ikigaiLine": "This story filled {a} most. The next years are for {b}.",
     "ikigaiNote": "Few stories fill all four circles early. They pull together, if you keep choosing.",
-    "ikigaiReflect": "Your circles at thirty eight."
+    "ikigaiReflect": "Your circles at thirty eight.",
+    "kindsNote": "Six kinds of people at work. Most people are a mix of two or three.",
+    "nearWant": "near your want"
   },
   "footerDoors": {
     "head": "This tool has three doors",

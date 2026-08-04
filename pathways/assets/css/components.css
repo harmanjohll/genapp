@@ -728,6 +728,19 @@ body[data-journey="true"] .site-foot { display: none; }
 .lived-row { margin-top: var(--s-3); }
 .lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
 
+/* RIASEC in student words: the kind chip on a want, and the near-want mark
+   on a choice that points the same way. Marks, never pushes. */
+.kind-chip {
+  display: inline-block; margin-top: var(--s-1); padding: 1px 8px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: var(--t-micro); color: var(--ink-mute);
+}
+.near-chip {
+  display: inline-block; padding: 1px 8px;
+  border-radius: 999px; background: var(--accent-soft, rgba(193, 95, 60, 0.12));
+  font-size: var(--t-micro); color: var(--accent);
+}
+
 /* the four ikigai circles, drawn from the run */
 .ikigai { margin-top: var(--s-2); }
 .ikigai svg { max-width: 100%; height: auto; display: block; }

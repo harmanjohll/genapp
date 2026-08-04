@@ -42,12 +42,36 @@ export const POINTS_PER_TURN = 2;
 /** At most this many subject choices join a turn, so the list stays readable. */
 export const SUBJECT_CHOICE_CAP = 2;
 
+// Holland's six types, as signatures over what this game already measures.
+// A choice or a chance card earns affinity with a type when its gains point
+// the way that type points. Two signals or more is a match; one is noise.
+export const RIASEC_SIGNS = {
+  R: { portfolio: 1, skills: 1, persistence: 1 },
+  I: { skills: 1, curiosity: 1 },
+  A: { portfolio: 1, curiosity: 1 },
+  S: { network: 1, optimism: 1 },
+  E: { network: 1, risk: 1 },
+  C: { skills: 1, persistence: 1 },
+};
+
+/** Affinity between a want's RIASEC letter and anything carrying gain/disp. */
+export function wantAffinity(obj, riasec) {
+  const sign = RIASEC_SIGNS[riasec];
+  if (!sign || !obj) return 0;
+  let score = 0;
+  Object.keys(obj.gain || {}).forEach((k) => { score += sign[k] || 0; });
+  Object.keys(obj.disp || {}).forEach((k) => { score += sign[k] || 0; });
+  if (obj.asks && sign[obj.asks.disposition]) score += 1;
+  return score;
+}
+
 export function createRun(startAge, label, want, plan) {
   return {
     label: label || 'Story',
     startAge,
     plan: { ...(plan || {}) },   // { subjectId: 'G1'|'G2'|'G3' }, the combination played
-    want: want || null,          // { id, label } or null for "not sure yet"
+    want: want || null,          // { id, label, riasec?, kind? } or null for "not sure yet"
+    aligned: 0,                  // choices lived that pointed the way the want points
     seed: Math.floor(Math.random() * 1e9),
     stepIndex: 0,
     steps: [],
@@ -149,6 +173,9 @@ export function applyChoices(run, stage, indices, cards, meta) {
   const outcomes = [];
   chosen.forEach((choice) => {
     grant(run, choice);
+    if (run.want && run.want.riasec && wantAffinity(choice, run.want.riasec) >= 2) {
+      run.aligned = (run.aligned || 0) + 1;
+    }
     const raised = choice.raise
       ? applyRaise(run, { ...choice.raise, _age: stage.age }, meta || {})
       : null;
@@ -303,6 +330,13 @@ function pickChance(run, stage, cards) {
   // door remain reachable on any combination, including none at all.
   const fitting = pickFrom.filter((c) => c.subjects && takesSubject(run, c.subjects));
   if (fitting.length && lcg(run.seed + run.stepIndex * 53) % 3 !== 0) pickFrom = fitting;
+  // The want biases which chances turn up, exactly the way subjects do: a
+  // preference over the pool, never a filter on what exists. A Helpers story
+  // meets more people; nothing stops a Doers story from meeting them too.
+  if (run.want && run.want.riasec) {
+    const liked = pickFrom.filter((c) => wantAffinity(c, run.want.riasec) >= 2);
+    if (liked.length && lcg(run.seed + run.stepIndex * 101) % 3 !== 0) pickFrom = liked;
+  }
   return pickFrom[lcg(run.seed + run.stepIndex * 7919) % pickFrom.length];
 }
 
