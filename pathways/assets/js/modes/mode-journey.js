@@ -17,7 +17,7 @@ import { openSheet, onSheetAction, close as closeSheet } from '../components/she
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
   respondToChance, askMet, finish, diffRuns, wantAffinity,
-  pointsFor, dealHand, playAsk, HAND_LIMIT,
+  pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -29,6 +29,7 @@ let picked = [];            // selected choice indices this turn
 let justResolved = null;    // chance outcome awaiting Continue
 let justLived = null;       // the year just committed, awaiting Continue
 let restartArmed = false;   // first tap arms, second tap clears the run
+let staleNote = null;       // set when the live run's start no longer matches NOW
 let compareSel = [];        // run indices picked for comparison
 let rerender = () => {};
 let DATA = null;
@@ -77,6 +78,7 @@ export function renderJourney(host, data, ctx, repaint) {
     return;
   }
 
+  staleNote = staleCheck(data, st);
   if (justLived) return livedScreen(host, data);
   if (justResolved) return chanceOutcome(host, data);
   if (run.pending) {
@@ -320,6 +322,7 @@ function turnScreen(host, stage, data) {
   // Two behaviours for one gesture reads as broken. Now every turn ends the
   // same way: pick, then one button, and the first turn says the rule.
   host.innerHTML = shell(`
+    ${staleBanner(data)}
     ${turnMeta(stage)}
     <p class="lede j-sit">${situation(data, stage)}</p>
     ${run.stepIndex === 0 ? `<div class="panel tight" style="margin-top:var(--s-3)"><p class="small" style="margin:0">${esc(jc.turnHint)}</p></div>` : ''}
@@ -328,13 +331,12 @@ function turnScreen(host, stage, data) {
       <span class="pts" aria-label="${left} of ${PTS} points left">${'●'.repeat(Math.max(0, left))}${'○'.repeat(spent)}</span>
       <span class="pts-why">${esc(pointsWhy(jc, PTS, reasons))}</span>
     </div>
-    ${handStrip(data, stage)}
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
     <div class="btn-row" style="margin-top:var(--s-4)">
       ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
-    ${prev}`, rail(data));
+    ${prev}`, rail(data, stage));
 
   focusH1(host);
   bindGlossary(host);
@@ -350,6 +352,13 @@ function turnScreen(host, stage, data) {
       rerender();
     },
     live: () => commit(data),
+    stalekeep: () => {
+      run.staleAck = `${JSON.stringify(getState().plan || {})}|${currentYear().age}`;
+      setLiveRun(run);
+      staleNote = null;
+      rerender();
+    },
+    stalefresh: () => { setLiveRun(null); resetJourney(); rerender(); },
     ask: (btn) => {
       const m = MV(data).find((x) => x.id === btn.dataset.id);
       const st2 = currentStage(run, stages);
@@ -362,6 +371,56 @@ function turnScreen(host, stage, data) {
       rerender();
     },
   });
+}
+
+/**
+ * A run keeps the subjects and the year it began with, on purpose: a story you
+ * already played must stay true when you edit your plan next week. The cost is
+ * that the two can silently diverge, and silence is the worst of the options.
+ * A student who set Sec 1 subjects, played a story, then switched to Sec 3 and
+ * rebuilt their combination was left with a Sec 1 story wearing a Sec 3 label
+ * and no explanation. So the run says what it is playing and offers the two
+ * honest choices: keep this story, or start one from the subjects you have now.
+ * Nothing is auto destroyed, because a story in progress is twenty minutes of
+ * somebody's thinking.
+ */
+function staleCheck(data, st) {
+  if (!run || run.done) return null;
+  const same = JSON.stringify(run.plan || {}) === JSON.stringify(st.plan || {});
+  const yearAge = currentYear().age;
+  const sameYear = run.startAge === yearAge;
+  if (same && sameYear) return null;
+  // Keeping the story is a decision, and a decision that has to be re-made on
+  // every repaint is not one. It is remembered against the exact state that
+  // prompted it, so a later, different change asks again.
+  const sig = `${JSON.stringify(st.plan || {})}|${yearAge}`;
+  if (run.staleAck === sig) return null;
+  const rows = planRows(data, run.plan);
+  return {
+    subjects: !same,
+    year: !sameYear,
+    oldLabel: rows.length ? subjectChips(rows, 4) : data.copy.journey.comboNone,
+    oldAge: run.startAge,
+    newAge: yearAge,
+  };
+}
+
+function staleBanner(data) {
+  if (!staleNote) return '';
+  const jc = data.copy.journey;
+  const lines = [];
+  if (staleNote.subjects) lines.push(fill(jc.staleBody, { old: 'subjects' }));
+  if (staleNote.year) lines.push(fill(jc.staleYear, { old: staleNote.oldAge, new: staleNote.newAge }));
+  return `
+    <div class="stalebar">
+      <p class="caps">${esc(jc.staleHead)}</p>
+      <p class="small">${lines.map(esc).join(' ')}</p>
+      ${staleNote.subjects ? `<p class="chips subjchips">${staleNote.oldLabel}</p>` : ''}
+      <div class="btn-row" style="margin-top:var(--s-3)">
+        <button class="btn ghost small" type="button" data-action="stalekeep">${esc(jc.staleKeep)}</button>
+        <button class="btn accent small" type="button" data-action="stalefresh">${esc(jc.staleFresh)}</button>
+      </div>
+    </div>`;
 }
 
 /** Why this year has the points it has, in the student's words. */
@@ -379,19 +438,22 @@ function pointsWhy(jc, n, reasons) {
 function handStrip(data, stage) {
   const jc = data.copy.journey;
   const held = (run.hand || []).map((id) => MV(data).find((m) => m.id === id)).filter(Boolean);
-  if (!held.length && !run.askedThisYear) return '';
+  const usedUp = (run.asksThisYear || 0) >= ASKS_PER_YEAR;
+  const leftN = ASKS_PER_YEAR - (run.asksThisYear || 0);
+  if (!held.length && !usedUp) return '';
   return `
     <div class="hand">
       <p class="caps">${icon('d_people')}${esc(jc.handHead)} <span class="hand-count">${held.length}/${HAND_LIMIT}</span></p>
-      <p class="micro mute">${esc(run.askedThisYear ? jc.handUsed : jc.handRule)}</p>
-      ${held.length ? `<div class="handrow">
+      <p class="micro mute">${esc(usedUp ? jc.handUsed : fill(jc.handLeft, { n: leftN }))}</p>
+      ${held.length ? `<div class="handcol">
         ${held.map((m) => `
-          <button class="askcard" type="button" data-action="ask" data-id="${esc(m.id)}" ${run.askedThisYear ? 'disabled' : ''}>
+          <button class="askcard" type="button" data-action="ask" data-id="${esc(m.id)}" ${usedUp ? 'disabled' : ''}>
             <span class="ac-ic">${icon(m.ic)}</span>
             <span class="ac-label">${esc(m.label)}</span>
             <span class="ac-tag">${esc(jc.askTag)}</span>
           </button>`).join('')}
       </div>` : `<p class="small mute">${esc(jc.handEmpty)}</p>`}
+      <p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.handRule)}</p>
     </div>`;
 }
 
@@ -898,7 +960,7 @@ function turnMeta(stage) {
  * subjects you carry. Same data as before, now grouped by the questions a
  * counsellor would actually ask.
  */
-function rail(data) {
+function rail(data, stage) {
   const jc = data.copy.journey;
   const bars = ['skills', 'network', 'portfolio'].map((k) => {
     const lab = { skills: 'Can do', network: 'Know me', portfolio: 'Made' }[k];
@@ -927,6 +989,7 @@ function rail(data) {
     <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_how')}${esc(jc.q3)}</p>
     <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">No doors yet. They come.</span>'}</p>
     ${combo.length ? `<p class="chips subjchips" style="margin-top:var(--s-2)">${subjectChips(combo, 6)}</p>` : ''}
+    ${stage ? handStrip(data, stage) : ''}
     ${storySoFar(data)}
     <button class="btn ghost small" type="button" data-action="restart" style="margin-top:var(--s-5)">${esc(jc.startOver)}</button>`;
 }

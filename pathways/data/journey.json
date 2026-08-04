@@ -2277,7 +2277,12 @@
     "dsa_aware",
     "attached",
     "exchanged",
-    "found_mentor"
+    "found_mentor",
+    "asked_form",
+    "asked_senior",
+    "went_open",
+    "led_cca",
+    "asked_family"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",

@@ -170,9 +170,9 @@
     "moveTag": "a real move",
     "removeHint": "tap again to remove",
     "handHead": "Your superpowers",
-    "handRule": "Free to play. One a year. Using one teaches you another.",
+    "handRule": "Free to play. Two a year. Using one teaches you another.",
     "handEmpty": "None left in hand. You used them.",
-    "handUsed": "Used this year.",
+    "handUsed": "Both used this year.",
     "playAsk": "Use this",
     "askTag": "free",
     "commitTag": "takes real time",
@@ -182,7 +182,13 @@
     "whyCca": "The club you went all in on takes its share.",
     "whyFreer": "More of your time is yours to direct now.",
     "whyPlain": "A normal year.",
-    "whyNote": "This is about the hours in your year, not about whether your combination is right."
+    "whyNote": "This is about the hours in your year, not about whether your combination is right.",
+    "handLeft": "{n} left this year.",
+    "staleHead": "Your subjects changed",
+    "staleBody": "This story is still playing the {old} you started with. Stories keep the subjects they began with, so the one you already played stays true.",
+    "staleKeep": "Keep playing this one",
+    "staleFresh": "Start fresh with my new subjects",
+    "staleYear": "You were {old} when this story started. You are {new} now."
   },
   "footerDoors": {
     "head": "This tool has three doors",
