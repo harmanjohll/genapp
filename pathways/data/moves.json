@@ -5,7 +5,7 @@
     "accessed": "2026-08-04",
     "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Two kinds. Asks are superpowers: a held hand of at most three, free to play because asking costs courage rather than time, one a year, and playing one draws another because asking begets knowing who to ask. Commitments consume the year, so they join the turn pool as ordinary choices and spend points; the exchange costs two because three months is three months. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
   },
-  "rule": "Two kinds. Superpowers are asks: free, held in a small hand, one a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
+  "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
   "moves": [
     {
       "id": "ask_help",
@@ -183,6 +183,103 @@
       },
       "sets": "found_mentor",
       "ic": "d_people",
+      "kind": "ask"
+    },
+    {
+      "id": "formteacher",
+      "label": "Ask your form teacher which subject suits how you learn",
+      "ages": [
+        13,
+        16
+      ],
+      "body": "They see you in class all week. They have an opinion and nobody ever asks for it.",
+      "outcome": "They name something you are good at that you had not counted as a skill.",
+      "disp": {
+        "curiosity": 1
+      },
+      "gain": {
+        "skills": 1
+      },
+      "sets": "asked_form",
+      "ic": "q_who",
+      "kind": "ask"
+    },
+    {
+      "id": "senior",
+      "label": "Talk to a senior who took the road you are curious about",
+      "ages": [
+        14,
+        19
+      ],
+      "body": "One year above you, same school, already there. Ask what they wish they had known.",
+      "outcome": "Straight answers, no brochure voice. Some of it puts you off, which is also useful.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "curiosity": 1
+      },
+      "sets": "asked_senior",
+      "ic": "d_people",
+      "kind": "ask"
+    },
+    {
+      "id": "openhouse",
+      "label": "Go to an open house and ask one real question",
+      "ages": [
+        14,
+        18
+      ],
+      "body": "Everyone walks around collecting flyers. Ask a lecturer what students find hardest in year one.",
+      "outcome": "The answer is specific and nothing like the flyer. You remember it for years.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "curiosity": 1,
+        "risk": 1
+      },
+      "sets": "went_open",
+      "ic": "curiosity",
+      "kind": "ask"
+    },
+    {
+      "id": "cca",
+      "label": "Ask your CCA teacher for something harder",
+      "ages": [
+        13,
+        17
+      ],
+      "body": "Not a bigger title. A real job nobody wants: run the thing, teach the juniors, fix what is broken.",
+      "outcome": "You are trusted with something before you feel ready, which is how it always goes.",
+      "gain": {
+        "portfolio": 1
+      },
+      "disp": {
+        "persistence": 1
+      },
+      "sets": "led_cca",
+      "ic": "t_portfolio",
+      "kind": "ask"
+    },
+    {
+      "id": "family",
+      "label": "Ask someone in your family who took a different road",
+      "ages": [
+        13,
+        24
+      ],
+      "body": "An uncle, a cousin, anyone who did not do what everyone expected. Ask how it worked out.",
+      "outcome": "Someone in your own family is proof the standard road is not the only one.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "optimism": 1,
+        "flexibility": 1
+      },
+      "sets": "asked_family",
+      "ic": "d_sflu",
       "kind": "ask"
     }
   ]

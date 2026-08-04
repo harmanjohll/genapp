@@ -108,7 +108,7 @@ export function createRun(startAge, label, want, plan) {
     aligned: 0,                  // choices lived that pointed the way the want points
     movesMade: [],               // { id, age }, player-initiated moves, each once
     hand: [],                    // ask ids held, dealt and drawn, capped at HAND_LIMIT
-    askedThisYear: false,        // one ask a year
+    asksThisYear: 0,             // asks played this year, capped at ASKS_PER_YEAR
     seed: Math.floor(Math.random() * 1e9),
     stepIndex: 0,
     steps: [],
@@ -169,7 +169,9 @@ export const MOVE_CHOICE_CAP = 2;
  * there is to ask. The student who never plays a card never meets the rest of
  * the deck, and that is the honest consequence rather than a punishment.
  */
-export const HAND_LIMIT = 3;
+export const HAND_LIMIT = 5;
+/** Asks playable per year. Two, because a real student can do both. */
+export const ASKS_PER_YEAR = 2;
 
 const asksFor = (moves, age) => (moves || []).filter((m) => m.kind === 'ask' && age >= m.ages[0] && age <= m.ages[1]);
 
@@ -179,24 +181,26 @@ export function dealHand(run, moves, age) {
   const made = new Set((run.movesMade || []).map((m) => m.id));
   const held = new Set(run.hand);
   const pool = asksFor(moves, age).filter((m) => !made.has(m.id) && !held.has(m.id));
-  let i = 0;
-  while (run.hand.length < HAND_LIMIT && i < pool.length) {
-    run.hand.push(pool[(lcg(run.seed + age * 31 + i) + i) % pool.length].id);
-    run.hand = [...new Set(run.hand)];
-    i += 1;
+  if (!pool.length) return run.hand;
+  // Walk the pool from a seeded offset rather than sampling it. Sampling with
+  // a dedup step spent iterations on collisions and could stop short, dealing
+  // four cards into a hand of five with seven waiting.
+  const off = lcg(run.seed + age * 31) % pool.length;
+  for (let i = 0; i < pool.length && run.hand.length < HAND_LIMIT; i += 1) {
+    run.hand.push(pool[(off + i) % pool.length].id);
   }
   return run.hand;
 }
 
 /** Play an ask: free, once a year, and it draws a replacement. */
 export function playAsk(run, move, age, moves) {
-  if (run.askedThisYear) return false;
+  if ((run.asksThisYear || 0) >= ASKS_PER_YEAR) return false;
   if (!Array.isArray(run.hand) || !run.hand.includes(move.id)) return false;
   grant(run, move);
   if (!run.movesMade) run.movesMade = [];
   run.movesMade.push({ id: move.id, age });
   run.hand = run.hand.filter((id) => id !== move.id);
-  run.askedThisYear = true;
+  run.asksThisYear = (run.asksThisYear || 0) + 1;
   dealHand(run, moves, age);
   return true;
 }
@@ -300,7 +304,7 @@ export function applyChoices(run, stage, indices, cards, meta, moves) {
     chance: null,
   });
 
-  run.askedThisYear = false;
+  run.asksThisYear = 0;
   const card = pickChance(run, stage, cards);
   if (card) run.pending = { cardId: card.id };
   else { run.pending = null; run.stepIndex += 1; }
