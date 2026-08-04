@@ -29,6 +29,28 @@ const PROMPTS = [
     why: 'Turns the session into a commitment. Follow it up or it does not count.' },
 ];
 
+// The counselling underneath, named, with where each piece is visible on the
+// screen. This exists so a teacher or school leader can audit the resource
+// against the ECG frame without reverse engineering it from the interface.
+const ECG_MAP = [
+  { name: 'The three guiding questions', src: 'MOE ECG',
+    where: 'They head the rail beside every Journey turn, badge each stage with the question it leans on, and sit over the destination list and the take-a-question card in Now. Who am I, where do I want to go, how do I get there.' },
+  { name: 'Planned happenstance', src: 'Krumboltz',
+    where: 'The five dispositions the game tracks are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check dispositions built by ordinary choices. The chip says "you built the footing for this".' },
+  { name: 'Career as narrative', src: 'Savickas',
+    where: 'Every run is told as a story: your story so far in the rail, a written reflection at thirty eight, an ending in sentences rather than scores, and two stories compared, including what each wanted and who each became.' },
+  { name: 'Life-span development', src: 'Super',
+    where: 'One run spans thirteen to forty eight, and the want named at the start is re-asked at thirty eight. Changing it is treated as progress, and the ending tells both halves.' },
+  { name: 'Circumscription and compromise', src: 'Gottfredson',
+    where: 'The banner says nothing here can be closed to you, the engine holds a no-dead-end invariant for every plan, and the breadth counter nudges: rule things out after you look, not before.' },
+  { name: 'Self efficacy', src: 'Bandura, SCCT',
+    where: 'The Can do ledger grows from doing. Taking the demanding response to a chance is the mastery experience, and the outcome screen says where believing you can starts.' },
+  { name: 'Decision learning, then action', src: 'CASVE cycle',
+    where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
+  { name: 'The tool defers to people', src: 'ECG practice',
+    where: 'Every mode ends at a person: take-one-question cards address the subject teacher, the form teacher and the ECG counsellor by name, and the footer says whose advice this is not.' },
+];
+
 export function renderTeacher(host, data, ctx, repaint) {
   const st = getState();
   const f = data._freshness;
@@ -74,6 +96,19 @@ export function renderTeacher(host, data, ctx, repaint) {
                 <p class="caps">${esc(p.mode)}</p>
                 <h3 style="margin-bottom:var(--s-2)">${esc(p.ask)}</h3>
                 <p class="small mute" style="margin-bottom:0">${esc(p.why)}</p>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>The counselling underneath</h2></div>
+          <p class="small mute" style="max-width:60ch">Each principle this resource is built on, and where it is visible on the screen. Audit it against your ECG programme from here.</p>
+          <div class="grid two" style="margin-top:var(--s-3)">
+            ${ECG_MAP.map((m) => `
+              <div class="card">
+                <p class="caps">${esc(m.src)}</p>
+                <h3 style="margin-bottom:var(--s-2)">${esc(m.name)}</h3>
+                <p class="small mute" style="margin-bottom:0">${esc(m.where)}</p>
               </div>`).join('')}
           </div>
         </div>

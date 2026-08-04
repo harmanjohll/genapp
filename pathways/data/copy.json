@@ -58,7 +58,8 @@
     "horizonHead": "If Sec 3 started tomorrow",
     "horizonNote": "A combination like this usually follows. Yours will be your own.",
     "horizonOpens": "Opens",
-    "horizonNearer": "Brings closer"
+    "horizonNearer": "Brings closer",
+    "breadthNudge": "Rule things out after you look, not before."
   },
   "pulse": {
     "opened": "{dest} is open now.",
@@ -148,7 +149,8 @@
     "changeWant": "It has changed",
     "nameWant": "Name one now",
     "endWantChanged": "At {age} you said: {was}. It became: {want}.",
-    "becameHead": "Who you became"
+    "becameHead": "Who you became",
+    "efficacyLine": "You did the hard version. Believing you can starts there."
   },
   "footerDoors": {
     "head": "This tool has three doors",

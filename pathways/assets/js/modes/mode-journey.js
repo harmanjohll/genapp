@@ -467,9 +467,12 @@ function chanceAsk(host, card, data) {
   bindGlossary(host);
   onAction(host, {
     respond: (btn) => {
+      const r = (card.responses || [])[Number(btn.dataset.i)];
       const before = snapshot();
       respondToChance(run, card, Number(btn.dataset.i));
-      justResolved = { card, delta: delta(before), step: run.steps[run.steps.length - 1] };
+      // Taking the demanding response is a mastery experience, which is where
+      // self efficacy actually comes from, so the outcome screen says so.
+      justResolved = { card, delta: delta(before), step: run.steps[run.steps.length - 1], stretch: !!(r && r.needsAsk) };
       setLiveRun(run);
       rerender();
     },
@@ -483,6 +486,13 @@ const DISP_WORD = { curiosity: 'curious', persistence: 'persistent', flexibility
 function idWords(r, jc) {
   const top = Object.entries(r.disp).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 2);
   return top.length ? top.map(([k]) => DISP_WORD[k]).join(' and ') : jc.identityNone.toLowerCase();
+}
+
+/** A run's want as a story: what was named, and what it became if it moved. */
+function wantStory(r) {
+  const label = (w) => (w ? w.label : 'Not sure yet');
+  const changed = r.wantWas !== undefined && (r.wantWas ? r.wantWas.id : null) !== (r.want ? r.want.id : null);
+  return changed ? `${esc(label(r.wantWas))}, then ${esc(label(r.want))}` : esc(label(r.want));
 }
 
 /**
@@ -539,6 +549,7 @@ function chanceOutcome(host, data) {
       <h1 class="serif" tabindex="-1" style="font-size:var(--t-h2)">${esc(ch.response || '')}</h1>
       <p class="lede" style="margin-top:var(--s-3)">${decorate(ch.text || '')}</p>
       ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
+      ${justResolved.stretch ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(jc.efficacyLine)}</p>` : ''}
       <div class="btn-row" style="margin-top:var(--s-4)">
         <button class="btn" type="button" data-action="go">${esc(jc.continue)}</button>
       </div>
@@ -639,8 +650,8 @@ function showDiff(host, data, pair) {
           <div class="diff-head">${esc(a.label)}${d.paths[0] ? ` · ${esc(d.paths[0])}` : ''}</div>
           <div class="diff-head">${esc(b.label)}${d.paths[1] ? ` · ${esc(d.paths[1])}` : ''}</div>
           <div></div>
-          <div class="diff-want">${d.wants[0] ? esc(d.wants[0].label) : 'Not sure yet'}</div>
-          <div class="diff-want">${d.wants[1] ? esc(d.wants[1].label) : 'Not sure yet'}</div>
+          <div class="diff-want">${wantStory(a)}<span class="small mute" style="display:block">became ${esc(idWords(a, jc))}</span></div>
+          <div class="diff-want">${wantStory(b)}<span class="small mute" style="display:block">became ${esc(idWords(b, jc))}</span></div>
           <div></div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[0]), 4) || '<span class="faint">·</span>'}</div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[1]), 4) || '<span class="faint">·</span>'}</div>

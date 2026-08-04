@@ -332,7 +332,7 @@ function tail(st, reaches, data) {
 
     ${askCard(st, reaches, data)}
 
-    <p class="micro mute breadth">${esc(fill(c.breadth, { n: looked, total }))}</p>
+    <p class="micro mute breadth">${esc(fill(c.breadth, { n: looked, total }))} ${esc(c.breadthNudge)}</p>
 
     <div class="btn-row" style="margin-top:var(--s-4)">
       <button class="btn ghost small" type="button" data-action="share">${esc(c.shareHead)}</button>
