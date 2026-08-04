@@ -107,6 +107,13 @@ export function renderTeacher(host, data, ctx, repaint) {
         </div>
 
         <div class="section">
+          <div class="panel">
+            <h2>Run a field test</h2>
+            <p class="small">One class, 45 minutes, paper slips before and after. Three questions: could you name two places you could go, do you know one thing you could do this year that opens doors later, do you know who to ask. Watch for the student who taps a choice and waits, and the one who shows a neighbour their screen unprompted. The full protocol, with the observation tally and the printable slips, is in FIELD_TEST.md in this folder.</p>
+          </div>
+        </div>
+
+        <div class="section">
           <div class="section-head"><h2>The counselling underneath</h2></div>
           <p class="small mute" style="max-width:60ch">Each principle this resource is built on, and where it is visible on the screen. Audit it against your ECG programme from here.</p>
           <div class="grid two" style="margin-top:var(--s-3)">

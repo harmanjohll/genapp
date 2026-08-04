@@ -2873,6 +2873,146 @@
           "outcome": "Saying no clearly is also a professional skill. The next mention will fit better."
         }
       ]
+    },
+    {
+      "id": "c_teacher_notices",
+      "minAge": 14,
+      "maxAge": 17,
+      "type": "opportunity",
+      "title": "The teacher you asked remembers",
+      "body": "Students who ask stand out, in a good way. There is a competition team short one member, and your name comes up.",
+      "ifTaken": "You are in the room because you once admitted you were stuck.",
+      "ifMissed": "The team fills up. The standing offer of help does not.",
+      "requiresFlag": "asked_help",
+      "responses": [
+        {
+          "label": "Join the team",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "outcome": "You are not the best on the team. You are on the team, which is the part that compounds."
+        },
+        {
+          "label": "Say no, protect your year",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "A clean no. The teacher nods, and keeps you in mind anyway."
+        }
+      ]
+    },
+    {
+      "id": "c_shadow_offer",
+      "minAge": 16,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "The place you shadowed calls back",
+      "body": "They remember the student who asked good questions for a day. There is a holiday stint if you want it.",
+      "ifTaken": "Two weeks of the real thing, paid in experience and a reference.",
+      "ifMissed": "The stint goes to someone else. The door stays on its hinges.",
+      "requiresFlag": "seen_work",
+      "responses": [
+        {
+          "label": "Take the stint",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "outcome": "By day three the glamour is gone and something better is there: you can picture yourself doing this, or you now know you cannot."
+        },
+        {
+          "label": "Holidays are for resting, pass",
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Rest is real. The contact keeps."
+        }
+      ]
+    },
+    {
+      "id": "c_intern_return",
+      "minAge": 19,
+      "maxAge": 22,
+      "type": "opportunity",
+      "title": "They want you back",
+      "body": "The supervisor who wrote three sentences about you now writes one more: would you consider coming back, properly.",
+      "ifTaken": "The attachment you took seriously turns into the first offer.",
+      "ifMissed": "You are headed elsewhere. The reference letter still works everywhere.",
+      "requiresFlag": "attached",
+      "responses": [
+        {
+          "label": "Go back, on pay this time",
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_workstudy",
+          "outcome": "Earning and learning at once. The three sentences did this."
+        },
+        {
+          "label": "Point them to a classmate",
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You pass the door to someone who needs it. People remember who does that."
+        }
+      ]
+    },
+    {
+      "id": "c_exchange_thread",
+      "minAge": 21,
+      "maxAge": 27,
+      "type": "encounter",
+      "title": "A message from the exchange",
+      "body": "Someone you met on those three months is building something, and remembers how you handled the week everything went wrong.",
+      "ifTaken": "The friendship you packed home turns out to be a working one.",
+      "ifMissed": "The message sits. Friendships built abroad keep.",
+      "requiresFlag": "exchanged",
+      "responses": [
+        {
+          "label": "Help with the build",
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "outcome": "Working across a time zone with someone you trust. The exchange is still paying out, years after the flight home."
+        },
+        {
+          "label": "Cheer from here",
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Not every thread needs pulling. It stays warm."
+        }
+      ]
+    },
+    {
+      "id": "c_eae_empty",
+      "minAge": 16,
+      "maxAge": 17,
+      "type": "chance",
+      "title": "The EAE window opens without you",
+      "body": "June. Classmates are submitting folders of things made and done, applying on interest before any results. You watch, empty handed.",
+      "ifTaken": "A late scramble teaches you what the folder was for.",
+      "ifMissed": "The window closes on schedule. Results season will still hear your case.",
+      "excludesFlag": "eae_ready",
+      "responses": [
+        {
+          "label": "Scramble something together",
+          "disp": {
+            "risk": 1,
+            "persistence": 1
+          },
+          "outcome": "Three late nights making a folder that took others a year. Thin, but yours, and next window you will not start from zero."
+        },
+        {
+          "label": "Let this one pass",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "You watch how it works so the next window is not a mystery. Plenty of roads run through results season."
+        }
+      ]
     }
   ]
 }

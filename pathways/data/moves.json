@@ -3,9 +3,9 @@
     "source": "MOE admissions pages and school ECG practice",
     "url": "https://www.moe.gov.sg/post-secondary/admissions",
     "accessed": "2026-08-04",
-    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
+    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Moves join the turn pool as ordinary choices, costing a point from the same budget, because asking costs attention the way working does. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
   },
-  "rule": "Free, on top of your 2 points. One move a year, each move once. Moves open things later.",
+  "rule": "Moves sit among your choices and cost a point like anything else. Each can be made once. They open things later.",
   "moves": [
     {
       "id": "ask_help",

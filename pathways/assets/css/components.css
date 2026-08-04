@@ -768,36 +768,29 @@ body[data-journey="true"] .audstrip { display: none; }
 /* The question mark rides with its question everywhere it appears. */
 .rail-q svg, .qchip svg { vertical-align: -2px; margin-right: 5px; }
 
-/* The hand of moves. Drawn as playing cards because that is what they are:
-   things you can play. Chances arrive; these wait for you. */
-.movesrow { display: flex; gap: var(--s-3); overflow-x: auto; padding: var(--s-2) 2px var(--s-3); }
-.movecard {
-  flex: 0 0 auto; width: 118px; min-height: 108px;
-  display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2);
-  padding: var(--s-3); text-align: left;
-  border: 1px solid var(--rule); border-radius: var(--r-md);
-  background: var(--surface); cursor: pointer; font: inherit; color: var(--ink);
-  box-shadow: 0 1px 0 var(--rule-soft);
-  transition: transform 120ms var(--ease), box-shadow 120ms var(--ease);
+/* A move inside the choice grid. Same button, same economy, marked as a
+   card from your hand: accent edge, its icon, and a small honest tag. */
+.choice.mv { border-left: 3px solid var(--accent); background: linear-gradient(90deg, rgba(193, 95, 60, 0.05), transparent 60%); }
+.choice.mv .c-label svg { margin-right: 6px; vertical-align: -2px; color: var(--accent); }
+.mv-tag {
+  display: inline-block; padding: 1px 8px; border-radius: 999px;
+  border: 1px dashed var(--accent); color: var(--accent); font-size: var(--t-micro);
 }
-.movecard:hover { transform: translateY(-2px); box-shadow: var(--shadow-md, 0 3px 10px rgba(0,0,0,0.08)); }
-.movecard[data-dim="true"] { opacity: 0.55; }
-.mc-ic { color: var(--accent); }
-.mc-label { font-size: var(--t-small); font-weight: 600; line-height: 1.3; }
-@media (prefers-reduced-motion: reduce) { .movecard { transition: none; } .movecard:hover { transform: none; } }
 
-/* RIASEC in student words: the kind chip on a want, and the near-want mark
-   on a choice that points the same way. Marks, never pushes. */
-.kind-chip {
-  display: inline-block; margin-top: var(--s-1); padding: 1px 8px;
-  border: 1px solid var(--rule); border-radius: 999px;
-  font-size: var(--t-micro); color: var(--ink-mute);
+/* The life strip: one dot per year of this run, filled as lived. The whole
+   life is visible on every turn, which is the point of the mode. */
+.lifestrip { display: inline-flex; gap: 3px; align-items: center; margin: 0 var(--s-2); }
+.lifestrip i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rule); display: inline-block;
 }
-.near-chip {
-  display: inline-block; padding: 1px 8px;
-  border-radius: 999px; background: var(--accent-soft, rgba(193, 95, 60, 0.12));
-  font-size: var(--t-micro); color: var(--accent);
-}
+.lifestrip i.on { background: var(--ink-soft); }
+.lifestrip i.now { background: var(--accent); transform: scale(1.5); }
+
+/* The chance card carries its kind as a large quiet watermark. */
+.chance { position: relative; overflow: hidden; }
+.ch-mark { position: absolute; top: -12px; right: -12px; opacity: 0.07; pointer-events: none; }
+.ch-mark svg { width: 130px; height: 130px; }
 
 /* the four ikigai circles, drawn from the run */
 .iki-pair svg { max-width: 190px; }
