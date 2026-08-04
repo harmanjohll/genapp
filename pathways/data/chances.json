@@ -2733,6 +2733,146 @@
           }
         }
       ]
+    },
+    {
+      "id": "c_ecg_remembers",
+      "minAge": 15,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "The counsellor remembers you",
+      "body": "You asked a real question last year, so when a taster day for a course you had never considered comes up, your name comes up with it.",
+      "ifTaken": "You go. It is not what you expected, in a useful way.",
+      "ifMissed": "The day runs without you. The counsellor's door stays open.",
+      "requiresFlag": "ecg_seen",
+      "responses": [
+        {
+          "label": "Go to the taster day",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "A morning inside a course you had no picture of. Now you have a picture, and it votes."
+        },
+        {
+          "label": "Pass this time",
+          "outcome": "Not this one. Knowing you can be asked is worth something on its own."
+        }
+      ]
+    },
+    {
+      "id": "c_eae_window",
+      "minAge": 16,
+      "maxAge": 17,
+      "type": "opportunity",
+      "title": "The EAE window opens",
+      "body": "June. Applications open for poly and ITE on interest and aptitude, before any results. You have a folder ready and most people do not.",
+      "ifTaken": "You apply with something to show. Interviews like having something to point at.",
+      "ifMissed": "The window shuts on schedule. The folder still counts for the next one.",
+      "requiresFlag": "eae_ready",
+      "responses": [
+        {
+          "label": "Apply with your folder",
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_eae",
+          "outcome": "A conditional place before anyone sits an exam. The folder did what folders do."
+        },
+        {
+          "label": "Hold it for later",
+          "outcome": "You wait. The work is done and keeps."
+        }
+      ]
+    },
+    {
+      "id": "c_dsa_form",
+      "minAge": 16,
+      "maxAge": 16,
+      "type": "chance",
+      "title": "The DSA form asks who you are",
+      "body": "Talent area, evidence, a personal statement. And the fine print you already know: an accepted offer is binding.",
+      "ifTaken": "Writing down what you are good at, with proof, changes how you see the list.",
+      "ifMissed": "You skip it. The talent does not go anywhere.",
+      "requiresFlag": "dsa_aware",
+      "responses": [
+        {
+          "label": "Fill it in honestly",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "outcome": "Whatever the outcome, you now have a page that says what you are unusually good at. Few people your age have that page."
+        },
+        {
+          "label": "Decide it is not for you",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "A considered no is a decision, not a miss. You wanted the open field."
+        }
+      ]
+    },
+    {
+      "id": "c_parents_back",
+      "minAge": 15,
+      "maxAge": 25,
+      "type": "encounter",
+      "title": "Your parents surprise you",
+      "body": "Months after that dinner, one of them mentions your plan to someone else. Accurately. On your side.",
+      "ifTaken": "Having your family behind a plan is wind at your back.",
+      "ifMissed": "It passes quietly. It still happened.",
+      "requiresFlag": "told_parents",
+      "responses": [
+        {
+          "label": "Let them in on the next step too",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "They do not fully get it. They are for it anyway, and that turns out to matter more."
+        },
+        {
+          "label": "Nod and keep the rest private",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Some plans grow better in the dark for a while. You know they are with you when it counts."
+        }
+      ]
+    },
+    {
+      "id": "c_mentor_call",
+      "minAge": 21,
+      "maxAge": 30,
+      "type": "opportunity",
+      "title": "Your mentor makes a call",
+      "body": "The hour you asked for became an occasional coffee. This time they mention a team that is looking for someone like you.",
+      "ifTaken": "A door opens that was never advertised.",
+      "ifMissed": "The team fills the seat. The coffee continues.",
+      "requiresFlag": "found_mentor",
+      "responses": [
+        {
+          "label": "Say yes to the introduction",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "outcome": "Most jobs are never posted anywhere. Now you know how the other kind gets filled."
+        },
+        {
+          "label": "Not the right fit, say so",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Saying no clearly is also a professional skill. The next mention will fit better."
+        }
+      ]
     }
   ]
 }

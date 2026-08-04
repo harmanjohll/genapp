@@ -243,10 +243,15 @@ export function reconcile(data) {
     if (!state.offer.length) state.offer = null;
   }
 
+  const moveIds = new Set(((data.moves && data.moves.moves) || []).map((m) => m.id));
+  const pruneMoves = (r) => {
+    if (Array.isArray(r.movesMade)) r.movesMade = r.movesMade.filter((m) => m && moveIds.has(m.id));
+    else r.movesMade = [];
+  };
   state.runs = state.runs.filter((r) => validRun(r, cardIds));
-  state.runs.forEach((r) => prunePlan(r.plan));
+  state.runs.forEach((r) => { prunePlan(r.plan); pruneMoves(r); });
   if (state.liveRun && !validRun(state.liveRun, cardIds)) state.liveRun = null;
-  if (state.liveRun) prunePlan(state.liveRun.plan);
+  if (state.liveRun) { prunePlan(state.liveRun.plan); pruneMoves(state.liveRun); }
 
   const dropped = {
     plan: before.plan - Object.keys(state.plan).length,
