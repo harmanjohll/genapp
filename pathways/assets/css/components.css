@@ -678,15 +678,18 @@ body[data-journey="true"] .site-foot { display: none; }
 .grp-note { font-size: var(--t-micro); color: var(--ink-mute); margin: calc(-1 * var(--s-1)) 0 var(--s-2); }
 
 /* footer doors */
-/* The audience strip above the header. Quiet, right aligned, scrolls away. */
+/* The audience strip above the header: "I am a [student]". The select is
+   styled as the year selector's sibling, so the two dropdowns read as one
+   family. It scrolls away with the page and hides during a Journey run. */
 .audstrip { border-bottom: 1px solid var(--rule-soft); }
-.audstrip nav {
-  display: flex; justify-content: flex-end; gap: var(--s-4);
-  padding: var(--s-1) 0; font-size: var(--t-micro);
+.audstrip .wrap { display: flex; justify-content: flex-end; padding-top: var(--s-2); padding-bottom: var(--s-2); }
+.iam { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-small); color: var(--ink-soft); }
+.iam select {
+  min-height: 32px; padding: 0 var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  background: var(--surface); font: inherit; font-size: var(--t-small); font-weight: 600;
+  color: var(--ink); cursor: pointer;
 }
-.audstrip a { color: var(--ink-mute); text-decoration-color: var(--rule); }
-.audstrip a:hover { color: var(--accent); }
-.audstrip [aria-current] { color: var(--ink-soft); font-weight: 700; }
 body[data-journey="true"] .audstrip { display: none; }
 
 /* The footer disclaimer, three titled columns across the width. Each column

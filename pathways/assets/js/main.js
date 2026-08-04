@@ -158,16 +158,22 @@ function paint() {
 function mountDoors() {
   const f = data.copy.footerDoors;
   if (!f) return;
-  const who = extraMode || 'students';
-  const door = (id, href, label) => (who === id
-    ? `<span aria-current="page">${esc(label)}</span>`
-    : `<a href="${href}">${esc(label)}</a>`);
+  const who = extraMode || 'student';
+  const roles = [
+    { id: 'student', href: './', label: f.roleStudent },
+    { id: 'parent', href: './?mode=parent', label: f.roleParent },
+    { id: 'teacher', href: './?mode=teacher', label: f.roleTeacher },
+  ];
   const div = document.createElement('div');
   div.className = 'audstrip';
-  div.innerHTML = `<div class="wrap"><nav aria-label="${esc(f.head)}">
-    ${door('students', './', f.shortStudents)}
-    ${door('parent', './?mode=parent', f.shortParents)}
-    ${door('teacher', './?mode=teacher', f.shortTeachers)}
-  </nav></div>`;
+  div.innerHTML = `<div class="wrap">
+    <label class="iam">
+      <span>${esc(f.iAm)}</span>
+      <select aria-label="${esc(f.head)}">
+        ${roles.map((r) => `<option value="${r.href}"${r.id === who ? ' selected' : ''}>${esc(r.label)}</option>`).join('')}
+      </select>
+    </label></div>`;
+  const sel = div.querySelector('select');
+  sel.addEventListener('change', () => { location.href = sel.value; });
   document.body.insertBefore(div, head);
 }
