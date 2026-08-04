@@ -26,6 +26,7 @@ let run = null;
 let stages = [];
 let picked = [];            // selected choice indices this turn
 let justResolved = null;    // chance outcome awaiting Continue
+let justLived = null;       // the year just committed, awaiting Continue
 let compareSel = [];        // run indices picked for comparison
 let rerender = () => {};
 let DATA = null;
@@ -56,6 +57,7 @@ export function renderJourney(host, data, ctx, repaint) {
     return;
   }
 
+  if (justLived) return livedScreen(host, data);
   if (justResolved) return chanceOutcome(host, data);
   if (run.pending) {
     const card = data.chances.cards.find((c) => c.id === run.pending.cardId);
@@ -69,7 +71,7 @@ export function renderJourney(host, data, ctx, repaint) {
 }
 
 export function resetJourney() {
-  run = null; picked = []; justResolved = null;
+  run = null; picked = []; justResolved = null; justLived = null;
   document.body.dataset.journey = 'false';
 }
 
@@ -221,6 +223,7 @@ function introScreen(host, data, st) {
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">You choose. Things turn up. Nothing ends it.</p>
         ${comboBlock}
         <div class="wantbox">
+          <p class="caps rail-q">${esc(jc.q2)}</p>
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(hasPlan ? jc.wantHint : jc.comboGate)}</p>
           <div class="grid two" style="margin-top:var(--s-3)">
@@ -319,7 +322,14 @@ function turnScreen(host, stage, data) {
 function commit(data) {
   if (!picked.length) return;
   const stage = currentStage(run, stages);
+  // Capture the chosen rows and the before state now: applyChoices advances
+  // the run, and the lived screen has to speak about the year that was, not
+  // the year that is next.
+  const pool = visibleChoices(stage, run);
+  const chosen = picked.map((i) => pool[i]).filter(Boolean);
+  const before = snapshot();
   applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data));
+  justLived = { age: stage.age, chosen, delta: delta(before) };
   announce(`Age ${stage.age} lived.`);
   picked = [];
   setLiveRun(run);
@@ -346,7 +356,11 @@ function forkScreen(host, stage, data) {
   bindGlossary(host);
   onAction(host, {
     fork: (btn) => {
-      applyChoices(run, stage, [Number(btn.dataset.i)], data.chances.cards, subjectMeta(data));
+      const i = Number(btn.dataset.i);
+      const chosen = [pool[i]].filter(Boolean);
+      const before = snapshot();
+      applyChoices(run, stage, [i], data.chances.cards, subjectMeta(data));
+      justLived = { age: stage.age, chosen, delta: delta(before) };
       announce(`Chosen. Age ${stage.age}.`);
       setLiveRun(run);
       rerender();
@@ -356,11 +370,27 @@ function forkScreen(host, stage, data) {
 
 function reflectScreen(host, stage, data) {
   const r = data.journey.reflection;
+  const jc = data.copy.journey;
+  // The want re-check. A goal named at fifteen is allowed to be wrong at
+  // thirty eight; ECG treats revising it as progress, not failure, so the
+  // game does too. The original is kept so the ending can tell both halves.
+  const wants = (data.journey.wants || []).filter((w) => w.id !== 'unsure' && w.id !== (run.want && run.want.id));
+  const wantCheck = `
+    <div class="wantcheck" data-ref="wantblock">
+      <p class="small">${esc(run.want
+        ? fill(jc.stillTrue, { age: run.startAge, want: run.want.label })
+        : fill(jc.stillTrueNone, { age: run.startAge }))} <strong>${esc(jc.stillTrueAsk)}</strong></p>
+      <div class="btn-row" style="margin-top:var(--s-2)">
+        ${run.want ? `<button class="btn ghost small" type="button" data-action="keepwant">${esc(jc.keepWant)}</button>` : ''}
+        <button class="btn ghost small" type="button" data-action="changewant">${esc(run.want ? jc.changeWant : jc.nameWant)}</button>
+      </div>
+    </div>`;
   host.innerHTML = `
     <div class="wrap">
       <div class="reflect fade-up">
         ${turnMeta(stage)}
         <p class="lede j-sit">${esc(stage.situation)}</p>
+        ${wantCheck}
         <h2 class="serif" style="margin-top:var(--s-4)">${esc(r.prompt)}</h2>
         <div class="btn-row" style="margin-top:var(--s-4)">
           ${r.options.map((o) => `<button class="btn ghost" type="button" data-action="rpick" data-t="${esc(o)}">${esc(o)}</button>`).join('')}
@@ -376,8 +406,26 @@ function reflectScreen(host, stage, data) {
       </div>
     </div>`;
   focusH1(host);
+  const block = () => host.querySelector('[data-ref="wantblock"]');
   onAction(host, {
     rpick: (btn) => { const inp = host.querySelector('[data-ref="rtext"]'); if (inp) inp.value = btn.dataset.t; },
+    keepwant: () => { const b = block(); if (b) b.innerHTML = `<p class="small mute">${esc(run.want.label)}. Kept.</p>`; },
+    changewant: () => {
+      const b = block(); if (!b) return;
+      b.innerHTML = `
+        <p class="small"><strong>${esc(jc.q2)}</strong></p>
+        <div class="btn-row" style="margin-top:var(--s-2)">
+          ${wants.map((w) => `<button class="btn ghost small" type="button" data-action="wantset" data-id="${esc(w.id)}">${esc(w.label)}</button>`).join('')}
+        </div>`;
+    },
+    wantset: (btn) => {
+      const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
+      if (!w) return;
+      if (run.wantWas === undefined) run.wantWas = run.want;
+      run.want = { id: w.id, label: w.label };
+      setLiveRun(run);
+      const b = block(); if (b) b.innerHTML = `<p class="small mute">Now: ${esc(w.label)}.</p>`;
+    },
     rgo: () => {
       const inp = host.querySelector('[data-ref="rtext"]');
       applyReflection(run, stage, inp ? inp.value : '');
@@ -428,6 +476,59 @@ function chanceAsk(host, card, data) {
   });
 }
 
+// The five dispositions are Krumboltz's planned happenstance skills, and the
+// identity words are how the rail answers "Who am I?" without showing a chart.
+const DISP_WORD = { curiosity: 'curious', persistence: 'persistent', flexibility: 'flexible', optimism: 'hopeful', risk: 'bold' };
+
+function idWords(r, jc) {
+  const top = Object.entries(r.disp).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 2);
+  return top.length ? top.map(([k]) => DISP_WORD[k]).join(' and ') : jc.identityNone.toLowerCase();
+}
+
+/**
+ * The ECG question a stage leans on. The three run through every year, but
+ * each screen leads with one: early turns are about noticing who you are,
+ * forks are the moments you choose a direction, and the long middle is the
+ * work of getting there.
+ */
+function stageQuestion(stage, jc) {
+  const f = stage.format || 'turn';
+  if (f === 'fork') return jc.q2;
+  if (f === 'reflect') return jc.q1;
+  return stage.age <= 16 ? jc.q1 : jc.q3;
+}
+
+/**
+ * The beat that was missing. Every choice carries an authored outcome
+ * sentence, and it used to surface only in the small print of the next turn
+ * and the ending. Committing a year now shows what that year did to you
+ * before the next one starts, the same way a chance card resolves.
+ */
+function livedScreen(host, data) {
+  const jc = data.copy.journey;
+  const { age, chosen, delta: d } = justLived;
+  const grew = [...new Set(chosen.flatMap((c) => Object.keys(c.disp || {})))].map((k) => DISP_WORD[k]);
+  const becoming = grew.length ? fill(jc.becoming, { words: grew.slice(0, 2).join(' and ') }) : '';
+  host.innerHTML = shell(`
+    <div class="chance-out lived">
+      <p class="caps">${esc(fill(jc.livedHead, { age }))}</p>
+      ${chosen.map((c) => `
+        <div class="lived-row">
+          <p class="lived-choice serif">${esc(c.label)}</p>
+          ${c.outcome ? `<p class="lede">${decorate(c.outcome)}</p>` : ''}
+        </div>`).join('')}
+      ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
+      ${becoming ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(becoming)}</p>` : ''}
+      <div class="btn-row" style="margin-top:var(--s-4)">
+        <button class="btn accent" type="button" data-action="go">${esc(jc.continue)}</button>
+      </div>
+    </div>`, rail(data));
+  announce([fill(jc.livedHead, { age }), ...chosen.map((c) => c.outcome).filter(Boolean)].join(' '));
+  focusH1(host);
+  bindGlossary(host);
+  onAction(host, { go: () => { justLived = null; rerender(); } });
+}
+
 function chanceOutcome(host, data) {
   const jc = data.copy.journey;
   const { step, delta: d } = justResolved;
@@ -450,9 +551,13 @@ function chanceOutcome(host, data) {
 
 function endingScreen(host, data, st) {
   const jc = data.copy.journey;
-  const wantLine = run.want
-    ? fill(jc.endWant, { age: run.startAge, want: run.want.label })
-    : fill(jc.endWantUnsure, { age: run.startAge });
+  const wantChanged = run.wantWas !== undefined
+    && (run.wantWas ? run.wantWas.id : null) !== (run.want ? run.want.id : null);
+  const wantLine = wantChanged && run.want
+    ? fill(jc.endWantChanged, { age: run.startAge, was: run.wantWas ? run.wantWas.label : 'not sure', want: run.want.label })
+    : run.want
+      ? fill(jc.endWant, { age: run.startAge, want: run.want.label })
+      : fill(jc.endWantUnsure, { age: run.startAge });
   const pathLine = run.pathLabel ? fill(jc.endPath, { path: run.pathLabel }) : '';
   const moments = (run.moments || []).map((m) => `
     <p><strong>Age ${m.age}.</strong> ${decorate([m.outcome, m.chance ? m.chance.text : ''].filter(Boolean).join(' '))}</p>`).join('');
@@ -465,6 +570,10 @@ function endingScreen(host, data, st) {
         <h1 class="serif" tabindex="-1" style="font-size:var(--t-hero);line-height:var(--lh-hero)">${esc(wantLine)}</h1>
         ${pathLine ? `<p class="lede">${esc(pathLine)}</p>` : ''}
         <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>You lived it steadily, which is a way of living it.</p>'}</div>
+        <div class="section">
+          <p class="caps">${esc(jc.becameHead)}</p>
+          <p class="idwords serif">${esc(idWords(run, jc))}</p>
+        </div>
         <div class="section">
           <p class="caps">${esc(jc.doorsHead)}</p>
           <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
@@ -570,12 +679,20 @@ function turnMeta(stage) {
   const n = run.stepIndex + 1;
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
+  const q = DATA ? `<span class="qchip">${esc(stageQuestion(stage, DATA.copy.journey))}</span>` : '';
   return `
     <p class="turn-meta caps">Step ${n} of ${stages.length} ${label} ${want}</p>
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${stage.age}</span>
-      <h1 class="serif" tabindex="-1">${esc(stage.title)}</h1></div>`;
+      <h1 class="serif" tabindex="-1">${esc(stage.title)}</h1>${q}</div>`;
 }
 
+/**
+ * The rail is the compass: the three ECG questions, answered live from the
+ * run. Who you are is the dispositions and what you have built. Where you
+ * are going is the want. How you get there is the doors you hold and the
+ * subjects you carry. Same data as before, now grouped by the questions a
+ * counsellor would actually ask.
+ */
 function rail(data) {
   const jc = data.copy.journey;
   const bars = ['skills', 'network', 'portfolio'].map((k) => {
@@ -591,15 +708,18 @@ function rail(data) {
   }).join('');
   const combo = planRows(data, run.plan);
   return `
-    ${combo.length ? `
-      <p class="caps">${esc(jc.comboRail)}</p>
-      <p class="chips subjchips">${subjectChips(combo, 6)}</p>` : ''}
-    <p class="caps" ${combo.length ? 'style="margin-top:var(--s-4)"' : ''}>${esc(jc.doorsHead)}</p>
-    <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">None yet. They come.</span>'}</p>
-    <p class="caps" style="margin-top:var(--s-4)">${esc(jc.carryHead)}</p>
+    <p class="caps rail-q">${esc(jc.q1)}</p>
+    <p class="idwords serif">${esc(idWords(run, jc))}</p>
     <div class="disp-bars">${bars}</div>
-    <details style="margin-top:var(--s-3)"><summary class="small mute">How you tend to act</summary>
+    <details style="margin-top:var(--s-2)"><summary class="small mute">${esc(jc.carryHead)}</summary>
       <div class="disp-bars" style="margin-top:var(--s-2)">${dbars}</div></details>
+
+    <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q2)}</p>
+    <p class="small">${run.want ? esc(run.want.label) : `<span class="mute">${esc(jc.railWhereNone)}</span>`}</p>
+
+    <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q3)}</p>
+    <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">No doors yet. They come.</span>'}</p>
+    ${combo.length ? `<p class="chips subjchips" style="margin-top:var(--s-2)">${subjectChips(combo, 6)}</p>` : ''}
     ${storySoFar(data)}`;
 }
 
