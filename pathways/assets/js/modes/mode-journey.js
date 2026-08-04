@@ -26,6 +26,7 @@ let DOORS = {};
 let run = null;
 let stages = [];
 let picked = [];            // selected choice indices this turn
+let pickedAsks = [];        // ask ids staged this turn, spent on Live this year
 let justResolved = null;    // chance outcome awaiting Continue
 let justLived = null;       // the year just committed, awaiting Continue
 let restartArmed = false;   // first tap arms, second tap clears the run
@@ -93,7 +94,7 @@ export function renderJourney(host, data, ctx, repaint) {
 }
 
 export function resetJourney() {
-  run = null; picked = []; justResolved = null; justLived = null;
+  run = null; picked = []; pickedAsks = []; justResolved = null; justLived = null;
   document.body.dataset.journey = 'false';
 }
 
@@ -332,8 +333,9 @@ function turnScreen(host, stage, data) {
       <span class="pts-why">${esc(pointsWhy(jc, PTS, reasons))}</span>
     </div>
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
+    ${yearSummary(data, stage, pool)}
     <div class="btn-row" style="margin-top:var(--s-4)">
-      ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
+      ${(picked.length || pickedAsks.length) ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
     ${prev}`, rail(data, stage));
@@ -359,15 +361,15 @@ function turnScreen(host, stage, data) {
       rerender();
     },
     stalefresh: () => { setLiveRun(null); resetJourney(); rerender(); },
+    // An ask is staged, never fired on the spot. Tapping one used to end the
+    // year immediately, which is the same mistake the choice grid used to make
+    // and it was worse here: a tap on a panel at the side of the screen threw
+    // the student into the next year before they had finished deciding this
+    // one. The year is decided as a whole and lived on one button.
     ask: (btn) => {
-      const m = MV(data).find((x) => x.id === btn.dataset.id);
-      const st2 = currentStage(run, stages);
-      if (!m || !st2) return;
-      const before = snapshot();
-      if (!playAsk(run, m, st2.age, MV(data))) return;
-      setLiveRun(run);
-      justLived = { age: st2.age, chosen: [{ label: m.label, outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, disp: m.disp || {} }], delta: delta(before) };
-      announce(m.outcome);
+      const id = btn.dataset.id;
+      if (pickedAsks.includes(id)) pickedAsks = pickedAsks.filter((x) => x !== id);
+      else if (pickedAsks.length < ASKS_PER_YEAR - (run.asksThisYear || 0)) pickedAsks = [...pickedAsks, id];
       rerender();
     },
   });
@@ -423,6 +425,26 @@ function staleBanner(data) {
     </div>`;
 }
 
+/**
+ * What this year adds up to, before you live it. The three questions are the
+ * frame: what you do is how you get there, who you ask is part of who you are
+ * becoming, and both are read against where you said you were going. A year is
+ * decided as a whole, so the whole is shown before the button.
+ */
+function yearSummary(data, stage, pool) {
+  const jc = data.copy.journey;
+  if (!picked.length && !pickedAsks.length) return '';
+  const doing = picked.map((i) => pool[i]).filter(Boolean).map((c) => c.label);
+  const asking = pickedAsks.map((id) => (MV(data).find((m) => m.id === id) || {}).label).filter(Boolean);
+  return `
+    <div class="yearsum">
+      <p class="caps">${esc(fill(jc.yearHead, { age: stage.age }))}</p>
+      ${doing.length ? `<p class="small"><b>${esc(jc.yearDoing)}</b> ${esc(doing.join('. '))}.</p>` : ''}
+      ${asking.length ? `<p class="small"><b>${esc(jc.yearAsking)}</b> ${esc(asking.join('. '))}.</p>` : ''}
+      <p class="micro mute">${esc(run.want ? fill(jc.yearWant, { want: run.want.label }) : jc.yearNoWant)}</p>
+    </div>`;
+}
+
 /** Why this year has the points it has, in the student's words. */
 function pointsWhy(jc, n, reasons) {
   const map = { full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer };
@@ -446,19 +468,24 @@ function handStrip(data, stage) {
       <p class="caps">${icon('d_people')}${esc(jc.handHead)} <span class="hand-count">${held.length}/${HAND_LIMIT}</span></p>
       <p class="micro mute">${esc(usedUp ? jc.handUsed : fill(jc.handLeft, { n: leftN }))}</p>
       ${held.length ? `<div class="handcol">
-        ${held.map((m) => `
-          <button class="askcard" type="button" data-action="ask" data-id="${esc(m.id)}" ${usedUp ? 'disabled' : ''}>
+        ${held.map((m) => {
+          const on = pickedAsks.includes(m.id);
+          const full = !on && pickedAsks.length >= (ASKS_PER_YEAR - (run.asksThisYear || 0));
+          return `
+          <button class="askcard ${on ? 'on' : ''}" type="button" data-action="ask" data-id="${esc(m.id)}"
+                  aria-pressed="${on}" ${full ? 'data-dim="true"' : ''}>
             <span class="ac-ic">${icon(m.ic)}</span>
             <span class="ac-label">${esc(m.label)}</span>
-            <span class="ac-tag">${esc(jc.askTag)}</span>
-          </button>`).join('')}
+            <span class="ac-tag">${esc(on ? jc.askStaged : jc.askTag)}</span>
+          </button>`;
+        }).join('')}
       </div>` : `<p class="small mute">${esc(jc.handEmpty)}</p>`}
       <p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.handRule)}</p>
     </div>`;
 }
 
 function commit(data) {
-  if (!picked.length) return;
+  if (!picked.length && !pickedAsks.length) return;
   const stage = currentStage(run, stages);
   // Capture the chosen rows and the before state now: applyChoices advances
   // the run, and the lived screen has to speak about the year that was, not
@@ -466,10 +493,19 @@ function commit(data) {
   const pool = visibleChoices(stage, run, MV(data));
   const chosen = picked.map((i) => pool[i]).filter(Boolean);
   const before = snapshot();
-  applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
-  justLived = { age: stage.age, chosen, delta: delta(before) };
+  // Asks first, so a door one opens is already held when the year resolves.
+  const askRows = [];
+  pickedAsks.forEach((id) => {
+    const m = MV(data).find((x) => x.id === id);
+    if (m && playAsk(run, m, stage.age, MV(data))) {
+      askRows.push({ label: m.label, outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, gain: m.gain, disp: m.disp || {} });
+    }
+  });
+  if (picked.length) applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
+  else { run.asksThisYear = 0; run.stepIndex += 1; }
+  justLived = { age: stage.age, chosen: [...chosen, ...askRows], delta: delta(before) };
   announce(`Age ${stage.age} lived.`);
-  picked = [];
+  picked = []; pickedAsks = [];
   setLiveRun(run);
   rerender();
 }

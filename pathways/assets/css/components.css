@@ -778,6 +778,15 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
+/* What the year adds up to, shown before it is lived. */
+.yearsum {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--rule); border-radius: var(--r-md); background: var(--surface);
+}
+.yearsum p { margin: 0 0 var(--s-1); }
+.askcard.on { border-width: 2px; background: var(--accent-wash); }
+.askcard[data-dim="true"] { opacity: 0.5; }
+
 /* AIM's links back to the other two modes. Evidence panels, not decoration:
    what you already played toward this want, and what your combination stands
    at right now. */

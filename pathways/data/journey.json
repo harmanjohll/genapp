@@ -1996,6 +1996,30 @@
             "path:arts": "You teach the new tools without losing the old eye. The class fills with people twice as scared as you."
           },
           "opens": "d_people"
+        },
+        {
+          "label": "Take the pay cut for the better team",
+          "gain": {
+            "network": 2,
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1,
+            "optimism": 1
+          },
+          "outcome": "Less money, people who are good at the thing. You learn faster in one year than in the four before it.",
+          "cost": 1
+        },
+        {
+          "label": "Turn down the promotion that would end the craft",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 2
+          },
+          "outcome": "Everyone assumes you will regret it. You are still doing the work you actually like at fifty.",
+          "cost": 1
         }
       ]
     },
@@ -2070,6 +2094,27 @@
             "path:hands": "Twenty five years of sites and quotes and being asked for by name. The business is mostly already there."
           },
           "opens": "d_people"
+        },
+        {
+          "label": "Learn something with no career in it",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "curiosity": 3,
+            "optimism": 1
+          },
+          "outcome": "Nobody asked you to learn this. You are better company for it, and two doors open sideways."
+        },
+        {
+          "label": "Help someone else use theirs",
+          "gain": {
+            "network": 3
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "You fill in the form a friend had avoided for a year. They go, and they tell people who helped."
         }
       ],
       "format": "fork"
@@ -2147,6 +2192,19 @@
           "outcome": "The setbacks, the sideways moves, the person who called. They believe it because it is not a speech.",
           "cost": 1,
           "opens": "d_workstudy"
+        },
+        {
+          "label": "Hire the one nobody else would",
+          "gain": {
+            "network": 2,
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 2,
+            "optimism": 2
+          },
+          "outcome": "You remember being the unlikely one. They turn out fine, which everybody could have guessed and nobody did.",
+          "cost": 1
         }
       ]
     }
@@ -2282,7 +2340,13 @@
     "asked_senior",
     "went_open",
     "led_cca",
-    "asked_family"
+    "asked_family",
+    "asked_lecturer",
+    "used_careers",
+    "asked_boss",
+    "asked_peer",
+    "asked_younger",
+    "told_home"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",
