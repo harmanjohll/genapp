@@ -778,6 +778,38 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
+/* Two economies, told apart on sight. The hand of superpowers sits above the
+   year's choices in its own panel: free, courage not hours, outside the points
+   line entirely. Commitments stay in the choice grid where the points are. */
+.hand {
+  margin: var(--s-4) 0 var(--s-5); padding: var(--s-4);
+  border: 1px dashed var(--accent); border-radius: var(--r-md);
+  background: var(--accent-wash);
+}
+.hand .caps { color: var(--accent-dk); }
+.hand .caps svg { vertical-align: -2px; margin-right: 5px; }
+.hand-count { color: var(--ink-mute); font-weight: 400; }
+.handrow { display: flex; gap: var(--s-3); overflow-x: auto; padding-top: var(--s-3); }
+.askcard {
+  flex: 0 0 auto; width: 140px; min-height: 104px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-1);
+  padding: var(--s-3); text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+  border: 1px solid var(--accent); border-radius: var(--r-md); background: var(--surface);
+  box-shadow: 0 2px 0 var(--accent-wash);
+  transition: transform 120ms var(--ease);
+}
+.askcard:hover:not([disabled]) { transform: translateY(-3px); }
+.askcard[disabled] { opacity: 0.45; cursor: not-allowed; }
+.ac-ic { color: var(--accent); }
+.ac-label { font-size: var(--t-small); font-weight: 600; line-height: 1.3; }
+.ac-tag {
+  margin-top: auto; padding: 0 7px; border-radius: 999px;
+  background: var(--accent); color: var(--paper); font-size: var(--t-micro); font-weight: 700;
+}
+.pts-why { display: block; width: 100%; font-size: var(--t-micro); color: var(--ink-mute); margin-top: var(--s-1); }
+.pointsrow { flex-wrap: wrap; }
+@media (prefers-reduced-motion: reduce) { .askcard { transition: none; } .askcard:hover { transform: none; } }
+
 /* The life strip: one dot per year of this run, filled as lived. The whole
    life is visible on every turn, which is the point of the mode. */
 .lifestrip { display: inline-flex; gap: 3px; align-items: center; margin: 0 var(--s-2); }

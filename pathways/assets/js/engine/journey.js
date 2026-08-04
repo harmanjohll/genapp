@@ -39,6 +39,40 @@ const DISP_KEYS = ['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'
 const TRACKS = ['skills', 'network', 'portfolio'];
 const TRACK_CAP = 24;
 export const POINTS_PER_TURN = 2;
+
+/**
+ * A year's points are time and energy, so they are not a constant.
+ *
+ * Four scarcities run through this game and they are not the same thing.
+ * Points are time and energy. Options are what is available to spend them on,
+ * which is the choice list and grows with doors. Opportunity is what arrives
+ * uninvited, which is the chance deck. Courage is what asking costs, and that
+ * is why asks are free: a student with no time still has the capacity to ask.
+ *
+ * In school years the load is real. Seven subjects or more is a fuller year
+ * than four. A CCA you went all in on takes its share. After school the shape
+ * changes: at seventeen to twenty four more of the day is yours to direct, and
+ * from twenty seven work and the people who depend on you take it back.
+ *
+ * The floor is 2 and the ceiling is 4, so no year is ever too thin to be a
+ * real turn. Nothing here is a verdict on the plan: a fuller year is a fact
+ * about this year, never a judgement about the combination, and the reason
+ * line says so in those words.
+ */
+export function pointsFor(run, stage) {
+  const age = stage.age;
+  const reasons = [];
+  let pts = 2;
+  if (age >= 17 && age <= 24) { pts += 1; reasons.push({ k: 'freer', d: 1 }); }
+  if (age >= 27) { pts += 0; }
+  if (age <= 18) {
+    const n = Object.keys(run.plan || {}).length;
+    if (n >= 7) { pts -= 1; reasons.push({ k: 'full', d: -1, n }); }
+    else if (n > 0 && n <= 4) { pts += 1; reasons.push({ k: 'light', d: 1, n }); }
+    if ((run.flags || []).includes('took_stage')) { pts -= 1; reasons.push({ k: 'cca', d: -1 }); }
+  }
+  return { points: Math.max(2, Math.min(4, pts)), reasons };
+}
 /** At most this many subject choices join a turn, so the list stays readable. */
 export const SUBJECT_CHOICE_CAP = 2;
 
@@ -73,6 +107,8 @@ export function createRun(startAge, label, want, plan) {
     want: want || null,          // { id, label, riasec?, kind? } or null for "not sure yet"
     aligned: 0,                  // choices lived that pointed the way the want points
     movesMade: [],               // { id, age }, player-initiated moves, each once
+    hand: [],                    // ask ids held, dealt and drawn, capped at HAND_LIMIT
+    askedThisYear: false,        // one ask a year
     seed: Math.floor(Math.random() * 1e9),
     stepIndex: 0,
     steps: [],
@@ -123,6 +159,48 @@ export function takesSubject(run, spec) {
 /** At most this many moves join a turn's pool, same reason as the subject cap. */
 export const MOVE_CHOICE_CAP = 2;
 
+/**
+ * The hand of asks, and the rule that makes it a game.
+ *
+ * You hold at most three. Playing one is free, because asking costs courage
+ * rather than time, and one a year, because the limit on asking is nerve and
+ * not hours. Playing one draws another eligible ask into the hand, which is
+ * the whole ECG lesson stated as a rule: asking is how you find out who else
+ * there is to ask. The student who never plays a card never meets the rest of
+ * the deck, and that is the honest consequence rather than a punishment.
+ */
+export const HAND_LIMIT = 3;
+
+const asksFor = (moves, age) => (moves || []).filter((m) => m.kind === 'ask' && age >= m.ages[0] && age <= m.ages[1]);
+
+/** Top up the hand from the eligible asks not held and not spent. */
+export function dealHand(run, moves, age) {
+  if (!Array.isArray(run.hand)) run.hand = [];
+  const made = new Set((run.movesMade || []).map((m) => m.id));
+  const held = new Set(run.hand);
+  const pool = asksFor(moves, age).filter((m) => !made.has(m.id) && !held.has(m.id));
+  let i = 0;
+  while (run.hand.length < HAND_LIMIT && i < pool.length) {
+    run.hand.push(pool[(lcg(run.seed + age * 31 + i) + i) % pool.length].id);
+    run.hand = [...new Set(run.hand)];
+    i += 1;
+  }
+  return run.hand;
+}
+
+/** Play an ask: free, once a year, and it draws a replacement. */
+export function playAsk(run, move, age, moves) {
+  if (run.askedThisYear) return false;
+  if (!Array.isArray(run.hand) || !run.hand.includes(move.id)) return false;
+  grant(run, move);
+  if (!run.movesMade) run.movesMade = [];
+  run.movesMade.push({ id: move.id, age });
+  run.hand = run.hand.filter((id) => id !== move.id);
+  run.askedThisYear = true;
+  dealHand(run, moves, age);
+  return true;
+}
+
 export function visibleChoices(stage, run, moves) {
   const all = stage.choices || [];
   const base = all.filter((c) => !c.needsSubject && (!c.needsDoor || run.doors.includes(c.needsDoor)));
@@ -134,21 +212,24 @@ export function visibleChoices(stage, run, moves) {
   // same way working does. A year spent asking and preparing is a real year.
   // Each move plays once per run; which two are offered rotates with the
   // seed, so replays meet different parts of the hand.
-  let hand = [];
+  // Commitments only. Asks are free and live in the hand, not here, because
+  // booking a chat does not consume the year the way an attachment does.
+  let commits = [];
   if ((stage.format || 'turn') === 'turn' && Array.isArray(moves) && moves.length) {
     const made = new Set((run.movesMade || []).map((m) => m.id));
-    const open = moves.filter((m) => stage.age >= m.ages[0] && stage.age <= m.ages[1] && !made.has(m.id));
+    const open = moves.filter((m) => m.kind === 'commit'
+      && stage.age >= m.ages[0] && stage.age <= m.ages[1] && !made.has(m.id));
     if (open.length) {
       const off = lcg(run.seed + stage.age * 97) % open.length;
-      hand = Array.from({ length: Math.min(MOVE_CHOICE_CAP, open.length) },
+      commits = Array.from({ length: Math.min(MOVE_CHOICE_CAP, open.length) },
         (_, i) => open[(off + i) % open.length])
         .map((m) => ({
-          id: m.id, label: m.label, cost: 1, gain: m.gain, disp: m.disp, sets: m.sets,
-          outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true,
+          id: m.id, label: m.label, cost: m.cost || 1, gain: m.gain, disp: m.disp, sets: m.sets,
+          outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, isCommit: true,
         }));
     }
   }
-  return [...base, ...subject, ...hand];
+  return [...base, ...subject, ...commits];
 }
 
 const LV = { G1: 1, G2: 2, G3: 3 };
@@ -219,6 +300,7 @@ export function applyChoices(run, stage, indices, cards, meta, moves) {
     chance: null,
   });
 
+  run.askedThisYear = false;
   const card = pickChance(run, stage, cards);
   if (card) run.pending = { cardId: card.id };
   else { run.pending = null; run.stepIndex += 1; }
