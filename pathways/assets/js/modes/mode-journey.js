@@ -17,6 +17,7 @@ import { openSheet, onSheetAction, close as closeSheet } from '../components/she
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
   respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN, wantAffinity,
+  movesAvailable, applyMove,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -329,6 +330,7 @@ function turnScreen(host, stage, data) {
       ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
+    ${movesTray(data, stage)}
     ${prev}`, rail(data));
 
   focusH1(host);
@@ -345,6 +347,62 @@ function turnScreen(host, stage, data) {
       rerender();
     },
     live: () => commit(data),
+    move: (btn) => openMove(data, btn.dataset.id, btn),
+  });
+}
+
+/**
+ * The hand of moves under the year's choices. Chances happen to you; these
+ * are you acting on the system, and every one is a real thing a Singapore
+ * student can do this year. Tapping a card opens it in the sheet, because
+ * the body text is the point: it says how to actually do the thing.
+ */
+function movesTray(data, stage) {
+  const jc = data.copy.journey;
+  const avail = movesAvailable((data.moves && data.moves.moves) || [], run, stage.age);
+  if (!avail.length) return '';
+  const locked = avail[0].locked;
+  return `
+    <div class="moves">
+      <p class="caps" style="margin-top:var(--s-5)">${esc(jc.movesHead)}</p>
+      <p class="micro mute">${esc(locked ? jc.movesDone : jc.movesRule)}</p>
+      <div class="movesrow">
+        ${avail.map((m) => `
+          <button class="movecard" type="button" data-action="move" data-id="${esc(m.id)}" ${locked ? 'data-dim="true"' : ''}>
+            <span class="mc-ic">${icon(m.ic)}</span>
+            <span class="mc-label">${esc(m.label)}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function openMove(data, id, trigger) {
+  const jc = data.copy.journey;
+  const stage = currentStage(run, stages);
+  const m = ((data.moves && data.moves.moves) || []).find((x) => x.id === id);
+  if (!m || !stage) return;
+  const locked = (run.movesMade || []).some((x) => x.age === stage.age);
+  openSheet(`
+    <h2 id="sheet-title">${icon(m.ic)}${esc(m.label)}</h2>
+    <p>${esc(m.body)}</p>
+    ${m.check ? `<p class="micro mute">${esc(m.check)}</p>` : ''}
+    ${locked ? `<p class="small mute">${esc(jc.movesDone)}</p>` : `
+      <div class="btn-row" style="margin-top:var(--s-4)">
+        <button class="btn accent" type="button" data-action="mv-do" data-id="${esc(m.id)}">${esc(jc.moveDo)}</button>
+      </div>`}`, trigger);
+  onSheetAction({
+    'mv-do': (btn) => {
+      const mv = ((data.moves && data.moves.moves) || []).find((x) => x.id === btn.dataset.id);
+      const st2 = currentStage(run, stages);
+      if (!mv || !st2) return;
+      const before = snapshot();
+      if (!applyMove(run, mv, st2.age)) { closeSheet(); return; }
+      setLiveRun(run);
+      justLived = { age: st2.age, chosen: [{ label: mv.label, outcome: mv.outcome, disp: mv.disp || {} }], delta: delta(before) };
+      closeSheet();
+      announce(mv.outcome);
+      rerender();
+    },
   });
 }
 
@@ -702,6 +760,14 @@ function endingScreen(host, data, st) {
           <p class="caps">${esc(jc.doorsHead)}</p>
           <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute">The next turn opens some.</span>'}</p>
         </div>
+        ${(run.movesMade || []).length ? `
+          <div class="section">
+            <p class="caps">${esc(jc.movesYouMade)}</p>
+            <ul class="small raised">${run.movesMade.map((mm) => {
+              const m = ((data.moves && data.moves.moves) || []).find((x) => x.id === mm.id);
+              return m ? `<li>${icon(m.ic)} ${esc(m.label)}, at ${mm.age}.</li>` : '';
+            }).join('')}</ul>
+          </div>` : ''}
         ${(run.raises || []).length ? `
           <div class="section">
             <p class="caps">${esc(jc.raisedHead)}</p>

@@ -72,6 +72,7 @@ export function createRun(startAge, label, want, plan) {
     plan: { ...(plan || {}) },   // { subjectId: 'G1'|'G2'|'G3' }, the combination played
     want: want || null,          // { id, label, riasec?, kind? } or null for "not sure yet"
     aligned: 0,                  // choices lived that pointed the way the want points
+    movesMade: [],               // { id, age }, player-initiated moves, each once
     seed: Math.floor(Math.random() * 1e9),
     stepIndex: 0,
     steps: [],
@@ -165,6 +166,30 @@ function applyRaise(run, spec, meta) {
 }
 
 /** Spend the turn's points on one or more choices. */
+/**
+ * Moves are the other half of the game's grammar. A chance happens to you; a
+ * move is you acting on the system: asking for help, booking the counsellor,
+ * starting an EAE folder. Free, on top of the year's points, one a year and
+ * each once, because the scarcity is attention, not permission. A move sets
+ * a flag through the same grant() a choice uses, and flagged chance cards
+ * are preferred by the draw, so a move this year changes what turns up later.
+ */
+export function movesAvailable(allMoves, run, age) {
+  const made = new Set((run.movesMade || []).map((m) => m.id));
+  const usedThisAge = (run.movesMade || []).some((m) => m.age === age);
+  return (allMoves || [])
+    .filter((m) => age >= m.ages[0] && age <= m.ages[1] && !made.has(m.id))
+    .map((m) => ({ ...m, locked: usedThisAge }));
+}
+
+export function applyMove(run, move, age) {
+  if (!run.movesMade) run.movesMade = [];
+  if (run.movesMade.some((m) => m.id === move.id || m.age === age)) return false;
+  grant(run, move);
+  run.movesMade.push({ id: move.id, age });
+  return true;
+}
+
 export function applyChoices(run, stage, indices, cards, meta) {
   const pool = visibleChoices(stage, run);
   const chosen = indices.map((i) => pool[i]).filter(Boolean);

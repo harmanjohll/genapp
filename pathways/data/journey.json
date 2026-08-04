@@ -2268,7 +2268,16 @@
     "looked_around",
     "took_stage",
     "helped_someone",
-    "moved_up"
+    "moved_up",
+    "asked_help",
+    "ecg_seen",
+    "told_parents",
+    "seen_work",
+    "eae_ready",
+    "dsa_aware",
+    "attached",
+    "exchanged",
+    "found_mentor"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",
