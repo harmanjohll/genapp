@@ -160,7 +160,9 @@
     "ikigaiNote": "Few stories fill all four circles early. They pull together, if you keep choosing.",
     "ikigaiReflect": "Your circles at thirty eight.",
     "kindsNote": "Six kinds of people at work. Most people are a mix of two or three.",
-    "nearWant": "near your want"
+    "nearWant": "near your want",
+    "ikigaiCompareHead": "Where each story sits",
+    "tryContrast": "You played {a}. Try the opposite kind of life:"
   },
   "footerDoors": {
     "head": "This tool has three doors",

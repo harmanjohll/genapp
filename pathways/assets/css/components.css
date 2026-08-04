@@ -757,6 +757,7 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 
 /* the four ikigai circles, drawn from the run */
+.iki-pair svg { max-width: 190px; }
 .ikigai { margin-top: var(--s-2); }
 .ikigai svg { max-width: 100%; height: auto; display: block; }
 .ikigai text { font-family: var(--body); }
