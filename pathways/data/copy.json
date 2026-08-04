@@ -167,7 +167,8 @@
     "startOver": "Start this story over",
     "startOverArm": "Tap again. This story will be gone.",
     "movesYouMade": "Moves you made",
-    "moveTag": "a real move"
+    "moveTag": "a real move",
+    "removeHint": "tap again to remove"
   },
   "footerDoors": {
     "head": "This tool has three doors",
