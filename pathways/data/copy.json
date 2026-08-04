@@ -166,6 +166,9 @@
     "head": "This tool has three doors",
     "students": "Students, you are in it.",
     "parents": "Parents, a short guide to the system as it is now.",
-    "teachers": "Teachers, running this with a class."
+    "teachers": "Teachers, running this with a class.",
+    "shortStudents": "Students",
+    "shortParents": "Parents",
+    "shortTeachers": "Teachers"
   }
 }
