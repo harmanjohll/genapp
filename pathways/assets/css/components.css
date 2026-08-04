@@ -364,7 +364,7 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 
 /* Collapsed, one control covers the whole strip. */
 .ribbon-toggle {
-  position: absolute; inset: 0; width: 100%;
+  position: absolute; inset: 0; width: 100%; min-height: var(--tap);
   background: none; border: none; padding: 0; cursor: pointer;
 }
 .ribbon-close {
@@ -563,8 +563,9 @@ button, .lchip, .pip, summary, select { touch-action: manipulation; }
 code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-warm); padding: 1px 5px; border-radius: var(--r-sm); }
 
 /* ---------- journey: path, hints, timeline ---------- */
-.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; min-width: 0; }
 .turn-meta .caps { margin: 0; }
+.turn-meta .wantline { min-width: 0; overflow-wrap: anywhere; }
 /* Which route this run is on. Neutral ink, never a colour that could rank one
    family above another. */
 .path-chip {
@@ -591,7 +592,11 @@ code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-warm
    readable measure, what you are carrying pinned on the right. On a phone the
    rail follows the scene. The footer leaves during play: a disclaimer under a
    game screen reads like small print under a memory. */
+/* Grid children default to min-width auto, so any wide child, the hand's row
+   of cards or a long want line, pushes the whole track past the viewport and
+   the phone scrolls sideways. Both tracks are told they may shrink. */
 .journey-grid { display: grid; gap: var(--s-6); align-items: start; }
+.journey-grid > * { min-width: 0; }
 @media (min-width: 900px) {
   .journey-grid { grid-template-columns: minmax(0, 1fr) clamp(280px, 26vw, 360px); column-gap: var(--s-7); }
   .j-rail { position: sticky; top: var(--s-4); }
@@ -812,6 +817,7 @@ body[data-journey="true"] .audstrip { display: none; }
    year's choices in its own panel: free, courage not hours, outside the points
    line entirely. Commitments stay in the choice grid where the points are. */
 .hand {
+  max-width: 100%;
   margin: var(--s-4) 0 var(--s-5); padding: var(--s-4);
   border: 1px dashed var(--accent); border-radius: var(--r-md);
   background: var(--accent-wash);
@@ -819,7 +825,7 @@ body[data-journey="true"] .audstrip { display: none; }
 .hand .caps { color: var(--accent-dk); }
 .hand .caps svg { vertical-align: -2px; margin-right: 5px; }
 .hand-count { color: var(--ink-mute); font-weight: 400; }
-.handcol { display: flex; flex-direction: column; gap: var(--s-2); padding-top: var(--s-3); }
+.handcol { display: flex; flex-direction: column; gap: var(--s-2); padding-top: var(--s-3); max-width: 100%; }
 @media (max-width: 899px) { .handcol { flex-direction: row; overflow-x: auto; } .askcard { width: 150px; min-height: 104px; } }
 .askcard {
   flex: 0 0 auto; width: 100%; min-height: var(--tap);
