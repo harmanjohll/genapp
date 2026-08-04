@@ -742,9 +742,31 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .idwords { font-size: var(--t-h3); margin: var(--s-1) 0 var(--s-2); }
 
-/* the year just lived, between committing and the next stage */
-.lived-row { margin-top: var(--s-3); }
+/* The year just lived, between committing and the next stage. This screen is
+   the reward beat of the whole game, so it gets ceremony the other panels do
+   not: the age large in the display face, then room to read what happened. */
+.lived { padding-top: var(--s-6); }
+.lived-age {
+  font-family: var(--display); font-size: clamp(3rem, 10vw, 4.5rem);
+  color: var(--accent); line-height: 1; margin-bottom: var(--s-2);
+}
+.lived-row { margin-top: var(--s-4); }
 .lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
+
+/* The reflect stage is the quiet year. It reads slower on purpose: more air
+   above, a narrower column, the situation given room. Design is doing the
+   counselling here: the layout is the instruction to sit with it. */
+.reflect { margin-top: var(--s-7); }
+.reflect .j-sit { font-size: var(--t-h3); line-height: 1.5; max-width: 40ch; }
+.reflect h2 { margin-top: var(--s-6); }
+
+/* On a choice, the label is the decision and the chips are the accounting.
+   The chips read one size down and muted so the human sentence wins. */
+.choice .c-chips { font-size: var(--t-micro); color: var(--ink-mute); }
+.choice .near-chip { color: var(--accent); }
+
+/* The question mark rides with its question everywhere it appears. */
+.rail-q svg, .qchip svg { vertical-align: -2px; margin-right: 5px; }
 
 /* RIASEC in student words: the kind chip on a want, and the near-want mark
    on a choice that points the same way. Marks, never pushes. */

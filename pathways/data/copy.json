@@ -163,7 +163,9 @@
     "ikigaiCompareHead": "Where each story sits",
     "tryContrast": "You played {a}. Try the opposite kind of life:",
     "turnHint": "Every year you get 2 points. Small choices cost 1, big ones cost 2. Pick, then tap Live this year.",
-    "leftHint": "1 point left. Add one more, or live the year now."
+    "leftHint": "1 point left. Add one more, or live the year now.",
+    "startOver": "Start this story over",
+    "startOverArm": "Tap again. This story will be gone."
   },
   "footerDoors": {
     "head": "This tool has three doors",
