@@ -711,6 +711,30 @@ body[data-journey="true"] .site-foot { display: none; }
    Both were treatments for a dead end that should not have existed. The wants
    no longer wait on anything, so the state and its step markers are gone. */
 
+/* The ECG compass. The three questions recur across Journey and NOW: as rail
+   headings, as a chip on each stage, as kickers over the blocks in NOW that
+   answer them. One voice, so a student who meets them in an ECG lesson
+   recognises them here, and the reverse. */
+.rail-q { color: var(--accent); letter-spacing: 0.06em; }
+.qchip {
+  display: inline-block; margin-left: var(--s-3); padding: 2px 10px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: var(--t-micro); color: var(--ink-soft); white-space: nowrap;
+  align-self: center;
+}
+.idwords { font-size: var(--t-h3); margin: var(--s-1) 0 var(--s-2); }
+
+/* the year just lived, between committing and the next stage */
+.lived-row { margin-top: var(--s-3); }
+.lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
+
+/* the want re-check on the reflect stage */
+.wantcheck {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface);
+}
+
 /* the picker, inside the sheet */
 .picker { margin-top: var(--s-3); }
 .pk-group { margin-bottom: var(--s-4); }

@@ -67,6 +67,7 @@ export function renderNow(container, data, ctx) {
             ${pips(reaches)}
           </div>
           <section aria-labelledby="doors-h">
+            <p class="caps rail-q">${esc(data.copy.journey.q2)}</p>
             <h2 id="doors-h" class="h-sm">${esc(c.doorsHead)}</h2>
             <ul class="doors" id="doors">${reaches.map((r) => doorRow(r, lev)).join('')}</ul>
           </section>
@@ -359,6 +360,7 @@ function askCard(st, reaches, data) {
   }
   return `
     <div class="ask">
+      <p class="caps rail-q">${esc(data.copy.journey.q3)}</p>
       <p class="caps">${esc(c.askHead)}</p>
       <p class="ask-q" id="askq">${esc(q)}</p>
       <button class="btn small" type="button" data-action="copyask" data-q="${esc(q)}">${esc(c.askCopy)}</button>
