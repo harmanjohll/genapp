@@ -230,5 +230,15 @@
     "classAll": "Between you, this room already holds every destination on the list.",
     "classNote": "Nobody here holds all of them alone. That is the point worth saying out loud.",
     "classNone": "No codes yet. Paste them above."
+  },
+  "parentLive": {
+    "head": "What is on this phone",
+    "none": "Nothing set on this device yet. The rest of this page still holds.",
+    "takes": "Your child has set {n} subjects for {year}.",
+    "opens": "With those levels, {n} of the {total} next steps are open to them right now.",
+    "lever": "One change would move {n} of them: {move}.",
+    "privacy": "Subjects only. What they wrote, what they wanted and the stories they played stay theirs, and this page does not show them.",
+    "askHead": "One thing worth asking tonight",
+    "askBody": "Ask them to show you this screen and talk you through it. Not to justify it. Just to show you."
   }
 }
