@@ -120,13 +120,35 @@ export function takesSubject(run, spec) {
  * can take a choice away from them, which is why the base set is computed
  * without reference to the plan at all.
  */
-export function visibleChoices(stage, run) {
+/** At most this many moves join a turn's pool, same reason as the subject cap. */
+export const MOVE_CHOICE_CAP = 2;
+
+export function visibleChoices(stage, run, moves) {
   const all = stage.choices || [];
   const base = all.filter((c) => !c.needsSubject && (!c.needsDoor || run.doors.includes(c.needsDoor)));
   const subject = all
     .filter((c) => c.needsSubject && takesSubject(run, c.needsSubject))
     .slice(0, SUBJECT_CHOICE_CAP);
-  return [...base, ...subject];
+  // Moves join the pool the way subject choices do: as ordinary choices,
+  // costing a point from the same budget, because asking costs attention the
+  // same way working does. A year spent asking and preparing is a real year.
+  // Each move plays once per run; which two are offered rotates with the
+  // seed, so replays meet different parts of the hand.
+  let hand = [];
+  if ((stage.format || 'turn') === 'turn' && Array.isArray(moves) && moves.length) {
+    const made = new Set((run.movesMade || []).map((m) => m.id));
+    const open = moves.filter((m) => stage.age >= m.ages[0] && stage.age <= m.ages[1] && !made.has(m.id));
+    if (open.length) {
+      const off = lcg(run.seed + stage.age * 97) % open.length;
+      hand = Array.from({ length: Math.min(MOVE_CHOICE_CAP, open.length) },
+        (_, i) => open[(off + i) % open.length])
+        .map((m) => ({
+          id: m.id, label: m.label, cost: 1, gain: m.gain, disp: m.disp, sets: m.sets,
+          outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true,
+        }));
+    }
+  }
+  return [...base, ...subject, ...hand];
 }
 
 const LV = { G1: 1, G2: 2, G3: 3 };
@@ -166,38 +188,18 @@ function applyRaise(run, spec, meta) {
 }
 
 /** Spend the turn's points on one or more choices. */
-/**
- * Moves are the other half of the game's grammar. A chance happens to you; a
- * move is you acting on the system: asking for help, booking the counsellor,
- * starting an EAE folder. Free, on top of the year's points, one a year and
- * each once, because the scarcity is attention, not permission. A move sets
- * a flag through the same grant() a choice uses, and flagged chance cards
- * are preferred by the draw, so a move this year changes what turns up later.
- */
-export function movesAvailable(allMoves, run, age) {
-  const made = new Set((run.movesMade || []).map((m) => m.id));
-  const usedThisAge = (run.movesMade || []).some((m) => m.age === age);
-  return (allMoves || [])
-    .filter((m) => age >= m.ages[0] && age <= m.ages[1] && !made.has(m.id))
-    .map((m) => ({ ...m, locked: usedThisAge }));
-}
-
-export function applyMove(run, move, age) {
-  if (!run.movesMade) run.movesMade = [];
-  if (run.movesMade.some((m) => m.id === move.id || m.age === age)) return false;
-  grant(run, move);
-  run.movesMade.push({ id: move.id, age });
-  return true;
-}
-
-export function applyChoices(run, stage, indices, cards, meta) {
-  const pool = visibleChoices(stage, run);
+export function applyChoices(run, stage, indices, cards, meta, moves) {
+  const pool = visibleChoices(stage, run, moves);
   const chosen = indices.map((i) => pool[i]).filter(Boolean);
   if (!chosen.length) return run;
 
   const outcomes = [];
   chosen.forEach((choice) => {
     grant(run, choice);
+    if (choice.isMove) {
+      if (!run.movesMade) run.movesMade = [];
+      run.movesMade.push({ id: choice.id, age: stage.age });
+    }
     if (run.want && run.want.riasec && wantAffinity(choice, run.want.riasec) >= 2) {
       run.aligned = (run.aligned || 0) + 1;
     }
@@ -329,6 +331,10 @@ export function eligibleCards(cards, run, age) {
     if (c.paths && run.path && !c.paths.includes(run.path)) return false;
     if (c.paths && !run.path) return false;
     if (c.requiresFlag && !run.flags.includes(c.requiresFlag)) return false;
+    // The mirror of requiresFlag: this card is the version of the event for
+    // the person who did not make the move. The EAE window opens either way;
+    // what differs is whether you have a folder when it does.
+    if (c.excludesFlag && run.flags.includes(c.excludesFlag)) return false;
     if (c.when && !bandsMet(run, c.when)) return false;
     return true;
   });
@@ -502,6 +508,7 @@ export function runJourneySweep(data) {
       failures.push({ card: c.id, why: 'setback without onwardMoves' });
     }
     if (c.requiresFlag && !flagIds.has(c.requiresFlag)) failures.push({ card: c.id, why: `unknown requiresFlag ${c.requiresFlag}` });
+    if (c.excludesFlag && !flagIds.has(c.excludesFlag)) failures.push({ card: c.id, why: `unknown excludesFlag ${c.excludesFlag}` });
     (c.subjects || []).forEach((id) => {
       if (!subjectIds.has(id)) failures.push({ card: c.id, why: `unknown subject tag ${id}` });
     });
@@ -533,6 +540,7 @@ export function runJourneySweep(data) {
   //                the plan having shifted what "the last choice" means
   // mode 'subject' always takes a subject choice when one is offered, which is
   //                the only way the new content gets played by the sweep at all
+  const simMoves = (data.moves && data.moves.moves) || [];
   function playSim(stageList2, cards2, pi, si, strat, plan, mode, startAge) {
     const local = [];
     simCount += 1;
@@ -550,12 +558,12 @@ export function runJourneySweep(data) {
         const card = cards2.find((c) => c.id === run.pending.cardId);
         respondToChance(run, card, si % Math.max(1, (card.responses || []).length));
       } else {
-        const pool = visibleChoices(stage, run);
-        const baseN = pool.filter((c) => !c.needsSubject).length;
+        const pool = visibleChoices(stage, run, simMoves);
+        const baseN = pool.filter((c) => !c.needsSubject && !c.isMove).length;
         const span = mode === 'base' ? baseN : pool.length;
         if ((stage.format || 'turn') === 'fork') {
           const idx = stage.id === 's_results' ? Math.min(pi, span - 1) : strat(span);
-          applyChoices(run, stage, [Math.max(0, Math.min(span - 1, idx))], cards2, subjectMeta);
+          applyChoices(run, stage, [Math.max(0, Math.min(span - 1, idx))], cards2, subjectMeta, simMoves);
         } else {
           const subjectIdx = pool.findIndex((c) => c.needsSubject);
           const first = mode === 'subject' && subjectIdx >= 0
@@ -566,7 +574,7 @@ export function runJourneySweep(data) {
             const second = pool.findIndex((c, i) => i !== first && i < span && (c.cost || 1) === 1);
             if (second >= 0) picks.push(second);
           }
-          applyChoices(run, stage, picks, cards2, subjectMeta);
+          applyChoices(run, stage, picks, cards2, subjectMeta, simMoves);
         }
       }
       if (run.doors.length < doorsPrev) local.push('doors shrank');

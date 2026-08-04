@@ -17,7 +17,6 @@ import { openSheet, onSheetAction, close as closeSheet } from '../components/she
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
   respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN, wantAffinity,
-  movesAvailable, applyMove,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -290,7 +289,7 @@ function shell(inner, rail) {
 
 function turnScreen(host, stage, data) {
   const jc = data.copy.journey;
-  const pool = visibleChoices(stage, run);
+  const pool = visibleChoices(stage, run, MV(data));
   const spent = picked.reduce((n, i) => n + (pool[i].cost || 1), 0);
   const left = POINTS_PER_TURN - spent;
   const prev = lastStory();
@@ -304,11 +303,11 @@ function turnScreen(host, stage, data) {
     // the story respects like any other.
     const near = run.want && run.want.riasec && wantAffinity(c, run.want.riasec) >= 2;
     return `
-      <button class="choice sel ${on ? 'on' : ''}" type="button" data-action="pick" data-i="${i}"
+      <button class="choice sel ${on ? 'on' : ''} ${c.isMove ? 'mv' : ''}" type="button" data-action="pick" data-i="${i}"
               aria-pressed="${on}" ${disabledByBudget ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>
-        <span class="c-label">${decorate(c.label)}</span>
-        <span class="c-chips">${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}</span>
+        <span class="c-label">${c.isMove ? icon(c.ic) : ''}${decorate(c.label)}</span>
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.moveTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -330,7 +329,6 @@ function turnScreen(host, stage, data) {
       ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
-    ${movesTray(data, stage)}
     ${prev}`, rail(data));
 
   focusH1(host);
@@ -347,62 +345,6 @@ function turnScreen(host, stage, data) {
       rerender();
     },
     live: () => commit(data),
-    move: (btn) => openMove(data, btn.dataset.id, btn),
-  });
-}
-
-/**
- * The hand of moves under the year's choices. Chances happen to you; these
- * are you acting on the system, and every one is a real thing a Singapore
- * student can do this year. Tapping a card opens it in the sheet, because
- * the body text is the point: it says how to actually do the thing.
- */
-function movesTray(data, stage) {
-  const jc = data.copy.journey;
-  const avail = movesAvailable((data.moves && data.moves.moves) || [], run, stage.age);
-  if (!avail.length) return '';
-  const locked = avail[0].locked;
-  return `
-    <div class="moves">
-      <p class="caps" style="margin-top:var(--s-5)">${esc(jc.movesHead)}</p>
-      <p class="micro mute">${esc(locked ? jc.movesDone : jc.movesRule)}</p>
-      <div class="movesrow">
-        ${avail.map((m) => `
-          <button class="movecard" type="button" data-action="move" data-id="${esc(m.id)}" ${locked ? 'data-dim="true"' : ''}>
-            <span class="mc-ic">${icon(m.ic)}</span>
-            <span class="mc-label">${esc(m.label)}</span>
-          </button>`).join('')}
-      </div>
-    </div>`;
-}
-
-function openMove(data, id, trigger) {
-  const jc = data.copy.journey;
-  const stage = currentStage(run, stages);
-  const m = ((data.moves && data.moves.moves) || []).find((x) => x.id === id);
-  if (!m || !stage) return;
-  const locked = (run.movesMade || []).some((x) => x.age === stage.age);
-  openSheet(`
-    <h2 id="sheet-title">${icon(m.ic)}${esc(m.label)}</h2>
-    <p>${esc(m.body)}</p>
-    ${m.check ? `<p class="micro mute">${esc(m.check)}</p>` : ''}
-    ${locked ? `<p class="small mute">${esc(jc.movesDone)}</p>` : `
-      <div class="btn-row" style="margin-top:var(--s-4)">
-        <button class="btn accent" type="button" data-action="mv-do" data-id="${esc(m.id)}">${esc(jc.moveDo)}</button>
-      </div>`}`, trigger);
-  onSheetAction({
-    'mv-do': (btn) => {
-      const mv = ((data.moves && data.moves.moves) || []).find((x) => x.id === btn.dataset.id);
-      const st2 = currentStage(run, stages);
-      if (!mv || !st2) return;
-      const before = snapshot();
-      if (!applyMove(run, mv, st2.age)) { closeSheet(); return; }
-      setLiveRun(run);
-      justLived = { age: st2.age, chosen: [{ label: mv.label, outcome: mv.outcome, disp: mv.disp || {} }], delta: delta(before) };
-      closeSheet();
-      announce(mv.outcome);
-      rerender();
-    },
   });
 }
 
@@ -412,10 +354,10 @@ function commit(data) {
   // Capture the chosen rows and the before state now: applyChoices advances
   // the run, and the lived screen has to speak about the year that was, not
   // the year that is next.
-  const pool = visibleChoices(stage, run);
+  const pool = visibleChoices(stage, run, MV(data));
   const chosen = picked.map((i) => pool[i]).filter(Boolean);
   const before = snapshot();
-  applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data));
+  applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
   justLived = { age: stage.age, chosen, delta: delta(before) };
   announce(`Age ${stage.age} lived.`);
   picked = [];
@@ -424,7 +366,7 @@ function commit(data) {
 }
 
 function forkScreen(host, stage, data) {
-  const pool = visibleChoices(stage, run);
+  const pool = visibleChoices(stage, run, MV(data));
   host.innerHTML = `
     <div class="wrap">
       <div class="fork fade-up">
@@ -446,7 +388,7 @@ function forkScreen(host, stage, data) {
       const i = Number(btn.dataset.i);
       const chosen = [pool[i]].filter(Boolean);
       const before = snapshot();
-      applyChoices(run, stage, [i], data.chances.cards, subjectMeta(data));
+      applyChoices(run, stage, [i], data.chances.cards, subjectMeta(data), MV(data));
       justLived = { age: stage.age, chosen, delta: delta(before) };
       announce(`Chosen. Age ${stage.age}.`);
       setLiveRun(run);
@@ -536,6 +478,7 @@ function chanceAsk(host, card, data) {
 
   host.innerHTML = shell(`
     <div class="chance ${card.type === 'setback' ? 'setback' : ''}">
+      <span class="ch-mark" aria-hidden="true">${icon(`ch_${card.type}`)}</span>
       <p class="kind">${icon(`ch_${card.type}`)}${esc(kind)}</p>
       <h1 class="serif" tabindex="-1" style="margin:var(--s-2) 0 var(--s-3)">${esc(card.title)}</h1>
       <p>${decorate(card.body)}</p>
@@ -647,6 +590,9 @@ function contrastWant(data, r) {
   return wants.find((w) => w.riasec === RIASEC_OPPOSITE[letter]) || null;
 }
 
+/** The hand of moves, from data. */
+const MV = (data) => (data.moves && data.moves.moves) || [];
+
 /** The RIASEC kind behind a want id, in the student word. Codes stay off stage. */
 function wantKind(id) {
   const w = DATA && (DATA.journey.wants || []).find((x) => x.id === id);
@@ -690,8 +636,10 @@ function livedScreen(host, data) {
       <p class="caps">${esc(fill(jc.livedHead, { age }))}</p>
       ${chosen.map((c) => `
         <div class="lived-row">
-          <p class="lived-choice serif">${esc(c.label)}</p>
+          <p class="lived-choice serif">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</p>
+          ${c.isMove && c.body ? `<p class="small mute">${esc(c.body)}</p>` : ''}
           ${c.outcome ? `<p class="lede">${decorate(c.outcome)}</p>` : ''}
+          ${c.isMove && c.check ? `<p class="micro mute">${esc(c.check)}</p>` : ''}
         </div>`).join('')}
       ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
       ${becoming ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(becoming)}</p>` : ''}
@@ -888,8 +836,10 @@ function turnMeta(stage) {
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
   const sq = DATA ? stageQuestion(stage, DATA.copy.journey) : null;
   const q = sq ? `<span class="qchip">${icon(sq.ic)}${esc(sq.label)}</span>` : '';
+  const strip = `<span class="lifestrip" role="img" aria-label="Year ${n} of ${stages.length}">${stages.map((s, i) =>
+    `<i class="${i < run.stepIndex ? 'on' : ''}${i === run.stepIndex ? ' now' : ''}"></i>`).join('')}</span>`;
   return `
-    <p class="turn-meta caps">Step ${n} of ${stages.length} ${label} ${want}</p>
+    <p class="turn-meta caps">Step ${n} of ${stages.length} ${strip} ${label} ${want}</p>
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${stage.age}</span>
       <h1 class="serif" tabindex="-1">${esc(stage.title)}</h1>${q}</div>`;
 }

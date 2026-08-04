@@ -166,12 +166,8 @@
     "leftHint": "1 point left. Add one more, or live the year now.",
     "startOver": "Start this story over",
     "startOverArm": "Tap again. This story will be gone.",
-    "movesHead": "Make a move",
-    "movesRule": "Free, on top of your points. One a year, each once. Moves open things later.",
-    "movesDone": "Move made this year.",
-    "moveDo": "Do it",
-    "moveMadeChip": "made",
-    "movesYouMade": "Moves you made"
+    "movesYouMade": "Moves you made",
+    "moveTag": "a real move"
   },
   "footerDoors": {
     "head": "This tool has three doors",
