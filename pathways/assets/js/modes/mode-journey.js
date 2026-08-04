@@ -16,7 +16,8 @@ import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
-  respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN, wantAffinity,
+  respondToChance, askMet, finish, diffRuns, wantAffinity,
+  pointsFor, dealHand, playAsk, HAND_LIMIT,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -290,8 +291,10 @@ function shell(inner, rail) {
 function turnScreen(host, stage, data) {
   const jc = data.copy.journey;
   const pool = visibleChoices(stage, run, MV(data));
+  const { points: PTS, reasons } = pointsFor(run, stage);
   const spent = picked.reduce((n, i) => n + (pool[i].cost || 1), 0);
-  const left = POINTS_PER_TURN - spent;
+  const left = PTS - spent;
+  dealHand(run, MV(data), stage.age);
   const prev = lastStory();
 
   const choices = pool.map((c, i) => {
@@ -307,7 +310,7 @@ function turnScreen(host, stage, data) {
               aria-pressed="${on}" ${disabledByBudget ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>
         <span class="c-label">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</span>
-        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.moveTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -322,8 +325,10 @@ function turnScreen(host, stage, data) {
     ${run.stepIndex === 0 ? `<div class="panel tight" style="margin-top:var(--s-3)"><p class="small" style="margin:0">${esc(jc.turnHint)}</p></div>` : ''}
     <div class="pointsrow" role="status">
       <span class="caps">${esc(jc.points)}</span>
-      <span class="pts" aria-label="${left} of ${POINTS_PER_TURN} points left">${'●'.repeat(left)}${'○'.repeat(spent)}</span>
+      <span class="pts" aria-label="${left} of ${PTS} points left">${'●'.repeat(Math.max(0, left))}${'○'.repeat(spent)}</span>
+      <span class="pts-why">${esc(pointsWhy(jc, PTS, reasons))}</span>
     </div>
+    ${handStrip(data, stage)}
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
     <div class="btn-row" style="margin-top:var(--s-4)">
       ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
@@ -345,7 +350,49 @@ function turnScreen(host, stage, data) {
       rerender();
     },
     live: () => commit(data),
+    ask: (btn) => {
+      const m = MV(data).find((x) => x.id === btn.dataset.id);
+      const st2 = currentStage(run, stages);
+      if (!m || !st2) return;
+      const before = snapshot();
+      if (!playAsk(run, m, st2.age, MV(data))) return;
+      setLiveRun(run);
+      justLived = { age: st2.age, chosen: [{ label: m.label, outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, disp: m.disp || {} }], delta: delta(before) };
+      announce(m.outcome);
+      rerender();
+    },
   });
+}
+
+/** Why this year has the points it has, in the student's words. */
+function pointsWhy(jc, n, reasons) {
+  const map = { full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer };
+  const why = reasons.length ? reasons.map((r) => map[r.k]).filter(Boolean).join(' ') : jc.whyPlain;
+  return fill(jc.pointsWhy, { n, why });
+}
+
+/**
+ * The hand of superpowers, above the year's choices and visibly not part of
+ * them. Asking costs courage, not hours, so these are free and sit outside the
+ * points economy entirely. One a year, and playing one draws another.
+ */
+function handStrip(data, stage) {
+  const jc = data.copy.journey;
+  const held = (run.hand || []).map((id) => MV(data).find((m) => m.id === id)).filter(Boolean);
+  if (!held.length && !run.askedThisYear) return '';
+  return `
+    <div class="hand">
+      <p class="caps">${icon('d_people')}${esc(jc.handHead)} <span class="hand-count">${held.length}/${HAND_LIMIT}</span></p>
+      <p class="micro mute">${esc(run.askedThisYear ? jc.handUsed : jc.handRule)}</p>
+      ${held.length ? `<div class="handrow">
+        ${held.map((m) => `
+          <button class="askcard" type="button" data-action="ask" data-id="${esc(m.id)}" ${run.askedThisYear ? 'disabled' : ''}>
+            <span class="ac-ic">${icon(m.ic)}</span>
+            <span class="ac-label">${esc(m.label)}</span>
+            <span class="ac-tag">${esc(jc.askTag)}</span>
+          </button>`).join('')}
+      </div>` : `<p class="small mute">${esc(jc.handEmpty)}</p>`}
+    </div>`;
 }
 
 function commit(data) {

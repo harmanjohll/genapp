@@ -3,9 +3,9 @@
     "source": "MOE admissions pages and school ECG practice",
     "url": "https://www.moe.gov.sg/post-secondary/admissions",
     "accessed": "2026-08-04",
-    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Moves join the turn pool as ordinary choices, costing a point from the same budget, because asking costs attention the way working does. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
+    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Two kinds. Asks are superpowers: a held hand of at most three, free to play because asking costs courage rather than time, one a year, and playing one draws another because asking begets knowing who to ask. Commitments consume the year, so they join the turn pool as ordinary choices and spend points; the exchange costs two because three months is three months. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
   },
-  "rule": "Moves sit among your choices and cost a point like anything else. Each can be made once. They open things later.",
+  "rule": "Two kinds. Superpowers are asks: free, held in a small hand, one a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
   "moves": [
     {
       "id": "ask_help",
@@ -23,7 +23,8 @@
         "persistence": 1
       },
       "sets": "asked_help",
-      "ic": "persistence"
+      "ic": "persistence",
+      "kind": "ask"
     },
     {
       "id": "ecg",
@@ -39,7 +40,8 @@
         "optimism": 1
       },
       "sets": "ecg_seen",
-      "ic": "q_where"
+      "ic": "q_where",
+      "kind": "ask"
     },
     {
       "id": "yearhead",
@@ -54,7 +56,8 @@
         "risk": 1
       },
       "sets": "asked_up",
-      "ic": "risk"
+      "ic": "risk",
+      "kind": "ask"
     },
     {
       "id": "parents",
@@ -72,7 +75,8 @@
         "optimism": 1
       },
       "sets": "told_parents",
-      "ic": "d_people"
+      "ic": "d_people",
+      "kind": "ask"
     },
     {
       "id": "shadow",
@@ -90,7 +94,9 @@
         "curiosity": 1
       },
       "sets": "seen_work",
-      "ic": "curiosity"
+      "ic": "curiosity",
+      "kind": "commit",
+      "cost": 1
     },
     {
       "id": "eae_prep",
@@ -106,7 +112,9 @@
       },
       "sets": "eae_ready",
       "ic": "d_portfolio",
-      "check": "Poly EAE and ITE EAE, at moe.gov.sg. Applications run in June, before exams."
+      "check": "Poly EAE and ITE EAE, at moe.gov.sg. Applications run in June, before exams.",
+      "kind": "commit",
+      "cost": 1
     },
     {
       "id": "dsa",
@@ -122,7 +130,9 @@
       },
       "sets": "dsa_aware",
       "ic": "g_elective",
-      "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit you to that JC."
+      "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit you to that JC.",
+      "kind": "commit",
+      "cost": 1
     },
     {
       "id": "intern",
@@ -138,7 +148,9 @@
         "network": 1
       },
       "sets": "attached",
-      "ic": "t_skills"
+      "ic": "t_skills",
+      "kind": "commit",
+      "cost": 1
     },
     {
       "id": "exchange",
@@ -153,7 +165,9 @@
         "flexibility": 2
       },
       "sets": "exchanged",
-      "ic": "flexibility"
+      "ic": "flexibility",
+      "kind": "commit",
+      "cost": 2
     },
     {
       "id": "mentor",
@@ -168,7 +182,8 @@
         "network": 2
       },
       "sets": "found_mentor",
-      "ic": "d_people"
+      "ic": "d_people",
+      "kind": "ask"
     }
   ]
 }
