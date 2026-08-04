@@ -20,7 +20,7 @@ teacher and one slip per student.
 | 5 to 10 | "Set your subjects to what you actually take." Nothing else. | Who cannot find the level chips. Who asks a neighbour. |
 | 10 to 25 | "Go to Journey. Play until 25 or further." Nothing else. | The moments below. |
 | 25 to 35 | "Play again with a different want. Then put your two stories side by side." | Who finds Play again unaided. Who reads the compare screen aloud. |
-| 35 to 42 | Pairs: "What did your starting point actually decide?" | Listen for the app's own words coming back: doors, moves, want. |
+| 35 to 42 | Class code round, then pairs: "What did your starting point actually decide?" | The moment the last code goes in and the room holds every destination. Watch who looks up. |
 | 42 to 45 | Slips, side two. Collect. | Done. |
 
 ## The observation tally
@@ -39,6 +39,21 @@ Make a tick each time you see one of these. Five ticks on any row is a finding.
 | Circles at 38 | Asks what the circles mean (the drawing has failed to self-explain) |
 | Anywhere | Uses the word "score", "marks" or "win" |
 | Anywhere | Shows a neighbour their screen unprompted (this is the good column) |
+
+## The class code round
+
+The teacher page at `?mode=teacher` has a box for class codes. Each student
+finds theirs under "Carry this to another device" in Now: five characters, no
+name, no grades, and nothing that can be turned back into a person.
+
+Go round the room and type them in as they are read out. The picture builds
+live: the spread of kinds, the range of subject loads, and the line this whole
+resource exists to earn, which is how many of the eight destinations the room
+already holds between them. With twenty students it is almost always all eight.
+
+Nothing is sent anywhere. It runs in your browser and disappears with the tab.
+Say that out loud before you start, because a class that thinks it is being
+recorded will read out someone else's numbers.
 
 ## The slips
 
