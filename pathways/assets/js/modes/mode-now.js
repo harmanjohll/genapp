@@ -22,7 +22,7 @@ import { esc, onAction, statusChip } from '../components/dom.js';
 import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
-import { reach, sortReaches, lever, STATES } from '../engine/reach.js';
+import { reach, sortReaches, lever, STATES, classCode } from '../engine/reach.js';
 import { project, horizonMoves } from '../engine/project.js';
 import { pulse, leverLine } from '../engine/pulse.js';
 import {
@@ -515,11 +515,23 @@ function onClear() {
 async function onShare() {
   const url = shareUrl();
   const c = DATA.copy.chrome;
+  const st = getState();
+  // The class code rides along with the share sheet because it answers the
+  // same question, how does what I have travel, for a room rather than a
+  // second device. It is computed here and never stored or sent.
+  const want = (DATA.journey.wants || []).find((w) => w.id === st.aim);
+  const reaches = sortReaches(DATA.pathways.destinations.map((d) => reach(st.plan, d, { ...CTX, plan: st.plan })));
+  const code = classCode(st.plan, want && want.riasec, reaches);
   openSheet(`
     <h2 id="sheet-title">${esc(c.shareHead)}</h2>
     <p class="small mute">${esc(c.shareHint)}</p>
     <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="Your link">
-    <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">${esc(c.askCopy)}</button>`);
+    <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">${esc(c.askCopy)}</button>
+    <div class="classcode">
+      <p class="caps">${esc(c.codeHead)}</p>
+      <p class="code-big">${esc(code)}</p>
+      <p class="micro mute">${esc(c.codeHint)}</p>
+    </div>`);
   onSheetAction({ copylink: (b) => copyText(b, b.dataset.url) });
 }
 

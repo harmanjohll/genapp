@@ -371,3 +371,36 @@ function generatePlans(allSubjects) {
 
   return plans;
 }
+
+// --- the class code ---------------------------------------------------------
+//
+// A room cannot see its own spread, and this app has no server to give it one.
+// The thesis of the whole resource, that there is no best combination and that
+// between them a class already holds every destination, is the one claim a
+// student cannot verify alone. So each screen shows five characters, students
+// read them out, and the teacher's own browser does the arithmetic. Nothing
+// leaves any device except what a student chooses to say in the room.
+//
+// Five characters, base 36: kind letter, subject count, G3 count, and an eight
+// bit mask of which destinations are open, one bit per destination in the
+// order the data gives them. Short enough to read across a classroom, and it
+// carries no name, no grade and no way back to a person.
+
+const B36 = (n) => Math.max(0, Math.min(35, Math.round(n))).toString(36).toUpperCase();
+
+export function classCode(plan, wantKindLetter, reaches) {
+  const n = Object.keys(plan || {}).length;
+  const g3 = Object.values(plan || {}).filter((l) => l === 'G3').length;
+  let mask = 0;
+  (reaches || []).forEach((r, i) => { if (i < 8 && r.state === 'open') mask |= (1 << i); });
+  return `${(wantKindLetter || '-').toUpperCase()}${B36(n)}${B36(g3)}${mask.toString(36).toUpperCase().padStart(2, '0')}`;
+}
+
+export function readClassCode(code) {
+  const s = String(code || '').trim().toUpperCase();
+  if (!/^[RIASEC-][0-9A-Z][0-9A-Z][0-9A-Z]{2}$/.test(s)) return null;
+  const val = (c) => parseInt(c, 36);
+  const mask = parseInt(s.slice(3, 5), 36);
+  if (Number.isNaN(mask)) return null;
+  return { kind: s[0], subjects: val(s[1]), g3: val(s[2]), mask };
+}

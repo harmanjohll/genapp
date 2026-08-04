@@ -59,7 +59,9 @@
     "horizonNote": "A combination like this usually follows. Yours will be your own.",
     "horizonOpens": "Opens",
     "horizonNearer": "Brings closer",
-    "breadthNudge": "Rule things out after you look, not before."
+    "breadthNudge": "Rule things out after you look, not before.",
+    "codeHead": "Your class code",
+    "codeHint": "Five characters. Read it out if your teacher asks. It carries no name and no grades, and it cannot be turned back into you."
   },
   "pulse": {
     "opened": "{dest} is open now.",
@@ -216,5 +218,17 @@
     "movesHead": "Moves that serve this",
     "movesBody": "Real things you can do this year.",
     "chooserLede": "Not a job title. A shape of life, and more than one road to it."
+  },
+  "teacher": {
+    "classHead": "What this room holds",
+    "classIntro": "Ask each student for their class code, one line each. Nothing is sent anywhere: this runs in your browser and disappears when you close the tab.",
+    "classPlaceholder": "A7303\nS520C\nR4130",
+    "classCount": "{n} students in.",
+    "classKinds": "Kinds in the room",
+    "classLoad": "Subject loads run from {lo} to {hi}.",
+    "classPunch": "Between you, this room already holds {n} of the {total} destinations.",
+    "classAll": "Between you, this room already holds every destination on the list.",
+    "classNote": "Nobody here holds all of them alone. That is the point worth saying out loud.",
+    "classNone": "No codes yet. Paste them above."
   }
 }

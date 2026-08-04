@@ -9,6 +9,35 @@
 
 import { esc, onAction } from '../components/dom.js';
 import { getState, setOffer } from '../state.js';
+import { readClassCode } from '../engine/reach.js';
+
+const KIND_NAME = { R: 'Doers', I: 'Thinkers', A: 'Creators', S: 'Helpers', E: 'Persuaders', C: 'Organisers', '-': 'Not sure yet' };
+
+/**
+ * The class picture, computed here and nowhere else.
+ *
+ * A room cannot see its own spread, and the app has no server to give it one.
+ * The claim the whole resource rests on, that there is no best combination and
+ * that between them a class already holds every destination, is the one thing
+ * a student cannot check alone. Students read five characters out, the teacher
+ * types them, and this runs in the teacher's browser and dies with the tab.
+ * No names, no grades, nothing stored, nothing sent.
+ */
+function classPicture(raw, data) {
+  const rows = String(raw || '').split(/[\s,]+/).map(readClassCode).filter(Boolean);
+  if (!rows.length) return null;
+  const kinds = {};
+  let union = 0; let lo = 99; let hi = 0;
+  rows.forEach((r) => {
+    kinds[r.kind] = (kinds[r.kind] || 0) + 1;
+    union |= r.mask;
+    lo = Math.min(lo, r.subjects); hi = Math.max(hi, r.subjects);
+  });
+  const total = (data.pathways.destinations || []).length;
+  let held = 0;
+  for (let i = 0; i < total; i += 1) if (union & (1 << i)) held += 1;
+  return { n: rows.length, kinds, held, total, lo, hi };
+}
 
 const PROMPTS = [
   { mode: 'Now', ask: 'What did you assume was closed to you that turned out not to be?',
@@ -59,6 +88,35 @@ const ECG_MAP = [
     where: 'Every mode ends at a person: take-one-question cards address the subject teacher, the form teacher and the ECG counsellor by name, and the footer says whose advice this is not.' },
 ];
 
+function classOut(pic, data) {
+  const t = data.copy.teacher || {};
+  if (!pic) return `<p class="small mute">${esc(t.classNone || '')}</p>`;
+  const order = ['R', 'I', 'A', 'S', 'E', 'C', '-'];
+  const max = Math.max(...Object.values(pic.kinds));
+  const bars = order.filter((k) => pic.kinds[k]).map((k) => `
+    <div class="kindbar">
+      <span class="small">${esc(KIND_NAME[k])}</span>
+      <span class="track"><span class="fill" style="width:${Math.round((pic.kinds[k] / max) * 100)}%"></span></span>
+      <span class="small mute">${pic.kinds[k]}</span>
+    </div>`).join('');
+  const punch = pic.held >= pic.total
+    ? (t.classAll || '')
+    : fill(t.classPunch || '', { n: pic.held, total: pic.total });
+  return `
+    <p class="small">${esc(fill(t.classCount || '', { n: pic.n }))}
+       ${esc(fill(t.classLoad || '', { lo: pic.lo, hi: pic.hi }))}</p>
+    <p class="caps" style="margin-top:var(--s-3)">${esc(t.classKinds || '')}</p>
+    ${bars}
+    <div class="classpunch">
+      <strong>${esc(punch)}</strong>
+      <p class="small" style="margin:var(--s-2) 0 0">${esc(t.classNote || '')}</p>
+    </div>`;
+}
+
+function fill(tpl, vars) {
+  return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
+}
+
 export function renderTeacher(host, data, ctx, repaint) {
   const st = getState();
   const f = data._freshness;
@@ -106,6 +164,15 @@ export function renderTeacher(host, data, ctx, repaint) {
                 <p class="small mute" style="margin-bottom:0">${esc(p.why)}</p>
               </div>`).join('')}
           </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>${esc((data.copy.teacher || {}).classHead || 'What this room holds')}</h2></div>
+          <p class="small mute" style="max-width:64ch">${esc((data.copy.teacher || {}).classIntro || '')}</p>
+          <label class="sr-only" for="classcodes">Class codes, one per line</label>
+          <textarea id="classcodes" class="classbox" data-action-input="codes"
+                    placeholder="${esc((data.copy.teacher || {}).classPlaceholder || '')}"></textarea>
+          <div id="classout">${classOut(null, data)}</div>
         </div>
 
         <div class="section">
@@ -183,6 +250,14 @@ export function renderTeacher(host, data, ctx, repaint) {
         </div>
       </div>
     </div>`;
+
+  const box = host.querySelector('#classcodes');
+  if (box) {
+    box.addEventListener('input', () => {
+      const out = host.querySelector('#classout');
+      if (out) out.innerHTML = classOut(classPicture(box.value, data), data);
+    });
+  }
 
   onAction(host, {
     print: () => window.print(),
