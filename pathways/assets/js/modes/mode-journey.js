@@ -390,6 +390,8 @@ function reflectScreen(host, stage, data) {
       <div class="reflect fade-up">
         ${turnMeta(stage)}
         <p class="lede j-sit">${esc(stage.situation)}</p>
+        <p class="caps" style="margin-top:var(--s-4)">${esc(jc.ikigaiReflect)}</p>
+        ${ikigaiPanel(run, jc, true)}
         ${wantCheck}
         <h2 class="serif" style="margin-top:var(--s-4)">${esc(r.prompt)}</h2>
         <div class="btn-row" style="margin-top:var(--s-4)">
@@ -467,9 +469,12 @@ function chanceAsk(host, card, data) {
   bindGlossary(host);
   onAction(host, {
     respond: (btn) => {
+      const r = (card.responses || [])[Number(btn.dataset.i)];
       const before = snapshot();
       respondToChance(run, card, Number(btn.dataset.i));
-      justResolved = { card, delta: delta(before), step: run.steps[run.steps.length - 1] };
+      // Taking the demanding response is a mastery experience, which is where
+      // self efficacy actually comes from, so the outcome screen says so.
+      justResolved = { card, delta: delta(before), step: run.steps[run.steps.length - 1], stretch: !!(r && r.needsAsk) };
       setLiveRun(run);
       rerender();
     },
@@ -483,6 +488,66 @@ const DISP_WORD = { curiosity: 'curious', persistence: 'persistent', flexibility
 function idWords(r, jc) {
   const top = Object.entries(r.disp).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 2);
   return top.length ? top.map(([k]) => DISP_WORD[k]).join(' and ') : jc.identityNone.toLowerCase();
+}
+
+// --------------------------------------------------------------------------
+// Ikigai. The four circles are not a quiz here: they are computed from the
+// story as played. The want you named and the appetite you showed are what
+// you love. The Can do ledger and the levels you moved are what you are good
+// at. Know me, the people who would vouch for you, is the teenage form of
+// what the world needs. Doors held and things made are what can pay you.
+// Nothing is asked that the run has not already answered.
+
+function ikigaiScores(r) {
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  return {
+    love: clamp((r.disp.curiosity + r.disp.optimism) / 6 + (r.want ? 0.25 : 0)),
+    good: clamp(r.ledger.skills / 12 + (r.raises || []).length * 0.15),
+    needs: clamp(r.ledger.network / 10),
+    pay: clamp((r.doors || []).length / 4 + r.ledger.portfolio / 16),
+  };
+}
+
+function ikigaiPanel(r, jc, small) {
+  const s = ikigaiScores(r);
+  const names = { love: jc.ikigaiLove, good: jc.ikigaiGood, needs: jc.ikigaiNeeds, pay: jc.ikigaiPay };
+  const op = (v) => (0.12 + v * 0.5).toFixed(2);
+  const size = small ? 190 : 300;
+  const svg = `
+    <svg viewBox="0 0 320 340" width="${size}" role="img"
+         aria-label="Four circles: ${Object.entries(s).map(([k, v]) => `${names[k]} ${Math.round(v * 100)} percent`).join(', ')}">
+      <g fill="var(--accent)" stroke="var(--rule)" stroke-width="1">
+        <circle cx="160" cy="112" r="78" fill-opacity="${op(s.love)}"/>
+        <circle cx="218" cy="170" r="78" fill-opacity="${op(s.pay)}"/>
+        <circle cx="160" cy="228" r="78" fill-opacity="${op(s.good)}"/>
+        <circle cx="102" cy="170" r="78" fill-opacity="${op(s.needs)}"/>
+      </g>
+      <g font-size="12" fill="var(--ink-soft)" text-anchor="middle" font-family="inherit">
+        <text x="160" y="24">${esc(names.love)}</text>
+        <text x="272" y="170" transform="rotate(90 272 170)">${esc(names.pay)}</text>
+        <text x="160" y="326">${esc(names.good)}</text>
+        <text x="48" y="170" transform="rotate(-90 48 170)">${esc(names.needs)}</text>
+      </g>
+    </svg>`;
+  if (small) return `<div class="ikigai">${svg}</div>`;
+  const ranked = Object.entries(s).sort((a, b) => b[1] - a[1]);
+  const line = fill(jc.ikigaiLine, {
+    a: names[ranked[0][0]].toLowerCase(),
+    b: names[ranked[ranked.length - 1][0]].toLowerCase(),
+  });
+  return `
+    <div class="ikigai">
+      ${svg}
+      <p class="small">${esc(line)}</p>
+      <p class="micro mute">${esc(jc.ikigaiNote)}</p>
+    </div>`;
+}
+
+/** A run's want as a story: what was named, and what it became if it moved. */
+function wantStory(r) {
+  const label = (w) => (w ? w.label : 'Not sure yet');
+  const changed = r.wantWas !== undefined && (r.wantWas ? r.wantWas.id : null) !== (r.want ? r.want.id : null);
+  return changed ? `${esc(label(r.wantWas))}, then ${esc(label(r.want))}` : esc(label(r.want));
 }
 
 /**
@@ -539,6 +604,7 @@ function chanceOutcome(host, data) {
       <h1 class="serif" tabindex="-1" style="font-size:var(--t-h2)">${esc(ch.response || '')}</h1>
       <p class="lede" style="margin-top:var(--s-3)">${decorate(ch.text || '')}</p>
       ${d.length ? `<p class="delta">${d.map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
+      ${justResolved.stretch ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(jc.efficacyLine)}</p>` : ''}
       <div class="btn-row" style="margin-top:var(--s-4)">
         <button class="btn" type="button" data-action="go">${esc(jc.continue)}</button>
       </div>
@@ -573,6 +639,10 @@ function endingScreen(host, data, st) {
         <div class="section">
           <p class="caps">${esc(jc.becameHead)}</p>
           <p class="idwords serif">${esc(idWords(run, jc))}</p>
+        </div>
+        <div class="section">
+          <p class="caps">${esc(jc.ikigaiHead)}</p>
+          ${ikigaiPanel(run, jc)}
         </div>
         <div class="section">
           <p class="caps">${esc(jc.doorsHead)}</p>
@@ -639,8 +709,8 @@ function showDiff(host, data, pair) {
           <div class="diff-head">${esc(a.label)}${d.paths[0] ? ` · ${esc(d.paths[0])}` : ''}</div>
           <div class="diff-head">${esc(b.label)}${d.paths[1] ? ` · ${esc(d.paths[1])}` : ''}</div>
           <div></div>
-          <div class="diff-want">${d.wants[0] ? esc(d.wants[0].label) : 'Not sure yet'}</div>
-          <div class="diff-want">${d.wants[1] ? esc(d.wants[1].label) : 'Not sure yet'}</div>
+          <div class="diff-want">${wantStory(a)}<span class="small mute" style="display:block">became ${esc(idWords(a, jc))}</span></div>
+          <div class="diff-want">${wantStory(b)}<span class="small mute" style="display:block">became ${esc(idWords(b, jc))}</span></div>
           <div></div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[0]), 4) || '<span class="faint">·</span>'}</div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[1]), 4) || '<span class="faint">·</span>'}</div>

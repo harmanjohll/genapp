@@ -728,6 +728,12 @@ body[data-journey="true"] .site-foot { display: none; }
 .lived-row { margin-top: var(--s-3); }
 .lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
 
+/* the four ikigai circles, drawn from the run */
+.ikigai { margin-top: var(--s-2); }
+.ikigai svg { max-width: 100%; height: auto; display: block; }
+.ikigai text { font-family: var(--body); }
+.ikigai p { max-width: 44ch; }
+
 /* the want re-check on the reflect stage */
 .wantcheck {
   margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
