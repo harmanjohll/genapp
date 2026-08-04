@@ -199,5 +199,18 @@
     "roleStudent": "student",
     "roleParent": "parent",
     "roleTeacher": "teacher"
+  },
+  "aim": {
+    "playedChip": "you played this",
+    "playedHead": "You played a story about this",
+    "playedBody": "At {age} you wanted this. By 48 you were holding {n} doors, and you became someone {words}.",
+    "playedOpen": "Open that story",
+    "reachHead": "What your subjects reach right now",
+    "reachBody": "{n} open now, from the combination sitting in Now.",
+    "reachNone": "Nothing set in Now yet. Set your subjects and this fills in.",
+    "reachGo": "See it in Now",
+    "movesHead": "Moves that serve this",
+    "movesBody": "Real things, this year. The asks are free.",
+    "chooserLede": "Not a job title. A shape of life, and more than one road to it."
   }
 }

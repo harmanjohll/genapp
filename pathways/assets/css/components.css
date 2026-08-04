@@ -778,6 +778,18 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
+/* AIM's links back to the other two modes. Evidence panels, not decoration:
+   what you already played toward this want, and what your combination stands
+   at right now. */
+.aim-linked {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border-left: 3px solid var(--rule); border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--surface);
+}
+.aim-linked .caps svg { vertical-align: -2px; margin-right: 5px; }
+.aim-move { display: flex; align-items: center; gap: var(--s-2); margin-bottom: var(--s-2); flex-wrap: wrap; }
+.aim-move svg { vertical-align: -2px; color: var(--accent); }
+
 /* The run and NOW have diverged. Said plainly, with both honest options, and
    nothing destroyed until the student picks. */
 .stalebar {

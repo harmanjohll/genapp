@@ -8,19 +8,55 @@
 // with no ranking. The absence of the ranking is the content.
 
 import { esc, onAction } from '../components/dom.js';
+import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction } from '../components/sheet.js';
-import { getState, setAim, toggleAction, currentYear } from '../state.js';
+import { getState, setAim, toggleAction, currentYear, setMode } from '../state.js';
+import { reach, sortReaches } from '../engine/reach.js';
+
+// AIM was the only mode that knew nothing about the other two. It offered
+// roads and a static list of things to do this term, while NOW held the
+// student's actual combination and JOURNEY held stories they had already
+// played toward the very same want. The three modes share ids: five of the
+// seven futures here carry the same id as a Journey want, so a story played
+// about making things is a story about this future. Wiring that up is what
+// turns three screens into one instrument, and it is the CASVE execution
+// step done honestly: decide, then act, with the evidence in front of you.
+
+/** Same one line template helper the other modes use. */
+function fill(tpl, vars) {
+  return String(tpl).replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
+}
+
+/** A finished run that aimed at this future, most recent first. */
+function storyFor(st, futureId) {
+  return [...(st.runs || [])].reverse().find((r) => r.want && r.want.id === futureId) || null;
+}
+
+const DISP_WORD = { curiosity: 'curious', persistence: 'persistent', flexibility: 'flexible', optimism: 'hopeful', risk: 'bold' };
+function idWords(r) {
+  const top = Object.entries(r.disp || {}).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 2);
+  return top.length ? top.map(([k]) => DISP_WORD[k]).join(' and ') : 'still finding out';
+}
+
+/** What the plan in NOW currently reaches, using the same engine NOW uses. */
+function reachNow(st, data, ctx) {
+  if (!ctx || !data.pathways) return null;
+  const list = sortReaches(data.pathways.destinations.map((d) => reach(st.plan, d, { ...ctx, plan: st.plan })));
+  return { open: list.filter((r) => r.state === 'open').length, total: list.length };
+}
 
 export function renderAim(host, data, ctx, repaint) {
   const st = getState();
   const future = data.futures.futures.find((f) => f.id === st.aim);
 
-  host.innerHTML = `<div class="wrap">${future ? detail(future, st, data) : chooser(data)}</div>`;
+  host.innerHTML = `<div class="wrap">${future ? detail(future, st, data, ctx) : chooser(data, st)}</div>`;
 
   bindGlossary(host);
   onAction(host, {
     pick: (btn) => { setAim(btn.dataset.id); repaint(); window.scrollTo({ top: 0 }); },
+    tonow: () => setMode('now'),
+    tojourney: () => setMode('journey'),
     back: () => { setAim(null); repaint(); },
     action: (btn) => { toggleAction(btn.dataset.text); repaint(); },
     road: (btn) => openRoad(future, Number(btn.dataset.i), btn),
@@ -29,23 +65,75 @@ export function renderAim(host, data, ctx, repaint) {
   });
 }
 
-function chooser(data) {
+function chooser(data, st) {
+  const ac = data.copy.aim || {};
+  const jc = data.copy.journey;
   return `
     <div class="section" style="margin-top:var(--s-6)">
       <p class="caps">Aim</p>
       <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Start from what you want.</h1>
-      <p class="lede" style="margin-top:var(--s-3)">Not a job title.</p>
+      <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_where')}${esc(jc.q2)}</p>
+      <p class="lede" style="margin-top:var(--s-2);max-width:44ch">${esc(ac.chooserLede)}</p>
       <div class="grid two" style="margin-top:var(--s-5)">
-        ${data.futures.futures.map((f) => `
+        ${data.futures.futures.map((f) => {
+          const played = storyFor(st, f.id);
+          return `
           <button class="future-btn" type="button" data-action="pick" data-id="${f.id}">
             <span class="want">${esc(f.want)}</span>
-          </button>`).join('')}
+            ${played ? `<span class="kind-chip">${esc(ac.playedChip)}</span>` : ''}
+          </button>`;
+        }).join('')}
       </div>
     </div>`;
 }
 
-function detail(f, st, data) {
+function detail(f, st, data, ctx) {
   const year = currentYear();
+  const ac = data.copy.aim || {};
+  const jc = data.copy.journey;
+  const played = storyFor(st, f.id);
+  const rn = reachNow(st, data, ctx);
+  const planN = Object.keys(st.plan || {}).length;
+
+  // The story already played toward this want. Evidence beats exhortation:
+  // a student who reached 48 holding six doors has proof in their own hand.
+  const playedBlock = played ? `
+    <div class="aim-linked">
+      <p class="caps">${icon('q_who')}${esc(ac.playedHead)}</p>
+      <p class="small">${esc(fill(ac.playedBody, {
+        age: played.startAge, n: (played.doors || []).length, words: idWords(played),
+      }))}</p>
+      <button class="btn ghost small" type="button" data-action="tojourney" style="margin-top:var(--s-2)">${esc(ac.playedOpen)}</button>
+    </div>` : '';
+
+  // What the combination in NOW currently reaches. AIM asked students to work
+  // backwards while ignoring where they actually stand.
+  const reachBlock = `
+    <div class="aim-linked">
+      <p class="caps">${icon('q_how')}${esc(ac.reachHead)}</p>
+      <p class="small">${planN && rn ? esc(fill(ac.reachBody, { n: rn.open })) : esc(ac.reachNone)}</p>
+      <button class="btn ghost small" type="button" data-action="tonow" style="margin-top:var(--s-2)">${esc(ac.reachGo)}</button>
+    </div>`;
+
+  // The same moves the game plays with. A this-term list that ignored them
+  // was inventing a second, weaker vocabulary for the same idea.
+  const moves = ((data.moves && data.moves.moves) || []).filter((m) => year.age >= m.ages[0] && year.age <= m.ages[1]);
+  const movesBlock = moves.length ? `
+    <div class="thisterm" style="margin-top:var(--s-5)">
+      <p class="caps">${esc(ac.movesHead)}</p>
+      <p class="micro mute">${esc(ac.movesBody)}</p>
+      <ul style="list-style:none;padding:0;margin-top:var(--s-3)">
+        ${moves.slice(0, 5).map((m) => {
+          const on = st.actions.includes(m.label);
+          return `<li class="aim-move">
+            <button class="btn ${on ? 'accent' : 'ghost'} small" type="button" data-action="action"
+                    data-text="${esc(m.label)}" aria-pressed="${on}">${on ? '\u2713' : '+'}</button>
+            <span>${icon(m.ic)} ${esc(m.label)}</span>
+            <span class="${m.kind === 'ask' ? 'ac-tag' : 'mv-tag'}">${esc(m.kind === 'ask' ? jc.askTag : jc.commitTag)}</span>
+          </li>`;
+        }).join('')}
+      </ul>
+    </div>` : '';
   const roads = f.routes.map((r, i) => `
     <li>
       <button class="future-btn" type="button" data-action="road" data-i="${i}" aria-haspopup="dialog">
@@ -71,8 +159,13 @@ function detail(f, st, data) {
       <h1 class="serif" style="font-size:var(--t-h1);margin-top:var(--s-4)">${esc(f.want)}</h1>
       <p class="small mute">${esc(f.looksLike)}</p>
 
-      <h2 class="h-sm" style="margin-top:var(--s-5)">${f.routes.length} roads there, in no order</h2>
+      ${playedBlock}
+      ${reachBlock}
+
+      <p class="caps rail-q" style="margin-top:var(--s-5)">${icon('q_how')}${esc(jc.q3)}</p>
+      <h2 class="h-sm">${f.routes.length} roads there, in no order</h2>
       <ul class="grid two" style="list-style:none;padding:0;margin-top:var(--s-3)">${roads}</ul>
+      ${movesBlock}
 
       <div class="thisterm" style="margin-top:var(--s-6)">
         <p class="caps">${esc(year.label)}, this term</p>
