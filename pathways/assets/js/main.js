@@ -58,7 +58,7 @@ async function init() {
   };
 
   mountRibbon(document.body, data.lifelong);
-  mountFooterDoors();
+  mountDoors();
   renderHead();
   paint();
 
@@ -148,17 +148,26 @@ function paint() {
 }
 
 
-// The three doors, quietly, in the footer. Parents arrive on their child's
-// phone, so the parent page cannot be URL only the way the teacher page is.
-function mountFooterDoors() {
-  const foot = document.querySelector('.site-foot .wrap');
-  if (!foot || !data.copy.footerDoors) return;
+// The three doors, at the top. They were in the footer, but a parent handed
+// their child's phone decides in the first screenful whether this page is for
+// them, and footer discovery asked them to scroll the whole subject list
+// first. The strip is quiet on purpose: the header is not pinned, so it
+// scrolls away after one look, and it hides during a Journey run with the
+// rest of the chrome. The old worry about students finding a Teacher button
+// was about a button styled like a mode; three muted words are not that.
+function mountDoors() {
   const f = data.copy.footerDoors;
+  if (!f) return;
+  const who = extraMode || 'students';
+  const door = (id, href, label) => (who === id
+    ? `<span aria-current="page">${esc(label)}</span>`
+    : `<a href="${href}">${esc(label)}</a>`);
   const div = document.createElement('div');
-  div.className = 'footdoors';
-  div.innerHTML = `<p class="caps">${esc(f.head)}</p>
-    <p class="small"><a href="./">${esc(f.students)}</a>
-    <a href="./?mode=parent">${esc(f.parents)}</a>
-    <a href="./?mode=teacher">${esc(f.teachers)}</a></p>`;
-  foot.appendChild(div);
+  div.className = 'audstrip';
+  div.innerHTML = `<div class="wrap"><nav aria-label="${esc(f.head)}">
+    ${door('students', './', f.shortStudents)}
+    ${door('parent', './?mode=parent', f.shortParents)}
+    ${door('teacher', './?mode=teacher', f.shortTeachers)}
+  </nav></div>`;
+  document.body.insertBefore(div, head);
 }

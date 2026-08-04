@@ -47,6 +47,8 @@ const ECG_MAP = [
     where: 'The Can do ledger grows from doing. Taking the demanding response to a chance is the mastery experience, and the outcome screen says where believing you can starts.' },
   { name: 'Decision learning, then action', src: 'CASVE cycle',
     where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
+  { name: 'Six kinds of working', src: 'Holland RIASEC',
+    where: 'The wants carry the six types in student words, codes kept to this page: Doers (R) good with my hands, Thinkers (I) work out how things work, Creators (A) make things people use, Helpers (S) there when people are struggling, Persuaders (E) run my own thing, Organisers (C) every detail exactly right. The want feeds the engine gently: choices pointing its way are marked "near your want", chances that fit it turn up more often without narrowing what can happen, and years lived near the want fill the love circle. Bridge to your profiler from here; remind students most people are a mix of two or three.' },
   { name: 'A reason to get up', src: 'Ikigai',
     where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
   { name: 'The tool defers to people', src: 'ECG practice',

@@ -16,7 +16,7 @@ import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
-  respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN,
+  respondToChance, askMet, finish, diffRuns, POINTS_PER_TURN, wantAffinity,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -230,8 +230,10 @@ function introScreen(host, data, st) {
             ${wants.map((w) => `
               <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
                 <span class="want" style="font-size:1rem">${esc(w.label)}</span>
+                ${w.kind ? `<span class="kind-chip">${esc(w.kind)}</span>` : ''}
               </button>`).join('')}
           </div>
+          <p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.kindsNote)}</p>
         </div>
         ${runsList}
         ${st.runs.length ? `<button class="btn ghost small" type="button" data-action="clearruns" style="margin-top:var(--s-4)">Clear stories</button>` : ''}
@@ -243,7 +245,7 @@ function introScreen(host, data, st) {
     pick: (btn) => openPicker(data, btn),
     want: (btn) => {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
-      startRun(data, w && w.id !== 'unsure' ? { id: w.id, label: w.label } : null);
+      startRun(data, w && w.id !== 'unsure' ? { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind } : null);
       rerender();
     },
     pickrun: (btn) => {
@@ -277,12 +279,16 @@ function turnScreen(host, stage, data) {
     const on = picked.includes(i);
     const cost = c.cost || 1;
     const disabledByBudget = !on && cost > left;
+    // A choice that points the way your want points is marked, never pushed:
+    // the mark is information about fit, and picking against it is a choice
+    // the story respects like any other.
+    const near = run.want && run.want.riasec && wantAffinity(c, run.want.riasec) >= 2;
     return `
       <button class="choice sel ${on ? 'on' : ''}" type="button" data-action="pick" data-i="${i}"
               aria-pressed="${on}" ${disabledByBudget ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>
         <span class="c-label">${decorate(c.label)}</span>
-        <span class="c-chips">${gainChips(c)}</span>
+        <span class="c-chips">${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -424,7 +430,7 @@ function reflectScreen(host, stage, data) {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
       if (!w) return;
       if (run.wantWas === undefined) run.wantWas = run.want;
-      run.want = { id: w.id, label: w.label };
+      run.want = { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind };
       setLiveRun(run);
       const b = block(); if (b) b.innerHTML = `<p class="small mute">Now: ${esc(w.label)}.</p>`;
     },
@@ -501,7 +507,7 @@ function idWords(r, jc) {
 function ikigaiScores(r) {
   const clamp = (x) => Math.max(0, Math.min(1, x));
   return {
-    love: clamp((r.disp.curiosity + r.disp.optimism) / 6 + (r.want ? 0.25 : 0)),
+    love: clamp((r.disp.curiosity + r.disp.optimism) / 6 + (r.want ? 0.15 : 0) + Math.min(0.3, (r.aligned || 0) * 0.06)),
     good: clamp(r.ledger.skills / 12 + (r.raises || []).length * 0.15),
     needs: clamp(r.ledger.network / 10),
     pay: clamp((r.doors || []).length / 4 + r.ledger.portfolio / 16),
@@ -541,6 +547,12 @@ function ikigaiPanel(r, jc, small) {
       <p class="small">${esc(line)}</p>
       <p class="micro mute">${esc(jc.ikigaiNote)}</p>
     </div>`;
+}
+
+/** The RIASEC kind behind a want id, in the student word. Codes stay off stage. */
+function wantKind(id) {
+  const w = DATA && (DATA.journey.wants || []).find((x) => x.id === id);
+  return w && w.kind ? w.kind : '';
 }
 
 /** A run's want as a story: what was named, and what it became if it moved. */
@@ -709,8 +721,8 @@ function showDiff(host, data, pair) {
           <div class="diff-head">${esc(a.label)}${d.paths[0] ? ` · ${esc(d.paths[0])}` : ''}</div>
           <div class="diff-head">${esc(b.label)}${d.paths[1] ? ` · ${esc(d.paths[1])}` : ''}</div>
           <div></div>
-          <div class="diff-want">${wantStory(a)}<span class="small mute" style="display:block">became ${esc(idWords(a, jc))}</span></div>
-          <div class="diff-want">${wantStory(b)}<span class="small mute" style="display:block">became ${esc(idWords(b, jc))}</span></div>
+          <div class="diff-want">${wantStory(a)}${a.want && wantKind(a.want.id) ? ` <span class="kind-chip">${esc(wantKind(a.want.id))}</span>` : ''}<span class="small mute" style="display:block">became ${esc(idWords(a, jc))}</span></div>
+          <div class="diff-want">${wantStory(b)}${b.want && wantKind(b.want.id) ? ` <span class="kind-chip">${esc(wantKind(b.want.id))}</span>` : ''}<span class="small mute" style="display:block">became ${esc(idWords(b, jc))}</span></div>
           <div></div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[0]), 4) || '<span class="faint">·</span>'}</div>
           <div class="diff-combo">${subjectChips(planRows(data, d.plans[1]), 4) || '<span class="faint">·</span>'}</div>
@@ -785,7 +797,9 @@ function rail(data) {
       <div class="disp-bars" style="margin-top:var(--s-2)">${dbars}</div></details>
 
     <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q2)}</p>
-    <p class="small">${run.want ? esc(run.want.label) : `<span class="mute">${esc(jc.railWhereNone)}</span>`}</p>
+    <p class="small">${run.want
+      ? `${esc(run.want.label)}${wantKind(run.want.id) ? ` <span class="kind-chip">${esc(wantKind(run.want.id))}</span>` : ''}`
+      : `<span class="mute">${esc(jc.railWhereNone)}</span>`}</p>
 
     <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q3)}</p>
     <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">No doors yet. They come.</span>'}</p>

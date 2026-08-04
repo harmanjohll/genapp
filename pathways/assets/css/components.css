@@ -678,8 +678,23 @@ body[data-journey="true"] .site-foot { display: none; }
 .grp-note { font-size: var(--t-micro); color: var(--ink-mute); margin: calc(-1 * var(--s-1)) 0 var(--s-2); }
 
 /* footer doors */
-.footdoors { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
-.footdoors a { margin-right: var(--s-4); }
+/* The audience strip above the header. Quiet, right aligned, scrolls away. */
+.audstrip { border-bottom: 1px solid var(--rule-soft); }
+.audstrip nav {
+  display: flex; justify-content: flex-end; gap: var(--s-4);
+  padding: var(--s-1) 0; font-size: var(--t-micro);
+}
+.audstrip a { color: var(--ink-mute); text-decoration-color: var(--rule); }
+.audstrip a:hover { color: var(--accent); }
+.audstrip [aria-current] { color: var(--ink-soft); font-weight: 700; }
+body[data-journey="true"] .audstrip { display: none; }
+
+/* The footer disclaimer, three titled columns across the width. Each column
+   keeps a readable measure; the horizontal is used by columns, not by lines. */
+.foot-grid { display: grid; gap: var(--s-5); grid-template-columns: 1fr; }
+@media (min-width: 700px) { .foot-grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-6); } }
+.foot-col .caps { margin-bottom: var(--s-2); }
+.foot-col p:not(.caps) { margin: 0; max-width: 48ch; }
 
 /* ---------- the combination: Journey starts from what you take ---------- */
 /* The three level hues stay equal in weight here exactly as they are in NOW.
@@ -727,6 +742,19 @@ body[data-journey="true"] .site-foot { display: none; }
 /* the year just lived, between committing and the next stage */
 .lived-row { margin-top: var(--s-3); }
 .lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
+
+/* RIASEC in student words: the kind chip on a want, and the near-want mark
+   on a choice that points the same way. Marks, never pushes. */
+.kind-chip {
+  display: inline-block; margin-top: var(--s-1); padding: 1px 8px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: var(--t-micro); color: var(--ink-mute);
+}
+.near-chip {
+  display: inline-block; padding: 1px 8px;
+  border-radius: 999px; background: var(--accent-soft, rgba(193, 95, 60, 0.12));
+  font-size: var(--t-micro); color: var(--accent);
+}
 
 /* the four ikigai circles, drawn from the run */
 .ikigai { margin-top: var(--s-2); }
