@@ -1523,7 +1523,7 @@
             "curiosity": 2,
             "risk": 1
           },
-          "outcome": "It is yours from twenty five, not your employer's. You spend it on something nobody asked you to learn.",
+          "outcome": "It is yours from 25, not your employer's. You spend it on something nobody asked you to learn.",
           "cost": 1
         }
       ],
@@ -2062,7 +2062,7 @@
             "risk": 3,
             "optimism": 2
           },
-          "outcome": "Twenty years of contacts and knowing how it really works. A far better time to start than at twenty five.",
+          "outcome": "Twenty years of contacts and knowing how it really works. A far better time to start than at 25.",
           "outcomeIf": {
             "flag:built_side": "The side thing has paying customers already. You are not starting a business so much as admitting you have one.",
             "path:academic": "The profession taught you rigour and the network came free. The business runs on both from the first month.",
@@ -2109,7 +2109,7 @@
           "disp": {
             "curiosity": 3
           },
-          "outcome": "Steady, deliberate, still curious. That is rarer at forty eight than it sounds, and it is the whole trick.",
+          "outcome": "Steady, deliberate, still curious. That is rarer at 48 than it sounds, and it is the whole trick.",
           "cost": 2
         },
         {
@@ -2132,7 +2132,7 @@
             "risk": 3,
             "optimism": 2
           },
-          "outcome": "People do this at forty eight, in real numbers, every year. It is unusual and it is not rare.",
+          "outcome": "People do this at 48, in real numbers, every year. It is unusual and it is not rare.",
           "cost": 2
         },
         {

@@ -340,7 +340,7 @@
       "title": "Your family has a route in mind",
       "body": "They want the one they have heard of. They are not wrong about wanting good things for you.",
       "ifTaken": "You show them what the other route actually leads to. It takes three conversations, not one.",
-      "ifMissed": "You go along with it for now. A lot of people do, and a lot of people revisit it at twenty five.",
+      "ifMissed": "You go along with it for now. A lot of people do, and a lot of people revisit it at 25.",
       "onwardMoves": [
         "Bring them to an open house rather than arguing at home",
         "Ask your ECG counsellor to explain the route to them"
@@ -979,7 +979,7 @@
       "maxAge": 40,
       "type": "opportunity",
       "title": "Your SkillsFuture Credit is sitting there",
-      "body": "Yours from twenty five, not your employer's, and not tied to what you studied. Most people never spend it.",
+      "body": "Yours from 25, not your employer's, and not tied to what you studied. Most people never spend it.",
       "ifTaken": "You spend it on something nobody asked you to learn. Three years later it is half your job.",
       "ifMissed": "It sits there. It keeps sitting there, and it tops up, so this comes round again.",
       "gain": {
@@ -1272,7 +1272,7 @@
       "maxAge": 55,
       "type": "setback",
       "title": "Your body sends a bill",
-      "body": "Nothing catastrophic. Enough that you cannot do the work the way you did it at twenty five.",
+      "body": "Nothing catastrophic. Enough that you cannot do the work the way you did it at 25.",
       "ifTaken": "You redesign the work around it, early, while it is still a choice and not an emergency.",
       "ifMissed": "You push on unchanged for a couple of years, then redesign it anyway, from further back.",
       "onwardMoves": [
@@ -1324,7 +1324,7 @@
       "type": "opportunity",
       "title": "Something you knew twenty years ago comes back",
       "body": "A skill everyone abandoned turns out to matter again, and almost nobody left can still do it.",
-      "ifTaken": "You are one of the few. Rarity is worth more at fifty than speed was at twenty five.",
+      "ifTaken": "You are one of the few. Rarity is worth more at fifty than speed was at 25.",
       "ifMissed": "You assume it is not relevant any more. Someone else makes the case and gets the work.",
       "gain": {
         "skills": 2,
@@ -1419,7 +1419,7 @@
       "type": "opportunity",
       "title": "They want you, at fifty three",
       "body": "Re employment ages keep rising and experienced people keep getting scarcer. Somebody makes you an offer.",
-      "ifTaken": "You take it on your own terms, which you can set at this age and could not at twenty five.",
+      "ifTaken": "You take it on your own terms, which you can set at this age and could not at 25.",
       "ifMissed": "You stay where you are, comfortable and known. That is a genuine choice and not a lesser one.",
       "gain": {
         "doors": 2,
@@ -1670,7 +1670,7 @@
       "title": "A real client, while you are still studying",
       "body": "Someone wants to pay you for the thing you are being taught. It is too soon and they asked anyway.",
       "ifTaken": "You take it, underprice it, deliver it, and learn more in six weeks than in the last two semesters.",
-      "ifMissed": "You say you are not ready. You will not feel ready at twenty five either.",
+      "ifMissed": "You say you are not ready. You will not feel ready at 25 either.",
       "gain": {
         "portfolio": 2,
         "network": 2

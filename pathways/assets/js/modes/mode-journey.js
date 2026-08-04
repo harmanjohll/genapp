@@ -220,7 +220,7 @@ function introScreen(host, data, st) {
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">Journey</p>
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
-        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">You choose. Things turn up. Nothing ends it.</p>
+        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what you do each year, from now to 48. Life happens in between. No choice ends your story.</p>
         ${comboBlock}
         <div class="wantbox">
           <p class="caps rail-q">${esc(jc.q2)}</p>
@@ -292,17 +292,23 @@ function turnScreen(host, stage, data) {
       </button>`;
   }).join('');
 
+  // The turn used to commit itself the moment the points were spent, so a
+  // 2 point choice jumped to the next screen while a 1 point choice sat
+  // waiting, and the confirm button in this template could never render.
+  // Two behaviours for one gesture reads as broken. Now every turn ends the
+  // same way: pick, then one button, and the first turn says the rule.
   host.innerHTML = shell(`
     ${turnMeta(stage)}
     <p class="lede j-sit">${situation(data, stage)}</p>
+    ${run.stepIndex === 0 ? `<div class="panel tight" style="margin-top:var(--s-3)"><p class="small" style="margin:0">${esc(jc.turnHint)}</p></div>` : ''}
     <div class="pointsrow" role="status">
       <span class="caps">${esc(jc.points)}</span>
       <span class="pts" aria-label="${left} of ${POINTS_PER_TURN} points left">${'●'.repeat(left)}${'○'.repeat(spent)}</span>
     </div>
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
     <div class="btn-row" style="margin-top:var(--s-4)">
-      ${spent >= POINTS_PER_TURN ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
-      ${spent === 1 ? `<button class="btn ghost" type="button" data-action="justthis">${esc(jc.justThis)}</button>` : ''}
+      ${picked.length ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
+      ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
     ${prev}`, rail(data));
 
@@ -317,11 +323,9 @@ function turnScreen(host, stage, data) {
       // A big choice tapped without the points for it takes over the turn
       // instead of dead clicking: the tap means "this one", so honour it.
       else picked = [i];
-      if (picked.reduce((n, x) => n + (pool[x].cost || 1), 0) >= POINTS_PER_TURN) commit(data);
-      else rerender();
+      rerender();
     },
     live: () => commit(data),
-    justthis: () => commit(data),
   });
 }
 
@@ -690,7 +694,7 @@ function endingScreen(host, data, st) {
             <p class="chips subjchips">${subjectChips(planRows(data, run.plan))}</p>
             <p class="micro mute">${esc(jc.comboNote)}</p>
           </div>` : ''}
-        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At thirty eight you wrote: ${esc(run.reflection)}</p>` : ''}
+        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At 38 you wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
           <h2>${esc(jc.playAgain)}</h2>
@@ -770,7 +774,7 @@ function showDiff(host, data, pair) {
           </div>
         </div>
         ${d.reflections.some(Boolean) ? `
-          <div class="section"><p class="caps">At thirty eight you wrote</p>
+          <div class="section"><p class="caps">At 38 you wrote</p>
           <div class="grid two">
             <p class="small">${esc(d.reflections[0] || '·')}</p>
             <p class="small">${esc(d.reflections[1] || '·')}</p>
