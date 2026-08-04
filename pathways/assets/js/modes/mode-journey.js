@@ -306,8 +306,8 @@ function turnScreen(host, stage, data) {
       <button class="choice sel ${on ? 'on' : ''} ${c.isMove ? 'mv' : ''}" type="button" data-action="pick" data-i="${i}"
               aria-pressed="${on}" ${disabledByBudget ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>
-        <span class="c-label">${c.isMove ? icon(c.ic) : ''}${decorate(c.label)}</span>
-        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.moveTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}</span>
+        <span class="c-label">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</span>
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.moveTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -375,7 +375,7 @@ function forkScreen(host, stage, data) {
         <div class="fork-choices" role="group" aria-label="Your choice">
           ${pool.map((c, i) => `
             <button class="choice fork-c" type="button" data-action="fork" data-i="${i}">
-              <span class="c-label">${decorate(c.label)}</span>
+              <span class="c-label">${esc(c.label)}</span>
               <span class="c-chips">${gainChips(c)}</span>
             </button>`).join('')}
         </div>
@@ -486,7 +486,7 @@ function chanceAsk(host, card, data) {
       <div class="grid" role="group" aria-label="How you respond" style="margin-top:var(--s-4)">
         ${(card.responses || []).map((r, i) => `
           <button class="choice resp" type="button" data-action="respond" data-i="${i}">
-            <span class="c-label">${decorate(r.label)}</span>
+            <span class="c-label">${esc(r.label)}</span>
             ${r.needsAsk ? `<span class="c-note">${esc(met ? jc.metChip : jc.stretchChip)}</span>` : ''}
           </button>`).join('')}
       </div>

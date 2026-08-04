@@ -770,12 +770,13 @@ body[data-journey="true"] .audstrip { display: none; }
 
 /* A move inside the choice grid. Same button, same economy, marked as a
    card from your hand: accent edge, its icon, and a small honest tag. */
-.choice.mv { border-left: 3px solid var(--accent); background: linear-gradient(90deg, rgba(193, 95, 60, 0.05), transparent 60%); }
+.choice.mv { border-left: 3px solid var(--accent); }
 .choice.mv .c-label svg { margin-right: 6px; vertical-align: -2px; color: var(--accent); }
 .mv-tag {
   display: inline-block; padding: 1px 8px; border-radius: 999px;
   border: 1px dashed var(--accent); color: var(--accent); font-size: var(--t-micro);
 }
+.undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
 /* The life strip: one dot per year of this run, filled as lived. The whole
    life is visible on every turn, which is the point of the mode. */
