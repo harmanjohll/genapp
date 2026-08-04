@@ -3,16 +3,16 @@
     "source": "MOE admissions pages and school ECG practice",
     "url": "https://www.moe.gov.sg/post-secondary/admissions",
     "accessed": "2026-08-04",
-    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Two kinds. Asks are superpowers: a held hand of at most three, free to play because asking costs courage rather than time, one a year, and playing one draws another because asking begets knowing who to ask. Commitments consume the year, so they join the turn pool as ordinary choices and spend points; the exchange costs two because three months is three months. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things."
+    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Two kinds. Asks are superpowers: a held hand of at most three, free to play because asking costs courage rather than time, one a year, and playing one draws another because asking begets knowing who to ask. Commitments consume the year, so they join the turn pool as ordinary choices and spend points; the exchange costs two because three months is three months. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things. Moves are bounded to the institution that actually has the role: form teachers, Year Heads and school counsellors end at 17, and post secondary carries its own people, lecturers and career services, then a supervisor at work."
   },
   "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
   "moves": [
     {
       "id": "ask_help",
-      "label": "Ask for help with the subject that scares you",
+      "label": "Ask a teacher for help with the subject that scares you",
       "ages": [
         13,
-        16
+        17
       ],
       "body": "Go to the teacher after class. Say which part you do not get. That is the whole move.",
       "outcome": "The teacher shows you where it actually went wrong, which is never where you thought.",
@@ -31,9 +31,9 @@
       "label": "Book a chat with the ECG counsellor",
       "ages": [
         13,
-        18
+        17
       ],
-      "body": "Every secondary school has one, and it is free. Bring one question. Where could I go, is a good one.",
+      "body": "Every secondary school and JC has one, and it is free. Bring one question. Where could I go is a good one.",
       "outcome": "They show you two roads you did not know existed. Nobody makes you take either.",
       "disp": {
         "flexibility": 1,
@@ -48,7 +48,7 @@
       "label": "Ask your Year Head what moving up takes",
       "ages": [
         13,
-        15
+        16
       ],
       "body": "Not a promise. A question: what would my marks need to look like to take this at G3?",
       "outcome": "Now you know the number. It is smaller than the rumour said.",
@@ -190,7 +190,7 @@
       "label": "Ask your form teacher which subject suits how you learn",
       "ages": [
         13,
-        16
+        17
       ],
       "body": "They see you in class all week. They have an opinion and nobody ever asks for it.",
       "outcome": "They name something you are good at that you had not counted as a skill.",
@@ -209,7 +209,7 @@
       "label": "Talk to a senior who took the road you are curious about",
       "ages": [
         14,
-        19
+        20
       ],
       "body": "One year above you, same school, already there. Ask what they wish they had known.",
       "outcome": "Straight answers, no brochure voice. Some of it puts you off, which is also useful.",
@@ -280,6 +280,123 @@
       },
       "sets": "asked_family",
       "ic": "d_sflu",
+      "kind": "ask"
+    },
+    {
+      "id": "lecturer",
+      "label": "Ask your lecturer how they got into this",
+      "ages": [
+        17,
+        22
+      ],
+      "body": "Poly and ITE lecturers worked in the trade before they taught it. Most are glad to be asked.",
+      "outcome": "They tell you the route they actually took, which was not the neat one on the website.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "curiosity": 1
+      },
+      "sets": "asked_lecturer",
+      "ic": "q_who",
+      "kind": "ask"
+    },
+    {
+      "id": "careercoach",
+      "label": "Book a session with your school's career services",
+      "ages": [
+        17,
+        24
+      ],
+      "body": "Poly, ITE and every university run one. They know which employers hire from your course, and it is free while you are enrolled.",
+      "outcome": "They read your resume properly and tell you the two things wrong with it.",
+      "gain": {
+        "portfolio": 1
+      },
+      "disp": {
+        "flexibility": 1
+      },
+      "sets": "used_careers",
+      "ic": "q_where",
+      "kind": "ask"
+    },
+    {
+      "id": "supervisor",
+      "label": "Ask your supervisor what would get you promoted",
+      "ages": [
+        22,
+        34
+      ],
+      "body": "Not a complaint. A question: what would I need to be doing for this to be the obvious next step?",
+      "outcome": "They name two things. One you expected. The other you had never thought about.",
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "risk": 1
+      },
+      "sets": "asked_boss",
+      "ic": "risk",
+      "kind": "ask"
+    },
+    {
+      "id": "peer_ask",
+      "label": "Ask someone whose life you would want how they arranged it",
+      "ages": [
+        30,
+        55
+      ],
+      "body": "Not their job. Their week. How they got the hours to look like that.",
+      "outcome": "It was arranged on purpose, in steps, and they will tell you the steps if you ask.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "curiosity": 1,
+        "flexibility": 1
+      },
+      "sets": "asked_peer",
+      "ic": "d_people",
+      "kind": "ask"
+    },
+    {
+      "id": "younger",
+      "label": "Ask a younger colleague to teach you something",
+      "ages": [
+        34,
+        55
+      ],
+      "body": "They know the tools you have been avoiding. Asking costs you nothing but the admission.",
+      "outcome": "Half an hour, and the thing you were dreading turns out to be learnable.",
+      "gain": {
+        "skills": 1,
+        "network": 1
+      },
+      "disp": {
+        "curiosity": 1
+      },
+      "sets": "asked_younger",
+      "ic": "curiosity",
+      "kind": "ask"
+    },
+    {
+      "id": "family_late",
+      "label": "Tell the people at home what you are thinking of changing",
+      "ages": [
+        30,
+        55
+      ],
+      "body": "A change at forty lands on everyone you live with. Say it out loud before it is decided.",
+      "outcome": "They had noticed. Saying it makes it a plan the household is in on, not a surprise.",
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "optimism": 1,
+        "risk": 1
+      },
+      "sets": "told_home",
+      "ic": "d_people",
       "kind": "ask"
     }
   ]

@@ -2340,7 +2340,13 @@
     "asked_senior",
     "went_open",
     "led_cca",
-    "asked_family"
+    "asked_family",
+    "asked_lecturer",
+    "used_careers",
+    "asked_boss",
+    "asked_peer",
+    "asked_younger",
+    "told_home"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",
