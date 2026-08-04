@@ -47,6 +47,8 @@ const ECG_MAP = [
     where: 'The Can do ledger grows from doing. Taking the demanding response to a chance is the mastery experience, and the outcome screen says where believing you can starts.' },
   { name: 'Decision learning, then action', src: 'CASVE cycle',
     where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
+  { name: 'A reason to get up', src: 'Ikigai',
+    where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
   { name: 'The tool defers to people', src: 'ECG practice',
     where: 'Every mode ends at a person: take-one-question cards address the subject teacher, the form teacher and the ECG counsellor by name, and the footer says whose advice this is not.' },
 ];

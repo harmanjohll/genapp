@@ -150,7 +150,15 @@
     "nameWant": "Name one now",
     "endWantChanged": "At {age} you said: {was}. It became: {want}.",
     "becameHead": "Who you became",
-    "efficacyLine": "You did the hard version. Believing you can starts there."
+    "efficacyLine": "You did the hard version. Believing you can starts there.",
+    "ikigaiHead": "Where this story sits",
+    "ikigaiLove": "What you love",
+    "ikigaiGood": "What you are good at",
+    "ikigaiNeeds": "What the world needs",
+    "ikigaiPay": "What can pay you",
+    "ikigaiLine": "This story filled {a} most. The next years are for {b}.",
+    "ikigaiNote": "Few stories fill all four circles early. They pull together, if you keep choosing.",
+    "ikigaiReflect": "Your circles at thirty eight."
   },
   "footerDoors": {
     "head": "This tool has three doors",
