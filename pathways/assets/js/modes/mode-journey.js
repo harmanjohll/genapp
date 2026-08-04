@@ -27,6 +27,7 @@ let stages = [];
 let picked = [];            // selected choice indices this turn
 let justResolved = null;    // chance outcome awaiting Continue
 let justLived = null;       // the year just committed, awaiting Continue
+let restartArmed = false;   // first tap arms, second tap clears the run
 let compareSel = [];        // run indices picked for comparison
 let rerender = () => {};
 let DATA = null;
@@ -45,6 +46,24 @@ export function renderJourney(host, data, ctx, repaint) {
   }
 
   document.body.dataset.journey = run && !run.done ? 'true' : 'false';
+
+  // The run survives a refresh on purpose: a reload must not cost a student
+  // twenty minutes of story. The cost of that persistence is that a stuck or
+  // regretted story needs a way out, so every in-run screen's rail carries
+  // Start over. Armed on the first tap, so one stray touch cannot end it.
+  restartArmed = false;
+  onAction(host, {
+    restart: (btn) => {
+      if (!restartArmed) {
+        restartArmed = true;
+        btn.textContent = data.copy.journey.startOverArm;
+        return;
+      }
+      setLiveRun(null);
+      resetJourney();
+      rerender();
+    },
+  });
 
   if (!run) return introScreen(host, data, st);
   if (run.done) return endingScreen(host, data, st);
@@ -223,7 +242,7 @@ function introScreen(host, data, st) {
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what you do each year, from now to 48. Life happens in between. No choice ends your story.</p>
         ${comboBlock}
         <div class="wantbox">
-          <p class="caps rail-q">${esc(jc.q2)}</p>
+          <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(hasPlan ? jc.wantHint : jc.comboGate)}</p>
           <div class="grid two" style="margin-top:var(--s-3)">
@@ -591,9 +610,9 @@ function wantStory(r) {
  */
 function stageQuestion(stage, jc) {
   const f = stage.format || 'turn';
-  if (f === 'fork') return jc.q2;
-  if (f === 'reflect') return jc.q1;
-  return stage.age <= 16 ? jc.q1 : jc.q3;
+  if (f === 'fork') return { ic: 'q_where', label: jc.q2 };
+  if (f === 'reflect') return { ic: 'q_who', label: jc.q1 };
+  return stage.age <= 16 ? { ic: 'q_who', label: jc.q1 } : { ic: 'q_how', label: jc.q3 };
 }
 
 /**
@@ -609,6 +628,7 @@ function livedScreen(host, data) {
   const becoming = grew.length ? fill(jc.becoming, { words: grew.slice(0, 2).join(' and ') }) : '';
   host.innerHTML = shell(`
     <div class="chance-out lived">
+      <p class="lived-age serif" aria-hidden="true">${age}</p>
       <p class="caps">${esc(fill(jc.livedHead, { age }))}</p>
       ${chosen.map((c) => `
         <div class="lived-row">
@@ -800,7 +820,8 @@ function turnMeta(stage) {
   const n = run.stepIndex + 1;
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
-  const q = DATA ? `<span class="qchip">${esc(stageQuestion(stage, DATA.copy.journey))}</span>` : '';
+  const sq = DATA ? stageQuestion(stage, DATA.copy.journey) : null;
+  const q = sq ? `<span class="qchip">${icon(sq.ic)}${esc(sq.label)}</span>` : '';
   return `
     <p class="turn-meta caps">Step ${n} of ${stages.length} ${label} ${want}</p>
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${stage.age}</span>
@@ -829,21 +850,22 @@ function rail(data) {
   }).join('');
   const combo = planRows(data, run.plan);
   return `
-    <p class="caps rail-q">${esc(jc.q1)}</p>
+    <p class="caps rail-q">${icon('q_who')}${esc(jc.q1)}</p>
     <p class="idwords serif">${esc(idWords(run, jc))}</p>
     <div class="disp-bars">${bars}</div>
     <details style="margin-top:var(--s-2)"><summary class="small mute">${esc(jc.carryHead)}</summary>
       <div class="disp-bars" style="margin-top:var(--s-2)">${dbars}</div></details>
 
-    <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q2)}</p>
+    <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_where')}${esc(jc.q2)}</p>
     <p class="small">${run.want
       ? `${esc(run.want.label)}${wantKind(run.want.id) ? ` <span class="kind-chip">${esc(wantKind(run.want.id))}</span>` : ''}`
       : `<span class="mute">${esc(jc.railWhereNone)}</span>`}</p>
 
-    <p class="caps rail-q" style="margin-top:var(--s-4)">${esc(jc.q3)}</p>
+    <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_how')}${esc(jc.q3)}</p>
     <p class="chips doorchips">${run.doors.map((d) => `<span>${icon(d)}${esc((DOORS[d] || {}).label || d)}</span>`).join('') || '<span class="mute small">No doors yet. They come.</span>'}</p>
     ${combo.length ? `<p class="chips subjchips" style="margin-top:var(--s-2)">${subjectChips(combo, 6)}</p>` : ''}
-    ${storySoFar(data)}`;
+    ${storySoFar(data)}
+    <button class="btn ghost small" type="button" data-action="restart" style="margin-top:var(--s-5)">${esc(jc.startOver)}</button>`;
 }
 
 function storySoFar(data) {

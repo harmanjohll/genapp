@@ -65,6 +65,18 @@ const PATHS = {
   optimism: '<path d="M2.9 11.8a5.1 5.1 0 0 1 10.2 0"/><path d="M8 2.4v1.7M3.7 4.1l1.2 1.2M12.3 4.1l-1.2 1.2"/>',
   risk: '<path d="M2.5 11.8h3.2M10.3 11.8h3.2"/><path d="M5.7 11.8C5.7 5.9 10.3 5.9 10.3 11.8"/>',
 
+  /* ---- the three ECG questions --------------------------------------- */
+  // The questions recur across two modes and five surfaces. One mark per
+  // question, wherever it appears, so a student who meets "Who am I?" in
+  // Journey recognises it in NOW without reading a word.
+
+  // One person, facing you.
+  q_who: '<circle cx="8" cy="5.4" r="2.4"/><path d="M3.6 13.4c0-2.6 1.9-4.2 4.4-4.2s4.4 1.6 4.4 4.2"/>',
+  // A compass, needle set.
+  q_where: '<circle cx="8" cy="8" r="5.5"/><path d="M10.4 5.6 9.1 9 5.6 10.4 7 7z"/>',
+  // A route from a filled here to an open there.
+  q_how: '<circle cx="3.2" cy="12.8" r="1.3" fill="currentColor" stroke="none"/><path d="M4.5 12.6C9.5 12 6.6 4.4 11.3 3.9"/><circle cx="12.7" cy="3.7" r="1.4"/>',
+
   /* ---- subject groups ------------------------------------------------- */
 
   g_core: '<rect x="3" y="3" width="10" height="10" rx="2.2"/><path d="M6.1 8l1.5 1.6 3-3.2"/>',
