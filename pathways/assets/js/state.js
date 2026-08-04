@@ -36,6 +36,7 @@ const initial = () => ({
   guesses: {},
   offer: null,       // subject ids this school runs, null means all
   seenIntro: false,
+  seenVersion: null,   // the release this device has already been shown
 });
 
 function load() {
@@ -189,6 +190,21 @@ export function clearRuns() {
 export function setOffer(ids) {
   state.offer = ids && ids.length ? ids : null;
   persist(); notify({ kind: 'offer' });
+}
+
+/**
+ * The build a device last saw.
+ *
+ * This ships from a branch to a browser that caches aggressively, so a class
+ * can be sitting on three different builds with nobody aware of it. The
+ * version is baked into the data, compared against what this device saw last,
+ * and the difference is shown once. A student who has never opened the app is
+ * not shown a changelog: the first run is marked silently, because a list of
+ * what changed is meaningless to someone who has seen none of it.
+ */
+export function markVersionSeen(v) {
+  state.seenVersion = v;
+  persist();
 }
 
 export function markIntroSeen() {

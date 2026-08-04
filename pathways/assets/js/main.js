@@ -1,10 +1,11 @@
 // Entry point. Loads data, mounts the shell, renders the active mode.
 
 import { loadAll } from './data-loader.js';
-import { getState, subscribe, setMode, setYear, setLiveRun, reconcile, MODES, YEARS, currentYear } from './state.js';
+import { getState, subscribe, setMode, setYear, setLiveRun, reconcile, markVersionSeen, MODES, YEARS, currentYear } from './state.js';
 import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js';
 import { runInvariantSweep } from './engine/reach.js';
 import { projectionSweep } from './engine/project.js';
 import { runCopyBudget } from './engine/copy-budget.js';
@@ -71,12 +72,45 @@ async function init() {
     paint();
   });
 
+  showVersionNote();
+
   if (params.get('dev') === '1') {
     runInvariantSweep(ctx);
     projectionSweep(ctx);
     runJourneySweep(data);
     runCopyBudget(data);
   }
+}
+
+/**
+ * What changed since this device last looked.
+ *
+ * The app ships from a branch into a browser that caches hard, so a class can
+ * be sitting on three different builds and nobody knows. The version is baked
+ * into the data and compared against what this device saw. Once, on the first
+ * paint after an update, in the student's own words and never in the
+ * developer's. A device that has never seen the app is marked silently: a list
+ * of changes means nothing to somebody who has seen none of what changed.
+ */
+function showVersionNote() {
+  const v = data.version;
+  if (!v || !v.version) return;
+  const seen = getState().seenVersion;
+  if (seen === v.version) return;
+  if (!seen) { markVersionSeen(v.version); return; }
+  const rel = (v.releases || []).find((r) => r.version === v.version);
+  markVersionSeen(v.version);
+  if (!rel || !(rel.changes || []).length) return;
+  openSheet(`
+    <h2 id="sheet-title">${esc(rel.head || 'What is new')}</h2>
+    <p class="small mute">Version ${esc(rel.version)}</p>
+    <ul class="small" style="margin-top:var(--s-3);padding-left:1.1em">
+      ${rel.changes.map((c) => `<li style="margin-bottom:var(--s-2)">${esc(c)}</li>`).join('')}
+    </ul>
+    <div class="btn-row" style="margin-top:var(--s-4)">
+      <button class="btn accent" type="button" data-action="vok">Got it</button>
+    </div>`);
+  onSheetAction({ vok: () => closeSheet() });
 }
 
 function renderHead() {
