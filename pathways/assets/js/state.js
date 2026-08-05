@@ -36,6 +36,7 @@ const initial = () => ({
   guesses: {},
   offer: null,       // subject ids this school runs, null means all
   seenIntro: false,
+  seenVersion: null,   // the release this device has already been shown
 });
 
 function load() {
@@ -191,6 +192,21 @@ export function setOffer(ids) {
   persist(); notify({ kind: 'offer' });
 }
 
+/**
+ * The build a device last saw.
+ *
+ * This ships from a branch to a browser that caches aggressively, so a class
+ * can be sitting on three different builds with nobody aware of it. The
+ * version is baked into the data, compared against what this device saw last,
+ * and the difference is shown once. A student who has never opened the app is
+ * not shown a changelog: the first run is marked silently, because a list of
+ * what changed is meaningless to someone who has seen none of it.
+ */
+export function markVersionSeen(v) {
+  state.seenVersion = v;
+  persist();
+}
+
 export function markIntroSeen() {
   state.seenIntro = true;
   persist();
@@ -216,6 +232,7 @@ function validRun(r, cardIds) {
   if (!r || typeof r !== 'object') return false;
   if (!Number.isFinite(r.startAge) || !Number.isFinite(r.stepIndex)) return false;
   if (typeof r.done !== 'boolean') return false;
+  if (r.short !== undefined && typeof r.short !== 'boolean') return false;
   if (!Array.isArray(r.steps) || !Array.isArray(r.doors) || !Array.isArray(r.flags) || !Array.isArray(r.raises)) return false;
   if (!r.ledger || typeof r.ledger !== 'object' || !['skills', 'network', 'portfolio'].every((k) => Number.isFinite(r.ledger[k]))) return false;
   if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;

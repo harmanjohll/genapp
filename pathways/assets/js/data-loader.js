@@ -14,7 +14,7 @@
 
 const FILES = [
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
-  'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories', 'moves',
+  'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories', 'moves', 'version',
 ];
 
 const REQUIRED = ['subjects', 'pathways', 'progressions', 'copy', 'glossary'];

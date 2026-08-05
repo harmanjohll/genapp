@@ -194,7 +194,20 @@
     "yearDoing": "Doing:",
     "yearAsking": "Asking:",
     "yearWant": "All of it counts toward: {want}.",
-    "yearNoWant": "You have not named what you want yet. That is allowed, and this still counts."
+    "yearNoWant": "You have not named what you want yet. That is allowed, and this still counts.",
+    "undoYear": "Undo that year",
+    "undoNote": "Changed your mind? Put it back the way it was.",
+    "runLong": "The whole thing, 13 to 48",
+    "runShort": "Just school, to 18",
+    "runPick": "How far do you want to play?",
+    "runShortNote": "Six years. Fits one lesson.",
+    "runLongNote": "Fifteen years. Takes longer, and shows more.",
+    "tourHead": "Three things and you are playing",
+    "tour1": "Points are your time this year. Big choices cost 2, small ones cost 1.",
+    "tour2": "People you can ask are free. Two a year, and they open things later.",
+    "tour3": "Pick everything you want, then tap Live this year once.",
+    "tourGo": "Got it, start",
+    "tourSkip": "Skip"
   },
   "footerDoors": {
     "head": "This tool has three doors",
@@ -217,7 +230,11 @@
     "reachGo": "See it in Now",
     "movesHead": "Moves that serve this",
     "movesBody": "Real things you can do this year.",
-    "chooserLede": "Not a job title. A shape of life, and more than one road to it."
+    "chooserLede": "Not a job title. A shape of life, and more than one road to it.",
+    "saidHead": "You said you would",
+    "saidBody": "From the last time you were here. Tick what you have done.",
+    "saidDone": "Done",
+    "saidClear": "Clear these"
   },
   "teacher": {
     "classHead": "What this room holds",

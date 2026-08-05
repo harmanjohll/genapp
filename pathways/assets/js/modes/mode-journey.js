@@ -31,6 +31,7 @@ let justResolved = null;    // chance outcome awaiting Continue
 let justLived = null;       // the year just committed, awaiting Continue
 let restartArmed = false;   // first tap arms, second tap clears the run
 let staleNote = null;       // set when the live run's start no longer matches NOW
+let lastYear = null;        // the run as it stood before the current year, for undo
 let compareSel = [];        // run indices picked for comparison
 let rerender = () => {};
 let DATA = null;
@@ -46,6 +47,9 @@ export function renderJourney(host, data, ctx, repaint) {
   if (!run && st.liveRun) {
     run = st.liveRun;
     stages = stagesFor(j.stages, run.startAge);
+    // A short run must resume short, or a refresh silently signs the student
+    // up for nine more years they never chose.
+    if (run.short) stages = stages.filter((x) => x.age <= SHORT_END);
   }
 
   document.body.dataset.journey = run && !run.done ? 'true' : 'false';
@@ -94,11 +98,23 @@ export function renderJourney(host, data, ctx, repaint) {
 }
 
 export function resetJourney() {
-  run = null; picked = []; pickedAsks = []; justResolved = null; justLived = null;
+  run = null; picked = []; pickedAsks = []; justResolved = null; justLived = null; lastYear = null;
   document.body.dataset.journey = 'false';
 }
 
-function startRun(data, want) {
+/**
+ * How far to play, asked once, at the moment it matters.
+ *
+ * Fifteen stages is a long game for a thirteen year old with forty five
+ * minutes, and a lesson that runs out of clock before the ending never
+ * reaches the compare screen, which is the whole point of the mode. A student
+ * can stop at eighteen instead: the same engine, the same cards, the same
+ * ending, just the school years. Nothing is withheld from the short run, and
+ * the long one is not the correct answer.
+ */
+const SHORT_END = 18;
+
+function startRun(data, want, short) {
   const j = data.journey;
   const st = getState();
   // No clamp. A Sec 1 student plays Sec 1. The old floor of 15 silently aged a
@@ -106,13 +122,15 @@ function startRun(data, want) {
   // called Sec 3, the chance to ask to move a level up: the one thing that was
   // actually available in the year it had just skipped.
   stages = stagesFor(j.stages, currentYear().age);
+  if (short) stages = stages.filter((x) => x.age <= SHORT_END);
   const n = st.runs.length + 1;
   // The run carries a copy of the plan, not a reference to it. A student who
   // edits their subjects in NOW next week must not silently rewrite the story
   // they already played, and the compare screen has to hold two combinations
   // at once for the comparison to mean anything.
   run = createRun(stages[0].age, `Story ${n}`, want, st.plan);
-  picked = []; justResolved = null;
+  run.short = !!short;
+  picked = []; justResolved = null; lastYear = null;
   setLiveRun(run);
 }
 
@@ -268,8 +286,8 @@ function introScreen(host, data, st) {
     pick: (btn) => openPicker(data, btn),
     want: (btn) => {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
-      startRun(data, w && w.id !== 'unsure' ? { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind } : null);
-      rerender();
+      const want = w && w.id !== 'unsure' ? { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind } : null;
+      openStartSheet(data, want, btn);
     },
     pickrun: (btn) => {
       const i = Number(btn.dataset.i);
@@ -493,6 +511,10 @@ function commit(data) {
   const pool = visibleChoices(stage, run, MV(data));
   const chosen = picked.map((i) => pool[i]).filter(Boolean);
   const before = snapshot();
+  // The whole run as it stood before this year. A mis-tap used to cost the
+  // student the entire story, because Start over was the only way back, and a
+  // game about trying things cannot punish a slip of the thumb.
+  lastYear = structuredCloneSafe(run);
   // Asks first, so a door one opens is already held when the year resolves.
   const askRows = [];
   pickedAsks.forEach((id) => {
@@ -735,6 +757,34 @@ function contrastWant(data, r) {
   return wants.find((w) => w.riasec === RIASEC_OPPOSITE[letter]) || null;
 }
 
+/**
+ * Between naming a want and playing, two things the student needs: how a turn
+ * works, and how long they are signing up for. Three lines and a choice, once,
+ * in the sheet, rather than a wall of rules on the intro that nobody reads and
+ * nobody can find again.
+ */
+function openStartSheet(data, want, trigger) {
+  const jc = data.copy.journey;
+  openSheet(`
+    <h2 id="sheet-title">${esc(jc.tourHead)}</h2>
+    <ol class="small tourlist">
+      <li>${esc(jc.tour1)}</li>
+      <li>${esc(jc.tour2)}</li>
+      <li>${esc(jc.tour3)}</li>
+    </ol>
+    <p class="caps" style="margin-top:var(--s-5)">${esc(jc.runPick)}</p>
+    <div class="runpick">
+      <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
+      <p class="micro mute">${esc(jc.runLongNote)}</p>
+      <button class="btn ghost" type="button" data-action="goshort" style="margin-top:var(--s-3)">${esc(jc.runShort)}</button>
+      <p class="micro mute">${esc(jc.runShortNote)}</p>
+    </div>`, trigger);
+  onSheetAction({
+    golong: () => { closeSheet(); startRun(data, want, false); rerender(); },
+    goshort: () => { closeSheet(); startRun(data, want, true); rerender(); },
+  });
+}
+
 /** The hand of moves, from data. */
 const MV = (data) => (data.moves && data.moves.moves) || [];
 
@@ -790,12 +840,24 @@ function livedScreen(host, data) {
       ${becoming ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(becoming)}</p>` : ''}
       <div class="btn-row" style="margin-top:var(--s-4)">
         <button class="btn accent" type="button" data-action="go">${esc(jc.continue)}</button>
+        ${lastYear ? `<button class="btn ghost small" type="button" data-action="undoyear">${esc(jc.undoYear)}</button>` : ''}
       </div>
+      ${lastYear ? `<p class="micro mute">${esc(jc.undoNote)}</p>` : ''}
     </div>`, rail(data));
   announce([fill(jc.livedHead, { age }), ...chosen.map((c) => c.outcome).filter(Boolean)].join(' '));
   focusH1(host);
   bindGlossary(host);
-  onAction(host, { go: () => { justLived = null; rerender(); } });
+  onAction(host, {
+    go: () => { justLived = null; lastYear = null; rerender(); },
+    undoyear: () => {
+      if (!lastYear) return;
+      run = lastYear; lastYear = null;
+      justLived = null; picked = []; pickedAsks = [];
+      setLiveRun(run);
+      announce('That year is back the way it was.');
+      rerender();
+    },
+  });
 }
 
 function chanceOutcome(host, data) {

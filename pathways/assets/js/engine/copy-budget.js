@@ -75,7 +75,9 @@ const CAPS = {
 const FIRST_PAINT = { now: 365, journey: 220, aim: 120 };
 
 // Fields that are maintainer facing, not student facing.
-const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName']);
+// Machine fields, not prose. An ISO date is not a sentence a student reads,
+// and the no dash rule is about sentences.
+const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName', 'date', 'version', 'kind', 'sets', 'ic']);
 
 const words = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
 
