@@ -783,6 +783,11 @@ body[data-journey="true"] .audstrip { display: none; }
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
+.tourlist { padding-left: 1.2em; }
+.tourlist li { margin-bottom: var(--s-2); }
+.runpick .btn { width: 100%; }
+.runpick p { margin: var(--s-1) 0 0; }
+
 /* The class code: five characters a student can read across a room. */
 .classcode { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
 .code-big {

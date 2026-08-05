@@ -8,6 +8,10 @@ const server=createServer(async(req,res)=>{try{let p=decodeURIComponent(req.url.
  const f=join(ROOT,normalize(p).replace(/^(\.\.[/\\])+/,''));const b=await readFile(f);
  res.writeHead(200,{'Content-Type':TYPES[extname(f)]||'application/octet-stream'});res.end(b);}catch(e){res.writeHead(404);res.end('nf');}});
 await new Promise(r=>server.listen(0,r));const port=server.address().port;
+// Seed the version the app actually ships. Hardcoding it means the changelog
+// sheet opens over the first screen on the next release and swallows every
+// click after it, so the sweep fails on the release rather than on a layout.
+const VERSION=JSON.parse(await readFile(join(ROOT,'pathways/data/version.json'),'utf8')).version;
 const browser=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});
 const bad=[];
 const W=Number(process.argv[2]||390);
@@ -49,7 +53,7 @@ const seed=async(s)=>{await page.evaluate((x)=>localStorage.setItem('pathways.st
 
 const PLAN={el:'G2',maths:'G3',sci_pc:'G3',hum_ss_hist:'G2',art:'G2'};
 await page.goto(`http://127.0.0.1:${port}/pathways/index.html`,{waitUntil:'domcontentloaded'});
-await seed({mode:'now',year:'sec3',plan:PLAN,seenVersion:'1.0.0'});
+await seed({mode:'now',year:'sec3',plan:PLAN,seenVersion:VERSION});
 await page.reload({waitUntil:'networkidle'}); await page.waitForTimeout(700);
 await check('NOW landing');
 // sheets from Now
@@ -59,7 +63,11 @@ const sh=await tab(/carry this to another device/i); if(sh){ await sh.click(); a
 // journey
 await (await tab(/^Journey$/)).click(); await page.waitForTimeout(600); await check('JOURNEY intro');
 const pick=await tab(/pick your subjects|change subjects/i); if(pick){ await pick.click(); await page.waitForTimeout(600); await check('sheet: subject picker'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
-await (await page.$$('.future-btn'))[0].click(); await page.waitForTimeout(600); await check('JOURNEY turn');
+await (await page.$$('.future-btn'))[0].click(); await page.waitForTimeout(600);
+await check('sheet: how it works and how far');
+for(const b of await page.$$('dialog[open] button')){const t=((await b.innerText().catch(()=>''))||'').trim();
+  if(/whole thing/i.test(t)){ await b.click(); break; }}
+await page.waitForTimeout(600); await check('JOURNEY turn');
 const ac=await page.$('.askcard'); if(ac){ await ac.click(); await page.waitForTimeout(400); }
 const ch=await page.$('.choice'); if(ch){ await ch.click(); await page.waitForTimeout(400); }
 await check('JOURNEY turn, year staged');

@@ -232,6 +232,7 @@ function validRun(r, cardIds) {
   if (!r || typeof r !== 'object') return false;
   if (!Number.isFinite(r.startAge) || !Number.isFinite(r.stepIndex)) return false;
   if (typeof r.done !== 'boolean') return false;
+  if (r.short !== undefined && typeof r.short !== 'boolean') return false;
   if (!Array.isArray(r.steps) || !Array.isArray(r.doors) || !Array.isArray(r.flags) || !Array.isArray(r.raises)) return false;
   if (!r.ledger || typeof r.ledger !== 'object' || !['skills', 'network', 'portfolio'].every((k) => Number.isFinite(r.ledger[k]))) return false;
   if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;

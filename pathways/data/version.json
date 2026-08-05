@@ -6,8 +6,19 @@
     "units": "not applicable",
     "notes": "The app ships from a branch and a student's browser caches it, so a class can be sitting on three different builds without anyone knowing. The version is baked in here and compared against what the device last saw. On a change, one sheet, once, listing what moved in the student's own words. Bump `version` and put the newest block first in `releases`. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "releases": [
+    {
+      "version": "1.1.0",
+      "date": "2026-08-05",
+      "head": "What is new",
+      "changes": [
+        "You can undo a year now. Change your mind on the screen right after you live it.",
+        "Before you start, three lines on how a turn works.",
+        "You can play the short game: just the school years, to 18. It fits one lesson.",
+        "Aim remembers what you said you would do, and asks you about it next time."
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2026-08-04",

@@ -118,6 +118,23 @@ function detail(f, st, data, ctx) {
   // The same moves the game plays with. A this-term list that ignored them
   // was inventing a second, weaker vocabulary for the same idea.
   const moves = ((data.moves && data.moves.moves) || []).filter((m) => year.age >= m.ages[0] && year.age <= m.ages[1]);
+  // What you committed to last time you were here. AIM was decide and forget:
+  // a student ticked two things, closed the tab, and nothing ever asked again.
+  // The CASVE cycle does not end at deciding, and neither should the mode.
+  const said = (st.actions || []).filter(Boolean);
+  const saidBlock = said.length ? `
+    <div class="aim-linked">
+      <p class="caps">${icon('q_how')}${esc(ac.saidHead)}</p>
+      <p class="small mute">${esc(ac.saidBody)}</p>
+      <ul style="list-style:none;padding:0;margin-top:var(--s-2)">
+        ${said.map((a) => `<li class="aim-move">
+          <button class="btn ghost small" type="button" data-action="action" data-text="${esc(a)}"
+                  aria-label="Done: ${esc(a)}">${esc(ac.saidDone)}</button>
+          <span>${esc(a)}</span>
+        </li>`).join('')}
+      </ul>
+    </div>` : '';
+
   const movesBlock = moves.length ? `
     <div class="thisterm" style="margin-top:var(--s-5)">
       <p class="caps">${esc(ac.movesHead)}</p>
@@ -159,6 +176,7 @@ function detail(f, st, data, ctx) {
       <h1 class="serif" style="font-size:var(--t-h1);margin-top:var(--s-4)">${esc(f.want)}</h1>
       <p class="small mute">${esc(f.looksLike)}</p>
 
+      ${saidBlock}
       ${playedBlock}
       ${reachBlock}
 
