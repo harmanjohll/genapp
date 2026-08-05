@@ -27,7 +27,7 @@ import { project, horizonMoves } from '../engine/project.js';
 import { pulse, leverLine } from '../engine/pulse.js';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
-  markIntroSeen, shareUrl, YEARS, currentYear,
+  markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity,
 } from '../state.js';
 
 let DATA = null;
@@ -89,6 +89,7 @@ export function renderNow(container, data, ctx) {
             ${junctureLine(data, st, phase, showUpper)}
             ${phase === 'lower' ? horizonPanel(data, st) : ''}
           </section>
+          ${weekPanel(st, data)}
           <div id="tail">${tail(st, reaches, data)}</div>
         </div>
       </div>
@@ -343,6 +344,119 @@ function tail(st, reaches, data) {
 }
 
 /**
+ * What a student carries besides their subjects, and what it is worth.
+ *
+ * The subject list is only half of a week. A student training three evenings,
+ * running a uniformed group and getting a younger brother fed has a real week
+ * that no school system writes down anywhere, and an app that models only the
+ * timetable is modelling the easy half.
+ *
+ * Four things, in the order a counsellor would take them: what the week is,
+ * what it is building, where it can go, and how people carry it. The order
+ * matters. The load line comes first because a student wants to be seen before
+ * they want advice, and it is a description every time, never a verdict. There
+ * is no line in this panel or in activities.json that says a week is too full
+ * or asks whether someone is sure, because a fourteen year old carrying four
+ * evenings is usually carrying them for a reason, and sometimes for a reason
+ * nobody offered them a choice about.
+ */
+function weekPanel(st, data) {
+  const A = data.activities || {};
+  const all = A.activities || [];
+  const C = A.copy || {};
+  if (!all.length) return '';
+  const mine = (st.activities || []).map((id) => all.find((a) => a.id === id)).filter(Boolean);
+  const w = mine.reduce((n, a) => n + (a.week || 0), 0);
+  const band = w <= 0 ? 'none' : w <= 2 ? 'light' : w <= 5 ? 'steady' : 'full';
+  const sess = w === 1 ? C.sessions1 : fill(C.sessionsN, { n: w });
+  const loadLine = { light: C.loadLight, steady: C.loadSteady, full: C.loadFull }[band];
+
+  // Two of each, taken from what they actually carry. All of them is a wall of
+  // advice; two is a conversation, and the sheet holds the rest per activity.
+  const two = (key) => mine.map((a) => a[key]).filter(Boolean).slice(0, 2);
+  // Two sentences, not one list. The tracks are things you end up holding and
+  // the dispositions are ways you end up being, and running them together as
+  // one comma list read as a jumble of unlike things.
+  const uniq = (xs) => [...new Set(xs)].filter(Boolean);
+  const listOf = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+  const held = uniq(mine.flatMap((a) => Object.keys(a.gain || {}).map((k) => TRACK_WORD[k])));
+  const ways = uniq(mine.flatMap((a) => Object.keys(a.disp || {}).map((k) => DISP_WORD[k])));
+  const builds = [
+    held.length ? `${sentence(listOf(held))}.` : '',
+    ways.length ? `${sentence(listOf(ways))}.` : '',
+  ].filter(Boolean).join(' ');
+
+  const block = (head, items) => (items.length ? `
+    <div class="week-block">
+      <p class="caps">${esc(head)}</p>
+      ${items.map((t) => `<p class="small">${esc(t)}</p>`).join('')}
+    </div>` : '');
+
+  return `
+    <div class="week" id="week">
+      <p class="caps rail-q q-who">${icon('q_who')}${esc(data.copy.journey.q1)}</p>
+      <div class="week-head">
+        <h2 class="h-sm">${esc(C.head)}</h2>
+        <button class="btn ghost small" type="button" data-action="acts">${esc(mine.length ? C.change : C.pick)}</button>
+      </div>
+      ${mine.length ? `
+        <p class="chips actchips">${mine.map((a) => `<span class="chip act">${icon(a.ic)}${esc(a.label)}</span>`).join('')}</p>
+        <p class="lede week-load">${esc(fill(loadLine, { n: sess }))}</p>
+        ${builds ? `<div class="week-block"><p class="caps">${esc(C.buildHead)}</p>
+          <p class="small">${esc(builds)}</p></div>` : ''}
+        ${block(C.opensHead, two('opens'))}
+        ${block(C.workHead, two('work'))}
+        ${block(C.manageHead, two('manage'))}
+        <p class="micro mute">${esc(C.note)} ${esc(C.yearNote)}</p>
+      ` : `<p class="small mute">${esc(C.empty)}</p>`}
+    </div>`;
+}
+
+const sentence = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+const TRACK_WORD = { skills: 'things you can do', network: 'people who know you', portfolio: 'work you can show' };
+const DISP_WORD = {
+  curiosity: 'curiosity', persistence: 'persistence', flexibility: 'flexibility',
+  optimism: 'optimism', risk: 'willingness to try things',
+};
+
+/** The picker. Grouped, plainly worded, and nothing in it is ranked. */
+function openActs(data, trigger) {
+  const A = data.activities || {};
+  const all = A.activities || [];
+  const C = A.copy || {};
+  const paint = () => {
+    const st = getState();
+    const groups = [...new Set(all.map((a) => a.group))];
+    const body = groups.map((g) => `
+      <div class="pk-group">
+        <p class="caps">${esc(g)}</p>
+        ${all.filter((a) => a.group === g).map((a) => {
+          const on = (st.activities || []).includes(a.id);
+          return `
+            <button class="actrow${on ? ' on' : ''}" type="button" data-action="acttog"
+                    data-id="${esc(a.id)}" aria-pressed="${on}">
+              <span class="actrow-name">${icon(a.ic)}${esc(a.label)}</span>
+            </button>`;
+        }).join('')}
+      </div>`).join('');
+    const n = (st.activities || []).length;
+    return `
+      <h2 id="sheet-title">${esc(C.sheetHead)}</h2>
+      <p class="small mute">${esc(C.hint)}</p>
+      <div class="picker">${body}</div>
+      <p class="micro mute" style="margin-top:var(--s-3)">${esc(C.sheetNote)}</p>
+      <div class="btn-row" style="margin-top:var(--s-4)">
+        <button class="btn accent" type="button" data-action="actdone">${esc(C.done)}${n ? ` (${n})` : ''}</button>
+      </div>`;
+  };
+  const sheet = openSheet(paint(), trigger);
+  onSheetAction({
+    acttog: (btn) => { toggleActivity(btn.dataset.id); sheet.innerHTML = paint(); },
+    actdone: () => { closeSheet(); renderNow(host, DATA, CTX); },
+  });
+}
+
+/**
  * The exit ticket. The evidence on career tools is consistent that a screen on
  * its own is the weakest form of this intervention and that its job is to start
  * a conversation. This is the only thing here designed to leave the device.
@@ -398,6 +512,7 @@ function bindActions() {
     dest: (btn) => openDest(btn.dataset.id, btn),
     year: (btn) => setYear(btn.dataset.year),
     dismiss: (btn) => { markIntroSeen(); btn.closest('.firstrun').remove(); },
+    acts: (btn) => openActs(DATA, btn),
     avail: (btn) => {
       const av = DATA.subjects.availabilityNote;
       openSheet(`

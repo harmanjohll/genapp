@@ -87,6 +87,10 @@ const PATHS = {
   // Three equal bars, the same mark as the app's own favicon. Everyone takes
   // these, and nothing about them is ranked.
   g_common: '<rect x="1.9" y="6.4" width="3.7" height="3.2" rx="1.6" fill="currentColor" stroke="none"/><rect x="6.2" y="6.4" width="3.7" height="3.2" rx="1.6" fill="currentColor" stroke="none"/><rect x="10.5" y="6.4" width="3.7" height="3.2" rx="1.6" fill="currentColor" stroke="none"/>',
+  // An open book, for the glossary. The button used to read "Aa", which every
+  // reader tested on took for a text size control, because on a phone that is
+  // exactly what "Aa" means everywhere else.
+  glossary: '<path d="M8 4.4C6.6 3.3 4.7 3 2.3 3.2v8.4c2.4-.2 4.3.1 5.7 1.2 1.4-1.1 3.3-1.4 5.7-1.2V3.2C11.3 3 9.4 3.3 8 4.4z"/><path d="M8 4.4v8.4"/>',
 };
 
 /**

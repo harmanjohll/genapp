@@ -18,6 +18,7 @@ import {
   createRun, stagesFor, currentStage, visibleChoices, applyChoices, applyReflection,
   respondToChance, askMet, finish, diffRuns, wantAffinity,
   pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR,
+  loadOf, loadBand, grantYield,
 } from '../engine/journey.js';
 import { getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel, setMode } from '../state.js';
 
@@ -37,6 +38,9 @@ let rerender = () => {};
 let DATA = null;
 
 export function renderJourney(host, data, ctx, repaint) {
+  // Before anything replaces the DOM, note where the student is standing and
+  // what they are touching. See settle() at the foot of this file.
+  markPlace(host);
   rerender = repaint;
   DATA = data;
   PATHS = Object.fromEntries((data.journey.paths || []).map((p) => [p.id, p]));
@@ -99,6 +103,9 @@ export function renderJourney(host, data, ctx, repaint) {
 
 export function resetJourney() {
   run = null; picked = []; pickedAsks = []; justResolved = null; justLived = null; lastYear = null;
+  // Leaving the mode ends the screen you were on, so coming back is a new
+  // screen and starts at the top rather than restoring a scroll from Now.
+  lastScreen = null;
   document.body.dataset.journey = 'false';
 }
 
@@ -130,6 +137,10 @@ function startRun(data, want, short) {
   // at once for the comparison to mean anything.
   run = createRun(stages[0].age, `Story ${n}`, want, st.plan);
   run.short = !!short;
+  // Copied for the same reason the plan is: what a student carries this term
+  // is part of the story they played, and changing a CCA next month must not
+  // rewrite a run they already finished.
+  run.activities = [...(st.activities || [])];
   picked = []; justResolved = null; lastYear = null;
   setLiveRun(run);
 }
@@ -280,7 +291,7 @@ function introScreen(host, data, st) {
         ${st.runs.length ? `<button class="btn ghost small" type="button" data-action="clearruns" style="margin-top:var(--s-4)">Clear stories</button>` : ''}
       </div>
     </div>`;
-  focusH1(host);
+  settle(host, 'intro');
   bindGlossary(host);
   onAction(host, {
     pick: (btn) => openPicker(data, btn),
@@ -312,7 +323,7 @@ function shell(inner, rail) {
 function turnScreen(host, stage, data) {
   const jc = data.copy.journey;
   const pool = visibleChoices(stage, run, MV(data));
-  const { points: PTS, reasons } = pointsFor(run, stage);
+  const { points: PTS, reasons } = pointsFor(run, stage, data);
   const spent = picked.reduce((n, i) => n + (pool[i].cost || 1), 0);
   const left = PTS - spent;
   dealHand(run, MV(data), stage.age);
@@ -358,7 +369,7 @@ function turnScreen(host, stage, data) {
     </div>
     ${prev}`, rail(data, stage));
 
-  focusH1(host);
+  settle(host, `turn:${run.stepIndex}`);
   bindGlossary(host);
   onAction(host, {
     pick: (btn) => {
@@ -465,7 +476,10 @@ function yearSummary(data, stage, pool) {
 
 /** Why this year has the points it has, in the student's words. */
 function pointsWhy(jc, n, reasons) {
-  const map = { full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer };
+  const map = {
+    full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer,
+    week: jc.whyWeek, room: jc.whyRoom,
+  };
   const why = reasons.length ? reasons.map((r) => map[r.k]).filter(Boolean).join(' ') : jc.whyPlain;
   return fill(jc.pointsWhy, { n, why });
 }
@@ -515,6 +529,16 @@ function commit(data) {
   // student the entire story, because Start over was the only way back, and a
   // game about trying things cannot punish a slip of the thumb.
   lastYear = structuredCloneSafe(run);
+  // The week pays in before anything is spent. A CCA played twice a week for
+  // four years builds something in every one of those weeks whether or not a
+  // turn was spent on it, and a game that only counted the turns would tell
+  // the busiest students their week was worth nothing.
+  const paid = grantYield(run, data, stage.age);
+  const weekRows = paid ? [{
+    label: data.copy.journey.weekPaid,
+    outcome: fill(data.copy.journey.weekPaidNote, { what: carriedPhrase(data) }),
+    isMove: false,
+  }] : [];
   // Asks first, so a door one opens is already held when the year resolves.
   const askRows = [];
   pickedAsks.forEach((id) => {
@@ -525,7 +549,7 @@ function commit(data) {
   });
   if (picked.length) applyChoices(run, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
   else { run.asksThisYear = 0; run.stepIndex += 1; }
-  justLived = { age: stage.age, chosen: [...chosen, ...askRows], delta: delta(before) };
+  justLived = { age: stage.age, chosen: [...chosen, ...askRows, ...weekRows], delta: delta(before) };
   announce(`Age ${stage.age} lived.`);
   picked = []; pickedAsks = [];
   setLiveRun(run);
@@ -548,15 +572,22 @@ function forkScreen(host, stage, data) {
         </div>
       </div>
     </div>`;
-  focusH1(host);
+  settle(host, `fork:${run.stepIndex}`);
   bindGlossary(host);
   onAction(host, {
     fork: (btn) => {
       const i = Number(btn.dataset.i);
       const chosen = [pool[i]].filter(Boolean);
       const before = snapshot();
+      // A fork is still a year lived, so the week pays into it too.
+      const paid = grantYield(run, data, stage.age);
+      const weekRows = paid ? [{
+        label: data.copy.journey.weekPaid,
+        outcome: fill(data.copy.journey.weekPaidNote, { what: carriedPhrase(data) }),
+        isMove: false,
+      }] : [];
       applyChoices(run, stage, [i], data.chances.cards, subjectMeta(data), MV(data));
-      justLived = { age: stage.age, chosen, delta: delta(before) };
+      justLived = { age: stage.age, chosen: [...chosen, ...weekRows], delta: delta(before) };
       announce(`Chosen. Age ${stage.age}.`);
       setLiveRun(run);
       rerender();
@@ -603,7 +634,7 @@ function reflectScreen(host, stage, data) {
         </div>
       </div>
     </div>`;
-  focusH1(host);
+  settle(host, `reflect:${run.stepIndex}`);
   const block = () => host.querySelector('[data-ref="wantblock"]');
   onAction(host, {
     rpick: (btn) => { const inp = host.querySelector('[data-ref="rtext"]'); if (inp) inp.value = btn.dataset.t; },
@@ -662,7 +693,7 @@ function chanceAsk(host, card, data) {
         <ul class="small">${card.onwardMoves.map((m) => `<li>${decorate(m)}</li>`).join('')}</ul></details>` : ''}
     </div>`, rail(data));
 
-  focusH1(host);
+  settle(host, `chance:${card.id}`);
   bindGlossary(host);
   onAction(host, {
     respond: (btn) => {
@@ -828,7 +859,7 @@ function livedScreen(host, data) {
   host.innerHTML = shell(`
     <div class="chance-out lived">
       <p class="lived-age serif" aria-hidden="true">${age}</p>
-      <p class="caps">${esc(fill(jc.livedHead, { age }))}</p>
+      <h1 class="caps" tabindex="-1" style="margin:0">${esc(fill(jc.livedHead, { age }))}</h1>
       ${chosen.map((c) => `
         <div class="lived-row">
           <p class="lived-choice serif">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</p>
@@ -845,7 +876,7 @@ function livedScreen(host, data) {
       ${lastYear ? `<p class="micro mute">${esc(jc.undoNote)}</p>` : ''}
     </div>`, rail(data));
   announce([fill(jc.livedHead, { age }), ...chosen.map((c) => c.outcome).filter(Boolean)].join(' '));
-  focusH1(host);
+  settle(host, `lived:${run.stepIndex}`);
   bindGlossary(host);
   onAction(host, {
     go: () => { justLived = null; lastYear = null; rerender(); },
@@ -876,7 +907,7 @@ function chanceOutcome(host, data) {
       </div>
     </div>`, rail(data));
   announce([ch.response, ...d.map((x) => x.text)].filter(Boolean).join('. '));
-  focusH1(host);
+  settle(host, `outcome:${run.stepIndex}`);
   bindGlossary(host);
   onAction(host, { go: () => { justResolved = null; rerender(); } });
 }
@@ -954,7 +985,7 @@ function endingScreen(host, data, st) {
         </div>
       </div>
     </div>`;
-  focusH1(host);
+  settle(host, 'ending');
   bindGlossary(host);
   onAction(host, {
     again: () => { run = null; rerender(); },
@@ -1029,8 +1060,7 @@ function showDiff(host, data, pair) {
         </div>
       </div>
     </div>`;
-  window.scrollTo(0, 0);
-  focusH1(host);
+  settle(host, 'diff');
   onAction(host, { back: () => rerender() });
 }
 
@@ -1177,9 +1207,92 @@ function subjectsPhrase(data, r) {
   return `${use.slice(0, -1).join(', ')} and ${use[use.length - 1]}`;
 }
 
+/** The run's own activities, named, so the week reads as theirs and not a stat. */
+function carriedPhrase(data) {
+  const all = (data.activities && data.activities.activities) || [];
+  // Mid sentence, so the label's leading capital comes off. Every label in
+  // activities.json starts with an ordinary word, never a name.
+  const use = (run.activities || []).map((id) => all.find((a) => a.id === id))
+    .filter(Boolean).map((a) => a.label.charAt(0).toLowerCase() + a.label.slice(1)).slice(0, 2);
+  if (!use.length) return 'what you carry';
+  if (use.length === 1) return use[0];
+  return `${use[0]} and ${use[1]}`;
+}
+
 /** Situation text, with the student's own subjects folded in where authored. */
 function situation(data, stage) {
   return decorate(fill(stage.situation, { subjects: subjectsPhrase(data, run) }));
+}
+
+// --- keeping your place ---------------------------------------------------
+//
+// Every screen here paints by replacing the mode's whole innerHTML, and the
+// old code then moved focus to the heading. On a genuinely new screen that is
+// right, and required: a screen reader has to be told the page changed.
+//
+// On a repaint of the screen you are already standing on it is wrong twice
+// over. Staging a choice, staging an ask, or untapping either one rebuilds the
+// same turn, and focusing the heading scrolls it back into view. A student who
+// had scrolled down to reach the choices was thrown to the top of the page on
+// every single tap, and lost the control they had just pressed along with it.
+// The turn screen is the one place in the app where you tap several times
+// before anything advances, so it took the whole of the damage.
+//
+// So a paint now says which screen it is. A different screen goes to the top
+// and announces the heading, exactly as before. The same screen keeps the
+// scroll where the student put it and puts focus back on the control they
+// pressed, found again by what it does rather than by identity, since the
+// element itself no longer exists.
+
+let lastScreen = null;
+let keep = null;   // { y, sel }, captured before the DOM is replaced
+
+function attrEsc(v) {
+  return String(v).replace(/["\\]/g, '\\$&');
+}
+
+/** Called at the top of a paint, while the outgoing DOM is still standing. */
+function markPlace(host) {
+  const a = document.activeElement;
+  let sel = null;
+  if (a && host && host.contains(a) && a.dataset && a.dataset.action) {
+    const bits = [`[data-action="${attrEsc(a.dataset.action)}"]`];
+    // data-id and data-i are what tell two otherwise identical controls apart.
+    ['id', 'i'].forEach((k) => {
+      if (a.dataset[k] !== undefined) bits.push(`[data-${k}="${attrEsc(a.dataset[k])}"]`);
+    });
+    sel = bits.join('');
+  }
+  keep = { y: window.scrollY, sel };
+}
+
+function settle(host, key) {
+  const same = key !== null && key === lastScreen;
+  lastScreen = key;
+  if (!same) {
+    window.scrollTo(0, 0);
+    focusH1(host);
+    return;
+  }
+  const y = keep ? keep.y : window.scrollY;
+  let target = null;
+  if (keep && keep.sel) { try { target = host.querySelector(keep.sel); } catch { target = null; } }
+  window.scrollTo(0, y);
+  // The control can legitimately be gone: the Live button appears only once
+  // something is staged, and disappears again when the last thing is untapped.
+  // Focus falls back to the heading so a keyboard user is never left on body,
+  // but quietly, without dragging the page along with it.
+  if (!target) {
+    const h = host.querySelector('h1[tabindex="-1"]');
+    if (h) h.focus({ preventScroll: true });
+    return;
+  }
+  // The page is held where the student left it and the layout reflows around
+  // it, which is what a disclosure opening anywhere else on the web does.
+  // Holding the tapped control still instead was tried and is worse: the
+  // summary that appears when you stage something is feedback about the tap,
+  // and pinning the control pushes that feedback off the top of the screen.
+  target.focus({ preventScroll: true });
 }
 
 function focusH1(host) {

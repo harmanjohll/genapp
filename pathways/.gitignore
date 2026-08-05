@@ -1,0 +1,4 @@
+# Screenshots dropped here by browser probes run from this folder. The app
+# ships zero image assets on purpose (the only mark in it is an inline data
+# URI favicon), so a png landing in this directory is always debris.
+*.png

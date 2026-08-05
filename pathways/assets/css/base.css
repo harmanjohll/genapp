@@ -83,7 +83,14 @@ li { margin-bottom: var(--s-1); }
 }
 
 /* app shell */
-#app { min-height: 60vh; }
+/* Scroll anchoring off, on purpose.
+   Every mode repaints by replacing this element's whole subtree, and Chrome's
+   scroll anchoring then picks a fresh anchor and nudges the scroll to keep it
+   visually still. That is the right instinct for a document growing an image
+   above the fold and exactly wrong here: the mode has already restored the
+   scroll the student chose, and the browser moved it afterwards. Journey took
+   the damage, where a turn is several taps and every tap shifted the page. */
+#app { min-height: 60vh; overflow-anchor: none; }
 
 /* Not sticky, at any width.
    Pinned, it covered between 23 and 68 pixels of content at every scroll

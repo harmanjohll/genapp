@@ -52,6 +52,20 @@ const CAPS = {
   'lifelong.markers[].body': 28,
   'dispositions.dispositions[].body': 18,
   'stories.typicalPaths[].body': 34,
+  // The activities panel. `opens`, `work` and `manage` are the ECG content of
+  // this feature and two of each appear at once, so they are capped tight
+  // enough that four activities do not turn the panel into an essay.
+  'activities.activities[].label': 8,
+  'activities.activities[].opens': 32,
+  'activities.activities[].work': 20,
+  'activities.activities[].manage': 20,
+  'activities.copy.loadLight': 24,
+  'activities.copy.loadSteady': 24,
+  'activities.copy.loadFull': 34,
+  'activities.copy.empty': 24,
+  'activities.copy.note': 22,
+  'activities.copy.yearNote': 34,
+  'activities.copy.sheetNote': 24,
 };
 
 // First paint caps.

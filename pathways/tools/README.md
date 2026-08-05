@@ -12,7 +12,7 @@ path:
 
 ## mobile-sweep.mjs
 
-Walks all twenty one screens and sheets at a phone width and reports, per screen:
+Walks all twenty four screens and sheets at a phone width and reports, per screen:
 the page scrolling sideways, any element sticking past the viewport with no
 scroller to excuse it, text clipped by a fixed height, and standalone buttons
 under the tap minimum.
@@ -27,7 +27,12 @@ next release, the changelog sheet opens over the first screen, and every click
 after it is swallowed, so the sweep fails on the release instead of a layout.
 The version popup gets its own screen at the end, seeded older on purpose.
 
-Covers: NOW and its four sheets, the JOURNEY intro, turn, staged turn, chance
-card, fork, the reflect stage, the ending and compare, AIM's chooser, detail
-and road sheet, the teacher page with a class picture in it, the parent page,
-and the version popup.
+Covers: NOW and its sheets, the activities picker and NOW carrying a full week,
+the JOURNEY intro, turn, staged turn, chance card, fork, the reflect stage, the
+ending and compare, AIM's chooser, detail and road sheet, the teacher page with
+a class picture in it, the parent page, and the version popup.
+
+A screen the tool cannot find is skipped in silence, which reads as a pass. The
+glossary sheet went unswept for one release that way, because the button it
+looks for was relabelled and the regex still matched the old text. If a screen
+stops appearing in the output, that is the finding.
