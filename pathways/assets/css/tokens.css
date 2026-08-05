@@ -40,10 +40,41 @@
   --other:        #6E5AA0;
   --other-wash:   rgba(110, 90, 160, 0.10);
 
-  /* signal */
+  /* The compass.
+     The three ECG questions frame every screen in every mode, and they used to
+     borrow --accent. That was the one genuine muddle in this palette: the same
+     colour said "this is the question you are answering" and "this is the thing
+     you could do next", so neither meaning was reliable. The questions get
+     their own hue and --accent is now reserved for action, nothing else.
+
+     One hue, not three. Measured against every token already here, the only
+     wide gap left in the wheel is the olive band around 95 degrees, 56 from the
+     nearest neighbour. Three questions would mean three near identical greens
+     nobody could tell apart, which is decoration pretending to be information.
+     The three icons already distinguish the questions; the colour says only
+     that all three belong to one frame. 5.7:1 on paper. */
+  --compass:      #4F6B3A;
+  --compass-wash: rgba(79, 107, 58, 0.10);
+
+  /* Signal. One meaning: the thing you could act on next. Nothing decorative,
+     no headings, and since the compass moved off it, nothing structural.
+
+     Three steps, and which one to use is decided by contrast rather than by
+     taste. --accent is 4.0:1 on paper, which clears AA for large text and fails
+     it for small, so it is a fill and a display colour only: the count numeral,
+     the age on a turn, a button's background, a selected border. Any accent
+     coloured WORD at body size takes --accent-dk, which is 5.5:1 on paper and
+     5.5:1 the other way round under paper coloured text. --accent-dkr is the
+     hover for a filled button, so the fill can darken without the label ever
+     dropping below where it started. */
   --accent:      #C25E3A;
   --accent-dk:   #A44A2A;
+  --accent-dkr:  #8F4023;
   --accent-wash: rgba(194, 94, 58, 0.10);
+  /* Green text on the green wash is 4.2:1, which is the one place the reach
+     palette does not carry itself. Same hue, dark enough to read on its own
+     tint. Used for words only; the pips and rules keep --open. */
+  --open-ink:    #276A4C;
   --flag:        #7D5F2A;
   --flag-wash:   rgba(138, 106, 47, 0.12);
 

@@ -57,9 +57,21 @@ await seed({mode:'now',year:'sec3',plan:PLAN,seenVersion:VERSION});
 await page.reload({waitUntil:'networkidle'}); await page.waitForTimeout(700);
 await check('NOW landing');
 // sheets from Now
-const gl=await tab(/^Aa$/); if(gl){ await gl.click(); await page.waitForTimeout(500); await check('sheet: glossary'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
+const gl=await tab(/^Words$/); if(gl){ await gl.click(); await page.waitForTimeout(500); await check('sheet: glossary'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
 const row=await page.$('.srow-name, .srows button'); if(row){ await row.click(); await page.waitForTimeout(500); await check('sheet: subject detail'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
 const sh=await tab(/carry this to another device/i); if(sh){ await sh.click(); await page.waitForTimeout(500); await check('sheet: share + class code'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }
+// what else you carry: the panel filled, and the picker behind it
+const actBtn=await tab(/add what you do|change these/i);
+if(actBtn){ await actBtn.click(); await page.waitForTimeout(500); await check('sheet: what else you carry');
+  // the sheet repaints on every toggle, so a held handle goes stale
+  for(const want of [/^A sport CCA$/,/people at home$/,/outside school$/]){
+    for(const b of await page.$$('dialog[open] .actrow')){
+      if(want.test(((await b.innerText().catch(()=>''))||'').trim())){ await b.click(); await page.waitForTimeout(180); break; }
+    }
+  }
+  await check('sheet: activities picked');
+  const dn=await tab(/^Done/i); if(dn){ await dn.click(); await page.waitForTimeout(600); }
+  await check('NOW with a full week'); }
 // journey
 await (await tab(/^Journey$/)).click(); await page.waitForTimeout(600); await check('JOURNEY intro');
 const pick=await tab(/pick your subjects|change subjects/i); if(pick){ await pick.click(); await page.waitForTimeout(600); await check('sheet: subject picker'); await page.keyboard.press('Escape'); await page.waitForTimeout(300); }

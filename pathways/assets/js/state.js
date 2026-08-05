@@ -28,6 +28,7 @@ const initial = () => ({
   mode: 'now',
   year: 'sec2',
   plan: {},          // { subjectId: 'G1' | 'G2' | 'G3' }
+  activities: [],    // activity ids the student says they carry besides lessons
   aim: null,
   actions: [],
   runs: [],
@@ -52,7 +53,7 @@ function load() {
   if (!MODES[base.mode]) base.mode = 'now';
   if (!YEARS.some((v) => v.id === base.year)) base.year = 'sec2';
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
-  ['actions', 'runs', 'looked'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
+  ['actions', 'runs', 'looked', 'activities'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
     const params = new URLSearchParams(location.search);
     const m = params.get('mode');
@@ -187,6 +188,20 @@ export function clearRuns() {
   persist(); notify({ kind: 'runs' });
 }
 
+/**
+ * What a student carries besides their subjects.
+ *
+ * Held here rather than inside a run because it is a fact about this term, not
+ * about a story: it outlives every run, and both Mode NOW and the Journey
+ * engine read it. Ids only. Nothing about a CCA, a job or who is looked after
+ * at home leaves the device, same as everything else in this file.
+ */
+export function toggleActivity(id) {
+  const i = state.activities.indexOf(id);
+  if (i >= 0) state.activities.splice(i, 1); else state.activities.push(id);
+  persist(); notify({ kind: 'activities' });
+}
+
 export function setOffer(ids) {
   state.offer = ids && ids.length ? ids : null;
   persist(); notify({ kind: 'offer' });
@@ -259,6 +274,9 @@ export function reconcile(data) {
     state.offer = state.offer.filter((id) => levelsById[id]);
     if (!state.offer.length) state.offer = null;
   }
+
+  const actIds = new Set(((data.activities && data.activities.activities) || []).map((a) => a.id));
+  if (actIds.size) state.activities = state.activities.filter((id) => actIds.has(id));
 
   const moveIds = new Set(((data.moves && data.moves.moves) || []).map((m) => m.id));
   const pruneMoves = (r) => {

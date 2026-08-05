@@ -5,6 +5,7 @@ import { getState, subscribe, setMode, setYear, setLiveRun, reconcile, markVersi
 import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
+import { icon } from './components/icons.js';
 import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js';
 import { runInvariantSweep } from './engine/reach.js';
 import { projectionSweep } from './engine/project.js';
@@ -125,13 +126,18 @@ function renderHead() {
           ${YEARS.map((v) => `<option value="${v.id}"${v.id === y.id ? ' selected' : ''}>${esc(v.label)}</option>`).join('')}
         </select>
       </label>
-      <button type="button" class="glossbtn" data-action="glossary"
-              aria-label="What the letters mean">${esc(data.copy.chrome.glossaryBtn)}</button>
       <nav class="modebar" aria-label="Modes">
         ${Object.values(MODES).map((m) => `
           <button type="button" data-action="mode" data-mode="${m.id}"
                   aria-current="${!extraMode && st.mode === m.id}">${esc(m.label)}</button>`).join('')}
       </nav>
+      <!-- Last in the row, and after the modes rather than before them. It sat
+           beside the year selector reading "Aa", which is the universal phone
+           idiom for a text size control, so a reference list looked like a
+           formatting toggle in the one place a student would look for one. It
+           says what it is now, and it stands apart from the three modes. -->
+      <button type="button" class="glossbtn" data-action="glossary"
+              aria-label="${esc(data.copy.chrome.glossaryAria)}">${icon('glossary')}${esc(data.copy.chrome.glossaryBtn)}</button>
     </div>`;
 
   onAction(head, {

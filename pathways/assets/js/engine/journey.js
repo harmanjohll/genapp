@@ -49,29 +49,117 @@ export const POINTS_PER_TURN = 2;
  * uninvited, which is the chance deck. Courage is what asking costs, and that
  * is why asks are free: a student with no time still has the capacity to ask.
  *
- * In school years the load is real. Seven subjects or more is a fuller year
- * than four. A CCA you went all in on takes its share. After school the shape
- * changes: at seventeen to twenty four more of the day is yours to direct, and
- * from twenty seven work and the people who depend on you take it back.
+ * In school years the load is real, but only where the student had a say in
+ * it. Counting subjects at Sec 1 and Sec 2 was wrong: that timetable is set,
+ * every subject on it is compulsory, and a game that hands a thirteen year old
+ * fewer points for a list they did not choose is describing a constraint as if
+ * it were a decision. From Sec 3 the combination is genuinely chosen, so from
+ * age 15 the count means something and is counted.
+ *
+ * What is real at every school age is the rest of the week: a CCA, training,
+ * a job, the people at home. That comes from the student's own declared
+ * activities, and it is the honest reading of a fourteen year old's time.
+ *
+ * After school the shape changes: at seventeen to twenty four more of the day
+ * is yours to direct, and from twenty seven work and the people who depend on
+ * you take it back.
  *
  * The floor is 2 and the ceiling is 4, so no year is ever too thin to be a
- * real turn. Nothing here is a verdict on the plan: a fuller year is a fact
- * about this year, never a judgement about the combination, and the reason
- * line says so in those words.
+ * real turn. Nothing here is a verdict: a fuller week is a fact about the
+ * week, never a judgement about the student, and the reason line says so in
+ * those words. A fuller week also pays, every year, through activityYield
+ * below, so carrying more can never leave a run with less. See the
+ * monotonicity check in runJourneySweep.
  */
-export function pointsFor(run, stage) {
+export function pointsFor(run, stage, data) {
   const age = stage.age;
   const reasons = [];
   let pts = 2;
   if (age >= 17 && age <= 24) { pts += 1; reasons.push({ k: 'freer', d: 1 }); }
   if (age >= 27) { pts += 0; }
-  if (age <= 18) {
+  if (age >= 15 && age <= 18) {
     const n = Object.keys(run.plan || {}).length;
     if (n >= 7) { pts -= 1; reasons.push({ k: 'full', d: -1, n }); }
     else if (n > 0 && n <= 4) { pts += 1; reasons.push({ k: 'light', d: 1, n }); }
+  }
+  if (age <= 18) {
+    const w = loadOf(run.activities, data);
+    if (w >= 6) { pts -= 1; reasons.push({ k: 'week', d: -1, n: w }); }
+    else if (w > 0 && w <= 2) { pts += 1; reasons.push({ k: 'room', d: 1, n: w }); }
     if ((run.flags || []).includes('took_stage')) { pts -= 1; reasons.push({ k: 'cca', d: -1 }); }
   }
   return { points: Math.max(2, Math.min(4, pts)), reasons };
+}
+
+// --- what a student carries besides lessons -------------------------------
+//
+// Two functions, and the second exists because of the first. loadOf makes the
+// game honest about time. On its own that would punish the busiest students,
+// which is both unkind and false: a sport played twice a week for four years
+// builds something every one of those weeks, whether or not a turn was spent
+// on it. activityYield pays that in, every school year, automatically.
+//
+// The rates are set so the paying in always covers the taking away. The
+// heaviest week costs at most one point a year and yields two; a light week
+// gains a point and yields none. So the total a run can accumulate rises with
+// what is carried, never falls. That is asserted rather than asserted-in-prose:
+// see the activity monotonicity block in runJourneySweep.
+
+const ACT = (data) => (data && data.activities && data.activities.activities) || [];
+
+/** Sessions a week, summed over what the student says they carry. */
+export function loadOf(ids, data) {
+  if (!ids || !ids.length) return 0;
+  const all = ACT(data);
+  if (!all.length) return 0;
+  return ids.reduce((n, id) => {
+    const a = all.find((x) => x.id === id);
+    return n + (a ? (a.week || 0) : 0);
+  }, 0);
+}
+
+export function loadBand(w) {
+  if (w <= 0) return 'none';
+  if (w <= 2) return 'light';
+  if (w <= 5) return 'steady';
+  return 'full';
+}
+
+/**
+ * What the week pays into a school year, without a turn being spent on it.
+ *
+ * Scaled by load rather than by count, so three light things and one heavy one
+ * are treated as the week they actually are. Spread over the tracks and
+ * dispositions the student's own activities point at, so it reads as their
+ * week and not as a bonus.
+ */
+export function activityYield(ids, data, age) {
+  const empty = { gain: {}, disp: {}, n: 0 };
+  if (age > 18) return empty;             // school CCAs end; the run's own moves take over
+  const w = loadOf(ids, data);
+  const n = w >= 6 ? 2 : (w >= 3 ? 1 : 0);
+  if (!n) return empty;
+  const all = ACT(data);
+  const mine = (ids || []).map((id) => all.find((x) => x.id === id)).filter(Boolean);
+  const pool = (key) => {
+    const counts = {};
+    mine.forEach((a) => Object.entries(a[key] || {}).forEach(([k, v]) => { counts[k] = (counts[k] || 0) + v; }));
+    return Object.entries(counts).sort((x, y) => y[1] - x[1]).map(([k]) => k);
+  };
+  const take = (keys) => {
+    const out = {};
+    keys.slice(0, n).forEach((k) => { out[k] = 1; });
+    return out;
+  };
+  return { gain: take(pool('gain')), disp: take(pool('disp')), n };
+}
+
+/** Pays the week into a lived school year. Returns what it paid, or null. */
+export function grantYield(run, data, age) {
+  const y = activityYield(run.activities, data, age);
+  if (!y.n) return null;
+  grant(run, { gain: y.gain, disp: y.disp });
+  return y;
 }
 /** At most this many subject choices join a turn, so the list stays readable. */
 export const SUBJECT_CHOICE_CAP = 2;
@@ -104,6 +192,7 @@ export function createRun(startAge, label, want, plan) {
     label: label || 'Story',
     startAge,
     plan: { ...(plan || {}) },   // { subjectId: 'G1'|'G2'|'G3' }, the combination played
+    activities: [],              // what the student says they carry besides lessons
     want: want || null,          // { id, label, riasec?, kind? } or null for "not sure yet"
     aligned: 0,                  // choices lived that pointed the way the want points
     movesMade: [],               // { id, age }, player-initiated moves, each once
@@ -762,7 +851,61 @@ export function runJourneySweep(data) {
     });
   });
 
+  // 7. Doing more never leaves a student worse off.
+  //
+  // This is the invariant behind the whole activities layer, and it exists
+  // because the honest half of that layer is dangerous on its own. A week with
+  // four evenings in it genuinely has fewer free hours, and a game that only
+  // modelled the taking away would tell the busiest students, the ones training
+  // three nights or getting a younger brother fed, that their week is a
+  // handicap. It is not, and the code should not be able to say it is.
+  //
+  // So: for every subset of activities and every activity not in it, adding
+  // that activity must not reduce what the run can accumulate over the school
+  // years. Capacity is points plus what the week pays in by itself, summed
+  // across every school stage, because those are the only two ways a school
+  // year grows anything. Monotone, exactly like the reach engine's rule that
+  // raising a level can never move a destination further away.
+  //
+  // Every subset of thirteen activities is 8,192, which is cheap and exact, so
+  // it is checked exhaustively rather than sampled.
+  const acts = (data.activities && data.activities.activities) || [];
+  let actChecks = 0;
+  if (acts.length && acts.length <= 16) {
+    const schoolStages = stageList.filter((s) => s.age <= 18);
+    const capacity = (ids) => {
+      const r = { plan: {}, activities: ids, flags: [] };
+      return schoolStages.reduce((sum, s) => {
+        const { points } = pointsFor(r, s, data);
+        const y = activityYield(ids, data, s.age);
+        return sum + points + Object.keys(y.gain).length + Object.keys(y.disp).length;
+      }, 0);
+    };
+    const ids = acts.map((a) => a.id);
+    for (let mask = 0; mask < (1 << ids.length); mask += 1) {
+      const set = ids.filter((_, i) => mask & (1 << i));
+      const base = capacity(set);
+      for (let i = 0; i < ids.length; i += 1) {
+        if (mask & (1 << i)) continue;
+        actChecks += 1;
+        const more = capacity([...set, ids[i]]);
+        if (more < base) {
+          failures.push({
+            combo: set.join('+') || 'nothing',
+            why: `adding ${ids[i]} drops capacity from ${base} to ${more}`,
+          });
+          mask = 1 << ids.length;   // one counterexample is the whole finding
+          break;
+        }
+      }
+    }
+  }
+
   const ok = failures.length === 0;
+  console.log(
+    `%cActivity monotonicity: ${failures.length ? 'FAIL' : 'PASS'} (${actChecks} additions over ${acts.length} activities)`,
+    failures.length ? 'color:#B23A2A;font-weight:700' : 'color:#2F7D5B;font-weight:700'
+  );
   console.log(
     `%cJourney sweep: ${ok ? 'PASS' : 'FAIL'} (${stageList.length} stages x ${paths.length} paths, ${cards.length} cards, ${simCount} sims over ${combos.length} combinations)`,
     ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700'

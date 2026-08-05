@@ -10,8 +10,8 @@
   transition: background var(--dur-fast) var(--ease);
 }
 .btn:hover { background: var(--ink-soft); }
-.btn.accent { background: var(--accent); border-color: var(--accent); }
-.btn.accent:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
+.btn.accent { background: var(--accent-dk); border-color: var(--accent-dk); }
+.btn.accent:hover { background: var(--accent-dkr); border-color: var(--accent-dkr); }
 .btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
 .btn.ghost:hover { background: var(--paper-warm); }
 .btn.small { min-height: var(--tap); padding: var(--s-2) var(--s-4); font-size: var(--t-small); }
@@ -33,11 +33,13 @@
    as a place you could go, and on a phone it was the same width as Journey.
    Dashed border, no fill, and outside the nav landmark. */
 .glossbtn {
-  min-height: var(--tap); padding: var(--s-2) var(--s-3);
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: var(--tap); padding: var(--s-2) var(--s-4);
   border: 1px dashed var(--rule); border-radius: var(--r-pill);
   background: transparent; cursor: pointer;
   font: inherit; font-size: var(--t-small); font-weight: 600; color: var(--ink-mute);
 }
+.glossbtn svg { flex: none; }
 .glossbtn:hover { background: var(--paper-warm); color: var(--ink); }
 
 .yearsel select {
@@ -172,6 +174,17 @@
 .door[data-state="within-reach"] .door-hit { border-left-color: var(--within); }
 .door[data-state="longer-route"] .door-hit { border-left-color: var(--longer); }
 .door[data-state="other-route"] .door-hit  { border-left-color: var(--other); }
+
+/* The state, in the state's own colour, on the words that name it.
+   The four states were already the most carefully reasoned colour system in
+   the app and they were carried by a 4px rule and a pip, both of which require
+   a student to have learned the code first. Putting the hue on the status text
+   makes the system legible on sight, in the one list where the whole point is
+   watching four things change as you tap. All four clear 4.5:1 on paper. */
+.door[data-state="open"] .door-status         { color: var(--open); }
+.door[data-state="within-reach"] .door-status { color: var(--within); }
+.door[data-state="longer-route"] .door-status { color: var(--longer); }
+.door[data-state="other-route"] .door-status  { color: var(--other); }
 .door[data-state="open"] .door-status { color: var(--open); font-weight: 650; }
 
 .door.moved .door-hit { animation: flash 900ms var(--ease); }
@@ -308,7 +321,7 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
   font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
   padding: 3px var(--s-3); border-radius: var(--r-pill);
 }
-.reach-state[data-state="open"]         { background: var(--open-wash); color: var(--open); }
+.reach-state[data-state="open"]         { background: var(--open-wash); color: var(--open-ink); }
 .reach-state[data-state="within-reach"] { background: var(--within-wash); color: var(--within); }
 .reach-state[data-state="longer-route"] { background: var(--longer-wash); color: var(--longer); }
 .reach-state[data-state="other-route"]  { background: var(--other-wash); color: var(--other); }
@@ -626,11 +639,11 @@ body[data-journey="true"] .site-foot { display: none; }
 
 /* points */
 .pointsrow { display: flex; align-items: center; gap: var(--s-3); margin: var(--s-4) 0 var(--s-3); }
-.pts { color: var(--accent); font-size: 1.1rem; letter-spacing: 3px; }
+.pts { color: var(--accent-dk); font-size: 1.1rem; letter-spacing: 3px; }
 
 /* selectable choices */
 .choice.sel { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); align-items: start; }
-.choice.sel .c-cost { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; padding-top: 3px; }
+.choice.sel .c-cost { color: var(--accent-dk); font-size: 0.8rem; letter-spacing: 2px; padding-top: 3px; }
 .choice.sel .c-label { font-weight: 650; }
 .choice.sel .c-chips { grid-column: 2; display: flex; flex-wrap: wrap; gap: var(--s-1); }
 .gchip { font-size: var(--t-micro); background: var(--paper-warm); border-radius: var(--r-pill); padding: 1px var(--s-2); color: var(--ink-mute); }
@@ -644,7 +657,7 @@ body[data-journey="true"] .site-foot { display: none; }
 .choice.resp .c-note { display: block; font-size: var(--t-micro); color: var(--flag); margin-top: var(--s-1); }
 .chance-out { padding: var(--s-5) 0; }
 .delta { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
-.dchip { background: var(--open-wash); color: var(--open); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-small); font-weight: 650; }
+.dchip { background: var(--open-wash); color: var(--open-ink); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-small); font-weight: 650; }
 
 /* forks: one big decision, full bleed */
 .fork { margin-top: var(--s-6); }
@@ -662,7 +675,7 @@ body[data-journey="true"] .site-foot { display: none; }
 
 /* rail bits */
 .doorchips { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: 0; margin: var(--s-2) 0 0; list-style: none; }
-.doorchips span { background: var(--open-wash); color: var(--open); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-micro); font-weight: 650; }
+.doorchips span { background: var(--open-wash); color: var(--open-ink); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-micro); font-weight: 650; }
 .j-log { list-style: none; padding: 0; margin: var(--s-2) 0 0; }
 .j-log li { padding: 2px 0; border-bottom: 1px dashed var(--rule-soft); }
 .j-prev { margin-top: var(--s-5); background: var(--paper-warm); }
@@ -738,7 +751,8 @@ body[data-journey="true"] .audstrip { display: none; }
    headings, as a chip on each stage, as kickers over the blocks in NOW that
    answer them. One voice, so a student who meets them in an ECG lesson
    recognises them here, and the reverse. */
-.rail-q { color: var(--accent); letter-spacing: 0.06em; }
+.rail-q { color: var(--compass); letter-spacing: 0.06em; }
+.rail-q svg { vertical-align: -2px; margin-right: 6px; }
 .qchip {
   display: inline-block; margin-left: var(--s-3); padding: 2px 10px;
   border: 1px solid var(--rule); border-radius: 999px;
@@ -768,7 +782,7 @@ body[data-journey="true"] .audstrip { display: none; }
 /* On a choice, the label is the decision and the chips are the accounting.
    The chips read one size down and muted so the human sentence wins. */
 .choice .c-chips { font-size: var(--t-micro); color: var(--ink-mute); }
-.choice .near-chip { color: var(--accent); }
+.choice .near-chip { color: var(--accent-dk); }
 
 /* The question mark rides with its question everywhere it appears. */
 .rail-q svg, .qchip svg { vertical-align: -2px; margin-right: 5px; }
@@ -779,7 +793,7 @@ body[data-journey="true"] .audstrip { display: none; }
 .choice.mv .c-label svg { margin-right: 6px; vertical-align: -2px; color: var(--accent); }
 .mv-tag {
   display: inline-block; padding: 1px 8px; border-radius: 999px;
-  border: 1px dashed var(--accent); color: var(--accent); font-size: var(--t-micro);
+  border: 1px dashed var(--accent); color: var(--accent-dk); font-size: var(--t-micro);
 }
 .undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
 
@@ -937,3 +951,44 @@ body[data-journey="true"] .audstrip { display: none; }
   border: 1px dashed var(--rule); border-radius: var(--r-lg); background: var(--surface); }
 .hz-moves { margin: var(--s-3) 0 0; padding-left: 1.1em; }
 .hz-moves li { margin-bottom: var(--s-2); }
+
+/* ---------- what else a student carries ---------------------------------- */
+/* The panel sits under the subject list because it is the other half of the
+   same week, and it is tinted with the compass wash rather than given a border
+   of its own: it answers Who am I, which is the question the kicker names. */
+.week {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border-radius: var(--r-lg); background: var(--compass-wash);
+}
+.week-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-2);
+}
+.week-head h2 { margin: 0; }
+.actchips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0; }
+.chip.act {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22em 0.6em; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--rule);
+  font-size: var(--t-small); color: var(--ink-soft);
+}
+.chip.act svg { flex: none; }
+.week-load { margin: var(--s-3) 0; max-width: 46ch; }
+.week-block { margin-top: var(--s-4); }
+.week-block .caps { color: var(--compass); margin-bottom: var(--s-1); }
+.week-block p.small { margin: 0 0 var(--s-2); max-width: 52ch; }
+.week .micro { margin-top: var(--s-4); max-width: 52ch; }
+
+/* Rows in the picker. Wide, plain, and pressed rather than ticked: nothing in
+   this list is more correct than anything else in it, so nothing in it gets an
+   accent until it is chosen. */
+.actrow {
+  display: flex; align-items: center; width: 100%; min-height: var(--tap);
+  gap: var(--s-3); padding: var(--s-2) var(--s-3);
+  margin-bottom: var(--s-2); text-align: left; font: inherit; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-md);
+  color: var(--ink);
+}
+.actrow-name { display: inline-flex; align-items: center; gap: var(--s-2); }
+.actrow.on { border-color: var(--compass); background: var(--compass-wash); font-weight: 650; }
+@media (hover: hover) { .actrow:hover { background: var(--paper-warm); } }

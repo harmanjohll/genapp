@@ -13,7 +13,8 @@
       "journey": "Journey",
       "aim": "Aim"
     },
-    "glossaryBtn": "Aa",
+    "glossaryBtn": "Words",
+    "glossaryAria": "Words: what the letters and terms on this site mean",
     "firstRun": "Nothing here can be closed to you.",
     "openNow": "open now",
     "doorsHead": "Where this could lead",
@@ -183,6 +184,8 @@
     "whyCca": "The club you went all in on takes its share.",
     "whyFreer": "More of your time is yours to direct now.",
     "whyPlain": "A normal year.",
+    "whyWeek": "Your week outside lessons is a full one.",
+    "whyRoom": "There is room in your week outside lessons.",
     "whyNote": "This is about the hours in your year, not about whether your combination is right.",
     "handLeft": "{n} left this year.",
     "staleHead": "Your subjects changed",
@@ -207,7 +210,9 @@
     "tour2": "People you can ask are free. Two a year, and they open things later.",
     "tour3": "Pick everything you want, then tap Live this year once.",
     "tourGo": "Got it, start",
-    "tourSkip": "Skip"
+    "tourSkip": "Skip",
+    "weekPaid": "What you already carry",
+    "weekPaidNote": "You carried {what} through this year. That happens whether or not a turn is spent on it."
   },
   "footerDoors": {
     "head": "This tool has three doors",
@@ -254,7 +259,7 @@
     "takes": "Your child has set {n} subjects for {year}.",
     "opens": "With those levels, {n} of the {total} next steps are open to them right now.",
     "lever": "One change would move {n} of them: {move}.",
-    "privacy": "Subjects only. What they wrote, what they wanted and the stories they played stay theirs, and this page does not show them.",
+    "privacy": "Subjects only. What they wrote, what they wanted, the stories they played and what they said they carry outside lessons stay theirs, and this page does not show them.",
     "askHead": "One thing worth asking tonight",
     "askBody": "Ask them to show you this screen and talk you through it. Not to justify it. Just to show you."
   }

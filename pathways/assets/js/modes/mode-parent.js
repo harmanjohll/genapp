@@ -20,6 +20,14 @@ const fill = (t, v) => String(t || '').replace(/\{(\w+)\}/g, (_, k) => (v[k] == 
  * and the stories they played are their own thinking, and a tool that hands
  * those to an adult unasked has broken the promise that made the child honest
  * in the first place. The page says which line it is drawing, out loud.
+ *
+ * The activities list is on the private side of that line and the reason is
+ * worth stating rather than leaving to be inferred. A student can tick that
+ * they are looking after somebody at home, or helping in a family business.
+ * Those are exactly the entries a child might not want read over their
+ * shoulder by the adult they are looking after or working for, and a page that
+ * surfaced them would teach students not to tick them, which would cost the
+ * app the truest thing it knows about their week. Not shown, and said so.
  */
 function liveBlock(data, ctx) {
   const c = data.copy.parentLive || {};
