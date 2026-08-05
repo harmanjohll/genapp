@@ -1,0 +1,3241 @@
+{
+  "_meta": {
+    "source": "Written for this app, grounded in Krumboltz planned happenstance theory and the structure of the Singapore education and training system",
+    "url": "https://doi.org/10.1177/1069072708328861",
+    "accessed": "2026-08-01",
+    "units": "not applicable",
+    "notes": "Each card fires at a life stage, and whether the player can use it is checked against dispositions, never grades. A chance the player could not use is described as something that happened while they were not looking. Never a punishment, always replayable. No card removes an option permanently. Cards carrying a paths array only appear to players on those routes; untagged cards appear to anyone. The deck is sized so every age has at least eight eligible cards on every path, because with sixteen cards three of the ages had only three and a replay simply repeated the first run. Every setback keeps onwardMoves with its dollar amounts intact: the amounts are the reason a setback reads as survivable rather than frightening."
+  },
+  "cards": [
+    {
+      "id": "teacher_notices",
+      "minAge": 13,
+      "maxAge": 17,
+      "type": "encounter",
+      "title": "A teacher stops you after class",
+      "body": "She says your last piece was the best thing she read that week, and asks if you have thought about taking it further.",
+      "ifTaken": "You say yes. Twenty minutes later you leave with two things you had never heard of.",
+      "ifMissed": "You say something polite and go. She does not raise it again, because teachers assume you would have said.",
+      "gain": {
+        "network": 1,
+        "curiosity": 1
+      },
+      "responses": [
+        {
+          "label": "Ask her what she means",
+          "outcome": "You stay twenty minutes. You leave with two names and a competition you had never heard of.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "needsAsk": true,
+          "stretch": "You do not quite believe her, but you stay. Awkward, one name, and the thought that she might be right.",
+          "opens": "d_people"
+        },
+        {
+          "label": "Say thanks and think it over",
+          "outcome": "You look up the two things she named that evening. One of them keeps your attention.",
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Say something polite and go",
+          "outcome": "You keep your lunch break. The piece is still the best thing she read that week."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 1
+      },
+      "subjects": [
+        "science_g1",
+        "sci_pc",
+        "sci_pb",
+        "sci_cb",
+        "physics",
+        "chemistry",
+        "biology",
+        "amaths"
+      ]
+    },
+    {
+      "id": "level_up_offer",
+      "minAge": 13,
+      "maxAge": 17,
+      "type": "opportunity",
+      "title": "The school offers you a subject a level up",
+      "body": "Your results were strong enough. It will be harder and it will take more of your time.",
+      "ifTaken": "You take it. The first term is genuinely difficult and by the third you have caught up.",
+      "ifMissed": "You decline, which is reasonable. The offer usually comes round again.",
+      "gain": {
+        "skills": 1,
+        "doors": 1
+      },
+      "responses": [
+        {
+          "label": "Take the slot",
+          "outcome": "The first term is genuinely hard. By the third you have caught up and it shows.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "sets": "asked_up",
+          "needsAsk": true,
+          "stretch": "You take it scared. The first term is a wall, you scrape through, and harder stops frightening you quite so much."
+        },
+        {
+          "label": "Ask for one term to decide",
+          "outcome": "The school agrees to a trial term. You see the pace up close before anything is fixed.",
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Keep the load you have",
+          "outcome": "You keep your evenings and your average. The offer usually comes round again."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 1
+      }
+    },
+    {
+      "id": "failed_paper",
+      "minAge": 13,
+      "maxAge": 19,
+      "type": "setback",
+      "title": "You fail a paper badly",
+      "body": "Not a near miss. A bad result in a subject you thought you were fine in.",
+      "ifTaken": "You work out what went wrong instead of deciding you are bad at it. A term to recover, and you recover.",
+      "ifMissed": "You avoid the subject a while. It stays uncomfortable longer than it needed to.",
+      "onwardMoves": [
+        "Ask the teacher to go through the paper with you",
+        "Move it to a level you can work at, which is not a defeat"
+      ],
+      "gain": {
+        "persistence": 1
+      },
+      "responses": [
+        {
+          "label": "Ask the teacher to walk through it",
+          "outcome": "You go through it question by question. It was three habits, not a ceiling, and a term fixes them.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "needsAsk": true,
+          "stretch": "You knock on her door dreading it. The walkthrough stings, you stay to the end, and staying is the new part."
+        },
+        {
+          "label": "Compare papers with a friend who passed",
+          "outcome": "You sit with their paper beside yours. The difference is method, and method can be copied.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Leave it for a while",
+          "outcome": "You give it some air. The subject keeps, and the next paper is a fresh one."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 1
+      }
+    },
+    {
+      "id": "open_house",
+      "minAge": 14,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "An open house you were not going to attend",
+      "body": "A friend is going to a poly and ITE open house. You had already decided that route was not for you.",
+      "ifTaken": "You go. You find a course you did not know existed and ask questions for forty minutes.",
+      "ifMissed": "You stay home, still choosing between the four options you already knew.",
+      "gain": {
+        "doors": 2,
+        "curiosity": 1
+      },
+      "responses": [
+        {
+          "label": "Go along with your friend",
+          "outcome": "You find a course you did not know existed and ask questions for forty minutes.",
+          "disp": {
+            "curiosity": 1
+          },
+          "opens": "d_polyroad",
+          "sets": "looked_around",
+          "needsAsk": true,
+          "stretch": "You go half against your own decision. It is loud and unfamiliar, and two booths in you start asking questions."
+        },
+        {
+          "label": "Ask your friend to bring details back",
+          "outcome": "They come back with brochures and one story that sticks. The two of you talk routes for the first time.",
+          "gain": {
+            "network": 1
+          }
+        },
+        {
+          "label": "Keep your Saturday",
+          "outcome": "You keep the weekend, and the plan you already had. Both are still yours."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 1
+      }
+    },
+    {
+      "id": "eae_window",
+      "minAge": 16,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "Early Admissions opens",
+      "body": "You can apply on interest and aptitude, before results. It asks what you have done and why you want this.",
+      "ifTaken": "You apply. Whatever happens, you have said out loud what you want, which is the hard part.",
+      "ifMissed": "You decide there is no point because of your results. It was designed not to work that way.",
+      "gain": {
+        "doors": 2,
+        "portfolio": 1
+      },
+      "responses": [
+        {
+          "label": "Apply and say what you want",
+          "outcome": "You write down what you have done and why you want it. Saying it plainly turns out to be the hard part.",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "opens": "d_eae",
+          "sets": "eae_applied",
+          "needsAsk": true,
+          "stretch": "You apply not expecting much. The form takes three evenings, you send it anyway, and wanting it stops being a secret."
+        },
+        {
+          "label": "Ask your ECG counsellor how it works",
+          "outcome": "They walk you through what the panel actually reads. The window is longer than you thought it was.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Sit this round out",
+          "outcome": "You let the window close quietly. The main round is still the main round."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      }
+    },
+    {
+      "id": "results_short",
+      "minAge": 16,
+      "maxAge": 18,
+      "type": "setback",
+      "title": "Your results come out and you are short",
+      "body": "Not by much. By enough. The course you had in mind is not open this round.",
+      "ifTaken": "You take a route you had not considered, because you looked at where it leads instead of how it sounds.",
+      "ifMissed": "You take the nearest thing to the original plan without looking around. It works out, more slowly.",
+      "onwardMoves": [
+        "A fifth year, to take subjects at a harder level",
+        "A foundation year inside the polytechnic",
+        "The ITE route, which reaches the same diploma another way"
+      ],
+      "gain": {
+        "flexibility": 1
+      },
+      "responses": [
+        {
+          "label": "Look at where each route leads",
+          "outcome": "You trace three routes to the end instead of the start. One you had never considered reads best.",
+          "disp": {
+            "flexibility": 1
+          },
+          "opens": "d_iteroad",
+          "needsAsk": true,
+          "stretch": "You read routes you told yourself were not yours. It costs some pride, and the map gets wider while you look."
+        },
+        {
+          "label": "Ask the school about the fifth year",
+          "outcome": "The teacher explains how the extra year works. In ten years, nobody can tell who took it.",
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Take the nearest thing and go",
+          "outcome": "You pick the closest course to the plan. It works out, at its own pace."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 1
+      }
+    },
+    {
+      "id": "friend_moves",
+      "minAge": 15,
+      "maxAge": 19,
+      "type": "encounter",
+      "title": "Your closest friend takes a different route",
+      "body": "You had half assumed you would do the same thing. Now you are choosing on your own.",
+      "ifTaken": "You choose for yourself, and stay friends. Both of those take a bit of doing at sixteen.",
+      "ifMissed": "You follow them partway, then double back. You lose a little time and learn something permanent.",
+      "gain": {
+        "flexibility": 1,
+        "doors": 1
+      },
+      "responses": [
+        {
+          "label": "Choose your own route anyway",
+          "outcome": "You pick for yourself and stay friends. Both take a bit of doing at sixteen.",
+          "disp": {
+            "flexibility": 1
+          },
+          "needsAsk": true,
+          "stretch": "You choose alone for the first time and it feels like a cliff. It holds, and choosing gets easier after this."
+        },
+        {
+          "label": "Ask them why they chose it",
+          "outcome": "Their reasons are theirs, not yours. Hearing them out loud makes your own easier to see.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Follow along for now",
+          "outcome": "You go where they go for now. Plenty of people start that way and steer later."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 1
+      }
+    },
+    {
+      "id": "parent_expects",
+      "minAge": 13,
+      "maxAge": 19,
+      "type": "setback",
+      "title": "Your family has a route in mind",
+      "body": "They want the one they have heard of. They are not wrong about wanting good things for you.",
+      "ifTaken": "You show them what the other route actually leads to. It takes three conversations, not one.",
+      "ifMissed": "You go along with it for now. A lot of people do, and a lot of people revisit it at 25.",
+      "onwardMoves": [
+        "Bring them to an open house rather than arguing at home",
+        "Ask your ECG counsellor to explain the route to them"
+      ],
+      "gain": {
+        "optimism": 1,
+        "network": 1
+      },
+      "responses": [
+        {
+          "label": "Show them where the route leads",
+          "outcome": "You bring the destination, not the argument. It takes three conversations, not one, and the third one lands.",
+          "disp": {
+            "optimism": 1
+          },
+          "needsAsk": true,
+          "stretch": "You argue for it before you fully believe it. The first talk goes badly, the second better, and belief catches up."
+        },
+        {
+          "label": "Bring them to an open house",
+          "outcome": "They meet a lecturer and two parents like them. It does more than any argument at home would.",
+          "gain": {
+            "network": 1
+          }
+        },
+        {
+          "label": "Go with their route for now",
+          "outcome": "You take their route for now. Plenty of people do, and revisit it later with more say."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      }
+    },
+    {
+      "id": "teacher_leaves",
+      "minAge": 13,
+      "maxAge": 21,
+      "type": "setback",
+      "title": "The teacher who backed you leaves",
+      "body": "Mid year, no warning. They were the one who thought you were capable of more than you did.",
+      "ifTaken": "You keep going, and you find another. There is usually another, and they are usually willing.",
+      "ifMissed": "You drift in that subject for a term. It comes back, later, with someone else.",
+      "onwardMoves": [
+        "Ask them for a contact before they go",
+        "Find the next person who takes you seriously and stay in touch"
+      ],
+      "gain": {
+        "persistence": 1
+      },
+      "responses": [
+        {
+          "label": "Keep going and find another backer",
+          "outcome": "You keep the standard they held you to. By June somebody new is holding it with you.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "needsAsk": true,
+          "stretch": "You keep working with nobody watching. A flat term, then a new teacher asks who taught you to work like that."
+        },
+        {
+          "label": "Ask them for a contact first",
+          "outcome": "They write down a name and an email before they go. People who back you tend to know each other.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Let the term settle first",
+          "outcome": "You coast in that subject for a while. It comes back later, with someone new in the room."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      }
+    },
+    {
+      "id": "money_tight",
+      "minAge": 13,
+      "maxAge": 30,
+      "type": "setback",
+      "title": "Money gets tight at home",
+      "body": "Something changes and you start thinking about what things cost in a way your friends do not.",
+      "ifTaken": "You find out what support exists rather than assuming there is none. There is quite a lot of it.",
+      "ifMissed": "You carry it alone for a while. It is heavier that way and it does not have to be.",
+      "onwardMoves": [
+        "Ask the school about the financial assistance schemes, quietly",
+        "Work study routes pay you while you qualify",
+        "Bursaries exist at every ITE, poly and university here"
+      ],
+      "gain": {
+        "persistence": 1,
+        "flexibility": 1
+      },
+      "responses": [
+        {
+          "label": "Ask the school what support exists",
+          "outcome": "You ask quietly and there is quite a lot. Fees, transport, meals. Nobody makes it a thing.",
+          "disp": {
+            "persistence": 1
+          },
+          "needsAsk": true,
+          "stretch": "Asking feels like the hardest homework of the year. You ask anyway, and the answer is bigger than the embarrassment."
+        },
+        {
+          "label": "Look up the work study routes",
+          "outcome": "You find routes that pay you while you qualify. Knowing they exist changes how the sums feel.",
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Keep it to yourself for now",
+          "outcome": "You carry it quietly for a term. The schemes stay where they are, ready when you want them."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      }
+    },
+    {
+      "id": "competition",
+      "minAge": 13,
+      "maxAge": 24,
+      "type": "opportunity",
+      "title": "A competition you could enter",
+      "body": "Weeks of preparation for one day, and a real chance you place nowhere at all.",
+      "ifTaken": "You enter. You do not win. You are visibly better afterwards and somebody noticed you.",
+      "ifMissed": "You skip it. It runs again next year, with different people in it.",
+      "gain": {
+        "portfolio": 2,
+        "network": 1
+      },
+      "responses": [
+        {
+          "label": "Enter and prepare properly",
+          "outcome": "You place nowhere. You are visibly better afterwards, and one judge keeps your name.",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "sets": "took_stage",
+          "needsAsk": true,
+          "stretch": "You enter with less footing than the rest. The day is rough, you finish, and standing there gets easier to imagine.",
+          "opens": "d_portfolio"
+        },
+        {
+          "label": "Enter with a team instead",
+          "outcome": "The team carries the parts you are still learning, and you carry your share. You learn the format from the inside.",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Give it a miss this year",
+          "outcome": "You keep your weeks. It runs again next year, with different people in it."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama",
+        "dt",
+        "computing",
+        "ess"
+      ]
+    },
+    {
+      "id": "small_side_thing",
+      "minAge": 13,
+      "maxAge": 45,
+      "type": "opportunity",
+      "title": "A small thing on the side",
+      "body": "Something you make, fix, sell or run that nobody is grading. It takes your weekends.",
+      "ifTaken": "You keep at it. Years later it is the thing people ask about first.",
+      "ifMissed": "You let it go when things get busy, which is what usually happens.",
+      "gain": {
+        "portfolio": 2,
+        "skills": 1
+      },
+      "responses": [
+        {
+          "label": "Keep at it every weekend",
+          "outcome": "It eats your weekends and slowly becomes yours. Years later it is the thing people ask about first.",
+          "gain": {
+            "portfolio": 1,
+            "skills": 1
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "opens": "d_portfolio",
+          "sets": "built_side",
+          "needsAsk": true,
+          "stretch": "It wobbles without much behind it. You keep poking at why, and the poking becomes a habit you keep."
+        },
+        {
+          "label": "Rope in a friend to share it",
+          "outcome": "Half the load, half the say. It survives the busy months because two people are carrying it.",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          }
+        },
+        {
+          "label": "Let it stay a someday thing",
+          "outcome": "You park it for a busier season. Ideas like this keep better than people say they do."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 1
+      },
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt",
+        "art"
+      ]
+    },
+    {
+      "id": "wrong_course",
+      "minAge": 18,
+      "maxAge": 24,
+      "type": "setback",
+      "title": "Three months in, it is the wrong course",
+      "body": "Not too hard. Just not what you thought, and not what you want three years of.",
+      "ifTaken": "You talk to someone and switch. It costs you time and it does not cost you the decade.",
+      "ifMissed": "You finish it. A diploma is still a diploma, and you move sideways after, as many people do.",
+      "onwardMoves": [
+        "Transfer inside the institution, which is more possible than it looks",
+        "Finish, then switch field at the next step, which is very common",
+        "Use it as the base for something next door"
+      ],
+      "gain": {
+        "flexibility": 1,
+        "persistence": 1
+      },
+      "responses": [
+        {
+          "label": "Talk to someone and switch",
+          "outcome": "You switch inside the institution. It costs you a semester and it does not cost you the decade.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "needsAsk": true,
+          "stretch": "You raise it with no plan B in hand. The talk is uncomfortable, the switch is messy, and it fits better already."
+        },
+        {
+          "label": "Finish it and move sideways after",
+          "outcome": "A diploma is still a diploma. You move sideways at the next step, as many people do.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Give it one more term",
+          "outcome": "You wait one more term before deciding. Some courses open up in Year 2, and now you will know."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 2
+      }
+    },
+    {
+      "id": "internship_offer",
+      "minAge": 18,
+      "maxAge": 24,
+      "type": "opportunity",
+      "title": "An internship nobody else applied for",
+      "body": "Not glamorous, at a company you have never heard of. Your lecturer mentions it once.",
+      "ifTaken": "The company is small enough that you do real work, and your supervisor remembers your name for ten years.",
+      "ifMissed": "You wait for a better one. Better ones are more competitive.",
+      "gain": {
+        "network": 2,
+        "skills": 1,
+        "portfolio": 1
+      },
+      "responses": [
+        {
+          "label": "Take the internship",
+          "outcome": "The place is small enough that you do real work. Your supervisor remembers your name for ten years.",
+          "gain": {
+            "network": 1,
+            "skills": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "needsAsk": true,
+          "stretch": "You take it unsure it counts. The work is over your head for weeks, and you stop waiting for ready.",
+          "opens": "d_workstudy"
+        },
+        {
+          "label": "Ask the lecturer about the company",
+          "outcome": "The lecturer knows the owner from years back. You get the story, and a warm introduction if you want one.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Wait for a bigger name",
+          "outcome": "You hold out for one you have heard of. Those have their own season, and you plan around it."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "subjects": [
+        "computing",
+        "ebs",
+        "poa",
+        "economics",
+        "ess"
+      ]
+    },
+    {
+      "id": "someone_asks",
+      "minAge": 19,
+      "maxAge": 32,
+      "type": "encounter",
+      "title": "Someone asks if you can do something you never have",
+      "body": "At work, in front of people. You could say yes and work it out, or say no and stay safe.",
+      "ifTaken": "You say yes. The first attempt is rough. You are now the person who does that thing.",
+      "ifMissed": "You say no, honestly, and someone else becomes the person who does that thing.",
+      "gain": {
+        "skills": 2,
+        "network": 1
+      },
+      "responses": [
+        {
+          "label": "Say yes and work it out",
+          "outcome": "The first attempt is rough. You are now the person who does that thing.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "risk": 1
+          },
+          "needsAsk": true,
+          "stretch": "You say yes with nothing behind it but nerve. The first attempt is rough twice over, and yes gets easier.",
+          "opens": "d_people"
+        },
+        {
+          "label": "Say yes if someone checks your work",
+          "outcome": "Someone senior agrees to check your work. The checking teaches you faster than getting it right alone would.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          }
+        },
+        {
+          "label": "Pass it on honestly",
+          "outcome": "You say no honestly, and your no keeps its value. Someone else takes it this time."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt"
+      ]
+    },
+    {
+      "id": "upgrade_window",
+      "minAge": 20,
+      "maxAge": 32,
+      "type": "opportunity",
+      "title": "Your employer will pay for you to upgrade",
+      "body": "Part time, alongside the job. It will cost you your evenings for two years.",
+      "ifTaken": "You do it. Two hard years, and a qualification you did not have at nineteen.",
+      "ifMissed": "You do not. It tends to come round again, and the SkillsFuture routes are there anyway.",
+      "gain": {
+        "skills": 2,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Take the two years of evenings",
+          "outcome": "Two hard years alongside the job. You finish with a qualification you did not have at nineteen.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "opens": "d_workstudy",
+          "needsAsk": true,
+          "stretch": "Evenings go first, then some weekends. You nearly stop twice, hand in anyway, and finishing becomes something you know about yourself."
+        },
+        {
+          "label": "Ask to start with one module",
+          "outcome": "You start with one module and see how it sits beside the job. Slower, and it survives contact with your life.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Keep your evenings this year",
+          "outcome": "You keep your evenings. The offer tends to come round, and the SkillsFuture routes stay open anyway."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      }
+    },
+    {
+      "id": "mentor_appears",
+      "minAge": 18,
+      "maxAge": 40,
+      "type": "encounter",
+      "title": "Someone senior takes an interest",
+      "body": "No reason you can see. They start telling you things nobody writes down.",
+      "ifTaken": "You ask them questions worth their time, and keep asking. It shapes the next ten years.",
+      "ifMissed": "You are polite and never follow up. They move on, because most people never follow up.",
+      "gain": {
+        "network": 3,
+        "skills": 1
+      },
+      "responses": [
+        {
+          "label": "Ask questions worth their time",
+          "outcome": "You keep asking and they keep answering. What they tell you shapes the next ten years.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "opens": "d_people",
+          "needsAsk": true,
+          "stretch": "It is hard to see why they bother with you. You follow up anyway, twice, and find that people sometimes just do."
+        },
+        {
+          "label": "Write down what they tell you",
+          "outcome": "You keep a notebook of the rules nobody writes down. Half of it saves you years, later.",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Stay polite and keep your distance",
+          "outcome": "You stay friendly and a little distant. They keep telling you things, just fewer of them."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      }
+    },
+    {
+      "id": "burnout",
+      "minAge": 24,
+      "maxAge": 48,
+      "type": "setback",
+      "title": "You hit a wall",
+      "body": "Not dramatic. You are just tired in a way that sleeping does not fix, and the work has stopped meaning anything.",
+      "ifTaken": "You stop and change something real, rather than pushing through it for another eighteen months.",
+      "ifMissed": "You push through. It costs you two years and you get there anyway, wearier.",
+      "onwardMoves": [
+        "Change the work before you change the field",
+        "Talk to someone. Employers here are required to have something in place",
+        "Flexible work requests are a legal right now, not a favour"
+      ],
+      "gain": {
+        "flexibility": 1,
+        "persistence": 1
+      },
+      "responses": [
+        {
+          "label": "Change something real about the work",
+          "outcome": "You move the parts of the work that were grinding you. By spring the work means something again.",
+          "disp": {
+            "flexibility": 1
+          },
+          "needsAsk": true,
+          "stretch": "You change things without knowing what will help. Some changes miss. The ones that land teach you what you actually needed."
+        },
+        {
+          "label": "Talk to someone about it",
+          "outcome": "Saying it out loud makes it smaller. Your employer has something in place for exactly this, and you use it.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Push on a bit longer",
+          "outcome": "You keep going as you are for now. The ways to change it keep too."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 2
+      }
+    },
+    {
+      "id": "old_colleague",
+      "minAge": 24,
+      "maxAge": 50,
+      "type": "encounter",
+      "title": "Someone you worked with years ago calls",
+      "body": "They are building something and thought of you, because of how you were to work with.",
+      "ifTaken": "You take the call, then the meeting. It changes the next five years.",
+      "ifMissed": "You are busy. They call someone else who is also good.",
+      "gain": {
+        "network": 2,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Take the call and the meeting",
+          "outcome": "An hour of coffee becomes a plan. It changes the shape of your next five years.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "needsAsk": true,
+          "stretch": "You go along unsure what they see in you. Two meetings in, you stop asking why and start asking what next."
+        },
+        {
+          "label": "Hear them out over lunch",
+          "outcome": "You take the lunch and ask everything. Whatever you decide later, you now know what is being built.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Thank them and stay put",
+          "outcome": "You are settled where you are, and you say so warmly. They keep your number anyway."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 2
+      }
+    },
+    {
+      "id": "teach_someone",
+      "minAge": 24,
+      "maxAge": 55,
+      "type": "encounter",
+      "title": "A younger person asks how you got here",
+      "body": "They are where you were. They think their result decided everything.",
+      "ifTaken": "You tell them the real version, including what went badly. They believe it because it is not a speech.",
+      "ifMissed": "You give the tidy version. Less use to them than the real one would have been.",
+      "gain": {
+        "network": 1,
+        "portfolio": 1
+      },
+      "responses": [
+        {
+          "label": "Tell them the real version",
+          "outcome": "You include what went badly. They believe it because it is not a speech.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "sets": "helped_someone",
+          "needsAsk": true,
+          "stretch": "You tell it before it feels finished. Saying the hard parts out loud is work, and the work steadies you."
+        },
+        {
+          "label": "Show them what you actually made",
+          "outcome": "You show the work, early bad pieces included. A route looks walkable once someone sees the start of it.",
+          "gain": {
+            "portfolio": 1
+          }
+        },
+        {
+          "label": "Give the short tidy version",
+          "outcome": "You keep it brief and kind. It helps a little, and the long version keeps for another day."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      }
+    },
+    {
+      "id": "credit_arrives",
+      "minAge": 25,
+      "maxAge": 40,
+      "type": "opportunity",
+      "title": "Your SkillsFuture Credit is sitting there",
+      "body": "Yours from 25, not your employer's, and not tied to what you studied. Most people never spend it.",
+      "ifTaken": "You spend it on something nobody asked you to learn. Three years later it is half your job.",
+      "ifMissed": "It sits there. It keeps sitting there, and it tops up, so this comes round again.",
+      "gain": {
+        "skills": 2,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Spend it on something nobody asked for",
+          "outcome": "You learn a thing with no obvious use. Three years later it is half your job.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "needsAsk": true,
+          "stretch": "You book a course with no case for it beyond wanting it. The first weekend you are the slowest there, and you go back."
+        },
+        {
+          "label": "Spend it near the work you do",
+          "outcome": "A course next door to your job. Useful by Monday, and the people in the room are useful too.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          }
+        },
+        {
+          "label": "Leave it sitting for now",
+          "outcome": "It sits there and it tops up. This one genuinely comes round again."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 2
+      }
+    },
+    {
+      "id": "retrenched",
+      "minAge": 26,
+      "maxAge": 50,
+      "type": "setback",
+      "title": "Your role disappears",
+      "body": "Not because of you. The work moved, or the company did, or the technology did.",
+      "ifTaken": "You treat it as a switch rather than an ending, and use the support that exists for exactly this.",
+      "ifMissed": "You look for the same job elsewhere a while before widening. You get there, later.",
+      "onwardMoves": [
+        "SkillsFuture Career Transition Programme, built for exactly this",
+        "From age 40, a $4,000 credit and a monthly training allowance while you retrain full time",
+        "A subsidised full time diploma, at up to 90 percent off, at any age"
+      ],
+      "gain": {
+        "flexibility": 1,
+        "optimism": 1
+      },
+      "responses": [
+        {
+          "label": "Treat it as a switch",
+          "outcome": "You use the support built for exactly this, and aim at where the work is going, not where it was.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "needsAsk": true,
+          "stretch": "You fill in the programme forms on a bad week. Halfway through the course, the ending starts reading like a start."
+        },
+        {
+          "label": "Call three people who know your work",
+          "outcome": "Two call back the same week. What you hear about the market is better than what you feared.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Look for the same job first",
+          "outcome": "You start with what you know. Widening the search is still there if this runs long."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      }
+    },
+    {
+      "id": "field_changes",
+      "minAge": 28,
+      "maxAge": 52,
+      "type": "setback",
+      "title": "Your whole field changes under you",
+      "body": "The tools you built a career on are being replaced. Some of your work now takes seconds.",
+      "ifTaken": "You learn the new tools while it is still a choice, and end up worth more than before.",
+      "ifMissed": "You learn them later, under more pressure. You still learn them.",
+      "onwardMoves": [
+        "Short courses on SkillsFuture Credit, on your own terms",
+        "A full reskilling with a training allowance from age 40",
+        "Move to the part of the field the change did not touch"
+      ],
+      "gain": {
+        "curiosity": 1,
+        "flexibility": 1
+      },
+      "responses": [
+        {
+          "label": "Learn the new tools now",
+          "needsAsk": true,
+          "outcome": "You book a short course before anyone makes you. Within a year the new tools are doing your boring work for you.",
+          "stretch": "Rough going. You poke at the new tools nightly, half lost, and catch yourself wanting to know how they actually work.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Move to the untouched part",
+          "outcome": "You shift to the corner the change did not reach. Quieter work, same trade, and time to watch where things go.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Let it settle first",
+          "outcome": "You keep doing what you do well and watch a while. The new tools will still be learnable when you choose to."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 3
+      }
+    },
+    {
+      "id": "caring_duty",
+      "minAge": 30,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "Someone at home needs you",
+      "body": "A parent, a child, a partner. The job has to move around it for a while, and there is no version where it does not.",
+      "ifTaken": "You restructure the work rather than leaving it. It is slower for two years and it holds.",
+      "ifMissed": "You step out for a while. Coming back is harder than it should be, and people do it constantly.",
+      "onwardMoves": [
+        "Flexible work requests are a legal right here since 2024",
+        "Part time study carries a $300 monthly allowance now",
+        "Career comebacks are common and there are programmes for them"
+      ],
+      "gain": {
+        "flexibility": 2
+      },
+      "responses": [
+        {
+          "label": "Reshape the job around home",
+          "needsAsk": true,
+          "outcome": "You put in the flexible work request and rebuild your week. Slower for a while, and both things hold.",
+          "stretch": "You improvise the week as you go, tired and juggling. Piece by piece you learn to bend the job without dropping it.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Tell your manager the truth",
+          "outcome": "You lay it out plainly. The roster moves, a colleague covers Tuesdays, and you stop carrying it alone.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Carry it quietly for now",
+          "outcome": "You manage it privately and keep the job unchanged. It holds for now, and the options stay where they are."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 3
+      }
+    },
+    {
+      "id": "second_career",
+      "minAge": 38,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "You could start again, properly",
+      "body": "There is a thing you have wanted for years. From forty the state pays most of it and gives you an allowance.",
+      "ifTaken": "You enrol. You are oldest in some of the rooms and it is not the problem you expected.",
+      "ifMissed": "You carry on as you are, which is a real choice. The programme does not expire.",
+      "gain": {
+        "skills": 2,
+        "doors": 3,
+        "portfolio": 1
+      },
+      "responses": [
+        {
+          "label": "Enrol and start again",
+          "needsAsk": true,
+          "outcome": "You sign up. Oldest in half the rooms, paid throughout, and the thing you wanted is now the thing you do.",
+          "stretch": "You start before you feel ready and it shows. Every week in the deep end makes the next leap look smaller.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_sflu"
+        },
+        {
+          "label": "Try it small first",
+          "outcome": "You take one short course in the field before committing. Three months later you know, either way, and knowing was the point.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Stay with what you have",
+          "outcome": "You carry on as you are, which is a real choice. The programme sits there, not expiring, in case."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 3
+      }
+    },
+    {
+      "id": "levelup_40",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "The mid career credit lands",
+      "body": "Four thousand dollars at forty, plus half your income monthly while you study full time. Over thirty six thousand people have used it.",
+      "ifTaken": "You take a year out and come back qualified in something else entirely. Paid, throughout.",
+      "ifMissed": "You mean to look into it. It is still there next year, and the year after.",
+      "gain": {
+        "doors": 3,
+        "skills": 2
+      },
+      "responses": [
+        {
+          "label": "Take the year and use it",
+          "needsAsk": true,
+          "outcome": "A year out, half your income paid monthly, and you come back qualified in something else. Thirty six thousand people before you.",
+          "stretch": "You start half convinced it will not work for someone like you. It keeps working anyway, and you start expecting it to.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Spend it part time instead",
+          "outcome": "Evenings and weekends, job kept, credit spent. Slower than the full year, and nothing at home has to move.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Leave it for now",
+          "outcome": "You mean to look into it. It is still there next year, and the year after, unspent and yours."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 3
+      }
+    },
+    {
+      "id": "health_wake",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "Your body sends a bill",
+      "body": "Nothing catastrophic. Enough that you cannot do the work the way you did it at 25.",
+      "ifTaken": "You redesign the work around it, early, while it is still a choice and not an emergency.",
+      "ifMissed": "You push on unchanged for a couple of years, then redesign it anyway, from further back.",
+      "onwardMoves": [
+        "Move to the supervising or training side of the same trade",
+        "A subsidised diploma can move you sideways at any age",
+        "Ask about workplace adjustments before you consider leaving"
+      ],
+      "gain": {
+        "flexibility": 2
+      },
+      "responses": [
+        {
+          "label": "Redesign the work around it",
+          "needsAsk": true,
+          "outcome": "You move to the parts you can do for twenty more years. Early, on your terms, while it is still a choice.",
+          "stretch": "You change things awkwardly, in stages, missing how it used to feel. Each adjustment comes easier than the one before it.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Ask about adjustments at work",
+          "outcome": "You ask before deciding anything bigger. The desk moves, the shifts change, and the job fits again for now.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Push on as you are",
+          "outcome": "You keep going the old way a while longer. Your body keeps sending reminders, politely, and the options keep waiting."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 3
+      }
+    },
+    {
+      "id": "industry_returns",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "Something you knew twenty years ago comes back",
+      "body": "A skill everyone abandoned turns out to matter again, and almost nobody left can still do it.",
+      "ifTaken": "You are one of the few. Rarity is worth more at fifty than speed was at 25.",
+      "ifMissed": "You assume it is not relevant any more. Someone else makes the case and gets the work.",
+      "gain": {
+        "skills": 2,
+        "doors": 2,
+        "network": 1
+      },
+      "responses": [
+        {
+          "label": "Dust the old skill off",
+          "needsAsk": true,
+          "outcome": "Two months of practice brings it back. Suddenly you are one of a handful in the country who can still do this.",
+          "stretch": "Rustier than you thought. You drill it nightly from old notes, and keeping at it becomes the thing you are known for.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Tell people you still can",
+          "outcome": "You mention it to two old contacts. Within a month somebody calls with work almost nobody else still handles.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Let it stay in the past",
+          "outcome": "You leave it where it was. The work goes to someone else, and what you know now keeps paying anyway."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 3
+      }
+    },
+    {
+      "id": "asked_to_mentor",
+      "minAge": 45,
+      "maxAge": 55,
+      "type": "encounter",
+      "title": "You are asked to mentor formally",
+      "body": "Not a favour for one person. A programme, with a cohort, and your name on it.",
+      "ifTaken": "You say yes. It turns out to be the part of the job you will miss most.",
+      "ifMissed": "You say you are too busy. You are, and you will wonder about it.",
+      "gain": {
+        "network": 3,
+        "portfolio": 1
+      },
+      "responses": [
+        {
+          "label": "Say yes to the programme",
+          "needsAsk": true,
+          "outcome": "You take the cohort. Their questions sharpen what you know, and one of them keeps in touch for years.",
+          "stretch": "You doubt you have much worth passing on. The first sessions wobble, and their faces slowly talk you out of the doubt.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "sets": "helped_someone"
+        },
+        {
+          "label": "Take one mentee instead",
+          "outcome": "You keep it small and do it properly. One person, one year, and it costs less than you feared.",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Pass this round",
+          "outcome": "You say the timing is wrong, which it is. The programme runs yearly, and the asking does not stop."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 3
+      }
+    },
+    {
+      "id": "still_hiring",
+      "minAge": 48,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "They want you, at fifty three",
+      "body": "Re employment ages keep rising and experienced people keep getting scarcer. Somebody makes you an offer.",
+      "ifTaken": "You take it on your own terms, which you can set at this age and could not at 25.",
+      "ifMissed": "You stay where you are, comfortable and known. That is a genuine choice and not a lesser one.",
+      "gain": {
+        "doors": 2,
+        "network": 2
+      },
+      "responses": [
+        {
+          "label": "Take it on your terms",
+          "needsAsk": true,
+          "outcome": "You name the days, the scope and the pay. They agree faster than you expected, because they came to you.",
+          "stretch": "You take it with your stomach in knots, new badge at fifty three. The knots loosen, and saying yes gets easier.",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1
+          }
+        },
+        {
+          "label": "Ask them for the details first",
+          "outcome": "You take the offer seriously enough to probe it. Two conversations later you know exactly what you would be walking into.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Stay where you are known",
+          "outcome": "You thank them and stay. Comfortable and known is a genuine choice, and the phone has started ringing at this age."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 3
+      }
+    },
+    {
+      "id": "reunion",
+      "minAge": 45,
+      "maxAge": 55,
+      "type": "encounter",
+      "title": "You run into someone from Sec 4",
+      "body": "They were the one everyone expected to do well. You compare the last thirty years over coffee.",
+      "ifTaken": "Neither of your lives went the way the class would have predicted. You both find that funny now.",
+      "ifMissed": "You keep it short and polite. You think about it on the way home anyway.",
+      "gain": {
+        "network": 1,
+        "optimism": 1
+      },
+      "responses": [
+        {
+          "label": "Ask for the whole story",
+          "needsAsk": true,
+          "outcome": "Coffee runs two hours. Neither life went the way the class predicted, and you both find that funny now.",
+          "stretch": "Small talk feels safer, but you ask anyway. The awkward first questions turn into the most interesting hour of your month.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1,
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Keep it short and warm",
+          "outcome": "A few minutes, a real smile, and off you go. You think about their story on the ride home anyway."
+        }
+      ],
+      "asks": {
+        "disposition": "curiosity",
+        "min": 3
+      }
+    },
+    {
+      "id": "jc_pressure",
+      "paths": [
+        "academic"
+      ],
+      "minAge": 18,
+      "maxAge": 21,
+      "type": "setback",
+      "title": "The pace is faster than you can hold",
+      "body": "Two years compressed into what feels like eight months, and everyone around you looks like they are coping.",
+      "ifTaken": "You ask for help early, which almost nobody does, and it turns the year around.",
+      "ifMissed": "You keep up appearances for a term. It is a lonely way to spend it.",
+      "onwardMoves": [
+        "Ask a tutor for help in week three, not week thirteen",
+        "A polytechnic transfer is still available and is not a demotion"
+      ],
+      "gain": {
+        "persistence": 2
+      },
+      "responses": [
+        {
+          "label": "Ask for help in week three",
+          "needsAsk": true,
+          "outcome": "You go to the tutor early, which almost nobody does. The term turns around before it has a chance to bury you.",
+          "stretch": "Admitting you are behind costs you a week of pride. You keep showing up to consultations anyway, and it slowly compounds.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Form a study group",
+          "outcome": "Four of you, one whiteboard, twice a week. Explaining it to someone else turns out to be how you learn it.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Hold on quietly this term",
+          "outcome": "You keep up appearances a while longer. The pace stays hard, and the doors to asking stay open all year."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      }
+    },
+    {
+      "id": "jc_scholar",
+      "paths": [
+        "academic"
+      ],
+      "minAge": 19,
+      "maxAge": 24,
+      "type": "opportunity",
+      "title": "A scholarship application lands in your inbox",
+      "body": "It bonds you for several years afterwards. It also pays for everything and opens a specific door.",
+      "ifTaken": "You apply and think hard about the bond first, which is the part people skip.",
+      "ifMissed": "You leave it. There are more of these than anyone tells you, and they run every year.",
+      "gain": {
+        "doors": 2,
+        "network": 1
+      },
+      "responses": [
+        {
+          "label": "Apply, eyes open on the bond",
+          "needsAsk": true,
+          "outcome": "You write the essays and read the bond twice. Whatever they decide, you now know how to ask for big things.",
+          "stretch": "The interview rattles you and the essays take four drafts. Putting yourself forward stops feeling like something other people do.",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_people"
+        },
+        {
+          "label": "Ask a scholar what it costs",
+          "outcome": "You find someone two years into the bond and ask. Their answer changes which ones you would ever sign.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Let this one go",
+          "outcome": "You skip it. There are more of these than anyone tells you, and they run again every single year."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "subjects": [
+        "amaths",
+        "physics",
+        "chemistry",
+        "biology"
+      ]
+    },
+    {
+      "id": "jc_useless",
+      "paths": [
+        "academic"
+      ],
+      "minAge": 21,
+      "maxAge": 27,
+      "type": "setback",
+      "title": "Nobody wants your degree specifically",
+      "body": "You are qualified, articulate, and competing with two hundred people who are also qualified and articulate.",
+      "ifTaken": "You stop applying for titles and start applying for problems you can actually solve.",
+      "ifMissed": "You send out another eighty applications. Number ninety two works, six months later.",
+      "onwardMoves": [
+        "Add a practical certification alongside the degree",
+        "Smaller firms give more responsibility and screen less on the name"
+      ],
+      "gain": {
+        "flexibility": 2
+      },
+      "responses": [
+        {
+          "label": "Apply to problems, not titles",
+          "needsAsk": true,
+          "outcome": "You rewrite everything around what you can actually fix. The interviews change tone within a fortnight.",
+          "stretch": "You bin the template letter without knowing what replaces it. Each odd application teaches you another way you could be useful.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Add a practical certification",
+          "outcome": "Three months, one certificate, and your applications stop looking like two hundred others. A smaller firm bites first.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          }
+        },
+        {
+          "label": "Keep sending the applications",
+          "outcome": "You keep the same letter going out. Number ninety two works, six months later, which is how it goes for many."
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 2
+      }
+    },
+    {
+      "id": "poly_client",
+      "paths": [
+        "applied"
+      ],
+      "minAge": 19,
+      "maxAge": 24,
+      "type": "opportunity",
+      "title": "A real client, while you are still studying",
+      "body": "Someone wants to pay you for the thing you are being taught. It is too soon and they asked anyway.",
+      "ifTaken": "You take it, underprice it, deliver it, and learn more in six weeks than in the last two semesters.",
+      "ifMissed": "You say you are not ready. You will not feel ready at 25 either.",
+      "gain": {
+        "portfolio": 2,
+        "network": 2
+      },
+      "responses": [
+        {
+          "label": "Take the job and quote low",
+          "needsAsk": true,
+          "outcome": "You underprice it, deliver it, and learn more in six weeks than in two semesters. They tell a friend about you.",
+          "stretch": "You say yes before you know how. Three panicked weekends, one honest apology, and something real with your name on it.",
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "risk": 1
+          },
+          "sets": "built_side",
+          "opens": "d_portfolio"
+        },
+        {
+          "label": "Bring in a classmate to share it",
+          "outcome": "You split the work and the fee. Halved money, halved panic, and you both have a client before graduation.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Tell them not this time",
+          "outcome": "You say the timing is wrong and mean it. They keep your number, because people who answer honestly are rare."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "subjects": [
+        "dt",
+        "art",
+        "computing",
+        "nfs"
+      ]
+    },
+    {
+      "id": "poly_ceiling",
+      "paths": [
+        "applied"
+      ],
+      "minAge": 24,
+      "maxAge": 34,
+      "type": "setback",
+      "title": "Someone tells you the diploma is your ceiling",
+      "body": "Said casually, by someone senior, as though it were simply a fact about you.",
+      "ifTaken": "You go and find the part time degree route, and the exemptions, and the people who did it.",
+      "ifMissed": "It sits with you for a couple of years before you test whether it was ever true.",
+      "onwardMoves": [
+        "Diplomas carry exemptions, so a degree often starts in Year 2",
+        "SIT and SUSS are built around applied diploma holders",
+        "Work study degrees pay you while you do it"
+      ],
+      "gain": {
+        "optimism": 2,
+        "doors": 1
+      },
+      "responses": [
+        {
+          "label": "Go find the degree route",
+          "needsAsk": true,
+          "outcome": "You find the exemptions, the part time route, and three people who did it. The ceiling turns out to be a shelf.",
+          "stretch": "You go looking half believing the remark. Every person you find who did it chips another piece off the believing.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "opens": "d_polyroad"
+        },
+        {
+          "label": "Ask the senior what they meant",
+          "outcome": "You ask, calmly, in front of nobody. They backpedal a little, and you learn how loosely such things get said.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "risk": 1
+          }
+        },
+        {
+          "label": "Let the remark sit",
+          "outcome": "You file it away for now. It surfaces sometimes, and the routes it was wrong about keep running regardless."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 3
+      }
+    },
+    {
+      "id": "poly_industry",
+      "paths": [
+        "applied"
+      ],
+      "minAge": 21,
+      "maxAge": 30,
+      "type": "encounter",
+      "title": "Your old internship supervisor calls",
+      "body": "Two years on, they remember you, and they are hiring for something better than you would have applied for.",
+      "ifTaken": "You get the job on the strength of six months you did at nineteen.",
+      "ifMissed": "You get it anyway. That is what an internship actually buys you.",
+      "gain": {
+        "network": 2,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Say yes to the bigger job",
+          "needsAsk": true,
+          "outcome": "You take a role you would never have applied for. Six months you did at nineteen turn out to be the reference.",
+          "stretch": "You feel underqualified the whole first month. Saying yes anyway, out loud, to someone senior, gets easier every time after this.",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_people"
+        },
+        {
+          "label": "Ask what the role really needs",
+          "outcome": "You get the honest version before deciding. It is bigger than advertised and closer to reach than you assumed.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Thank them and stay put",
+          "outcome": "You stay where you are, warmly. The call itself told you what an internship actually buys, and yours is still buying.",
+          "gain": {
+            "network": 1
+          }
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      }
+    },
+    {
+      "id": "ite_written_off",
+      "paths": [
+        "hands"
+      ],
+      "minAge": 18,
+      "maxAge": 27,
+      "type": "setback",
+      "title": "Someone assumes things about you",
+      "body": "A relative, a stranger at a wedding, a form. They hear ITE and they finish the sentence themselves.",
+      "ifTaken": "You let the work answer it. Within a few years it does, loudly and without you saying anything.",
+      "ifMissed": "It gets under your skin for a while. Then you meet people who never make that assumption at all.",
+      "onwardMoves": [
+        "The GPA 3.5 guarantee into poly is a fact you can point at",
+        "Trades pay well and cannot be offshored, which is also a fact"
+      ],
+      "gain": {
+        "optimism": 2,
+        "persistence": 1
+      },
+      "responses": [
+        {
+          "label": "Let the work answer for you",
+          "needsAsk": true,
+          "outcome": "You skip the argument and keep building. Within a few years the work answers, loudly, without you saying anything.",
+          "stretch": "The comment stings longer than you admit. You keep turning up anyway, and slowly your own opinion starts outweighing theirs.",
+          "gain": {
+            "skills": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Point at the 3.5 guarantee",
+          "outcome": "You mention the guaranteed poly place and the pay in the trade, mildly. The sentence they finished gets shorter each year.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "risk": 1
+          }
+        },
+        {
+          "label": "Leave it at the wedding",
+          "outcome": "You change the subject and finish your dinner. Later you meet people who never make that assumption at all."
+        }
+      ],
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      }
+    },
+    {
+      "id": "ite_boss_offer",
+      "paths": [
+        "hands"
+      ],
+      "minAge": 21,
+      "maxAge": 32,
+      "type": "opportunity",
+      "title": "Your boss offers to sponsor your diploma",
+      "body": "They pay, you study at night, you stay two years afterwards. That last part is the real question.",
+      "ifTaken": "Two years of evenings, funded. You come out with a diploma and no debt.",
+      "ifMissed": "You keep the freedom to move. The subsidised routes are still there when you want them.",
+      "gain": {
+        "skills": 2,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Take the two years of evenings",
+          "needsAsk": true,
+          "outcome": "Funded nights, a diploma, no debt, and a boss who now plans around keeping you. The two years pass anyway.",
+          "stretch": "Work all day, class all night, and your weekends thin out. Finishing things when they stop being fun becomes your quiet skill.",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "opens": "d_workstudy"
+        },
+        {
+          "label": "Ask about the two year stay",
+          "outcome": "You ask what happens if life changes mid bond. The answer is fairer than you feared, and now it is written down.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Keep your freedom to move",
+          "outcome": "You stay unbonded. The subsidised routes remain there whenever you want them, and your boss respects a straight answer."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 3
+      }
+    },
+    {
+      "id": "ite_own_shop",
+      "paths": [
+        "hands"
+      ],
+      "minAge": 27,
+      "maxAge": 43,
+      "type": "opportunity",
+      "title": "The chance to buy in",
+      "body": "The owner is winding down and wants someone to take it on. You know the work better than he does now.",
+      "ifTaken": "You take it on. Fifteen years of knowing exactly how it runs turns out to be the whole qualification.",
+      "ifMissed": "Someone else buys it. You are still the person who knows how it runs, and that travels.",
+      "gain": {
+        "portfolio": 3,
+        "doors": 2
+      },
+      "responses": [
+        {
+          "label": "Buy in and run it",
+          "needsAsk": true,
+          "outcome": "Your name goes on the licence. Fifteen years of knowing exactly how it runs turns out to be the whole qualification.",
+          "stretch": "The loan keeps you up at night for the first year. Every decision that lands makes the next one less frightening.",
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_trade"
+        },
+        {
+          "label": "Offer to buy in slowly",
+          "outcome": "You propose stages, a share a year while he steps back. He likes it, because he was not ready either.",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Let someone else buy it",
+          "outcome": "Someone else takes it on. You are still the person who knows how it runs, and that travels with you."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 3
+      }
+    },
+    {
+      "id": "arts_rejection",
+      "paths": [
+        "arts"
+      ],
+      "minAge": 19,
+      "maxAge": 30,
+      "type": "setback",
+      "title": "A rejection that actually stings",
+      "body": "Not a form email. Someone whose opinion you respect looked at the work and passed.",
+      "ifTaken": "You ask them why, and they tell you, and it is the most useful hour of the year.",
+      "ifMissed": "You do not make anything for a month. Then you do, and it is better.",
+      "onwardMoves": [
+        "Ask for the specific reason. Most will tell you if you ask well",
+        "Keep a body of work going that nobody commissioned"
+      ],
+      "gain": {
+        "persistence": 2
+      },
+      "responses": [
+        {
+          "label": "Ask them exactly why",
+          "needsAsk": true,
+          "outcome": "You ask well, and they tell you properly. It is the most useful hour of your year, and it costs one email.",
+          "stretch": "Rereading their reply hurts twice. You make work to their notes for a month, and the making outlasts the sting.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "persistence": 1
+          },
+          "sets": "asked_up"
+        },
+        {
+          "label": "Keep the uncommissioned work going",
+          "outcome": "You keep a body of work moving that nobody asked for. It is where the next real piece comes from.",
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "curiosity": 1
+          }
+        },
+        {
+          "label": "Put it down for now",
+          "outcome": "You make nothing for a month. Then you do, and it is better."
+        }
+      ],
+      "asks": {
+        "disposition": "persistence",
+        "min": 3
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama"
+      ]
+    },
+    {
+      "id": "arts_commission",
+      "paths": [
+        "arts"
+      ],
+      "minAge": 21,
+      "maxAge": 38,
+      "type": "opportunity",
+      "title": "A commission bigger than anything you have done",
+      "body": "The budget is real and so is the risk of visibly failing at it in public.",
+      "ifTaken": "You take it and you deliver, barely. It becomes the piece everything after is measured against.",
+      "ifMissed": "You pass. It goes to someone a year ahead of you, who was also not ready.",
+      "gain": {
+        "portfolio": 3,
+        "network": 2
+      },
+      "responses": [
+        {
+          "label": "Take it and deliver",
+          "needsAsk": true,
+          "outcome": "You deliver, barely, in public. It becomes the piece everything after is measured against, and the budget clears your rent.",
+          "stretch": "You are in over your head for three months and everyone can see it. Working scared, in public, changes what scares you.",
+          "gain": {
+            "portfolio": 2
+          },
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_portfolio",
+          "sets": "took_stage"
+        },
+        {
+          "label": "Take it with a collaborator",
+          "outcome": "You bring in someone whose skills cover your gaps. The piece is better than either of you would have made alone.",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Pass it on this time",
+          "outcome": "It goes to someone a year ahead of you, who was also not ready. You keep making at your own pace."
+        }
+      ],
+      "asks": {
+        "disposition": "risk",
+        "min": 3
+      },
+      "subjects": [
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama"
+      ]
+    },
+    {
+      "id": "arts_steady",
+      "paths": [
+        "arts"
+      ],
+      "minAge": 24,
+      "maxAge": 40,
+      "type": "opportunity",
+      "title": "A salaried job, doing it in house",
+      "body": "Regular money, a team, and someone else worrying about where the next project comes from.",
+      "ifTaken": "You take it and keep your own practice going at nights. Both get better, oddly.",
+      "ifMissed": "You stay freelance. Feast and famine, and entirely yours.",
+      "gain": {
+        "skills": 2,
+        "network": 2,
+        "doors": 1
+      },
+      "responses": [
+        {
+          "label": "Take it, keep the practice",
+          "needsAsk": true,
+          "outcome": "Salary by day, your own work at night. Both get better, oddly, and the rent stops deciding what you make.",
+          "stretch": "The first months you resent the meetings and miss the freedom. Slowly you learn to be two kinds of artist at once.",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          }
+        },
+        {
+          "label": "Negotiate a four day week",
+          "outcome": "You ask for four days and get it. One weekday stays yours, and the practice keeps its heartbeat.",
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 1
+          }
+        },
+        {
+          "label": "Stay freelance",
+          "outcome": "Feast and famine, and entirely yours. You keep the whole say over what you make and when.",
+          "gain": {
+            "portfolio": 1
+          }
+        }
+      ],
+      "asks": {
+        "disposition": "flexibility",
+        "min": 2
+      }
+    },
+    {
+      "id": "cb_reference_up",
+      "minAge": 18,
+      "maxAge": 20,
+      "type": "encounter",
+      "requiresFlag": "asked_up",
+      "title": "A reference from the teacher you asked",
+      "body": "You are applying onward. The teacher you asked to move up at fifteen hears, finds you, and offers to write the reference herself.",
+      "asks": {
+        "disposition": "risk",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Ask her to aim it higher",
+          "needsAsk": true,
+          "outcome": "She writes it for the harder one without blinking. Asking, it turns out, is still the trick that works.",
+          "stretch": "Your voice wobbles asking for more. She says yes before you finish. You notice asking gets easier each time.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "opens": "d_people"
+        },
+        {
+          "label": "Take the reference with thanks",
+          "outcome": "It arrives in three days, specific and warm. A stranger reading it would want to meet you.",
+          "gain": {
+            "network": 1
+          },
+          "opens": "d_people"
+        },
+        {
+          "label": "Tell her you have it covered",
+          "outcome": "You manage on your own, which you can. She says the offer stands if you ever want it."
+        }
+      ]
+    },
+    {
+      "id": "cb_elective_name",
+      "minAge": 18,
+      "maxAge": 20,
+      "type": "opportunity",
+      "requiresFlag": "looked_around",
+      "paths": [
+        "applied",
+        "hands"
+      ],
+      "title": "A name you know on the elective list",
+      "body": "The elective list goes up. One name you know: the lecturer who answered your questions for forty minutes when you went looking at sixteen.",
+      "asks": {
+        "disposition": "curiosity",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Take the elective and sit front",
+          "needsAsk": true,
+          "outcome": "He places you by the second week: the one who asked. The module becomes the best hour of your timetable.",
+          "stretch": "It clashes with easier options and you take it anyway. Heavier week, better questions. You start looking things up unasked.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          }
+        },
+        {
+          "label": "Pick the lighter option this term",
+          "outcome": "A sensible term. The elective runs every year, and the name stays on the list where you can find it."
+        }
+      ],
+      "subjects": [
+        "dt",
+        "electronics",
+        "nfs",
+        "ess",
+        "art",
+        "higher_art",
+        "music",
+        "higher_music",
+        "drama",
+        "computing"
+      ]
+    },
+    {
+      "id": "cb_panel_again",
+      "minAge": 19,
+      "maxAge": 22,
+      "type": "encounter",
+      "requiresFlag": "eae_applied",
+      "paths": [
+        "academic",
+        "applied"
+      ],
+      "title": "You have answered this question before",
+      "body": "A scholarship panel, three faces, one question: why this. You said it out loud once at sixteen, to a stranger, for Early Admissions.",
+      "asks": {
+        "disposition": "optimism",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Say it plainly, like last time",
+          "needsAsk": true,
+          "outcome": "The words come easier the second time. One panellist writes while you talk, which is what you want them doing.",
+          "stretch": "It comes out shaky and true. They lean in anyway. Saying it twice makes it easier to believe.",
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          }
+        },
+        {
+          "label": "Answer with what you have done",
+          "outcome": "You walk them through what you have done. It stands on its own, and the panel can see it does.",
+          "gain": {
+            "portfolio": 1
+          }
+        },
+        {
+          "label": "Keep your answer small",
+          "outcome": "You keep it modest and the interview stays pleasant. The bigger version keeps, for a day you feel like telling it."
+        }
+      ],
+      "subjects": [
+        "hum_ss_geog",
+        "hum_ss_hist",
+        "hum_ss_lit",
+        "geography",
+        "history",
+        "literature"
+      ]
+    },
+    {
+      "id": "cb_front_again",
+      "minAge": 20,
+      "maxAge": 24,
+      "type": "opportunity",
+      "requiresFlag": "took_stage",
+      "title": "They need someone out front",
+      "body": "The launch needs a voice and everybody steps back. Someone says your name: you were the one who took the stage in school.",
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Take the mic again",
+          "needsAsk": true,
+          "outcome": "Years since the last time, and it comes back within a minute. Two people ask for your name afterwards.",
+          "stretch": "Your hands shake through the first minute. Then it steadies. You volunteer before anyone asks, the next time.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 2
+          }
+        },
+        {
+          "label": "Offer to write it for someone",
+          "outcome": "You draft the words and someone else delivers them. Half the credit, none of the sweat, and the words were yours.",
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Let someone else have it",
+          "outcome": "Someone else fronts it and does fine. You watch from the side, comfortable, and clap in the right places."
+        }
+      ]
+    },
+    {
+      "id": "cb_interview_build",
+      "minAge": 21,
+      "maxAge": 26,
+      "type": "encounter",
+      "requiresFlag": "built_side",
+      "title": "An interviewer finds the thing you built",
+      "body": "She skips the transcript and points at the thing you built at sixteen. Tell me about this, she says, and sits back.",
+      "asks": {
+        "disposition": "optimism",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Tell it like it mattered",
+          "needsAsk": true,
+          "outcome": "You talk for ten minutes without notes. She stops writing and starts asking. The job comes with the story attached.",
+          "stretch": "You undersell it, catch yourself, and start over. Rough telling, true story. You leave believing it a little more.",
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          }
+        },
+        {
+          "label": "Show her the thing on your phone",
+          "outcome": "It still runs. She passes the phone round the panel. Nobody asks about grades after that.",
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_portfolio"
+        },
+        {
+          "label": "Keep it brief and move on",
+          "outcome": "You give two tidy lines and the interview moves on. The thing sits quietly on your record, still yours."
+        }
+      ],
+      "subjects": [
+        "computing",
+        "electronics",
+        "dt",
+        "art"
+      ]
+    },
+    {
+      "id": "cb_helped_hiring",
+      "minAge": 24,
+      "maxAge": 30,
+      "type": "encounter",
+      "requiresFlag": "helped_someone",
+      "title": "Someone you helped is hiring",
+      "body": "Someone you coached through the exam year writes. Their team is hiring, a field next to yours, and they thought of you first.",
+      "asks": {
+        "disposition": "flexibility",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Go and hear them out",
+          "needsAsk": true,
+          "outcome": "Half of what you know carries over. The rest you learn quickly, vouched for by someone who saw you teach.",
+          "stretch": "You go in as the beginner for the first time in years. Awkward for a month. It loosens something useful.",
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 2,
+            "skills": 1
+          }
+        },
+        {
+          "label": "Thank them and stay put",
+          "outcome": "You are settled where you are, and say so warmly. The message thread stays open, which is worth keeping."
+        }
+      ]
+    },
+    {
+      "id": "cb_side_offer",
+      "minAge": 27,
+      "maxAge": 34,
+      "type": "opportunity",
+      "requiresFlag": "built_side",
+      "title": "An offer for the side thing",
+      "body": "The thing you built at sixteen never quite stopped. Now a stranger emails asking if you would take money to do it properly.",
+      "asks": {
+        "disposition": "risk",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Name a price and mean it",
+          "needsAsk": true,
+          "outcome": "You quote a real number. They pay it, and the weekend thing becomes a paying thing, still yours.",
+          "stretch": "You quote low and deliver anyway. It costs your evenings for a month. Next time you name the real number.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 2,
+            "network": 1
+          }
+        },
+        {
+          "label": "Keep it yours, unpaid",
+          "outcome": "You say no thanks, kindly. Some things are better without invoices, and you get to decide which ones."
+        }
+      ]
+    },
+    {
+      "id": "cb_hiring_desk",
+      "minAge": 30,
+      "maxAge": 38,
+      "type": "encounter",
+      "requiresFlag": "eae_applied",
+      "title": "You are the one hiring now",
+      "body": "Your team is hiring. The shortlist screens on certificates. You remember applying on interest at sixteen, before any results existed.",
+      "asks": {
+        "disposition": "risk",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Ask to interview one on aptitude",
+          "needsAsk": true,
+          "outcome": "You get one slot for someone with a thin certificate and a thick folder. She turns out to be the hire.",
+          "stretch": "The room pushes back and your voice is not steady. The slot happens anyway. Speaking up gets easier after.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "sets": "helped_someone"
+        },
+        {
+          "label": "Leave the sheet as it is",
+          "outcome": "The round runs as designed and the hire is fine. You file the thought for a round you are running."
+        }
+      ]
+    },
+    {
+      "id": "cb_look_again",
+      "minAge": 34,
+      "maxAge": 43,
+      "type": "opportunity",
+      "requiresFlag": "looked_around",
+      "title": "You know how to look",
+      "body": "The field shifts again. While others scramble, you catch yourself doing what you did at sixteen: going to look before deciding anything.",
+      "asks": {
+        "disposition": "curiosity",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Spend a month looking properly",
+          "needsAsk": true,
+          "outcome": "Open days, taster courses, coffee with strangers. You choose from six options while colleagues argue about two.",
+          "stretch": "The looking eats your evenings and half leads nowhere. You notice you have stopped minding that. The habit sets in.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1,
+            "skills": 1
+          }
+        },
+        {
+          "label": "Sit tight and watch a while",
+          "outcome": "You let the dust settle first, which is a method too. The looking keeps, and you know how to do it."
+        }
+      ]
+    },
+    {
+      "id": "cb_named_mentor",
+      "minAge": 38,
+      "maxAge": 43,
+      "type": "opportunity",
+      "requiresFlag": "helped_someone",
+      "title": "Your name kept coming up",
+      "body": "A mentoring programme calls. When they asked around for names, the people you helped through exams years ago all gave the same one: yours.",
+      "asks": {
+        "disposition": "persistence",
+        "min": 2
+      },
+      "responses": [
+        {
+          "label": "Say yes to the cohort",
+          "needsAsk": true,
+          "outcome": "Eight students, one year, your name on it. You tell them the real version and they believe it.",
+          "stretch": "You nearly skip the third session, and go. By the eighth you would not miss it. Showing up becomes the skill.",
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "network": 2,
+            "portfolio": 1
+          }
+        },
+        {
+          "label": "Pass this round, warmly",
+          "outcome": "You say not this year, and mean the year part. They keep your name on the list, where the others put it."
+        }
+      ]
+    },
+    {
+      "id": "ls_mixed_class",
+      "minAge": 13,
+      "maxAge": 14,
+      "type": "encounter",
+      "title": "Your class is at three different levels",
+      "body": "Same form class, different subject levels. Someone says it like it is a ranking. It is not one.",
+      "responses": [
+        {
+          "label": "Say so out loud",
+          "outcome": "You point out everyone is at a different level in something. It lands better than expected.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          }
+        },
+        {
+          "label": "Let it go this time",
+          "outcome": "You say nothing. It sits with you, and it is why you are careful about it later.",
+          "disp": {
+            "flexibility": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_review_comes",
+      "minAge": 13,
+      "maxAge": 15,
+      "type": "opportunity",
+      "title": "The review comes round",
+      "body": "Your teacher says you could try a paper a level up. A real offer, and yours to take or leave.",
+      "asks": {
+        "disposition": "risk",
+        "min": 1
+      },
+      "responses": [
+        {
+          "label": "Take it",
+          "outcome": "You take it. Harder from the first week, and by the third term the pace is just the pace.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "sets": "moved_up",
+          "needsAsk": true,
+          "stretch": "You take it without feeling ready. A wall for a term, you scrape through, and harder stops frightening you."
+        },
+        {
+          "label": "Ask what it would take",
+          "outcome": "She tells you the actual bar. Knowing the number turns it from a mood into a plan.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Stay where you are",
+          "outcome": "You keep the level and your evenings. The review comes round again, because it always does.",
+          "disp": {
+            "flexibility": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_hums_not_yet",
+      "minAge": 13,
+      "maxAge": 13,
+      "type": "opportunity",
+      "title": "You want Geography moved up",
+      "body": "You ask. Humanities levels start moving at the end of Sec 2, not this year. It is the calendar, not you.",
+      "responses": [
+        {
+          "label": "Ask what to do meanwhile",
+          "outcome": "She gives you the bar for next year. You spend the year aiming at a number you know.",
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Work at it anyway",
+          "outcome": "Nobody marks the extra reading. You arrive at Sec 2 already ahead of the question.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "persistence": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_right_sizing",
+      "minAge": 14,
+      "maxAge": 16,
+      "type": "setback",
+      "title": "One subject is taking the whole week",
+      "body": "A level you carry is eating the time your other subjects need. The school raises easing it down.",
+      "onwardMoves": [
+        "A level eased now can be asked about again later.",
+        "The subject stays on your certificate either way.",
+        "Ask exactly what would need to change to hold it."
+      ],
+      "responses": [
+        {
+          "label": "Take the recalibration",
+          "outcome": "You move it down and your week comes back. The other subjects lift within a term.",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 2
+          }
+        },
+        {
+          "label": "Ask for one more term",
+          "outcome": "They agree to look again at the end of term. You decide with evidence, not in a hurry.",
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_combination_form",
+      "minAge": 14,
+      "maxAge": 15,
+      "type": "opportunity",
+      "title": "The combination form comes home",
+      "body": "Choices, in boxes, due Friday. Everyone at home has an opinion and most left school long ago.",
+      "responses": [
+        {
+          "label": "Fill it in together",
+          "outcome": "You go through it properly with someone. The argument happens now instead of in Sec 3.",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "sets": "looked_around"
+        },
+        {
+          "label": "Decide it yourself first",
+          "outcome": "You work out what you want before anyone tells you. Then you go and defend it.",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "skills": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ls_friend_moved_up",
+      "minAge": 13,
+      "maxAge": 15,
+      "type": "encounter",
+      "title": "Someone moved up and you did not",
+      "body": "They got the offer this round. You did not. It stings more than you would say out loud.",
+      "responses": [
+        {
+          "label": "Ask them how",
+          "outcome": "They tell you what actually changed. It is boring and repeatable, which is good news.",
+          "disp": {
+            "curiosity": 2
+          },
+          "gain": {
+            "skills": 1
+          }
+        },
+        {
+          "label": "Put your head down",
+          "outcome": "You go quiet and work. Nobody notices for two terms and then everybody does.",
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "c_ecg_remembers",
+      "minAge": 15,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "The counsellor remembers you",
+      "body": "You asked a real question last year. So when a taster day comes up for a course you had never considered, your name comes up with it.",
+      "ifTaken": "You go. It is not what you expected, in a useful way.",
+      "ifMissed": "The day runs without you. The counsellor's door stays open.",
+      "requiresFlag": "ecg_seen",
+      "responses": [
+        {
+          "label": "Go to the taster day",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "curiosity": 1
+          },
+          "outcome": "A morning inside a course you had no picture of. Now you have a picture, and it votes."
+        },
+        {
+          "label": "Pass this time",
+          "outcome": "Not this one. Knowing you can be asked is worth something on its own."
+        }
+      ]
+    },
+    {
+      "id": "c_eae_window",
+      "minAge": 16,
+      "maxAge": 17,
+      "type": "opportunity",
+      "title": "The EAE window opens",
+      "body": "June. Applications open for poly and ITE on interest and aptitude, before any results. You have a folder ready and most people do not.",
+      "ifTaken": "You apply with something to show. Interviews like having something to point at.",
+      "ifMissed": "The window shuts on schedule. The folder still counts for the next one.",
+      "requiresFlag": "eae_ready",
+      "responses": [
+        {
+          "label": "Apply with your folder",
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_eae",
+          "outcome": "A conditional place before anyone sits an exam. The folder did what folders do."
+        },
+        {
+          "label": "Hold it for later",
+          "outcome": "You wait. The work is done and keeps."
+        }
+      ]
+    },
+    {
+      "id": "c_dsa_form",
+      "minAge": 16,
+      "maxAge": 16,
+      "type": "chance",
+      "title": "The DSA form asks who you are",
+      "body": "Talent area, evidence, a personal statement. And the fine print you already know: an accepted offer is binding.",
+      "ifTaken": "Writing down what you are good at, with proof, changes how you see the list.",
+      "ifMissed": "You skip it. The talent does not go anywhere.",
+      "requiresFlag": "dsa_aware",
+      "responses": [
+        {
+          "label": "Fill it in honestly",
+          "gain": {
+            "portfolio": 1
+          },
+          "disp": {
+            "risk": 1
+          },
+          "outcome": "Whatever the outcome, you now have a page that says what you are unusually good at. Few people your age have that page."
+        },
+        {
+          "label": "Decide it is not for you",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "A considered no is a decision, not a miss. You wanted the open field."
+        }
+      ]
+    },
+    {
+      "id": "c_parents_back",
+      "minAge": 15,
+      "maxAge": 25,
+      "type": "encounter",
+      "title": "Your parents surprise you",
+      "body": "Months after that dinner, one of them mentions your plan to someone else. Accurately. On your side.",
+      "ifTaken": "Having your family behind a plan is wind at your back.",
+      "ifMissed": "It passes quietly. It still happened.",
+      "requiresFlag": "told_parents",
+      "responses": [
+        {
+          "label": "Let them in on the next step too",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "They do not fully get it. They are for it anyway, and that turns out to matter more."
+        },
+        {
+          "label": "Nod and keep the rest private",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Some plans grow better in the dark for a while. You know they are with you when it counts."
+        }
+      ]
+    },
+    {
+      "id": "c_mentor_call",
+      "minAge": 21,
+      "maxAge": 30,
+      "type": "opportunity",
+      "title": "Your mentor makes a call",
+      "body": "The hour you asked for became an occasional coffee. This time they mention a team that is looking for someone like you.",
+      "ifTaken": "A door opens that was never advertised.",
+      "ifMissed": "The team fills the seat. The coffee continues.",
+      "requiresFlag": "found_mentor",
+      "responses": [
+        {
+          "label": "Say yes to the introduction",
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "outcome": "Most jobs are never posted anywhere. Now you know how the other kind gets filled."
+        },
+        {
+          "label": "Not the right fit, say so",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Saying no clearly is also a professional skill. The next mention will fit better."
+        }
+      ]
+    },
+    {
+      "id": "c_teacher_notices",
+      "minAge": 14,
+      "maxAge": 17,
+      "type": "opportunity",
+      "title": "The teacher you asked remembers",
+      "body": "Students who ask stand out, in a good way. There is a competition team short one member, and your name comes up.",
+      "ifTaken": "You are in the room because you once admitted you were stuck.",
+      "ifMissed": "The team fills up. The standing offer of help does not.",
+      "requiresFlag": "asked_help",
+      "responses": [
+        {
+          "label": "Join the team",
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "outcome": "You are not the best on the team. You are on the team, which is the part that compounds."
+        },
+        {
+          "label": "Say no, protect your year",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "A clean no. The teacher nods, and keeps you in mind anyway."
+        }
+      ]
+    },
+    {
+      "id": "c_shadow_offer",
+      "minAge": 16,
+      "maxAge": 18,
+      "type": "opportunity",
+      "title": "The place you shadowed calls back",
+      "body": "They remember the student who asked good questions for a day. There is a holiday stint if you want it.",
+      "ifTaken": "Two weeks of the real thing, paid in experience and a reference.",
+      "ifMissed": "The stint goes to someone else. The door stays on its hinges.",
+      "requiresFlag": "seen_work",
+      "responses": [
+        {
+          "label": "Take the stint",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "outcome": "By day three the glamour is gone and something better is there: you can picture yourself doing this, or you now know you cannot."
+        },
+        {
+          "label": "Holidays are for resting, pass",
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Rest is real. The contact keeps."
+        }
+      ]
+    },
+    {
+      "id": "c_intern_return",
+      "minAge": 19,
+      "maxAge": 22,
+      "type": "opportunity",
+      "title": "They want you back",
+      "body": "The supervisor who wrote three sentences about you now writes one more: would you consider coming back, properly.",
+      "ifTaken": "The attachment you took seriously turns into the first offer.",
+      "ifMissed": "You are headed elsewhere. The reference letter still works everywhere.",
+      "requiresFlag": "attached",
+      "responses": [
+        {
+          "label": "Go back, on pay this time",
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_workstudy",
+          "outcome": "Earning and learning at once. The three sentences did this."
+        },
+        {
+          "label": "Point them to a classmate",
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You pass the door to someone who needs it. People remember who does that."
+        }
+      ]
+    },
+    {
+      "id": "c_exchange_thread",
+      "minAge": 21,
+      "maxAge": 27,
+      "type": "encounter",
+      "title": "A message from the exchange",
+      "body": "Someone you met on those three months is building something, and remembers how you handled the week everything went wrong.",
+      "ifTaken": "The friendship you packed home turns out to be a working one.",
+      "ifMissed": "The message sits. Friendships built abroad keep.",
+      "requiresFlag": "exchanged",
+      "responses": [
+        {
+          "label": "Help with the build",
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "outcome": "Working across a time zone with someone you trust. The exchange is still paying out, years after the flight home."
+        },
+        {
+          "label": "Cheer from here",
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Not every thread needs pulling. It stays warm."
+        }
+      ]
+    },
+    {
+      "id": "c_eae_empty",
+      "minAge": 16,
+      "maxAge": 17,
+      "type": "chance",
+      "title": "The EAE window opens without you",
+      "body": "June. Classmates are submitting folders of things made and done, applying on interest before any results. You watch, empty handed.",
+      "ifTaken": "A late scramble teaches you what the folder was for.",
+      "ifMissed": "The window closes on schedule. Results season will still hear your case.",
+      "excludesFlag": "eae_ready",
+      "responses": [
+        {
+          "label": "Scramble something together",
+          "disp": {
+            "risk": 1,
+            "persistence": 1
+          },
+          "outcome": "Three late nights making a folder that took others a year. Thin, but yours, and next window you will not start from zero."
+        },
+        {
+          "label": "Let this one pass",
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "You watch how it works so the next window is not a mystery. Plenty of roads run through results season."
+        }
+      ]
+    },
+    {
+      "id": "late_parents",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "Your parents need you now",
+      "body": "The generation that raised you starts needing appointments, lifts and time. It arrives in the middle of everything else.",
+      "ifTaken": "You build the year around it. Work bends, and it turns out work can bend.",
+      "ifMissed": "You carry it quietly and it costs more than it had to.",
+      "onwardMoves": [
+        "Ask work for the flexible arrangement in writing",
+        "Split the load with a sibling on an actual schedule",
+        "Find out what the Agency for Integrated Care already funds"
+      ],
+      "responses": [
+        {
+          "label": "Ask for the flexible arrangement",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "flexibility": 2
+          },
+          "outcome": "You ask plainly and mostly get it. The people who say yes remember that you asked instead of quietly drowning."
+        },
+        {
+          "label": "Take the year at half speed",
+          "disp": {
+            "persistence": 2,
+            "optimism": 1
+          },
+          "outcome": "A slower year on purpose. Nothing in your field moved so fast that you could not catch it."
+        },
+        {
+          "label": "Share it out properly",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "One conversation nobody wanted to start, and the load stops being yours alone."
+        }
+      ]
+    },
+    {
+      "id": "late_youngboss",
+      "minAge": 38,
+      "maxAge": 55,
+      "type": "encounter",
+      "title": "Your new boss is younger than you",
+      "body": "By a decade. They are good at the parts you are not, and they know less than you about the parts that matter.",
+      "ifTaken": "You work out what each of you is for. It goes better than either of you expected.",
+      "ifMissed": "You are polite and distant, and neither of you learns anything.",
+      "responses": [
+        {
+          "label": "Say what you know, then let them lead",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "flexibility": 2
+          },
+          "outcome": "You stop auditioning for a job you already have. They start asking you things."
+        },
+        {
+          "label": "Learn the thing they are better at",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "curiosity": 2
+          },
+          "outcome": "Being taught at forty two is uncomfortable for about a fortnight, then it is just useful."
+        }
+      ]
+    },
+    {
+      "id": "late_letgo",
+      "minAge": 42,
+      "maxAge": 55,
+      "type": "setback",
+      "title": "The role goes, and it is not about you",
+      "body": "The company restructures. Your work was fine. The box on the chart is gone anyway.",
+      "ifTaken": "You are between things, with twenty years of knowing how it works.",
+      "ifMissed": "You take the first thing offered and spend a year wishing you had waited a month.",
+      "onwardMoves": [
+        "Tell twenty people you are looking, by name, not by post",
+        "Check what the mid career credit covers before you spend savings",
+        "Take the interview you are not qualified for"
+      ],
+      "responses": [
+        {
+          "label": "Tell people by name, not by post",
+          "gain": {
+            "network": 3
+          },
+          "disp": {
+            "risk": 1
+          },
+          "outcome": "Twenty messages. Three replies that matter. One of them is the next thing, and it was never advertised."
+        },
+        {
+          "label": "Use the gap to retrain, deliberately",
+          "gain": {
+            "skills": 2
+          },
+          "disp": {
+            "persistence": 2,
+            "optimism": 1
+          },
+          "outcome": "You come out with a qualification and a story about why you changed. Both get used."
+        },
+        {
+          "label": "Take something steady while you think",
+          "gain": {
+            "skills": 1
+          },
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Rent paid, head clear. The thinking gets done, which is what the steady thing was for."
+        }
+      ]
+    },
+    {
+      "id": "late_oldcolleague",
+      "minAge": 40,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "Someone you worked with is starting something",
+      "body": "They have money, a plan and one seat they trust. They thought of you because of how you were to work with, not what you knew.",
+      "ifTaken": "The reference you never wrote down turns out to be the one that mattered.",
+      "ifMissed": "They start it anyway. You stay in touch.",
+      "responses": [
+        {
+          "label": "Join early, before it is safe",
+          "gain": {
+            "portfolio": 2,
+            "network": 1
+          },
+          "disp": {
+            "risk": 3
+          },
+          "outcome": "Uncertain, fast, yours in a way employment never was. Whatever happens, you built something with your name inside it."
+        },
+        {
+          "label": "Help from where you are",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 1
+          },
+          "outcome": "Evenings and weekends, on the parts you are best at. Real help, and no bridge burned."
+        }
+      ]
+    },
+    {
+      "id": "late_empty",
+      "minAge": 45,
+      "maxAge": 55,
+      "type": "chance",
+      "title": "The house gets quiet",
+      "body": "The people you organised twenty years around are living their own lives now. There is time in the week that used to be spoken for.",
+      "ifTaken": "You fill it on purpose rather than by accident.",
+      "ifMissed": "It fills itself with work, which is what usually happens.",
+      "responses": [
+        {
+          "label": "Give the time to something you choose",
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "disp": {
+            "curiosity": 2
+          },
+          "outcome": "A thing that is yours, that nobody is paying for and nobody can take."
+        },
+        {
+          "label": "Put it into people coming up",
+          "gain": {
+            "network": 3
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "Four evenings a month with someone at the start. They will remember it at fifty."
+        }
+      ]
+    },
+    {
+      "id": "late_lastask",
+      "minAge": 46,
+      "maxAge": 55,
+      "type": "opportunity",
+      "title": "A young one asks you the question you asked",
+      "body": "Fifteen years old, sitting where you sat, wanting to know whether the road you took is the right one.",
+      "ifTaken": "You give them the true answer instead of the tidy one.",
+      "ifMissed": "You say something encouraging and forgettable.",
+      "responses": [
+        {
+          "label": "Tell them the messy version",
+          "gain": {
+            "network": 2
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "The false starts, the year that went nowhere, the door that opened late. They believe you, which the tidy version never earns."
+        },
+        {
+          "label": "Tell them nothing closed for you",
+          "gain": {
+            "network": 1
+          },
+          "disp": {
+            "optimism": 2
+          },
+          "outcome": "You say it because it is true, and because at fifteen you did not believe anyone who said it. Say it anyway."
+        }
+      ]
+    }
+  ]
+}

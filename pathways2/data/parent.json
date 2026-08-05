@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "source": "MOE Full SBB pages, SEAB SEC overview, MOE SchoolFinder guidance. Written for parents of the first SEC cohorts.",
+    "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+    "accessed": "2026-07-31",
+    "units": "not applicable",
+    "notes": "One calm page. The parent is very often the person actually driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes."
+  },
+  "title": "For parents",
+  "lede": "The system your child is in is not the one you went through. Here is the shape of it, in five minutes.",
+  "sections": [
+    {
+      "head": "What changed since your day",
+      "body": "Express, Normal Academic and Normal Technical are gone. Since 2024 your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels are becoming one exam, the SEC, first sat in 2027. One certificate lists every subject and the level it was taken at."
+    },
+    {
+      "head": "What G1, G2 and G3 actually are",
+      "body": "Levels of a subject, not a rank of your child. G3 covers the most ground fastest, G1 is the most practical. A student can hold G3 English beside G2 Maths. Levels move: schools shift students up and down every year, on classwork, not on one paper."
+    },
+    {
+      "head": "When the decisions happen",
+      "body": "Sec 1 and 2: levels settle and can move. Mid Sec 2: the subject combination exercise, the one that feels enormous and is adjustable. Sec 3: the combination runs. Sec 4: Early Admissions opens before results, on interest and evidence, then the main posting after results. A fifth year exists so one set of results does not settle everything."
+    },
+    {
+      "head": "Five conversations that help",
+      "items": [
+        "Ask what they enjoy before you ask what they scored.",
+        "Go to one open house together, including one route you had not considered.",
+        "Ask the subject teacher what moving up a level would take.",
+        "Ask them to show you this tool and their three actions for the term.",
+        "Ask the ECG counsellor anything. It is their job and it is free."
+      ]
+    },
+    {
+      "head": "Three that quietly hurt",
+      "items": [
+        "Comparing with cousins and colleagues' children. Different child, different road.",
+        "Treating one route as the real one and the rest as fallbacks. The salary data does not support it and neither does the system.",
+        "Deciding for them. A route a child chose survives a hard year better than a route chosen for them."
+      ]
+    },
+    {
+      "head": "Where the official answers live",
+      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is actually on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking, not deciding: some figures in it are marked provisional while MOE finalises the first SEC cohort's admission rules.",
+      "links": [
+        { "label": "MOE, post secondary admissions", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways" },
+        { "label": "MOE SchoolFinder", "url": "https://www.moe.gov.sg/schoolfinder" }
+      ]
+    }
+  ],
+  "status": "confirmed"
+}

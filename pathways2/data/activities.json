@@ -1,0 +1,281 @@
+{
+  "_meta": {
+    "source": "MOE CCA and LEAPS 2.0 guidance, polytechnic EAE and DSA-Sec published criteria, and school ECG practice",
+    "url": "https://www.moe.gov.sg/secondary/cca",
+    "accessed": "2026-08-05",
+    "units": "week is sessions a week, a plain estimate, not a measurement",
+    "status": "provisional",
+    "notes": "What a student carries besides their subjects. Two jobs. It makes the game honest about time, which is the one thing a fourteen year old cannot buy more of, and it tells a student what the thing they already do is building and where it can go, which is the conversation an ECG counsellor would have and almost nothing on a screen ever does.\n\nThree rules on the writing, and they are not stylistic. This file must never tell a student they are doing too much. It must never ask whether they are sure. It must never describe a commitment as a cost with nothing on the other side of it. A student carrying four evenings a week is usually carrying them for a reason, sometimes a reason nobody chose, and the last thing they need from a school website is a raised eyebrow. `work` is the next thing that would make it count, never a deficiency. `manage` is what people who carry this well actually do. `opens` is true and specific or it is not written.\n\n`week` is an honest session count and drives the points a Journey turn has to spend. It cannot be the whole story, or the game would punish the busiest students, so the engine also pays every year for what is carried: see activityYield in engine/journey.js and the monotonicity check that holds it to that. Adding an activity can never leave a run with less to accumulate than it had.\n\nCaring at home is in this list on purpose. It is a real commitment held by real students, it is invisible to every school system, and leaving it out would say it does not count."
+  },
+  "load": {
+    "bands": [
+      {
+        "id": "none",
+        "upTo": 0
+      },
+      {
+        "id": "light",
+        "upTo": 2
+      },
+      {
+        "id": "steady",
+        "upTo": 5
+      },
+      {
+        "id": "full",
+        "upTo": 99
+      }
+    ]
+  },
+  "activities": [
+    {
+      "id": "sport",
+      "label": "A sport CCA",
+      "group": "School",
+      "week": 2,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "persistence": 1
+      },
+      "riasec": "R",
+      "ic": "t_skills",
+      "opens": "Selectors and teachers write about people they have watched for years. Two seasons in the same sport is the kind of record a DSA or an EAE interview can actually read.",
+      "work": "Learn to say what you do well in words. Interviews ask, and training does not teach it.",
+      "manage": "Training nights are gone before the week starts. Put the heavy homework on the nights that are not."
+    },
+    {
+      "id": "uniformed",
+      "label": "A uniformed group",
+      "group": "School",
+      "week": 2,
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "persistence": 1,
+        "flexibility": 1
+      },
+      "riasec": "C",
+      "ic": "t_network",
+      "opens": "Ranks and badges are a written record of responsibility you were given young. Very few sixteen year olds have one.",
+      "work": "Notice what you are actually good at in there. Most people can only name the badge.",
+      "manage": "Camps eat whole weekends. Look at the term calendar early and move the deadlines you can."
+    },
+    {
+      "id": "perform",
+      "label": "A performing arts CCA",
+      "group": "School",
+      "week": 2,
+      "gain": {
+        "portfolio": 1
+      },
+      "disp": {
+        "persistence": 1,
+        "curiosity": 1
+      },
+      "riasec": "A",
+      "ic": "t_portfolio",
+      "opens": "Every performance is portfolio material. Arts institutions and DSA look at a body of work, and a body of work is what four years of this quietly becomes.",
+      "work": "Keep something from each performance. A photo, a programme, a recording. Nobody does this and everybody wishes they had.",
+      "manage": "Performance weeks are not normal weeks. Get ahead of them rather than through them."
+    },
+    {
+      "id": "club",
+      "label": "A club or society",
+      "group": "School",
+      "week": 1,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "curiosity": 1
+      },
+      "riasec": "I",
+      "ic": "t_skills",
+      "opens": "Robotics, infocomm, media, debate. These are the closest thing school has to the work itself, and poly and ITE lecturers recognise them on sight.",
+      "work": "Build one thing all the way to finished. One finished thing beats five started ones.",
+      "manage": "This one is easy to let slide because nobody chases you. Give it a fixed slot."
+    },
+    {
+      "id": "lead",
+      "label": "Student leadership",
+      "group": "School",
+      "week": 1,
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "optimism": 1,
+        "flexibility": 1
+      },
+      "riasec": "E",
+      "ic": "t_network",
+      "opens": "Prefect, class committee, council. You end up known by teachers who write testimonials, and known is the whole point of a referee.",
+      "work": "Take one job that is genuinely yours, not a title. Titles read thin.",
+      "manage": "Meetings appear at short notice. Keep one evening a week clear on purpose."
+    },
+    {
+      "id": "serve",
+      "label": "Service to other people",
+      "group": "School",
+      "week": 1,
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "optimism": 1
+      },
+      "riasec": "S",
+      "ic": "t_network",
+      "opens": "Going back to the same place matters more than the hours. Health and social service courses ask what you kept doing, not what you tried once.",
+      "work": "Stay with one group long enough that they know your name.",
+      "manage": "Fix it to a date, not a mood. Once a month that actually happens beats every week that does not."
+    },
+    {
+      "id": "compete",
+      "label": "Training for a competition",
+      "group": "School",
+      "week": 2,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "persistence": 1,
+        "risk": 1
+      },
+      "riasec": "I",
+      "ic": "t_skills",
+      "opens": "Olympiad, hackathon, national schools. A result is worth something and the preparation is worth more, because you learn how you work when it is hard.",
+      "work": "Write down what you tried after each round. That record is the thing you will still have in three years.",
+      "manage": "The weeks before are heavy and the weeks after are empty. Use the empty ones."
+    },
+    {
+      "id": "outside_train",
+      "label": "Training with a club outside school",
+      "group": "Outside",
+      "week": 3,
+      "gain": {
+        "portfolio": 1
+      },
+      "disp": {
+        "persistence": 1
+      },
+      "riasec": "R",
+      "ic": "t_portfolio",
+      "opens": "Coaches outside school see a different version of you, and they can say things a teacher cannot. A referee who has watched you for three years is rare.",
+      "work": "Ask your coach what the next level actually asks for. They know and they are waiting to be asked.",
+      "manage": "Travel time is real time. Count it, and stop pretending the evening is longer than it is."
+    },
+    {
+      "id": "make",
+      "label": "Something you make on your own",
+      "group": "Outside",
+      "week": 2,
+      "gain": {
+        "portfolio": 1
+      },
+      "disp": {
+        "curiosity": 1,
+        "persistence": 1
+      },
+      "riasec": "A",
+      "ic": "t_portfolio",
+      "opens": "Music, art, code, writing, video. Portfolio routes into design, media and computing care about what you made, and nobody asks which CCA it came from.",
+      "work": "Put it somewhere it can be seen. Work nobody can find does not count as work you did.",
+      "manage": "This is the one that gets dropped first in an exam term. Keep a small version going instead of stopping."
+    },
+    {
+      "id": "faith",
+      "label": "A weekly community group",
+      "group": "Outside",
+      "week": 1,
+      "gain": {
+        "network": 1
+      },
+      "disp": {
+        "optimism": 1
+      },
+      "riasec": "S",
+      "ic": "t_network",
+      "opens": "You know adults outside your family and your school. That is a wider set of people to ask than most of your class has.",
+      "work": "Say out loud, once, what you are thinking about doing after school. Somebody there will know somebody.",
+      "manage": "It is on the same day every week, which makes it the easiest thing in your week to plan around."
+    },
+    {
+      "id": "family",
+      "label": "Looking after people at home",
+      "group": "Home",
+      "week": 4,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "flexibility": 1,
+        "persistence": 1
+      },
+      "riasec": "S",
+      "ic": "t_skills",
+      "opens": "You are already doing what most people are taught in their twenties: running a day that will not wait. Health and social service courses take this seriously when you name it.",
+      "work": "Tell one teacher what your evenings look like. They cannot work around what they do not know.",
+      "manage": "The hour that is genuinely yours is usually early, not late. Find it and defend it."
+    },
+    {
+      "id": "work",
+      "label": "Helping with work or a family business",
+      "group": "Home",
+      "week": 3,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "flexibility": 1
+      },
+      "riasec": "E",
+      "ic": "t_skills",
+      "opens": "Customers, stock, money, complaints. Business and service courses teach this, and you have seen it. Say so, in those words.",
+      "work": "Name the parts you are trusted with. It is more than you think, and it is the part that transfers.",
+      "manage": "Busy periods are predictable. Ask now which weeks they are and plan school around them."
+    },
+    {
+      "id": "classes",
+      "label": "Extra classes outside school",
+      "group": "Outside",
+      "week": 2,
+      "gain": {
+        "skills": 1
+      },
+      "disp": {
+        "persistence": 1
+      },
+      "riasec": "C",
+      "ic": "t_skills",
+      "opens": "It buys back a subject you had written off, and a subject you get back is a set of courses you get back with it.",
+      "work": "Bring your own question. A session where you asked something is worth three where you sat.",
+      "manage": "It is time on top of homework, not instead of it. Decide which night the homework moves to."
+    }
+  ],
+  "copy": {
+    "head": "What else you carry",
+    "hint": "Tap what you do. Tap again to take it off.",
+    "pick": "Add what you do",
+    "change": "Change these",
+    "done": "Done",
+    "sheetHead": "What else you carry",
+    "sheetNote": "Nothing here is graded and nothing is compared. This is so the rest of the app can be honest about your week.",
+    "empty": "Nothing here yet. Add what you already do, and this says what it is building and where it can go.",
+    "loadHead": "Your week",
+    "loadLight": "About {n} a week outside lessons. There is room in your week if you want to put something in it.",
+    "loadSteady": "About {n} a week outside lessons. That is a real commitment, and it is the kind that leaves a record.",
+    "loadFull": "About {n} a week outside lessons. People who carry a week like this get good at deciding in advance what each evening is for, and that is a skill on its own.",
+    "sessions1": "one session",
+    "sessionsN": "{n} sessions",
+    "buildHead": "What this is building",
+    "opensHead": "Where it can go",
+    "workHead": "Worth working on",
+    "manageHead": "How people carry it",
+    "note": "More is not better here and less is not worse. This is what you already carry, not a target.",
+    "yearNote": "Your Journey turns know about this. A fuller week has fewer spare hours in it, and what you carry pays into every year whether you spend a turn on it or not."
+  }
+}
