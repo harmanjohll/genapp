@@ -2,7 +2,7 @@
   "_meta": {
     "source": "SEAB SEC 2027 syllabus listings (G1/G2/G3 school candidates), MOE course and applied subject pages, school Sec 3 option booklets. K codes verified by syllabus PDF title where marked confirmed.; MOE Full SBB pages and school FSBB briefings for the lower secondary model",
     "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
-    "accessed": "2026-07-31",
+    "accessed": "2026-08-05",
     "units": "subject levels G1, G2, G3",
     "notes": "The national picture, not a promise about any one school. Schools run subsets, and the subjects marked selected are offered only at schools approved to run them. Teachers can trim the list to their school in the teacher layer. No syllabus codes are shown to students: the Combined Science pair to code mapping is unverified and the app never needs it. Items marked provisional could not be verified against a primary SEAB PDF title. Third languages (MOELC, PSLE gated) and MTL B (performance triggered) are deliberately not planner rows; see the availability sheet."
   },
@@ -36,7 +36,7 @@
   },
   "availabilityNote": {
     "line": "Schools offer different subsets of these. Refer to the combinations your school offers.",
-    "sheet": "Not every school runs every subject, and that is normal. Subjects tagged selected schools are approved at some schools only. A school's own subject list can also change between cohorts. Check yours on MOE SchoolFinder, at open house, or with your form teacher. Third languages run separately at the MOE Language Centre for eligible students, and MTL B exists for students who find Mother Tongue very heavy going; both are conversations with your school.",
+    "sheet": "Not every school runs every subject, and that is normal. Subjects tagged selected schools are approved at some schools only. A school's own subject list can also change between cohorts. Check yours on MOE SchoolFinder, at open house, or with your form teacher. Third languages run separately at the MOE Language Centre for eligible students, and MTL B exists for students who find Mother Tongue very heavy going; both are conversations with your school. At G3 the elective half of the Humanities pair can also be Literature in a Mother Tongue Language, at schools that run it.",
     "schoolfinder": "https://www.moe.gov.sg/schoolfinder",
     "status": "confirmed"
   },
@@ -589,13 +589,13 @@
       "availability": "selected",
       "doing": "Why prices, wages and shortages happen, argued with evidence.",
       "likeIf": "you ask why things cost what they cost",
-      "note": "New at SEC. Few schools run it yet. Ask yours.",
+      "note": "New at SEC, code K343, first exam 2027. Few schools run it yet. Ask yours.",
       "showsUp": [
         "JC Economics, early",
         "Business and policy",
         "Reading the Budget"
       ],
-      "status": "provisional",
+      "status": "confirmed",
       "phase": "upper"
     },
     {
@@ -862,7 +862,7 @@
     }
   ],
   "junctures": {
-    "status": "provisional",
+    "status": "confirmed",
     "schoolNote": "Schools set their own criteria and their own review points. Your school's are the real ones.",
     "years": {
       "sec1": {

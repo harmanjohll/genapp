@@ -2,46 +2,22 @@
   "_meta": {
     "source": "Hand maintained with each release",
     "url": "",
-    "accessed": "2026-08-04",
+    "accessed": "2026-08-05",
     "units": "not applicable",
     "notes": "The app ships from a branch and a student's browser caches it, so a class can be sitting on three different builds without anyone knowing. The version is baked in here and compared against what the device last saw. On a change, one sheet, once, listing what moved in the student's own words. Bump `version` and put the newest block first in `releases`. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "1.2.0",
+  "version": "2.0.0",
   "releases": [
     {
-      "version": "1.2.0",
+      "version": "2.0.0",
       "date": "2026-08-05",
-      "head": "What is new",
+      "head": "This is version 2",
       "changes": [
-        "Journey stays where you left it. Tapping a choice no longer throws you back to the top of the page.",
-        "You can say what else you do besides lessons. A CCA, training, leadership, looking after people at home, a job. It tells you what that is building and where it can go.",
-        "Your week counts in Journey now. It pays into every school year on its own, without a turn spent on it.",
-        "At Sec 1 and Sec 2 your subjects are no longer counted as a load. They are compulsory, so that was never your decision to be measured on.",
-        "The Aa button says Words, because that is what it opens."
-      ]
-    },
-    {
-      "version": "1.1.0",
-      "date": "2026-08-05",
-      "head": "What is new",
-      "changes": [
-        "You can undo a year now. Change your mind on the screen right after you live it.",
-        "Before you start, three lines on how a turn works.",
-        "You can play the short game: just the school years, to 18. It fits one lesson.",
-        "Aim remembers what you said you would do, and asks you about it next time."
-      ]
-    },
-    {
-      "version": "1.0.0",
-      "date": "2026-08-04",
-      "head": "What is new",
-      "changes": [
-        "Your year is decided as a whole now. Pick what you do, pick who you ask, then tap Live this year once.",
-        "People you can ask sit beside the year. Asking is free and does not spend your points.",
-        "Points change with your real load. A fuller year gives you fewer, and the line under them says why.",
-        "Aim knows what you already played and what your subjects reach right now.",
-        "A class code, so your whole class can see what it holds between everyone.",
-        "The turn screen no longer slides sideways on a phone."
+        "The game plays in chapters now: school year by year, then the milestones that actually shape the years after, National Service included if it is part of your road.",
+        "Every figure that could be checked against MOE has been, and the ones that could not still say so.",
+        "The list of places never changes order. It never did rank you, and now it cannot.",
+        "Your class code now means what your teacher says it means.",
+        "A landing page that asks you one question before anything else."
       ]
     }
   ]
