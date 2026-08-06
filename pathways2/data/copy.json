@@ -228,6 +228,18 @@
     "classSeedChip": "Class play {code}",
     "cardSave": "Save your story card",
     "cardSaved": "Saved",
+    "possHead": "What else is possible from here",
+    "possNote": "Real routes, with what each one asks for. Nothing here is closed to you.",
+    "possWhen": "When",
+    "possNeeds": "What it asks for",
+    "possLeads": "Where it goes",
+    "possAsks": "What this road asks for",
+    "possMissedHead": "Roads that were open the whole time",
+    "possMissedNote": "These were live in the years you just played. Most of them still are.",
+    "mapHead": "Your road, drawn",
+    "mapNote": "The pale lines are the roads you did not take. Notice where they come back.",
+    "mapReflect": "Put what I wrote at 38 on the card",
+    "mapAlt": "A transit map of your played life. Every station is named in the list below it.",
     "cardHint": "One picture of this story, made on your device. Share it or keep it."
   },
   "footerDoors": {

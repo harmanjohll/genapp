@@ -1240,3 +1240,61 @@ body { transition: background-color 600ms var(--ease); }
 body[data-board="true"] .stage-holds { font-size: clamp(2.4rem, 6vw, 4rem); }
 body[data-board="true"] .stage-grid .dest-name { font-size: 1.5rem; }
 body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
+
+/* --- the story map at the ending ------------------------------------------
+   The map is the ending's centrepiece, not a download nobody clicks. It is a
+   canvas, so it scales as one picture and needs no responsive rules of its
+   own; the frame just gives it paper and a rule. */
+.storymap { margin: var(--s-6) 0 0; }
+.storymap figcaption { margin-bottom: var(--s-2); }
+.storymap-frame {
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sm);
+}
+.storymap-frame canvas { display: block; width: 100%; height: auto; }
+.storymap .micro { margin-top: var(--s-2); }
+.mapopt {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: var(--s-2); font-size: var(--t-small); color: var(--ink-soft);
+}
+.mapopt input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* --- what is possible from here -------------------------------------------
+   Folded shut on the turn screen: it must not compete with the choices, and
+   the first paint budget counts only the summary. Open, it is a small
+   reference table, so it reads like a timetable rather than a pitch. */
+.poss { margin-top: var(--s-4); border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+.poss > summary {
+  display: flex; align-items: center; gap: 7px; cursor: pointer;
+  font-size: var(--t-small); font-weight: 700; color: var(--ink-soft);
+  list-style: none;
+}
+.poss > summary::-webkit-details-marker { display: none; }
+.poss > summary::after { content: '+'; margin-left: auto; font-weight: 400; color: var(--ink-mute); }
+.poss[open] > summary::after { content: '\2212'; }
+.poss > summary svg { width: 1.05em; height: 1.05em; }
+.poss > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+.poss-list { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: var(--s-3); }
+.poss-row {
+  border-left: 3px solid var(--open); padding-left: var(--s-3);
+}
+.poss-label { font-family: var(--display); font-weight: 600; font-size: 1.02rem; margin: 0 0 4px; }
+.poss-dl {
+  display: grid; grid-template-columns: max-content 1fr; gap: 2px var(--s-3);
+  margin: 0; font-size: var(--t-small);
+}
+.poss-dl dt { color: var(--ink-mute); font-weight: 700; font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .04em; padding-top: 3px; }
+.poss-dl dd { margin: 0; color: var(--ink-soft); }
+.poss-truth { font-size: var(--t-small); color: var(--ink-mute); margin: 6px 0 0; }
+.poss-list.end { margin-top: var(--s-3); }
+@media (max-width: 30rem) {
+  .poss-dl { grid-template-columns: 1fr; gap: 0 0; }
+  .poss-dl dt { padding-top: 6px; }
+}
+
+/* What a road asks for, on the fork's own buttons. */
+.fork-need {
+  display: block; margin-top: 6px; font-size: var(--t-small);
+  color: var(--ink-soft); line-height: 1.45; text-wrap: pretty;
+}
+.fork-need em { font-style: normal; font-weight: 700; color: var(--ink-mute); font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .04em; }

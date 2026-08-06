@@ -58,6 +58,12 @@ const CAPS = {
   'activities.activities[].opens': 32,
   'activities.activities[].work': 20,
   'activities.activities[].manage': 20,
+  'possibilities.possibilities[].label': 8,
+  'possibilities.possibilities[].when': 12,
+  'possibilities.possibilities[].needs': 18,
+  'possibilities.possibilities[].leads': 16,
+  'possibilities.possibilities[].truth': 26,
+  'possibilities.forkNeeds.*': 30,
 };
 
 const FIRST_PAINT = { now: 365, journey: 240, aim: 130 };

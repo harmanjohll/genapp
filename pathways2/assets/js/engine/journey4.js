@@ -55,6 +55,8 @@ export const SUBJECT_CHOICE_CAP = 2;
 export const MOVE_CHOICE_CAP = 2;
 export const HAND_LIMIT = 5;
 export const ASKS_PER_YEAR = 2;
+export const SHORT_CHAPTERS = 2;   // family chapters a one lesson run lives
+export const SHORT_FLOOR = 5;      // turns a one lesson run gets at minimum
 
 // ---------------------------------------------------------------------------
 // The sequence: which stages this run will live, in order.
@@ -87,20 +89,28 @@ export function sequenceFor(j, run) {
   const school = schoolStages(j, run.startAge);
   const family = (j.paths || []).find((p) => p.id === (run.path || 'applied')) || (j.paths || [])[0];
   const index = byId(j);
+  // A chapter can be gated on NS, or on a flag the fork set. Flag gates are
+  // what make Millennia Institute, the foundation year and direct entry to
+  // Higher Nitec year two real roads rather than five words on a button.
+  const flags = run.flags || [];
   const tail = ((family && family.sequence) || [])
     .map((id) => index.get(id))
     .filter(Boolean)
-    .filter((s) => !s.requiresNS || run.ns === true);
+    .filter((s) => !s.requiresNS || run.ns === true)
+    .filter((s) => !s.requiresFlag || flags.includes(s.requiresFlag))
+    .filter((s) => !s.excludesFlag || !flags.includes(s.excludesFlag));
   const all = [...school, ...tail];
   if (run.short) {
-    // The short run fits one lesson: school, the fork, the NS question, and
-    // the first chapter of the chosen life, then the ending.
+    // One lesson, but a shape: school, the envelope, the service question, then
+    // TWO chapters of the road chosen, so the choice gets a consequence and not
+    // just an opening. Floored at five turns, because a Sec 5 student starting
+    // late was getting three.
     const out = [];
     let chapters = 0;
     for (const s of all) {
       out.push(s);
       if (s.chapter && s.format !== 'ask-ns' && (s.format || 'turn') !== 'fork') chapters += 1;
-      if (chapters >= 1) break;
+      if (chapters >= SHORT_CHAPTERS && out.length >= SHORT_FLOOR) break;
     }
     return out;
   }
@@ -151,7 +161,6 @@ export function createRun(startAge, label, want, plan) {
     activities: [],
     want: want || null,
     ns: null,                    // null until the road asks; true or false after
-    aligned: 0,
     movesMade: [],
     hand: [],
     asksThisYear: 0,
@@ -209,11 +218,11 @@ export function pointsFor(run, stage, data, age) {
   const reasons = [];
   let pts = 2;
   if (age >= 17 && age <= 24) { pts += 1; reasons.push({ k: 'freer', d: 1 }); }
-  if (age >= 15 && age <= 18) {
-    const n = Object.keys(run.plan || {}).length;
-    if (n >= 7) { pts -= 1; reasons.push({ k: 'full', d: -1, n }); }
-    else if (n > 0 && n <= 4) { pts += 1; reasons.push({ k: 'light', d: 1, n }); }
-  }
+  // Deliberately nothing here reads the size of the combination. Taking seven
+  // subjects used to cost a student one action a year and taking four used to
+  // buy one, which punished the fuller plan this app spends Plan mode
+  // encouraging. Time pressure is modelled by activities, which the
+  // monotonicity sweep proves can only ever help.
   if (age <= 18) {
     const w = loadOf(run.activities, data);
     if (w >= 6) { pts -= 1; reasons.push({ k: 'week', d: -1, n: w }); }
@@ -372,10 +381,13 @@ function applyRaise(run, spec, meta) {
  * This is the one place the game renders opportunity cost, and it renders it
  * as story, never as a number.
  */
-export function missedLine(stage, run, moves, indices, age) {
-  const pool = visibleChoices(stage, run, moves, age);
+export function missedLine(stage, run, moves, indices, age, pool) {
+  // The pool MUST be the one the student was actually shown. Recomputing it
+  // here reads the run after its grants have landed, so a door opened this very
+  // turn shifts every index and the game names a road it never offered.
+  const shown = pool || visibleChoices(stage, run, moves, age);
   const picked = new Set(indices);
-  const unchosen = pool.filter((c, i) => !picked.has(i) && c.missed);
+  const unchosen = shown.filter((c, i) => !picked.has(i) && c.missed);
   if (!unchosen.length) return null;
   unchosen.sort((a, b) => (b.cost || 1) - (a.cost || 1));
   return unchosen[0].missed;
@@ -387,15 +399,15 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
   const chosen = indices.map((i) => pool[i]).filter(Boolean);
   if (!chosen.length) return run;
 
+  // Which doors this chapter opened, recorded on the step itself, so the story
+  // map can mark a door at the moment it opened instead of only listing it.
+  const doorsBefore = run.doors.slice();
   const outcomes = [];
   chosen.forEach((choice) => {
     grant(run, choice);
     if (choice.isMove) {
       if (!run.movesMade) run.movesMade = [];
       run.movesMade.push({ id: choice.id, age });
-    }
-    if (run.want && run.want.riasec && wantAffinity(choice, run.want.riasec) >= 2) {
-      run.aligned = (run.aligned || 0) + 1;
     }
     const raised = choice.raise
       ? applyRaise(run, { ...choice.raise, _age: age }, meta || {})
@@ -410,7 +422,8 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
     format: stage.format || 'turn',
     choices: chosen.map((c) => c.label),
     outcome: outcomes.join(' '),
-    missed: missedLine(stage, run, moves, indices, age),
+    missed: missedLine(stage, run, moves, indices, age, pool),
+    opened: run.doors.filter((d) => !doorsBefore.includes(d)),
     chance: null,
   });
 
@@ -441,6 +454,7 @@ export function respondToChance(run, card, responseIndex) {
 
   const met = !r.needsAsk || askMet(run, card);
   const text = met ? r.outcome : (r.stretch || r.outcome);
+  const doorsBefore = run.doors.slice();
 
   if (met) {
     grant(run, r);
@@ -455,6 +469,8 @@ export function respondToChance(run, card, responseIndex) {
       id: card.id, title: card.title, type: card.type,
       response: r.label, met, text,
     };
+    const fresh = run.doors.filter((d) => !doorsBefore.includes(d));
+    if (fresh.length) step.opened = [...(step.opened || []), ...fresh];
   }
   run.pending = null;
   run.stepIndex += 1;
@@ -467,9 +483,10 @@ export function askMet(run, card) {
 }
 
 function grant(run, thing) {
+  const focus = (thing.cost || 1) >= POINTS_PER_TURN ? 1 : 0;
   if (thing.gain) {
     TRACKS.forEach((k) => {
-      const raw = thing.gain[k];
+      const raw = thing.gain[k] ? thing.gain[k] + focus : 0;
       if (typeof raw !== 'number' || raw <= 0) return;
       const cur = run.ledger[k];
       run.ledger[k] = Math.min(TRACK_CAP, cur + Math.max(1, Math.round(raw * (TRACK_CAP - cur) / TRACK_CAP)));
@@ -540,6 +557,14 @@ function pickChance(run, stage, cards, age) {
   const fmt = stage.format || 'turn';
   if (fmt === 'reflect' || fmt === 'ask-ns') return null;
   if (stage.noChance) return null;
+  // A quiet chapter every fifth turn. A year where nothing lands is part of a
+  // life, and it makes the years that do land count.
+  //
+  // Deliberately positional and not seeded. Tying it to the seed meant two
+  // students were dealt different NUMBERS of cards, and since cards open doors,
+  // luck decided how big a life got. The rhythm is the same for everyone; which
+  // cards arrive inside it is what varies.
+  if (run.stepIndex % 5 === 3) return null;
   const pool = eligibleCards(cards, run, age);
   if (!pool.length) return null;
   const rich = pool.filter((c) => c.requiresFlag || c.when);
@@ -762,6 +787,8 @@ export function runJourneySweep(data) {
     });
   };
   (j.stages || []).forEach((s) => {
+    if (s.requiresFlag) readFlags.add(s.requiresFlag);
+    if (s.excludesFlag) readFlags.add(s.excludesFlag);
     [s, ...Object.values(s.variants || {})].forEach((v) => (v.choices || []).forEach(scanOutcomeIf));
   });
   (j.flags || []).forEach((f) => {
@@ -792,19 +819,23 @@ export function runJourneySweep(data) {
 
   // 5. The pool can never starve, on any family, with or without NS.
   const MIN_POOL = 8;
+  const FLAG_SETS = [[], ['at_mi'], ['at_pfp'], ['hn_direct']];
   PATHS.forEach((path) => {
     [true, false].forEach((ns) => {
+      FLAG_SETS.forEach((extra) => {
       const bare = createRun(13, 'sweep', null, null);
       bare.path = path;
       bare.ns = ns;
+      bare.flags = [ns ? 'ns_yes' : 'ns_no', ...extra];
       const seq = sequenceFor(j, bare);
       seq.forEach((s, i) => {
         const fmt = s.format || 'turn';
         if (fmt === 'reflect' || fmt === 'ask-ns' || s.noChance) return;
         const age = ageAt(j, bare, i);
-        const n = eligibleCards(cards, { ...bare, steps: [], flags: [`ns_${ns ? 'yes' : 'no'}`] }, age)
+        const n = eligibleCards(cards, { ...bare, steps: [] }, age)
           .filter((c) => !c.requiresFlag && !c.when).length;
         if (n < MIN_POOL) failures.push({ path, ns, stage: s.id, age, why: `pool ${n} below ${MIN_POOL}` });
+      });
       });
     });
   });
@@ -814,9 +845,10 @@ export function runJourneySweep(data) {
   let simCount = 0;
   const frames = new Set();
 
-  function playSim(pi, si, strat, plan, mode, startAge, ns) {
+  function playSim(pi, si, strat, plan, mode, startAge, ns, short) {
     simCount += 1;
     const run = createRun(startAge, 'sim', null, plan);
+    run.short = !!short;
     run.seed = 12345 + pi * 7 + si * 13 + (ns ? 3 : 0);
     const local = [];
     let guard = 0;
@@ -837,7 +869,16 @@ export function runJourneySweep(data) {
       const baseN = pool.filter((c) => !c.needsSubject && !c.isMove).length;
       const span = mode === 'base' ? baseN : pool.length;
       if (fmt === 'fork') {
-        const idx = stage.id === 's_results' ? Math.min(pi, span - 1) : strat(span);
+        let idx;
+        if (stage.id === 's_results') {
+          // Match the family by name, never by position, and rotate through the
+          // branches that lead to it so the flag gated roads get played too.
+          const want = PATHS[pi];
+          const hits = pool.map((c, k) => ((c.sets && c.sets.path) === want ? k : -1)).filter((k) => k >= 0);
+          idx = hits.length ? hits[si % hits.length] : 0;
+        } else {
+          idx = strat(span);
+        }
         applyChoices(run, j, stage, [Math.max(0, Math.min(span - 1, idx))], cards, subjectMeta, simMoves);
       } else {
         const subjectIdx = pool.findIndex((c) => c.needsSubject);
@@ -855,7 +896,9 @@ export function runJourneySweep(data) {
       doorsPrev = run.doors.length;
     }
     if (!run.done) local.push('run did not complete');
-    if (run.done && run.doors.length < 3) local.push(`only ${run.doors.length} doors by the end`);
+    if (run.done && !run.short && run.doors.length < 3) local.push(`only ${run.doors.length} doors by the end`);
+    if (run.done && run.short && run.doors.length < 2) local.push(`short run held only ${run.doors.length} doors`);
+    if (run.done && run.short && run.steps.length < SHORT_FLOOR) local.push(`short run only ${run.steps.length} turns`);
     if (run.done && !run.ending) local.push('no ending frame resolved');
     TRACKS.forEach((k) => { if (run.ledger[k] > TRACK_CAP) local.push(`${k} over cap`); });
     return { run, local };
