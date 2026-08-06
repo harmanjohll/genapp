@@ -2776,7 +2776,7 @@
   {
    "id": "sc_fees_home",
    "type": "setback",
-   "minAge": 15,
+   "minAge": 16,
    "maxAge": 19,
    "title": "The fee letter at home",
    "body": "The letter with the course fee on it sits on the table for two days. Nobody in the flat says the word money, and everybody is thinking it.",
@@ -2823,7 +2823,7 @@
   {
    "id": "sc_parent_lost_job",
    "type": "setback",
-   "minAge": 15,
+   "minAge": 16,
    "maxAge": 22,
    "title": "The retrenchment at home",
    "body": "A parent is home on a Tuesday afternoon in office clothes. Within a week the conversation reaches your course fees and next year.",

@@ -12,22 +12,33 @@ let terms = [];
 let byTerm = new Map();
 let sorted = [];
 
+let matcher = null;
+
 export function initGlossary(glossaryData) {
   terms = (glossaryData && glossaryData.terms) || [];
   byTerm = new Map(terms.map((t) => [t.term.toLowerCase(), t]));
   // Longest first, so "Higher Nitec" wins over "Nitec".
   sorted = terms.slice().sort((a, b) => b.term.length - a.term.length);
+  const alts = sorted.map((t) => t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  matcher = alts ? new RegExp(`(?<![\\w-])(${alts})(?![\\w-])`, 'g') : null;
 }
 
-/** Wrap known acronyms in plain text so they can be tapped. Escapes first. */
+/**
+ * Wrap known acronyms in plain text so they can be tapped. Escapes first.
+ *
+ * ONE pass, over one alternation, longest term first. It used to run a separate
+ * pass per term over its own output, which meant the "Nitec" pass matched the
+ * word inside the data-term="Higher Nitec" attribute the previous pass had just
+ * written. The markup shattered, and a student reading the possibilities panel
+ * on an ITE chapter saw `">Higher Nitec still open to you later` in the middle of
+ * a sentence. Any short term contained in a longer one had the same fault.
+ */
 export function decorate(text) {
-  let out = esc(text);
-  sorted.forEach((t) => {
-    const safe = t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const re = new RegExp(`(?<![\\w>-])(${safe})(?![\\w<-])`, 'g');
-    out = out.replace(re, `<button type="button" class="gloss" data-action="gloss" data-term="${esc(t.term)}">$1</button>`);
-  });
-  return out;
+  const out = esc(text);
+  if (!matcher) return out;
+  return out.replace(matcher, (m) => (
+    `<button type="button" class="gloss" data-action="gloss" data-term="${esc(m)}">${m}</button>`
+  ));
 }
 
 export function bindGlossary(container) {
