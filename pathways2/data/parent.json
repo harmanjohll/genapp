@@ -2,7 +2,7 @@
   "_meta": {
     "source": "MOE Full SBB pages, SEAB SEC overview, MOE SchoolFinder guidance. Written for parents of the first SEC cohorts.",
     "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
-    "accessed": "2026-07-31",
+    "accessed": "2026-08-05",
     "units": "not applicable",
     "notes": "One calm page. The parent is very often the person actually driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes."
   },
@@ -11,7 +11,7 @@
   "sections": [
     {
       "head": "What changed since your day",
-      "body": "Express, Normal Academic and Normal Technical are gone. Since 2024 your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels are becoming one exam, the SEC, first sat in 2027. One certificate lists every subject and the level it was taken at."
+      "body": "Express, Normal Academic and Normal Technical are gone. Since 2024 your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels became one exam, the SEC, first sat in 2027. And the JAE you remember is replaced from 2028 by one Post Secondary Admissions Exercise covering JC, MI, poly, PFP and ITE on a single portal."
     },
     {
       "head": "What G1, G2 and G3 actually are",
@@ -41,10 +41,16 @@
     },
     {
       "head": "Where the official answers live",
-      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is actually on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking, not deciding: some figures in it are marked provisional while MOE finalises the first SEC cohort's admission rules.",
+      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is actually on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking, not deciding: the headline 2028 figures match what MOE has announced, and anything not yet read from a primary page is marked provisional on screen.",
       "links": [
-        { "label": "MOE, post secondary admissions", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways" },
-        { "label": "MOE SchoolFinder", "url": "https://www.moe.gov.sg/schoolfinder" }
+        {
+          "label": "MOE, post secondary admissions",
+          "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways"
+        },
+        {
+          "label": "MOE SchoolFinder",
+          "url": "https://www.moe.gov.sg/schoolfinder"
+        }
       ]
     }
   ],

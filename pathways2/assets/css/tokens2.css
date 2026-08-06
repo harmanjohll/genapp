@@ -1,0 +1,196 @@
+/* Design tokens, v2.
+   All identity lives here. A school skin is a change to this file, not a rebuild.
+   Fonts are system stacks on purpose: this app makes zero external network calls.
+
+   Two new axes over v1, both deliberately quiet:
+
+   ERAS. The game walks a life from 13 to 48, and v1 rendered every year at one
+   visual temperature. body[data-era] now tints the ambient surfaces, and only
+   the ambient surfaces: paper warms and cools with the decade, the accent
+   deepens slightly with age. Semantic colour never moves: the three level hues
+   and the four reach states mean the same thing at every age, or they mean
+   nothing.
+
+   DARK. prefers-color-scheme plus a manual override on <html data-theme>.
+   Every pair below was picked against its own paper; the wash alphas rise in
+   the dark because tinted translucency dies on black. */
+
+:root {
+  /* ink and paper */
+  --ink:        #14181F;
+  --ink-soft:   #39414D;
+  --ink-mute:   #5A6370;
+  --ink-faint:  #626B78;
+  --paper:      #FBF8F3;
+  --paper-warm: #F5F0E7;
+  --surface:    #FFFFFF;
+  --rule:       #E3DCD0;
+  --rule-soft:  #EFE9DF;
+
+  /* Subject levels. Three hues of deliberately equal weight. Never reused. */
+  --g1:       #2E7D74;
+  --g1-wash:  rgba(46, 125, 116, 0.10);
+  --g2:       #4A5FA5;
+  --g2-wash:  rgba(74, 95, 165, 0.10);
+  --g3:       #8A4F7D;
+  --g3-wash:  rgba(138, 79, 125, 0.10);
+
+  /* Reach states. No red: nothing in this app is a failure state. */
+  --open:         #2F7D5B;
+  --open-wash:    rgba(47, 125, 91, 0.10);
+  --open-ink:     #276A4C;
+  --within:       #8A5F19;
+  --within-wash:  rgba(168, 116, 31, 0.12);
+  --longer:       #33689E;
+  --longer-wash:  rgba(51, 104, 158, 0.10);
+  --other:        #6E5AA0;
+  --other-wash:   rgba(110, 90, 160, 0.10);
+
+  /* The compass: the three ECG questions, one hue, told apart by icon. */
+  --compass:      #4F6B3A;
+  --compass-wash: rgba(79, 107, 58, 0.10);
+
+  /* Action. --accent fills, --accent-dk is text on paper, --accent-dkr hovers. */
+  --accent:      #C25E3A;
+  --accent-dk:   #A44A2A;
+  --accent-dkr:  #8F4023;
+  --accent-wash: rgba(194, 94, 58, 0.10);
+  --flag:        #7D5F2A;
+  --flag-wash:   rgba(138, 106, 47, 0.12);
+
+  /* ribbon */
+  --band-school: #C9BBA6;
+  --band-work:   #A9BFC9;
+
+  /* type */
+  --display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --body:    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-hero:  clamp(2rem, 6.5vw, 3.6rem);
+  --t-h1:    clamp(1.5rem, 4vw, 2.1rem);
+  --t-h2:    clamp(1.15rem, 2.6vw, 1.4rem);
+  --t-h3:    1.02rem;
+  --t-body:  1rem;
+  --t-small: 0.87rem;
+  --t-micro: 0.75rem;
+
+  --lh-hero: 1.08;
+  --lh-h:    1.22;
+  --lh-body: 1.6;
+
+  /* spacing */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 104px;
+
+  --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-pill: 999px;
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur:  420ms;
+  --dur-fast: 180ms;
+
+  /* layout */
+  --gutter: clamp(16px, 4vw, 40px);
+  --max:    1280px;
+  --ribbon-h:      26px;
+  --ribbon-h-open: 88px;
+  --scroll-pad:    24px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.06);
+  --shadow:    0 2px 14px rgba(20, 24, 31, 0.08);
+  --shadow-lg: 0 8px 34px rgba(20, 24, 31, 0.12);
+
+  --tap: 44px;
+}
+
+/* ---- eras: ambient only, semantics never move ---------------------------- */
+body[data-era="school"]  { --paper: #FBF8F3; --paper-warm: #F5F0E7; }
+body[data-era="postsec"] { --paper: #F9F8F4; --paper-warm: #F1F0E8; }
+body[data-era="twenties"]{ --paper: #F8F8F6; --paper-warm: #EFF0EC; }
+body[data-era="thirties"]{ --paper: #F7F7F8; --paper-warm: #EDEEF0; --accent: #B65837; }
+body[data-era="later"]   { --paper: #F7F6F4; --paper-warm: #ECEAE6; --accent: #A9532F; }
+
+/* ---- dark ----------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:        #E9E5DD;
+    --ink-soft:   #C6C1B7;
+    --ink-mute:   #A39E93;
+    --ink-faint:  #97928A;
+    --paper:      #15181D;
+    --paper-warm: #1B1F26;
+    --surface:    #20252D;
+    --rule:       #3A4048;
+    --rule-soft:  #2C323A;
+
+    --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.16);
+    --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.16);
+    --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.16);
+
+    --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
+    --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
+    --longer:   #7FAEDC;  --longer-wash: rgba(127, 174, 220, 0.15);
+    --other:    #A995D6;  --other-wash: rgba(169, 149, 214, 0.15);
+
+    --compass:  #93B478;  --compass-wash: rgba(147, 180, 120, 0.14);
+
+    --accent:      #E0794F;
+    --accent-dk:   #E98F6A;
+    --accent-dkr:  #F2A585;
+    --accent-wash: rgba(224, 121, 79, 0.14);
+    --flag:        #C7A45E;  --flag-wash: rgba(199, 164, 94, 0.15);
+
+    --band-school: #6E6350;
+    --band-work:   #52646E;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow:    0 2px 14px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.55);
+  }
+}
+:root[data-theme="dark"] {
+  --ink:        #E9E5DD;
+  --ink-soft:   #C6C1B7;
+  --ink-mute:   #A39E93;
+  --ink-faint:  #97928A;
+  --paper:      #15181D;
+  --paper-warm: #1B1F26;
+  --surface:    #20252D;
+  --rule:       #3A4048;
+  --rule-soft:  #2C323A;
+  --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.16);
+  --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.16);
+  --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.16);
+  --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
+  --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
+  --longer:   #7FAEDC;  --longer-wash: rgba(127, 174, 220, 0.15);
+  --other:    #A995D6;  --other-wash: rgba(169, 149, 214, 0.15);
+  --compass:  #93B478;  --compass-wash: rgba(147, 180, 120, 0.14);
+  --accent:      #E0794F;
+  --accent-dk:   #E98F6A;
+  --accent-dkr:  #F2A585;
+  --accent-wash: rgba(224, 121, 79, 0.14);
+  --flag:        #C7A45E;  --flag-wash: rgba(199, 164, 94, 0.15);
+  --band-school: #6E6350;
+  --band-work:   #52646E;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow:    0 2px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.55);
+}
+
+/* Dark eras: shift the dark paper the same quiet amount. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-era="postsec"],
+  :root[data-theme="dark"] body[data-era="postsec"]  { --paper: #14191F; --paper-warm: #1A2028; }
+  :root:not([data-theme="light"]) body[data-era="twenties"],
+  :root[data-theme="dark"] body[data-era="twenties"] { --paper: #141A1C; --paper-warm: #1A2124; }
+  :root:not([data-theme="light"]) body[data-era="thirties"],
+  :root[data-theme="dark"] body[data-era="thirties"] { --paper: #15181C; --paper-warm: #1B1F24; }
+  :root:not([data-theme="light"]) body[data-era="later"],
+  :root[data-theme="dark"] body[data-era="later"]    { --paper: #16171A; --paper-warm: #1C1E21; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-fast: 0ms; }
+}

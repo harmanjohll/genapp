@@ -17,6 +17,17 @@
 // they are three hues of equal weight and a glyph would rank them.
 
 const PATHS = {
+
+  /* ---- v2 chrome ------------------------------------------------------- */
+
+  // The brand mark: two roads that cross and part.
+  brand: '<path d="M2.5 12.5C6.5 12.5 5 4.5 8 4.5s1.5 8 5.5 8" fill="none"/><circle cx="2.7" cy="12.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="13.3" cy="12.5" r="1.2" fill="currentColor" stroke="none"/>',
+  // Sound: a small speaker, waves on and off.
+  sound_on: '<path d="M2.8 6.2h2.4L8.6 3.4v9.2L5.2 9.8H2.8z"/><path d="M10.6 5.6a3.4 3.4 0 0 1 0 4.8M12.3 4a5.7 5.7 0 0 1 0 8"/>',
+  sound_off: '<path d="M2.8 6.2h2.4L8.6 3.4v9.2L5.2 9.8H2.8z"/><path d="M10.8 6.4l3 3.2M13.8 6.4l-3 3.2"/>',
+  // Theme: half sun, half moon.
+  theme: '<circle cx="8" cy="8" r="4.6"/><path d="M8 3.4v9.2A4.6 4.6 0 0 0 8 3.4z" fill="currentColor" stroke="none"/>',
+
   /* ---- the ten named doors ------------------------------------------- */
 
   // A way in that opens before the main one does.
