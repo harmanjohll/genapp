@@ -1298,3 +1298,63 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   color: var(--ink-soft); line-height: 1.45; text-wrap: pretty;
 }
 .fork-need em { font-style: normal; font-weight: 700; color: var(--ink-mute); font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .04em; }
+
+/* --- the table: the board game --------------------------------------------
+   Designed to be read at arm's length by four people leaning over one phone,
+   or projected. Bigger type than the solo mode, and the seat whose turn it is
+   is the loudest thing on screen. */
+.tgame { max-width: 46rem; margin-inline: auto; }
+.tstrip { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.tchapter { display: flex; align-items: baseline; gap: var(--s-3); margin-top: var(--s-2); }
+.tseat {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  margin-top: var(--s-4); padding: var(--s-2) var(--s-3);
+  background: var(--surface); border: 2px solid var(--accent); border-radius: var(--r-md);
+}
+.tseat .caps { color: var(--accent-dk); margin: 0; }
+.tnames { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--s-3); }
+.tname { display: grid; gap: 4px; }
+.tname input {
+  font: inherit; padding: 8px 10px; border: 1.5px solid var(--rule);
+  border-radius: var(--r-sm); background: var(--surface); color: var(--ink);
+}
+.tname input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.tpass { max-width: 32rem; margin: var(--s-8) auto; text-align: center; }
+.tpass h1 { font-size: var(--t-hero); line-height: var(--lh-hero); }
+
+.treveal {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--s-3); margin-top: var(--s-4);
+}
+.tcard {
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); padding: var(--s-3); box-shadow: var(--shadow-sm);
+}
+.tcard-name { font-family: var(--display); font-weight: 600; margin: 0 0 var(--s-2); }
+.tcard-path { font-size: var(--t-small); color: var(--ink-soft); margin: 0 0 var(--s-2); }
+.tcard-list { margin: 0; padding-left: 1.05em; font-size: var(--t-small); }
+.tcard-list li { margin-bottom: 3px; }
+.tcard-card { font-size: var(--t-small); color: var(--ink-soft); margin: var(--s-2) 0 0; }
+
+/* The printed pack. Hidden on screen, and the only thing on paper. */
+.printpack { display: none; }
+@media print {
+  .audstrip, #site-head, #site-foot, .btn-row, .modebar, .ribbon, .tstrip { display: none !important; }
+  body { background: #fff; }
+  .section > *:not(.printpack) { display: none !important; }
+  .printpack { display: block; color: #000; }
+  .printpack h2 { font-family: var(--display); font-size: 20pt; margin: 0 0 4pt; }
+  .printpack h3 { font-family: var(--display); font-size: 13pt; margin: 16pt 0 4pt; }
+  .pp-note { font-size: 9pt; color: #444; margin: 0 0 8pt; }
+  .pp-board { list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6pt; }
+  .pp-board li { border: 1pt solid #999; border-radius: 4pt; padding: 6pt 8pt; font-size: 10pt; }
+  .pp-board li strong { display: block; font-size: 11pt; }
+  .pp-board li span { color: #444; }
+  .pp-track { margin: 0; padding-left: 16pt; font-size: 10pt; columns: 2; }
+  .pp-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4pt; }
+  .pp-table th, .pp-table td { border: 1pt solid #999; padding: 5pt 6pt; text-align: left; vertical-align: top; }
+  .pp-table th { background: #eee; }
+}
+.tcard-deal { display: block; font-weight: 700; color: var(--ink); }

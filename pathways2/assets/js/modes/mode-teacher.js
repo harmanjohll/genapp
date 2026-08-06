@@ -224,6 +224,15 @@ export function renderTeacher(host, data, ctx, repaint) {
           say to each other afterwards. Budget more time for the conversation than the screen.
         </p>
 
+        <div class="panel" style="margin-top:var(--s-4);border:2px solid var(--accent)">
+          <h2>${esc(data.copy.table.teacherLink)}</h2>
+          <p class="small" style="margin-top:var(--s-2)">${esc(data.copy.table.teacherLinkNote)}</p>
+          <div class="btn-row" style="margin-top:var(--s-3)">
+            <a class="btn accent" href="./?mode=table">${esc(data.copy.table.teacherLink)}</a>
+            <a class="btn ghost" href="./?mode=teacher&amp;board=1">The projector reveal</a>
+          </div>
+        </div>
+
         <div class="teacher-note">
           <h4>Say this first</h4>
           <p style="margin-bottom:0">This tool never tells anyone they cannot do something, and that is deliberate rather than kind. Students will look for the padlock. Name that there is not one, and ask them why they expected it.</p>

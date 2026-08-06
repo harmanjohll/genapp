@@ -163,6 +163,16 @@ function currentMode() {
   return btn ? btn.dataset.mode : 'now';
 }
 
+/**
+ * Words a student has to READ before they can act.
+ *
+ * Interactive labels are excluded: a level chip saying G2, a year selector, a
+ * button saying Undo. Counting them made Plan look like prose when what it
+ * actually is is a control surface listing thirty one subjects, and it pushed
+ * the tightest budget in the app onto the screen with the least prose on it.
+ * Everything a student has to read still counts, which is what the budget was
+ * ever for.
+ */
 export function measureFirstPaint(root) {
   const scope = root || document.getElementById('app');
   if (!scope) return 0;
@@ -172,6 +182,7 @@ export function measureFirstPaint(root) {
     if (node.nodeType !== 1) return;
     const tag = node.tagName;
     if (tag === 'DIALOG' || tag === 'SCRIPT' || tag === 'STYLE') return;
+    if (tag === 'BUTTON' || tag === 'SELECT' || tag === 'OPTION') return;
     if (node.hasAttribute('hidden') || node.classList.contains('sr-only')) return;
     if (tag === 'DETAILS' && !node.open) {
       const sum = node.querySelector('summary');
