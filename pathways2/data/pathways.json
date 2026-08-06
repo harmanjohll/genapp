@@ -62,7 +62,7 @@
         },
         {
           "label": "Or ELMAB3 21, ELB3 14, or MAB3 14 at G2",
-          "note": "With two or fewer G3 passes, and Grade 5 at G2 in every subject counted. Taking every fifth year subject at G3 needs ELMAB3 19 or better.",
+          "note": "With two or fewer G3 passes, and Grade 5 at G2 in every subject counted. Taking every fifth year subject at G3 needs ELMAB3 19.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
@@ -282,7 +282,7 @@
       "order": 30,
       "duration": "3 years, or leave with a Nitec after 2",
       "feels": "Learn a trade by doing it, in a workshop, kitchen or studio.",
-      "leadsTo": "Higher Nitec, then poly or work. Nitec is the exit point on the way.",
+      "leadsTo": "Higher Nitec, then poly or work. Nitec marks the exit stop.",
       "structural": [
         {
           "id": "n_el",
@@ -314,7 +314,7 @@
         }
       ],
       "alsoIn": [
-        "One course now, not two stacked ones. Leaving after Year 2 with a Nitec and coming back later is a real road, not a failure."
+        "One course now, not two stacked ones. Leaving after Year 2 with a Nitec and returning later is a real road."
       ],
       "routesIfNotHere": [],
       "status": "confirmed"

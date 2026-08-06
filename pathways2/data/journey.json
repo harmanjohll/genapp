@@ -1,2238 +1,83 @@
 {
   "_meta": {
-    "source": "Written for this app. Stage structure follows the shape of the Singapore education and training system; choices are written so none is the correct answer.",
-    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
-    "accessed": "2026-07-31",
-    "units": "years of age",
-    "notes": "No choice is scored right or wrong and no combination produces a failure. Every stage advances. Two attention points per turn: the only cost is the thing you did not do. Doors are named and append only. Flags let later cards and outcomes remember earlier choices. Stages from 18 carry variants keyed by path family; branches merge from 34 because by then the route genuinely stops deciding what is available."
+    "source": "Authored for this app. Institutional facts follow data/pathways.json and data/subjects.json; NS staging follows public MINDEF enlistment norms; no private person or business is real.",
+    "url": "",
+    "accessed": "2026-08-05",
+    "units": "chapters and years",
+    "notes": "v2 content rules, linted where possible: every screen owns a concrete noun; public places are real, private ones invented; dialogue is allowed and Singlish is never mocked; one aphorism per string; school years are narrated from inside the age; the memoir voice is earned from 27 up. The NS chapters are asked for once, in fiction, and the answer is logged, never revisited. Every flag set here is read by a card or an outcome. Every door is granted somewhere and asked for somewhere."
   },
   "paths": [
     {
       "id": "academic",
       "label": "Junior College",
-      "short": "JC"
+      "sequence": [
+        "ch_ns_ask",
+        "ch_jc1",
+        "ch_alevels",
+        "ch_ns_in",
+        "ch_ns_ord",
+        "ch_uni",
+        "ch_paycheque",
+        "ch_cross",
+        "ch_build",
+        "ch_quiet",
+        "ch_mirror",
+        "ch_late"
+      ]
     },
     {
       "id": "applied",
       "label": "Polytechnic",
-      "short": "Poly"
+      "sequence": [
+        "ch_ns_ask",
+        "ch_sem1",
+        "ch_intern",
+        "ch_gradseason",
+        "ch_ns_in",
+        "ch_ns_ord",
+        "ch_paycheque",
+        "ch_cross",
+        "ch_build",
+        "ch_quiet",
+        "ch_mirror",
+        "ch_late"
+      ]
     },
     {
       "id": "hands",
       "label": "ITE",
-      "short": "ITE"
+      "sequence": [
+        "ch_ns_ask",
+        "ch_workshop",
+        "ch_exit",
+        "ch_hnfinal",
+        "ch_ns_in",
+        "ch_ns_ord",
+        "ch_paycheque",
+        "ch_cross",
+        "ch_build",
+        "ch_quiet",
+        "ch_mirror",
+        "ch_late"
+      ]
     },
     {
       "id": "arts",
       "label": "Arts school",
-      "short": "Arts"
-    }
-  ],
-  "ledger": [
-    {
-      "id": "skills",
-      "label": "Can do",
-      "icon": "▲"
-    },
-    {
-      "id": "network",
-      "label": "Know me",
-      "icon": "●"
-    },
-    {
-      "id": "portfolio",
-      "label": "Made",
-      "icon": "◆"
-    }
-  ],
-  "stages": [
-    {
-      "id": "s_sec1",
-      "age": 13,
-      "title": "Sec 1",
-      "format": "turn",
-      "situation": "New school, new everything. Your class sits at different levels in different subjects, and that is the design.",
-      "choices": [
-        {
-          "label": "Find your feet first",
-          "cost": 1,
-          "outcome": "You spend a term working out how this place runs. Not wasted, and quieter than you wanted.",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "flexibility": 2
-          }
-        },
-        {
-          "label": "Ask to move a subject up",
-          "cost": 1,
-          "outcome": "You ask. Nobody stopped you asking, which is the thing worth finding out this early.",
-          "disp": {
-            "risk": 2
-          },
-          "gain": {
-            "skills": 1
-          },
-          "sets": "asked_up",
-          "raise": {
-            "any": [
-              "el",
-              "maths",
-              "ls_science",
-              "mtl"
-            ]
-          },
-          "outcomeRaised": "You ask, and {subject} moves to {level}. The first term is hard. By the third you have caught up."
-        },
-        {
-          "label": "Go all in on one club",
-          "cost": 1,
-          "outcome": "Three afternoons a week. You are not the best there and you stop caring about that.",
-          "gain": {
-            "network": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "sets": "took_stage"
-        },
-        {
-          "label": "Get properly good at one subject",
-          "cost": 1,
-          "outcome": "You pick the one you like and push. It becomes the thing people ask you about.",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "curiosity": 1
-          }
-        },
-        {
-          "label": "Look after the people around you",
-          "cost": 1,
-          "outcome": "You are the one who notices when someone goes quiet. It costs time you had.",
-          "gain": {
-            "network": 2
-          },
-          "disp": {
-            "optimism": 1
-          },
-          "sets": "helped_someone"
-        }
+      "sequence": [
+        "ch_ns_ask",
+        "ch_foundation",
+        "ch_portfolio",
+        "ch_showsell",
+        "ch_ns_in",
+        "ch_ns_ord",
+        "ch_paycheque",
+        "ch_cross",
+        "ch_build",
+        "ch_quiet",
+        "ch_mirror",
+        "ch_late"
       ]
-    },
-    {
-      "id": "s_sec2",
-      "age": 14,
-      "title": "Sec 2",
-      "format": "turn",
-      "situation": "The combination exercise is this year. Where your levels land now is what you carry into Sec 3.",
-      "choices": [
-        {
-          "label": "Push the level you want up",
-          "cost": 1,
-          "outcome": "You go at it all year with the review in mind. A grind, and you know exactly why.",
-          "disp": {
-            "persistence": 2
-          },
-          "gain": {
-            "skills": 1
-          },
-          "sets": "asked_up",
-          "raise": {
-            "any": [
-              "ls_geography",
-              "ls_history",
-              "ls_literature",
-              "el",
-              "maths",
-              "ls_science"
-            ]
-          },
-          "outcomeRaised": "It works. {subject} moves to {level}, and that is the level you walk into Sec 3 holding."
-        },
-        {
-          "label": "Go and look at what Sec 3 offers",
-          "cost": 1,
-          "outcome": "Open house, option booklet, three teachers you cornered. You choose on information, not rumour.",
-          "disp": {
-            "curiosity": 2
-          },
-          "gain": {
-            "network": 1
-          },
-          "sets": "looked_around"
-        },
-        {
-          "label": "Keep the levels and go deeper",
-          "cost": 1,
-          "outcome": "You stop chasing the level and get genuinely good where you are. That reads on paper too.",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 1
-          }
-        },
-        {
-          "label": "Build something nobody asked for",
-          "cost": 1,
-          "outcome": "It has nothing to do with school. It is the first thing that is properly yours.",
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "sets": "built_side"
-        },
-        {
-          "label": "Spend the year with your people",
-          "cost": 1,
-          "outcome": "Not a wasted year. You end it with friends who are still around at thirty.",
-          "gain": {
-            "network": 2
-          },
-          "disp": {
-            "optimism": 1
-          }
-        }
-      ]
-    },
-    {
-      "id": "s_sec3",
-      "age": 15,
-      "title": "Sec 3",
-      "situation": "New subjects, new classes, and some friends are now in different rooms. This year you take {subjects}.",
-      "choices": [
-        {
-          "label": "Go hard at what you are good at",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "You get better at what you were already decent at. A narrower year than it could have been.",
-          "cost": 1
-        },
-        {
-          "label": "Work at the subject you find hardest",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "A slog. You are still not top of the class, and you are no longer afraid of it.",
-          "cost": 1
-        },
-        {
-          "label": "Take something outside class seriously",
-          "gain": {
-            "network": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "curiosity": 1,
-            "risk": 1
-          },
-          "outcome": "It costs you study time. You end the year with three adults who would vouch for you.",
-          "cost": 1,
-          "sets": "took_stage"
-        },
-        {
-          "label": "Ask to move a subject up a level",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "risk": 2
-          },
-          "outcome": "The first term is hard and by the third you have caught up. Nobody stopped you asking.",
-          "cost": 1,
-          "sets": "asked_up"
-        },
-        {
-          "label": "Live in the lab this year",
-          "needsSubject": [
-            "science_g1",
-            "sci_pc",
-            "sci_pb",
-            "sci_cb",
-            "physics",
-            "chemistry",
-            "biology"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "outcome": "The practicals stop being a chore. You start guessing what the experiment will do before you run it."
-        },
-        {
-          "label": "Chase one question past the syllabus",
-          "needsSubject": [
-            "hum_ss_geog",
-            "hum_ss_hist",
-            "hum_ss_lit",
-            "geography",
-            "history",
-            "literature"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "curiosity": 2
-          },
-          "outcome": "You read well past what the paper wants. One argument you build this year stays with you."
-        },
-        {
-          "label": "Sit with the hard Maths",
-          "needsSubject": [
-            "amaths"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "It is slow, and then suddenly it is not. You stop believing you are bad at this."
-        },
-        {
-          "label": "Build something small and ship it",
-          "needsSubject": [
-            "computing",
-            "electronics"
-          ],
-          "cost": 1,
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "sets": "built_side",
-          "outcome": "Twelve people use it. Two send you bugs. You fix them, which is the whole job in miniature."
-        },
-        {
-          "label": "Make one piece worth showing",
-          "needsSubject": [
-            "art",
-            "higher_art",
-            "music",
-            "higher_music",
-            "drama"
-          ],
-          "cost": 1,
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "It takes far longer than you thought. It ends up in a folder you can hand to someone."
-        },
-        {
-          "label": "Finish one real thing properly",
-          "needsSubject": [
-            "dt",
-            "electronics",
-            "nfs",
-            "ess",
-            "poa",
-            "economics",
-            "ebs"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "Not a mock up. Something that works, that somebody else uses, with your name on it."
-        }
-      ]
-    },
-    {
-      "id": "s_sec4",
-      "age": 16,
-      "title": "Sec 4",
-      "situation": "The exam year. Everyone has an opinion about what you should do next, and most have only seen one route.",
-      "choices": [
-        {
-          "label": "Focus entirely on the results",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "A clean, narrow year. You go into the exams as ready as you were going to be.",
-          "cost": 1
-        },
-        {
-          "label": "Study, and go and look around",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "curiosity": 2
-          },
-          "outcome": "You lose some weekends to open houses, and find a course you cannot stop thinking about.",
-          "cost": 1,
-          "sets": "looked_around"
-        },
-        {
-          "label": "Apply through Early Admissions",
-          "gain": {
-            "portfolio": 1
-          },
-          "disp": {
-            "optimism": 2,
-            "risk": 1
-          },
-          "outcome": "You have to say what you want to a stranger. That turns out to be the hard part.",
-          "cost": 1,
-          "sets": "eae_applied",
-          "opens": "d_eae"
-        },
-        {
-          "label": "Build one thing properly on the side",
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "curiosity": 1,
-            "persistence": 1
-          },
-          "outcome": "Nobody grades it. Years later it is the thing people ask you about first.",
-          "cost": 1,
-          "sets": "built_side"
-        },
-        {
-          "label": "Keep the practicals going anyway",
-          "needsSubject": [
-            "science_g1",
-            "sci_pc",
-            "sci_pb",
-            "sci_cb",
-            "physics",
-            "chemistry",
-            "biology"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "outcome": "Revision eats the year. The hours you keep in the lab are the ones you still remember."
-        },
-        {
-          "label": "Write one essay for yourself",
-          "needsSubject": [
-            "hum_ss_geog",
-            "hum_ss_hist",
-            "hum_ss_lit",
-            "geography",
-            "history",
-            "literature"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "outcome": "Nobody marks it. It is the first thing you write that actually sounds like you."
-        },
-        {
-          "label": "Push the Maths past the paper",
-          "needsSubject": [
-            "amaths"
-          ],
-          "cost": 1,
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "outcome": "You go a chapter beyond what is examined. Two years later that chapter turns up again."
-        },
-        {
-          "label": "Keep building through the exam year",
-          "needsSubject": [
-            "computing",
-            "electronics"
-          ],
-          "cost": 1,
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "sets": "built_side",
-          "outcome": "Less sleep, more made. You walk into next year holding something you can actually show."
-        },
-        {
-          "label": "Put the portfolio together properly",
-          "needsSubject": [
-            "art",
-            "higher_art",
-            "music",
-            "higher_music",
-            "drama"
-          ],
-          "cost": 1,
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "You pick six pieces and cut the rest. Choosing turns out to be harder than making was."
-        },
-        {
-          "label": "Enter one thing outside school",
-          "needsSubject": [
-            "dt",
-            "electronics",
-            "nfs",
-            "ess",
-            "poa",
-            "economics",
-            "ebs"
-          ],
-          "cost": 1,
-          "gain": {
-            "network": 1,
-            "portfolio": 1
-          },
-          "disp": {
-            "risk": 1
-          },
-          "outcome": "A competition, a market stall, a real client. You do not win. You do get seen."
-        }
-      ]
-    },
-    {
-      "id": "s_results",
-      "age": 17,
-      "title": "Results",
-      "situation": "The envelope. This is the moment that feels like a verdict, and is not one.",
-      "choices": [
-        {
-          "label": "Junior College",
-          "sets": {
-            "path": "academic",
-            "label": "Junior College"
-          },
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "persistence": 1
-          },
-          "outcome": "Two years, a few subjects, taken deep and fast. You start in February.",
-          "opens": "d_alevels"
-        },
-        {
-          "label": "Polytechnic",
-          "sets": {
-            "path": "applied",
-            "label": "Polytechnic"
-          },
-          "gain": {
-            "portfolio": 1
-          },
-          "disp": {
-            "curiosity": 1
-          },
-          "outcome": "You pick a field on day one. Three years in it, with a real internship in the middle.",
-          "opens": "d_polyroad"
-        },
-        {
-          "label": "ITE",
-          "sets": {
-            "path": "hands",
-            "label": "ITE"
-          },
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "risk": 1
-          },
-          "outcome": "A workshop in week one, on the equipment the industry actually uses.",
-          "opens": "d_iteroad"
-        },
-        {
-          "label": "An arts school, on a portfolio",
-          "sets": {
-            "path": "arts",
-            "label": "Arts school",
-            "flag": "built_side"
-          },
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "risk": 1,
-            "optimism": 1
-          },
-          "outcome": "They looked at what you made and at how you talked about it. Your results barely came up.",
-          "opens": "d_portfolio"
-        },
-        {
-          "label": "A fifth year, to widen it",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "One more year in the same uniform. Some friends do not understand it. In ten years nobody can tell.",
-          "opens": "d_fifth"
-        }
-      ],
-      "format": "fork"
-    },
-    {
-      "id": "s_first",
-      "age": 18,
-      "title": "A fifth year",
-      "situation": "Same school, one more year, subjects at a harder level. The room is smaller and the teaching is closer.",
-      "choices": [
-        {
-          "label": "Aim it at Junior College",
-          "sets": {
-            "path": "academic",
-            "label": "Junior College"
-          },
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "You get there a year later than the others, and you get there.",
-          "opens": "d_alevels"
-        },
-        {
-          "label": "Aim it at a polytechnic course",
-          "sets": {
-            "path": "applied",
-            "label": "Polytechnic"
-          },
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "persistence": 1,
-            "curiosity": 1
-          },
-          "outcome": "The extra year was for a specific course. You get the specific course.",
-          "opens": "d_polyroad"
-        },
-        {
-          "label": "Aim it at Higher Nitec",
-          "sets": {
-            "path": "hands",
-            "label": "ITE"
-          },
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "risk": 1,
-            "persistence": 1
-          },
-          "outcome": "Straight into Year 2 on the strength of the year. You are not behind, you took a run up.",
-          "opens": "d_iteroad"
-        },
-        {
-          "label": "Spend it building a portfolio",
-          "sets": {
-            "path": "arts",
-            "label": "Arts school",
-            "flag": "built_side"
-          },
-          "gain": {
-            "portfolio": 3
-          },
-          "disp": {
-            "curiosity": 2,
-            "risk": 1
-          },
-          "outcome": "Twelve months of making things. The folder at the end is the argument.",
-          "opens": "d_portfolio"
-        }
-      ],
-      "variants": {
-        "academic": {
-          "title": "First year at JC",
-          "situation": "Lectures, tutorials, and a reading list nobody checks. The pace is the thing people warn you about, and they are right.",
-          "choices": [
-            {
-              "label": "Keep up, head down",
-              "gain": {
-                "skills": 2
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You stay on top of the pace. It costs most of your evenings and it works.",
-              "cost": 1
-            },
-            {
-              "label": "Join a CCA and take it seriously",
-              "gain": {
-                "network": 2,
-                "portfolio": 1
-              },
-              "disp": {
-                "curiosity": 1,
-                "risk": 1
-              },
-              "outcome": "Your grades dip a little. You know people two years ahead who tell you things the handbook does not.",
-              "cost": 2,
-              "sets": "took_stage",
-              "opens": "d_people"
-            },
-            {
-              "label": "Find a tutor group and study together",
-              "gain": {
-                "skills": 1,
-                "network": 2
-              },
-              "disp": {
-                "flexibility": 1,
-                "persistence": 1
-              },
-              "outcome": "Explaining it to someone else turns out to be how you learn it.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Chase a subject nobody made you take",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "curiosity": 2
-              },
-              "outcome": "It is not on any syllabus. It becomes the thing you talk about in interviews.",
-              "cost": 1
-            }
-          ],
-          "format": "turn"
-        },
-        "applied": {
-          "title": "First year at poly",
-          "situation": "Studios, a project brief in week two, and nobody checking whether you did the reading.",
-          "choices": [
-            {
-              "label": "Get very good at the software",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You become the one people ask. Deep, and narrow for now.",
-              "cost": 1
-            },
-            {
-              "label": "Say yes to every group project",
-              "gain": {
-                "network": 2,
-                "skills": 1
-              },
-              "disp": {
-                "flexibility": 2
-              },
-              "outcome": "You learn to work with people who work nothing like you. That is most of a career.",
-              "cost": 1,
-              "opens": "d_people"
-            },
-            {
-              "label": "Enter a competition",
-              "gain": {
-                "portfolio": 2
-              },
-              "disp": {
-                "risk": 2,
-                "optimism": 1
-              },
-              "outcome": "You do not win. A judge remembers your name and emails you eighteen months later.",
-              "cost": 2
-            },
-            {
-              "label": "Start freelancing small jobs",
-              "gain": {
-                "portfolio": 2,
-                "network": 1
-              },
-              "disp": {
-                "risk": 1,
-                "curiosity": 1
-              },
-              "outcome": "Tiny paid work, badly priced. You learn what a client actually is.",
-              "cost": 2
-            }
-          ],
-          "format": "turn"
-        },
-        "hands": {
-          "title": "First year at ITE",
-          "situation": "A workshop, a locker, and a set of tools that are yours for the year. Small class, and the lecturer worked in the trade.",
-          "choices": [
-            {
-              "label": "Master the machine everyone avoids",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Six months in you are the one they call over. That is a real thing to be.",
-              "cost": 2,
-              "opens": "d_trade"
-            },
-            {
-              "label": "Aim straight at a poly place",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You find out a GPA of 3.5 guarantees it, and you start aiming at that in week three.",
-              "cost": 1
-            },
-            {
-              "label": "Take a paid part time job in the trade",
-              "gain": {
-                "network": 2,
-                "skills": 1
-              },
-              "disp": {
-                "risk": 1
-              },
-              "outcome": "Tiring. You are on real sites, with real deadlines, being paid, at eighteen.",
-              "cost": 1,
-              "opens": "d_people"
-            },
-            {
-              "label": "Fix things for people for free",
-              "gain": {
-                "portfolio": 2,
-                "network": 1
-              },
-              "disp": {
-                "curiosity": 1,
-                "optimism": 1
-              },
-              "outcome": "Word gets round the neighbourhood. Half your later work comes from this.",
-              "cost": 2
-            }
-          ],
-          "format": "turn"
-        },
-        "arts": {
-          "title": "First year at art school",
-          "situation": "A studio space, a crit every fortnight, and the first honest feedback you have had on work you care about.",
-          "choices": [
-            {
-              "label": "Make far more than they ask for",
-              "gain": {
-                "portfolio": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Volume is how anyone gets good. Most of it is bad and the last five are not.",
-              "cost": 1,
-              "sets": "built_side"
-            },
-            {
-              "label": "Learn the technical craft properly",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 1,
-                "curiosity": 1
-              },
-              "outcome": "Taste is common and craft is not. You spend the year on craft.",
-              "cost": 1
-            },
-            {
-              "label": "Show your work in public",
-              "gain": {
-                "network": 2
-              },
-              "disp": {
-                "risk": 2,
-                "optimism": 1
-              },
-              "outcome": "Terrifying. Two people ask if you take commissions.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Collaborate outside your discipline",
-              "gain": {
-                "network": 2,
-                "portfolio": 1
-              },
-              "disp": {
-                "flexibility": 2,
-                "curiosity": 1
-              },
-              "outcome": "You work with a musician and a coder. None of you know the others' rules, which is the point.",
-              "cost": 2,
-              "opens": "d_people"
-            }
-          ],
-          "format": "turn"
-        }
-      },
-      "format": "fork"
-    },
-    {
-      "id": "s_second",
-      "age": 19,
-      "title": "Second year",
-      "situation": "The novelty has gone. This is the year the people who get good at this get good at it.",
-      "choices": [
-        {
-          "label": "Go deeper in one thing",
-          "gain": {
-            "skills": 3
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "Depth is its own kind of freedom. You start choosing it on purpose.",
-          "cost": 1
-        },
-        {
-          "label": "Widen out and try more",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "curiosity": 2
-          },
-          "outcome": "Best at nothing yet, and you can see how the pieces fit, which is rarer.",
-          "cost": 1
-        },
-        {
-          "label": "Get to know people who are ahead of you",
-          "gain": {
-            "network": 3
-          },
-          "disp": {
-            "optimism": 1,
-            "risk": 1
-          },
-          "outcome": "They tell you things nobody writes down. Most of what happens next comes through them.",
-          "cost": 2,
-          "opens": "d_people"
-        },
-        {
-          "label": "Take on something you are not ready for",
-          "gain": {
-            "skills": 1,
-            "portfolio": 2
-          },
-          "disp": {
-            "risk": 2
-          },
-          "outcome": "It goes badly and then it goes fine. You are now the person who does that thing.",
-          "cost": 2
-        }
-      ],
-      "variants": {
-        "academic": {
-          "title": "A Level year",
-          "situation": "Prelims, then the real thing. The whole two years is about to be measured in a fortnight.",
-          "choices": [
-            {
-              "label": "Everything into the exams",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You give it what you have. However it lands, you will not be wondering.",
-              "cost": 1
-            },
-            {
-              "label": "Study, and keep one thing alive outside",
-              "gain": {
-                "skills": 2,
-                "portfolio": 1
-              },
-              "disp": {
-                "persistence": 1,
-                "curiosity": 1
-              },
-              "outcome": "One evening a week stays yours. It is the reason you do not burn out in March.",
-              "cost": 2
-            },
-            {
-              "label": "Help the people struggling around you",
-              "gain": {
-                "network": 2,
-                "skills": 1
-              },
-              "disp": {
-                "optimism": 1,
-                "flexibility": 1
-              },
-              "outcome": "You teach it, so you learn it twice. Three of them stay friends for twenty years.",
-              "cost": 2,
-              "sets": "helped_someone",
-              "opens": "d_people"
-            },
-            {
-              "label": "Work out what the degree is actually for",
-              "disp": {
-                "curiosity": 2
-              },
-              "outcome": "You email people doing the job. Two reply, and one changes what you apply for.",
-              "cost": 1
-            }
-          ]
-        },
-        "applied": {
-          "title": "Internship year",
-          "situation": "Six months inside a real company, doing real work, for the first time. Nobody is grading it and everybody notices it.",
-          "choices": [
-            {
-              "label": "Be the one who volunteers",
-              "gain": {
-                "network": 3,
-                "skills": 1
-              },
-              "disp": {
-                "risk": 2
-              },
-              "outcome": "You get handed things above your level. Your supervisor remembers your name for a decade.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Learn how the business actually runs",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "curiosity": 2
-              },
-              "outcome": "Not just your task. Where the money comes from, and who decides. Very few interns ask.",
-              "cost": 1
-            },
-            {
-              "label": "Do your work impeccably and go home",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Nothing flashy, nothing late, nothing wrong. That reputation is worth more than it sounds.",
-              "cost": 2
-            },
-            {
-              "label": "Use it to find out you hate this field",
-              "disp": {
-                "flexibility": 3
-              },
-              "outcome": "Six months to learn it, rather than six years. That is the internship working perfectly.",
-              "cost": 1
-            }
-          ]
-        },
-        "hands": {
-          "title": "Higher Nitec",
-          "situation": "Harder work, better equipment, and a class that has thinned out. The people left actually want to be here.",
-          "choices": [
-            {
-              "label": "Push the GPA toward 3.5",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "A guaranteed poly place at 3.5 is a specific target, and specific targets are the ones people hit.",
-              "cost": 1
-            },
-            {
-              "label": "Take a traineeship with an employer",
-              "gain": {
-                "network": 2,
-                "skills": 2
-              },
-              "disp": {
-                "risk": 1,
-                "persistence": 1
-              },
-              "outcome": "Paid, on site, learning from people who have done it twenty years.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Compete in a skills competition",
-              "gain": {
-                "portfolio": 2,
-                "network": 1
-              },
-              "disp": {
-                "risk": 2,
-                "optimism": 1
-              },
-              "outcome": "You train for months for one day. You place mid field and you are a different worker after it.",
-              "cost": 2,
-              "sets": "took_stage"
-            },
-            {
-              "label": "Start taking your own small jobs",
-              "gain": {
-                "portfolio": 2,
-                "network": 1
-              },
-              "disp": {
-                "risk": 2
-              },
-              "outcome": "You quote badly, once. After that you quote properly, for the rest of your life.",
-              "cost": 1
-            }
-          ]
-        },
-        "arts": {
-          "title": "Second year in the studio",
-          "situation": "The work is getting better and you can finally see how far off it still is. That gap is the whole job.",
-          "choices": [
-            {
-              "label": "Find your own thing and dig in",
-              "gain": {
-                "portfolio": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You stop making what gets marked well and start making what is yours.",
-              "cost": 1
-            },
-            {
-              "label": "Assist someone already working",
-              "gain": {
-                "network": 3,
-                "skills": 1
-              },
-              "disp": {
-                "risk": 1,
-                "flexibility": 1
-              },
-              "outcome": "You carry equipment for a year and watch how a professional actually operates.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Learn the commercial side",
-              "gain": {
-                "skills": 2
-              },
-              "disp": {
-                "curiosity": 2
-              },
-              "outcome": "Pricing, contracts, invoices. Unglamorous, and it is why some artists eat.",
-              "cost": 1
-            },
-            {
-              "label": "Put on a show with your year",
-              "gain": {
-                "portfolio": 2,
-                "network": 2
-              },
-              "disp": {
-                "risk": 2,
-                "optimism": 1
-              },
-              "outcome": "You organise, hang, publicise and stand in the room. Forty people come. It counts.",
-              "cost": 2,
-              "opens": "d_people"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "s_launch",
-      "age": 21,
-      "title": "Out the other side",
-      "situation": "You hold a qualification. The question now is what you do with the next three years, not the next thirty.",
-      "choices": [
-        {
-          "label": "Straight into work",
-          "gain": {
-            "skills": 2,
-            "network": 2
-          },
-          "disp": {
-            "risk": 1
-          },
-          "outcome": "Earning while others study. The learning carries on, on someone's payroll.",
-          "cost": 1,
-          "opens": "d_people"
-        },
-        {
-          "label": "Keep studying, further up",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "More years, and a wider set of roles at the end of them.",
-          "cost": 1
-        },
-        {
-          "label": "Work and study at the same time",
-          "gain": {
-            "skills": 2,
-            "network": 2
-          },
-          "disp": {
-            "persistence": 3
-          },
-          "outcome": "Employed and studying at once. Genuinely hard, and you finish with both.",
-          "cost": 2,
-          "opens": "d_workstudy"
-        },
-        {
-          "label": "Take a year to do something odd",
-          "gain": {
-            "portfolio": 2
-          },
-          "disp": {
-            "curiosity": 2,
-            "risk": 2
-          },
-          "outcome": "Everyone tells you it is a gap. It is the year you refer back to for decades.",
-          "cost": 2
-        }
-      ],
-      "variants": {
-        "academic": {
-          "title": "University",
-          "situation": "A campus, a degree, and for the first time nobody has told you what to be interested in.",
-          "choices": [
-            {
-              "label": "Chase the best grades you can",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "It opens the doors that screen on grades. Those doors close again after about three years.",
-              "cost": 1
-            },
-            {
-              "label": "Get experience alongside the degree",
-              "gain": {
-                "network": 3,
-                "portfolio": 1
-              },
-              "disp": {
-                "risk": 1,
-                "curiosity": 1
-              },
-              "outcome": "Internships, part time work, anything real. You graduate with a record and not just a transcript.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Run something on campus",
-              "gain": {
-                "network": 2,
-                "portfolio": 2
-              },
-              "disp": {
-                "risk": 2,
-                "optimism": 1
-              },
-              "outcome": "Budgets, people, a thing that fails publicly if you get it wrong. Nothing else at university is like it.",
-              "cost": 2,
-              "opens": "d_people"
-            },
-            {
-              "label": "Go abroad for a semester",
-              "gain": {
-                "network": 1
-              },
-              "disp": {
-                "flexibility": 3,
-                "risk": 1
-              },
-              "outcome": "Uncomfortable for a month, then the most useful thing you did. You stop assuming your normal is normal.",
-              "cost": 1
-            }
-          ]
-        },
-        "applied": {
-          "title": "Diploma in hand",
-          "situation": "Three years in a field, an internship on the record, and a portfolio you could put in front of anyone.",
-          "choices": [
-            {
-              "label": "Take the job offer",
-              "gain": {
-                "skills": 2,
-                "network": 2
-              },
-              "disp": {
-                "risk": 1
-              },
-              "outcome": "You start earning at twenty one, in the field you trained for. That is not the common story it should be.",
-              "cost": 1,
-              "opens": "d_people"
-            },
-            {
-              "label": "Go on to a degree with exemptions",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Your diploma carries credits, so you start partway in. Cheaper and faster than the long way round.",
-              "cost": 1
-            },
-            {
-              "label": "Take a work study degree",
-              "gain": {
-                "skills": 2,
-                "network": 2
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "Employed and studying at once, paid throughout. Tiring, and you come out with both.",
-              "cost": 2,
-              "opens": "d_workstudy"
-            },
-            {
-              "label": "Go out on your own with the portfolio",
-              "gain": {
-                "portfolio": 3
-              },
-              "disp": {
-                "risk": 3,
-                "optimism": 2
-              },
-              "outcome": "No salary and no permission needed. You find out fast whether the work is good enough.",
-              "cost": 2,
-              "sets": "built_side"
-            }
-          ]
-        },
-        "hands": {
-          "title": "Qualified",
-          "situation": "You are trained, certified, and employable in a trade that cannot be done from a laptop in another country.",
-          "choices": [
-            {
-              "label": "Go and earn",
-              "gain": {
-                "skills": 2,
-                "network": 2
-              },
-              "disp": {
-                "risk": 1
-              },
-              "outcome": "Full pay, real responsibility, at twenty one. Some of your friends have three years of fees left.",
-              "cost": 1,
-              "opens": "d_people"
-            },
-            {
-              "label": "Take the guaranteed poly place",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "The GPA you chased is now a diploma place. The long climb has a next rung and you are on it.",
-              "cost": 1
-            },
-            {
-              "label": "Specialise in something rare",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "curiosity": 2,
-                "persistence": 1
-              },
-              "outcome": "A narrow certification almost nobody holds. Rare beats general, in money and in freedom.",
-              "cost": 2
-            },
-            {
-              "label": "Start taking your own contracts",
-              "gain": {
-                "portfolio": 2,
-                "network": 2
-              },
-              "disp": {
-                "risk": 3
-              },
-              "outcome": "Your own van, your own quotes, your own mistakes. Nobody has to hire you first.",
-              "cost": 2,
-              "opens": "d_people"
-            }
-          ]
-        },
-        "arts": {
-          "title": "Out of the studio",
-          "situation": "A diploma, a body of work, and an industry that hires on what it has seen rather than what you hold.",
-          "choices": [
-            {
-              "label": "Take a studio job and learn the trade",
-              "gain": {
-                "skills": 2,
-                "network": 2
-              },
-              "disp": {
-                "persistence": 1,
-                "flexibility": 1
-              },
-              "outcome": "Junior, badly paid, surrounded by people better than you. Exactly where you want to be.",
-              "cost": 1,
-              "opens": "d_people"
-            },
-            {
-              "label": "Go on to the degree",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Three more years to go further, and to teach later if you want to.",
-              "cost": 1
-            },
-            {
-              "label": "Freelance from the start",
-              "gain": {
-                "portfolio": 3
-              },
-              "disp": {
-                "risk": 3,
-                "optimism": 1
-              },
-              "outcome": "Feast and famine. You get very good at pitching and very fast at working.",
-              "cost": 2
-            },
-            {
-              "label": "Take the day job, keep the practice",
-              "gain": {
-                "skills": 1,
-                "portfolio": 2
-              },
-              "disp": {
-                "persistence": 2,
-                "flexibility": 1
-              },
-              "outcome": "Rent paid, work continuing at nights and weekends. Unromantic, and it is how most of them do it.",
-              "cost": 2
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "s_early",
-      "age": 24,
-      "title": "Early working years",
-      "situation": "The work is not what the course described, and a great deal of the job turns out to be other people.",
-      "choices": [
-        {
-          "label": "Get very good at your one thing",
-          "gain": {
-            "skills": 3
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "You become the person they come to for it. Deep and narrow.",
-          "cost": 2
-        },
-        {
-          "label": "Learn how the whole place works",
-          "gain": {
-            "network": 2
-          },
-          "disp": {
-            "curiosity": 2
-          },
-          "outcome": "Best at nothing, and able to see how the pieces fit, which is rarer and better paid later.",
-          "cost": 1
-        },
-        {
-          "label": "Keep building something of your own",
-          "gain": {
-            "portfolio": 2,
-            "skills": 1
-          },
-          "disp": {
-            "risk": 1,
-            "curiosity": 1
-          },
-          "outcome": "Two lives at once, tiring and interesting. People start to know the side thing.",
-          "cost": 2
-        },
-        {
-          "label": "Use your SkillsFuture Credit on something unrelated",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "curiosity": 2,
-            "risk": 1
-          },
-          "outcome": "It is yours from 25, not your employer's. You spend it on something nobody asked you to learn.",
-          "cost": 1
-        }
-      ],
-      "variants": {
-        "academic": {
-          "title": "Graduate, first job",
-          "situation": "The degree got you the interview. Nothing you learned in it is what you do on a Tuesday.",
-          "choices": [
-            {
-              "label": "Learn the job properly and fast",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "Two years of catching up on everything the degree did not cover. Everyone does this. Few admit it.",
-              "cost": 1
-            },
-            {
-              "label": "Find a mentor and be worth their time",
-              "gain": {
-                "network": 3,
-                "skills": 1
-              },
-              "disp": {
-                "optimism": 2
-              },
-              "outcome": "You ask, which most people never do. They say yes, which most people do not expect.",
-              "cost": 2,
-              "sets": "helped_someone"
-            },
-            {
-              "label": "Move to a smaller place with more rope",
-              "gain": {
-                "skills": 2
-              },
-              "disp": {
-                "risk": 2,
-                "flexibility": 1
-              },
-              "outcome": "Less prestige on the card, three times the responsibility. You grow faster than your cohort.",
-              "cost": 2
-            },
-            {
-              "label": "Question whether this is the field",
-              "disp": {
-                "flexibility": 3
-              },
-              "outcome": "Asking at twenty four costs a year. Asking at thirty six costs considerably more.",
-              "cost": 1
-            }
-          ]
-        },
-        "applied": {
-          "title": "Three years in",
-          "situation": "You started earlier than most of the graduates around you, and it shows in what you can actually do.",
-          "choices": [
-            {
-              "label": "Deepen the technical craft",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 2
-              },
-              "outcome": "You are now genuinely senior at the thing itself, while others are still learning it.",
-              "cost": 2
-            },
-            {
-              "label": "Add the degree part time",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "Evenings and weekends for three years, often employer funded. The ceiling you were told about disappears.",
-              "cost": 1
-            },
-            {
-              "label": "Move sideways into a growing field",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "flexibility": 2,
-                "risk": 1
-              },
-              "outcome": "Most of what you know still applies. You are a beginner in the rest, briefly.",
-              "cost": 1
-            },
-            {
-              "label": "Lead a small project",
-              "gain": {
-                "network": 2,
-                "skills": 1
-              },
-              "disp": {
-                "risk": 2
-              },
-              "outcome": "Three people, one deadline, your name on it. The first real test of whether you can carry others.",
-              "cost": 2
-            }
-          ]
-        },
-        "hands": {
-          "title": "In the trade",
-          "situation": "You are quick, you are trusted, and people ask for you by name. There is a version of this that lasts forty years.",
-          "choices": [
-            {
-              "label": "Become the best on the site",
-              "gain": {
-                "skills": 3,
-                "network": 1
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "Mastery in a trade is visible in a way it is not in an office. Everyone knows who is good.",
-              "cost": 2
-            },
-            {
-              "label": "Add the diploma part time",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "Nights, funded, over two or three years. The supervisor roles open, and so does the degree after it.",
-              "cost": 1
-            },
-            {
-              "label": "Move into supervising",
-              "gain": {
-                "network": 3,
-                "skills": 1
-              },
-              "disp": {
-                "risk": 2
-              },
-              "outcome": "Managing a crew is a different job from doing the work, and you have to learn it from scratch.",
-              "cost": 1
-            },
-            {
-              "label": "Set up on your own",
-              "gain": {
-                "portfolio": 3
-              },
-              "disp": {
-                "risk": 3,
-                "optimism": 2
-              },
-              "outcome": "Your name on the van. Everything depends on you now, which is the frightening part and the point.",
-              "cost": 2
-            }
-          ]
-        },
-        "arts": {
-          "title": "Making a living at it",
-          "situation": "Some months are good. The question at twenty four is whether you can make this sustainable, not whether you are talented.",
-          "choices": [
-            {
-              "label": "Get properly good at one discipline",
-              "gain": {
-                "skills": 3
-              },
-              "disp": {
-                "persistence": 3
-              },
-              "outcome": "The work gets undeniable. Undeniable is the only marketing that lasts.",
-              "cost": 2
-            },
-            {
-              "label": "Build the client relationships",
-              "gain": {
-                "network": 3
-              },
-              "disp": {
-                "optimism": 2,
-                "flexibility": 1
-              },
-              "outcome": "Repeat clients are the difference between a career and a run of luck.",
-              "cost": 2,
-              "sets": "built_side"
-            },
-            {
-              "label": "Move into a steadier adjacent role",
-              "gain": {
-                "skills": 1
-              },
-              "disp": {
-                "flexibility": 3
-              },
-              "outcome": "In house, salaried, still creative. Not a retreat. A different set of trade offs, chosen with open eyes.",
-              "cost": 1
-            },
-            {
-              "label": "Teach some of the week",
-              "gain": {
-                "network": 2,
-                "skills": 1
-              },
-              "disp": {
-                "optimism": 1,
-                "persistence": 1
-              },
-              "outcome": "Two days teaching pays the rent and makes the other three days braver.",
-              "cost": 1,
-              "sets": "helped_someone"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "s_cross",
-      "age": 27,
-      "title": "The first real crossroads",
-      "situation": "You could stay on this road another decade and be fine. Something is asking whether fine was the plan.",
-      "choices": [
-        {
-          "label": "Stay, and go deeper",
-          "gain": {
-            "skills": 3,
-            "network": 1
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "Mastery is real and it takes years. You choose to spend them here.",
-          "outcomeIf": {
-            "path:academic": "The profession has ranks and you start climbing. The exams, it turns out, were the easy part.",
-            "path:applied": "Six years in already, and now depth on top. People ask for you by name before they ask the price.",
-            "path:hands": "Mastery in a trade is visible. The certifications stack, the rare jobs come to you, and your rate follows.",
-            "path:arts": "The work stops looking like anyone else's. Depth in a style is the thing collectors and clients actually buy."
-          }
-        },
-        {
-          "label": "Move sideways into something near",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "flexibility": 2,
-            "risk": 1
-          },
-          "outcome": "Most of what you know still applies. A beginner again in the rest, briefly.",
-          "outcomeIf": {
-            "path:academic": "The degree was general on purpose. It travels with you, and the new field cares more about how you think.",
-            "path:applied": "Your diploma skills carry over more than you expected. You are a beginner in the labels, not the work.",
-            "path:hands": "The trade next door uses half your tools already. Your hands learn the other half faster than a course could.",
-            "path:arts": "You take the craft into a nearby industry. The trained eye turns out to be the rare part."
-          }
-        },
-        {
-          "label": "Upgrade formally while working",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 3
-          },
-          "outcome": "Two years of evenings, and a qualification you did not have at nineteen.",
-          "outcomeIf": {
-            "path:academic": "A postgraduate qualification alongside the job. Two years of evenings, and the specialist rooms start returning your calls.",
-            "path:applied": "The part time degree starts in Year 2 because the diploma carries credits. The ceiling you were told about disappears.",
-            "path:hands": "Nights at poly on top of the trade. The supervisor roles open, and the degree after them if you want.",
-            "path:arts": "You add the paper to the practice. Teaching gigs and grants ask for it, and now you have it."
-          }
-        },
-        {
-          "label": "Leave and start your own thing",
-          "gain": {
-            "portfolio": 3
-          },
-          "disp": {
-            "risk": 3,
-            "optimism": 2
-          },
-          "outcome": "The salary stops and the ceiling goes with it. Both of those are true at once.",
-          "outcomeIf": {
-            "flag:built_side": "The side thing you kept alive becomes the front thing. Day one already has customers who know your name.",
-            "path:applied": "Clients from the internship years come with you. Six years of shipped work is the pitch, and it lands.",
-            "path:hands": "The van has your name on it now. The trade taught you the work; the first year teaches pricing.",
-            "path:arts": "You have freelanced in all but name for years. Now the invoices say so, and you set the terms."
-          }
-        }
-      ],
-      "variants": {
-        "academic": {
-          "situation": "Your cohort is splitting. Some are deep into a profession, some are already on their second thing entirely."
-        },
-        "applied": {
-          "situation": "You have six years of doing the work behind you at twenty seven, which is more than most people your age."
-        },
-        "hands": {
-          "situation": "The trade has been good to you. The question is whether you want to be doing it with your hands at fifty."
-        },
-        "arts": {
-          "situation": "You have made a living from it for six years, which most people who started with you have not."
-        }
-      },
-      "format": "fork"
-    },
-    {
-      "id": "s_build",
-      "age": 30,
-      "title": "Building something",
-      "situation": "People ask your opinion now. That is a kind of power, and it is easy to spend it badly.",
-      "choices": [
-        {
-          "label": "Take charge of other people's work",
-          "gain": {
-            "network": 3,
-            "skills": 1
-          },
-          "disp": {
-            "risk": 1,
-            "persistence": 1
-          },
-          "outcome": "Managing is a different job from doing, and nobody trains you for it.",
-          "cost": 2,
-          "outcomeIf": {
-            "flag:helped_someone": "You have been teaching people since the exam years. Managing turns out to be that, with budgets attached.",
-            "path:academic": "Your cohort is running things too. The difference is you learn to manage the work, not just the meetings.",
-            "path:hands": "Running a crew is its own trade. The body gets a rest and the phone never does.",
-            "path:arts": "You lead a studio team now. Protecting other people's good work turns out to be its own craft."
-          }
-        },
-        {
-          "label": "Stay hands on and become expert",
-          "gain": {
-            "skills": 3
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "You keep doing the work instead of talking about it. Fewer meetings, more craft.",
-          "cost": 1,
-          "outcomeIf": {
-            "path:academic": "You turn down the management track people expect of a graduate. Specialist work suits you and it shows.",
-            "path:applied": "Nine years of craft compounds. Juniors bring you the problems nobody else can read, and you can.",
-            "path:hands": "Twelve years in, you are the one the young ones watch. The rare certifications keep your rate climbing.",
-            "path:arts": "You keep making instead of directing. The work stays yours, and yours is what people come for."
-          }
-        },
-        {
-          "label": "Build the thing with your name on it",
-          "gain": {
-            "portfolio": 3
-          },
-          "disp": {
-            "risk": 3,
-            "optimism": 2
-          },
-          "outcome": "Everything depends on you now, which is the terrifying part and the entire point.",
-          "cost": 2,
-          "outcomeIf": {
-            "flag:built_side": "The thing you built on the side was a rehearsal. This time it starts with customers and a track record.",
-            "path:applied": "Nine years of client work means referrals, not cold calls. The first invoice goes out in week one.",
-            "path:hands": "The workshop keys are yours. Every job you ever priced badly taught you what this one should cost.",
-            "path:arts": "The studio gets your name on the door. The practice you kept alive at nights is now the whole day."
-          }
-        },
-        {
-          "label": "Deliberately work less for a while",
-          "gain": {
-            "network": 1
-          },
-          "disp": {
-            "flexibility": 2
-          },
-          "outcome": "A family, an illness, a parent, or just enough. The career waits. It genuinely does.",
-          "cost": 1,
-          "outcomeIf": {
-            "flag:helped_someone": "The people you helped over the years cover for you without being asked. That is what the helping bought.",
-            "path:academic": "The profession frowns a little, then forgets. When you come back the letters after your name still work.",
-            "path:hands": "The trade waits better than people say. Your certifications keep, and your reputation keeps longer than that.",
-            "path:arts": "The practice shrinks to one small piece a month. It keeps the hand in, and it is enough."
-          }
-        }
-      ],
-      "variants": {
-        "academic": {
-          "situation": "The people you studied with are running things now, or have left entirely. Both look like success from outside."
-        },
-        "applied": {
-          "situation": "You have nine years of doing this. The juniors treat you as the person who knows, which is disconcerting."
-        },
-        "hands": {
-          "situation": "Your body has opinions about the work now. Plenty of people plan the next twenty years around that at exactly this point."
-        },
-        "arts": {
-          "situation": "The work is genuinely yours now. The question is whether you scale it, or keep it small and keep it good."
-        }
-      }
-    },
-    {
-      "id": "s_shift",
-      "age": 34,
-      "title": "The ground moves",
-      "situation": "Your field is not what it was. Some of what you were paid for is now done differently, or by something else.",
-      "choices": [
-        {
-          "label": "Learn the new tools early",
-          "gain": {
-            "skills": 3
-          },
-          "disp": {
-            "curiosity": 2,
-            "flexibility": 1
-          },
-          "outcome": "Ahead of the curve rather than under it. The change becomes an advantage.",
-          "cost": 1,
-          "outcomeIf": {
-            "path:academic": "The theory under the tools is the part you already hold. The buttons take weeks, not years.",
-            "path:applied": "You have retooled before, every few years since poly. This round is bigger and the habit is the same.",
-            "path:hands": "The new machines still need someone who knows why the old ones worked. That someone is you, retrained.",
-            "path:arts": "The new tools make your old style faster, not obsolete. You feed them taste they do not have."
-          },
-          "opens": "d_workstudy"
-        },
-        {
-          "label": "Move to the part it did not touch",
-          "gain": {
-            "skills": 1
-          },
-          "disp": {
-            "flexibility": 2
-          },
-          "outcome": "A sensible sidestep. The work is still there and it is quieter.",
-          "cost": 1
-        },
-        {
-          "label": "Retrain properly, into something else",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "risk": 2,
-            "optimism": 2
-          },
-          "outcome": "You use what exists for this and start again on purpose. Not a fall. A decision.",
-          "cost": 2,
-          "outcomeIf": {
-            "flag:built_side": "The side thing showed you learning something whole from nothing. This is that again, with rent involved.",
-            "path:academic": "Starting over after the long academic road feels expensive. The study habits from those years pay it back fast.",
-            "path:applied": "You pick the new field the way you picked poly, by what the work is like on a Tuesday.",
-            "path:hands": "You have retrained once already, at seventeen, into the trade. The second time is easier because you remember the first."
-          }
-        },
-        {
-          "label": "Become the one who trains everyone else",
-          "gain": {
-            "network": 3,
-            "skills": 1
-          },
-          "disp": {
-            "optimism": 1,
-            "curiosity": 1
-          },
-          "outcome": "You learn it first, then teach it. That makes you difficult to do without.",
-          "cost": 2,
-          "outcomeIf": {
-            "flag:helped_someone": "You have been explaining things to people since school. Now it is on the org chart, with a room booked.",
-            "path:academic": "You write the training the way you wish your lectures had been written. People actually stay awake for it.",
-            "path:hands": "You train the crew on the new kit. Fifteen years of near misses is a syllabus nobody else has.",
-            "path:arts": "You teach the new tools without losing the old eye. The class fills with people twice as scared as you."
-          },
-          "opens": "d_people"
-        },
-        {
-          "label": "Take the pay cut for the better team",
-          "gain": {
-            "network": 2,
-            "skills": 1
-          },
-          "disp": {
-            "risk": 1,
-            "optimism": 1
-          },
-          "outcome": "Less money, people who are good at the thing. You learn faster in one year than in the four before it.",
-          "cost": 1
-        },
-        {
-          "label": "Turn down the promotion that would end the craft",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "Everyone assumes you will regret it. You are still doing the work you actually like at fifty.",
-          "cost": 1
-        }
-      ]
-    },
-    {
-      "id": "s_mid",
-      "age": 38,
-      "title": "A quiet year",
-      "situation": "Nothing demands anything this year. You get to think.",
-      "format": "reflect"
-    },
-    {
-      "id": "s_reboot",
-      "age": 43,
-      "title": "The reboot years",
-      "situation": "From forty, the state pays for a serious change: a four thousand dollar credit, and an allowance while you study.",
-      "choices": [
-        {
-          "label": "Do the thing you always meant to",
-          "gain": {
-            "skills": 2,
-            "portfolio": 1
-          },
-          "disp": {
-            "risk": 2,
-            "optimism": 2
-          },
-          "outcome": "Half your income as an allowance while you study full time. You are oldest in the room and it does not matter.",
-          "opens": "d_sflu",
-          "outcomeIf": {
-            "flag:built_side": "The side thing waited twenty years for your full attention. Now it gets a funded year of it.",
-            "path:academic": "Two decades after the A Levels you are a student again, this time in something you chose for yourself.",
-            "path:hands": "The classroom felt like someone else's place at sixteen. At forty three, allowance paid, it is just a room.",
-            "path:arts": "You retrain in the discipline you always circled. The eye comes with you and the funding does the rest."
-          }
-        },
-        {
-          "label": "Take a subsidised diploma part time",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "persistence": 3
-          },
-          "outcome": "Up to ninety percent off, three hundred a month while you do it, and you keep the job."
-        },
-        {
-          "label": "Go deeper where you already are",
-          "gain": {
-            "skills": 3,
-            "network": 1
-          },
-          "disp": {
-            "persistence": 2
-          },
-          "outcome": "No dramatic move. You become the person the whole place relies on, which is its own security."
-        },
-        {
-          "label": "Start the business now",
-          "gain": {
-            "portfolio": 3,
-            "network": 1
-          },
-          "disp": {
-            "risk": 3,
-            "optimism": 2
-          },
-          "outcome": "Twenty years of contacts and knowing how it really works. A far better time to start than at 25.",
-          "outcomeIf": {
-            "flag:built_side": "The side thing has paying customers already. You are not starting a business so much as admitting you have one.",
-            "path:academic": "The profession taught you rigour and the network came free. The business runs on both from the first month.",
-            "path:applied": "Every client you served for two decades is now a lead. Half your first year is booked before you register.",
-            "path:hands": "Twenty five years of sites and quotes and being asked for by name. The business is mostly already there."
-          },
-          "opens": "d_people"
-        },
-        {
-          "label": "Learn something with no career in it",
-          "gain": {
-            "portfolio": 1
-          },
-          "disp": {
-            "curiosity": 3,
-            "optimism": 1
-          },
-          "outcome": "Nobody asked you to learn this. You are better company for it, and two doors open sideways."
-        },
-        {
-          "label": "Help someone else use theirs",
-          "gain": {
-            "network": 3
-          },
-          "disp": {
-            "optimism": 2
-          },
-          "outcome": "You fill in the form a friend had avoided for a year. They go, and they tell people who helped."
-        }
-      ],
-      "format": "fork"
-    },
-    {
-      "id": "s_late",
-      "age": 48,
-      "title": "Looking long",
-      "situation": "You have more working years ahead of you than a school leaver has lived. That is arithmetic, not encouragement.",
-      "choices": [
-        {
-          "label": "Teach what you know to people coming up",
-          "gain": {
-            "network": 3,
-            "portfolio": 1
-          },
-          "disp": {
-            "optimism": 2
-          },
-          "outcome": "You tell them the real version, including what went badly. More use than the tidy one.",
-          "cost": 1,
-          "sets": "helped_someone",
-          "outcomeIf": {
-            "flag:helped_someone": "You have done this informally for thirty years. The programme just puts a name on what you already were.",
-            "path:academic": "You tell them the degree was the start, not the story. Coming from you, with your record, they believe it.",
-            "path:hands": "Apprentices watch your hands the way you once watched your first foreman's. The trade keeps moving through you.",
-            "path:arts": "Students bring you work unlike anything you make, and you help them make it better. That is the whole job."
-          },
-          "opens": "d_people"
-        },
-        {
-          "label": "Keep learning inside the work",
-          "gain": {
-            "skills": 2,
-            "network": 1
-          },
-          "disp": {
-            "curiosity": 3
-          },
-          "outcome": "Steady, deliberate, still curious. That is rarer at 48 than it sounds, and it is the whole trick.",
-          "cost": 2
-        },
-        {
-          "label": "Switch to something gentler on purpose",
-          "gain": {
-            "network": 1
-          },
-          "disp": {
-            "flexibility": 3
-          },
-          "outcome": "Fewer hours, less travel, work you can do for another fifteen years. A design decision, not a retreat.",
-          "cost": 1
-        },
-        {
-          "label": "Start over one more time",
-          "gain": {
-            "skills": 2
-          },
-          "disp": {
-            "risk": 3,
-            "optimism": 2
-          },
-          "outcome": "People do this at 48, in real numbers, every year. It is unusual and it is not rare.",
-          "cost": 2
-        },
-        {
-          "label": "Tell them the messy version",
-          "gain": {
-            "network": 3,
-            "portfolio": 1
-          },
-          "disp": {
-            "optimism": 2
-          },
-          "outcome": "The setbacks, the sideways moves, the person who called. They believe it because it is not a speech.",
-          "cost": 1,
-          "opens": "d_workstudy"
-        },
-        {
-          "label": "Hire the one nobody else would",
-          "gain": {
-            "network": 2,
-            "portfolio": 1
-          },
-          "disp": {
-            "risk": 2,
-            "optimism": 2
-          },
-          "outcome": "You remember being the unlikely one. They turn out fine, which everybody could have guessed and nobody did.",
-          "cost": 1
-        }
-      ]
-    }
-  ],
-  "endingFrames": [
-    {
-      "id": "wide",
-      "when": "doors",
-      "title": "You kept the map wide.",
-      "body": "More is open to you now than when you started. That is what happens when someone keeps looking."
-    },
-    {
-      "id": "deep",
-      "when": "skills",
-      "title": "You got genuinely good at something.",
-      "body": "Depth is its own freedom. People who are properly skilled are rarely short of options."
-    },
-    {
-      "id": "known",
-      "when": "network",
-      "title": "People know who you are.",
-      "body": "Most of what happens at work comes through someone who thought of you."
-    },
-    {
-      "id": "made",
-      "when": "portfolio",
-      "title": "You made things.",
-      "body": "A record of what you can do that depends on nobody's grading. It opened doors no score could."
     }
   ],
   "wants": [
@@ -2274,87 +119,1815 @@
     },
     {
       "id": "unsure",
-      "label": "Not sure yet, honestly"
+      "label": "Not sure yet, honestly",
+      "riasec": null,
+      "kind": null
     }
   ],
   "doorsCatalog": {
     "d_eae": {
-      "label": "Early Admissions",
-      "note": "You know how it works and what it asks."
+      "label": "Early Admissions"
     },
     "d_portfolio": {
-      "label": "A portfolio",
-      "note": "Things you made, gathered where they can be shown."
+      "label": "A portfolio"
     },
     "d_people": {
-      "label": "People who vouch for you",
-      "note": "Adults who would put their name next to yours."
+      "label": "People who vouch for you"
     },
     "d_workstudy": {
-      "label": "Work and study together",
-      "note": "Paid while you qualify, at any age."
+      "label": "Work and study together"
     },
     "d_polyroad": {
-      "label": "The poly to degree road",
-      "note": "Diploma first, exemptions later."
+      "label": "The poly to degree road"
     },
     "d_iteroad": {
-      "label": "The ITE to poly road",
-      "note": "GPA 2.5 to apply, guaranteed at 3.5."
+      "label": "The ITE to poly road"
     },
     "d_fifth": {
-      "label": "The fifth year",
-      "note": "One more year, then every route again."
+      "label": "A fifth year"
     },
     "d_sflu": {
-      "label": "The reset at forty",
-      "note": "A funded restart that does not expire."
+      "label": "SkillsFuture, later"
     },
     "d_trade": {
-      "label": "A trade in your hands",
-      "note": "Skill that employers recognise on sight."
+      "label": "A trade in your hands"
     },
     "d_alevels": {
-      "label": "The A Level road",
-      "note": "Two years deep, then university."
+      "label": "The A Level road"
     }
   },
   "flags": [
-    "built_side",
-    "asked_up",
-    "eae_applied",
-    "looked_around",
-    "took_stage",
-    "helped_someone",
-    "moved_up",
+    "ns_yes",
+    "ns_no",
     "asked_help",
     "ecg_seen",
+    "asked_up",
     "told_parents",
+    "asked_form",
+    "asked_senior",
+    "went_open",
+    "led_cca",
+    "asked_family",
     "seen_work",
     "eae_ready",
     "dsa_aware",
     "attached",
     "exchanged",
     "found_mentor",
-    "asked_form",
-    "asked_senior",
-    "went_open",
-    "led_cca",
-    "asked_family",
     "asked_lecturer",
     "used_careers",
     "asked_boss",
     "asked_peer",
     "asked_younger",
-    "told_home"
+    "told_home",
+    "built_side",
+    "helped_someone",
+    "took_stage",
+    "moved_up",
+    "looked_around",
+    "nitec_exit",
+    "stayed_course",
+    "side_paying"
   ],
   "reflection": {
     "prompt": "Name one thing you would do differently from here.",
     "options": [
-      "Say yes to more",
-      "Guard my time better",
-      "Tell people what I want"
+      "Ask for help earlier",
+      "Try the thing sooner",
+      "Worry less about the label",
+      "Keep one thing for myself"
     ],
-    "hint": "Or write your own. Nobody marks this. It appears when you compare two stories."
-  }
+    "hint": "Nobody marks this. It reappears when you compare two stories, in your own words."
+  },
+  "stages": [
+    {
+      "id": "s_sec1",
+      "age": 13,
+      "title": "Sec 1",
+      "situation": "New school, new blazer, and by June you know which staircase floods. This year you take {subjects}, and everything is still moving.",
+      "choices": [
+        {
+          "label": "Join the CCA trial anyway",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "took_stage",
+          "outcome": "Wednesday trainings eat your evenings and hand you a second set of friends.",
+          "missed": "The trial happened without you. There is next year."
+        },
+        {
+          "label": "Fix your weakest subject first",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Thursday remedial with Mr Tan, week after week. October's paper comes back two grades kinder.",
+          "missed": "The Thursday remedial ran without you."
+        },
+        {
+          "label": "Ask to move a subject up",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "raise": {
+            "any": [
+              "el",
+              "maths",
+              "mtl",
+              "ls_science"
+            ]
+          },
+          "outcome": "You ask. The answer is a maybe, then a yes, and the timetable changes.",
+          "outcomeRaised": "{subject} moves to {level} at year end. You asked, so it moved.",
+          "missed": "Nobody knew you wanted to move up, so nothing moved.",
+          "sets": "moved_up"
+        },
+        {
+          "label": "Keep your primary school thing going",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "outcome": "Wushu, or the keyboard, or the drawing. Old thing, new school, still yours.",
+          "missed": "The old thing goes quiet this year."
+        },
+        {
+          "label": "Go all in on settling well",
+          "cost": 2,
+          "disp": {
+            "flexibility": 1,
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You learn names, bus routes and which auntie gives extra gravy. The year steadies under you."
+        },
+        {
+          "label": "Build something after school",
+          "cost": 2,
+          "needsSubject": [
+            "computing",
+            "art",
+            "dt"
+          ],
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "built_side",
+          "outcome": "A game in Scratch, a comic, a stool. Small, finished, and yours."
+        }
+      ]
+    },
+    {
+      "id": "s_sec2",
+      "age": 14,
+      "title": "Sec 2",
+      "situation": "Streaming is gone but the whisper survives at the void deck: which class are you in. This year the subject combination form is real, and {subjects} sit on your table.",
+      "choices": [
+        {
+          "label": "Chase the level move properly",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "raise": {
+            "any": [
+              "el",
+              "maths",
+              "mtl",
+              "ls_science",
+              "ls_geography",
+              "ls_history",
+              "ls_literature"
+            ]
+          },
+          "outcome": "You ask what the bar is, then train for it like a race.",
+          "outcomeRaised": "{subject} moves to {level}. The Sec 3 form changes shape because you asked.",
+          "missed": "The review meeting discussed other people.",
+          "sets": "moved_up"
+        },
+        {
+          "label": "Interrogate the subject booklet",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "looked_around",
+          "outcome": "You read all of it, even Electronics, even Drama. Two subjects you had dismissed stop being jokes.",
+          "missed": "You picked what your friends picked."
+        },
+        {
+          "label": "Take the stage, or the pitch",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "sets": "took_stage",
+          "outcome": "Concert, kids day, inter school heats. Your name gets read over a PA system."
+        },
+        {
+          "label": "Help somebody who is sinking",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "You sit with the classmate everyone gave up on. Their D becomes a C, and they remember.",
+          "missed": "The classmate who was sinking found someone else, eventually."
+        },
+        {
+          "label": "Guard your own oxygen",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "outcome": "Home is loud this year. You do your work at the library near the interchange and keep your head."
+        },
+        {
+          "label": "Turn the hobby serious",
+          "cost": 2,
+          "needsSubject": [
+            "art",
+            "music",
+            "computing"
+          ],
+          "disp": {
+            "curiosity": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "built_side",
+          "outcome": "Twelve people use the thing you made. Two send you bugs. You fix them."
+        }
+      ]
+    },
+    {
+      "id": "s_sec3",
+      "age": 15,
+      "title": "Sec 3",
+      "situation": "The combination is set: {subjects} now, all the way to the SEC. New class, some old faces missing, and suddenly teachers say the word portfolio out loud.",
+      "choices": [
+        {
+          "label": "Go deep on your best subject",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Past papers before anyone assigns them. The subject starts feeling like yours, not the school's.",
+          "missed": "Your best subject stayed merely good this year."
+        },
+        {
+          "label": "Start the EAE folder now",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "eae_ready",
+          "outcome": "Screenshots, certs, the write up of the thing you built. Boring now, gold at Sec 4.",
+          "missed": "The folder stayed empty. Sec 4 will mean one panicked typing weekend."
+        },
+        {
+          "label": "Lead something small",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "led_cca",
+          "outcome": "Logistics IC for the CCA bazaar. Everything that can topple does, and you catch most of it.",
+          "missed": "Someone else carried the bazaar clipboard."
+        },
+        {
+          "label": "See a real workplace",
+          "cost": 2,
+          "disp": {
+            "curiosity": 1,
+            "risk": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "seen_work",
+          "outcome": "One day shadowing at a clinic, a workshop, an office in Ubi. Half your guesses about work were wrong."
+        },
+        {
+          "label": "Hold the line at home",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Grandma's appointments, the shop after school, your brother's spelling. Nobody grades it. It still counts."
+        },
+        {
+          "label": "Ship something real",
+          "cost": 2,
+          "needsSubject": [
+            "computing",
+            "dt",
+            "art",
+            "nfs",
+            "music",
+            "drama"
+          ],
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "sets": "built_side",
+          "outcome": "The bake sale ordering sheet, the class tee design, the two minute film. Used by strangers, kept in your folder."
+        }
+      ]
+    },
+    {
+      "id": "s_sec4",
+      "age": 16,
+      "title": "Sec 4",
+      "situation": "SEC year. The class group chat becomes a study group chat, mostly. EAE opens before results, and everyone suddenly wants to know what Mother Tongue B3 converts to.",
+      "choices": [
+        {
+          "label": "Train for the paper",
+          "cost": 2,
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone."
+        },
+        {
+          "label": "Balance the paper and the person",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You keep Sunday football and your sanity. Your mocks wobble, then hold."
+        },
+        {
+          "label": "Ask a teacher to aim you",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "asked_help",
+          "outcome": "Ms D circles two questions in your script. Just these two habits, she says. She is right.",
+          "missed": "You revised alone, and guessed at what to fix."
+        },
+        {
+          "label": "Keep one made thing alive",
+          "cost": 1,
+          "needsSubject": [
+            "art",
+            "computing",
+            "dt",
+            "drama",
+            "music"
+          ],
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "outcome": "Fifteen minutes a night on the thing that is yours. The exam year does not eat it."
+        },
+        {
+          "label": "Carry your household through it",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "You cook Tuesdays and quiz your sister for her PSLE. The house passes its exams together."
+        },
+        {
+          "label": "Actually apply for EAE",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "opens": "d_eae",
+          "outcome": "You write five hundred words about the thing you made and hit submit before you can chicken out.",
+          "missed": "The EAE window closed. It does not reopen. The main round remains.",
+          "sets": "eae_ready"
+        }
+      ]
+    },
+    {
+      "id": "s_results",
+      "age": 17,
+      "title": "Results day",
+      "format": "fork",
+      "situation": "The envelope, in a hall that smells of floor polish. This is the moment that feels like a verdict, and is not one. Where do you point yourself?",
+      "choices": [
+        {
+          "label": "Junior College",
+          "cost": 1,
+          "sets": {
+            "path": "academic",
+            "label": "Junior College"
+          },
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_alevels",
+          "outcome": "You pick the fast lane with the essays. Two years, one exam, and everything after it."
+        },
+        {
+          "label": "Polytechnic",
+          "cost": 1,
+          "sets": {
+            "path": "applied",
+            "label": "Polytechnic"
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_polyroad",
+          "outcome": "You pick a field with a name and a lanyard. Three years of doing the actual thing."
+        },
+        {
+          "label": "ITE, Higher Nitec",
+          "cost": 1,
+          "sets": {
+            "path": "hands",
+            "label": "ITE"
+          },
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_iteroad",
+          "outcome": "You pick the workshop over the lecture hall. The tools are real from day one."
+        },
+        {
+          "label": "An arts school, on a portfolio",
+          "cost": 1,
+          "sets": {
+            "path": "arts",
+            "label": "Arts school"
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_portfolio",
+          "outcome": "You pick the interview where your folder does the talking. NAFA or LASALLE, work first."
+        },
+        {
+          "label": "A fifth year, to widen it",
+          "cost": 1,
+          "sets": {
+            "path": "applied",
+            "label": "Fifth year, then poly"
+          },
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_fifth",
+          "outcome": "One more year at a harder level, aimed at a specific course. Slower, and it works."
+        }
+      ]
+    },
+    {
+      "id": "ch_ns_ask",
+      "chapter": "Before it starts",
+      "years": 0,
+      "format": "ask-ns",
+      "situation": "One question before the next part. Around now, most Singaporean sons spend two years in uniform. Some serve before their course, some after. Is National Service part of your road?",
+      "noChance": true
+    },
+    {
+      "id": "ch_jc1",
+      "chapter": "JC One",
+      "years": 1,
+      "situation": "Lectures run at double speed and the reading list is not a suggestion. Project Work locks five strangers into one grade. Everyone here was top of some class.",
+      "choices": [
+        {
+          "label": "Learn to study, properly",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Mugging harder stops working by July. Notes, sleep, spaced practice: the H2s finally sit still.",
+          "missed": "Term three arrives before your study system does."
+        },
+        {
+          "label": "Carry your PW group",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "You chair the meetings nobody wants. The grade lands, and four people owe you.",
+          "missed": "The PW group limps without a chair."
+        },
+        {
+          "label": "Run for something",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "optimism": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "sets": "took_stage",
+          "outcome": "Council, or captain, or the fest committee. Your Tuesdays vanish and your circle triples."
+        },
+        {
+          "label": "Keep a made thing breathing",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "built_side",
+          "outcome": "The film club edit, the fanzine, the app. JC does not get all of you.",
+          "missed": "The side thing hibernates under the reading list."
+        },
+        {
+          "label": "Hold a weekend job",
+          "cost": 2,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "outcome": "Cafe counter at Junction 8. Your own transport money, and a manager who rates you."
+        }
+      ]
+    },
+    {
+      "id": "ch_alevels",
+      "chapter": "A Levels year",
+      "years": 1,
+      "situation": "Prelims, then the real thing. The canteen empties after five as the study rooms fill. Someone laminates a countdown. It is a strange, close, purposeful year.",
+      "choices": [
+        {
+          "label": "Give the exam its year",
+          "cost": 2,
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "You train like it is a season. Whatever the slip says, you finish knowing you emptied the tank."
+        },
+        {
+          "label": "Pace it like a human",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Badminton Thursdays survive the countdown. You walk into the hall level, not hollow.",
+          "missed": "The year became only the exam."
+        },
+        {
+          "label": "Study in a pack",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Four of you, one whiteboard, economics until the library chases you out. The pack holds."
+        },
+        {
+          "label": "Apply sideways too",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "looked_around",
+          "outcome": "You read the poly EAE page and two overseas prospectuses anyway. Knowing the exits calms the corridor.",
+          "missed": "Plan B stayed unwritten.",
+          "opens": "d_polyroad"
+        }
+      ]
+    },
+    {
+      "id": "ch_sem1",
+      "chapter": "First semester",
+      "years": 1,
+      "situation": "A campus with escalators, modules with codes, and a GPA that starts counting from week one. Nobody checks your homework. That is the trap and the gift.",
+      "choices": [
+        {
+          "label": "Treat week one like week ten",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "You learn the GPA math early: semester one counts the same as semester six. Your seniors wish they had.",
+          "missed": "Semester one graded you while you were settling in."
+        },
+        {
+          "label": "Say yes to the studio crowd",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "outcome": "Supper at the West Coast prata place after critique night. Half your future collaborators are at that table.",
+          "missed": "The supper table formed without you."
+        },
+        {
+          "label": "Join the freelance job board",
+          "cost": 2,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 1,
+            "skills": 1
+          },
+          "sets": "side_paying",
+          "outcome": "A real client, a real deadline, eighty real dollars. School suddenly has a point."
+        },
+        {
+          "label": "Guard the GPA and the gym",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Routine carries you: classes, training, home by eight. Boring, and it banks a 3.8 semester."
+        },
+        {
+          "label": "Take the club exco seat",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "took_stage",
+          "outcome": "You run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know you now."
+        }
+      ]
+    },
+    {
+      "id": "ch_intern",
+      "chapter": "The internship",
+      "years": 1,
+      "situation": "Twenty weeks inside a real company, with a staff pass and a standup at nine fifteen. Your supervisor is thirty one and tired. What you do here follows you.",
+      "choices": [
+        {
+          "label": "Treat it as the real thing",
+          "cost": 2,
+          "disp": {
+            "persistence": 1,
+            "risk": 1
+          },
+          "gain": {
+            "skills": 2,
+            "network": 1
+          },
+          "sets": "attached",
+          "outcome": "You take the ticket nobody wants and close it. On your last day the team lead says call me when you graduate."
+        },
+        {
+          "label": "Collect skills like receipts",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "You shadow the senior tech at every fault call. Half a diploma's learning happens in that van.",
+          "missed": "You did what the sheet said and no more."
+        },
+        {
+          "label": "Interview the adults at lunch",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "asked_senior",
+          "outcome": "How did you get here, you ask the quiet engineer. Nobody has asked her in years. She tells you everything.",
+          "missed": "Twenty lunches, headphones in."
+        },
+        {
+          "label": "Keep school ticking beside it",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "FYP proposal drafted on the evening MRT out of Tanjong Pagar. Tired, organised, on time."
+        }
+      ]
+    },
+    {
+      "id": "ch_gradseason",
+      "chapter": "Graduation season",
+      "years": 1,
+      "situation": "Final year project, then the square hat. The group chat splits three ways: job offers, uni applications, and one guy going full time on his sneaker resale thing.",
+      "choices": [
+        {
+          "label": "Make the FYP your flag",
+          "cost": 2,
+          "disp": {
+            "persistence": 1,
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "opens": "d_portfolio",
+          "outcome": "The project gets shown at the school showcase. A stranger photographs your poster and emails you."
+        },
+        {
+          "label": "Finish the friendships properly",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Chalet at Pasir Ris, photos at the jetty. These are the numbers you will still have at forty."
+        },
+        {
+          "label": "Chase the degree place",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "looked_around",
+          "outcome": "GPA, portfolio, personal statement. You apply to three courses and let the dice sit.",
+          "missed": "The uni application window slid past unopened."
+        },
+        {
+          "label": "Take the job offer seriously",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "The internship company calls back. A number with a comma in it, attached to your name.",
+          "missed": "The callback went to voicemail and then to someone else.",
+          "opens": "d_workstudy"
+        }
+      ]
+    },
+    {
+      "id": "ch_workshop",
+      "chapter": "Year one, workshop",
+      "years": 1,
+      "situation": "Coveralls, toe capped boots, and a lecturer who spent nineteen years fixing lifts before he taught it. The workshop smells of cut metal. You are sixteen minutes in and useful.",
+      "choices": [
+        {
+          "label": "Get certified early",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "First aid, work at height, the basic WSQ modules. Cards in your wallet that mean sites will take you.",
+          "missed": "The cert runs filled up without your name."
+        },
+        {
+          "label": "Become the lecturer's shadow",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "sets": "asked_senior",
+          "outcome": "Mr Rashid lets you strip the compressor twice. Ask him anything, he says, except for extensions.",
+          "missed": "Mr Rashid taught someone else his shortcuts."
+        },
+        {
+          "label": "Take the weekend site job",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "sets": "side_paying",
+          "outcome": "Your uncle's aircon crew in Tampines, Saturdays. Cash, sweat, and the fastest learning you have done."
+        },
+        {
+          "label": "Keep the books tight too",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Theory modules count in the GPA that poly will read. You give the maths its hour before dinner."
+        },
+        {
+          "label": "Fix things for the block",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "The kopitiam auntie's chiller, your neighbour's fan. Word gets around the block that you can fix."
+        }
+      ]
+    },
+    {
+      "id": "ch_exit",
+      "chapter": "The exit decision",
+      "years": 1,
+      "situation": "End of Year 2. Leave now with a Nitec and start earning, or stay for Year 3 and the Higher Nitec. Uncle says money. Mr Rashid says finish.",
+      "choices": [
+        {
+          "label": "Stay and finish Year 3",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "stayed_course",
+          "outcome": "You stay for the Higher Nitec and the GPA that opens poly. The pay can wait a year.",
+          "missed": "The full time pay packet waits a year."
+        },
+        {
+          "label": "Exit with the Nitec, work",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "nitec_exit",
+          "opens": "d_trade",
+          "outcome": "You take the Nitec and the job. The door back to Year 3 stays open, and you know where it is.",
+          "missed": "The workshop kept your seat warm anyway."
+        },
+        {
+          "label": "Split the difference",
+          "cost": 2,
+          "disp": {
+            "flexibility": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1,
+            "portfolio": 1
+          },
+          "outcome": "Stay enrolled, work the school holidays on payroll. Both uncles half satisfied, you fully stretched."
+        },
+        {
+          "label": "Ask what the GPA buys",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "ecg_seen",
+          "outcome": "The ECG officer draws the ladder on scrap paper: 2.5 applies, raw 3.5 guarantees. You photograph it.",
+          "missed": "You decided on vibes instead of the actual numbers."
+        }
+      ]
+    },
+    {
+      "id": "ch_hnfinal",
+      "chapter": "Higher Nitec final",
+      "years": 1,
+      "situation": "Final year. Industry attachment mornings, GPA arithmetic at night. The poly application window opens in January and your class talks about it at the bak chor mee stall.",
+      "choices": [
+        {
+          "label": "Line up the job first",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Two interviews before graduation, one offer in hand. Poly can happen later, from a desk that pays.",
+          "missed": "Results day arrived with nothing lined up behind it."
+        },
+        {
+          "label": "Teach the Year 1s",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "You run the Saturday remedial in the workshop. Explaining torque settings turns out to be how you master them."
+        },
+        {
+          "label": "Chase the 3.5",
+          "cost": 2,
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 1
+          },
+          "opens": "d_iteroad",
+          "outcome": "Raw 3.5 guarantees a poly place. You do the retest, keep the CCA points, and cross it."
+        },
+        {
+          "label": "Own the attachment",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "sets": "attached",
+          "outcome": "The firm gives you the fault log nobody wants. You clear it, and the supervisor keeps your number.",
+          "missed": "The attachment stayed a timetable, not a foot in the door.",
+          "opens": "d_people"
+        }
+      ]
+    },
+    {
+      "id": "ch_foundation",
+      "chapter": "Foundation year",
+      "years": 1,
+      "situation": "First crit. Your work goes on the wall and strangers discuss it like you are not there. Materials cost more than food this month. Happier and more scared than ever.",
+      "choices": [
+        {
+          "label": "Make more than assigned",
+          "cost": 2,
+          "disp": {
+            "persistence": 1,
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot."
+        },
+        {
+          "label": "Learn to take the crit",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "You stop defending and start noting. The work improves the week you stop bleeding on it.",
+          "missed": "Every crit still feels like a verdict on you."
+        },
+        {
+          "label": "Freelance tiny jobs",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "side_paying",
+          "outcome": "A menu for the zi char at Blk 214, a logo for a cousin's bakery. Paid twice, printed once.",
+          "missed": "The paying gigs went to someone hungrier."
+        },
+        {
+          "label": "Find your material",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Riso, clay, After Effects, thread. One of them answers you back. You marry it."
+        },
+        {
+          "label": "Waitress the weekends",
+          "cost": 2,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "outcome": "Dim sum service pays for the paint. Your feet hate you and your ledger balances."
+        }
+      ]
+    },
+    {
+      "id": "ch_portfolio",
+      "chapter": "The portfolio year",
+      "years": 1,
+      "situation": "The year the folder becomes a body of work. An open call at the library gallery, a zine fair at Bras Basah, a brand hunting student artists.",
+      "choices": [
+        {
+          "label": "Answer the open call",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "opens": "d_portfolio",
+          "outcome": "Two pieces in a real gallery for three weeks. Your grandmother comes twice and tells the invigilator.",
+          "missed": "The gallery wall hung other people's work."
+        },
+        {
+          "label": "Table at the zine fair",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1,
+            "portfolio": 1
+          },
+          "sets": "side_paying",
+          "outcome": "You sell forty three copies at five dollars and trade the rest. The table beside yours becomes a collaborator.",
+          "missed": "The fair happened one table short."
+        },
+        {
+          "label": "Serve the craft, quietly",
+          "cost": 2,
+          "disp": {
+            "persistence": 2
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "A thousand hours of unglamorous practice. The jump in your work is visible from across the room."
+        },
+        {
+          "label": "Assist a working artist",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "sets": "found_mentor",
+          "outcome": "You stretch canvas and hold lights for someone mid career. You learn what the job actually is.",
+          "missed": "The studio assistant post went in a day."
+        }
+      ]
+    },
+    {
+      "id": "ch_showsell",
+      "chapter": "Show and sell",
+      "years": 1,
+      "situation": "Grad show year. Everything goes on one wall with your name under it. Aunties ask what job this becomes; the honest answer is several, stitched together, at first.",
+      "choices": [
+        {
+          "label": "Make the grad show count",
+          "cost": 2,
+          "disp": {
+            "persistence": 1,
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "outcome": "You rebuild the piece three times. On opening night a design studio leaves a card on your plinth."
+        },
+        {
+          "label": "Line up the stitched income",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Two teaching gigs, one retainer, weekend markets. A spreadsheet that adds up to rent.",
+          "missed": "Month one after graduation starts with zero invoices."
+        },
+        {
+          "label": "Document everything properly",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "outcome": "Photographed, captioned, on a site with your name as the URL. Future clients find you because of tonight.",
+          "opens": "d_portfolio"
+        },
+        {
+          "label": "Apply for the degree top up",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "looked_around",
+          "outcome": "UAS degree, or overseas with a scholarship folder. You ask the lecturers to grade your odds honestly.",
+          "missed": "The degree deadline passed while the show consumed you.",
+          "opens": "d_polyroad"
+        }
+      ]
+    },
+    {
+      "id": "ch_ns_in",
+      "chapter": "Enlistment",
+      "years": 1,
+      "requiresNS": true,
+      "pts": 2,
+      "ptsWhy": "ns",
+      "situation": "Tekong. The haircut, the duffel bag, a bunk of strangers: JC boy, poly boy, ITE boy, one guy who paints. Whatever you were outside, the field levels it by Wednesday.",
+      "choices": [
+        {
+          "label": "Go for command school",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1,
+            "network": 1
+          },
+          "outcome": "You shout commands you once ignored. Leading tired people politely turns out to be a career skill."
+        },
+        {
+          "label": "Master the vocation given",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Signals, or medic, or transport. Not what you asked for, and you get quietly excellent at it.",
+          "missed": "The vocation stayed a chore you did adequately."
+        },
+        {
+          "label": "Be the bunk's glue",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "sets": "helped_someone",
+          "outcome": "You talk the homesick recruit off the ledge at two am. The bunk group chat will outlive the army.",
+          "missed": "The bunk stayed twelve strangers sharing a ceiling."
+        },
+        {
+          "label": "Book out, keep learning",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Weekends: an online cert, driving lessons, the language app. The two years will not be a blank."
+        }
+      ]
+    },
+    {
+      "id": "ch_ns_ord",
+      "chapter": "ORD",
+      "years": 1,
+      "requiresNS": true,
+      "pts": 2,
+      "ptsWhy": "ns",
+      "situation": "The countdown app hits double digits. Half the bunk applies to uni on cookhouse wifi; the poly grads compare job ads on guard duty. ORD loh, someone yells, hourly.",
+      "choices": [
+        {
+          "label": "Apply for what is next, now",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "sets": "looked_around",
+          "outcome": "Applications submitted from the mess table between duties. Your start date exists before your ORD date.",
+          "missed": "ORD arrived with no plan behind it, and the gap stretched."
+        },
+        {
+          "label": "Bank the specialist skills",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Licences, logistics, the medic cert. You leave with paper civvie employers actually read."
+        },
+        {
+          "label": "Keep the bunk network warm",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "outcome": "Supper at Al Azhar after every book out. Fifteen numbers from four different roads, all yours now.",
+          "missed": "The bunk chat went quiet before the cake did."
+        },
+        {
+          "label": "Save like it matters",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Allowance is small so you make it deliberate. You ORD with a four figure buffer and options."
+        }
+      ]
+    },
+    {
+      "id": "ch_uni",
+      "chapter": "University",
+      "years": 3,
+      "situation": "Matriculation, a hall room that fits a bed and an ego, modules you finally chose yourself. Somewhere between orientation and final year project, you pick who you are becoming.",
+      "choices": [
+        {
+          "label": "Go deep in the major",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Honours track, a prof who knows your name, a thesis you almost enjoy. Depth compounds.",
+          "missed": "The major stayed a timetable instead of becoming a craft."
+        },
+        {
+          "label": "Take the exchange semester",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1,
+            "skills": 1
+          },
+          "sets": "exchanged",
+          "outcome": "Six months in another country on a student budget. You come back with range and a group chat in two time zones."
+        },
+        {
+          "label": "Build the side project",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "sets": "built_side",
+          "outcome": "The app, the podcast, the thesis turned tool. Strangers use it, which no grade can buy.",
+          "missed": "The side project stayed a note on your phone."
+        },
+        {
+          "label": "Work the career fairs",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "sets": "used_careers",
+          "outcome": "Coffee chats, resume clinics, two internships. Graduation is an on ramp, not a cliff.",
+          "missed": "The careers office knew everyone's name except yours.",
+          "opens": "d_people"
+        }
+      ]
+    },
+    {
+      "id": "ch_paycheque",
+      "chapter": "First pay cheque",
+      "years": 3,
+      "wantCheck": true,
+      "situation": "The first full month of pay lands with a payslip you read twice. CPF is real now. So is the six fifteen alarm, and the question of what for.",
+      "choices": [
+        {
+          "label": "Learn the job cold",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "You become the one who actually reads the manual. Within a year the escalations route to you.",
+          "missed": "Competence arrived on schedule instead of early."
+        },
+        {
+          "label": "Build the money habits",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Give some home, save some hard, keep some for living. The buffer buys you courage later.",
+          "missed": "The pay came and went without a plan."
+        },
+        {
+          "label": "Keep a paying side thing",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "curiosity": 1
+          },
+          "gain": {
+            "portfolio": 1,
+            "network": 1
+          },
+          "sets": "side_paying",
+          "outcome": "Weekend shoots, tuition classes, small builds. A second income with your own name on it."
+        },
+        {
+          "label": "Show up for your people",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "told_home",
+          "outcome": "Dinner at home Sundays, and you say out loud what you are working towards. They stop guessing.",
+          "missed": "Home kept guessing what you were up to."
+        },
+        {
+          "label": "Start the part time diploma",
+          "cost": 2,
+          "needsDoor": "d_workstudy",
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "Work Study route: employed, paid, studying. Tuesday nights hurt and the certificate is real."
+        }
+      ]
+    },
+    {
+      "id": "ch_cross",
+      "chapter": "The crossroads",
+      "fixedAge": 27,
+      "years": 3,
+      "format": "fork",
+      "situation": "Another decade on this road would be fine. On your phone: a course brochure, a job ad, a business name you doodled. Pick the next stretch.",
+      "choices": [
+        {
+          "label": "Go deep, become the expert",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "You choose mastery where you stand. The next thousand hours make you the person they phone first."
+        },
+        {
+          "label": "Switch fields on purpose",
+          "cost": 1,
+          "disp": {
+            "risk": 1,
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You trade seniority for range and start again on purpose. The beginner months are humbling and short."
+        },
+        {
+          "label": "Upgrade while working",
+          "cost": 1,
+          "needsDoor": "d_sflu",
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "SkillsFuture route: part time degree, employer nodding, weekends gone. The qualification lands at thirty."
+        },
+        {
+          "label": "Start the thing, small",
+          "cost": 1,
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 1
+          },
+          "sets": "built_side",
+          "outcome": "Registered on ACRA in a lunch break. One client, then two. You keep the day job while it breathes."
+        },
+        {
+          "label": "Choose the people years",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Family, or caring, or the community thing that needs hands. Work holds steady while life takes the lead."
+        }
+      ]
+    },
+    {
+      "id": "ch_build",
+      "chapter": "Building",
+      "fixedAge": 31,
+      "years": 4,
+      "situation": "The thirties go brick by brick: a team you half chose, a flat with your name on it, a calendar that recurs. What you water here grows.",
+      "choices": [
+        {
+          "label": "Take the lead role",
+          "cost": 2,
+          "disp": {
+            "risk": 1,
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "outcome": "Managing is a different job from doing, and nobody trains you. You learn on live humans, gently."
+        },
+        {
+          "label": "Stay the craft person",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "You decline the manager track twice. Your work gets quoted, forked, photographed. No regrets, most days.",
+          "missed": "The lead role went to someone who wanted it less."
+        },
+        {
+          "label": "Scale the side thing up",
+          "cost": 2,
+          "needsDoor": "d_portfolio",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "outcome": "The folder of work becomes the pitch. You quote a real number, they pay it, and the weekend thing hires you."
+        },
+        {
+          "label": "Teach what you know",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "Adjunct evenings at your old school, or workshops at the CC. Explaining the craft renews it.",
+          "missed": "The teaching slot went unstaffed another year."
+        },
+        {
+          "label": "Protect the home front",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "told_home",
+          "outcome": "Parents aging, maybe kids arriving, definitely laundry. You resize ambition to fit love, on purpose."
+        }
+      ]
+    },
+    {
+      "id": "ch_quiet",
+      "chapter": "The quiet year",
+      "fixedAge": 38,
+      "years": 1,
+      "format": "reflect",
+      "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want you named as a teenager is still yours, or has quietly become something else."
+    },
+    {
+      "id": "ch_mirror",
+      "chapter": "The form again",
+      "fixedAge": 41,
+      "years": 4,
+      "situation": "A subject combination form is on your table again. Not yours: a thirteen year old you love is watching your face for a verdict. You remember this exact silence.",
+      "choices": [
+        {
+          "label": "Say what nobody told you",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "sets": "helped_someone",
+          "outcome": "Nothing on this form can close your life, you say. You watch their shoulders come down an inch.",
+          "missed": "The kid decoded your silence as a verdict anyway."
+        },
+        {
+          "label": "Walk the open house with them",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "Poly, ITE and JC open houses in one season, both of you asking questions. Their shortlist doubles.",
+          "missed": "They shortlisted from hearsay instead of visits."
+        },
+        {
+          "label": "Vouch for a young person",
+          "cost": 1,
+          "needsDoor": "d_people",
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "A reference letter, an intro, a first gig. The people who once vouched for you taught you the move."
+        },
+        {
+          "label": "Take the mid career credit",
+          "cost": 2,
+          "disp": {
+            "curiosity": 1,
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "opens": "d_sflu",
+          "outcome": "The four thousand dollar top up at forty, spent on a course you chose like an adult. Homework at your age, gladly."
+        },
+        {
+          "label": "Reorganise around what matters",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "Fewer hours, closer commute, one deliberate downshift. The trade is explicit and you sign it."
+        }
+      ]
+    },
+    {
+      "id": "ch_late",
+      "chapter": "Where you stand",
+      "fixedAge": 48,
+      "years": 1,
+      "situation": "Forty eight. One classmate just retrained as a nurse; the wedding relative who judged ITE now asks your advice. The road behind you looks nothing like the form at fourteen.",
+      "choices": [
+        {
+          "label": "Mentor on purpose",
+          "cost": 1,
+          "disp": {
+            "optimism": 1
+          },
+          "gain": {
+            "network": 2
+          },
+          "sets": "asked_younger",
+          "outcome": "You take two juniors seriously, the way Mr Rashid took you. It is the best interest rate you have found.",
+          "missed": "The juniors figured it out slower, alone."
+        },
+        {
+          "label": "Learn the new tool anyway",
+          "cost": 1,
+          "disp": {
+            "curiosity": 1
+          },
+          "gain": {
+            "skills": 2
+          },
+          "outcome": "The software that was supposed to replace you becomes the thing you wield. Younger colleagues notice."
+        },
+        {
+          "label": "Turn the trade into a shop",
+          "cost": 2,
+          "needsDoor": "d_trade",
+          "disp": {
+            "risk": 1
+          },
+          "gain": {
+            "portfolio": 2
+          },
+          "outcome": "Your name above a door, your hours on it. Thirty years of hands finally on your own invoice."
+        },
+        {
+          "label": "Bank the last conversions",
+          "cost": 1,
+          "disp": {
+            "persistence": 1
+          },
+          "gain": {
+            "skills": 1
+          },
+          "outcome": "The subsidised diploma at any age is real money on the table. You take the class with the nineteen year olds."
+        },
+        {
+          "label": "Rest, visibly",
+          "cost": 1,
+          "disp": {
+            "flexibility": 1
+          },
+          "gain": {
+            "network": 1
+          },
+          "outcome": "You model something rare at your age: enough. The younger ones need to see it done once."
+        }
+      ]
+    }
+  ],
+  "endingFrames": [
+    {
+      "want": "make",
+      "head": "You wanted to make things people use.",
+      "body": "Count what exists because you do: the shipped work, the fixed machines, the printed pages. Strangers touch things you made without knowing your name, which is what making always promised."
+    },
+    {
+      "want": "make",
+      "track": "network",
+      "head": "You wanted to make things people use.",
+      "body": "The surprise is that your making became a team sport. The things exist because you learned to gather people around a bench and keep them there."
+    },
+    {
+      "want": "hands",
+      "head": "You wanted to be good with your hands.",
+      "body": "You are. The proof is in call backs and referrals, in the neighbour who trusts nobody else with the compressor. Skill this physical cannot be faked and was never obsolete."
+    },
+    {
+      "want": "people",
+      "head": "You wanted to be there when people struggle.",
+      "body": "Count who calls you first when it goes wrong. That list is your actual CV, and it took thirty years of showing up to write."
+    },
+    {
+      "want": "people",
+      "track": "skills",
+      "head": "You wanted to be there when people struggle.",
+      "body": "You learned the hard version: care with competence attached. The kindness got trained, certified and rostered, and it holds up at three in the morning."
+    },
+    {
+      "want": "own",
+      "head": "You wanted to run your own thing.",
+      "body": "Whether the name above the door is yours yet or not, you have run things for years: budgets, crews, risks taken with your own signature. Ownership turned out to be a habit before it was a registration."
+    },
+    {
+      "want": "how",
+      "head": "You wanted to work out how things work.",
+      "body": "You never stopped. The subjects changed names; the itch survived every timetable. People bring you broken systems the way others bring gossip, and you are glad."
+    },
+    {
+      "want": "order",
+      "head": "You wanted every detail exactly right.",
+      "body": "The world paid you for precisely this: the audits passed, the doses checked, the builds that do not wobble. Rigour turned out to be a form of care."
+    },
+    {
+      "want": "unsure",
+      "head": "At the start you said you were not sure.",
+      "body": "That was the honest answer, and it worked. You tried things, kept what fit and folded the rest, which is not indecision. It is how the sure people actually got sure."
+    },
+    {
+      "want": "any",
+      "ns": "yes",
+      "head": "Your road, with two years in green.",
+      "body": "The uniform years slowed the paper and fed the person: strangers became brothers, and you learned to be depended on. Every date after shifted two years, and nothing worth having fell off the road."
+    },
+    {
+      "want": "any",
+      "head": "Your road, walked your way.",
+      "body": "Same start as thousands, same ending as no one. The doors you hold were opened by asking, making and showing up, none of which was printed on the form at fourteen."
+    }
+  ]
 }

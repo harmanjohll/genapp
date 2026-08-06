@@ -2,7 +2,7 @@
   "_meta": {
     "source": "Route structures from MOE post secondary admissions pages, polytechnic and ITE course listings, SkillsFuture work study programme information",
     "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
-    "accessed": "2026-07-31",
+    "accessed": "2026-08-05",
     "units": "years",
     "notes": "Futures are stated as wants, not job titles. Gottfredson's work on circumscription shows teenagers rule out whole fields early on perceived prestige and fit, before knowing anything about them. Naming a job invites that. Naming a want does not. Every future carries at least three structurally different roads, in no order, because the absence of a ranking is the content."
   },
@@ -12,10 +12,42 @@
       "want": "I want to make things people use",
       "looksLike": "Products, buildings, software, furniture, food, clothes.",
       "routes": [
-        { "label": "Poly first", "steps": ["Poly diploma", "Studio or firm"], "years": 3, "note": "Making things from semester one. A portfolio before you are twenty." },
-        { "label": "ITE first", "steps": ["Nitec or Higher Nitec", "Work"], "years": 2, "note": "Fastest route to real skill with your hands." },
-        { "label": "JC first", "steps": ["A Levels", "Degree"], "years": 2, "note": "Longest run up, widest theory when you arrive." },
-        { "label": "Arts route", "steps": ["Portfolio", "NAFA or LASALLE"], "years": 3, "note": "Entry turns on what you made, not a score." }
+        {
+          "label": "Poly first",
+          "steps": [
+            "Poly diploma",
+            "Studio or firm"
+          ],
+          "years": 3,
+          "note": "Making things from semester one. A portfolio before you are twenty."
+        },
+        {
+          "label": "ITE first",
+          "steps": [
+            "Nitec or Higher Nitec",
+            "Work"
+          ],
+          "years": 2,
+          "note": "Fastest route to real skill with your hands."
+        },
+        {
+          "label": "JC first",
+          "steps": [
+            "A Levels",
+            "Degree"
+          ],
+          "years": 2,
+          "note": "Longest run up, widest theory when you arrive."
+        },
+        {
+          "label": "Arts route",
+          "steps": [
+            "Portfolio",
+            "NAFA or LASALLE"
+          ],
+          "years": 3,
+          "note": "Entry turns on what you made, not a score."
+        }
       ],
       "thisTerm": [
         "Make one thing this month nobody asked for.",
@@ -28,10 +60,42 @@
       "want": "I want to be really good with my hands",
       "looksLike": "Aircraft, cars, wiring, kitchens, hair, machines, buildings.",
       "routes": [
-        { "label": "ITE, direct", "steps": ["Nitec or Higher Nitec", "Work"], "years": 2, "note": "Trained on the equipment the industry actually uses." },
-        { "label": "ITE, then further", "steps": ["Higher Nitec", "Poly diploma"], "years": 5, "note": "GPA 2.5 to apply, guaranteed a place at 3.5." },
-        { "label": "Poly engineering", "steps": ["Poly diploma", "Industry"], "years": 3, "note": "More theory alongside, wider first job market." },
-        { "label": "Work study", "steps": ["A job", "A qualification"], "years": 3, "note": "Paid from day one, qualified at the end." }
+        {
+          "label": "ITE, direct",
+          "steps": [
+            "Nitec or Higher Nitec",
+            "Work"
+          ],
+          "years": 2,
+          "note": "Trained on the equipment the industry actually uses."
+        },
+        {
+          "label": "ITE, then further",
+          "steps": [
+            "Higher Nitec",
+            "Poly diploma"
+          ],
+          "years": 5,
+          "note": "GPA 2.5 to apply, guaranteed a place at 3.5."
+        },
+        {
+          "label": "Poly engineering",
+          "steps": [
+            "Poly diploma",
+            "Industry"
+          ],
+          "years": 3,
+          "note": "More theory alongside, wider first job market."
+        },
+        {
+          "label": "Work study",
+          "steps": [
+            "A job",
+            "A qualification"
+          ],
+          "years": 3,
+          "note": "Paid from day one, qualified at the end."
+        }
       ],
       "thisTerm": [
         "Go to an ITE or poly open house.",
@@ -44,10 +108,42 @@
       "want": "I want to be there when people are struggling",
       "looksLike": "Nursing, social work, teaching, paramedics, early childhood.",
       "routes": [
-        { "label": "Poly health", "steps": ["Poly diploma", "Practice"], "years": 3, "note": "Real patients and families well before you graduate." },
-        { "label": "ITE first", "steps": ["Nitec or Higher Nitec", "Care work"], "years": 2, "note": "Care employers hire from ITE and back your upgrading." },
-        { "label": "JC, then a degree", "steps": ["A Levels", "Degree"], "years": 2, "note": "The route into professions that need a degree to start." },
-        { "label": "Later, second career", "steps": ["Other work first", "Diploma or degree"], "years": 2, "note": "Many arrive in their thirties and bring more with them." }
+        {
+          "label": "Poly health",
+          "steps": [
+            "Poly diploma",
+            "Practice"
+          ],
+          "years": 3,
+          "note": "Real patients and families well before you graduate."
+        },
+        {
+          "label": "ITE first",
+          "steps": [
+            "Nitec or Higher Nitec",
+            "Care work"
+          ],
+          "years": 2,
+          "note": "Care employers hire from ITE and back your upgrading."
+        },
+        {
+          "label": "JC, then a degree",
+          "steps": [
+            "A Levels",
+            "Degree"
+          ],
+          "years": 2,
+          "note": "The route into professions that need a degree to start."
+        },
+        {
+          "label": "Later, second career",
+          "steps": [
+            "Other work first",
+            "Diploma or degree"
+          ],
+          "years": 2,
+          "note": "Many arrive in their thirties and bring more with them."
+        }
       ],
       "thisTerm": [
         "Volunteer somewhere that is not comfortable.",
@@ -60,10 +156,44 @@
       "want": "I want to run my own thing",
       "looksLike": "A shop, studio, service, stall or practice with your name on it.",
       "routes": [
-        { "label": "Learn the trade", "steps": ["ITE or poly", "Work for someone", "Your own"], "years": 5, "note": "Almost everyone learns it inside someone else's first." },
-        { "label": "Business route", "steps": ["Accounts at school", "Poly business"], "years": 3, "note": "Knowing how money moves is the whole difference." },
-        { "label": "Degree route", "steps": ["JC or poly", "Degree", "Industry"], "years": 6, "note": "Slower to the line, wider network at it." },
-        { "label": "Start now, small", "steps": ["Make or sell something", "Keep the records"], "years": 0, "note": "The only road here that needs nobody's permission." }
+        {
+          "label": "Learn the trade",
+          "steps": [
+            "ITE or poly",
+            "Work for someone",
+            "Your own"
+          ],
+          "years": 5,
+          "note": "Almost everyone learns it inside someone else's first."
+        },
+        {
+          "label": "Business route",
+          "steps": [
+            "Accounts at school",
+            "Poly business"
+          ],
+          "years": 3,
+          "note": "Knowing how money moves is the whole difference."
+        },
+        {
+          "label": "Degree route",
+          "steps": [
+            "JC or poly",
+            "Degree",
+            "Industry"
+          ],
+          "years": 6,
+          "note": "Slower to the line, wider network at it."
+        },
+        {
+          "label": "Start now, small",
+          "steps": [
+            "Make or sell something",
+            "Keep the records"
+          ],
+          "years": 0,
+          "note": "The only road here that needs nobody's permission."
+        }
       ],
       "thisTerm": [
         "Sell one thing to one person you are not related to.",
@@ -76,10 +206,43 @@
       "want": "I want to work out how things work",
       "looksLike": "Research, data, software, labs, engineering, medicine.",
       "routes": [
-        { "label": "JC, then research", "steps": ["A Levels", "Degree"], "years": 2, "note": "Most direct route in, and it asks most of your G3 subjects." },
-        { "label": "Poly applied science", "steps": ["Poly diploma", "Lab or degree"], "years": 3, "note": "In a real lab in year one, not year four." },
-        { "label": "Computing", "steps": ["Computing at school", "Poly or JC"], "years": 3, "note": "The one field where what you built counts nearly as much." },
-        { "label": "ITE, then up", "steps": ["Higher Nitec", "Poly diploma", "Degree"], "years": 5, "note": "Longer, and people complete it every year." }
+        {
+          "label": "JC, then research",
+          "steps": [
+            "A Levels",
+            "Degree"
+          ],
+          "years": 2,
+          "note": "Most direct route in, and it asks most of your G3 subjects."
+        },
+        {
+          "label": "Poly applied science",
+          "steps": [
+            "Poly diploma",
+            "Lab or degree"
+          ],
+          "years": 3,
+          "note": "In a real lab in year one, not year four."
+        },
+        {
+          "label": "Computing",
+          "steps": [
+            "Computing at school",
+            "Poly or JC"
+          ],
+          "years": 3,
+          "note": "The one field where what you built counts nearly as much."
+        },
+        {
+          "label": "ITE, then up",
+          "steps": [
+            "Higher Nitec",
+            "Poly diploma",
+            "Degree"
+          ],
+          "years": 5,
+          "note": "Longer, and people complete it every year."
+        }
       ],
       "thisTerm": [
         "Pick one thing you use daily and find out how it works.",
@@ -88,14 +251,95 @@
       ]
     },
     {
+      "id": "order",
+      "want": "I want to get every detail exactly right",
+      "looksLike": "Accountancy, labs, aviation checks, pharmacy, quality control, ops.",
+      "routes": [
+        {
+          "label": "Poly first",
+          "steps": [
+            "Poly diploma",
+            "Audit or ops role"
+          ],
+          "note": "Accountancy, biomedical and aviation management diplomas all trade in precision.",
+          "years": 3
+        },
+        {
+          "label": "ITE first",
+          "steps": [
+            "Higher Nitec",
+            "Certified technician"
+          ],
+          "note": "Calibration, avionics and lab skills are precision as a trade.",
+          "years": 3
+        },
+        {
+          "label": "JC first",
+          "steps": [
+            "A Levels",
+            "Accountancy or science degree"
+          ],
+          "note": "The long runway into audit, actuarial and research work.",
+          "years": 5
+        },
+        {
+          "label": "Work and study",
+          "steps": [
+            "A job",
+            "Part time certification"
+          ],
+          "note": "Bookkeeping and quality roles certify while you work.",
+          "years": 4
+        }
+      ],
+      "thisTerm": [
+        "Reconcile something real: a CCA budget, a stall float.",
+        "Ask an accountant or lab tech what a day is like.",
+        "Find one error in something official. Report it kindly."
+      ]
+    },
+    {
       "id": "decide",
       "want": "I want to be where decisions get made",
       "looksLike": "Policy, law, management, public service, journalism.",
       "routes": [
-        { "label": "Humanities", "steps": ["Humanities at G3", "JC", "Degree"], "years": 2, "note": "These teach you to argue from evidence that disagrees." },
-        { "label": "Poly, then degree", "steps": ["Poly diploma", "Degree"], "years": 3, "note": "You arrive with experience others do not have." },
-        { "label": "Through the work", "steps": ["Any way in", "Take responsibility early"], "years": 0, "note": "Many who run things took the job nobody wanted." },
-        { "label": "Later, on purpose", "steps": ["A first career", "Mid career degree"], "years": 3, "note": "SkillsFuture Level Up exists for exactly this move." }
+        {
+          "label": "Humanities",
+          "steps": [
+            "Humanities at G3",
+            "JC",
+            "Degree"
+          ],
+          "years": 2,
+          "note": "These teach you to argue from evidence that disagrees."
+        },
+        {
+          "label": "Poly, then degree",
+          "steps": [
+            "Poly diploma",
+            "Degree"
+          ],
+          "years": 3,
+          "note": "You arrive with experience others do not have."
+        },
+        {
+          "label": "Through the work",
+          "steps": [
+            "Any way in",
+            "Take responsibility early"
+          ],
+          "years": 0,
+          "note": "Many who run things took the job nobody wanted."
+        },
+        {
+          "label": "Later, on purpose",
+          "steps": [
+            "A first career",
+            "Mid career degree"
+          ],
+          "years": 3,
+          "note": "SkillsFuture Level Up exists for exactly this move."
+        }
       ],
       "thisTerm": [
         "Argue a position in front of people who disagree.",
@@ -104,14 +348,38 @@
       ]
     },
     {
-      "id": "unknown",
+      "id": "unsure",
       "want": "I honestly do not know yet",
       "looksLike": "Most people your age, including the ones who sound certain.",
       "isBreadthTour": true,
       "routes": [
-        { "label": "Keep it wide", "steps": ["Levels you can carry", "Nothing ruled out"], "years": 0, "note": "Not the same as everything at G3. Drowning closes more than it opens." },
-        { "label": "Go and try things", "steps": ["Open houses", "One new thing a term"], "years": 0, "note": "You cannot choose between options you have never seen." },
-        { "label": "Pick a direction", "steps": ["Choose the next step only", "Reassess after"], "years": 0, "note": "You can decide two years without deciding forty." }
+        {
+          "label": "Keep it wide",
+          "steps": [
+            "Levels you can carry",
+            "Nothing ruled out"
+          ],
+          "years": 0,
+          "note": "Not the same as everything at G3. Drowning closes more than it opens."
+        },
+        {
+          "label": "Go and try things",
+          "steps": [
+            "Open houses",
+            "One new thing a term"
+          ],
+          "years": 0,
+          "note": "You cannot choose between options you have never seen."
+        },
+        {
+          "label": "Pick a direction",
+          "steps": [
+            "Choose the next step only",
+            "Reassess after"
+          ],
+          "years": 0,
+          "note": "You can decide two years without deciding forty."
+        }
       ],
       "thisTerm": [
         "Go to one open house for a route you dismissed.",

@@ -62,7 +62,7 @@ const CAPS = {
 
 const FIRST_PAINT = { now: 365, journey: 240, aim: 130 };
 
-const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName', 'date', 'version', 'kind', 'sets', 'ic']);
+const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName', 'date', 'version', 'kind', 'sets', 'ic', 'format']);
 
 const words = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
 

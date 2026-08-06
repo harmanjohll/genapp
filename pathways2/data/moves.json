@@ -2,14 +2,14 @@
   "_meta": {
     "source": "MOE admissions pages and school ECG practice",
     "url": "https://www.moe.gov.sg/post-secondary/admissions",
-    "accessed": "2026-08-04",
-    "notes": "Player-initiated moves, as opposed to chances, which happen to you. Every move is a real thing a Singapore student can do this year, phrased so a Sec 1 reader could do it tomorrow. EAE and DSA cards checked against moe.gov.sg/post-secondary/admissions/poly-eae and /dsa on the accessed date: Poly EAE is aptitude first and applies in June before results, ITE EAE takes graduating N and O Level students into Higher Nitec, DSA-JC is talent based at Sec 4 and an accepted offer is binding. Two kinds. Asks are superpowers: a held hand of at most three, free to play because asking costs courage rather than time, one a year, and playing one draws another because asking begets knowing who to ask. Commitments consume the year, so they join the turn pool as ordinary choices and spend points; the exchange costs two because three months is three months. Each move sets a flag; some chance cards require those flags, so a move this year changes what can turn up later. That is the point: asking opens things. Moves are bounded to the institution that actually has the role: form teachers, Year Heads and school counsellors end at 17, and post secondary carries its own people, lecturers and career services, then a supervisor at work."
+    "accessed": "2026-08-05",
+    "notes": "Asks are free because asking costs courage, not hours: a hand of five, two playable a year, and playing one draws another. Commitments spend points because three months is three months. Every flag set here is read by a callback card, which is the whole promise of a move: do it now, and the story remembers."
   },
   "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
   "moves": [
     {
       "id": "ask_help",
-      "label": "Ask a teacher for help with the subject that scares you",
+      "label": "Ask a teacher about the subject that scares you",
       "ages": [
         13,
         17
@@ -96,7 +96,8 @@
       "sets": "seen_work",
       "ic": "curiosity",
       "kind": "commit",
-      "cost": 1
+      "cost": 1,
+      "missed": "The shadowing day ran with somebody else asking the questions."
     },
     {
       "id": "eae_prep",
@@ -106,7 +107,7 @@
         17
       ],
       "body": "Poly and ITE EAE take you on interest and aptitude, before results, in June. They ask what you have made and done. Start having an answer.",
-      "outcome": "A folder with your name on it: things made, things done, and why this course. Most people start it a week before the deadline. You did not.",
+      "outcome": "A folder with your name on it: things made, things done, the story of why this course. EAE reads it before results.",
       "gain": {
         "portfolio": 2
       },
@@ -114,7 +115,9 @@
       "ic": "d_portfolio",
       "check": "Poly EAE and ITE EAE, at moe.gov.sg. Applications run in June, before exams.",
       "kind": "commit",
-      "cost": 1
+      "cost": 1,
+      "missed": "The EAE folder stayed a good intention.",
+      "opens": "d_eae"
     },
     {
       "id": "dsa",
@@ -132,7 +135,8 @@
       "ic": "g_elective",
       "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit you to that JC.",
       "kind": "commit",
-      "cost": 1
+      "cost": 1,
+      "missed": "The DSA window shut while you were deciding to ask."
     },
     {
       "id": "intern",
@@ -150,7 +154,9 @@
       "sets": "attached",
       "ic": "t_skills",
       "kind": "commit",
-      "cost": 1
+      "cost": 1,
+      "missed": "The attachment stayed a timetable entry.",
+      "opens": "d_people"
     },
     {
       "id": "exchange",
@@ -167,7 +173,8 @@
       "sets": "exchanged",
       "ic": "flexibility",
       "kind": "commit",
-      "cost": 2
+      "cost": 2,
+      "missed": "The exchange cohort flew without you."
     },
     {
       "id": "mentor",
@@ -206,7 +213,7 @@
     },
     {
       "id": "senior",
-      "label": "Talk to a senior who took the road you are curious about",
+      "label": "Ask a senior who took the road you want",
       "ages": [
         14,
         20
@@ -341,7 +348,7 @@
     },
     {
       "id": "peer_ask",
-      "label": "Ask someone whose life you would want how they arranged it",
+      "label": "Ask someone whose life you want how they arranged it",
       "ages": [
         30,
         55
@@ -381,7 +388,7 @@
     },
     {
       "id": "family_late",
-      "label": "Tell the people at home what you are thinking of changing",
+      "label": "Tell the people at home what might change",
       "ages": [
         30,
         55

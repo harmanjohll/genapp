@@ -333,7 +333,8 @@ export function visibleChoices(stage, run, moves, age) {
         (_, i) => open[(off + i) % open.length])
         .map((m) => ({
           id: m.id, label: m.label, cost: m.cost || 1, gain: m.gain, disp: m.disp, sets: m.sets,
-          outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, isCommit: true,
+          outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, missed: m.missed,
+          isMove: true, isCommit: true,
         }));
     }
   }
