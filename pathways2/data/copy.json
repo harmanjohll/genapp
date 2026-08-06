@@ -54,11 +54,11 @@
   },
   "landing": {
     "kicker": "For Singapore secondary students",
-    "q": "Eight places you could go after secondary school. How many stay reachable, no matter which subjects you pick?",
+    "q": "Eight places you could go after secondary school. How many stay reachable, whatever subjects you pick?",
     "guessHint": "Take a guess. Tap a number.",
     "revealAll": "All eight. Every one keeps a road to it from any combination.",
     "revealYou": "You guessed {n}.",
-    "revealNote": "Some roads are longer. None are closed. That is not a slogan; the engine underneath this site cannot produce a closed door, and you can check it.",
+    "revealNote": "Some roads are longer. None are closed. The engine under this site cannot draw a closed door, and you can check it.",
     "enterPlan": "Plan",
     "enterPlanSub": "Set your subjects, watch what opens",
     "enterPlay": "Play",
@@ -66,7 +66,8 @@
     "enterAct": "Act",
     "enterActSub": "Leave with three things to do this term",
     "skip": "Straight in",
-    "audience": "Also here: a page for parents, and one for teachers."
+    "audience": "Also here: a page for parents, and one for teachers.",
+    "roadTag": "a road in"
   },
   "pulse": {
     "opened": "{dest} is open now.",

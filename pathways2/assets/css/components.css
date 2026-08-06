@@ -236,9 +236,9 @@ h3.grp { display: flex; align-items: center; }
 }
 .lchip:hover { background: var(--paper-warm); }
 .lgap { width: var(--tap); height: var(--tap); flex: none; }
-.lchip[data-lv="G1"][aria-pressed="true"] { border-color: var(--g1); background: var(--g1-wash); color: var(--g1); }
-.lchip[data-lv="G2"][aria-pressed="true"] { border-color: var(--g2); background: var(--g2-wash); color: var(--g2); }
-.lchip[data-lv="G3"][aria-pressed="true"] { border-color: var(--g3); background: var(--g3-wash); color: var(--g3); }
+.lchip[data-lv="G1"][aria-pressed="true"] { border-color: var(--g1); background: linear-gradient(var(--g1-wash), var(--g1-wash)), var(--surface); color: var(--g1); }
+.lchip[data-lv="G2"][aria-pressed="true"] { border-color: var(--g2); background: linear-gradient(var(--g2-wash), var(--g2-wash)), var(--surface); color: var(--g2); }
+.lchip[data-lv="G3"][aria-pressed="true"] { border-color: var(--g3); background: linear-gradient(var(--g3-wash), var(--g3-wash)), var(--surface); color: var(--g3); }
 .lchip[aria-pressed="true"] { border-width: 2px; }
 
 /* ---------- panels, chips, notices ---------- */
@@ -927,9 +927,9 @@ body[data-journey="true"] .audstrip { display: none; }
   font-size: var(--t-small); font-weight: 650; color: var(--ink-mute);
 }
 .lvchip.on { border-width: 2px; }
-.lvchip.lv-g1.on { border-color: var(--g1); background: var(--g1-wash); color: var(--g1); }
-.lvchip.lv-g2.on { border-color: var(--g2); background: var(--g2-wash); color: var(--g2); }
-.lvchip.lv-g3.on { border-color: var(--g3); background: var(--g3-wash); color: var(--g3); }
+.lvchip.lv-g1.on { border-color: var(--g1); background: linear-gradient(var(--g1-wash), var(--g1-wash)), var(--surface); color: var(--g1); }
+.lvchip.lv-g2.on { border-color: var(--g2); background: linear-gradient(var(--g2-wash), var(--g2-wash)), var(--surface); color: var(--g2); }
+.lvchip.lv-g3.on { border-color: var(--g3); background: linear-gradient(var(--g3-wash), var(--g3-wash)), var(--surface); color: var(--g3); }
 .diff-combo { display: flex; flex-wrap: wrap; gap: var(--s-1); font-size: var(--t-micro); }
 .diff-combo .subjchip { padding: 0.15em 0.4em; font-size: var(--t-micro); }
 @media (hover: hover) { .lvchip:hover { background: var(--paper-warm); } }
@@ -1003,11 +1003,60 @@ body { transition: background-color 600ms var(--ease); }
 @media (prefers-reduced-motion: reduce) { body { transition: none; } }
 
 /* ---------- the landing ---------- */
-.landing { min-height: 72vh; display: flex; align-items: center; padding: var(--s-8) 0; }
+.landing { position: relative; min-height: 78vh; padding: var(--s-8) 0 var(--s-7); overflow: hidden; }
+.landing > .wrap { position: relative; }
+.landing-bg {
+  position: absolute; inset: auto 0 0 0; height: min(46vh, 420px);
+  color: var(--ink); opacity: 0.05; pointer-events: none;
+}
+.landing-bg svg { width: 100%; height: 100%; display: block; }
 .landing-kicker { display: inline-flex; align-items: center; gap: var(--s-2); }
 .landing-kicker svg { width: 1.3em; height: 1.3em; color: var(--accent); }
-.landing-q { font-size: var(--t-hero); line-height: var(--lh-hero); margin: var(--s-4) 0 var(--s-3); max-width: 22ch; }
-.guess-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+.landing-q {
+  font-size: clamp(1.6rem, 4.6vw, 2.6rem); line-height: var(--lh-hero);
+  margin: var(--s-4) 0 var(--s-5); max-width: 30ch;
+}
+
+/* The eight, standing on the page. Identical treatment, data order, and the
+   reveal is each card answering for itself, one beat apart. */
+.eight-grid {
+  list-style: none; padding: 0; margin: 0 0 var(--s-6);
+  display: grid; gap: var(--s-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 700px)  { .eight-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.dest-card {
+  position: relative; min-height: 92px; padding: var(--s-3) var(--s-4);
+  display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-2);
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); box-shadow: var(--shadow-sm);
+}
+.dest-name { font-family: var(--display); font-weight: 600; font-size: 1.02rem; line-height: 1.25; }
+.road-tag {
+  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  padding: 2px 10px; border-radius: var(--r-pill);
+  background: var(--open-wash); color: var(--open-ink);
+  font-size: var(--t-micro); font-weight: 700;
+  opacity: 0; transform: translateY(4px);
+}
+.road-tag svg { width: 1em; height: 1em; margin: 0; }
+.dest-card.revealed { border-color: var(--open); }
+.dest-card.revealed .road-tag {
+  animation: roadIn 420ms var(--ease) both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+.dest-card.revealed { transition: border-color 300ms var(--ease); transition-delay: calc(var(--i) * 110ms); }
+@keyframes roadIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dest-card.revealed .road-tag { animation: none; opacity: 1; transform: none; }
+  .dest-card.revealed { transition: none; }
+}
+
+.guess-block { margin-top: var(--s-2); }
+.guess-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
 .guess-n {
   min-width: var(--tap); min-height: var(--tap); padding: 0 var(--s-3);
   border: 1.5px solid var(--rule); border-radius: var(--r-md);
@@ -1017,22 +1066,37 @@ body { transition: background-color 600ms var(--ease); }
 }
 .guess-n:hover { border-color: var(--accent); }
 .guess-n.on { border-color: var(--accent); background: var(--accent-wash); color: var(--accent-dk); }
-.reveal { margin-top: var(--s-6); }
-.reveal-big { font-size: var(--t-h1); line-height: var(--lh-h); max-width: 26ch; }
+.reveal-big {
+  font-size: var(--t-h1); line-height: var(--lh-h); max-width: 28ch;
+  animation-delay: 980ms;
+}
 .reveal-big:focus { outline: none; }
-.landing-doors { display: grid; gap: var(--s-3); margin-top: var(--s-6); }
-@media (min-width: 700px) { .landing-doors { grid-template-columns: repeat(3, 1fr); } }
+.guess-block .small.mute.fade-up { animation-delay: 1150ms; max-width: 56ch; }
+
+.landing-doors {
+  display: grid; gap: var(--s-3); margin-top: var(--s-6); align-items: stretch;
+  animation-delay: 1300ms;
+}
+@media (min-width: 700px) { .landing-doors { grid-template-columns: 1fr auto 1fr auto 1fr; } }
 .ldoor {
   display: flex; flex-direction: column; gap: var(--s-1); text-align: left;
-  padding: var(--s-5); min-height: 108px; cursor: pointer; font: inherit;
+  padding: var(--s-4) var(--s-5); min-height: 116px; cursor: pointer; font: inherit;
   border: 1.5px solid var(--rule); border-radius: var(--r-lg); background: var(--surface);
   transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
 .ldoor:hover { border-color: var(--accent); transform: translateY(-2px); }
+.ldoor-ic { color: var(--accent); }
+.ldoor-ic svg { width: 1.4em; height: 1.4em; margin: 0; }
 .ldoor-name { font-family: var(--display); font-weight: 600; font-size: var(--t-h2); }
 .ldoor-sub { color: var(--ink-mute); font-size: var(--t-small); }
-@media (hover: none) { .ldoor:hover { border-color: var(--rule); transform: none; } }
-@media (prefers-reduced-motion: reduce) { .ldoor, .guess-n { transition: none; } }
+.ldoor-arrow { align-self: center; color: var(--ink-faint); font-size: 1.2rem; display: none; }
+@media (min-width: 700px) { .ldoor-arrow { display: block; } }
+.landing-aud { margin-top: var(--s-7); }
+@media (hover: none) { .ldoor:hover { border-color: var(--rule); transform: none; } .guess-n:hover { border-color: var(--rule); } }
+@media (prefers-reduced-motion: reduce) {
+  .ldoor, .guess-n { transition: none; }
+  .reveal-big, .guess-block .fade-up, .landing-doors { animation-delay: 0ms; }
+}
 
 /* ---------- v2 chrome ---------- */
 .brand {
