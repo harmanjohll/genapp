@@ -13,7 +13,10 @@ import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import { cue } from '../sound.js';
-import { drawLifeCard } from '../components/lifecard.js';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js';
+import {
+  possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
+} from '../engine/possible.js';
 import {
   createRun, sequenceFor, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns,
@@ -365,6 +368,7 @@ function turnScreen(host, stage, data, age) {
       <span class="pts-why">${esc(pointsWhy(jc, PTS, reasons))}</span>
     </div>
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
+    ${possibleBlock(data, age)}
     ${yearSummary(data, stage, pool, age)}
     <div class="btn-row" style="margin-top:var(--s-4)">
       ${(picked.length || pickedAsks.length) ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
@@ -401,6 +405,35 @@ function turnScreen(host, stage, data, age) {
     changewant: () => wantChangeUI(host, data),
     wantset: (btn) => wantSet(host, data, btn),
   });
+}
+
+/**
+ * What is possible from here, folded shut. It sits under the choices because it
+ * is not a choice: it is the set of real routes live at this age, with what each
+ * asks for. Closed by default, so the turn stays a turn and the first paint
+ * budget holds; open once and a student is reading the actual system.
+ */
+function possibleBlock(data, age) {
+  const jc = data.copy.journey;
+  const list = possibilitiesFor(data, run, age, 3);
+  if (!list.length) return '';
+  markShown(run, list);
+  const rows = list.map((p) => `
+    <li class="poss-row">
+      <p class="poss-label">${decorate(p.label)}</p>
+      <dl class="poss-dl">
+        <dt>${esc(jc.possWhen)}</dt><dd>${decorate(p.when)}</dd>
+        <dt>${esc(jc.possNeeds)}</dt><dd>${decorate(p.needs)}</dd>
+        <dt>${esc(jc.possLeads)}</dt><dd>${decorate(p.leads)}</dd>
+      </dl>
+      <p class="poss-truth">${decorate(p.truth)}</p>
+    </li>`).join('');
+  return `
+    <details class="poss">
+      <summary>${icon('q_how')}${esc(jc.possHead)}</summary>
+      <p class="micro mute" style="margin:var(--s-2) 0 0">${esc(jc.possNote)}</p>
+      <ul class="poss-list">${rows}</ul>
+    </details>`;
 }
 
 /** The mid run want check: a goal named at the start is allowed to move. */
@@ -621,11 +654,18 @@ function forkScreen(host, stage, data, age) {
         ${chapterMeta(data, stage, age)}
         <p class="lede j-sit" style="max-width:44ch">${situation(data, stage)}</p>
         <div class="fork-choices" role="group" aria-label="Your choice">
-          ${pool.map((c, i) => `
+          ${pool.map((c, i) => {
+            // The biggest decision in the game used to be five unlabelled
+            // doors. Each branch now states what it actually asks for, because
+            // a fork you cannot cost is not a choice, it is a guess.
+            const need = c.opens ? forkNeed(data, c.opens) : '';
+            return `
             <button class="choice fork-c ${c.needsDoor ? 'unlocked' : ''}" type="button" data-action="fork" data-i="${i}">
               <span class="c-label">${esc(c.label)}</span>
+              ${need ? `<span class="fork-need"><em>${esc(data.copy.journey.possAsks)}</em> ${decorate(need)}</span>` : ''}
               <span class="c-chips">${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(data.copy.journey.doorTag)}</span>` : ''}${gainChips(c)}</span>
-            </button>`).join('')}
+            </button>`;
+          }).join('')}
         </div>
       </div>
     </div>`;
@@ -844,6 +884,16 @@ function endingScreen(host, data, st) {
             <h2 class="serif">${esc(frame.head)}</h2>
             <p class="lede" style="margin-top:var(--s-2)">${decorate(frame.body || '')}</p>
           </div>` : ''}
+        <figure class="storymap">
+          <figcaption class="caps">${esc(jc.mapHead)}</figcaption>
+          <div class="storymap-frame" data-ref="map"></div>
+          <p class="micro mute">${esc(jc.mapNote)}</p>
+          ${run.reflection ? `
+            <label class="mapopt">
+              <input type="checkbox" data-action-change="reflectin">
+              <span>${esc(jc.mapReflect)}</span>
+            </label>` : ''}
+        </figure>
         <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>You lived it steadily, which is a way of living it.</p>'}</div>
         <div class="section">
           <p class="caps">${esc(jc.becameHead)}</p>
@@ -874,6 +924,23 @@ function endingScreen(host, data, st) {
             <p class="chips subjchips">${subjectChips(planRows(data, run.plan))}</p>
             <p class="micro mute">${esc(jc.comboNote)}</p>
           </div>` : ''}
+        ${(() => {
+          // Not a scolding. A list of routes that were live while this life was
+          // being lived, and mostly still are, which is the whole thesis.
+          const missed = possibilitiesMissed(data, run, 4);
+          if (!missed.length) return '';
+          return `
+            <div class="section">
+              <p class="caps">${esc(jc.possMissedHead)}</p>
+              <p class="small mute">${esc(jc.possMissedNote)}</p>
+              <ul class="poss-list end">${missed.map((p) => `
+                <li class="poss-row">
+                  <p class="poss-label">${decorate(p.label)}</p>
+                  <p class="small" style="margin:0">${decorate(p.needs)}</p>
+                  <p class="poss-truth">${decorate(p.truth)}</p>
+                </li>`).join('')}</ul>
+            </div>`;
+        })()}
         ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At 38 you wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
@@ -896,9 +963,28 @@ function endingScreen(host, data, st) {
     </div>`;
   settle(host, 'ending');
   bindGlossary(host);
+
+  // The map is drawn, on screen, at the ending. The PNG a student saves is the
+  // same canvas, so what they share is exactly what they were shown.
+  let withReflection = false;
+  const mapHost = host.querySelector('[data-ref="map"]');
+  const paintMap = () => {
+    if (!mapHost) return;
+    const cv = drawStoryMap(run, data, { includeReflection: withReflection });
+    cv.setAttribute('role', 'img');
+    cv.setAttribute('aria-label', jc.mapAlt);
+    mapHost.innerHTML = '';
+    mapHost.appendChild(cv);
+  };
+  paintMap();
+  const reflectBox = host.querySelector('[data-action-change="reflectin"]');
+  if (reflectBox) {
+    reflectBox.addEventListener('change', () => { withReflection = reflectBox.checked; paintMap(); });
+  }
+
   onAction(host, {
     savecard: (btn) => {
-      drawLifeCard(run, data);
+      saveStoryCard(run, data, { includeReflection: withReflection });
       const old = btn.textContent;
       btn.textContent = jc.cardSaved;
       setTimeout(() => { btn.textContent = old; }, 1600);

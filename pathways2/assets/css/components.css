@@ -1240,3 +1240,121 @@ body { transition: background-color 600ms var(--ease); }
 body[data-board="true"] .stage-holds { font-size: clamp(2.4rem, 6vw, 4rem); }
 body[data-board="true"] .stage-grid .dest-name { font-size: 1.5rem; }
 body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
+
+/* --- the story map at the ending ------------------------------------------
+   The map is the ending's centrepiece, not a download nobody clicks. It is a
+   canvas, so it scales as one picture and needs no responsive rules of its
+   own; the frame just gives it paper and a rule. */
+.storymap { margin: var(--s-6) 0 0; }
+.storymap figcaption { margin-bottom: var(--s-2); }
+.storymap-frame {
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sm);
+}
+.storymap-frame canvas { display: block; width: 100%; height: auto; }
+.storymap .micro { margin-top: var(--s-2); }
+.mapopt {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: var(--s-2); font-size: var(--t-small); color: var(--ink-soft);
+}
+.mapopt input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* --- what is possible from here -------------------------------------------
+   Folded shut on the turn screen: it must not compete with the choices, and
+   the first paint budget counts only the summary. Open, it is a small
+   reference table, so it reads like a timetable rather than a pitch. */
+.poss { margin-top: var(--s-4); border-top: 1px solid var(--rule); padding-top: var(--s-3); }
+.poss > summary {
+  display: flex; align-items: center; gap: 7px; cursor: pointer;
+  font-size: var(--t-small); font-weight: 700; color: var(--ink-soft);
+  list-style: none;
+}
+.poss > summary::-webkit-details-marker { display: none; }
+.poss > summary::after { content: '+'; margin-left: auto; font-weight: 400; color: var(--ink-mute); }
+.poss[open] > summary::after { content: '\2212'; }
+.poss > summary svg { width: 1.05em; height: 1.05em; }
+.poss > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+.poss-list { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: var(--s-3); }
+.poss-row {
+  border-left: 3px solid var(--open); padding-left: var(--s-3);
+}
+.poss-label { font-family: var(--display); font-weight: 600; font-size: 1.02rem; margin: 0 0 4px; }
+.poss-dl {
+  display: grid; grid-template-columns: max-content 1fr; gap: 2px var(--s-3);
+  margin: 0; font-size: var(--t-small);
+}
+.poss-dl dt { color: var(--ink-mute); font-weight: 700; font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .04em; padding-top: 3px; }
+.poss-dl dd { margin: 0; color: var(--ink-soft); }
+.poss-truth { font-size: var(--t-small); color: var(--ink-mute); margin: 6px 0 0; }
+.poss-list.end { margin-top: var(--s-3); }
+@media (max-width: 30rem) {
+  .poss-dl { grid-template-columns: 1fr; gap: 0 0; }
+  .poss-dl dt { padding-top: 6px; }
+}
+
+/* What a road asks for, on the fork's own buttons. */
+.fork-need {
+  display: block; margin-top: 6px; font-size: var(--t-small);
+  color: var(--ink-soft); line-height: 1.45; text-wrap: pretty;
+}
+.fork-need em { font-style: normal; font-weight: 700; color: var(--ink-mute); font-size: var(--t-micro); text-transform: uppercase; letter-spacing: .04em; }
+
+/* --- the table: the board game --------------------------------------------
+   Designed to be read at arm's length by four people leaning over one phone,
+   or projected. Bigger type than the solo mode, and the seat whose turn it is
+   is the loudest thing on screen. */
+.tgame { max-width: 46rem; margin-inline: auto; }
+.tstrip { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.tchapter { display: flex; align-items: baseline; gap: var(--s-3); margin-top: var(--s-2); }
+.tseat {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  margin-top: var(--s-4); padding: var(--s-2) var(--s-3);
+  background: var(--surface); border: 2px solid var(--accent); border-radius: var(--r-md);
+}
+.tseat .caps { color: var(--accent-dk); margin: 0; }
+.tnames { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--s-3); }
+.tname { display: grid; gap: 4px; }
+.tname input {
+  font: inherit; padding: 8px 10px; border: 1.5px solid var(--rule);
+  border-radius: var(--r-sm); background: var(--surface); color: var(--ink);
+}
+.tname input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.tpass { max-width: 32rem; margin: var(--s-8) auto; text-align: center; }
+.tpass h1 { font-size: var(--t-hero); line-height: var(--lh-hero); }
+
+.treveal {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--s-3); margin-top: var(--s-4);
+}
+.tcard {
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); padding: var(--s-3); box-shadow: var(--shadow-sm);
+}
+.tcard-name { font-family: var(--display); font-weight: 600; margin: 0 0 var(--s-2); }
+.tcard-path { font-size: var(--t-small); color: var(--ink-soft); margin: 0 0 var(--s-2); }
+.tcard-list { margin: 0; padding-left: 1.05em; font-size: var(--t-small); }
+.tcard-list li { margin-bottom: 3px; }
+.tcard-card { font-size: var(--t-small); color: var(--ink-soft); margin: var(--s-2) 0 0; }
+
+/* The printed pack. Hidden on screen, and the only thing on paper. */
+.printpack { display: none; }
+@media print {
+  .audstrip, #site-head, #site-foot, .btn-row, .modebar, .ribbon, .tstrip { display: none !important; }
+  body { background: #fff; }
+  .section > *:not(.printpack) { display: none !important; }
+  .printpack { display: block; color: #000; }
+  .printpack h2 { font-family: var(--display); font-size: 20pt; margin: 0 0 4pt; }
+  .printpack h3 { font-family: var(--display); font-size: 13pt; margin: 16pt 0 4pt; }
+  .pp-note { font-size: 9pt; color: #444; margin: 0 0 8pt; }
+  .pp-board { list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6pt; }
+  .pp-board li { border: 1pt solid #999; border-radius: 4pt; padding: 6pt 8pt; font-size: 10pt; }
+  .pp-board li strong { display: block; font-size: 11pt; }
+  .pp-board li span { color: #444; }
+  .pp-track { margin: 0; padding-left: 16pt; font-size: 10pt; columns: 2; }
+  .pp-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4pt; }
+  .pp-table th, .pp-table td { border: 1pt solid #999; padding: 5pt 6pt; text-align: left; vertical-align: top; }
+  .pp-table th { background: #eee; }
+}
+.tcard-deal { display: block; font-weight: 700; color: var(--ink); }

@@ -1,0 +1,500 @@
+{
+ "_meta": {
+  "purpose": "What is actually possible from where the student is standing, with what it asks and when it happens. Play narrated what happened; this names what could. Every entry is a real Singapore route, mechanism or allowance, written so a fourteen year old can act on it.",
+  "rules": [
+   "State the requirement as a fact about the route, never as a distance the student falls short by.",
+   "Never imply a route is closed. Requirements are timetables, not verdicts.",
+   "No aggregate is invented. Where a figure is provisional the truth line says so."
+  ],
+  "sources": "Figures match DESIGN.md's confirmed table for the 2027 SEC cohort.",
+  "version": "1.0.0"
+ },
+ "forkNeeds": {
+  "d_alevels": "L1R4 of sixteen or better across five G3 subjects, with English at C6, G3 Maths at D7 and Mother Tongue at D7.",
+  "d_polyroad": "Four G3 subjects and one G2 subject in the B slot. ELR2B2 of twenty two or better, and twenty four for nursing.",
+  "d_iteroad": "A pass that carries you in. Higher Nitec runs three years, and Nitec is the award you hold if you exit early.",
+  "d_portfolio": "A portfolio or an audition, and the year of practice sitting behind it.",
+  "d_fifth": "The Sec 5 criteria. A fifth year taken at all G3 asks a gross ELMAB3 of nineteen or better.",
+  "d_mi": "L1R4 of twenty or better across five G3 subjects. Wider at the door than a junior college, and a year longer.",
+  "d_pfp": "ELMAB3 of twelve or better at G2. You pick a cluster rather than a single course."
+ },
+ "possibilities": [
+  {
+   "id": "p_level_up",
+   "kind": "school",
+   "ages": [
+    13,
+    16
+   ],
+   "paths": null,
+   "label": "Move a subject up a level",
+   "when": "At each year's review point",
+   "needs": "A teacher who thinks you can carry it, and one term of showing you can",
+   "leads": "A wider set of courses open to you at the end of Sec 4",
+   "truth": "Under Full Subject Based Banding your level is decided each year. It is not a label you were given once."
+  },
+  {
+   "id": "p_eae",
+   "kind": "school",
+   "ages": [
+    15,
+    17
+   ],
+   "paths": null,
+   "label": "Apply through Early Admissions",
+   "when": "Around the middle of Sec 4",
+   "needs": "A course you can argue for, and something you have actually made or done",
+   "leads": "A conditional offer before results, held if you meet the course requirement",
+   "truth": "EAE weighs aptitude and interest. The offer still asks you to meet the course minimum, so the exam still counts."
+  },
+  {
+   "id": "p_portfolio_build",
+   "kind": "school",
+   "ages": [
+    13,
+    17
+   ],
+   "paths": null,
+   "label": "Start the folder now",
+   "when": "This term, not the term you need it",
+   "needs": "One finished thing a month, kept somewhere you can find it again",
+   "leads": "Something to show at an interview, an audition, or an EAE round",
+   "truth": "A folder is easier to fill over three years than over three weeks."
+  },
+  {
+   "id": "p_talk_teacher",
+   "kind": "school",
+   "ages": [
+    13,
+    17
+   ],
+   "paths": null,
+   "label": "Ask a teacher what they see",
+   "when": "Any week of any term",
+   "needs": "One question, and the nerve to sit through the whole answer",
+   "leads": "A clearer view of what you carry that you cannot get from inside",
+   "truth": "Teachers hold a picture of you built from three years of watching. Most will hand it over if asked."
+  },
+  {
+   "id": "p_fifth",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "Take a fifth year",
+   "when": "After the Sec 4 results",
+   "needs": "The Sec 5 criteria met, and a reason that belongs to you",
+   "leads": "A second sitting, then polytechnic, Millennia Institute or junior college",
+   "truth": "A fifth year is a year. Some roads only open after it, and the year is not held against you afterwards."
+  },
+  {
+   "id": "p_mi",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "Millennia Institute",
+   "when": "Applying after Sec 4",
+   "needs": "L1R4 of twenty or better across five G3 subjects",
+   "leads": "The same A Level, taken over three years instead of two",
+   "truth": "MI is deliberately wider at the door and slower inside. The certificate at the end is the same one."
+  },
+  {
+   "id": "p_pfp",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "The Poly Foundation Programme",
+   "when": "Applying after Sec 4",
+   "needs": "ELMAB3 of twelve or better, and a cluster you would be glad to be in",
+   "leads": "One foundation year, then straight into the first year of a diploma",
+   "truth": "PFP admits you to a cluster rather than a course. From AY2028 it is open to any mix of subject levels."
+  },
+  {
+   "id": "p_hn_direct",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "Start Higher Nitec at year two",
+   "when": "Applying after Sec 4, to the 2027 intake",
+   "needs": "ELMAB3 of nineteen or better",
+   "leads": "Higher Nitec without sitting through the first year",
+   "truth": "This route replaced the old DPP. The last DPP intake is 2027, so the mechanism has changed name and shape."
+  },
+  {
+   "id": "p_nursing",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "Nursing at a polytechnic",
+   "when": "Applying after Sec 4",
+   "needs": "ELR2B2 of twenty four or better",
+   "leads": "A nursing diploma, then practice, or a degree later",
+   "truth": "Nursing carries a wider net score than most diplomas because the need is real and the training is long."
+  },
+  {
+   "id": "p_arts_school",
+   "kind": "entry",
+   "ages": [
+    15,
+    17
+   ],
+   "paths": null,
+   "label": "An arts school, on a portfolio",
+   "when": "Audition and portfolio rounds, from Sec 4",
+   "needs": "Work you made, ready to show, and one honest person to look at it first",
+   "leads": "A diploma at an arts institution, entered on what you can do",
+   "truth": "A portfolio is read as evidence of practice rather than proof of talent. It rewards the student who started early."
+  },
+  {
+   "id": "p_appeal",
+   "kind": "entry",
+   "ages": [
+    16,
+    18
+   ],
+   "paths": null,
+   "label": "Appeal a posting",
+   "when": "The days straight after results",
+   "needs": "A course you can name, and a reason that is more than wanting it",
+   "leads": "A second look at where you were posted",
+   "truth": "Appealing is an ordinary part of the exercise. Ask early, ask in person, and ask about the next intake too."
+  },
+  {
+   "id": "p_pse",
+   "kind": "entry",
+   "ages": [
+    16,
+    17
+   ],
+   "paths": null,
+   "label": "Order your choices carefully",
+   "when": "When the posting portal opens",
+   "needs": "Your list ordered by what you actually want, not by what you think you can get",
+   "leads": "A posting decided by your order when scores tie",
+   "truth": "From 2028 one portal handles this. Where two students tie, the order you listed decides, so put the real first choice first."
+  },
+  {
+   "id": "p_switch_course",
+   "kind": "inside",
+   "ages": [
+    17,
+    21
+   ],
+   "paths": [
+    "applied",
+    "arts"
+   ],
+   "label": "Switch course inside the school",
+   "when": "Usually the end of the first year",
+   "needs": "Your first year grades, a place free in the other course, and a reason",
+   "leads": "The diploma you actually meant to take",
+   "truth": "Transfers happen every year. Ask the school what the window is long before you need to use it."
+  },
+  {
+   "id": "p_gpa_degree",
+   "kind": "inside",
+   "ages": [
+    18,
+    22
+   ],
+   "paths": [
+    "applied"
+   ],
+   "label": "The polytechnic to degree road",
+   "when": "Built across all three years",
+   "needs": "A GPA the university you want will look at, and modules that match the degree",
+   "leads": "A degree place, sometimes with a year of credit already granted",
+   "truth": "Polytechnic graduates enter local universities every year. Some enter with exemptions that shorten the degree."
+  },
+  {
+   "id": "p_ite_poly",
+   "kind": "inside",
+   "ages": [
+    18,
+    22
+   ],
+   "paths": [
+    "hands"
+   ],
+   "label": "The ITE to polytechnic road",
+   "when": "The final year of Higher Nitec",
+   "needs": "A net GPA of two point five to apply, three point five raw to be guaranteed",
+   "leads": "A polytechnic diploma",
+   "truth": "The guarantee is written down, so it is not a favour anyone grants you. CCA points lift the net figure, never the raw one."
+  },
+  {
+   "id": "p_ite_exit",
+   "kind": "inside",
+   "ages": [
+    17,
+    20
+   ],
+   "paths": [
+    "hands"
+   ],
+   "label": "Take the Nitec and start working",
+   "when": "At the exit point inside the three years",
+   "needs": "A trade you can practise, and a first employer willing to teach you",
+   "leads": "Work now, with Higher Nitec still open to you later",
+   "truth": "Nitec is the award you exit with from the three year Higher Nitec course. Leaving is a decision, and it reverses."
+  },
+  {
+   "id": "p_intern_convert",
+   "kind": "inside",
+   "ages": [
+    18,
+    22
+   ],
+   "paths": [
+    "applied",
+    "hands",
+    "arts"
+   ],
+   "label": "Turn the attachment into an offer",
+   "when": "The internship semester",
+   "needs": "Turning up early, asking for the harder task, and saying out loud that you want the job",
+   "leads": "A job offer before you have graduated",
+   "truth": "A great many first jobs began as an attachment somebody remembered clearly."
+  },
+  {
+   "id": "p_exchange",
+   "kind": "inside",
+   "ages": [
+    18,
+    22
+   ],
+   "paths": null,
+   "label": "Go on exchange",
+   "when": "Usually the second year",
+   "needs": "Grades that clear the bar, and the money planned for in advance",
+   "leads": "A semester somewhere else, and the nerve that comes back with you",
+   "truth": "Bursaries and grants exist for this. Ask the office rather than deciding on your own that it is not for you."
+  },
+  {
+   "id": "p_jc_poly",
+   "kind": "inside",
+   "ages": [
+    18,
+    20
+   ],
+   "paths": [
+    "academic"
+   ],
+   "label": "Go to polytechnic after A Levels",
+   "when": "After the A Level results",
+   "needs": "A diploma course you want more than you want a degree right now",
+   "leads": "A diploma, often with some modules exempted",
+   "truth": "The road runs in that direction too, and it is used more often than anyone says out loud."
+  },
+  {
+   "id": "p_aptitude",
+   "kind": "inside",
+   "ages": [
+    18,
+    24
+   ],
+   "paths": null,
+   "label": "Apply on aptitude, not only grades",
+   "when": "University application season",
+   "needs": "A portfolio, an interview or a test, depending on the school",
+   "leads": "A place through an aptitude based route",
+   "truth": "Every local university keeps a share of its places for students admitted on more than an aggregate."
+  },
+  {
+   "id": "p_bursary",
+   "kind": "inside",
+   "ages": [
+    16,
+    24
+   ],
+   "paths": null,
+   "label": "Ask about money early",
+   "when": "As soon as the fee letter appears",
+   "needs": "Household income papers, and one appointment nobody enjoys making",
+   "leads": "Fees covered in part or in full, and a loan you understand",
+   "truth": "Bursaries, loans and hardship funds are ordinary. Nobody in this system is expected to fund it alone."
+  },
+  {
+   "id": "p_defer",
+   "kind": "inside",
+   "ages": [
+    17,
+    20
+   ],
+   "paths": null,
+   "label": "Defer a place for service",
+   "when": "When the enlistment letter arrives",
+   "needs": "One form, filed before the deadline on it",
+   "leads": "The place kept for you until you finish serving",
+   "truth": "Deferment is routine and the place waits. Serving is done in the army, the police or the civil defence force."
+  },
+  {
+   "id": "p_parttime",
+   "kind": "later",
+   "ages": [
+    21,
+    48
+   ],
+   "paths": null,
+   "label": "A degree part time, while working",
+   "when": "Any year you can carry both",
+   "needs": "A course that runs in the evening, and a manager who knows you are doing it",
+   "leads": "A degree over four or five years, without stopping earning",
+   "truth": "SUSS and SIT build part time degrees around working adults. The classmates are mostly people with jobs."
+  },
+  {
+   "id": "p_sf_credit",
+   "kind": "later",
+   "ages": [
+    25,
+    55
+   ],
+   "paths": null,
+   "label": "Spend the SkillsFuture Credit",
+   "when": "From twenty five, whenever you like",
+   "needs": "A course that teaches something you will actually use",
+   "leads": "A skill, paid for out of the credit rather than your pocket",
+   "truth": "The credit does not expire, which is exactly why most people forget they are holding any."
+  },
+  {
+   "id": "p_mcc",
+   "kind": "later",
+   "ages": [
+    38,
+    55
+   ],
+   "paths": null,
+   "label": "The mid career top up",
+   "when": "From the year you turn forty",
+   "needs": "A course on the approved list, and a direction you have thought about",
+   "leads": "Four thousand dollars of training paid for",
+   "truth": "The top up was built for people changing direction, not only for people keeping current in the job they have."
+  },
+  {
+   "id": "p_mcta",
+   "kind": "later",
+   "ages": [
+    38,
+    55
+   ],
+   "paths": null,
+   "label": "Take the training allowance",
+   "when": "While studying full time, mid career",
+   "needs": "An eligible full time course, and the paperwork filed",
+   "leads": "An allowance that covers some of what you stop earning",
+   "truth": "Lost income is the real barrier to retraining at forty. The allowance exists because that was obvious to everybody."
+  },
+  {
+   "id": "p_ccp",
+   "kind": "later",
+   "ages": [
+    24,
+    55
+   ],
+   "paths": null,
+   "label": "A career conversion programme",
+   "when": "When you want a different industry entirely",
+   "needs": "An employer in the new field willing to take you on and train you",
+   "leads": "Paid training into a job in that industry",
+   "truth": "Conversion programmes hire first and teach after, so the interview matters more than the certificate."
+  },
+  {
+   "id": "p_mature",
+   "kind": "later",
+   "ages": [
+    25,
+    48
+   ],
+   "paths": null,
+   "label": "Enter university as a mature student",
+   "when": "From twenty five",
+   "needs": "Work behind you, and a case for yourself you can write down",
+   "leads": "A degree begun late and finished anyway",
+   "truth": "Mature entry routes exist at every local university, and the people using them are not unusual."
+  },
+  {
+   "id": "p_stack",
+   "kind": "later",
+   "ages": [
+    24,
+    55
+   ],
+   "paths": null,
+   "label": "Stack short courses into something",
+   "when": "Over a few years, on purpose",
+   "needs": "Courses that build on each other rather than courses that scatter",
+   "leads": "A recognised qualification, assembled a piece at a time",
+   "truth": "Modular certificates can add up to a full qualification when you plan the order before you start."
+  },
+  {
+   "id": "p_side",
+   "kind": "later",
+   "ages": [
+    21,
+    48
+   ],
+   "paths": null,
+   "label": "Start the thing small",
+   "when": "Any evening you have spare",
+   "needs": "One customer, and one month of trying",
+   "leads": "A side thing that grows, or proof it was never going to",
+   "truth": "Most businesses that lasted began beside a job that was paying the rent the whole time."
+  },
+  {
+   "id": "p_ask_work",
+   "kind": "later",
+   "ages": [
+    22,
+    48
+   ],
+   "paths": null,
+   "label": "Ask for the work you want",
+   "when": "Before the appraisal, never during it",
+   "needs": "A specific ask, and something finished to point at",
+   "leads": "Different work, or a clear answer you can plan around",
+   "truth": "People who end up with the interesting work have usually asked for it out loud, more than once."
+  },
+  {
+   "id": "p_mentor",
+   "kind": "later",
+   "ages": [
+    26,
+    55
+   ],
+   "paths": null,
+   "label": "Be the one who tells someone things",
+   "when": "Once five years sit behind you",
+   "needs": "An hour a month, and the honesty to say what you got wrong",
+   "leads": "A network that answers your messages, and a clearer head",
+   "truth": "Explaining a thing is how most people discover they already knew it."
+  },
+  {
+   "id": "p_back_school",
+   "kind": "later",
+   "ages": [
+    30,
+    55
+   ],
+   "paths": null,
+   "label": "Go back to school later",
+   "when": "Any decade you decide to",
+   "needs": "A reason you can say out loud, and a timetable your household agrees to",
+   "leads": "The qualification you put down years ago",
+   "truth": "A classroom of forty year olds is an ordinary sight now. It was not always, and that changed on purpose."
+  }
+ ]
+}

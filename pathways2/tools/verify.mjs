@@ -18,13 +18,15 @@ const load = (name) => JSON.parse(readFileSync(join(root, 'data', `${name}.json`
 const data = Object.fromEntries([
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
-  'moves', 'version', 'activities',
+  'moves', 'version', 'activities', 'possibilities',
 ].map((n) => [n, load(n)]));
 
 const { runInvariantSweep } = await import(join(root, 'assets/js/engine/reach.js'));
 const { projectionSweep } = await import(join(root, 'assets/js/engine/project.js'));
 const { runJourneySweep } = await import(join(root, 'assets/js/engine/journey4.js'));
 const { runCopyLint } = await import(join(root, 'assets/js/engine/copy-lint.js'));
+const { possibilitySweep } = await import(join(root, 'assets/js/engine/possible.js'));
+const { tableSweep } = await import(join(root, 'assets/js/modes/mode-table.js'));
 
 const ctx = {
   subjects: data.subjects.subjects,
@@ -38,6 +40,8 @@ const results = [
   ['reach', runInvariantSweep(ctx)],
   ['projection', projectionSweep(ctx)],
   ['journey', runJourneySweep(data)],
+  ['possibilities', possibilitySweep(data)],
+  ['table', tableSweep(data)],
   ['copy', runCopyLint(data)],
 ];
 

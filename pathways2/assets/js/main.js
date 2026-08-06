@@ -18,11 +18,13 @@ import { reach, runInvariantSweep } from './engine/reach.js';
 import { projectionSweep } from './engine/project.js';
 import { runCopyLint } from './engine/copy-lint.js';
 import { runJourneySweep } from './engine/journey4.js';
+import { possibilitySweep } from './engine/possible.js';
 import { renderLanding } from './modes/landing.js';
 import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
 import { renderAim } from './modes/mode-aim.js';
 import { renderTeacher } from './modes/mode-teacher.js';
+import { renderTable, resetTable, tableSweep } from './modes/mode-table.js';
 import { renderParent } from './modes/mode-parent.js';
 
 const app = document.getElementById('app');
@@ -33,7 +35,7 @@ let ctx = null;
 let onLanding = false;
 const params = new URLSearchParams(location.search);
 
-let extraMode = ['teacher', 'parent'].includes(params.get('mode')) ? params.get('mode') : null;
+let extraMode = ['teacher', 'parent', 'table'].includes(params.get('mode')) ? params.get('mode') : null;
 if (params.get('board') === '1') document.body.dataset.board = 'true';
 
 init();
@@ -94,6 +96,8 @@ async function init() {
     runInvariantSweep(ctx);
     projectionSweep(ctx);
     runJourneySweep(data);
+    possibilitySweep(data);
+    tableSweep(data);
     runCopyLint(data);
   }
 }
@@ -160,6 +164,7 @@ function renderHead() {
     home: () => { onLanding = true; renderHead(); paint(); },
     mode: (btn) => {
       extraMode = null;
+      resetTable();
       if (btn.dataset.mode !== 'journey') resetJourney();
       setMode(btn.dataset.mode);
     },
@@ -183,6 +188,7 @@ function paint() {
   document.getElementById('site-foot').style.display = onLanding ? 'none' : '';
   try {
     if (onLanding) { renderLanding(app, data, ctx, leaveLanding); return; }
+    if (extraMode === 'table') { renderTable(app, data, ctx, paint); return; }
     if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
     if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
     if (st.mode !== 'journey') document.body.dataset.era = 'school';
