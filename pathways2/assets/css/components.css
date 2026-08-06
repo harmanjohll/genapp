@@ -1,0 +1,1139 @@
+/* Components. */
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-height: var(--tap); padding: var(--s-3) var(--s-5);
+  border: 1px solid var(--ink); border-radius: var(--r-pill);
+  background: var(--ink); color: var(--paper);
+  font-weight: 600; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.btn:hover { background: var(--ink-soft); }
+.btn.accent { background: var(--accent-dk); border-color: var(--accent-dk); }
+.btn.accent:hover { background: var(--accent-dkr); border-color: var(--accent-dkr); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn.ghost:hover { background: var(--paper-warm); }
+.btn.small { min-height: var(--tap); padding: var(--s-2) var(--s-4); font-size: var(--t-small); }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+
+/* ---------- header ---------- */
+.modebar { display: flex; gap: var(--s-1); flex-wrap: wrap; }
+.modebar button {
+  min-height: var(--tap); padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  background: var(--surface); cursor: pointer; font-size: var(--t-small); font-weight: 600;
+}
+.modebar button:hover { background: var(--paper-warm); }
+.modebar button[aria-current="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* The glossary opener is not a fourth mode and must not look like one. It sat
+   inside the Modes nav at identical weight, which made a reference lookup read
+   as a place you could go, and on a phone it was the same width as Journey.
+   Dashed border, no fill, and outside the nav landmark. */
+.glossbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: var(--tap); padding: var(--s-2) var(--s-4);
+  border: 1px dashed var(--rule); border-radius: var(--r-pill);
+  background: transparent; cursor: pointer;
+  font: inherit; font-size: var(--t-small); font-weight: 600; color: var(--ink-mute);
+}
+.glossbtn svg { flex: none; }
+.glossbtn:hover { background: var(--paper-warm); color: var(--ink); }
+
+.yearsel select {
+  min-height: var(--tap); padding: 0 var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  background: var(--surface); font: inherit; font-size: var(--t-small); font-weight: 600;
+  color: var(--ink); cursor: pointer;
+}
+
+/* ---------- first run + pulse bar ---------- */
+.firstrun {
+  display: flex; align-items: center; gap: var(--s-3);
+  margin: var(--s-4) 0 0; padding: var(--s-2) var(--s-3);
+  background: var(--accent-wash); border-radius: var(--r-md);
+  font-size: var(--t-small); color: var(--accent-dk); font-weight: 600;
+}
+.firstrun .x {
+  margin-left: auto; border: none; background: none; cursor: pointer;
+  min-width: var(--tap); min-height: var(--tap); color: var(--accent-dk); font-size: 1rem;
+}
+
+/* ---------- layout ----------
+   The loop of this mode is: tap a level, watch the doors change. In one column
+   those two things are hundreds of pixels apart, so the consequence lands off
+   screen. Side by side it becomes direct manipulation.
+
+   Breakpoints, by the devices this actually runs on:
+     up to 699    phone. One column, doors first, state pips ride the sticky bar.
+     700 to 899   tablet portrait. Still one column, but roomier and the popup
+                  becomes a centred dialog rather than a bottom sheet.
+     900 up       tablet landscape and every school Chromebook. Two panes.
+     1400 up      wide. The subject list goes to two columns rather than
+                  stretching a 26 row list across a metre of glass. */
+.now-grid { display: grid; gap: var(--s-6); align-items: start; }
+
+@media (min-width: 900px) {
+  .now-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 30vw, 400px);
+    column-gap: var(--s-7);
+  }
+  .pane-subj  { grid-column: 1; grid-row: 1; min-width: 0; }
+  .pane-doors {
+    grid-column: 2; grid-row: 1;
+    position: sticky; top: var(--s-4);
+    max-height: calc(100dvh - var(--ribbon-h) - var(--s-7));
+    overflow-y: auto; overscroll-behavior: contain;
+    padding-right: var(--s-2);
+  }
+  .pane-doors .pulsebar { position: static; box-shadow: none; margin-top: 0; }
+  /* Redundant here: the full list is permanently visible beside the subjects.
+     Needs the extra specificity because the base .pips rule is declared further
+     down the file and would otherwise win on source order. */
+  .pane-doors .pips { display: none; }
+}
+
+/* Tablet portrait: still one column, but a destination row stretched across
+   800px puts the name and its status a long way apart. Cap the eye travel. */
+@media (min-width: 700px) and (max-width: 899px) {
+  .pane-doors { max-width: 660px; }
+}
+
+/* Two columns of subjects on a wide screen. Grid rather than CSS multicol,
+   which fragments rows across columns unpredictably. */
+@media (min-width: 1400px) {
+  /* Only lists long enough to be worth splitting. A group of one subject in a
+     two column grid sits at half width under full width groups, which reads as
+     broken. Browsers without :has() simply keep one column, which is fine. */
+  .srows:has(> li:nth-child(5)) {
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s-6);
+  }
+}
+
+.pulsebar {
+  position: sticky; top: 0; z-index: 40;
+  margin: var(--s-4) 0;
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface); border: 1px solid var(--rule-soft);
+  border-radius: var(--r-md); box-shadow: var(--shadow-sm);
+}
+.pulsebar .count { margin: 0; display: flex; align-items: baseline; gap: var(--s-2); }
+.pulsebar .count strong {
+  font-family: var(--display); font-size: 2.1rem; line-height: 1; color: var(--accent);
+  display: inline-block;
+}
+.pulsebar .count span { font-size: var(--t-small); color: var(--ink-mute); }
+.pulsebar .live { margin: var(--s-1) 0 0; font-size: var(--t-small); color: var(--ink-soft); min-height: 1.4em; }
+
+/* Eight pips, one per destination, coloured by state. Phone and tablet portrait
+   only, where the doors list scrolls out of sight above the subject list.
+   They carry state, which is four labelled buckets, not distance, and their
+   order matches the list exactly and never changes. */
+.pips { display: flex; gap: 5px; list-style: none; margin: var(--s-3) 0 0; padding: 0; }
+.pips li { flex: 1 1 0; }
+.pip { display: block; width: 100%; height: var(--tap); padding: 0; border: none; background: none; cursor: pointer; position: relative; }
+/* The touch target extends past the box, so a short pip still gets a full 44px
+   without spending 12px of a phone's vertical budget on empty space. */
+.pip::before { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }
+.pip::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  height: 6px; border-radius: 3px; background: var(--rule);
+  transition: background var(--dur-fast) var(--ease), height var(--dur-fast) var(--ease);
+}
+.pip[data-state="open"]::after         { background: var(--open); height: 10px; }
+.pip[data-state="within-reach"]::after { background: var(--within); }
+.pip[data-state="longer-route"]::after { background: var(--longer); }
+.pip[data-state="other-route"]::after  { background: var(--other); }
+.pip.lit::after { animation: pipLit 700ms var(--ease); }
+@keyframes pipLit { 0% { transform: translateY(-50%) scaleY(2.6); } 100% { transform: translateY(-50%) scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .pip.lit::after { animation: none; } }
+.pop { animation: pop 200ms var(--ease); }
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.14); } 100% { transform: scale(1); } }
+
+/* ---------- the doors list ----------
+   Fixed alphabetical order. No distance shown, no position encoding, no
+   re-sorting. An earlier version slid a dot along a track to show how far away
+   each destination was: that is a continuous ranking, and on a low plan it drew
+   a very clear picture of a ceiling. The four labelled states carry the meaning
+   and the status line carries the next action. */
+.doors { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule-soft); }
+.door { border-bottom: 1px solid var(--rule-soft); }
+.door-hit {
+  display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap;
+  width: 100%; min-height: 56px; padding: var(--s-3) var(--s-2) var(--s-3) var(--s-4);
+  background: none; border: none; border-left: 4px solid transparent;
+  text-align: left; cursor: pointer; font: inherit;
+}
+.door-hit:hover { background: var(--paper-warm); }
+.door-name { font-weight: 650; margin-right: auto; }
+.door-status { font-size: var(--t-small); color: var(--ink-mute); }
+
+.door[data-state="open"] .door-hit         { border-left-color: var(--open); }
+.door[data-state="within-reach"] .door-hit { border-left-color: var(--within); }
+.door[data-state="longer-route"] .door-hit { border-left-color: var(--longer); }
+.door[data-state="other-route"] .door-hit  { border-left-color: var(--other); }
+
+/* The state, in the state's own colour, on the words that name it.
+   The four states were already the most carefully reasoned colour system in
+   the app and they were carried by a 4px rule and a pip, both of which require
+   a student to have learned the code first. Putting the hue on the status text
+   makes the system legible on sight, in the one list where the whole point is
+   watching four things change as you tap. All four clear 4.5:1 on paper. */
+.door[data-state="open"] .door-status         { color: var(--open); }
+.door[data-state="within-reach"] .door-status { color: var(--within); }
+.door[data-state="longer-route"] .door-status { color: var(--longer); }
+.door[data-state="other-route"] .door-status  { color: var(--other); }
+.door[data-state="open"] .door-status { color: var(--open); font-weight: 650; }
+
+.door.moved .door-hit { animation: flash 900ms var(--ease); }
+@keyframes flash {
+  0%   { background: var(--accent-wash); }
+  100% { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .door.moved .door-hit { animation: none; } }
+
+/* ---------- subject rows ---------- */
+.subj-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
+.h-sm { font-family: var(--display); font-size: 1.2rem; }
+/* Not sticky. They were, to help scanning under a sticky header, and when the
+   header stopped being sticky they became headings pinned in the middle of the
+   viewport with nothing above them, sitting on top of the subject rows. The
+   media query that was meant to place them lost to this rule on source order
+   anyway, which is the same trap the pips fell into. */
+.grp {
+  font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-mute); font-weight: 700; margin: var(--s-5) 0 var(--s-2);
+  padding: var(--s-2) 0;
+}
+h3.grp { display: flex; align-items: center; }
+.grp .ic { width: 1.25em; height: 1.25em; }
+.srows { list-style: none; margin: 0; padding: 0; }
+.srow {
+  display: flex; align-items: center; gap: var(--s-2);
+  min-height: 52px; border-bottom: 1px solid var(--rule-soft);
+  border-left: 4px solid transparent; padding-left: var(--s-2);
+}
+.srow[data-level="G1"] { border-left-color: var(--g1); }
+.srow[data-level="G2"] { border-left-color: var(--g2); }
+.srow[data-level="G3"] { border-left-color: var(--g3); }
+.srow-name {
+  flex: 1 1 auto; min-width: 0; text-align: left; background: none; border: none;
+  font: inherit; cursor: pointer; padding: var(--s-2) var(--s-1);
+  min-height: var(--tap); color: var(--ink);
+  text-decoration: underline; text-decoration-color: var(--rule);
+  text-underline-offset: 3px; text-decoration-thickness: 1px;
+}
+.srow-name:hover { text-decoration-color: var(--accent); }
+.srow-levels { display: flex; gap: 4px; flex: none; }
+.lchip {
+  width: var(--tap); height: var(--tap); flex: none;
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); cursor: pointer;
+  font-size: var(--t-small); font-weight: 650; color: var(--ink-mute);
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.lchip:hover { background: var(--paper-warm); }
+.lgap { width: var(--tap); height: var(--tap); flex: none; }
+.lchip[data-lv="G1"][aria-pressed="true"] { border-color: var(--g1); background: var(--g1-wash); color: var(--g1); }
+.lchip[data-lv="G2"][aria-pressed="true"] { border-color: var(--g2); background: var(--g2-wash); color: var(--g2); }
+.lchip[data-lv="G3"][aria-pressed="true"] { border-color: var(--g3); background: var(--g3-wash); color: var(--g3); }
+.lchip[aria-pressed="true"] { border-width: 2px; }
+
+/* ---------- panels, chips, notices ---------- */
+.card, .panel {
+  background: var(--surface); border: 1px solid var(--rule-soft);
+  border-radius: var(--r-lg); padding: var(--s-5); box-shadow: var(--shadow-sm);
+}
+.panel.tight { padding: var(--s-4); margin-top: var(--s-5); }
+.grid { display: grid; gap: var(--s-4); }
+.grid.two { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.grid.three { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.section { margin-top: var(--s-6); }
+.section-head { margin-bottom: var(--s-4); }
+.section-head p { color: var(--ink-mute); max-width: 62ch; }
+
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2); padding: 0; margin: var(--s-3) 0; }
+.chips li { font-size: var(--t-micro); background: var(--paper-warm); padding: 3px var(--s-3); border-radius: var(--r-pill); color: var(--ink-soft); }
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; margin-top: var(--s-3); }
+.src-chip { font-size: var(--t-micro); color: var(--ink-mute); border: 1px solid var(--rule-soft); border-radius: var(--r-pill); padding: 1px var(--s-2); background: var(--surface); }
+.src-chip.provisional { color: var(--flag); border-color: var(--flag); background: var(--flag-wash); font-weight: 650; }
+.caution { font-size: var(--t-small); color: var(--flag); background: var(--flag-wash); padding: var(--s-2) var(--s-3); border-radius: var(--r-sm); }
+.notice { border: 1px solid var(--flag); background: var(--flag-wash); color: var(--flag); border-radius: var(--r-md); padding: var(--s-3) var(--s-4); font-size: var(--t-small); }
+.callout { border-left: 4px solid var(--accent); background: var(--accent-wash); border-radius: 0 var(--r-md) var(--r-md) 0; padding: var(--s-4); }
+.breadth { margin-top: var(--s-4); }
+.foot-note { margin-top: var(--s-5); }
+
+/* ---------- ask an adult, the exit ticket ---------- */
+.ask {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border: 2px solid var(--accent); border-radius: var(--r-lg); background: var(--surface);
+}
+.ask-q { font-family: var(--display); font-size: 1.05rem; margin: var(--s-2) 0 var(--s-3); }
+
+/* ---------- sheet ---------- */
+/* Bottom sheet on a phone, because that is where the thumb is and a centred
+   dialog on a small screen puts the close button out of reach.
+   Centred dialog from tablet portrait up, because a full width bar pinned to
+   the bottom of a 1366px screen is a phone pattern wearing the wrong clothes. */
+/* Phone base: a bottom sheet. */
+dialog.sheet {
+  border: none; padding: 0; margin: auto auto 0; max-width: 560px; width: 100%;
+  max-height: 86dvh; background: var(--surface); color: var(--ink);
+  border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+dialog.sheet::backdrop { background: rgba(20, 24, 31, 0.42); }
+dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
+@keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
+.sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--rule); margin: var(--s-3) auto var(--s-1); }
+.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto; max-height: calc(86dvh - 120px); }
+.sheet-body:focus { outline: none; }
+.sheet-foot { padding: var(--s-3) var(--s-5) var(--s-5); border-top: 1px solid var(--rule-soft); }
+
+/* Tablet portrait and up: a centred dialog sized to its content.
+   Must come after the base rules, or the phone animation and the grab handle
+   win on every screen size. */
+@media (min-width: 700px) {
+  dialog.sheet {
+    margin: auto; max-height: 80dvh;
+    width: min(560px, calc(100vw - 64px));
+    border-radius: var(--r-lg);
+  }
+  dialog.sheet[open] { animation: modalIn 200ms var(--ease); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
+  .sheet-grab { display: none; }
+  .sheet-body { max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
+  .sheet-foot { padding: var(--s-3) var(--s-6) var(--s-5); }
+}
+
+@media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
+.sheet-head { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
+.sheet-head h2 { margin-right: auto; }
+.full { font-size: var(--t-small); color: var(--ink-mute); margin-bottom: var(--s-3); }
+.glossary-list { display: grid; gap: var(--s-1); }
+.glossary-list dt { font-weight: 700; margin-top: var(--s-3); }
+.glossary-list dd { margin: 0; color: var(--ink-soft); font-size: var(--t-small); }
+.sharebox { width: 100%; padding: var(--s-3); border: 1px solid var(--rule); border-radius: var(--r-md); font: inherit; font-size: var(--t-small); margin: var(--s-3) 0; }
+
+.reach-state {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 3px var(--s-3); border-radius: var(--r-pill);
+}
+.reach-state[data-state="open"]         { background: var(--open-wash); color: var(--open-ink); }
+.reach-state[data-state="within-reach"] { background: var(--within-wash); color: var(--within); }
+.reach-state[data-state="longer-route"] { background: var(--longer-wash); color: var(--longer); }
+.reach-state[data-state="other-route"]  { background: var(--other-wash); color: var(--other); }
+
+.checklist { list-style: none; padding: 0; margin: 0 0 var(--s-4); display: grid; gap: var(--s-2); }
+.checklist li { display: flex; gap: var(--s-2); align-items: flex-start; font-size: var(--t-small); }
+.checklist .icon { flex: none; width: 1.1em; font-weight: 700; }
+.checklist .yes .icon { color: var(--open); }
+.checklist .not { color: var(--ink-mute); }
+.checklist .not .icon { color: var(--ink-faint); }
+
+.moves { background: var(--accent-wash); border-radius: var(--r-md); padding: var(--s-3) var(--s-4); margin-bottom: var(--s-4); }
+.moves h4 { margin: 0 0 var(--s-2); font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent-dk); }
+.moves ul { margin: 0; padding-left: 1.1em; font-size: var(--t-small); }
+.moves .who { color: var(--ink-mute); }
+
+.route { border: 1px dashed var(--rule); border-radius: var(--r-md); padding: var(--s-3); font-size: var(--t-small); background: var(--paper-warm); margin-bottom: var(--s-3); }
+.route .steps, .steps { display: flex; flex-wrap: wrap; gap: var(--s-1); align-items: center; margin-bottom: var(--s-2); }
+.step { background: var(--surface); border: 1px solid var(--rule-soft); border-radius: var(--r-pill); padding: 2px var(--s-3); font-size: var(--t-micro); }
+.arrow { color: var(--ink-faint); }
+.route .honest { color: var(--ink-mute); font-size: var(--t-micro); margin-top: var(--s-2); }
+details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; font-size: var(--t-small); color: var(--ink-mute); }
+
+.gloss { border: none; background: none; padding: 0; border-bottom: 1.5px dotted var(--ink-faint); cursor: pointer; font: inherit; color: inherit; }
+.gloss:hover { border-bottom-color: var(--accent); color: var(--accent-dk); }
+
+.undobar {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--ribbon-h) + 12px); z-index: 90;
+  display: flex; align-items: center; gap: var(--s-3);
+  background: var(--ink); color: var(--paper); padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-pill); box-shadow: var(--shadow-lg); font-size: var(--t-small);
+}
+.undobar .btn { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+/* ---------- the Long View ribbon ---------- */
+.ribbon {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+  height: calc(var(--ribbon-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Opaque. It was 95 percent and page text bled through it as you scrolled. */
+  background: var(--paper); border-top: 1px solid var(--rule);
+  transition: height var(--dur-fast) var(--ease);
+}
+.ribbon[data-open="true"] {
+  height: calc(var(--ribbon-h-open) + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -6px 24px rgba(20, 24, 31, 0.10);
+}
+@media (prefers-reduced-motion: reduce) { .ribbon { transition: none; } }
+
+.ribbon-inner { position: relative; height: var(--ribbon-h); padding: 6px var(--gutter) 0; }
+.ribbon[data-open="true"] .ribbon-inner { height: var(--ribbon-h-open); padding-top: var(--s-5); }
+
+/* Collapsed, one control covers the whole strip. */
+.ribbon-toggle {
+  position: absolute; inset: 0; width: 100%; min-height: var(--tap);
+  background: none; border: none; padding: 0; cursor: pointer;
+}
+.ribbon-close {
+  position: absolute; top: 2px; right: var(--gutter);
+  min-width: var(--tap); min-height: 32px;
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-mute); font-size: 1.1rem; line-height: 1;
+}
+
+.ribbon-track { position: relative; height: 10px; border-radius: var(--r-pill); background: var(--paper-warm); transition: height var(--dur-fast) var(--ease); }
+.ribbon[data-open="true"] .ribbon-track { height: 26px; }
+.ribbon-band { position: absolute; top: 0; bottom: 0; overflow: hidden; }
+.ribbon-band:first-child { border-radius: var(--r-pill) 0 0 var(--r-pill); }
+.ribbon-band:last-of-type { border-radius: 0 var(--r-pill) var(--r-pill) 0; }
+.ribbon-band.school { background: var(--band-school); }
+.ribbon-band.work { background: var(--band-work); }
+/* Labels sit inside their band. They used to float above the track, where they
+   collided with the "You are here" marker at the left hand end, which is
+   exactly where every student in this app is. */
+.ribbon-band-label {
+  position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
+  font-size: 10px; line-height: 1; color: var(--ink-soft); white-space: nowrap;
+  pointer-events: none; opacity: 0;
+}
+.ribbon[data-open="true"] .ribbon-band-label { opacity: 1; }
+.ribbon-mark { position: absolute; top: -10px; bottom: -10px; width: var(--tap); transform: translateX(-50%); background: none; border: none; padding: 0; cursor: pointer; }
+.ribbon-mark::after {
+  content: ""; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
+  width: 3px; height: 18px; border-radius: 2px; background: var(--ink-soft);
+}
+.ribbon-mark:hover::after { background: var(--accent); width: 5px; }
+.ribbon-you { position: absolute; top: -3px; bottom: -3px; width: 3px; background: var(--accent); transform: translateX(-50%); border-radius: 2px; pointer-events: none; }
+/* Inside the ribbon, not above it. It used to render 5px past the ribbon's own
+   top border, so a red label floated loose over the subject list. */
+.ribbon-you-label {
+  position: absolute; top: var(--s-2); font-size: 10px; font-weight: 700;
+  color: var(--accent-dk); transform: translateX(-50%); white-space: nowrap;
+}
+
+/* ---------- journey ---------- */
+/* Prose gets a measure. Without one, a paragraph on a 1366px Chromebook runs to
+   about 160 characters a line, which is roughly twice what anyone tracks
+   comfortably and considerably worse for a weak reader. */
+.turn > p, .chance p, .diff-verdict p, .thisterm > p, .panel > p, .ask-q, .story p { max-width: 66ch; }
+
+.turn { display: grid; gap: var(--s-4); }
+/* Choices side by side once there is room, so all three are comparable at a
+   glance rather than stacked down a column. */
+@media (min-width: 860px) {
+  .turn .grid[role="group"] { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .choice { display: flex; align-items: center; min-height: 92px; }
+}
+.turn-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+.turn-age { font-family: var(--display); font-size: 2rem; font-weight: 600; color: var(--accent); line-height: 1; }
+.choice {
+  display: block; width: 100%; text-align: left;
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); padding: var(--s-4); cursor: pointer; min-height: var(--tap);
+  font: inherit; font-weight: 650;
+}
+.choice:hover { border-color: var(--accent); background: var(--accent-wash); }
+.chance { border: 2px solid var(--other); border-radius: var(--r-lg); background: var(--other-wash); padding: var(--s-5); }
+.chance.setback { border-color: var(--longer); background: var(--longer-wash); }
+.chance .kind { font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--other); }
+.chance.setback .kind { color: var(--longer); }
+.chance .missed { font-style: italic; color: var(--ink-soft); }
+.ledger { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2); }
+.ledger-item { background: var(--surface); border: 1px solid var(--rule-soft); border-radius: var(--r-md); padding: var(--s-3); text-align: center; }
+.ledger-item .n { font-family: var(--display); font-size: 1.4rem; font-weight: 600; display: block; }
+.ledger-item .lbl { font-size: 10px; color: var(--ink-mute); line-height: 1.25; display: block; }
+.disp-bars { display: grid; gap: var(--s-2); }
+.disp-row { display: grid; grid-template-columns: 6.5em 1fr auto; gap: var(--s-3); align-items: center; font-size: var(--t-small); }
+.disp-track { height: 8px; background: var(--paper-warm); border-radius: var(--r-pill); overflow: hidden; }
+/* display block is load bearing: as an inline span inside a grid blockified
+   track, width 100 percent resolves against a zero width inline box and the
+   bar renders invisible. The game's only disposition feedback was blank for
+   every student until this line. */
+.disp-fill { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); transition: width var(--dur) var(--ease); }
+
+/* Side by side at every width, including 375px, because side by side is the
+   entire point of the screen. One row per age, shared age gutter, both
+   stories on the same row so the eye compares without scrolling. */
+.diff { display: grid; grid-template-columns: 2.6rem 1fr 1fr; gap: 0 var(--s-2); align-items: start; }
+.diff-age { font-size: var(--t-micro); font-weight: 700; color: var(--ink-faint); padding-top: var(--s-2); }
+.diff-cell { font-size: var(--t-small); padding: var(--s-2); border-bottom: 1px dashed var(--rule-soft); min-width: 0; overflow-wrap: break-word; }
+.diff-cell.differs { background: var(--accent-wash); border-radius: var(--r-sm); }
+.diff-head { font-weight: 700; padding: var(--s-2); font-size: var(--t-small); }
+.diff-want { font-size: var(--t-micro); color: var(--ink-mute); padding: 0 var(--s-2) var(--s-2); }
+.diff-verdict { margin-top: var(--s-5); padding: var(--s-5); border: 2px solid var(--accent); border-radius: var(--r-lg); background: var(--accent-wash); }
+.diff-verdict h2 { color: var(--accent-dk); }
+
+.story { border-radius: var(--r-md); padding: var(--s-4); border: 1px solid var(--rule-soft); background: var(--surface); }
+.story .kindmark { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-micro); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--s-2); }
+.story[data-kind="profile"] { border-left: 5px solid var(--open); }
+.story[data-kind="profile"] .kindmark { color: var(--open); }
+.story[data-kind="typical"] { border-left: 5px dashed var(--ink-faint); background: var(--paper-warm); }
+.story[data-kind="typical"] .kindmark { color: var(--ink-mute); }
+
+/* ---------- aim ---------- */
+.future-btn {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); padding: var(--s-4); min-height: var(--tap); font: inherit;
+}
+.future-btn:hover { border-color: var(--accent); background: var(--accent-wash); }
+.future-btn .want { font-family: var(--display); font-size: 1.05rem; font-weight: 600; display: block; }
+.thisterm { border: 2px solid var(--accent); border-radius: var(--r-lg); padding: var(--s-5); background: var(--surface); }
+.thisterm ol { margin: var(--s-3) 0 0; padding-left: 1.3em; }
+.thisterm li { margin-bottom: var(--s-3); }
+
+/* ---------- teacher ---------- */
+.teacher-note { border: 1px solid var(--longer); background: var(--longer-wash); border-radius: var(--r-md); padding: var(--s-4); margin-top: var(--s-4); }
+.teacher-note h4 { margin: 0 0 var(--s-2); color: var(--longer); font-size: var(--t-small); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ---------- board mode, for a projector at the front of a room ---------- */
+body[data-board="true"] { font-size: 1.35rem; }
+body[data-board="true"] .door-hit { min-height: 76px; }
+body[data-board="true"] .door-name { font-size: 1.25rem; }
+body[data-board="true"] .pulsebar .count strong { font-size: 3rem; }
+body[data-board="true"] .door[data-state="open"] .door-hit { background: var(--open-wash); }
+body[data-board="true"] .door-hit { border-left-width: 10px; }
+body[data-board="true"] .srows, body[data-board="true"] .ask, body[data-board="true"] .breadth { display: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 640px) {
+  .ledger { grid-template-columns: repeat(2, 1fr); }
+  .panel, .card { padding: var(--s-4); }
+  .turn-age { font-size: 1.6rem; }
+  .ribbon-band-label { display: none; }
+}
+
+/* Phone chrome.
+   The header wrapped to three rows and, with the sticky summary under it, ate
+   nearly a third of a 640px screen before any content. The mode bar becomes a
+   full width segmented control instead, which is both shorter and a much
+   better thumb target. */
+@media (max-width: 700px) {
+  .site-head { padding: var(--s-2) 0; }
+  .brand { font-size: 0.98rem; }
+  .modebar { width: 100%; }
+  .modebar button { flex: 1 1 0; padding: var(--s-2) var(--s-1); min-width: 0; }
+
+  .pulsebar { margin-top: var(--s-3); }
+  /* The summary bar is the only pinned thing here, so focus scrolling has to
+     clear it. */
+  --scroll-pad: 168px;
+
+  .pulsebar { padding: var(--s-3); }
+  .pulsebar .count strong { font-size: 1.8rem; }
+  /* 32px clears the 24px minimum, and every pip has a 56px equivalent in the
+     doors list directly below, which is the documented exception. */
+  .pip { height: 32px; }
+  .pips { margin-top: var(--s-2); }
+}
+
+/* Touch devices.
+   On a touch screen :hover latches after a tap and stays until you tap
+   something else, so every control a student has touched looks half selected.
+   Neutralised rather than removed, because a mouse still gets the affordance. */
+@media (hover: none) {
+  .btn:hover { background: var(--ink); }
+  .btn.accent:hover { background: var(--accent); }
+  .btn.ghost:hover { background: transparent; }
+  .modebar button:hover { background: var(--surface); }
+  .modebar button[aria-current="true"]:hover { background: var(--ink); }
+  .door-hit:hover { background: none; }
+  .lchip:hover { background: var(--surface); }
+  .srow-name:hover { text-decoration-color: var(--rule); }
+  .future-btn:hover, .choice:hover { border-color: var(--rule); background: var(--surface); }
+  .gloss:hover { border-bottom-color: var(--ink-faint); color: inherit; }
+  .ribbon-mark:hover::after { background: var(--ink-soft); width: 3px; }
+}
+
+/* Kill the 300ms tap delay without disabling pinch zoom. */
+button, .lchip, .pip, summary, select { touch-action: manipulation; }
+
+/* Short viewports: a phone held sideways, and small laptops with the browser
+   chrome eating the height. The ribbon is the first thing to give way, because
+   it is context rather than a control. */
+@media (max-height: 500px) {
+  .ribbon { display: none; }
+  body { padding-bottom: var(--s-5); }
+  .pulsebar { position: static; }
+  @media (min-width: 900px) { .pane-doors { max-height: none; position: static; } }
+}
+
+/* ---------- teacher: school offer picker and parent note ---------- */
+.offer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s-1); margin-top: var(--s-3); }
+.offer-item { display: flex; align-items: center; gap: var(--s-2); min-height: var(--tap); font-size: var(--t-small); cursor: pointer; }
+.offer-item input { width: 20px; height: 20px; flex: none; }
+.parent-note {
+  margin: var(--s-3) 0 0; padding: var(--s-4);
+  border-left: 4px solid var(--longer); background: var(--longer-wash);
+  border-radius: 0 var(--r-md) var(--r-md) 0; font-size: var(--t-small);
+}
+code { font-family: var(--mono); font-size: 0.92em; background: var(--paper-warm); padding: 1px 5px; border-radius: var(--r-sm); }
+
+/* ---------- journey: path, hints, timeline ---------- */
+.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; min-width: 0; }
+.turn-meta .caps { margin: 0; }
+.turn-meta .wantline { min-width: 0; overflow-wrap: anywhere; }
+/* Which route this run is on. Neutral ink, never a colour that could rank one
+   family above another. */
+.path-chip {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  padding: 3px var(--s-3); border-radius: var(--r-pill);
+  background: var(--paper-warm); color: var(--ink-soft); border: 1px solid var(--rule);
+  white-space: nowrap;
+}
+.choice .hint {
+  display: block; margin-top: var(--s-2);
+  font-size: var(--t-micro); font-weight: 600; color: var(--ink-mute);
+  text-transform: lowercase; letter-spacing: 0.02em;
+}
+.choice:hover .hint { color: var(--accent-dk); }
+.story-tl { margin-top: var(--s-4); }
+.story-tl summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; }
+.story-tl ol { margin: var(--s-2) 0 0; padding-left: 1.4em; font-size: var(--t-small); }
+.story-tl li { margin-bottom: var(--s-2); }
+.story-tl strong { display: inline-block; min-width: 2em; color: var(--accent-dk); }
+@media (hover: none) { .choice:hover .hint { color: var(--ink-mute); } }
+
+/* ---------- journey v3 ---------- */
+/* Two panes on a laptop, mirroring Mode NOW: the scene on the left at a
+   readable measure, what you are carrying pinned on the right. On a phone the
+   rail follows the scene. The footer leaves during play: a disclaimer under a
+   game screen reads like small print under a memory. */
+/* Grid children default to min-width auto, so any wide child, the hand's row
+   of cards or a long want line, pushes the whole track past the viewport and
+   the phone scrolls sideways. Both tracks are told they may shrink. */
+.journey-grid { display: grid; gap: var(--s-6); align-items: start; }
+.journey-grid > * { min-width: 0; }
+@media (min-width: 900px) {
+  .journey-grid { grid-template-columns: minmax(0, 1fr) clamp(280px, 26vw, 360px); column-gap: var(--s-7); }
+  .j-rail { position: sticky; top: var(--s-4); }
+}
+body[data-journey="true"] .site-foot { display: none; }
+.j-scene { margin-top: var(--s-5); }
+.j-sit { max-width: 58ch; }
+.j-rail { padding-top: var(--s-5); }
+.turn-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+
+/* --- icons ---------------------------------------------------------------
+   Sized in em so an icon always matches the text it sits beside, and drawn in
+   currentColor so it inherits that text's contrast rather than needing its own
+   check. Every one is aria-hidden and sits next to words that already say the
+   thing, so none of this is load bearing. */
+.ic {
+  width: 1.05em; height: 1.05em; flex: none;
+  vertical-align: -0.16em; margin-right: 0.4em;
+}
+.gchip, .dchip, .doorchips span, .disp-row > span:first-child, .chance .kind {
+  display: inline-flex; align-items: center;
+}
+.gchip .ic, .dchip .ic { margin-right: 0.3em; opacity: 0.9; }
+
+.pathchip { background: var(--other-wash); color: var(--other); border-radius: var(--r-pill); padding: 1px var(--s-3); font-weight: 700; }
+.wantline { color: var(--ink-faint); text-transform: none; letter-spacing: 0; font-weight: 500; }
+
+/* points */
+.pointsrow { display: flex; align-items: center; gap: var(--s-3); margin: var(--s-4) 0 var(--s-3); }
+.pts { color: var(--accent-dk); font-size: 1.1rem; letter-spacing: 3px; }
+
+/* selectable choices */
+.choice.sel { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); align-items: start; }
+.choice.sel .c-cost { color: var(--accent-dk); font-size: 0.8rem; letter-spacing: 2px; padding-top: 3px; }
+.choice.sel .c-label { font-weight: 650; }
+.choice.sel .c-chips { grid-column: 2; display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.gchip { font-size: var(--t-micro); background: var(--paper-warm); border-radius: var(--r-pill); padding: 1px var(--s-2); color: var(--ink-mute); }
+.choice.sel[aria-pressed="true"], .choice.sel.on { border-color: var(--accent); background: var(--accent-wash); }
+.choice.sel[data-dim="true"] { opacity: 0.75; } /* still tappable, never disabled */
+.j-choices { gap: var(--s-3); }
+
+/* chance */
+.askline { margin-top: var(--s-3); font-weight: 650; color: var(--ink-soft); }
+.choice.resp { display: block; }
+.choice.resp .c-note { display: block; font-size: var(--t-micro); color: var(--flag); margin-top: var(--s-1); }
+.chance-out { padding: var(--s-5) 0; }
+.delta { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+.dchip { background: var(--open-wash); color: var(--open-ink); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-small); font-weight: 650; }
+
+/* forks: one big decision, full bleed */
+.fork { margin-top: var(--s-6); }
+.fork .turn-age { font-size: clamp(3rem, 12vw, 6rem); }
+.fork-choices { display: grid; gap: var(--s-3); margin-top: var(--s-5); }
+@media (min-width: 860px) { .fork-choices { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+.fork-c { min-height: 110px; display: flex; flex-direction: column; gap: var(--s-2); justify-content: center; }
+
+/* reflect */
+.reflect { margin-top: var(--s-6); max-width: 60ch; }
+.rfree input {
+  width: 100%; margin-top: var(--s-3); padding: var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-md); font: inherit;
+}
+
+/* rail bits */
+.doorchips { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: 0; margin: var(--s-2) 0 0; list-style: none; }
+.doorchips span { background: var(--open-wash); color: var(--open-ink); border-radius: var(--r-pill); padding: 3px var(--s-3); font-size: var(--t-micro); font-weight: 650; }
+.j-log { list-style: none; padding: 0; margin: var(--s-2) 0 0; }
+.j-log li { padding: 2px 0; border-bottom: 1px dashed var(--rule-soft); }
+.j-prev { margin-top: var(--s-5); background: var(--paper-warm); }
+.wantbox { margin-top: var(--s-5); }
+.want-q { font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
+.chipsel { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.chip-btn {
+  min-height: var(--tap); padding: var(--s-2) var(--s-4); font: inherit; font-size: var(--t-small);
+  border: 1.5px solid var(--rule); border-radius: var(--r-pill); background: var(--surface); cursor: pointer;
+}
+.chip-btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-wash); font-weight: 650; }
+
+/* selected schools tag + conflict caution in NOW */
+.seltag { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--longer); background: var(--longer-wash); border-radius: var(--r-pill); padding: 1px var(--s-2); }
+.avail-line { margin: 0 0 var(--s-3); }
+.avail-line button { font-size: var(--t-small); }
+.grp-note { font-size: var(--t-micro); color: var(--ink-mute); margin: calc(-1 * var(--s-1)) 0 var(--s-2); }
+
+/* footer doors */
+/* The audience strip above the header: "I am a [student]". The select is
+   styled as the year selector's sibling, so the two dropdowns read as one
+   family. It scrolls away with the page and hides during a Journey run. */
+.audstrip { border-bottom: 1px solid var(--rule-soft); }
+.audstrip .wrap { display: flex; justify-content: flex-end; padding-top: var(--s-2); padding-bottom: var(--s-2); }
+.iam { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-small); color: var(--ink-soft); }
+.iam select {
+  min-height: 32px; padding: 0 var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  background: var(--surface); font: inherit; font-size: var(--t-small); font-weight: 600;
+  color: var(--ink); cursor: pointer;
+}
+body[data-journey="true"] .audstrip { display: none; }
+
+/* The footer disclaimer, three titled columns across the width. Each column
+   keeps a readable measure; the horizontal is used by columns, not by lines. */
+.foot-grid { display: grid; gap: var(--s-5); grid-template-columns: 1fr; }
+@media (min-width: 700px) { .foot-grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-6); } }
+.foot-col .caps { margin-bottom: var(--s-2); }
+.foot-col p:not(.caps) { margin: 0; max-width: 48ch; }
+
+/* ---------- the combination: Journey starts from what you take ---------- */
+/* The three level hues stay equal in weight here exactly as they are in NOW.
+   A chip that made G3 look like the good one would undo the whole app. */
+.combobox {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border: 1px solid var(--rule-soft); border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.subjchips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0 0; }
+/* Deliberately on --surface, not --paper-warm. The G1 teal reads 4.30 against
+   the warm tint and 4.88 against white, and the fix has to be the background
+   rather than the hue: darkening only G1 to pass would make one of three
+   equal weight levels visibly heavier than the other two. */
+.subjchips .subjchip {
+  display: inline-flex; align-items: center; gap: 0.35em;
+  padding: 0.28em 0.6em; border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); font-size: var(--t-small); line-height: 1.3;
+}
+.subjchip .lv { font-weight: 700; font-size: var(--t-micro); }
+.subjchip .lv-g1 { color: var(--g1); }
+.subjchip .lv-g2 { color: var(--g2); }
+.subjchip .lv-g3 { color: var(--g3); }
+.subjchip.more { color: var(--ink-mute); font-style: italic; }
+/* The want question waits until there is a combination to play forward. It is
+   dimmed and still fully readable: nothing here is disabled or taken away. */
+/* This box used to have a waiting state: with no plan it held a question and no
+   options, first at 0.62 opacity and later as step two of a numbered sequence.
+   Both were treatments for a dead end that should not have existed. The wants
+   no longer wait on anything, so the state and its step markers are gone. */
+
+/* The ECG compass. The three questions recur across Journey and NOW: as rail
+   headings, as a chip on each stage, as kickers over the blocks in NOW that
+   answer them. One voice, so a student who meets them in an ECG lesson
+   recognises them here, and the reverse. */
+.rail-q { color: var(--compass); letter-spacing: 0.06em; }
+.rail-q svg { vertical-align: -2px; margin-right: 6px; }
+.qchip {
+  display: inline-block; margin-left: var(--s-3); padding: 2px 10px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: var(--t-micro); color: var(--ink-soft); white-space: nowrap;
+  align-self: center;
+}
+.idwords { font-size: var(--t-h3); margin: var(--s-1) 0 var(--s-2); }
+
+/* The year just lived, between committing and the next stage. This screen is
+   the reward beat of the whole game, so it gets ceremony the other panels do
+   not: the age large in the display face, then room to read what happened. */
+.lived { padding-top: var(--s-6); }
+.lived-age {
+  font-family: var(--display); font-size: clamp(3rem, 10vw, 4.5rem);
+  color: var(--accent); line-height: 1; margin-bottom: var(--s-2);
+}
+.lived-row { margin-top: var(--s-4); }
+.lived-choice { font-size: var(--t-h3); margin-bottom: var(--s-1); }
+
+/* The reflect stage is the quiet year. It reads slower on purpose: more air
+   above, a narrower column, the situation given room. Design is doing the
+   counselling here: the layout is the instruction to sit with it. */
+.reflect { margin-top: var(--s-7); }
+.reflect .j-sit { font-size: var(--t-h3); line-height: 1.5; max-width: 40ch; }
+.reflect h2 { margin-top: var(--s-6); }
+
+/* On a choice, the label is the decision and the chips are the accounting.
+   The chips read one size down and muted so the human sentence wins. */
+.choice .c-chips { font-size: var(--t-micro); color: var(--ink-mute); }
+.choice .near-chip { color: var(--accent-dk); }
+
+/* The question mark rides with its question everywhere it appears. */
+.rail-q svg, .qchip svg { vertical-align: -2px; margin-right: 5px; }
+
+/* A move inside the choice grid. Same button, same economy, marked as a
+   card from your hand: accent edge, its icon, and a small honest tag. */
+.choice.mv { border-left: 3px solid var(--accent); }
+.choice.mv .c-label svg { margin-right: 6px; vertical-align: -2px; color: var(--accent); }
+.mv-tag {
+  display: inline-block; padding: 1px 8px; border-radius: 999px;
+  border: 1px dashed var(--accent); color: var(--accent-dk); font-size: var(--t-micro);
+}
+.undo-chip { font-size: var(--t-micro); color: var(--ink-mute); }
+
+.tourlist { padding-left: 1.2em; }
+.tourlist li { margin-bottom: var(--s-2); }
+.runpick .btn { width: 100%; }
+.runpick p { margin: var(--s-1) 0 0; }
+
+/* The class code: five characters a student can read across a room. */
+.classcode { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule-soft); }
+.code-big {
+  font-family: var(--display); font-size: 2.4rem; letter-spacing: 0.12em;
+  color: var(--accent); margin: var(--s-1) 0 var(--s-2);
+}
+.classbox {
+  width: 100%; min-height: 120px; padding: var(--s-3);
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  font: inherit; font-size: var(--t-small); font-family: var(--mono, ui-monospace, monospace);
+}
+.kindbar { display: grid; grid-template-columns: 8rem 1fr auto; gap: var(--s-2); align-items: center; margin-bottom: var(--s-1); }
+.kindbar .track { height: 10px; border-radius: 5px; background: var(--rule); overflow: hidden; }
+.kindbar .fill { display: block; height: 100%; background: var(--accent); }
+.classpunch {
+  margin-top: var(--s-4); padding: var(--s-4);
+  border: 2px solid var(--accent); border-radius: var(--r-md); background: var(--accent-wash);
+}
+.classpunch strong { font-family: var(--display); font-size: var(--t-h3); color: var(--accent-dk); }
+
+/* What the year adds up to, shown before it is lived. */
+.yearsum {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--rule); border-radius: var(--r-md); background: var(--surface);
+}
+.yearsum p { margin: 0 0 var(--s-1); }
+.askcard.on { border-width: 2px; background: var(--accent-wash); }
+.askcard[data-dim="true"] { opacity: 0.5; }
+
+/* AIM's links back to the other two modes. Evidence panels, not decoration:
+   what you already played toward this want, and what your combination stands
+   at right now. */
+.aim-linked {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border-left: 3px solid var(--rule); border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--surface);
+}
+.aim-linked .caps svg { vertical-align: -2px; margin-right: 5px; }
+.aim-move { display: flex; align-items: center; gap: var(--s-2); margin-bottom: var(--s-2); flex-wrap: wrap; }
+.aim-move svg { vertical-align: -2px; color: var(--accent); }
+
+/* The run and NOW have diverged. Said plainly, with both honest options, and
+   nothing destroyed until the student picks. */
+.stalebar {
+  margin-bottom: var(--s-5); padding: var(--s-4);
+  border: 1px solid var(--accent); border-left-width: 3px; border-radius: var(--r-md);
+  background: var(--accent-wash);
+}
+.stalebar .caps { color: var(--accent-dk); }
+
+/* Two economies, told apart on sight. The hand of superpowers sits above the
+   year's choices in its own panel: free, courage not hours, outside the points
+   line entirely. Commitments stay in the choice grid where the points are. */
+.hand {
+  max-width: 100%;
+  margin: var(--s-4) 0 var(--s-5); padding: var(--s-4);
+  border: 1px dashed var(--accent); border-radius: var(--r-md);
+  background: var(--accent-wash);
+}
+.hand .caps { color: var(--accent-dk); }
+.hand .caps svg { vertical-align: -2px; margin-right: 5px; }
+.hand-count { color: var(--ink-mute); font-weight: 400; }
+.handcol { display: flex; flex-direction: column; gap: var(--s-2); padding-top: var(--s-3); max-width: 100%; }
+@media (max-width: 899px) { .handcol { flex-direction: row; overflow-x: auto; } .askcard { width: 150px; min-height: 104px; } }
+.askcard {
+  flex: 0 0 auto; width: 100%; min-height: var(--tap);
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-1);
+  padding: var(--s-3); text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+  border: 1px solid var(--accent); border-radius: var(--r-md); background: var(--surface);
+  box-shadow: 0 2px 0 var(--accent-wash);
+  transition: transform 120ms var(--ease);
+}
+.askcard:hover:not([disabled]) { transform: translateY(-3px); }
+.askcard[disabled] { opacity: 0.45; cursor: not-allowed; }
+.ac-ic { color: var(--accent); }
+.ac-label { font-size: var(--t-small); font-weight: 600; line-height: 1.3; }
+.pts-why { display: block; width: 100%; font-size: var(--t-micro); color: var(--ink-mute); margin-top: var(--s-1); }
+.pointsrow { flex-wrap: wrap; }
+@media (prefers-reduced-motion: reduce) { .askcard { transition: none; } .askcard:hover { transform: none; } }
+
+/* The life strip: one dot per year of this run, filled as lived. The whole
+   life is visible on every turn, which is the point of the mode. */
+.lifestrip { display: inline-flex; gap: 3px; align-items: center; margin: 0 var(--s-2); }
+.lifestrip i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--rule); display: inline-block;
+}
+.lifestrip i.on { background: var(--ink-soft); }
+.lifestrip i.now { background: var(--accent); transform: scale(1.5); }
+
+/* The chance card carries its kind as a large quiet watermark. */
+.chance { position: relative; overflow: hidden; }
+.ch-mark { position: absolute; top: -12px; right: -12px; opacity: 0.07; pointer-events: none; }
+.ch-mark svg { width: 130px; height: 130px; }
+
+/* the four ikigai circles, drawn from the run */
+.iki-pair svg { max-width: 190px; }
+.ikigai { margin-top: var(--s-2); }
+.ikigai svg { max-width: 100%; height: auto; display: block; }
+.ikigai text { font-family: var(--body); }
+.ikigai p { max-width: 44ch; }
+
+/* the want re-check on the reflect stage */
+.wantcheck {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+/* the picker, inside the sheet */
+.picker { margin-top: var(--s-3); }
+.pk-group { margin-bottom: var(--s-4); }
+.pk-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-3); padding: var(--s-2) 0; border-bottom: 1px solid var(--rule-soft);
+}
+.pk-name { font-size: var(--t-small); }
+.pk-lv { display: flex; gap: var(--s-2); flex: none; }
+.lvchip {
+  min-width: var(--tap); min-height: var(--tap);
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); cursor: pointer;
+  font-size: var(--t-small); font-weight: 650; color: var(--ink-mute);
+}
+.lvchip.on { border-width: 2px; }
+.lvchip.lv-g1.on { border-color: var(--g1); background: var(--g1-wash); color: var(--g1); }
+.lvchip.lv-g2.on { border-color: var(--g2); background: var(--g2-wash); color: var(--g2); }
+.lvchip.lv-g3.on { border-color: var(--g3); background: var(--g3-wash); color: var(--g3); }
+.diff-combo { display: flex; flex-wrap: wrap; gap: var(--s-1); font-size: var(--t-micro); }
+.diff-combo .subjchip { padding: 0.15em 0.4em; font-size: var(--t-micro); }
+@media (hover: hover) { .lvchip:hover { background: var(--paper-warm); } }
+
+/* ---------- lower secondary: movement and the common curriculum ---------- */
+.nextlv {
+  margin-left: var(--s-2); padding: 0.12em 0.42em;
+  border: 1px dashed var(--rule); border-radius: var(--r-sm);
+  font-size: var(--t-micro); color: var(--ink-mute); white-space: nowrap;
+}
+.everyone { font-size: var(--t-micro); color: var(--ink-mute); font-style: italic; }
+.juncture { margin-top: var(--s-3); }
+.grp-fold > summary.grp { cursor: pointer; list-style: revert; }
+.grp-fold[open] > summary.grp { margin-bottom: var(--s-2); }
+/* Surface rather than the warm tint, so the panel reads as a quiet aside next
+   to the student's own list rather than competing with it. The dashed border
+   carries the "this is an inference, not your plan" signal on its own. */
+.horizon { margin-top: var(--s-4); padding: var(--s-4);
+  border: 1px dashed var(--rule); border-radius: var(--r-lg); background: var(--surface); }
+.hz-moves { margin: var(--s-3) 0 0; padding-left: 1.1em; }
+.hz-moves li { margin-bottom: var(--s-2); }
+
+/* ---------- what else a student carries ---------------------------------- */
+/* The panel sits under the subject list because it is the other half of the
+   same week, and it is tinted with the compass wash rather than given a border
+   of its own: it answers Who am I, which is the question the kicker names. */
+.week {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border-radius: var(--r-lg); background: var(--compass-wash);
+}
+.week-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-2);
+}
+.week-head h2 { margin: 0; }
+.actchips { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0; }
+.chip.act {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22em 0.6em; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--rule);
+  font-size: var(--t-small); color: var(--ink-soft);
+}
+.chip.act svg { flex: none; }
+.week-load { margin: var(--s-3) 0; max-width: 46ch; }
+.week-block { margin-top: var(--s-4); }
+.week-block .caps { color: var(--compass); margin-bottom: var(--s-1); }
+.week-block p.small { margin: 0 0 var(--s-2); max-width: 52ch; }
+.week .micro { margin-top: var(--s-4); max-width: 52ch; }
+
+/* Rows in the picker. Wide, plain, and pressed rather than ticked: nothing in
+   this list is more correct than anything else in it, so nothing in it gets an
+   accent until it is chosen. */
+.actrow {
+  display: flex; align-items: center; width: 100%; min-height: var(--tap);
+  gap: var(--s-3); padding: var(--s-2) var(--s-3);
+  margin-bottom: var(--s-2); text-align: left; font: inherit; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-md);
+  color: var(--ink);
+}
+.actrow-name { display: inline-flex; align-items: center; gap: var(--s-2); }
+.actrow.on { border-color: var(--compass); background: var(--compass-wash); font-weight: 650; }
+@media (hover: hover) { .actrow:hover { background: var(--paper-warm); } }
+
+/* =========================================================================
+   v2 additions. Everything above this line is the v1 component set, kept
+   because it was measured and earned; everything below is what v2 adds.
+   ========================================================================= */
+
+/* Ambient era shifts repaint the paper; ease it so a decade does not blink. */
+body { transition: background-color 600ms var(--ease); }
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
+
+/* ---------- the landing ---------- */
+.landing { min-height: 72vh; display: flex; align-items: center; padding: var(--s-8) 0; }
+.landing-kicker { display: inline-flex; align-items: center; gap: var(--s-2); }
+.landing-kicker svg { width: 1.3em; height: 1.3em; color: var(--accent); }
+.landing-q { font-size: var(--t-hero); line-height: var(--lh-hero); margin: var(--s-4) 0 var(--s-3); max-width: 22ch; }
+.guess-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+.guess-n {
+  min-width: var(--tap); min-height: var(--tap); padding: 0 var(--s-3);
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  background: var(--surface); font: inherit; font-weight: 650; font-size: 1.1rem;
+  color: var(--ink); cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.guess-n:hover { border-color: var(--accent); }
+.guess-n.on { border-color: var(--accent); background: var(--accent-wash); color: var(--accent-dk); }
+.reveal { margin-top: var(--s-6); }
+.reveal-big { font-size: var(--t-h1); line-height: var(--lh-h); max-width: 26ch; }
+.reveal-big:focus { outline: none; }
+.landing-doors { display: grid; gap: var(--s-3); margin-top: var(--s-6); }
+@media (min-width: 700px) { .landing-doors { grid-template-columns: repeat(3, 1fr); } }
+.ldoor {
+  display: flex; flex-direction: column; gap: var(--s-1); text-align: left;
+  padding: var(--s-5); min-height: 108px; cursor: pointer; font: inherit;
+  border: 1.5px solid var(--rule); border-radius: var(--r-lg); background: var(--surface);
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.ldoor:hover { border-color: var(--accent); transform: translateY(-2px); }
+.ldoor-name { font-family: var(--display); font-weight: 600; font-size: var(--t-h2); }
+.ldoor-sub { color: var(--ink-mute); font-size: var(--t-small); }
+@media (hover: none) { .ldoor:hover { border-color: var(--rule); transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ldoor, .guess-n { transition: none; } }
+
+/* ---------- v2 chrome ---------- */
+.brand {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  background: none; border: none; padding: var(--s-1) var(--s-2); cursor: pointer;
+  font-family: var(--display); font-size: 1.05rem; font-weight: 600; color: var(--ink);
+  margin-right: auto;
+}
+.brand svg { width: 1.2em; height: 1.2em; color: var(--accent); }
+.mode-arrow { color: var(--ink-faint); font-size: var(--t-small); align-self: center; }
+.head-tools { display: inline-flex; gap: var(--s-1); align-items: center; }
+.toolbtn {
+  min-width: var(--tap); min-height: var(--tap);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rule-soft); border-radius: var(--r-pill);
+  background: transparent; cursor: pointer; color: var(--ink-mute);
+}
+.toolbtn:hover { background: var(--paper-warm); color: var(--ink); }
+.toolbtn[aria-pressed="true"] { color: var(--accent-dk); border-color: var(--accent); }
+.toolbtn svg { margin: 0; }
+.glossbtn span { display: inline; }
+@media (max-width: 700px) {
+  .glossbtn span { display: none; }
+  .glossbtn { min-width: var(--tap); justify-content: center; }
+  .glossbtn svg { margin-right: 0; }
+  .head-tools { margin-left: auto; }
+}
+
+/* The kind chip: RIASEC kinds in student words. v1 referenced this class in
+   five places and never wrote it, so labels ran into their text. */
+.kind-chip {
+  display: inline-block; padding: 1px 9px; margin-left: var(--s-2);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  font-size: var(--t-micro); font-weight: 650; color: var(--ink-mute);
+  vertical-align: middle; white-space: nowrap;
+}
+.btn .kind-chip { border-color: currentColor; color: inherit; opacity: 0.85; }
+.raised { list-style: none; padding: 0; }
+.raised li { margin-bottom: var(--s-2); }
+
+/* Compare chips outside .subjchips still lay out as chips. */
+.diff-combo .subjchip {
+  display: inline-flex; align-items: center; gap: 0.35em;
+  padding: 0.15em 0.4em; font-size: var(--t-micro);
+  border: 1px solid var(--rule); border-radius: var(--r-md); background: var(--surface);
+}
+.diff-ch { display: block; font-size: 9px; font-weight: 600; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+.diff-tail { border: 1px dashed var(--rule); border-radius: var(--r-md); padding: var(--s-3); }
+.route-map { margin-top: var(--s-4); max-width: 560px; }
+.route-map svg { width: 100%; height: auto; display: block; }
+
+/* ---------- the NS question ---------- */
+.ns-ask { margin-top: var(--s-8); max-width: 60ch; }
+.ns-choices { display: grid; gap: var(--s-3); margin-top: var(--s-5); max-width: 460px; }
+.ns-c { font-family: var(--display); font-size: var(--t-h3); padding: var(--s-5); }
+
+/* ---------- the lived beat ---------- */
+.door-open {
+  margin: 0 0 var(--s-5); padding: var(--s-4) var(--s-5);
+  border: 2px solid var(--open); border-radius: var(--r-lg);
+  background: var(--open-wash);
+}
+.door-open .caps { color: var(--open-ink); }
+.door-open-name {
+  font-family: var(--display); font-size: var(--t-h2); font-weight: 600;
+  color: var(--open-ink); margin: var(--s-1) 0 0;
+  display: flex; align-items: center; gap: var(--s-2);
+}
+.door-open-name svg { width: 1.2em; height: 1.2em; }
+.lived-chance {
+  margin-top: var(--s-4); padding: var(--s-4);
+  border-left: 3px solid var(--other); border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--other-wash);
+}
+.lived-chance.setback { border-left-color: var(--longer); background: var(--longer-wash); }
+.lived-chance .kind { font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--other); display: inline-flex; align-items: center; }
+.lived-chance.setback .kind { color: var(--longer); }
+.meanwhile {
+  margin-top: var(--s-4); padding-left: var(--s-4);
+  border-left: 3px solid var(--rule); color: var(--ink-mute);
+  font-style: italic; font-size: var(--t-small); max-width: 52ch;
+}
+
+/* A choice a held door unlocked: quietly special, never louder than the text. */
+.choice.unlocked { border-style: double; border-width: 3px; border-color: var(--open); }
+.door-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 8px; border-radius: 999px;
+  background: var(--open-wash); color: var(--open-ink);
+  font-size: var(--t-micro); font-weight: 650;
+}
+.door-tag svg { width: 1em; height: 1em; margin: 0; }
+
+/* ---------- the ending frame ---------- */
+.ending-frame {
+  margin-top: var(--s-5); padding: var(--s-5);
+  border-left: 4px solid var(--accent); border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+}
+.ending-frame .lede { max-width: 60ch; }
+
+/* ---------- the Plan funnel ---------- */
+.funnel { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; }
+.funnel .caps { margin: 0; }
