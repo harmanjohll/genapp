@@ -19,6 +19,7 @@ import { projectionSweep } from './engine/project.js';
 import { runCopyLint } from './engine/copy-lint.js';
 import { runJourneySweep } from './engine/journey4.js';
 import { possibilitySweep } from './engine/possible.js';
+import { ecgSweep } from './engine/ecg-lint.js';
 import { renderLanding } from './modes/landing.js';
 import { renderNow } from './modes/mode-now.js';
 import { renderJourney, resetJourney } from './modes/mode-journey.js';
@@ -98,6 +99,7 @@ async function init() {
     runJourneySweep(data);
     possibilitySweep(data);
     tableSweep(data);
+    ecgSweep(data);
     runCopyLint(data);
   }
 }

@@ -78,6 +78,13 @@ export function renderLanding(host, data, ctx, leave) {
               <span class="ldoor-name">${esc(L.enterAct)}</span>
               <span class="ldoor-sub">${esc(L.enterActSub)}</span>
             </button>
+          </div>
+          <div class="lgroup">
+            <a class="ldoor wide" href="./?mode=table">
+              <span class="ldoor-ic">${icon('q_who')}</span>
+              <span class="ldoor-name">${esc(L.enterTable)}</span>
+              <span class="ldoor-sub">${esc(L.enterTableSub)}</span>
+            </a>
           </div>` : ''}
         <p class="micro faint landing-aud">${esc(L.audience)}</p>
       </div>

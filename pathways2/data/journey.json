@@ -1600,7 +1600,7 @@
    "chapter": "First pay cheque",
    "years": 3,
    "wantCheck": true,
-   "situation": "The first full month of pay lands with a payslip you read twice. CPF is real now. So is the six fifteen alarm, and the question of what for.",
+   "situation": "The first full month of pay lands with a payslip you read twice. CPF is real now, and so is the question of whether this job teaches you anything.",
    "choices": [
     {
      "label": "Learn the job cold",
@@ -1740,7 +1740,7 @@
    "chapter": "Building",
    "fixedAge": 31,
    "years": 4,
-   "situation": "The thirties go brick by brick: a team you half chose, a flat with your name on it, a calendar that recurs. What you water here grows.",
+   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what you learn on purpose while nobody is asking you to.",
    "choices": [
     {
      "label": "Take the lead role",

@@ -78,7 +78,9 @@
   "enterActSub": "Leave with three things to do this term",
   "skip": "Straight in",
   "audience": "Also here: a page for parents, and one for teachers.",
-  "roadTag": "a road in"
+  "roadTag": "a road in",
+  "enterTable": "Play it at a table",
+  "enterTableSub": "Two to six of you on one screen, then compare"
  },
  "pulse": {
   "opened": "{dest} is open now.",
