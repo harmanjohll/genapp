@@ -7,14 +7,14 @@
 import { loadAll } from './data-loader.js';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
-  markVersionSeen, MODES, YEARS, currentYear,
+  markVersionSeen, snapshotPlan, MODES, YEARS, currentYear,
 } from './state.js';
 import { initGlossary, openFullList } from './components/glossary.js';
 import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
 import { onAction, esc } from './components/dom.js';
 import { icon } from './components/icons.js';
 import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js';
-import { runInvariantSweep } from './engine/reach.js';
+import { reach, runInvariantSweep } from './engine/reach.js';
 import { projectionSweep } from './engine/project.js';
 import { runCopyLint } from './engine/copy-lint.js';
 import { runJourneySweep } from './engine/journey4.js';
@@ -64,6 +64,14 @@ async function init() {
 
   mountRibbon(document.body, data.lifelong);
   mountAudience();
+
+  // Photograph today's plan with its open count, so a later visit can say
+  // what moved. One line, and it is the whole Year loop's raw material.
+  const st0 = getState();
+  if (Object.keys(st0.plan).length) {
+    const open = ctx.destinations.filter((d) => reach(st0.plan, d, { ...ctx, plan: st0.plan }).state === 'open').length;
+    snapshotPlan(open);
+  }
 
   // First contact is one question, not thirty one subject rows. A device that
   // has answered it, or arrived by a deep link, goes straight in.

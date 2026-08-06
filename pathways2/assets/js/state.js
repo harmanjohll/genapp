@@ -41,6 +41,7 @@ const initial = () => ({
   landingGuess: null,   // what they guessed, kept so the reveal can quote it
   soundOn: false,       // five small cues, opt in, remembered
   seenVersion: null,
+  history: [],          // plan snapshots: { t, plan, open }, one a day at most
 });
 
 function load() {
@@ -53,7 +54,7 @@ function load() {
   if (!MODES[base.mode]) base.mode = 'now';
   if (!YEARS.some((v) => v.id === base.year)) base.year = 'sec2';
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
-  ['actions', 'runs', 'looked', 'activities'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
+  ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
     const params = new URLSearchParams(location.search);
     const m = params.get('mode');
@@ -198,6 +199,39 @@ export function markVersionSeen(v) {
 export function markIntroSeen() {
   state.seenIntro = true;
   persist();
+}
+
+/**
+ * The plan, photographed for the student's own future self.
+ *
+ * One snapshot a day at most, only when the plan is non empty and actually
+ * different from the last photograph, capped at twelve. It exists so Plan can
+ * say "since March: English G2 to G3, two more doors open", which is the
+ * cheapest proof this app can offer that a road moves. Device local, like
+ * everything else.
+ */
+export function snapshotPlan(openCount) {
+  const today = new Date().toISOString().slice(0, 10);
+  const plan = { ...state.plan };
+  if (!Object.keys(plan).length) return;
+  const hist = state.history;
+  const last = hist[hist.length - 1];
+  const same = last && JSON.stringify(last.plan) === JSON.stringify(plan) && last.open === openCount;
+  if (same) return;
+  if (last && last.t === today) { last.plan = plan; last.open = openCount; persist(); return; }
+  hist.push({ t: today, plan, open: openCount });
+  if (hist.length > 12) hist.shift();
+  persist();
+}
+
+/** The most recent snapshot at least `days` old and different from today's plan. */
+export function sincePoint(days) {
+  const cutoff = Date.now() - days * 86400000;
+  const candidates = state.history.filter((h) => new Date(h.t).getTime() <= cutoff);
+  const last = candidates[candidates.length - 1];
+  if (!last) return null;
+  if (JSON.stringify(last.plan) === JSON.stringify(state.plan)) return null;
+  return last;
 }
 
 /** The landing's one question: asked once, guess kept for the reveal. */

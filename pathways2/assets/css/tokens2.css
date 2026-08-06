@@ -5,11 +5,11 @@
    Two new axes over v1, both deliberately quiet:
 
    ERAS. The game walks a life from 13 to 48, and v1 rendered every year at one
-   visual temperature. body[data-era] now tints the ambient surfaces, and only
-   the ambient surfaces: paper warms and cools with the decade, the accent
-   deepens slightly with age. Semantic colour never moves: the three level hues
-   and the four reach states mean the same thing at every age, or they mean
-   nothing.
+   visual temperature. body[data-era] now tints the ambient paper, and only
+   the ambient paper, mixed from the live theme's own base so a manual theme
+   toggle can never be fought. Semantic colour never moves: the three level
+   hues and the four reach states mean the same thing at every age, or they
+   mean nothing.
 
    DARK. prefers-color-scheme plus a manual override on <html data-theme>.
    Every pair below was picked against its own paper; the wash alphas rise in
@@ -23,17 +23,19 @@
   --ink-faint:  #626B78;
   --paper:      #FBF8F3;
   --paper-warm: #F5F0E7;
+  --paper-base:      #FBF8F3;
+  --paper-warm-base: #F5F0E7;
   --surface:    #FFFFFF;
   --rule:       #E3DCD0;
   --rule-soft:  #EFE9DF;
 
   /* Subject levels. Three hues of deliberately equal weight. Never reused. */
   --g1:       #2E7D74;
-  --g1-wash:  rgba(46, 125, 116, 0.10);
+  --g1-wash:  rgba(46, 125, 116, 0.05);
   --g2:       #4A5FA5;
-  --g2-wash:  rgba(74, 95, 165, 0.10);
+  --g2-wash:  rgba(74, 95, 165, 0.05);
   --g3:       #8A4F7D;
-  --g3-wash:  rgba(138, 79, 125, 0.10);
+  --g3-wash:  rgba(138, 79, 125, 0.05);
 
   /* Reach states. No red: nothing in this app is a failure state. */
   --open:         #2F7D5B;
@@ -104,12 +106,27 @@
   --tap: 44px;
 }
 
-/* ---- eras: ambient only, semantics never move ---------------------------- */
-body[data-era="school"]  { --paper: #FBF8F3; --paper-warm: #F5F0E7; }
-body[data-era="postsec"] { --paper: #F9F8F4; --paper-warm: #F1F0E8; }
-body[data-era="twenties"]{ --paper: #F8F8F6; --paper-warm: #EFF0EC; }
-body[data-era="thirties"]{ --paper: #F7F7F8; --paper-warm: #EDEEF0; --accent: #B65837; }
-body[data-era="later"]   { --paper: #F7F6F4; --paper-warm: #ECEAE6; --accent: #A9532F; }
+/* ---- eras: ambient only, semantics never move ----------------------------
+   Derived from the live theme's own paper with color-mix, so the decade
+   tint follows light or dark automatically and can never fight a manual
+   toggle. The mix partner drifts from warm sand toward cool slate as the
+   decades pass; a few percent is a whisper on purpose. */
+body[data-era="postsec"] {
+  --paper: color-mix(in srgb, var(--paper-base) 96%, #7A8CA3 4%);
+  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 96%, #7A8CA3 4%);
+}
+body[data-era="twenties"] {
+  --paper: color-mix(in srgb, var(--paper-base) 95%, #6E8797 5%);
+  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 95%, #6E8797 5%);
+}
+body[data-era="thirties"] {
+  --paper: color-mix(in srgb, var(--paper-base) 94%, #66788E 6%);
+  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 94%, #66788E 6%);
+}
+body[data-era="later"] {
+  --paper: color-mix(in srgb, var(--paper-base) 93%, #5E6B7A 7%);
+  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 93%, #5E6B7A 7%);
+}
 
 /* ---- dark ----------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
@@ -120,13 +137,15 @@ body[data-era="later"]   { --paper: #F7F6F4; --paper-warm: #ECEAE6; --accent: #A
     --ink-faint:  #97928A;
     --paper:      #15181D;
     --paper-warm: #1B1F26;
+    --paper-base:      #15181D;
+    --paper-warm-base: #1B1F26;
     --surface:    #20252D;
     --rule:       #3A4048;
     --rule-soft:  #2C323A;
 
-    --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.16);
-    --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.16);
-    --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.16);
+    --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.11);
+    --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.11);
+    --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.11);
 
     --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
     --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
@@ -156,12 +175,14 @@ body[data-era="later"]   { --paper: #F7F6F4; --paper-warm: #ECEAE6; --accent: #A
   --ink-faint:  #97928A;
   --paper:      #15181D;
   --paper-warm: #1B1F26;
+  --paper-base:      #15181D;
+  --paper-warm-base: #1B1F26;
   --surface:    #20252D;
   --rule:       #3A4048;
   --rule-soft:  #2C323A;
-  --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.16);
-  --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.16);
-  --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.16);
+  --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.11);
+  --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.11);
+  --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.11);
   --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
   --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
   --longer:   #7FAEDC;  --longer-wash: rgba(127, 174, 220, 0.15);
@@ -177,18 +198,6 @@ body[data-era="later"]   { --paper: #F7F6F4; --paper-warm: #ECEAE6; --accent: #A
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow:    0 2px 14px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.55);
-}
-
-/* Dark eras: shift the dark paper the same quiet amount. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) body[data-era="postsec"],
-  :root[data-theme="dark"] body[data-era="postsec"]  { --paper: #14191F; --paper-warm: #1A2028; }
-  :root:not([data-theme="light"]) body[data-era="twenties"],
-  :root[data-theme="dark"] body[data-era="twenties"] { --paper: #141A1C; --paper-warm: #1A2124; }
-  :root:not([data-theme="light"]) body[data-era="thirties"],
-  :root[data-theme="dark"] body[data-era="thirties"] { --paper: #15181C; --paper-warm: #1B1F24; }
-  :root:not([data-theme="light"]) body[data-era="later"],
-  :root[data-theme="dark"] body[data-era="later"]    { --paper: #16171A; --paper-warm: #1C1E21; }
 }
 
 @media (prefers-reduced-motion: reduce) {

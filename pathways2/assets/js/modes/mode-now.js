@@ -28,6 +28,7 @@ import { pulse, leverLine } from '../engine/pulse.js';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
+  snapshotPlan, sincePoint,
 } from '../state.js';
 
 const STATE_API = { setMode };
@@ -330,6 +331,9 @@ function tail(st, reaches, data) {
   const f = data._freshness;
   const stale = f.stale ? ` ${fill(c.stale, { days: f.days })}` : '';
 
+  const since = sinceBlock(st, reaches, data);
+  const said = saidBlock(st, data);
+
   const toPlay = n ? `
     <div class="panel tight funnel">
       <p class="caps">${esc(c.toPlayHint)}</p>
@@ -343,8 +347,10 @@ function tail(st, reaches, data) {
     ? `<p class="caution" style="margin-top:var(--s-3)">${esc(c.reviewNudge)}</p>` : '';
 
   return `
+    ${since}
+    ${said}
     ${toPlay}
-    ${nudge}
+    ${nudge}${icsBlock(st, data)}
     ${verdict ? `<div class="panel tight">
         <p class="caps">${esc(fill(L.chip, { n, g3 }))}</p>
         <p class="small" style="margin:0">${esc(verdict)}</p>
@@ -521,6 +527,94 @@ function fill(tpl, vars) {
   return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
 }
 
+/**
+ * Since you were last here: the student's own road, moving. Renders only when
+ * a snapshot at least two weeks old differs from today, so it always has
+ * something true to say and never nags.
+ */
+function sinceBlock(st, reaches, data) {
+  const c = data.copy.chrome;
+  const past = sincePoint(14);
+  if (!past) return '';
+  const byId = new Map(DATA.subjects.subjects.map((s) => [s.id, s]));
+  const lines = [];
+  Object.entries(st.plan).forEach(([id, lv]) => {
+    const s = byId.get(id);
+    const name = s ? (s.shortName || s.name) : id;
+    const was = past.plan[id];
+    if (!was) lines.push(fill(c.sinceAdded, { subject: name }));
+    else if (was !== lv) lines.push(fill(c.sinceMoved, { subject: name, from: was, to: lv }));
+  });
+  const openNow = reaches.filter((r) => r.state === 'open').length;
+  const openLine = past.open != null && past.open !== openNow
+    ? fill(c.sinceOpen, { then: past.open, now: openNow }) : '';
+  if (!lines.length && !openLine) return '';
+  const when = new Date(past.t).toLocaleDateString('en-SG', { day: 'numeric', month: 'short' });
+  return `
+    <div class="since">
+      <p class="caps">${esc(c.sinceHead)} <span class="mute">(${esc(when)})</span></p>
+      ${lines.slice(0, 3).map((l) => `<p class="small">${esc(l)}</p>`).join('')}
+      ${openLine ? `<p class="small"><strong>${esc(openLine)}</strong></p>` : ''}
+      <p class="micro mute">${esc(c.sinceNote)}</p>
+    </div>`;
+}
+
+/** What you committed to in Act, back in view where the week is planned. */
+function saidBlock(st, data) {
+  const c = data.copy.chrome;
+  const said = (st.actions || []).filter(Boolean);
+  if (!said.length) return '';
+  return `
+    <div class="panel tight said">
+      <p class="caps">${esc(c.saidHead)}</p>
+      ${said.slice(0, 2).map((a) => `<p class="small">${esc(a)}</p>`).join('')}
+      <button class="btn ghost small" type="button" data-action="toact">${esc(c.saidGo)}</button>
+    </div>`;
+}
+
+/**
+ * The review week, into the calendar the student actually checks. A plain
+ * .ics built here and downloaded; term four is when Sec 1 and Sec 2 levels
+ * actually move, so only those years get the button.
+ */
+function icsBlock(st, data) {
+  if (st.year !== 'sec1' && st.year !== 'sec2') return '';
+  if (!Object.keys(st.plan).length) return '';
+  const c = data.copy.chrome;
+  return `
+    <p class="micro mute" style="margin-top:var(--s-3)">
+      <button class="gloss" type="button" data-action="ics">${esc(c.icsBtn)}</button>
+      ${esc(c.icsHint)}</p>`;
+}
+
+function downloadIcs(data) {
+  const c = data.copy.chrome;
+  const now = new Date();
+  // Mid October: the subject review conversations are live, and asking is
+  // still early enough to matter. Next October if this year's has passed.
+  const year = (now.getMonth() + 1 > 10 || (now.getMonth() + 1 === 10 && now.getDate() > 20))
+    ? now.getFullYear() + 1 : now.getFullYear();
+  const d = `${year}1015`;
+  const dEnd = `${year}1016`;
+  const stamp = now.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Paths//pathways2//EN',
+    'BEGIN:VEVENT',
+    `UID:paths-review-${year}@local`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${d}`,
+    `DTEND;VALUE=DATE:${dEnd}`,
+    `SUMMARY:${c.icsTitle}`,
+    `DESCRIPTION:${c.icsBody} ${location.origin}${location.pathname}`,
+    'END:VEVENT', 'END:VCALENDAR',
+  ].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  a.download = 'paths-review-week.ics';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 // --------------------------------------------------------------------------
 // Actions
 
@@ -532,6 +626,8 @@ function bindActions() {
     year: (btn) => setYear(btn.dataset.year),
     dismiss: (btn) => { markIntroSeen(); btn.closest('.firstrun').remove(); },
     toplay: () => { const { setMode } = STATE_API; setMode('journey'); },
+    toact: () => setMode('aim'),
+    ics: () => downloadIcs(DATA),
     acts: (btn) => openActs(DATA, btn),
     avail: (btn) => {
       const av = DATA.subjects.availabilityNote;
@@ -587,6 +683,7 @@ function onLevel(btn) {
   const reaches = computeReaches(getState().plan);
   lastReaches = reaches;
   const lev = lever(reaches);
+  snapshotPlan(reaches.filter((r) => r.state === 'open').length);
 
   const evt = {
     subjectName: s ? s.name : subject,
