@@ -1201,3 +1201,42 @@ body { transition: background-color 600ms var(--ease); }
 /* ---------- the Plan funnel ---------- */
 .funnel { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; }
 .funnel .caps { margin: 0; }
+
+/* ---------- The Year: the since panel and resurfaced commitments ---------- */
+.since {
+  margin-top: var(--s-5); padding: var(--s-4);
+  border-left: 4px solid var(--open); border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  background: var(--surface); box-shadow: var(--shadow-sm);
+}
+.since .caps { color: var(--open-ink); }
+.said { margin-top: var(--s-4); }
+
+/* ---------- The Room: the class seed and the stage ---------- */
+.seedrow { margin-top: var(--s-2); }
+.seedbox, .stagebox {
+  width: 100%; max-width: 280px; padding: var(--s-3);
+  border: 1.5px solid var(--rule); border-radius: var(--r-md);
+  font: inherit; font-family: var(--mono); font-size: 1.05rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: var(--surface); color: var(--ink);
+}
+.pathchip.seed { border-style: dashed; }
+
+.stage { padding: var(--s-7) 0 var(--s-8); }
+.stage-holds { font-size: clamp(1.8rem, 5vw, 3rem); margin: var(--s-3) 0 var(--s-5); }
+.stage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 900px) { .stage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stage-grid .dest-card { min-height: 110px; }
+.stage-grid .dest-name { font-size: 1.15rem; }
+.stage-form { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; margin-top: var(--s-6); }
+.stagebox { max-width: 340px; font-size: 1.4rem; padding: var(--s-4); }
+.stagebox.bad { border-color: var(--flag); animation: shake 300ms var(--ease); }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .stagebox.bad { animation: none; } }
+.stage-count { align-self: center; }
+.stage-kinds { margin-top: var(--s-6); max-width: 480px; }
+
+/* Board mode blows the stage up for the back row. */
+body[data-board="true"] .stage-holds { font-size: clamp(2.4rem, 6vw, 4rem); }
+body[data-board="true"] .stage-grid .dest-name { font-size: 1.5rem; }
+body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }

@@ -50,7 +50,18 @@
     "toPlayHint": "Your combination becomes a life, in the game.",
     "reviewNudge": "Subject review season is close. Two minutes: is your lever still the same?",
     "soundOn": "Sound on",
-    "soundOff": "Sound off"
+    "soundOff": "Sound off",
+    "sinceHead": "Since you were last here",
+    "sinceMoved": "{subject} went {from} to {to}.",
+    "sinceAdded": "{subject} joined your list.",
+    "sinceOpen": "{then} open then. {now} open now.",
+    "sinceNote": "Kept on this device only, so you can see your own road move.",
+    "saidHead": "You said you would",
+    "saidGo": "Tick them off in Act",
+    "icsBtn": "Put the review week in your calendar",
+    "icsHint": "Downloads a calendar file. Nothing leaves this device.",
+    "icsTitle": "Subject review season: check your Paths lever",
+    "icsBody": "Two minutes on the Paths site: are your levels still pointed where you want? Ask your subject teacher this week if not."
   },
   "landing": {
     "kicker": "For Singapore secondary students",
@@ -210,7 +221,14 @@
     "weekPaidNote": "You carried {what} through this year. That happens whether or not a turn was spent on it.",
     "chapterOf": "Chapter {n} of {total}",
     "endingHead": "Your story",
-    "raisedHead": "What you moved"
+    "raisedHead": "What you moved",
+    "classSeedLabel": "Playing with your class?",
+    "classSeedHint": "If your teacher gave a play code, put it here. The whole class gets the same luck.",
+    "classSeedPlaceholder": "Play code, like K7Q2M",
+    "classSeedChip": "Class play {code}",
+    "cardSave": "Save your story card",
+    "cardSaved": "Saved",
+    "cardHint": "One picture of this story, made on your device. Share it or keep it."
   },
   "footerDoors": {
     "head": "This tool has three doors",
@@ -245,7 +263,20 @@
     "classPunch": "Between you, this room already holds {n} of the {total} destinations.",
     "classAll": "Between you, this room already holds every destination on the list.",
     "classNote": "Nobody here holds all of them alone. That is the point worth saying out loud.",
-    "classNone": "No codes yet. Paste them above."
+    "classNone": "No codes yet. Paste them above.",
+    "playHead": "Class play: same luck for everyone",
+    "playIntro": "Generate a play code and read it out. Every student who enters it gets the same chances in the same order, so the debrief compares answers instead of luck.",
+    "playBtn": "New play code",
+    "playNote": "The code seeds the game's randomness and carries nothing else.",
+    "stageHead": "The reveal, staged",
+    "stageIntro": "Project this page with board mode on. Ask the room to guess how many of the eight it holds between everyone. Then type each student's class code and press Enter, one at a time, and watch.",
+    "stageOpen": "Open this page with board=1 for the stage.",
+    "stagePrompt": "Type a class code, press Enter",
+    "stageCount": "{n} codes in",
+    "stageHolds": "This room holds {n} of the {total}",
+    "stageAll": "This room holds all eight.",
+    "stageNobody": "Nobody holds all of them alone. Say that out loud.",
+    "stageReset": "Start over"
   },
   "parentLive": {
     "head": "What is on this phone",

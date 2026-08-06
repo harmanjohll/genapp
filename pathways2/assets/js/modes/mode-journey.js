@@ -13,6 +13,7 @@ import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
 import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
 import { cue } from '../sound.js';
+import { drawLifeCard } from '../components/lifecard.js';
 import {
   createRun, sequenceFor, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns,
@@ -105,11 +106,17 @@ function setEra(age) {
   if (document.body.dataset.era !== era) document.body.dataset.era = era;
 }
 
-function startRun(data, want, short) {
+function startRun(data, want, short, seedCode) {
   const st = getState();
   const n = st.runs.length + 1;
   run = createRun(currentYear().age, `Story ${n}`, want, st.plan);
   run.short = !!short;
+  // A class play code seeds the luck, so a room lives the same life and the
+  // debrief compares answers instead of dice. It carries nothing else.
+  if (seedCode && /^[a-z0-9]{3,8}$/i.test(seedCode.trim())) {
+    run.classSeed = seedCode.trim().toUpperCase();
+    run.seed = (parseInt(run.classSeed, 36) % 0x7fffffff) || run.seed;
+  }
   run.activities = [...(st.activities || [])];
   picked = []; pickedAsks = []; justLived = null; pendingLived = null; lastYear = null;
   setLiveRun(run);
@@ -267,6 +274,12 @@ function openStartSheet(data, want, trigger) {
       <li>${esc(jc.tour2)}</li>
       <li>${esc(jc.tour3)}</li>
     </ol>
+    <div class="seedrow">
+      <p class="caps" style="margin-top:var(--s-4)">${esc(jc.classSeedLabel)}</p>
+      <input class="seedbox" type="text" maxlength="8" autocapitalize="characters"
+             placeholder="${esc(jc.classSeedPlaceholder)}" data-ref="seed" aria-label="${esc(jc.classSeedLabel)}">
+      <p class="micro mute">${esc(jc.classSeedHint)}</p>
+    </div>
     <p class="caps" style="margin-top:var(--s-5)">${esc(jc.runPick)}</p>
     <div class="runpick">
       <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
@@ -274,9 +287,13 @@ function openStartSheet(data, want, trigger) {
       <button class="btn ghost" type="button" data-action="goshort" style="margin-top:var(--s-3)">${esc(jc.runShort)}</button>
       <p class="micro mute">${esc(jc.runShortNote)}</p>
     </div>`, trigger);
+  const seedVal = () => {
+    const el = document.querySelector('dialog.sheet [data-ref="seed"]');
+    return el ? el.value : '';
+  };
   onSheetAction({
-    golong: () => { closeSheet(); startRun(data, want, false); rerender(); },
-    goshort: () => { closeSheet(); startRun(data, want, true); rerender(); },
+    golong: () => { const s = seedVal(); closeSheet(); startRun(data, want, false, s); rerender(); },
+    goshort: () => { const s = seedVal(); closeSheet(); startRun(data, want, true, s); rerender(); },
   });
 }
 
@@ -296,12 +313,13 @@ function chapterMeta(data, stage, age) {
   const seq = sequenceFor(data.journey, run);
   const n = run.stepIndex + 1;
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
+  const seedChip = run.classSeed ? `<span class="pathchip seed">${esc(fill(jc.classSeedChip, { code: run.classSeed }))}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
   const strip = `<span class="lifestrip" role="img" aria-label="${esc(fill(jc.chapterOf, { n, total: seq.length }))}">${seq.map((s, i) =>
     `<i class="${i < run.stepIndex ? 'on' : ''}${i === run.stepIndex ? ' now' : ''}"></i>`).join('')}</span>`;
   const title = stage.chapter || stage.title;
   return `
-    <p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total: seq.length }))} ${strip} ${label} ${want}</p>
+    <p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total: seq.length }))} ${strip} ${label} ${seedChip} ${want}</p>
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${age}</span>
       <h1 class="serif" tabindex="-1">${esc(title)}</h1></div>`;
 }
@@ -868,6 +886,7 @@ function endingScreen(host, data, st) {
             </div>` : ''}
           <div class="btn-row" style="margin-top:var(--s-3)">
             <button class="btn accent" type="button" data-action="again">${esc(jc.playAgain)}</button>
+            <button class="btn" type="button" data-action="savecard">${esc(jc.cardSave)}</button>
             ${st.runs.length >= 2 ? `<button class="btn" type="button" data-action="compare2">${esc(jc.compareCta)}</button>` : ''}
             <button class="btn ghost" type="button" data-action="toact">${esc(jc.toAct)}</button>
             <button class="btn ghost" type="button" data-action="tonow">${esc(jc.seeInNow)}</button>
@@ -878,6 +897,12 @@ function endingScreen(host, data, st) {
   settle(host, 'ending');
   bindGlossary(host);
   onAction(host, {
+    savecard: (btn) => {
+      drawLifeCard(run, data);
+      const old = btn.textContent;
+      btn.textContent = jc.cardSaved;
+      setTimeout(() => { btn.textContent = old; }, 1600);
+    },
     again: () => { run = null; rerender(); },
     againas: () => {
       if (!contrast) return;

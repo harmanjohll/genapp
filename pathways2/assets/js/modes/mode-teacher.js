@@ -8,6 +8,8 @@
 // consistent that a screen on its own is the weakest form of the intervention.
 
 import { esc, onAction } from '../components/dom.js';
+import { icon } from '../components/icons.js';
+import { cue } from '../sound.js';
 import { getState, setOffer } from '../state.js';
 import { readClassCode } from '../engine/reach.js';
 
@@ -117,7 +119,96 @@ function fill(tpl, vars) {
   return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
 }
 
+// --- the stage --------------------------------------------------------------
+// Projected, dark or light, codes typed one at a time. Each code lights the
+// destinations it holds; the counter climbs; all eight is a moment with the
+// biggest sound in the app, if sound is on. Nothing entered here is stored:
+// the stage dies with the tab, exactly like the textarea it grew from.
+
+let stageCodes = [];   // { code, decoded }
+
+function renderStage(host, data, ctx) {
+  const t = data.copy.teacher || {};
+  const dests = (data.pathways.destinations || []).slice()
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  const total = dests.length;
+  let union = 0;
+  const kinds = {};
+  let lo = 99; let hi = 0;
+  stageCodes.forEach(({ decoded }) => {
+    union |= decoded.mask;
+    kinds[decoded.kind] = (kinds[decoded.kind] || 0) + 1;
+    lo = Math.min(lo, decoded.subjects); hi = Math.max(hi, decoded.subjects);
+  });
+  let held = 0;
+  for (let i = 0; i < total && i < 8; i += 1) if (union & (1 << i)) held += 1;
+  const all = stageCodes.length > 0 && held >= total;
+
+  const KIND_LABEL = { R: 'Doers', I: 'Thinkers', A: 'Creators', S: 'Helpers', E: 'Persuaders', C: 'Organisers', '-': 'Not sure yet' };
+  const maxKind = Math.max(1, ...Object.values(kinds));
+  const kindBars = ['R', 'I', 'A', 'S', 'E', 'C', '-'].filter((k) => kinds[k]).map((k) => `
+    <div class="kindbar">
+      <span class="small">${esc(KIND_LABEL[k])}</span>
+      <span class="track"><span class="fill" style="width:${Math.round((kinds[k] / maxKind) * 100)}%"></span></span>
+      <span class="small mute">${kinds[k]}</span>
+    </div>`).join('');
+
+  host.innerHTML = `
+    <div class="wrap stage">
+      <p class="caps">${esc(t.stageHead)}</p>
+      <h1 class="serif stage-holds" aria-live="polite">${all
+        ? esc(t.stageAll)
+        : esc(fill(t.stageHolds || '', { n: held, total }))}</h1>
+      ${all ? `<p class="lede">${esc(t.stageNobody)}</p>` : ''}
+      <ul class="eight-grid stage-grid" aria-label="The eight destinations">
+        ${dests.map((d, i) => `
+          <li class="dest-card${(union & (1 << i)) ? ' revealed' : ''}" style="--i:${i}">
+            <span class="dest-name">${esc(d.railName)}</span>
+            <span class="road-tag">${icon('q_how')}held in this room</span>
+          </li>`).join('')}
+      </ul>
+      <form class="stage-form" data-ref="form">
+        <label class="sr-only" for="stagecode">${esc(t.stagePrompt)}</label>
+        <input id="stagecode" class="stagebox" type="text" maxlength="6" autocomplete="off"
+               autocapitalize="characters" placeholder="${esc(t.stagePrompt)}">
+        <span class="caps stage-count">${esc(fill(t.stageCount || '', { n: stageCodes.length }))}</span>
+        ${stageCodes.length ? `<button class="btn ghost small" type="button" data-action="stagereset">${esc(t.stageReset)}</button>` : ''}
+      </form>
+      ${kindBars ? `<div class="stage-kinds"><p class="caps">${esc(t.classKinds)}</p>${kindBars}
+        <p class="small mute">${esc(fill(t.classLoad || '', { lo, hi }))}</p></div>` : ''}
+    </div>`;
+
+  const form = host.querySelector('[data-ref="form"]');
+  const input = host.querySelector('#stagecode');
+  if (form && input) {
+    input.focus();
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const raw = input.value.trim().toUpperCase();
+      const decoded = readClassCode(raw);
+      if (!decoded) { input.classList.add('bad'); setTimeout(() => input.classList.remove('bad'), 600); return; }
+      if (!stageCodes.some((c) => c.code === raw)) {
+        const before = held;
+        stageCodes.push({ code: raw, decoded });
+        renderStage(host, data, ctx);
+        let u2 = 0;
+        stageCodes.forEach(({ decoded: d2 }) => { u2 |= d2.mask; });
+        let h2 = 0;
+        for (let i = 0; i < total && i < 8; i += 1) if (u2 & (1 << i)) h2 += 1;
+        if (h2 >= total) cue('ending');
+        else if (h2 > before) cue('door');
+      } else {
+        input.value = '';
+      }
+    });
+  }
+  onAction(host, {
+    stagereset: () => { stageCodes = []; renderStage(host, data, ctx); },
+  });
+}
+
 export function renderTeacher(host, data, ctx, repaint) {
+  if (document.body.dataset.board === 'true') return renderStage(host, data, ctx);
   const st = getState();
   const f = data._freshness;
   const subjects = data.subjects.subjects;
@@ -167,7 +258,21 @@ export function renderTeacher(host, data, ctx, repaint) {
         </div>
 
         <div class="section">
+          <div class="panel">
+            <h2>${esc((data.copy.teacher || {}).playHead || '')}</h2>
+            <p class="small mute">${esc((data.copy.teacher || {}).playIntro || '')}</p>
+            <div class="btn-row" style="margin-top:var(--s-3)">
+              <button class="btn small" type="button" data-action="playcode">${esc((data.copy.teacher || {}).playBtn || '')}</button>
+              <span class="code-big" id="playcode" aria-live="polite"></span>
+            </div>
+            <p class="micro mute">${esc((data.copy.teacher || {}).playNote || '')}</p>
+          </div>
+        </div>
+
+        <div class="section">
           <div class="section-head"><h2>${esc((data.copy.teacher || {}).classHead || 'What this room holds')}</h2></div>
+          <p class="small mute">${esc((data.copy.teacher || {}).stageOpen || '')}
+            <a href="./?mode=teacher&board=1">${esc((data.copy.teacher || {}).stageHead || '')}</a></p>
           <p class="small mute" style="max-width:64ch">${esc((data.copy.teacher || {}).classIntro || '')}</p>
           <label class="sr-only" for="classcodes">Class codes, one per line</label>
           <textarea id="classcodes" class="classbox" data-action-input="codes"
@@ -260,6 +365,10 @@ export function renderTeacher(host, data, ctx, repaint) {
   }
 
   onAction(host, {
+    playcode: () => {
+      const el = host.querySelector('#playcode');
+      if (el) el.textContent = Array.from({ length: 5 }, () => '0123456789ABCDEFGHJKMNPQRSTUVWXYZ'[Math.floor(Math.random() * 33)]).join('');
+    },
     print: () => window.print(),
     saveoffer: () => {
       const ids = [...host.querySelectorAll('.offer-item input:checked')].map((i) => i.dataset.sid);
