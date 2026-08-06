@@ -27,6 +27,7 @@ const { runJourneySweep } = await import(join(root, 'assets/js/engine/journey4.j
 const { runCopyLint } = await import(join(root, 'assets/js/engine/copy-lint.js'));
 const { possibilitySweep } = await import(join(root, 'assets/js/engine/possible.js'));
 const { tableSweep } = await import(join(root, 'assets/js/modes/mode-table.js'));
+const { ecgSweep } = await import(join(root, 'assets/js/engine/ecg-lint.js'));
 
 const ctx = {
   subjects: data.subjects.subjects,
@@ -42,6 +43,7 @@ const results = [
   ['journey', runJourneySweep(data)],
   ['possibilities', possibilitySweep(data)],
   ['table', tableSweep(data)],
+  ['ecg', ecgSweep(data)],
   ['copy', runCopyLint(data)],
 ];
 

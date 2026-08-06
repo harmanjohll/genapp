@@ -1358,3 +1358,12 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .pp-table th { background: #eee; }
 }
 .tcard-deal { display: block; font-weight: 700; color: var(--ink); }
+
+/* The fourth door: the group game was reachable only by typing a URL, which is
+   the same as not shipping it. It sits under the three solo doors, full width,
+   because it is a different KIND of thing rather than a fourth step. */
+.ldoor.wide {
+  grid-column: 1 / -1; text-decoration: none;
+  border-style: dashed;
+}
+.ldoor.wide:hover, .ldoor.wide:focus-visible { border-style: solid; }

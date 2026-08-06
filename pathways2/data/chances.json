@@ -93,32 +93,46 @@
    "minAge": 14,
    "maxAge": 15,
    "title": "The reclass",
-   "body": "Sec 3 reshuffles everyone by combination. Your lunch table of three years is now split across four classrooms and two recess slots.",
+   "body": "Sec 3 reshuffles everyone by combination. Your lunch table of three years is split across four classrooms, and so are four different sets of options.",
    "responses": [
     {
-     "label": "Keep the old table",
-     "outcome": "Friday bubble tea at the interchange becomes the standing order. Different classes, same people, on purpose.",
+     "label": "Ask what their combination opens",
+     "outcome": "Three friends, three different lists of courses at the end. Comparing them properly is an hour well spent.",
      "gain": {
+      "skills": 1,
       "network": 1
      },
      "disp": {
-      "persistence": 1
-     }
+      "curiosity": 1
+     },
+     "sets": "asked_peer"
     },
     {
-     "label": "Build the new one",
-     "outcome": "The girl beside you in the new class becomes the friend you did not know you were missing.",
+     "label": "Check your own combination against a course",
+     "outcome": "One poly course page, read properly. Two of your subjects are the ones it asks for, and you did not know.",
      "gain": {
-      "network": 1
+      "skills": 2
      },
      "disp": {
-      "optimism": 1
-     }
+      "curiosity": 1
+     },
+     "sets": "looked_around"
+    },
+    {
+     "label": "Ask to move the subject you regret",
+     "outcome": "The form teacher explains the review window and what the subject teacher would need to see by then.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "risk": 1
+     },
+     "sets": "asked_up"
     }
    ],
    "onwardMoves": [
-    "A standing weekly meetup keeps old friends without costing new ones.",
-    "Two terms is roughly what a new class takes to feel like yours."
+    "A combination is a list of options, and comparing lists takes about an hour.",
+    "The review window has a date. Ask for it before it passes."
    ]
   },
   {
@@ -279,43 +293,6 @@
    ]
   },
   {
-   "id": "sc_chat_blowup",
-   "type": "setback",
-   "minAge": 13,
-   "maxAge": 16,
-   "title": "The group chat goes bad",
-   "body": "A joke you sent gets screenshot and reread without its tone. By Monday two tables are not talking to you and one is talking about you.",
-   "asks": {
-    "disposition": "risk",
-    "min": 1
-   },
-   "responses": [
-    {
-     "label": "Apologise in person",
-     "outcome": "Face to face at the canteen, no audience. It is wobbly and it works; the screenshot loses its power by Friday.",
-     "gain": {
-      "network": 1
-     },
-     "disp": {
-      "risk": 1
-     },
-     "needsAsk": true,
-     "stretch": "The words come out wrong the first time. The second try lands, and trying twice is what gets remembered."
-    },
-    {
-     "label": "Wait it out",
-     "outcome": "Drama has a half life of roughly two weeks. It passes, and leaves a small scar where a sorry would have been.",
-     "disp": {
-      "flexibility": 1
-     }
-    }
-   ],
-   "onwardMoves": [
-    "An apology without an audience fixes most of what a group chat breaks.",
-    "The school counsellor has seen every version of this and keeps confidences."
-   ]
-  },
-  {
    "id": "sc_cny_audit",
    "type": "encounter",
    "minAge": 13,
@@ -406,75 +383,45 @@
    "minAge": 13,
    "maxAge": 16,
    "title": "It goes wrong publicly",
-   "body": "The solo, the penalty, the debate rebuttal: yours, and it fails in front of everyone with phones. Someone claps kindly, which is worse.",
+   "body": "The solo, the penalty, the debate rebuttal: yours, and it fails in front of everyone with phones. It was going to be the centre of your CCA record.",
    "responses": [
     {
-     "label": "Show up next week",
-     "outcome": "Training resumes Tuesday and you are there, on time, ears hot. The flop shrinks into the anecdote it deserved to be.",
-     "disp": {
-      "persistence": 1
-     },
+     "label": "Ask what actually went wrong",
+     "outcome": "The teacher is specific for eleven minutes. Two of the three problems are technique, which is fixable by August.",
      "gain": {
-      "skills": 1
-     }
-    },
-    {
-     "label": "Debrief it with the coach",
-     "outcome": "The coach rewinds it kindly: preparation, not talent, failed you. The fix list is short and concrete.",
+      "skills": 2
+     },
      "disp": {
       "curiosity": 1
      },
-     "gain": {
-      "skills": 1
-     },
-     "sets": "asked_help"
+     "sets": "asked_form"
     },
     {
-     "label": "Quit the exposed spot",
-     "outcome": "The second row suits you for a season. Some retreats are rest, not surrender.",
+     "label": "Get it into the folder anyway",
+     "outcome": "A recording, and a written page on what you changed after. Audition panels ask for exactly this and rarely get it.",
+     "gain": {
+      "portfolio": 2
+     },
      "disp": {
-      "flexibility": 1
+      "persistence": 1
+     },
+     "opens": "d_portfolio"
+    },
+    {
+     "label": "Sign up for the next one",
+     "outcome": "Six weeks later, in front of a smaller room, it holds. Nobody films that one, and it counts more.",
+     "gain": {
+      "skills": 1,
+      "portfolio": 1
+     },
+     "disp": {
+      "risk": 1
      }
     }
    ],
    "onwardMoves": [
-    "A coach debrief inside a week turns a flop into technique.",
-    "Nobody's highlight reel includes the term they sat out."
-   ]
-  },
-  {
-   "id": "sc_new_kid",
-   "type": "encounter",
-   "minAge": 13,
-   "maxAge": 15,
-   "title": "The transfer student",
-   "body": "New kid arrives in March from another school, accent from somewhere else, eating alone by the drinks stall on day three.",
-   "responses": [
-    {
-     "label": "Take your tray over",
-     "outcome": "Turns out he mods games and his mum makes epok epok for the block. Your circle grows one permanent member.",
-     "gain": {
-      "network": 1
-     },
-     "disp": {
-      "optimism": 1
-     },
-     "sets": "helped_someone"
-    },
-    {
-     "label": "Wave him into the project",
-     "outcome": "The group needed a fourth anyway. Competence arrives wearing an unfamiliar uniform.",
-     "gain": {
-      "network": 1
-     }
-    },
-    {
-     "label": "Keep your lane",
-     "outcome": "Someone else takes the tray over. The kindness happened; it just was not yours this time.",
-     "disp": {
-      "flexibility": 1
-     }
-    }
+    "An audition folder that shows what you fixed beats one that shows only wins.",
+    "Ask for the specific fault while the memory is fresh enough to be useful."
    ]
   },
   {
@@ -683,7 +630,7 @@
    "minAge": 17,
    "maxAge": 25,
    "title": "It gets shared",
-   "body": "The thing you posted at midnight, the timelapse, the repair video, the cover, wakes up to four hundred shares and a DM from an account with a blue tick.",
+   "body": "The timelapse you posted at midnight wakes up to four hundred shares and a message from a real studio. Your portfolio just stopped being a folder nobody asked for.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -727,7 +674,7 @@
    "minAge": 17,
    "maxAge": 25,
    "title": "The call from home",
-   "body": "Grandpa falls in the kitchen. Suddenly your week has hospital visits, translated discharge summaries and a rota your parents cannot cover alone.",
+   "body": "Grandpa falls in the kitchen. Your week fills with hospital visits and a rota your parents cannot cover, in the middle of a semester with deadlines in it.",
    "responses": [
     {
      "label": "Take the structured share",
@@ -1347,41 +1294,47 @@
    "type": "setback",
    "minAge": 18,
    "maxAge": 22,
-   "title": "The ankle goes",
-   "body": "Route march, uneven ground, a pop you hear before you feel. MC, crutches, downgrade review, and the platoon moving on without your rifle.",
+   "title": "The downgrade review",
+   "body": "Route march, uneven ground, a pop you hear before you feel. Crutches, a downgrade review, and a vocation that will not be yours now.",
    "requiresNS": true,
    "responses": [
     {
-     "label": "Rehab like a job",
-     "outcome": "Physio exercises done at double the prescribed diligence. The ankle returns; the discipline it taught outstays it.",
+     "label": "Ask for the vocation you can use later",
+     "outcome": "Signals, storeman, clerk. Some of it maps onto a real qualification, and you ask which before they post you.",
      "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "persistence": 1
-     }
-    },
-    {
-     "label": "Fill the desk months",
-     "outcome": "Excused duties come with desk time. You finish an online cert the platoon has no idea exists.",
-     "gain": {
-      "skills": 1
+      "skills": 2
      },
      "disp": {
       "curiosity": 1
-     }
+     },
+     "sets": "looked_around"
     },
     {
-     "label": "Sink a while, then swim",
-     "outcome": "Watching your section pass out without you stings for weeks. Recovery has a morale curve, and it bends up.",
+     "label": "Take a certificate while you serve",
+     "outcome": "Evening modules, paid for, finished before ORD. It sits on the application you send the month after.",
+     "gain": {
+      "skills": 2
+     },
      "disp": {
-      "flexibility": 1
-     }
+      "persistence": 1
+     },
+     "opens": "d_workstudy"
+    },
+    {
+     "label": "Rehab and hold the trade",
+     "outcome": "Months of dull exercises, and the vocation comes back. The trade in your hands survives the year.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 2
+     },
+     "opens": "d_trade"
     }
    ],
    "onwardMoves": [
-    "Military physio and downgrade reviews are systematic; work the system.",
-    "Desk postings finish more certificates than anyone admits."
+    "Some service vocations map onto civilian qualifications. Ask which before posting.",
+    "Courses taken during service are paid for and finish before you need them."
    ]
   },
   {
@@ -1390,7 +1343,7 @@
    "minAge": 18,
    "maxAge": 22,
    "title": "Forty eight hour weekends",
-   "body": "Book out Friday 6pm, book in Sunday 9pm. The bunk splits into those who sleep the window and those who build something inside it.",
+   "body": "Book out Friday, book in Sunday. The bunk splits into those who sleep the window and those who put a qualification or a portfolio inside it.",
    "requiresNS": true,
    "responses": [
     {
@@ -1495,6 +1448,17 @@
      "disp": {
       "optimism": 1
      }
+    },
+    {
+     "label": "Use the year on the qualification",
+     "outcome": "Two extra modules and a certificate, finished while the group chat is still in camouflage. It counts on the next application.",
+     "gain": {
+      "skills": 2
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "opens": "d_workstudy"
     }
    ]
   },
@@ -1664,49 +1628,12 @@
    ]
   },
   {
-   "id": "cv_flat_maths",
-   "type": "encounter",
-   "minAge": 26,
-   "maxAge": 42,
-   "title": "The flat spreadsheet",
-   "body": "BTO or resale, grants, the CPF numbers, a queue number that feels like a lottery. The spreadsheet has two names on it, or one, and either is fine.",
-   "responses": [
-    {
-     "label": "Buy within one salary",
-     "outcome": "The conservative sum wins: a flat one person can carry alone. Every career risk after this is cheaper because of it.",
-     "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "flexibility": 1
-     }
-    },
-    {
-     "label": "Stretch for the location",
-     "outcome": "Nearer the parents, nearer the MRT, heavier mortgage. Some prices buy time, and time is the scarce one now.",
-     "gain": {
-      "network": 1
-     },
-     "disp": {
-      "risk": 1
-     }
-    },
-    {
-     "label": "Wait another cycle",
-     "outcome": "Renting near work for two more years keeps you liquid for the pivot you can feel coming.",
-     "disp": {
-      "curiosity": 1
-     }
-    }
-   ]
-  },
-  {
    "id": "cv_parent_diagnosis",
    "type": "setback",
    "minAge": 27,
    "maxAge": 49,
    "title": "The diagnosis",
-   "body": "Your father's scan comes back with a word on it. The doctor talks to you, not him, because you are the one taking notes now.",
+   "body": "Your father's scan comes back with a word on it. You are the one taking notes now, in the same month your employer wants an answer about the bigger role.",
    "responses": [
     {
      "label": "Build the care system",
@@ -1820,22 +1747,11 @@
    "minAge": 26,
    "maxAge": 49,
    "title": "The plateau years",
-   "body": "Three years, same title, same number after the dollar sign. LinkedIn keeps showing you a classmate's promotion announcements with balloons on them.",
+   "body": "Three years, same title, same number after the dollar sign. The work is fine. Nothing in it is teaching you anything new.",
    "responses": [
     {
-     "label": "Price yourself outside",
-     "outcome": "Two external interviews later you know your market number. You take it back inside, or out the door, but informed either way.",
-     "gain": {
-      "network": 1
-     },
-     "disp": {
-      "risk": 1
-     },
-     "sets": "asked_boss"
-    },
-    {
-     "label": "Grow sideways on purpose",
-     "outcome": "The adjacent skill, the cross team project, the certification: width now buys height later. Plateaus are load bearing.",
+     "label": "Put the credit into a real qualification",
+     "outcome": "A certificate that names a skill the next job advertises for. The plateau turns out to have been a decision.",
      "gain": {
       "skills": 2
      },
@@ -1845,16 +1761,32 @@
      "opens": "d_sflu"
     },
     {
-     "label": "Mute the balloons",
-     "outcome": "Comparison is a subscription you cancel. The classmate's ladder was never pointed where yours goes.",
+     "label": "Get on a conversion programme",
+     "outcome": "An employer in a growing field hires first and trains after. The pay dips for a year and the ceiling moves.",
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
      "disp": {
-      "flexibility": 1
-     }
+      "risk": 1
+     },
+     "opens": "d_workstudy"
+    },
+    {
+     "label": "Take the part time degree",
+     "outcome": "Four years of evenings, run around a job. The qualification arrives and so does a different conversation at work.",
+     "gain": {
+      "skills": 2
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "opens": "d_polyroad"
     }
    ],
    "onwardMoves": [
-    "A market interview costs one afternoon and reprices your confidence.",
-    "Internal transfers move more careers than resignations do."
+    "SkillsFuture Credit does not expire, which is why it goes unspent.",
+    "Conversion programmes place you with an employer before training you."
    ]
   },
   {
@@ -2049,7 +1981,7 @@
    "minAge": 16,
    "maxAge": 20,
    "title": "Your mother, at the wedding",
-   "body": "A relative starts the old song about your path. Across the table your mother, who you once braced to disappoint, cuts in with your exact reasoning. Word for word.",
+   "body": "A relative starts the old song about polytechnic not being university. Across the table your mother cuts in with your exact reasoning, word for word.",
    "requiresFlag": "told_parents",
    "responses": [
     {
@@ -2580,22 +2512,38 @@
    "requiresFlag": "built_side",
    "responses": [
     {
-     "label": "Own it fully",
-     "outcome": "Yes, you say, and the conversation becomes an opportunity wearing casual clothes. Made things are self introducing.",
+     "label": "Send it as your portfolio",
+     "outcome": "The same work, arranged as evidence, goes to an admissions panel and an employer in the same week.",
      "gain": {
-      "portfolio": 1
+      "portfolio": 2
+     },
+     "disp": {
+      "risk": 1
      },
      "opens": "d_portfolio"
     },
     {
-     "label": "Show the process too",
-     "outcome": "The messy folder of drafts interests them more than the polished result. Process is the proof of the next one.",
+     "label": "Ask what it would take to sell",
+     "outcome": "Costing, pricing, one customer. The answer is smaller and more boring than expected, and it works.",
      "gain": {
-      "skills": 1
+      "skills": 1,
+      "network": 1
      },
      "disp": {
       "curiosity": 1
-     }
+     },
+     "sets": "side_paying"
+    },
+    {
+     "label": "Ask for the introduction",
+     "outcome": "A name, an email, and a meeting you would not have got alone. Doors mostly open from the inside.",
+     "gain": {
+      "network": 2
+     },
+     "disp": {
+      "optimism": 1
+     },
+     "opens": "d_people"
     }
    ]
   },
@@ -2831,11 +2779,11 @@
    "minAge": 15,
    "maxAge": 19,
    "title": "The fee letter at home",
-   "body": "The letter sits on the table for two days before anyone mentions it. Nobody in the flat says the word money, and everybody is thinking it.",
+   "body": "The letter with the course fee on it sits on the table for two days. Nobody in the flat says the word money, and everybody is thinking it.",
    "responses": [
     {
-     "label": "Ask about the bursary",
-     "outcome": "The school has a form and a person whose whole job is this form. Fees drop by most of the amount.",
+     "label": "Ask the school about the bursary",
+     "outcome": "There is a form, and a person whose whole job is that form. Most of the fee comes off.",
      "gain": {
       "skills": 1
      },
@@ -2845,8 +2793,19 @@
      "sets": "asked_help"
     },
     {
-     "label": "Take on a weekend shift",
-     "outcome": "Saturdays go to a counter job. Tiring, and the household breathes, and something in you gets steadier.",
+     "label": "Check what the cheaper route costs",
+     "outcome": "The same qualification through a part time or work study route. Longer, paid for differently, and it arrives.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "curiosity": 1
+     },
+     "opens": "d_workstudy"
+    },
+    {
+     "label": "Take the weekend shift and keep the course",
+     "outcome": "Saturdays go to a counter job. The fee gets paid and the course stays the one you chose.",
      "gain": {
       "skills": 1,
       "network": 1
@@ -2854,18 +2813,11 @@
      "disp": {
       "persistence": 1
      }
-    },
-    {
-     "label": "Say nothing, absorb it",
-     "outcome": "The subject gets dropped. Term goes on, and a low hum of worry sits under everything you study.",
-     "disp": {
-      "persistence": 1
-     }
     }
    ],
    "onwardMoves": [
     "Every school has a financial assistance form and somebody who processes it weekly.",
-    "Asking about money early costs one conversation and changes a whole year."
+    "Work study and part time routes reach the same qualification on different money."
    ]
   },
   {
@@ -2874,45 +2826,47 @@
    "minAge": 15,
    "maxAge": 22,
    "title": "The retrenchment at home",
-   "body": "A parent is home on a Tuesday afternoon in office clothes. The explanation arrives in pieces over a week, mostly at dinner.",
+   "body": "A parent is home on a Tuesday afternoon in office clothes. Within a week the conversation reaches your course fees and next year.",
    "responses": [
     {
-     "label": "Be useful in the flat",
-     "outcome": "Groceries, the younger one's homework, the quiet jobs. The household holds, and somebody notices who held it.",
-     "gain": {
-      "network": 1
-     },
-     "disp": {
-      "persistence": 1,
-      "optimism": 1
-     },
-     "sets": "told_home"
-    },
-    {
-     "label": "Ask what it changes",
-     "outcome": "The plan gets said out loud instead of assumed. Two of the assumptions turn out to be wrong.",
-     "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "curiosity": 1
-     },
-     "sets": "asked_family"
-    },
-    {
-     "label": "Keep your own plan moving",
-     "outcome": "School stays the one thing running normally. Later, that turns out to have helped more than sympathy.",
+     "label": "Ask about the bursary before anything changes",
+     "outcome": "The assistance form goes in that month. Your course stays your course, which was the thing at risk.",
      "gain": {
       "skills": 1
      },
      "disp": {
       "persistence": 1
-     }
+     },
+     "sets": "asked_help"
+    },
+    {
+     "label": "Tell them about the conversion programmes",
+     "outcome": "You find two, print them, and leave them on the table. An employer in a growing field trains after hiring.",
+     "gain": {
+      "network": 1,
+      "skills": 1
+     },
+     "disp": {
+      "optimism": 1
+     },
+     "sets": "told_home"
+    },
+    {
+     "label": "Take paid work that teaches you something",
+     "outcome": "Not any shift. One in the industry you were curious about, which pays and doubles as finding out.",
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "disp": {
+      "curiosity": 1
+     },
+     "sets": "seen_work"
     }
    ],
    "onwardMoves": [
-    "Career conversion programmes hire mid career adults and train them after.",
-    "A household under strain still has a timetable, and keeping yours is a contribution."
+    "Financial assistance is designed for exactly the year a household income drops.",
+    "Career conversion programmes hire mid career adults first and train them after."
    ]
   },
   {
@@ -2921,24 +2875,14 @@
    "minAge": 23,
    "maxAge": 34,
    "title": "The month the numbers stop working",
-   "body": "Rent up, one bill unusually large, and a family expense nobody planned. The month does not close, and next month is worse.",
+   "body": "Rent up, one bill unusually large, and the part time course fee due in the same fortnight. The month does not close.",
    "responses": [
     {
-     "label": "Put the numbers on paper",
-     "outcome": "A spreadsheet nobody enjoys making. Two subscriptions and one habit turn out to be the problem.",
+     "label": "Ask what the employer will fund",
+     "outcome": "Course fee support exists and is under used. Half of it comes off, and the study continues.",
      "gain": {
-      "skills": 2
-     },
-     "disp": {
-      "persistence": 1
-     }
-    },
-    {
-     "label": "Ask for the raise now",
-     "outcome": "An awkward meeting, a specific number, and something to point at. Half of it lands.",
-     "gain": {
-      "network": 1,
-      "skills": 1
+      "skills": 1,
+      "network": 1
      },
      "disp": {
       "risk": 1
@@ -2946,20 +2890,32 @@
      "sets": "asked_boss"
     },
     {
-     "label": "Take the second income",
-     "outcome": "Evenings go to something that pays. It is heavy for eight months and it works.",
+     "label": "Stretch the qualification over more terms",
+     "outcome": "Two modules a semester instead of four. It finishes a year later and it finishes.",
      "gain": {
-      "skills": 1,
-      "portfolio": 1
+      "skills": 1
      },
      "disp": {
-      "persistence": 1
-     }
+      "flexibility": 1
+     },
+     "opens": "d_sflu"
+    },
+    {
+     "label": "Ask for the raise, transcript in hand",
+     "outcome": "A specific number, and the module transcript on the table. Half of it lands, which closes the month.",
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "disp": {
+      "risk": 1
+     },
+     "sets": "asked_boss"
     }
    ],
    "onwardMoves": [
-    "A written budget finds more money than a pay rise does, most months.",
-    "Asking for a specific figure beats hinting at a general one."
+    "Many employers fund course fees and almost nobody asks them to.",
+    "A qualification stretched over more terms still arrives."
    ]
   },
   {
@@ -3014,38 +2970,41 @@
    "body": "Four months of running at it, and one Tuesday nothing works. Reading the same paragraph five times, and none of it lands.",
    "responses": [
     {
-     "label": "Stop for a week, properly",
-     "outcome": "Sleep, then a doctor, then a week of nothing. The month after is the best work of the year.",
+     "label": "Tell the tutor before the deadline",
+     "outcome": "Two deadlines move and one module gets dropped cleanly. The semester becomes carryable instead of heroic.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "flexibility": 1
+     },
+     "sets": "asked_lecturer"
+    },
+    {
+     "label": "Take one subject down a level",
+     "outcome": "Seven subjects at the top level was the problem, not you. Six done properly reads better everywhere it matters.",
      "gain": {
       "skills": 1
      },
      "disp": {
       "flexibility": 1
      },
-     "sets": "asked_help"
+     "sets": "asked_up"
     },
     {
-     "label": "Tell someone who can act",
-     "outcome": "A tutor or a manager who moves two deadlines. The load becomes carryable rather than heroic.",
+     "label": "Rebuild the week around the hard paper",
+     "outcome": "The heavy subject gets the mornings. The load is the same and the results are not.",
      "gain": {
-      "network": 1
+      "skills": 2
      },
-     "disp": {
-      "persistence": 1
-     },
-     "sets": "asked_help"
-    },
-    {
-     "label": "Push through it",
-     "outcome": "The work gets done and costs double. A pattern begins that takes years to notice and unlearn.",
      "disp": {
       "persistence": 1
      }
     }
    ],
    "onwardMoves": [
-    "Every campus and most employers have counselling that nobody uses early enough.",
-    "A week off costs a week. Ignoring the wall usually costs a term."
+    "A module dropped cleanly costs less than a semester carried badly.",
+    "Every campus has consultation hours and they are mostly empty."
    ]
   },
   {
@@ -3094,208 +3053,46 @@
    "type": "setback",
    "minAge": 17,
    "maxAge": 34,
-   "title": "The knee, the wrist, the back",
-   "body": "One awkward landing and something structural gives. Six weeks in a brace, and the sport that organised your whole week is gone.",
+   "title": "The brace, and the folder",
+   "body": "Six weeks in a brace. The CCA that was going to be the whole middle of your Early Admissions folder is now somebody else's season.",
    "responses": [
     {
-     "label": "Find the version you can still do",
-     "outcome": "Coaching, managing, the score sheet. Still in the hall, still one of them, differently useful.",
+     "label": "Ask the coach for the reference anyway",
+     "outcome": "Two seasons of turning up is what the reference describes. Injury does not delete the record of the work.",
      "gain": {
-      "network": 2
+      "network": 1
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "sets": "asked_form"
+    },
+    {
+     "label": "Build the evidence from the bench",
+     "outcome": "Fixtures, stats, the junior training plan. An EAE panel reads organising a squad as readily as playing in one.",
+     "gain": {
+      "portfolio": 2
      },
      "disp": {
       "flexibility": 1
      },
-     "sets": "helped_someone"
+     "opens": "d_portfolio"
     },
     {
-     "label": "Put the hours somewhere else",
-     "outcome": "Six weeks of evenings go into something new. It becomes a second thing you are good at.",
-     "gain": {
-      "skills": 1,
-      "portfolio": 1
-     },
-     "disp": {
-      "curiosity": 1
-     }
-    },
-    {
-     "label": "Rehab it properly and return",
-     "outcome": "Dull exercises, twice a day, for months. The return is slower and holds better than the first version.",
-     "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "persistence": 2
-     }
-    }
-   ],
-   "onwardMoves": [
-    "An injury ends a season. It very rarely ends the thing itself.",
-    "The person who runs the team is still on the team."
-   ]
-  },
-  {
-   "id": "sc_health_flag",
-   "type": "setback",
-   "minAge": 36,
-   "maxAge": 50,
-   "title": "The number at the checkup",
-   "body": "A routine screening comes back with one figure circled. Not an emergency, the doctor says, and also not something to file away.",
-   "responses": [
-    {
-     "label": "Change the two obvious things",
-     "outcome": "Walking, and the late meals. Six months later the figure is boring again, which is the goal.",
-     "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "persistence": 1
-     }
-    },
-    {
-     "label": "Rearrange the working week",
-     "outcome": "Two evenings come back under your control. It turns out the job survives without them.",
-     "gain": {
-      "skills": 1
-     },
-     "disp": {
-      "flexibility": 1
-     }
-    },
-    {
-     "label": "Note it and carry on",
-     "outcome": "The circled number stays in a folder. It comes up again, later, with more urgency attached.",
-     "disp": {
-      "risk": 1
-     }
-    }
-   ],
-   "onwardMoves": [
-    "A mid career health scare is usually a warning rather than a verdict.",
-    "Two changed habits move most of the numbers a screening measures."
-   ]
-  },
-  {
-   "id": "cb_someone_matters",
-   "type": "encounter",
-   "minAge": 18,
-   "maxAge": 26,
-   "title": "Someone matters",
-   "body": "It starts as studying together and stops being that. Suddenly there is a person whose day you want to know about.",
-   "responses": [
-    {
-     "label": "Make room for it",
-     "outcome": "Time gets rearranged around a person instead of a timetable. The work holds, mostly, and the year is better.",
-     "gain": {
-      "network": 2
-     },
-     "disp": {
-      "optimism": 1
-     }
-    },
-    {
-     "label": "Keep the plan and the person",
-     "outcome": "Honest scheduling, said out loud. It is unromantic and it is the reason it lasts.",
-     "gain": {
-      "network": 1,
-      "skills": 1
-     },
-     "disp": {
-      "persistence": 1
-     }
-    },
-    {
-     "label": "Let it wait for a better year",
-     "outcome": "There is never a better year. Something quietly closes that would not have cost what you feared.",
-     "disp": {
-      "persistence": 1
-     }
-    }
-   ]
-  },
-  {
-   "id": "sc_it_ends",
-   "type": "setback",
-   "minAge": 19,
-   "maxAge": 30,
-   "title": "It ends",
-   "body": "Two years, and then a conversation in a stairwell. The routines that were shared are all still there, and now they are yours alone.",
-   "responses": [
-    {
-     "label": "Tell two people the truth",
-     "outcome": "Not the edited version. Two friends turn up properly, and the month is survivable.",
-     "gain": {
-      "network": 2
-     },
-     "disp": {
-      "optimism": 1
-     },
-     "sets": "asked_help"
-    },
-    {
-     "label": "Put it into the work",
-     "outcome": "A stretch of unreasonable focus. The output is real and so is the thing being avoided.",
+     "label": "Put the six weeks into a subject",
+     "outcome": "The paper you were letting slide gets six clear weeks. The level conversation in June goes differently.",
      "gain": {
       "skills": 2
      },
      "disp": {
       "persistence": 1
-     }
-    },
-    {
-     "label": "Change one routine on purpose",
-     "outcome": "A new gym, a new route, a new Thursday. Small architecture, and it holds the weight.",
-     "gain": {
-      "skills": 1
      },
-     "disp": {
-      "flexibility": 1
-     }
+     "sets": "asked_up"
     }
    ],
    "onwardMoves": [
-    "Telling two people the unedited version is the whole intervention.",
-    "Grief for a relationship runs on its own timetable and does not take instruction."
-   ]
-  },
-  {
-   "id": "cb_the_old_one",
-   "type": "encounter",
-   "minAge": 16,
-   "maxAge": 34,
-   "title": "Ah Ma needs somebody",
-   "body": "The hospital discharge comes with a list of appointments and nobody obvious to take her. The family conversation circles for a week.",
-   "responses": [
-    {
-     "label": "Take the Tuesday appointments",
-     "outcome": "Tuesdays go to a clinic waiting room. She talks about 1968, and you learn things nobody wrote down.",
-     "gain": {
-      "network": 2
-     },
-     "disp": {
-      "persistence": 1
-     },
-     "sets": "asked_family"
-    },
-    {
-     "label": "Organise the roster instead",
-     "outcome": "A shared calendar, four names, one printed list on the fridge. The load stops landing on one person.",
-     "gain": {
-      "skills": 2,
-      "network": 1
-     },
-     "disp": {
-      "persistence": 1
-     }
-    },
-    {
-     "label": "Send money and stay busy",
-     "outcome": "It is a real contribution. It is also the version you think about later, more than once.",
-     "gain": {
-      "skills": 1
-     }
-    }
+    "A referee describes two seasons of work, not the six weeks you missed.",
+    "Early Admissions reads organising, coaching and recording as evidence too."
    ]
   },
   {
@@ -3304,11 +3101,11 @@
    "minAge": 34,
    "maxAge": 50,
    "title": "The parent who needs you now",
-   "body": "The roles turn over quietly. Appointments, forms, medication times, and a person who used to organise all of this for you.",
+   "body": "Appointments, forms and medication times, all landing in the term you were meant to finish the part time diploma.",
    "responses": [
     {
-     "label": "Ask work for the flexibility",
-     "outcome": "A frank conversation, and two days a week move. The Tripartite guidelines give the request a place to stand.",
+     "label": "Ask work for the formal flexibility",
+     "outcome": "A frank conversation and two days move. The tripartite guidelines give the request somewhere to stand.",
      "gain": {
       "network": 1,
       "skills": 1
@@ -3319,26 +3116,30 @@
      "sets": "asked_boss"
     },
     {
-     "label": "Split it with your siblings",
-     "outcome": "A hard conversation about fairness, then a roster. Resentment drops when the list is written down.",
+     "label": "Defer the modules, not the qualification",
+     "outcome": "Two modules pushed to next year, in writing, with the school. The diploma arrives twelve months later.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "flexibility": 1
+     },
+     "opens": "d_sflu"
+    },
+    {
+     "label": "Split the caring and keep the course",
+     "outcome": "A roster with four names on it. Resentment drops when the list is written down, and the term survives.",
      "gain": {
       "network": 2
      },
      "disp": {
       "persistence": 1
      }
-    },
-    {
-     "label": "Carry it alone for now",
-     "outcome": "It is manageable for eleven months. The twelfth is the one that teaches you to ask.",
-     "disp": {
-      "persistence": 2
-     }
     }
    ],
    "onwardMoves": [
     "Employers must consider formal flexible work requests under the tripartite guidelines.",
-    "Caregiving split four ways is sustainable. The same load carried alone is not."
+    "Deferring modules in writing keeps the qualification. Walking away quietly does not."
    ]
   },
   {
@@ -3481,8 +3282,8 @@
    "body": "Somebody else gets the title. They are competent, and the reasons given are vague enough to be about anything.",
    "responses": [
     {
-     "label": "Ask for the specifics",
-     "outcome": "An uncomfortable meeting that produces two concrete gaps. Both of them are fixable within a year.",
+     "label": "Ask for the two specific gaps",
+     "outcome": "An uncomfortable meeting that names them. Both turn out to be a course and a project away.",
      "gain": {
       "skills": 1
      },
@@ -3492,29 +3293,31 @@
      "sets": "asked_boss"
     },
     {
-     "label": "Build the visible thing",
-     "outcome": "One project with your name unmistakably on it. The next round is a much shorter conversation.",
+     "label": "Get the qualification they cited",
+     "outcome": "Part time, eight months, paid for out of the credit. The next round is a much shorter conversation.",
      "gain": {
-      "portfolio": 2
+      "skills": 2
      },
      "disp": {
-      "risk": 1
-     }
+      "persistence": 1
+     },
+     "opens": "d_sflu"
     },
     {
-     "label": "Look outside quietly",
-     "outcome": "Three conversations elsewhere. Two of them value what your own building had stopped noticing.",
+     "label": "Take the interviews elsewhere",
+     "outcome": "Three conversations outside. Two of them value the work your own building had stopped noticing.",
      "gain": {
       "network": 2
      },
      "disp": {
       "flexibility": 1
-     }
+     },
+     "opens": "d_people"
     }
    ],
    "onwardMoves": [
     "Vague feedback becomes concrete the moment somebody is asked for examples.",
-    "Being passed over twice in the same place is information about the place."
+    "A qualification answers the stated reason and removes it from next year's conversation."
    ]
   },
   {
@@ -3849,7 +3652,7 @@
     },
     {
      "label": "Get the conversion programme",
-     "outcome": "An employer in a growing field takes you on and trains you. The pay dips for a year.",
+     "outcome": "A growing field takes you on and trains you afterwards. The pay dips for a year.",
      "gain": {
       "skills": 2
      },
@@ -3957,48 +3760,6 @@
    "onwardMoves": [
     "A failed venture is the most concentrated business education available.",
     "Most durable small businesses were rebuilt at least once."
-   ]
-  },
-  {
-   "id": "sc_wrong_in_public",
-   "type": "setback",
-   "minAge": 26,
-   "maxAge": 46,
-   "title": "Wrong, in front of everyone",
-   "body": "You argued it confidently in a room of thirty people, and the data arrives on Thursday showing you were plainly mistaken.",
-   "responses": [
-    {
-     "label": "Correct it yourself, first",
-     "outcome": "A short message to the same room. Reputation goes up, which is not what anybody expects.",
-     "gain": {
-      "network": 2
-     },
-     "disp": {
-      "optimism": 1,
-      "flexibility": 1
-     }
-    },
-    {
-     "label": "Work out how you got there",
-     "outcome": "The reasoning error, not the wrong answer. It stops a whole class of future mistakes.",
-     "gain": {
-      "skills": 2
-     },
-     "disp": {
-      "curiosity": 1
-     }
-    },
-    {
-     "label": "Let it fade",
-     "outcome": "Nobody mentions it again. A small carefulness enters your speaking that never quite leaves.",
-     "disp": {
-      "persistence": 1
-     }
-    }
-   ],
-   "onwardMoves": [
-    "Correcting yourself publicly is one of the fastest ways to build trust.",
-    "The reasoning error matters more than the wrong conclusion it produced."
    ]
   },
   {
