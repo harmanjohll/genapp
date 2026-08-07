@@ -187,8 +187,27 @@ const AUD={
   cov:[['STEM',11,32,6,0,0],['Language Arts',21,13,24,9,3],['Humanities & Social Science',10,9,6,10,0],
     ['Global & Civic Engagement',0,2,13,2,0],['Character, Leadership, Service',4,30,15,7,3],
     ['Sports, Health & Outdoor',6,9,12,7,5],['Aesthetics & Performing Arts',2,1,0,0,0],
-    ['Education & Career Guidance',1,5,2,6,4],['Uniformed Groups / CCA',5,4,2,0,0]]
+    ['Education & Career Guidance',1,5,2,6,4],['Uniformed Groups / CCA',5,4,2,0,0],
+
+  // --- second pass on the workbook's Data sheet, Wed/Thu rows only ---
+  ],
+  inBand:673, inBandStudent:530, inBandStaff:143, inBandEnrich:337, inBandNonEnrich:193,
+  // what the band is used for when it is NOT student facing
+  staffUse:[['HBL Day',21],['Department PD',13],['Committee Meeting',12],['Level Meeting',11],
+    ['Staff Meeting',9],['Staff Learning Day',7],['Annual Awards Day Committee',6],
+    ['School Timetable Arrangement',5],['SEN &amp; HL Briefing for FTs',4],['SMC Meeting',3],['Protected Leave',3]],
+  // student-facing in-band enrichment, by level
+  bandLevel:{'Sec 1':51,'Sec 2':89,'Sec 3':58,'Sec 4':29,'Sec 5':11},
+  // department ownership of student-facing in-band enrichment
+  deptTag:[['No department tag at all',255],['CCE',18],['Mathematics',16],['English',15],
+    ['PE',10],['Humanities',11],['English Language &amp; Literature',6]],
+  bandTermYear:[['2024 T1',133],['2024 T2',87],['2024 T3',89],['2024 T4',45],
+    ['2025 T1',117],['2025 T2',95],['2025 T3',66],['2025 T4',41]]
 };
+
+/* Real projected roll for next year, supplied by the school. Sec 5 is a single
+   small cohort. Class counts are 7 a level except Sec 3, which has 8. */
+const ROLL={p1:265,p2:355,p3:305,p4:265,p5:20, c1:7,c2:7,c3:8,c4:7};
 
 const HOUSES=[
   {k:'hood',n:'Hood',c:'#C8102E',col:'Red',colv:1,dis:'Going first',dom:'Service, Leadership & Community'},
@@ -263,11 +282,13 @@ const ACTS=[
 /* ============================================================ STATE */
 const DEF={
   tab:'case', pres:0,
-  cohort:200, classes:8, levels:4, houses:5, arch:'class',
+  p1:ROLL.p1,p2:ROLL.p2,p3:ROLL.p3,p4:ROLL.p4,p5:ROLL.p5,
+  c1:ROLL.c1,c2:ROLL.c2,c3:ROLL.c3,c4:ROLL.c4,
+  levels:4, houses:5, arch:'class',
   cycles:3, sessions:10, protect:80, hours:3,
-  adults:16, cluster:20, skew:.8, twoTutor:0,
-  pursue:15, takeup:60, mentorLoad:8, houseOwns:0,
-  teachers:70, facilRate:60, nonTeach:0, tutors:6,
+  cluster:25, skew:.8,
+  teachers:90, duty:10, adultRun:2, superRatio:5, leadersPer:2,
+  pursue:15, takeup:60, mentorLoad:8, houseOwns:0, tutors:6,
   cup:'percap', showScope:'house', showcases:3,
   strat:'full',
   acts:ACTS.reduce((o,a)=>(o[a.id]=1,o),{})
@@ -278,36 +299,67 @@ let SCEN=[null,null,null];
 /* ============================================================ MODEL */
 function model(){
   const M={};
-  M.N = S.cohort*S.levels;
+  /* --- cohort, level by level --- */
+  M.levelsArr=[{n:'Sec 1',pop:S.p1,cls:S.c1},{n:'Sec 2',pop:S.p2,cls:S.c2},
+               {n:'Sec 3',pop:S.p3,cls:S.c3},{n:'Sec 4',pop:S.p4,cls:S.c4}];
+  if(S.levels===5) M.levelsArr.push({n:'Sec 5',pop:S.p5,cls:1});
+  M.levelsArr.forEach(L=>L.size=L.cls>0?L.pop/L.cls:0);
+  M.N = M.levelsArr.reduce((s,L)=>s+L.pop,0);
   M.houseSize = M.N/S.houses;
-  M.classSize = S.cohort/S.classes;
-  M.classesTotal = S.classes*S.levels;
+  M.classesTotal = M.levelsArr.reduce((s,L)=>s+L.cls,0);
+  M.classSize = M.classesTotal>0 ? M.N/M.classesTotal : 0;
+  M.bigClass = Math.max(...M.levelsArr.map(L=>L.size));
+  M.overCap = M.levelsArr.filter(L=>L.size>40);
 
-  /* --- class nesting --- */
-  const q=Math.floor(S.classes/S.houses), rem=S.classes%S.houses;
-  M.q=q; M.rem=rem;
-  M.nestClean = rem===0;
-  // at a single level, rem houses hold q+1 classes
-  M.levelMax = (rem>0? q+1 : q)*M.classSize;
-  M.levelMin = q*M.classSize;
-  M.levelGap = M.levelMin>0 ? (M.levelMax-M.levelMin)/M.levelMin : (rem>0?1:0);
-  // across all levels, extras rotate
-  const extras = rem*S.levels;
-  const baseEach = Math.floor(extras/S.houses), extraHouses = extras%S.houses;
-  M.houseClassMax = q*S.levels + baseEach + (extraHouses>0?1:0);
-  M.houseClassMin = q*S.levels + baseEach;
-  M.totalGap = M.houseClassMin>0 ? (M.houseClassMax-M.houseClassMin)/M.houseClassMin : 0;
-  if(S.arch!=='class'){ M.levelGap=0; M.totalGap=0; M.nestClean=true; }
+  /* --- class nesting, computed per level from the real class counts --- */
+  M.perLevel = M.levelsArr.map(L=>{
+    const q=Math.floor(L.cls/S.houses), r=L.cls%S.houses;
+    const big=(r>0?q+1:q)*L.size, small=q*L.size;
+    return {...L,q,r,big,small,gap: small>0 ? (big-small)/small : (r>0?1:0)};
+  });
+  M.levelGap = Math.max(0,...M.perLevel.map(L=>L.gap));
+  M.nestClean = M.perLevel.every(L=>L.r===0);
+  M.worstLevel = M.perLevel.find(L=>L.gap===M.levelGap) || M.perLevel[0];
+
+  /* Assign whole form classes to houses so total headcount is as even as
+     possible. Longest-processing-time greedy: repeatedly give the next largest
+     class to whichever house is currently smallest. This is what a registration
+     officer would do by hand, and it is within a class of optimal. */
+  const pool=[];
+  M.levelsArr.forEach(L=>{ for(let i=0;i<L.cls;i++) pool.push({lvl:L.n,size:L.size}); });
+  pool.sort((a,b)=>b.size-a.size);
+  M.houseLoad = Array.from({length:S.houses},()=>({n:0,cls:0,byLevel:{}}));
+  pool.forEach(c=>{
+    const h=M.houseLoad.reduce((a,b)=>a.n<=b.n?a:b);
+    h.n+=c.size; h.cls++; h.byLevel[c.lvl]=(h.byLevel[c.lvl]||0)+1;
+  });
+  const loads=M.houseLoad.map(h=>h.n);
+  M.hMax=Math.max(...loads); M.hMin=Math.min(...loads);
+  M.totalGap = M.hMin>0 ? (M.hMax-M.hMin)/M.hMin : 0;
+  if(S.arch!=='class'){ M.levelGap=0; M.totalGap=0; M.nestClean=true;
+    M.houseLoad=M.houseLoad.map(()=>({n:M.houseSize,cls:M.classesTotal/S.houses,byLevel:{}})); }
 
   /* --- band capacity and choice --- */
   M.bandDays = S.cycles*S.sessions;                  // per track (Wed), per year
   M.actualDays = M.bandDays*S.protect/100;
-  M.clusters = Math.floor(S.adults/(S.twoTutor?2:1));
+  /* Supply. Only a handful of teachers are on duty on a band day, so groups are
+     mostly student led with a teacher supervising several at once, present in
+     the building rather than in the room. */
+  M.adultRun = Math.min(S.adultRun, S.duty);
+  M.supervisors = Math.max(0, S.duty - M.adultRun);
+  M.supervised = M.supervisors*S.superRatio;
+  M.clusters = M.adultRun + M.supervised;
   M.capacity = M.clusters*S.cluster;
   M.coverage = M.N>0 ? M.capacity/M.N : 0;
   M.clustersNeeded = Math.ceil(M.N/S.cluster);
-  M.adultsNeeded = M.clustersNeeded*(S.twoTutor?2:1);
-  M.adultGap = M.adultsNeeded - S.adults;
+  M.clusterGap = M.clustersNeeded - M.clusters;
+  // student leaders: how many, and what share of the upper secondary cohort
+  M.leadersNeeded = M.supervised*S.leadersPer;
+  M.leaderPool = S.p3+S.p4+(S.levels===5?S.p5:0);
+  M.leaderRate = M.leaderPool>0 ? M.leadersNeeded/M.leaderPool : 0;
+  // teachers needed if every group had an adult in the room, for contrast
+  M.adultsIfAdultLed = M.clustersNeeded;
+  M.dutyPerStudent = S.duty>0 ? M.N/S.duty : 0;
   const AL = allocate(M.clusters, S.cluster, M.N, S.skew);
   M.fcs = AL.fc; M.top2 = AL.top2; M.placed = AL.placed;
   M.topShare = AL.topShare;
@@ -330,14 +382,17 @@ function model(){
   M.fragLoss = S.houseOwns ? 1-1/S.houses : 0;
 
   /* --- adult supply --- */
-  M.supply = Math.round(S.teachers*S.facilRate/100) + S.nonTeach;
-  M.demandWed = M.clustersNeeded*(S.twoTutor?2:1);
-  M.demandThu = M.thuClusters*(S.twoTutor?2:1);
-  M.supplyGapWed = M.demandWed - M.supply;
-  M.supplyGapThu = M.demandThu - M.supply;
+  M.supply = S.duty;
+  M.demandWed = Math.ceil(M.clustersNeeded/Math.max(1,S.superRatio));   // supervisors needed
+  M.demandThu = Math.ceil(M.thuClusters/Math.max(1,S.superRatio));
+  M.supplyGapWed = M.demandWed - S.duty;
+  M.supplyGapThu = M.demandThu - S.duty;
   M.staffPerHouse = S.teachers/S.houses;
+  M.dutyPerHouse = S.duty/S.houses;
   M.tutorRatio = M.houseSize/Math.max(1,S.tutors);
-  M.teacherHrs = M.actualDays*S.hours*2; // a teacher running both bands
+  M.teacherHrs = M.actualDays*S.hours*2;
+  // how often a given teacher is on band duty across the year
+  M.dutyShare = S.teachers>0 ? (S.duty*M.actualDays*2)/S.teachers : 0;
 
   /* --- activities --- */
   const on = ACTS.filter(a=>S.acts[a.id]);
@@ -409,13 +464,17 @@ function model(){
 
   /* --- verdict --- */
   M.issues=[];
-  if(S.arch==='class' && rem!==0)
+  if(S.arch==='class' && !M.nestClean)
     M.issues.push([M.totalGap>0.25?'b':'w',
-      `${S.classes} form classes per level does not divide by ${S.houses}. At any single level, ${rem} house${rem>1?'s':''} hold${rem>1?'':'s'} a whole class more than the others, a ${pct(M.levelGap)} gap &mdash; and a single level is exactly where a carnival is contested. Across all ${S.levels} levels the extra classes rotate and the gap falls to ${pct(M.totalGap)}. Ten classes divides cleanly; eight does not.`]);
+      `No level divides cleanly into ${S.houses} houses. ${M.worstLevel.n} is the worst: ${M.worstLevel.cls} classes means ${M.worstLevel.r} house${M.worstLevel.r>1?'s':''} hold${M.worstLevel.r>1?'':'s'} ${M.worstLevel.q+1} classes and the rest hold ${M.worstLevel.q}, so at that level one house fields ${Math.round(M.worstLevel.big)} Beattyians against another's ${Math.round(M.worstLevel.small)}. Balancing whole classes across all ${S.levels} levels brings the school-wide spread down to ${pct(M.totalGap)}, but a carnival is contested at a level, not across the school.`]);
+  if(M.overCap.length)
+    M.issues.push(['w',`${M.overCap.map(L=>L.n).join(' and ')} would run at ${M.overCap.map(L=>Math.round(L.size)).join(' and ')} per form class. That is above the usual 40 cap, so either the class count for that level is higher than entered or the projection needs checking. It changes the nesting arithmetic either way.`]);
   if(M.coverage<1)
-    M.issues.push(['b',`Band capacity covers only ${pct(M.coverage)} of Beattyians. ${cm(Math.round(M.N-M.capacity))} have no place on a Wednesday. You need ${M.adultsNeeded} adults and have ${S.adults}.`]);
+    M.issues.push(['b',`Band capacity covers only ${pct(M.coverage)} of Beattyians. ${cm(Math.round(M.N-M.capacity))} have nowhere to go on a Wednesday. You are running ${M.clusters} groups and need ${M.clustersNeeded}.`]);
   else if(M.top2<.8)
-    M.issues.push(['w',`Only ${pct(M.top2)} get their first or second choice. Below 80 percent the catalogue is too narrow; add clusters, not seats.`]);
+    M.issues.push(['w',`Only ${pct(M.top2)} get their first or second choice. Below 80 percent the catalogue is too narrow; add groups, not seats.`]);
+  if(M.leaderRate>0.35)
+    M.issues.push(['w',`Running ${M.supervised} student-led groups needs ${Math.round(M.leadersNeeded)} student leaders, which is ${pct(M.leaderRate)} of Sec 3 and above. That is a large standing leadership corps to train and keep trained.`]);
   if(!M.gagneOk)
     M.issues.push(['w',`Cadence ${r1(M.perMonth)} sessions a month. Gagné dismisses provision at two or three a month as busywork. Below 3 you are running exposure, not talent development.`]);
   if(S.houseOwns)
@@ -548,36 +607,43 @@ function radar(items,size=210){
 
 /* ============================================================ RAIL */
 const RAIL=[
- {t:'Cohort and houses',f:[
-   ['cohort','Beattyians per level','range',120,320,10,'Level size. Total in the house system is this times the number of levels.'],
-   ['classes','Form classes per level','range',5,12,1,'The single most consequential unknown. It must divide by the number of houses for clean nesting.'],
-   ['levels','Levels in the house band','seg',[[4,'Sec 1–4'],[5,'Sec 1–5']],0,'Vertical mentoring wants Sec 5 in. The examination calendar argues it out.'],
-   ['houses','Number of houses','seg',[[4,'4'],[5,'5'],[6,'6']],0,'Beatty already has five. Four and six are shown to test the nesting arithmetic.'],
-   ['arch','Sorting architecture','sel',0,0,0,'How a Beattyian comes to belong to a house.']]},
+ {t:'The roll, level by level',f:[
+   ['p1','Sec 1 Beattyians','range',0,450,5,'Projection for next year: 265.'],
+   ['c1','Sec 1 form classes','range',3,16,1,'Projection: 7.'],
+   ['p2','Sec 2 Beattyians','range',0,450,5,'Projection: 355. The bulge cohort.'],
+   ['c2','Sec 2 form classes','range',3,16,1,'Projection: 7, which puts 51 in a class. Nine would bring it under 40.'],
+   ['p3','Sec 3 Beattyians','range',0,450,5,'Projection: 305.'],
+   ['c3','Sec 3 form classes','range',3,16,1,'Projection: 8, the only level with eight.'],
+   ['p4','Sec 4 Beattyians','range',0,450,5,'Projection: 265.'],
+   ['c4','Sec 4 form classes','range',3,16,1,'Projection: 7.'],
+   ['p5','Sec 5 Beattyians','range',0,120,5,'Projection: 20. Counted only when Sec 5 is in the band.']]},
+ {t:'Houses',f:[
+   ['levels','Levels in the house band','seg',[[4,'Sec 1–4'],[5,'Sec 1–5']],'Vertical mentoring wants Sec 5 in. The examination calendar argues it out.'],
+   ['houses','Number of houses','seg',[[4,'4'],[5,'5'],[6,'6'],[7,'7']],'Beatty has five. The others are here so you can see what the nesting arithmetic would do.'],
+   ['arch','Sorting architecture','sel',0,0,0,'How a Beattyian comes to belong to a house.'],
+   ['tutors','House tutors per house','range',1,30,1,'Vertical tutoring runs small mixed-age groups, ideally two tutors each.']]},
  {t:'The band',f:[
-   ['cycles','Cycles a year','seg',[[2,'2'],[3,'3'],[4,'4']],0,'Three cycles releases Term 4 to the examination calendar by design.'],
-   ['sessions','Sessions per cycle','range',6,14,1,'Renzulli’s published floor is 8.'],
-   ['protect','Band days actually protected','range',40,100,5,'Orals took 41 entries and ICT training 31 across two years.'],
-   ['hours','Hours per band day','range',1,4,.5,'The card is currently a 3pm to 6pm block.']]},
- {t:'Supply and choice',f:[
-   ['adults','Facilitating adults per band day','range',4,48,1,'Renzulli recruits teachers, support staff, parents and community. Content expertise is explicitly not required.'],
-   ['cluster','Cluster size','range',10,30,1,'Renzulli: 5 to 15, up to 25 with a second adult.'],
-   ['skew','Demand concentration','range',.2,1.6,.1,'How unevenly Beattyians want the same clusters. Higher means everyone chases the same few.'],
-   ['twoTutor','Two adults per cluster','seg',[[0,'One'],[1,'Two']],0,'Doubles quality and halves the number of clusters you can run.']]},
+   ['cycles','Cycles a year','seg',[[1,'1'],[2,'2'],[3,'3'],[4,'4']],'Three cycles releases Term 4 to the examination calendar by design.'],
+   ['sessions','Sessions per cycle','range',2,16,1,'Renzulli’s published floor is 8. Below that you are running tasters.'],
+   ['protect','Band days actually protected','range',20,100,5,'Orals took 41 entries, ICT training 31, and staff business 143 across two years.'],
+   ['hours','Hours per band day','range',.5,4,.5,'The card is currently a 3pm to 6pm block.']]},
+ {t:'Supply: who is in the room',f:[
+   ['duty','Teachers on duty per band day','range',0,60,1,'The school says 10. Everything else on this page bends around this number.'],
+   ['adultRun','Of those, running a group themselves','range',0,30,1,'The rest supervise student-led groups from outside the room.'],
+   ['superRatio','Groups supervised per teacher','range',1,15,1,'How many student-led groups one roaming teacher can hold. This is the multiplier that makes the arithmetic close.'],
+   ['leadersPer','Student leaders per group','range',1,5,1,'Two is the usual pairing, so nobody leads alone.'],
+   ['cluster','Group size','range',5,45,1,'Renzulli: 5 to 15, up to 25 with a second adult. Larger is possible when the group is student led and the activity is broad.'],
+   ['skew','Demand concentration','range',.1,2,.1,'How unevenly Beattyians want the same groups. Higher means everyone chases the same few.'],
+   ['teachers','Teaching establishment','range',20,160,1,'Total teaching staff, used for rotation and house team sizing.']]},
  {t:'Talent development',f:[
-   ['takeup','Thursday elective take-up','range',20,100,5,'Share of Beattyians electing a pathway.'],
-   ['pursue','Pursue tier, percent','range',3,30,1,'Renzulli’s revolving talent pool is 15 to 20 percent.'],
-   ['mentorLoad','Students per Pursue mentor','range',3,16,1,'Type III needs a named mentor and a real external audience.'],
-   ['houseOwns','Houses own the pathways','seg',[[0,'No'],[1,'Yes']],0,'The single most destructive switch on this page. Watch the talent pool.']]},
- {t:'Teachers',f:[
-   ['teachers','Teaching staff','range',30,120,1,'Total teaching establishment.'],
-   ['facilRate','Percent who facilitate','range',20,100,5,'The one house system dissertation found 25 percent disengagement produced measurable disparities.'],
-   ['nonTeach','Non-teacher facilitators','range',0,45,1,'Support staff, parents, alumni, community partners.'],
-   ['tutors','House tutors per house','range',2,20,1,'Vertical tutoring runs small mixed-age groups, ideally two tutors each.']]},
+   ['takeup','Thursday elective take-up','range',0,100,5,'Share of Beattyians electing a pathway.'],
+   ['pursue','Pursue tier, percent','range',0,40,1,'Renzulli’s revolving talent pool is 15 to 20 percent.'],
+   ['mentorLoad','Students per Pursue mentor','range',2,30,1,'Type III needs a named mentor and a real external audience.'],
+   ['houseOwns','Houses own the pathways','seg',[[0,'No'],[1,'Yes']],'The single most destructive switch on this page. Watch the talent pool.']]},
  {t:'The Cup',f:[
    ['cup','Scoring model','sel',0,0,0,'How house points accumulate.'],
-   ['showScope','Showcase audience','seg',[['house','House'],['school','Whole school']],0,'Who watches a Pursue product.'],
-   ['showcases','Showcases a year','range',0,8,1,'Renzulli requires an audience who voluntarily attend.']]}
+   ['showScope','Showcase audience','seg',[['house','House'],['school','Whole school']],'Who watches a Pursue product.'],
+   ['showcases','Showcases a year','range',0,12,1,'Renzulli requires an audience who voluntarily attend.']]}
 ];
 const SELOPTS={
   arch:Object.entries(ARCH).map(([k,v])=>[k,v.n]),
@@ -588,8 +654,9 @@ function buildRail(){
   let h='';
   h+=`<div class="grp"><h5>Presets</h5><div class="bd">
    <div class="seg" style="flex-wrap:wrap">
-    <button data-p="today">Today</button><button data-p="mvp">Minimum viable</button>
-    <button data-p="rep">Report</button><button data-p="full">Full ambition</button></div>
+    <button data-p="today">Today</button><button data-p="adultled">All adult-led</button>
+    <button data-p="studentled">Student-led</button><button data-p="full">Full ambition</button></div>
+   <div class="hint" style="margin-top:6px">Every figure below is yours to move. The roll is next year's projection, not a constraint &mdash; Reset restores it.</div>
    <div class="btnrow"><button class="act ghost" id="reset">Reset</button>
     <button class="act ghost" id="save0">Save A</button><button class="act ghost" id="save1">Save B</button></div>
    <div class="hint" id="scenNote"></div></div></div>`;
@@ -647,25 +714,31 @@ function railLabel(k){
   if(k==='arch') return ARCH[v].n.split(' ')[0];
   if(k==='cup') return {absolute:'Absolute',percap:'Per capita',participation:'Participation'}[v];
   if(k==='showScope') return v==='house'?'House':'School';
-  if(k==='houseOwns'||k==='twoTutor') return v?'Yes':'No';
+  if(k==='houseOwns') return v?'Yes':'No';
   if(k==='levels') return 'Sec 1–'+v;
-  if(k==='protect'||k==='facilRate'||k==='takeup'||k==='pursue') return v+'%';
+  if(k==='protect'||k==='takeup'||k==='pursue') return v+'%';
   if(k==='skew') return r1(v);
   if(k==='hours') return v+'h';
+  // show implied class size next to a level's class count
+  if(/^c[1-4]$/.test(k)){ const p=S['p'+k[1]]; return v>0? v+' · '+Math.round(p/v)+'/cls' : String(v); }
   return String(v);
 }
 /* Presets always start from the defaults, so clicking one is deterministic
    however much the rail has been moved beforehand. */
 function applyPreset(p){
   const P={
-    today:{cycles:2,sessions:10,protect:52,adults:3,cluster:20,pursue:6,takeup:20,
-           levels:4,houses:5,classes:8,facilRate:25,nonTeach:0,showcases:0,cup:'absolute'},
-    mvp:{cycles:2,sessions:10,protect:75,adults:37,cluster:22,pursue:8,takeup:35,levels:4,
-         houses:5,classes:8,facilRate:50,nonTeach:6,tutors:6,showcases:1,cup:'percap'},
-    rep:{cycles:3,sessions:10,protect:80,adults:32,cluster:25,pursue:15,takeup:60,levels:4,
-         houses:5,classes:10,facilRate:60,nonTeach:10,tutors:8,showcases:3,cup:'percap'},
-    full:{cycles:3,sessions:10,protect:88,adults:46,cluster:22,pursue:20,takeup:75,levels:5,
-          houses:5,classes:10,facilRate:75,nonTeach:22,tutors:10,showcases:4,cup:'percap'}
+    // the band as it actually ran, on the real roll
+    today:{cycles:2,sessions:10,protect:52,duty:3,adultRun:3,superRatio:1,cluster:20,
+           pursue:6,takeup:20,levels:4,houses:5,tutors:4,showcases:0,cup:'absolute'},
+    // ten duty teachers, all in a room. The model the constraint rules out
+    adultled:{cycles:3,sessions:10,protect:80,duty:10,adultRun:10,superRatio:1,cluster:25,
+           pursue:15,takeup:60,levels:4,houses:5,tutors:6,showcases:3,cup:'percap'},
+    // ten duty teachers, student-led groups, teachers roaming. The viable one
+    studentled:{cycles:3,sessions:10,protect:80,duty:10,adultRun:2,superRatio:6,cluster:25,
+           pursue:15,takeup:60,levels:4,houses:5,tutors:8,showcases:3,cup:'percap'},
+    // everything asked for, Sec 5 included
+    full:{cycles:3,sessions:10,protect:88,duty:14,adultRun:2,superRatio:6,cluster:25,
+          pursue:20,takeup:75,levels:5,houses:5,tutors:10,showcases:4,cup:'percap'}
   }[p];
   const tab=S.tab;
   S=JSON.parse(JSON.stringify(DEF));
@@ -763,7 +836,7 @@ function tabArch(M){
   const keys=Object.keys(ARCH);
   const score=k=>{
     const A=ARCH[k], saved=S.arch;
-    const nest = k==='class' ? (S.classes%S.houses===0?100:Math.round(100*(1-M.levelGap))) : 100;
+    const nest = k==='class' ? Math.round(100*clamp(1-M.levelGap,0,1)) : 100;
     return {n:A.n,persist:Math.round(A.persist*100),cohesion:Math.round(A.cohesion*100),
       mix:Math.round(A.mix*100),nest,load:Math.round(A.load*100),prec:A.prec,d:A.d};
   };
@@ -773,12 +846,21 @@ function tabArch(M){
     <td class="n">${s.nest}</td><td class="n">${s.load}</td>
     <td style="font-size:.93em;color:var(--g4)">${s.prec}</td></tr>`;}).join('');
 
-  // house size bars under current nesting
-  const q=M.q, rem=M.rem;
+  // whole-school house sizes after balancing whole classes
   const hb=HOUSES.slice(0,S.houses).map((h,i)=>{
-    const cls = (i<rem? q+1 : q);
-    return [h.n, cls*M.classSize, h.c, Math.round(cls*M.classSize)+' at a level'];
+    const L=M.houseLoad[i];
+    return [h.n, L.n, h.c, Math.round(L.n)+'  ('+L.cls+' classes)'];
   });
+  // worst single level, house by house
+  const WL=M.worstLevel;
+  const wb=HOUSES.slice(0,S.houses).map((h,i)=>{
+    const cls=(i<WL.r? WL.q+1 : WL.q);
+    return [h.n, cls*WL.size, h.c, Math.round(cls*WL.size)];
+  });
+  const levelRows=M.perLevel.map(L=>`<tr><td><b>${L.n}</b></td><td class="n">${cm(L.pop)}</td>
+    <td class="n">${L.cls}</td><td class="n"${L.size>40?' style="color:var(--bad);font-weight:bold"':''}>${Math.round(L.size)}</td>
+    <td class="n">${L.r===0?'clean':L.r+' × '+(L.q+1)+', '+(S.houses-L.r)+' × '+L.q}</td>
+    <td class="n"${L.gap>0?' style="color:var(--bad)"':''}>${pct(L.gap)}</td></tr>`).join('');
 
   return `
 <header class="pg"><h1>Architecture</h1>
@@ -788,19 +870,31 @@ ${verdict(M)}
 
 <h2>The binding constraint nobody names <span class="tag mod">modelled</span></h2>
 <div class="metrics">
-${metric(S.classes+' ÷ '+S.houses, 'Form classes per level, divided by houses', M.nestClean?'Divides cleanly':`Remainder ${M.rem}`, M.nestClean?'ok':'bad')}
-${metric(M.nestClean?'0%':pct(M.levelGap),'Size gap between houses at one level',M.nestClean?'Every house fields the same':'One house fields a whole class more',M.nestClean?'ok':'bad')}
-${metric(cm(Math.round(M.houseSize)),'Beattyians per house','Across Sec 1 to '+S.levels,'')}
-${metric(cm(Math.round(M.classSize)),'Students per form class','Cohort '+cm(M.N)+' across '+S.levels+' levels','')}
+${metric(M.perLevel.map(L=>L.cls).join('·'), 'Form classes, Sec 1 upward', M.nestClean?'Every level divides by '+S.houses:'No level divides by '+S.houses, M.nestClean?'ok':'bad')}
+${metric(M.nestClean?'0%':pct(M.levelGap),'Worst size gap at a single level',M.nestClean?'Every house fields the same':M.worstLevel.n+': '+Math.round(M.worstLevel.big)+' against '+Math.round(M.worstLevel.small),M.nestClean?'ok':'bad')}
+${metric(pct(M.totalGap),'Spread once classes are balanced','Largest house '+cm(Math.round(M.hMax))+', smallest '+cm(Math.round(M.hMin)),M.totalGap<.1?'ok':'warn')}
+${metric(cm(Math.round(M.houseSize)),'Beattyians per house','Across Sec 1 to '+S.levels+', total '+cm(M.N),'')}
+${metric(Math.round(M.bigClass),'Largest form class',M.overCap.length?M.overCap.map(L=>L.n).join(', ')+' above a 40 cap':'All levels within a 40 cap',M.overCap.length?'warn':'ok')}
 ${metric(M.mixScore,'Social mixing index','How many new people a house puts you with',M.mixScore>70?'ok':'warn')}
 </div>
 
+<h2>Level by level, on the real roll <span class="tag mea">projection</span></h2>
+<div class="scroll"><table><thead><tr><th>Level</th><th class="n">Beattyians</th><th class="n">Form classes</th>
+<th class="n">Per class</th><th class="n">Split across ${S.houses} houses</th><th class="n">Gap at that level</th></tr></thead>
+<tbody>${levelRows}</tbody></table></div>
+${M.overCap.length?`<p class="note" style="border-left-color:var(--red)"><b>Check this before anything else.</b> ${M.overCap.map(L=>L.n+' at '+Math.round(L.size)+' per class').join(', ')}. Singapore secondary form classes do not usually run above 40. Either that level has more classes than entered, or the projection needs revisiting. Move the class slider and watch the nesting change &mdash; ${S.p2>0&&S.c2>0?'Sec 2 at 9 classes would be '+Math.round(S.p2/9)+' per class':'the arithmetic shifts either way'}.</p>`:''}
+
 <div class="grid2">
-<div><h3>House size at a single level</h3>
-<div class="chart">${hbar(hb,{w:520,lw:88,rh:23})}</div>
+<div><h3>The worst single level: ${WL.n}</h3>
+<div class="chart">${hbar(wb,{w:500,lw:88,rh:23})}</div>
 <p class="note">${M.nestClean
-  ? 'Clean nesting. Every house holds the same number of whole form classes at every level, so a Sec 2 carnival is a fair fight before anyone turns up.'
-  : `With ${S.classes} classes and ${S.houses} houses, ${M.rem} house${M.rem>1?'s':''} hold${M.rem>1?'':'s'} an extra class at each level. Rotating the extra across levels evens it out over four years but never at any single level, which is exactly where inter-house competition happens. Ten classes divides cleanly. Eight does not.`}</p></div>
+  ? 'Clean nesting. Every house holds the same number of whole form classes at every level, so a carnival is a fair fight before anyone turns up.'
+  : `${WL.cls} classes across ${S.houses} houses means ${WL.r} house${WL.r>1?'s':''} hold${WL.r>1?'':'s'} ${WL.q+1} and ${S.houses-WL.r} hold ${WL.q}. At ${WL.n} that is ${Math.round(WL.big)} Beattyians against ${Math.round(WL.small)} &mdash; a ${pct(WL.gap)} gap, in the unit where inter-house competition actually happens. Seven classes cannot divide by five at all. Ten can; so can five, or fifteen.`}</p></div>
+
+<div><h3>After balancing whole classes across all levels</h3>
+<div class="chart">${hbar(hb,{w:500,lw:88,rh:23})}</div>
+<p class="note">Assigning the largest remaining class to the smallest house, repeatedly, brings the school-wide spread to <b>${pct(M.totalGap)}</b> &mdash; ${cm(Math.round(M.hMax))} against ${cm(Math.round(M.hMin))}. That is the number to quote for house <i>size</i> fairness, and it is manageable. It is not the number to quote for <i>competition</i> fairness, because a Sec 2 carnival is contested at Sec 2.</p>
+<p class="note">This is the practical resolution: <b>balance headcount across the whole school, then score the Cup per capita</b> so the residual spread cannot decide anything.</p></div>
 
 <div><h3>Where the current architecture sits</h3>
 <div class="chart" style="display:flex;justify-content:center">${radar([
@@ -854,11 +948,12 @@ ${verdict(M)}
 
 <h2>Capacity and choice <span class="tag mod">modelled</span></h2>
 <div class="metrics">
-${metric(M.clusters,'Clusters running in parallel','From '+S.adults+' adults'+(S.twoTutor?' at two per cluster':''),'')}
+${metric(M.clusters,'Groups running in parallel',M.adultRun+' adult-led, '+M.supervised+' student-led under '+M.supervisors+' roaming teacher'+(M.supervisors===1?'':'s'),'')}
 ${metric(pct(M.coverage),'Seats against Beattyians',M.coverage>=1?'Everyone can be placed':cm(Math.round(M.N-M.capacity))+' with nowhere to go',M.coverage>=1?'ok':'bad')}
 ${metric(pct(M.fcs),'Get their first choice','Second choices are normal and fine','')}
 ${metric(pct(M.top2),'Get first or second choice',M.top2>=.8?'Above the 80 percent floor':'Catalogue too narrow',M.top2>=.8?'ok':'warn')}
-${metric(M.adultsNeeded,'Adults needed for full coverage',M.adultGap>0?'Short by '+M.adultGap:'Supply is sufficient',M.adultGap>0?'bad':'ok')}
+${metric(M.clustersNeeded,'Groups needed to seat everyone',M.clusterGap>0?'Short by '+M.clusterGap:'Capacity closes',M.clusterGap>0?'bad':'ok')}
+${metric(Math.round(M.leadersNeeded),'Student leaders needed',pct(M.leaderRate)+' of Sec 3 and above',M.leaderRate<=.35?'ok':'warn')}
 ${metric(r1(M.perMonth),'Sessions per month',M.gagneOk?'Clears the Gagné line':'Below 3, this is exposure not development',M.gagneOk?'ok':'warn')}
 ${metric(Math.round(M.contactHrs),'Contact hours a year','Per Beattyian, one band track','')}
 </div>
@@ -977,10 +1072,9 @@ function tabActs(M){
   });
   const domRows=DREAM.map(([k,n])=>[n,M.dom[k],M.dom[k]===0?'#EC3237':'#000C53',M.dom[k]]);
 
-  // Cup fairness simulation
-  const q=M.q, rem=M.rem;
-  const sizes=HOUSES.slice(0,S.houses).map((h,i)=>(i<rem?q+1:q)*M.classSize*S.levels/S.levels);
-  const mean=sizes.reduce((a,b)=>a+b,0)/sizes.length;
+  // Cup fairness simulation, on the real balanced house sizes
+  const sizes=M.houseLoad.map(h=>h.n);
+  const mean=sizes.reduce((a,b)=>a+b,0)/Math.max(1,sizes.length);
   const cupRows=HOUSES.slice(0,S.houses).map((h,i)=>{
     const sz=sizes[i];
     const raw=sz*100/mean;
@@ -1043,42 +1137,56 @@ ${metric(pct(M.domBal),'DREAM balance','Smallest domain against largest',M.domBa
 /* ---------------------------------------------------------- 6. TEACHERS */
 function tabStaff(M){
   const supplyRows=[
-    ['Wednesday demand',M.demandWed,M.supplyGapWed>0?'#EC3237':'#1a7f4b',M.demandWed],
-    ['Thursday demand',M.demandThu,M.supplyGapThu>0?'#EC3237':'#1a7f4b',M.demandThu],
-    ['Adult supply',M.supply,'#000C53',M.supply],
-    ['Teaching staff facilitating',Math.round(S.teachers*S.facilRate/100),'#1F5FA8',Math.round(S.teachers*S.facilRate/100)],
-    ['Non-teacher facilitators',S.nonTeach,'#FFE200',S.nonTeach]
+    ['Groups needed to seat everyone',M.clustersNeeded,'#000C53',M.clustersNeeded],
+    ['Groups you can actually run',M.clusters,M.clusterGap>0?'#EC3237':'#1a7f4b',M.clusters],
+    ['If every group had a teacher in it',M.adultsIfAdultLed,'#EC3237',M.adultsIfAdultLed+' teachers'],
+    ['Teachers on duty',S.duty,'#FFE200',S.duty],
+    ['Student leaders required',Math.round(M.leadersNeeded),'#1F5FA8',Math.round(M.leadersNeeded)]
   ];
   return `
 <header class="pg"><h1>Organising teachers</h1>
-<p class="lede">Facilitator supply is the binding constraint on the entire design. Not the pedagogy, not the house names, not the Cup. If this number does not close, everything else on this dashboard is decoration.</p></header>
+<p class="lede">Ten teachers on duty against ${cm(M.N)} Beattyians is ${Math.round(M.dutyPerStudent)} students per adult. That single ratio rules out the model every enrichment framework assumes, and it points at the one that actually works here.</p></header>
 
 ${verdict(M)}
 
-<h2>Supply against demand <span class="tag mod">modelled</span></h2>
+<h2>The constraint, stated plainly <span class="tag mod">modelled</span></h2>
 <div class="metrics">
-${metric(M.supply,'Adults available','From '+S.teachers+' staff at '+S.facilRate+' percent, plus '+S.nonTeach+' non-teachers','')}
-${metric(M.demandWed,'Wednesday needs',M.supplyGapWed>0?'Short by '+M.supplyGapWed:'Covered',M.supplyGapWed>0?'bad':'ok')}
-${metric(M.demandThu,'Thursday needs',M.supplyGapThu>0?'Short by '+M.supplyGapThu:'Covered',M.supplyGapThu>0?'bad':'ok')}
-${metric(r1(M.staffPerHouse),'Teaching staff per house','House team size','')}
+${metric(S.duty,'Teachers on duty per band day','Of a '+S.teachers+'-strong establishment','')}
+${metric(Math.round(M.dutyPerStudent),'Beattyians per duty teacher','This is the number that decides the design',M.dutyPerStudent>60?'bad':'ok')}
+${metric(M.adultsIfAdultLed,'Teachers needed if every group had one','Against '+S.duty+' available','bad')}
+${metric(M.clusters,'Groups you can actually run',M.adultRun+' adult-led plus '+M.supervised+' student-led',M.clusterGap>0?'warn':'ok')}
+${metric(Math.round(M.leadersNeeded),'Student leaders required',pct(M.leaderRate)+' of Sec 3 and above',M.leaderRate<=.35?'ok':'warn')}
 ${metric(Math.round(M.tutorRatio),'Beattyians per house tutor',M.tutorRatio<=25?'Small enough to know them':'Too large for a tutoring relationship',M.tutorRatio<=25?'ok':'warn')}
-${metric(Math.round(M.teacherHrs),'Hours a year','Per teacher running both bands','')}
 </div>
 
-<div class="chart">${hbar(supplyRows,{w:600,lw:216,rh:23})}</div>
+<div class="chart">${hbar(supplyRows,{w:620,lw:250,rh:23})}</div>
+
+<div class="verdict ${M.clusterGap>0?'bad':'ok'}"><h3>The pivot this forces, and why it is an improvement</h3>
+<ul>
+<li class="${M.clusterGap>0?'b':'g'}"><b>Adult-led is arithmetically dead.</b> Seating ${cm(M.N)} Beattyians in groups of ${S.cluster} needs ${M.clustersNeeded} rooms running at once. With ${S.duty} teachers on duty you can staff ${S.duty} of them. Every enrichment framework in the literature assumes an adult per group, and none of them survives contact with this ratio.</li>
+<li class="g"><b>Student-led with roaming supervision closes it.</b> ${M.supervisors} teacher${M.supervisors===1?'':'s'} supervising ${S.superRatio} groups each covers ${M.supervised} groups; add the ${M.adultRun} run directly and you reach ${M.clusters}. Teachers are in the building, circulating, not in the room. That is exactly what the school already described.</li>
+<li class="g"><b>The cost is a leadership corps, and the cost is the point.</b> ${Math.round(M.leadersNeeded)} student leaders is ${pct(M.leaderRate)} of Sec 3 and above. That is not overhead you are paying for the band &mdash; it is the single largest leadership development programme the school could run, and it is LEAPS Leadership credit for every one of them.</li>
+<li class="w"><b>What it demands instead of teacher hours is teacher preparation.</b> A student-led group that nobody trained is a free period. The training of ${Math.round(M.leadersNeeded)} leaders is the real staffing cost, and it falls in Term 4 and at the start of each cycle rather than every Wednesday.</li>
+</ul></div>
+
+<h2>The band is already the school's own meeting time <span class="tag mea">measured</span></h2>
+<p class="lede">This is the finding that explains the ten-teacher ceiling, and it is not in the written report. Of ${AUD.inBand} in-band records across two years, <b>${AUD.inBandStaff} are not student-facing at all</b>. Wednesday and Thursday afternoons are when Beatty does its own business.</p>
+<div class="chart scroll">${hbar(AUD.staffUse.map(r=>[r[0],r[1],'#EC3237',r[1]]),{w:600,lw:238,rh:20})}</div>
+<p class="note">Department PD, level meetings, staff meetings, committee meetings, SMC meetings, staff learning days. The ten-teacher figure is not an arbitrary cap or a lack of goodwill: <b>the other eighty are in meetings that also live in this slot.</b> Any proposal that assumes teachers are free on Wednesday afternoons is competing with the school's own governance calendar, and it will lose.</p>
+<p class="note">Two consequences worth putting to the SMC directly. First, if the band becomes a student-activity block, <b>where does department PD go?</b> That is a de-implementation question and EEF says you must answer it. Second, the student-led model is the <i>only</i> one that lets both things happen in the same slot &mdash; which turns the constraint into the argument.</p>
 
 <div class="grid2">
-<div><h3>The arithmetic that has to close</h3>
-<p>A Wednesday house band covering ${cm(M.N)} Beattyians at clusters of ${S.cluster} needs <b>${M.clustersNeeded} clusters running simultaneously</b>. Beatty currently mounts a mean of 2.9 programmes per band day. That is a <b>${Math.round(M.clustersNeeded/2.9)}-fold increase in simultaneous adult deployment.</b></p>
-<p>There is exactly one way this arithmetic closes, and it is the thing most schools refuse to do: <b>Renzulli's model does not require content expertise from facilitators.</b> His enrichment clusters are facilitated rather than taught, and the published recruitment call goes to teachers, support staff, parents and community members alike. A parent who restores motorcycles can run a cluster. An admin officer who keeps bees can run a cluster. If facilitation stays inside the teaching establishment, the numbers do not close at any realistic staffing level.</p>
-<p class="note">Set non-teacher facilitators to 0 in the rail and watch the Wednesday gap. That is the honest picture of a teachers-only model.</p></div>
+<div><h3>Who owns the band today? Nobody. <span class="tag mea">measured</span></h3>
+<div class="chart">${hbar(AUD.deptTag.map(r=>[r[0],r[1],r[1]>200?'#EC3237':'#000C53',r[1]]),{w:480,lw:200,rh:20})}</div>
+<p class="note">Of ${AUD.inBandEnrich} student-facing enrichment records in the band, <b>${AUD.deptTag[0][1]} carry no department tag at all</b>. CCE has 18, Mathematics 16, English 15, PE 10. The band is not contested territory; it is unclaimed territory. That makes it much easier to redesign than it would be if four departments were defending it &mdash; and it explains how the slot fell to 1.33 activities a level-day without anyone noticing.</p></div>
 
 <div><h3>How to structure the house team</h3>
 <div class="scroll"><table><thead><tr><th>Role</th><th class="n">Per house</th><th>What they own</th></tr></thead><tbody>
 <tr><td><b>Head of House</b></td><td class="n">1</td><td>The house's development and its Cup campaign. A middle-management line, not an add-on to a full teaching load.</td></tr>
 <tr><td><b>Assistant Head</b></td><td class="n">1</td><td>Wednesday cluster logistics and the house exco. The succession line.</td></tr>
 <tr><td><b>House Tutors</b></td><td class="n">${S.tutors}</td><td>A vertical tutor group each, ${Math.round(M.tutorRatio)} Beattyians spanning Sec 1 to ${S.levels}. Owns the Total Talent Portfolio conversation and follows the same students for ${S.levels} years.</td></tr>
-<tr><td><b>Cluster facilitators</b></td><td class="n">${Math.round(M.clustersNeeded/S.houses)}</td><td>One Wednesday cluster each. Drawn from the whole adult community, not only teachers.</td></tr>
+<tr><td><b>Duty teachers</b></td><td class="n">${r1(M.dutyPerHouse)}</td><td>On the floor on a band day, roaming ${S.superRatio} student-led groups each. Rotated across the ${S.teachers}-strong establishment so no one carries it weekly.</td></tr>
+<tr><td><b>Student group leaders</b></td><td class="n">${Math.round(M.leadersNeeded/S.houses)}</td><td>Sec 3 and 4 Beattyians, ${S.leadersPer} to a group, trained in Term 4 and at each cycle start. This is the leadership programme, not a workaround.</td></tr>
 <tr><td><b>Pathway mentors</b></td><td class="n">${Math.round(M.mentorsNeeded/S.houses)}</td><td>Cross-house, attached to Type III projects, not to houses. Deliberately outside the house line.</td></tr>
 </tbody></table></div>
 <p class="note">Note the last row. Pathway mentors report to the field, not the house. That is the structural expression of the rule that houses own belonging and fields own pursuit &mdash; if mentors sat inside houses, the talent pool would fragment through the staffing chart even if the policy said otherwise.</p></div>
@@ -1113,9 +1221,9 @@ function tabDec(M){
    ['Are Sec 4 and 5 in the house band?',
     'Vertical mentoring depends on having seniors. The examination calendar argues them out. A vertical house that stops at Sec 3 is not vertical, and the data shows Sec 4 and 5 already being written off: 45 and 18 entries against 92 for Sec 2.',
     S.levels===5 ? 'Sec 1 to 5 included. '+cm(M.N)+' Beattyians, house of '+Math.round(M.houseSize)+', seniors available to lead.' : 'Sec 5 excluded. The house has no top tier, and the vertical structure loses the one job it exists to do.'],
-   ['How many facilitators will you actually field?',
-    'The design scales from five to forty parallel clusters. The honest answer determines whether choice is real or nominal. This is the single number that decides whether any of the rest happens.',
-    `${S.adults} adults gives ${M.clusters} clusters, ${pct(M.coverage)} coverage, ${pct(M.fcs)} first choice and ${pct(M.top2)} first-or-second. ${M.adultGap>0?'You are short '+M.adultGap+' adults.':'Supply is sufficient at this configuration.'}`],
+   ['How much of the band is student led?',
+    'Ten duty teachers against the whole school rules out an adult in every room. The question is not how many facilitators you can find, it is how many groups one roaming teacher can hold, and how many Sec 3 and 4 Beattyians you are willing to train to lead. That is a judgement about trust, not about staffing.',
+    `${S.duty} duty teachers, ${M.adultRun} running a group and ${M.supervisors} roaming ${S.superRatio} each, gives ${M.clusters} groups against ${M.clustersNeeded} needed. ${pct(M.coverage)} coverage, ${pct(M.top2)} first-or-second choice, and ${Math.round(M.leadersNeeded)} student leaders to train.`],
    ['Does Pursue reach 150 Beattyians or 50?',
     'Both are defensible. Only one matches the models being cited. Renzulli’s revolving talent pool is 15 to 20 percent; today Beatty runs 26 selective programmes generating roughly 60 occurrences a year.',
     `${S.pursue} percent is ${cm(M.pursueN)} places, needing ${M.mentorsNeeded} named mentors at ${S.mentorLoad} students each.`],
