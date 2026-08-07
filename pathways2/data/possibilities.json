@@ -495,6 +495,20 @@
    "needs": "A reason you can say out loud, and a timetable your household agrees to",
    "leads": "The qualification you put down years ago",
    "truth": "A classroom of forty year olds is an ordinary sight now. It was not always, and that changed on purpose."
+  },
+  {
+   "id": "p_ask_mentor",
+   "kind": "inside",
+   "ages": [
+    17,
+    24
+   ],
+   "paths": null,
+   "label": "Ask your mentor or the counsellor",
+   "when": "Any week, and before you have a crisis",
+   "needs": "One booked appointment, and a question sharper than what should I do",
+   "leads": "Someone who knows the transfer windows, the GPA bars and who is hiring",
+   "truth": "Every polytechnic and ITE has mentors and an ECG counsellor. Almost nobody books them until something has already gone wrong."
   }
  ]
 }

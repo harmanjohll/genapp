@@ -63,12 +63,28 @@ export function judgeCard(card) {
   return null;
 }
 
+// Roles that exist in a secondary school and nowhere after it. A polytechnic
+// has mentors, lecturers, course managers and an ECG counsellor; it has no form
+// teacher, no year head and no Sec 2 juniors.
+const SCHOOL_ROLES = /\b(form teacher|year head|form class|school fund|Sec [1-5]s?\b|speech day)/i;
+const FORK_AGE = 17;
+
 export function ecgSweep(data) {
   const failures = [];
   const cards = (data.chances && data.chances.cards) || [];
   cards.forEach((c) => {
     const why = judgeCard(c);
     if (why) failures.push({ card: c.id, title: c.title, why });
+    // A card that can be dealt after the results fork must not speak in
+    // secondary school vocabulary, unless it is gated to school.
+    if (!c.schoolOnly && c.maxAge >= FORK_AGE) {
+      const txt = [c.title, c.body, ...(c.responses || []).map((r) => `${r.label} ${r.outcome} ${r.stretch || ''}`),
+        ...(c.onwardMoves || [])].join(' ');
+      const m = txt.match(SCHOOL_ROLES);
+      if (m) {
+        failures.push({ card: c.id, title: c.title, why: `says "${m[0]}" but can be dealt after the fork` });
+      }
+    }
     if (c.type === 'setback' && !(c.onwardMoves || []).length) {
       failures.push({ card: c.id, title: c.title, why: 'a setback with no way around it' });
     }

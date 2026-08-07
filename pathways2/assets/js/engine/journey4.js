@@ -567,6 +567,10 @@ export function eligibleCards(cards, run, age) {
     if (used.has(c.id)) return false;
     if (c.paths && run.path && !c.paths.includes(run.path)) return false;
     if (c.paths && !run.path) return false;
+    // A polytechnic has no form teacher and no year head. Cards written in
+    // secondary school vocabulary stop at the results fork, the same gate the
+    // move deck uses.
+    if (c.schoolOnly && run.path) return false;
     if (c.requiresNS && run.ns !== true) return false;
     if (c.excludesNS && run.ns === true) return false;
     if (c.requiresFlag && !run.flags.includes(c.requiresFlag)) return false;
@@ -864,7 +868,13 @@ export function runJourneySweep(data) {
         const fmt = s.format || 'turn';
         if (fmt === 'reflect' || fmt === 'ask-ns' || s.noChance) return;
         const age = ageAt(j, bare, i);
-        const n = eligibleCards(cards, { ...bare, steps: [] }, age)
+        // The probe run must look the way a real run looks AT THIS STAGE. The
+        // sweep sets the family up front so it can walk the sequence, but a
+        // student has no path during the school years, and school gated cards
+        // are eligible then. Modelling it otherwise made the sweep report a
+        // starving deck for years that are in fact the best stocked.
+        const probe = { ...bare, steps: [], path: s.chapter ? path : null };
+        const n = eligibleCards(cards, probe, age)
           .filter((c) => !c.requiresFlag && !c.when).length;
         if (n < MIN_POOL) failures.push({ path, ns, stage: s.id, age, why: `pool ${n} below ${MIN_POOL}` });
       });

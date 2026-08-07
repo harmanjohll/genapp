@@ -1367,3 +1367,5 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   border-style: dashed;
 }
 .ldoor.wide:hover, .ldoor.wide:focus-visible { border-style: solid; }
+/* The lesson plan is scanned in a corridor, not read in an armchair. */
+.tight-list li { margin-bottom: 4px; line-height: 1.45; }
