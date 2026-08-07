@@ -42,21 +42,21 @@ function classPicture(raw, data) {
 }
 
 const PROMPTS = [
-  { mode: 'Now', ask: 'What did you assume was closed to you that turned out not to be?',
+  { mode: 'Plan', ask: 'What did you assume was closed to you that turned out not to be?',
     why: 'Surfaces beliefs picked up from siblings and from adults schooled under a different system.' },
-  { mode: 'Now', ask: 'Find a subject you have never considered. What would you do in it all day?',
+  { mode: 'Plan', ask: 'Find a subject you have never considered. What would you do in it all day?',
     why: 'Counters circumscription: students rule out whole fields on prestige long before they know anything about them.' },
-  { mode: 'Now', ask: 'Whose combination looks nothing like yours, and what does it open that yours does not?',
+  { mode: 'Plan', ask: 'Whose combination looks nothing like yours, and what does it open that yours does not?',
     why: 'Makes the point that there is no best combination, using the person sitting next to them as the evidence.' },
-  { mode: 'Journey', ask: 'Which chance did you miss, and what would you have needed to use it?',
+  { mode: 'Play', ask: 'Which chance did you miss, and what would you have needed to use it?',
     why: 'Moves the conversation from grades to dispositions without anyone saying the word.' },
-  { mode: 'Journey', ask: 'You played twice from the same start. What did your starting point actually decide?',
+  { mode: 'Play', ask: 'You played twice from the same start. What did your starting point actually decide?',
     why: 'The load bearing question of the whole resource. Worth ten minutes, not two.' },
-  { mode: 'Journey', ask: 'What went wrong in your story, and what happened after it?',
+  { mode: 'Play', ask: 'What went wrong in your story, and what happened after it?',
     why: 'Normalises setback as an event with a next step rather than an ending.' },
-  { mode: 'Aim', ask: 'Three roads to the same place. Which suits how you like to learn?',
+  { mode: 'Act', ask: 'Three roads to the same place. Which suits how you like to learn?',
     why: 'Reframes the choice as fit rather than rank.' },
-  { mode: 'Aim', ask: 'Which of your actions will you actually have done by the end of the month?',
+  { mode: 'Act', ask: 'Which of your actions will you actually have done by the end of the month?',
     why: 'Turns the session into a commitment. Follow it up or it does not count.' },
 ];
 
@@ -67,9 +67,9 @@ const ECG_MAP = [
   { name: 'The three guiding questions', src: 'MOE ECG',
     where: 'They head the rail beside every Journey turn, badge each stage with the question it leans on, and sit over the destination list and the take-a-question card in Now. Who am I, where do I want to go, how do I get there.' },
   { name: 'Planned happenstance', src: 'Krumboltz',
-    where: 'The five dispositions the game tracks are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check dispositions built by ordinary choices. The chip says "you built the footing for this".' },
+    where: 'The five dispositions tracked are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check what ordinary choices built.' },
   { name: 'Career as narrative', src: 'Savickas',
-    where: 'Every run is told as a story: your story so far in the rail, a written reflection at thirty eight, an ending in sentences rather than scores, and two stories compared, including what each wanted and who each became.' },
+    where: 'A run is a story, not a score: the rail keeps it, thirty eight asks for a written line, the ending is sentences, and two runs can be read side by side.' },
   { name: 'Life-span development', src: 'Super',
     where: 'One run spans thirteen to forty eight, and the want named at the start is re-asked at thirty eight. Changing it is treated as progress, and the ending tells both halves.' },
   { name: 'Circumscription and compromise', src: 'Gottfredson',
@@ -79,7 +79,7 @@ const ECG_MAP = [
   { name: 'Decision learning, then action', src: 'CASVE cycle',
     where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
   { name: 'Six kinds of working', src: 'Holland RIASEC',
-    where: 'The wants carry the six types in student words, codes kept to this page: Doers (R) good with my hands, Thinkers (I) work out how things work, Creators (A) make things people use, Helpers (S) there when people are struggling, Persuaders (E) run my own thing, Organisers (C) every detail exactly right. The want feeds the engine gently: choices pointing its way are marked "near your want", chances that fit it turn up more often without narrowing what can happen, and years lived near the want fill the love circle. Bridge to your profiler from here; remind students most people are a mix of two or three.' },
+    where: 'Six types in student words, codes kept to this page: Doers (R), Thinkers (I), Creators (A), Helpers (S), Persuaders (E), Organisers (C), and Not sure yet on purpose. The kind carries into Act, marks choices pointing that way, and tilts which chances appear without narrowing what can happen. Bridge to your own profiler from here, and remind students most people are a mix of two or three.' },
   { name: 'A reason to get up', src: 'Ikigai',
     where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
   { name: 'Four scarcities, not one', src: 'Game design for realism',
@@ -220,8 +220,8 @@ export function renderTeacher(host, data, ctx, repaint) {
         <p class="caps">Facilitation</p>
         <h1 class="serif" style="font-size:var(--t-h1)">Running this with a class</h1>
         <p class="lede" style="max-width:60ch">
-          The resource does not teach anything on its own. The learning is in what students
-          say to each other afterwards. Budget more time for the conversation than the screen.
+          It teaches nothing on its own. The learning is in what students say afterwards, so
+          budget more time for talk than for screen.
         </p>
 
         <div class="panel" style="margin-top:var(--s-4);border:2px solid var(--accent)">
@@ -235,22 +235,23 @@ export function renderTeacher(host, data, ctx, repaint) {
 
         <div class="teacher-note">
           <h4>Say this first</h4>
-          <p style="margin-bottom:0">This tool never tells anyone they cannot do something, and that is deliberate rather than kind. Students will look for the padlock. Name that there is not one, and ask them why they expected it.</p>
+          <p style="margin-bottom:0">Nothing here is ever closed to anyone. Students will look for the padlock. Name that there is none, and ask why they expected one.</p>
         </div>
 
         <div class="section">
           <div class="panel">
             <h2>A 45 minute shape</h2>
-            <ol>
-              <li><strong>5 min.</strong> Ask what they believe decides their future. Write the answers up. Do not correct any of them.</li>
-              <li><strong>8 min.</strong> Now mode. Build the combination they are actually considering, honestly.</li>
-              <li><strong>4 min.</strong> Read the one line above the list. That is the lever: the single move that shifts the most. Ask who has the same one.</li>
-              <li><strong>10 min.</strong> Journey mode, once through.</li>
-              <li><strong>8 min.</strong> Journey again from the same start, choosing differently. Then Compare.</li>
-              <li><strong>5 min.</strong> Aim mode. Three actions. Copy the question at the bottom of Now and take it out of the room.</li>
-              <li><strong>5 min.</strong> Back to the list from minute five. What would they change?</li>
+            <ol class="tight-list">
+              <li><strong>5.</strong> Ask what decides their future. Write the answers up. Correct none of them.</li>
+              <li><strong>8.</strong> Plan. The combination they are actually considering.</li>
+              <li><strong>4.</strong> Read the line above the list. That is the lever. Who shares one?</li>
+              <li><strong>10.</strong> Play, once through.</li>
+              <li><strong>8.</strong> Play again from the same start, choosing differently. Compare.</li>
+              <li><strong>5.</strong> Act. Three actions, and take the question out of the room.</li>
+              <li><strong>5.</strong> Back to minute five. What would they change?</li>
             </ol>
-            <p class="small mute">Finished early? Aim mode is the second activity, not a replay. It runs six to eight minutes and produces something different.</p>
+            <p class="small mute">Running early: Act is a second activity, not a replay. Groups of four:
+              the table game is the same lesson with the arguing built in.</p>
           </div>
         </div>
 
@@ -292,13 +293,26 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="panel">
             <h2>Run a field test</h2>
-            <p class="small">One class, 45 minutes, paper slips before and after. Three questions: could you name two places you could go, do you know one thing you could do this year that opens doors later, do you know who to ask. Watch for the student who taps a choice and waits, and the one who shows a neighbour their screen unprompted. The full protocol, with the observation tally and the printable slips, is in FIELD_TEST.md in this folder.</p>
+            <p class="small">Slips before and after, three questions: name two places you could go, one thing you could do this year, and who to ask. Watch for the student who taps and waits, and the one who turns their screen to a neighbour. Full protocol in FIELD_TEST.md.</p>
           </div>
         </div>
 
         <div class="section">
+          <div class="section-head"><h2>One to one, twenty minutes</h2></div>
+          <p class="small mute" style="max-width:60ch">For an ECG counsellor with one student, not a class.</p>
+          <ol class="tight-list" style="margin-top:var(--s-3)">
+            <li><strong>3.</strong> Plan, on their phone. Ask what they expected to be closed.</li>
+            <li><strong>4.</strong> Read the lever line together. That is the negotiable part of their year.</li>
+            <li><strong>8.</strong> Play the short run. Watch which chance they stall on.</li>
+            <li><strong>5.</strong> Open "what else is possible from here" and pick one route to check by Friday.</li>
+          </ol>
+          <p class="small mute" style="margin-top:var(--s-3)">They can bring a story card or a class code to the next session.
+            Both carry the reasoning and neither carries a grade.</p>
+        </div>
+
+        <div class="section">
           <div class="section-head"><h2>The counselling underneath</h2></div>
-          <p class="small mute" style="max-width:60ch">Each principle this resource is built on, and where it is visible on the screen. Audit it against your ECG programme from here.</p>
+          <p class="small mute" style="max-width:60ch">What it is built on, and where each principle shows on screen.</p>
           <div class="grid two" style="margin-top:var(--s-3)">
             ${ECG_MAP.map((m) => `
               <div class="card">
@@ -312,7 +326,7 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="panel">
             <h2>Only show what your school runs</h2>
-            <p class="small mute">The list carries all ${subjects.length} subjects nationally. Most schools run about fifteen. Untick the rest so nobody plans around a subject they cannot take here. Saved on this device. Start from your school's real list on <a href="https://www.moe.gov.sg/schoolfinder" target="_blank" rel="noopener">MOE SchoolFinder</a>.</p>
+            <p class="small mute">All ${subjects.length} subjects nationally are listed; most schools run about fifteen. Untick the rest so nobody plans around one you do not offer. Saved on this device. Check yours on <a href="https://www.moe.gov.sg/schoolfinder" target="_blank" rel="noopener">MOE SchoolFinder</a>.</p>
             <div class="offer-grid">
               ${subjects.map((s) => `
                 <label class="offer-item">
@@ -331,7 +345,7 @@ export function renderTeacher(host, data, ctx, repaint) {
           <div class="panel">
             <h2>At the front of the room</h2>
             <p>Add <code>?board=1</code> to the address for a projector view: bigger type, thicker state bars, subject list hidden.</p>
-            <p class="small mute">Students can carry their plan to another device with the link button at the bottom of Now. The link holds the plan and nothing else, which matters on a shared Chromebook trolley.</p>
+            <p class="small mute">The link button at the bottom of Plan carries a combination between devices. It holds the subjects and nothing else, which matters on a shared trolley.</p>
           </div>
         </div>
 
@@ -355,7 +369,7 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="notice">
             <strong>Before students see this, read OPEN_QUESTIONS.md.</strong>
-            <p style="margin:var(--s-2) 0 0">${data._provisionalCount} figures are marked provisional, meaning they were not read from a primary MOE or SEAB page. Criteria for the first SEC cohort are still settling. The tool is honest about that on screen and it still needs a teacher who knows which parts to caveat. Data last checked ${f.known ? esc(f.accessed) : 'unknown'}.</p>
+            <p style="margin:var(--s-2) 0 0">${data._provisionalCount} figures are provisional: not read from a primary MOE or SEAB page. Criteria for the first SEC cohort are still settling, so the screen says so and still needs you to caveat it. Last checked ${f.known ? esc(f.accessed) : 'unknown'}.</p>
           </div>
         </div>
 

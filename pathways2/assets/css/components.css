@@ -84,6 +84,7 @@
   .pane-doors {
     grid-column: 2; grid-row: 1;
     position: sticky; top: var(--s-4);
+    max-height: calc(100vh - var(--ribbon-h) - var(--s-7));
     max-height: calc(100dvh - var(--ribbon-h) - var(--s-7));
     overflow-y: auto; overscroll-behavior: contain;
     padding-right: var(--s-2);
@@ -280,7 +281,7 @@ h3.grp { display: flex; align-items: center; }
 /* Phone base: a bottom sheet. */
 dialog.sheet {
   border: none; padding: 0; margin: auto auto 0; max-width: 560px; width: 100%;
-  max-height: 86dvh; background: var(--surface); color: var(--ink);
+  max-height: 86vh; max-height: 86dvh; background: var(--surface); color: var(--ink);
   border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
@@ -288,7 +289,8 @@ dialog.sheet::backdrop { background: rgba(20, 24, 31, 0.42); }
 dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--rule); margin: var(--s-3) auto var(--s-1); }
-.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto; max-height: calc(86dvh - 120px); }
+.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto;
+  max-height: calc(86vh - 120px); max-height: calc(86dvh - 120px); }
 .sheet-body:focus { outline: none; }
 .sheet-foot { padding: var(--s-3) var(--s-5) var(--s-5); border-top: 1px solid var(--rule-soft); }
 
@@ -297,14 +299,14 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
    win on every screen size. */
 @media (min-width: 700px) {
   dialog.sheet {
-    margin: auto; max-height: 80dvh;
+    margin: auto; max-height: 80vh; max-height: 80dvh;
     width: min(560px, calc(100vw - 64px));
     border-radius: var(--r-lg);
   }
   dialog.sheet[open] { animation: modalIn 200ms var(--ease); }
   @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
   .sheet-grab { display: none; }
-  .sheet-body { max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
+  .sheet-body { max-height: calc(80vh - 124px); max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
   .sheet-foot { padding: var(--s-3) var(--s-6) var(--s-5); }
 }
 
@@ -1367,3 +1369,32 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   border-style: dashed;
 }
 .ldoor.wide:hover, .ldoor.wide:focus-visible { border-style: solid; }
+/* The lesson plan is scanned in a corridor, not read in an armchair. */
+.tight-list li { margin-bottom: 4px; line-height: 1.45; }
+
+/* --- universality fixes, found on a 56 combination device sweep -------------
+   A text input will not shrink below its default intrinsic width, and a grid
+   track sized 1fr will not go under its item's min-content. Together they push
+   the table's name grid past the viewport on any phone: 32px off on an iPhone
+   14 Pro, 22 on a Pixel 7. min-width:0 lets the track collapse; width:100% then
+   fills whatever is left. */
+.tname { min-width: 0; }
+.tname input { width: 100%; min-width: 0; box-sizing: border-box; }
+.tnames { grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); }
+
+/* Checkboxes were 20 square, under the 24px floor both platforms publish, and
+   the teacher page has one per subject. The control grows, and the label around
+   it becomes the target so the whole row is tappable. */
+.offer-item { display: flex; align-items: center; gap: 10px; padding: 7px 6px; cursor: pointer; }
+.offer-item input[type="checkbox"] { width: 24px; height: 24px; flex: 0 0 auto; accent-color: var(--accent); }
+.mapopt { padding: 6px 0; }
+.mapopt input { width: 24px; height: 24px; }
+
+/* Inline glossary buttons sit inside sentences, so WCAG exempts them from the
+   target minimum, but a thirteen year old on a bus is the actual test. A little
+   vertical padding, pulled back out with negative margin, grows the tap area
+   without moving a single line of text. */
+.gloss { padding: 4px 1px; margin: -4px -1px; }
+/* Inline links in prose are exempt from the target minimum, being part of a
+   sentence, but the same trick as .gloss costs nothing and helps a thumb. */
+.wrap p a[href], .small a[href], .micro a[href] { padding: 4px 1px; margin: -4px -1px; }

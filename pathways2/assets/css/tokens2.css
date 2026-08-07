@@ -111,22 +111,25 @@
    tint follows light or dark automatically and can never fight a manual
    toggle. The mix partner drifts from warm sand toward cool slate as the
    decades pass; a few percent is a whisper on purpose. */
-body[data-era="postsec"] {
-  --paper: color-mix(in srgb, var(--paper-base) 96%, #7A8CA3 4%);
-  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 96%, #7A8CA3 4%);
+@supports (background: color-mix(in srgb, red 50%, blue)) {
+  body[data-era="postsec"] {
+    --paper: color-mix(in srgb, var(--paper-base) 96%, #7A8CA3 4%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 96%, #7A8CA3 4%);
+  }
+  body[data-era="twenties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 95%, #6E8797 5%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 95%, #6E8797 5%);
+  }
+  body[data-era="thirties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 94%, #66788E 6%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 94%, #66788E 6%);
+  }
+  body[data-era="later"] {
+    --paper: color-mix(in srgb, var(--paper-base) 93%, #5E6B7A 7%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 93%, #5E6B7A 7%);
+  }
 }
-body[data-era="twenties"] {
-  --paper: color-mix(in srgb, var(--paper-base) 95%, #6E8797 5%);
-  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 95%, #6E8797 5%);
-}
-body[data-era="thirties"] {
-  --paper: color-mix(in srgb, var(--paper-base) 94%, #66788E 6%);
-  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 94%, #66788E 6%);
-}
-body[data-era="later"] {
-  --paper: color-mix(in srgb, var(--paper-base) 93%, #5E6B7A 7%);
-  --paper-warm: color-mix(in srgb, var(--paper-warm-base) 93%, #5E6B7A 7%);
-}
+
 
 /* ---- dark ----------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {

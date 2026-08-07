@@ -133,7 +133,8 @@
    "onwardMoves": [
     "A combination is a list of options, and comparing lists takes about an hour.",
     "The review window has a date. Ask for it before it passes."
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "sc_open_house",
@@ -290,7 +291,8 @@
    "onwardMoves": [
     "Every school has a student welfare fund and the form teacher holds the key.",
     "Edusave sits in your name already; awards top it up yearly."
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "sc_cny_audit",
@@ -375,7 +377,8 @@
    "onwardMoves": [
     "Your year head can pair you with the department's other strong teacher.",
     "A three person study group replaces about half of a good teacher."
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "sc_stage_flop",
@@ -457,7 +460,8 @@
       "persistence": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "ps_first_fail",
@@ -924,7 +928,7 @@
    "minAge": 18,
    "maxAge": 23,
    "title": "The scholarship question",
-   "body": "A teacher slides the form across: you should try for this. The bond clause is six years long and the interview panel eats undergraduates for breakfast.",
+   "body": "A tutor slides the form across: you should try for this. The bond clause is six years long and the interview panel eats undergraduates for breakfast.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -1887,7 +1891,8 @@
      },
      "sets": "helped_someone"
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_reference_up",
@@ -1916,7 +1921,8 @@
       "curiosity": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_eae_ready",
@@ -1942,7 +1948,8 @@
       "portfolio": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_ecg_ladder",
@@ -2192,7 +2199,8 @@
       "curiosity": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_senior_shortcut",
@@ -2287,7 +2295,8 @@
      },
      "sets": "helped_someone"
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_family_road",
@@ -2618,7 +2627,7 @@
    "id": "cb_stage_mc",
    "type": "opportunity",
    "minAge": 16,
-   "maxAge": 20,
+   "maxAge": 17,
    "title": "They remember the stage",
    "body": "Speech day needs an emcee and the teacher in charge remembers you from the stage, the pitch, the heats. The script is thin and the hall seats nine hundred.",
    "asks": {
@@ -2650,7 +2659,8 @@
      },
      "sets": "helped_someone"
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_exit_door_back",
@@ -2715,7 +2725,7 @@
    "id": "cb_helped_asks",
    "type": "encounter",
    "minAge": 16,
-   "maxAge": 19,
+   "maxAge": 17,
    "title": "Ms D asks back",
    "body": "The teacher whose two circled habits fixed your paper stops you: she is trialling a peer coaching scheme and wants you as the first tutor.",
    "requiresFlag": "asked_help",
@@ -2739,7 +2749,8 @@
       "optimism": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_plan_b_smooth",
@@ -3942,7 +3953,8 @@
       "persistence": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_essay_reads_back",
@@ -3993,7 +4005,8 @@
       "persistence": 1
      }
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_it_finally_clicks",
@@ -4044,7 +4057,8 @@
      },
      "sets": "asked_up"
     }
-   ]
+   ],
+   "schoolOnly": true
   },
   {
    "id": "cb_the_work_gets_shown",
@@ -4097,7 +4111,8 @@
      },
      "sets": "asked_form"
     }
-   ]
+   ],
+   "schoolOnly": true
   }
  ]
 }
