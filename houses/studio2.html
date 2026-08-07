@@ -30,7 +30,7 @@ a{color:var(--navy)}
 
 .shell{max-width:1340px;margin:0 auto;padding:0 18px 90px;display:flex;gap:24px;align-items:flex-start}
 .rail{width:288px;flex:0 0 288px;position:sticky;top:0;padding:18px 0 30px;max-height:100vh;overflow-y:auto}
-.main{flex:1;min-width:0;padding:22px 0 0}
+.main{flex:1;min-width:0;padding:22px 0 0;overflow-anchor:none}
 @media(max-width:1080px){.shell{display:block}.rail{width:auto;position:static;max-height:none;border-bottom:2px solid var(--g2);margin-bottom:10px}}
 
 /* rail controls */
@@ -814,7 +814,8 @@ function bindRail(){
     render();
   }));
   $$('#rail [data-p]').forEach(b=>b.onclick=()=>{applyPreset(b.dataset.p);});
-  $('#reset').onclick=()=>{S=JSON.parse(JSON.stringify(DEF));S.tab=curTab();render();};
+  // capture the tab before S is replaced, or curTab() reads the default back
+  $('#reset').onclick=()=>{const t=S.tab;S=JSON.parse(JSON.stringify(DEF));S.tab=t;render();};
   $('#save0').onclick=()=>{SCEN[0]=JSON.parse(JSON.stringify(S));render();};
   $('#save1').onclick=()=>{SCEN[1]=JSON.parse(JSON.stringify(S));render();};
 }
@@ -1573,6 +1574,12 @@ function render(opts){
     if(ae.dataset.h) refocus=`#main select[data-h="${ae.dataset.h}"][data-f="${ae.dataset.f}"]`;
     else if(ae.dataset.a) refocus=`#main input[data-a="${ae.dataset.a}"]`;
   }
+  /* Restoring a pixel offset is not enough: a verdict line appearing, or the
+     activities table shrinking, changes the height of everything above you, and
+     when the page gets shorter the browser clamps the scroll and the position
+     ratchets upward. Anchor to the section heading you are actually reading
+     instead. h2 count is fixed per tab, so the index survives a re-render. */
+  const anc = toTop ? null : anchorNow();
   const M=model();
   $$('.gnav a[data-t]').forEach(a=>a.classList.toggle('on',a.dataset.t===S.tab));
   $('#main').innerHTML = TABS[S.tab](M) + footer();
@@ -1590,9 +1597,30 @@ function render(opts){
   const aa=$('#autoAnchor'); if(aa) aa.onclick=()=>{autoAnchor();render();};
   if(toTop) window.scrollTo({top:0});
   else {
-    window.scrollTo({top:y});
     if(refocus){ const el=$(refocus); if(el) el.focus({preventScroll:true}); }
+    restoreAnchor(anc,y);
+    // Chrome re-runs its own scroll anchoring after the frame in which the
+    // subtree was replaced, which undoes the restore. Correct again next frame.
+    requestAnimationFrame(()=>restoreAnchor(anc,y));
   }
+}
+/* The last section heading at or above the top of the viewport, plus how far
+   above it sits. Null when you are still above the first heading. */
+function anchorNow(){
+  const hs=$$('#main h2');
+  for(let i=hs.length-1;i>=0;i--){
+    const t=hs[i].getBoundingClientRect().top;
+    if(t<=80) return {i,t};
+  }
+  return null;
+}
+function restoreAnchor(anc,y){
+  if(!anc){ window.scrollTo({top:y}); return; }
+  const hs=$$('#main h2');
+  const el=hs[anc.i];
+  if(!el){ window.scrollTo({top:y}); return; }
+  const delta=el.getBoundingClientRect().top-anc.t;
+  if(Math.abs(delta)>0.5) window.scrollBy(0,delta);
 }
 
 /* Anchor helpers. Keep one Sport, one Uniformed Group and one Performing Art per
