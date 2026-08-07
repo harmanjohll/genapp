@@ -202,7 +202,22 @@ const AUD={
   deptTag:[['No department tag at all',255],['CCE',18],['Mathematics',16],['English',15],
     ['PE',10],['Humanities',11],['English Language &amp; Literature',6]],
   bandTermYear:[['2024 T1',133],['2024 T2',87],['2024 T3',89],['2024 T4',45],
-    ['2025 T1',117],['2025 T2',95],['2025 T3',66],['2025 T4',41]]
+    ['2025 T1',117],['2025 T2',95],['2025 T3',66],['2025 T4',41]],
+
+  // --- third pass. Four things the written report does not say. ---
+  // (a) Wednesday and Thursday are used identically
+  wedThu:{Wed:157,Thu:180,
+    wedCat:[['Character, Leadership & Service',38],['Education & Career Guidance',24],['Language Arts',23],['STEM',22],['Sports, Health & Outdoor',16]],
+    thuCat:[['Character, Leadership & Service',39],['Language Arts',30],['STEM',28],['Humanities & Social Science',23],['Sports, Health & Outdoor',22]]},
+  // (b) annual churn: only 38 percent of programmes survive both years
+  churn:{y24:91,y25:93,both:51,died:40,born:42},
+  // (c) a third of band dates carried one programme for the whole school
+  dateSpread:{1:38,2:25,3:20,4:17,5:7,6:4,7:1}, bandDates:112,
+  // (d) when the band is banded, it favours G3
+  banded:{G1:{ent:20,enr:9},G2:{ent:32,enr:21},G3:{ent:73,enr:51}},
+  bandedProg:{G3:'SMO Training 11, Model UN 6, Math Innovators 5, EL Debate 3',
+              G2:'Historical Investigation 2, Geographical Investigation 2, NYP advising 2',
+              G1:'Upcycling workshop 3, then single learning journeys'}
 };
 
 /* Real projected roll for next year, supplied by the school. Sec 5 is a single
@@ -268,6 +283,58 @@ const ARCH={
     persist:.25,cohesion:.3,nest:0,mix:.85,load:.5,prec:'Closest analogue is Ron Clark Academy house culture, US elementary and middle.'}
 };
 
+/* ============================================================ DELIVERY MODELS
+   What actually happens in the room. Each is a one-click reconfiguration.
+   These are alternatives to "a teacher runs a cluster", which the ten-duty-
+   teacher constraint rules out anyway. */
+const MODELS={
+ clusters:{n:'Renzulli clusters', tag:'Orthodox',
+   d:'Mixed-age interest groups, facilitated not taught, producing something for an outside audience.',
+   why:'The published model. Everything in the literature assumes it.',
+   cost:'Needs an adult per group. That is the part Beatty cannot afford.',
+   set:{adultRun:2,superRatio:6,cluster:25,leadersPer:2,perRoom:1,takeup:60,pursue:15,showcases:3,showScope:'house',cup:'percap'}},
+
+ tutoring:{n:'Cross-age tutoring', tag:'Best evidenced',
+   d:'Sec 3 and 4 tutor Sec 1 and 2 inside their own house, in blocks of four to ten weeks.',
+   why:'EEF puts peer tutoring at five to six months additional progress &mdash; far stronger than the enrichment case, which corrects down to 0.32. It is vertical by construction, so it <i>is</i> the house. And it is student-led by design, which is the only staffing model available.',
+   cost:'Tutors must be trained or it becomes a free period. Training is the real cost, and it lands in Term 4.',
+   set:{adultRun:0,superRatio:5,cluster:30,leadersPer:10,perRoom:1,takeup:100,pursue:12,showcases:2,showScope:'house',cup:'participation'}},
+
+ exchange:{n:'Skill Exchange', tag:'Avant garde',
+   d:'Every Beattyian teaches one thing and learns one thing a year. Students propose the catalogue; the school only vets it.',
+   why:'Solves the catalogue problem and the facilitator problem with the same move. A Sec 3 who can solve a Rubik&rsquo;s cube, cook, edit video or code is a facilitator the school never had to hire.',
+   cost:'The catalogue is unpredictable and some of it will be thin. Vetting is a real job.',
+   set:{adultRun:1,superRatio:10,cluster:14,leadersPer:2,perRoom:2,takeup:100,pursue:10,showcases:3,showScope:'house',cup:'participation'}},
+
+ publisher:{n:'House as publisher', tag:'Avant garde',
+   d:'The house does not compete. Its job is to notice, document and broadcast what its own members achieve anywhere in the school.',
+   why:'Directly answers "celebrate the talents of others". Cup points go to the house that best publicises other people&rsquo;s work, so recognition stops being zero-sum and the quiet documentarian outscores the athlete.',
+   cost:'Harder to explain at assembly than a trophy. Needs a real channel &mdash; a wall, a feed, a termly publication.',
+   set:{adultRun:2,superRatio:6,cluster:25,leadersPer:2,perRoom:1,takeup:60,pursue:15,showcases:8,showScope:'school',cup:'participation'}},
+
+ families:{n:'Vertical families', tag:'Structural',
+   d:'Each house splits into families of about twenty spanning Sec 1 to 4, each led by a Sec 4. The family is the unit of belonging; the house is only the league it plays in.',
+   why:'A house of 238 is too big to belong to. Twenty is not. It also creates one named senior role per family, which is a leadership ladder rather than a leadership elite.',
+   cost:'Only works if Sec 4 are in the band. Excluding them empties the top of every family.',
+   set:{adultRun:2,superRatio:8,cluster:20,leadersPer:2,perRoom:2,tutors:12,takeup:60,pursue:15,showcases:3,showScope:'house',cup:'percap'}},
+
+ openstudio:{n:'Open Studio', tag:'Avant garde',
+   d:'One Wednesday a term everything stops and every Pursue project presents. Attendance is voluntary, and the audience is counted.',
+   why:'Renzulli requires an audience who <i>voluntarily attend</i>, and that is the test implementations fail. Counting the audience turns the hardest fidelity requirement into a number the school can see.',
+   cost:'A project nobody comes to is visible failure. That is the point, and it will be uncomfortable the first time.',
+   set:{adultRun:2,superRatio:6,cluster:25,leadersPer:2,perRoom:1,takeup:65,pursue:20,showcases:3,showScope:'school',cup:'percap'}},
+
+ twospeed:{n:'Two-speed fortnight', tag:'Cheapest',
+   d:'Alternate weeks. One Wednesday the whole house meets together; the next it splits into groups.',
+   why:'Answers "we need not always have activities". Halves the group-weeks to staff and room, and the whole-house week costs one adult per house.',
+   cost:'Halves cadence too. Watch the Gagné line &mdash; this is the configuration most likely to drop into busywork.',
+   set:{adultRun:2,superRatio:6,cluster:32,leadersPer:2,perRoom:1,sessions:6,takeup:50,pursue:12,showcases:2,showScope:'house',cup:'percap'}}
+};
+function applyModel(k){
+  const m=MODELS[k]; if(!m) return;
+  Object.assign(S,m.set); S.model=k; render();
+}
+
 /* strategy options for the Case tab */
 const STRAT={
   none:{n:'Do nothing',d:'Leave the band as it runs today.'},
@@ -325,9 +392,9 @@ const DEF={
         h7:{dom:'none',s:'',u:'',p:''}},
   p1:ROLL.p1,p2:ROLL.p2,p3:ROLL.p3,p4:ROLL.p4,p5:ROLL.p5,
   c1:ROLL.c1,c2:ROLL.c2,c3:ROLL.c3,c4:ROLL.c4,
-  levels:4, houses:5, arch:'class',
+  levels:4, houses:5, arch:'class', model:'clusters',
   cycles:3, sessions:10, protect:80, hours:3,
-  cluster:25, skew:.8,
+  cluster:25, skew:.8, rooms:48, perRoom:1,
   teachers:90, duty:10, adultRun:2, superRatio:5, leadersPer:2,
   pursue:15, takeup:60, mentorLoad:8, houseOwns:0, tutors:6,
   cup:'percap', showScope:'house', showcases:3,
@@ -389,13 +456,20 @@ function model(){
   M.adultRun = Math.min(S.adultRun, S.duty);
   M.supervisors = Math.max(0, S.duty - M.adultRun);
   M.supervised = M.supervisors*S.superRatio;
-  M.clusters = M.adultRun + M.supervised;
+  M.staffable = M.adultRun + M.supervised;
+  // Rooms are a second ceiling. Quiet or paired work fits more than one group to
+  // a room; the hall, ISH and the field hold several at once.
+  M.roomCap = S.rooms*S.perRoom;
+  M.clusters = Math.min(M.staffable, M.roomCap);
+  M.roomBound = M.roomCap < M.staffable;
+  M.roomsNeeded = Math.ceil(Math.ceil(M.N/S.cluster)/Math.max(1,S.perRoom));
   M.capacity = M.clusters*S.cluster;
   M.coverage = M.N>0 ? M.capacity/M.N : 0;
   M.clustersNeeded = Math.ceil(M.N/S.cluster);
   M.clusterGap = M.clustersNeeded - M.clusters;
   // student leaders: how many, and what share of the upper secondary cohort
-  M.leadersNeeded = M.supervised*S.leadersPer;
+  M.running = Math.min(M.clusters, M.clustersNeeded);
+  M.leadersNeeded = Math.max(0, M.running-M.adultRun)*S.leadersPer;
   M.leaderPool = S.p3+S.p4+(S.levels===5?S.p5:0);
   M.leaderRate = M.leaderPool>0 ? M.leadersNeeded/M.leaderPool : 0;
   // teachers needed if every group had an adult in the room, for contrast
@@ -514,8 +588,13 @@ function model(){
     M.issues.push(['b',`Band capacity covers only ${pct(M.coverage)} of Beattyians. ${cm(Math.round(M.N-M.capacity))} have nowhere to go on a Wednesday. You are running ${M.clusters} groups and need ${M.clustersNeeded}.`]);
   else if(M.top2<.8)
     M.issues.push(['w',`Only ${pct(M.top2)} get their first or second choice. Below 80 percent the catalogue is too narrow; add groups, not seats.`]);
+  if(M.roomBound && M.clusters < M.clustersNeeded)
+    M.issues.push(['w',`Rooms bind before staffing does. You could staff ${M.staffable} groups but ${S.rooms} rooms at ${S.perRoom} group${S.perRoom>1?'s':''} each hold only ${M.roomCap}. Either raise groups-per-room, which suits paired and quiet work, or run larger groups.`]);
   if(M.leaderRate>0.35)
-    M.issues.push(['w',`Running ${M.supervised} student-led groups needs ${Math.round(M.leadersNeeded)} student leaders, which is ${pct(M.leaderRate)} of Sec 3 and above. That is a large standing leadership corps to train and keep trained.`]);
+    M.issues.push([S.model==='tutoring'?'g':'w',
+      S.model==='tutoring'
+      ? `${Math.round(M.leadersNeeded)} tutors, ${pct(M.leaderRate)} of Sec 3 and above. High by design: in cross-age tutoring the upper school <i>is</i> the teaching body, and Sec 1 and 2 number ${cm(S.p1+S.p2)} against ${cm(M.leaderPool)} potential tutors, so the ratio works.`
+      : `${Math.round(M.leadersNeeded)} student leaders is ${pct(M.leaderRate)} of Sec 3 and above. A large standing corps to train and keep trained.`]);
   if(!M.gagneOk)
     M.issues.push(['w',`Cadence ${r1(M.perMonth)} sessions a month. Gagné dismisses provision at two or three a month as busywork. Below 3 you are running exposure, not talent development.`]);
   if(S.houseOwns)
@@ -674,6 +753,8 @@ const RAIL=[
    ['superRatio','Groups supervised per teacher','range',1,15,1,'How many student-led groups one roaming teacher can hold. This is the multiplier that makes the arithmetic close.'],
    ['leadersPer','Student leaders per group','range',1,5,1,'Two is the usual pairing, so nobody leads alone.'],
    ['cluster','Group size','range',5,45,1,'Renzulli: 5 to 15, up to 25 with a second adult. Larger is possible when the group is student led and the activity is broad.'],
+   ['rooms','Rooms available at once','range',5,90,1,'Form classrooms plus labs, ITRs, library, AVA, ISH, hall and field. Around 48 is realistic during the band, when no lessons are running.'],
+   ['perRoom','Groups sharing a room','range',1,4,1,'Paired or quiet work fits more than one group to a room, and the hall or field holds several. Tutoring pairs stack; a debate does not.'],
    ['skew','Demand concentration','range',.1,2,.1,'How unevenly Beattyians want the same groups. Higher means everyone chases the same few.'],
    ['teachers','Teaching establishment','range',20,160,1,'Total teaching staff, used for rotation and house team sizing.']]},
  {t:'Talent development',f:[
@@ -877,6 +958,18 @@ ${S.wushu==='S'
 <tr><td><b>Identity carrier</b></td><td>PE attire (exists today) · attire + anchors + Cup</td><td><b>${S.anchors?'Attire + anchors':'PE attire only'}</b></td><td>${S.anchors?'Each house has a visible flagship.':'Cheapest start. Colour already issued at Sec 1.'}</td></tr>
 </tbody></table></div>
 
+<h2>5 · Delivery models &mdash; what actually happens in the room</h2>
+<p class="lede">One click reconfigures the whole dashboard. Orthodox clusters assume an adult per group, which ten duty teachers rules out &mdash; so the alternatives are not decoration, they are the live options.</p>
+<div class="grid2">${Object.entries(MODELS).map(([k,m])=>`
+<div class="box ${S.model===k?'nav':''}" ${S.model===k?'style="background:#fffdf0"':''}>
+  <h4>${m.n} <span class="tag ${m.tag==='Avant garde'?'mod':(m.tag==='Best evidenced'?'res':'')}">${m.tag}</span></h4>
+  <p style="font-size:.92em">${m.d}</p>
+  <p style="font-size:.88em"><b>Why.</b> ${m.why}</p>
+  <p style="font-size:.88em;color:var(--g4)"><b>Cost.</b> ${m.cost}</p>
+  <button class="act sm ${S.model===k?'':'ghost'}" data-model="${k}">${S.model===k?'in use':'switch to this'}</button>
+</div>`).join('')}</div>
+<p class="note">These combine. Cross-age tutoring on Wednesday with Open Studio once a term, scored as House-as-publisher, is a coherent school and it is cheaper than the orthodox model it replaces.</p>
+
 <div class="thesis"><b>Why the existing names hold.</b> Non Vi Sed Arte, not by force but by skill &mdash; and five houses named after men whose profession was force. Fisher for engineering. Jellicoe for judgement. Hood for going first. Sturdee for preparation. Harwood for reading a situation while outnumbered. Not one is remembered for force; each for a form of skill. The talent areas follow from the dispositions almost without argument.</div>`;
 }
 
@@ -928,6 +1021,33 @@ ${metric(AUD.ccaDay.Wed+' &amp; '+AUD.ccaDay.Thu,'CCA occurrences on Wed and Thu
 <p>Enrichment occurrences by category and level. Ten cells are empty.</p>
 <div class="chart scroll">${heat(AUD.cov.map(r=>[r[0],r.slice(1)]),['Sec 1','Sec 2','Sec 3','Sec 4','Sec 5'])}</div>
 <p class="note">Sec 4 has no STEM. Aesthetics absent from Sec 3 up, in a school running SYF, concert band and Chinese orchestra. Either upper-sec enrichment stops, or it never reaches the card. Different problems, different fixes.</p></div>
+</div>
+
+<h2>Four things the written report does not say <span class="tag mea">measured</span></h2>
+<div class="grid2">
+<div class="box" style="border-left:4px solid var(--red)"><h4>a · The band is already streamed, and it favours G3</h4>
+<div class="chart">${hbar([
+ ['G3 &mdash; enrichment',AUD.banded.G3.enr,'#000C53',AUD.banded.G3.enr],
+ ['G2 &mdash; enrichment',AUD.banded.G2.enr,'#1F5FA8',AUD.banded.G2.enr],
+ ['G1 &mdash; enrichment',AUD.banded.G1.enr,'#EC3237',AUD.banded.G1.enr]],{w:440,lw:150,rh:22})}</div>
+<p>Where the band is recorded by banding group, G3 takes <b>${AUD.banded.G3.enr}</b> enrichment entries against G1's <b>${AUD.banded.G1.enr}</b>. Not just more &mdash; different in kind. G3 gets ${AUD.bandedProg.G3}. G1 gets ${AUD.bandedProg.G1}.</p>
+<p class="note"><b>Why this matters for houses.</b> A class-anchored vertical house is the one structure in the week that is blind to banding: under FSBB the form class survives, and the house rides on it. It would be the only slot where a G1 and a G3 Beattyian are in the same room by design. That is the strongest equity argument available here, and it is stronger than the attainment argument that is not there.</p></div>
+
+<div class="box" style="border-left:4px solid var(--red)"><h4>b · Only ${Math.round(AUD.churn.both/(AUD.churn.y24+AUD.churn.y25-AUD.churn.both)*100)} percent of programmes survive a year</h4>
+<div class="chart">${stackRow([['Survived',AUD.churn.both,'#1a7f4b',AUD.churn.both+' survived'],
+ ['Died',AUD.churn.died,'#EC3237',AUD.churn.died+' died'],['Born',AUD.churn.born,'#FFE200',AUD.churn.born+' born']],440,28)}</div>
+<p>${AUD.churn.y24} enrichment programmes ran in 2024 and ${AUD.churn.y25} in 2025, but only <b>${AUD.churn.both}</b> are the same ones. ${AUD.churn.died} died, ${AUD.churn.born} were invented.</p>
+<p class="note">This is a bigger finding than the ${AUD.prog1or2} one-or-twice programmes. The school rebuilds most of its enrichment offer <b>every year</b>, so nothing accumulates expertise, materials or reputation. It also explains the cadence problem at its root: a programme cannot develop a Beattyian over four years if it does not survive one.</p></div>
+
+<div class="box"><h4>c · Wednesday and Thursday are used identically</h4>
+<div class="chart">${hbar(AUD.wedThu.wedCat.slice(0,4).map(r=>[r[0],r[1],'#000C53',r[1]]),{w:430,lw:190,rh:19})}</div>
+<p style="font-size:.9em"><b>Wednesday ${AUD.wedThu.Wed} records. Thursday ${AUD.wedThu.Thu}.</b> Character and Leadership tops both. Language Arts, STEM and Sport follow on both. There is no differentiation to undo.</p>
+<p class="note">So Wednesday-as-house and Thursday-as-pathway is not a reduction in what runs. It is the <b>first time the two days would mean different things</b> &mdash; a free structural gain, because the school already owns two protected afternoons and currently spends them the same way twice.</p></div>
+
+<div class="box"><h4>d · A third of band dates carried one activity for the whole school</h4>
+<div class="chart">${hbar(Object.entries(AUD.dateSpread).map(([k,v])=>[k+' programme'+(k==='1'?'':'s'),v,k==='1'?'#EC3237':'#000C53',v]),{w:430,lw:120,rh:19})}</div>
+<p style="font-size:.9em">On <b>${AUD.dateSpread[1]} of ${AUD.bandDates}</b> band dates, all ${cm(M.N)} Beattyians had one programme between them. The busiest date in two years carried seven.</p>
+<p class="note">The 1.33 average hides the shape. This is not a thin menu, it is mostly no menu at all, punctuated by a handful of full days. Any target expressed as an average will be met without fixing it.</p></div>
 </div>
 
 <h2>Four strategies, scored on the same five outcomes <span class="tag mod">modelled</span></h2>
@@ -1376,8 +1496,10 @@ function tabDec(M){
   if(SCEN[0]||SCEN[1]){
     const cols=[['Current',S],['A',SCEN[0]],['B',SCEN[1]]].filter(c=>c[1]);
     const ms=cols.map(c=>{const sv=S;S=c[1];const m=model();S=sv;return m;});
-    const rowsDef=[['Architecture',(m,s)=>ARCH[s.arch].n],['Houses',(m,s)=>s.houses],['Classes per level',(m,s)=>s.classes],
-     ['Levels',(m,s)=>'Sec 1–'+s.levels],['Adults per band day',(m,s)=>s.adults],
+    const rowsDef=[['Delivery model',(m,s)=>MODELS[s.model]?MODELS[s.model].n:'—'],
+     ['Architecture',(m,s)=>ARCH[s.arch].n],['Houses',(m,s)=>s.houses],
+     ['Groups running',(m)=>m.running+' of '+m.clustersNeeded],['Student leaders',(m)=>Math.round(m.leadersNeeded)],
+     ['Levels',(m,s)=>'Sec 1–'+s.levels],['Duty teachers',(m,s)=>s.duty],
      ['Coverage',(m)=>pct(m.coverage)],['First choice',(m)=>pct(m.fcs)],['First or second',(m)=>pct(m.top2)],['Sessions/month',(m)=>r1(m.perMonth)],
      ['Pursue places',(m)=>cm(m.pursueN)],['Talent pool per field',(m)=>cm(Math.round(m.pool))],
      ['Affinity index',(m)=>m.affinity],['Talent depth index',(m)=>m.talent],
@@ -1438,8 +1560,19 @@ ${cmp}
 </ol></div>`;
 }
 
-/* ============================================================ RENDER */
-function render(){
+/* ============================================================ RENDER
+   Re-rendering #main throws away its DOM, so anything focused inside it is lost
+   and the page would jump. Keep the scroll position and restore focus to the
+   same control unless the tab actually changed. */
+function render(opts){
+  const toTop = !!(opts && opts.top);
+  const y = window.scrollY;
+  const ae = document.activeElement;
+  let refocus=null;
+  if(ae && ae!==document.body && $('#main').contains(ae)){
+    if(ae.dataset.h) refocus=`#main select[data-h="${ae.dataset.h}"][data-f="${ae.dataset.f}"]`;
+    else if(ae.dataset.a) refocus=`#main input[data-a="${ae.dataset.a}"]`;
+  }
   const M=model();
   $$('.gnav a[data-t]').forEach(a=>a.classList.toggle('on',a.dataset.t===S.tab));
   $('#main').innerHTML = TABS[S.tab](M) + footer();
@@ -1453,8 +1586,13 @@ function render(){
     if(k==='wushu') fixAnchors();
     render();});
   $$('#main [data-arch]').forEach(b=>b.onclick=()=>{S.arch=b.dataset.arch;render();});
+  $$('#main [data-model]').forEach(b=>b.onclick=()=>{applyModel(b.dataset.model);});
   const aa=$('#autoAnchor'); if(aa) aa.onclick=()=>{autoAnchor();render();};
-  window.scrollTo({top:0});
+  if(toTop) window.scrollTo({top:0});
+  else {
+    window.scrollTo({top:y});
+    if(refocus){ const el=$(refocus); if(el) el.focus({preventScroll:true}); }
+  }
 }
 
 /* Anchor helpers. Keep one Sport, one Uniformed Group and one Performing Art per
@@ -1490,7 +1628,7 @@ function footer(){
 }
 
 /* nav */
-$$('.gnav a[data-t]').forEach(a=>a.onclick=()=>{S.tab=a.dataset.t;render();});
+$$('.gnav a[data-t]').forEach(a=>a.onclick=()=>{S.tab=a.dataset.t;render({top:true});});
 $('#presBtn').onclick=()=>{document.body.classList.toggle('pres');
   $('#presBtn').classList.toggle('on',document.body.classList.contains('pres'));};
 $('#printBtn').onclick=()=>window.print();
