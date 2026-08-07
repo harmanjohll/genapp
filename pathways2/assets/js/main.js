@@ -203,11 +203,30 @@ function renderHead() {
   if (sel) sel.addEventListener('change', (e) => setYear(e.target.value));
 }
 
+// What each mode cannot work without. The global REQUIRED list in the loader
+// covers the files every screen needs; these are the per mode ones, kept here
+// because a missing deck should cost you Play and not the whole site.
+const MODE_NEEDS = {
+  now: [],
+  journey: ['journey', 'chances'],
+  aim: ['futures'],
+  table: ['journey', 'chances'],
+  teacher: [],
+  parent: ['parent'],
+};
+
+function missingFor(mode) {
+  const gone = new Set(data._missing || []);
+  return (MODE_NEEDS[mode] || []).filter((k) => gone.has(k) || !data[k]);
+}
+
 function paint() {
   const st = getState();
   document.getElementById('site-foot').style.display = onLanding ? 'none' : '';
   try {
     if (onLanding) { renderLanding(app, data, ctx, leaveLanding); return; }
+    const gone = missingFor(extraMode || st.mode);
+    if (gone.length) { partLoaded(gone); return; }
     if (extraMode === 'table') { renderTable(app, data, ctx, paint); return; }
     if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
     if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
@@ -229,6 +248,25 @@ function paint() {
       </div></div></div>`;
     onAction(app, { recover: () => { setLiveRun(null); resetJourney(); paint(); } });
   }
+}
+
+/** One part of the site did not arrive. Say so, and offer the way out. */
+function partLoaded(missing) {
+  const c = (data.copy && data.copy.chrome) || {};
+  app.innerHTML = `
+    <div class="wrap"><div class="section" style="margin-top:var(--s-6)"><div class="notice">
+      <strong>${esc(c.partHead || 'This part did not load.')}</strong>
+      <p style="margin:8px 0 0">${esc(c.partBody || 'The rest of the site is fine. Try again, or use another part of it.')}</p>
+      <div class="btn-row" style="margin-top:var(--s-3)">
+        <button class="btn accent" type="button" data-action="retry">${esc(c.partRetry || 'Try again')}</button>
+        <button class="btn ghost" type="button" data-action="topl">${esc(c.partPlan || 'Go to Plan')}</button>
+      </div>
+    </div></div></div>`;
+  onAction(app, {
+    retry: () => location.reload(),
+    topl: () => { extraMode = null; setMode('now'); },
+  });
+  console.warn('[data] mode unavailable, missing:', missing.join(', '));
 }
 
 // The audience strip: three quiet words above the header, because a parent

@@ -61,7 +61,11 @@
   "icsBtn": "Put the review week in your calendar",
   "icsHint": "Downloads a calendar file. Nothing leaves this device.",
   "icsTitle": "Subject review season: check your Paths lever",
-  "icsBody": "Two minutes on the Paths site: are your levels still pointed where you want? Ask your subject teacher this week if not."
+  "icsBody": "Two minutes on the Paths site: are your levels still pointed where you want? Ask your subject teacher this week if not.",
+  "partHead": "This part did not load.",
+  "partBody": "Something did not arrive over the connection. The rest of the site is fine, and nothing you did caused it.",
+  "partRetry": "Try again",
+  "partPlan": "Go to Plan"
  },
  "landing": {
   "kicker": "For Singapore secondary students",
