@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTY House Studio &middot; Hood, Jellicoe, Harwood, Sturdee, Fisher</title>
+<style>
+:root{--navy:#000C53;--yellow:#FFE200;--red:#EC3237;
+ --g1:#F6F7F9;--g2:#E4E6EC;--g3:#9aa0ae;--g4:#5b5f6b;--ink:#1a1c22;
+ --ok:#1a7f4b;--warn:#b8860b;--bad:#c0392b;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:Calibri,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1300px;margin:0 auto;padding:24px 20px 90px}
+h1,h2,h3,h4{font-family:Georgia,serif;color:var(--navy);margin:0 0 .35em}
+h1{font-size:29px;line-height:1.15}h2{font-size:21px;margin:34px 0 6px}h3{font-size:16px}h4{font-size:13.5px}
+p{margin:.4em 0 .8em}
+header{border-bottom:3px solid var(--navy);padding-bottom:13px;margin-bottom:16px}
+.sub{color:var(--g4);font-size:14px;max-width:900px}
+.lede{color:var(--g4);font-size:13.5px;max-width:920px;margin-bottom:12px}
+.thesis{border-left:5px solid var(--yellow);background:#fffdf0;padding:11px 15px;margin:14px 0;font-size:13.5px;max-width:920px}
+.tag{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;
+ background:var(--g1);border:1px solid var(--g2);color:var(--g4);padding:1px 6px;vertical-align:2px}
+.tag.mod{background:#fff8d8;border-color:#e8d98a;color:#7a6300}
+.tag.src{background:#eef4ff;border-color:#c3d4f2;color:#1f3f8f}
+.tag.unk{background:#fdeceb;border-color:#f0bfbc;color:#8d2b22}
+
+.verdict{border-left:6px solid var(--navy);background:var(--g1);padding:13px 16px;margin:16px 0}
+.verdict.ok{border-left-color:var(--ok)}.verdict.warn{border-left-color:var(--yellow)}.verdict.bad{border-left-color:var(--red)}
+.verdict h3{margin:0 0 3px}
+.verdict ul{margin:6px 0 0;padding-left:19px;font-size:13.5px}
+.verdict li{margin-bottom:4px}
+.verdict li.b{color:var(--bad)}.verdict li.w{color:var(--warn)}.verdict li.g{color:var(--ok)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:9px;margin:14px 0 4px}
+.m{border:1px solid var(--g2);border-top:4px solid var(--navy);padding:9px 11px}
+.m.ok{border-top-color:var(--ok)}.m.warn{border-top-color:var(--yellow)}.m.bad{border-top-color:var(--red)}
+.m b{display:block;font-family:Georgia,serif;font-size:23px;color:var(--navy);line-height:1.05}
+.m span{font-size:11.5px;color:var(--g4);display:block;margin-top:3px}
+.m i{font-size:11px;font-style:normal;display:block;margin-top:3px;font-weight:bold}
+.m i.ok{color:var(--ok)}.m i.warn{color:var(--warn)}.m i.bad{color:var(--bad)}
+
+.ctl{border:1px solid var(--g2);background:var(--g1);padding:14px 16px;margin:16px 0}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:14px 20px}
+label.f{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--g4);margin:0 0 4px;font-weight:bold}
+select{width:100%;font-family:inherit;font-size:13.5px;padding:5px 7px;border:1px solid var(--g2);background:#fff;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--navy);margin:2px 0}
+.hint{font-size:11px;color:var(--g3);margin-top:3px;line-height:1.35}
+.seg{display:flex;border:1px solid var(--g2);background:#fff}
+.seg button{flex:1;font-family:inherit;font-size:12.5px;padding:5px 3px;border:0;background:#fff;color:var(--g4);cursor:pointer;border-right:1px solid var(--g2)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+.btnrow{margin-top:13px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button.act{font-family:inherit;font-size:13px;padding:7px 15px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+button.act.ghost{background:#fff;color:var(--navy)}
+button.act.sm{font-size:12px;padding:5px 11px}
+button.act:hover{opacity:.88}
+.sep{width:1px;height:24px;background:var(--g2);margin:0 4px}
+
+.scen{border:1px solid var(--navy);padding:12px 15px;margin:16px 0;background:#fff}
+.scen h4{margin:0 0 7px}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.slot{border:1px solid var(--g2);padding:9px 11px;font-size:12px}
+.slot.full{border-left:4px solid var(--navy);background:var(--g1)}
+.slot b{display:block;font-family:Georgia,serif;font-size:14px;color:var(--navy)}
+.slot .d{color:var(--g4);margin:3px 0 6px;line-height:1.35;min-height:32px}
+.slot .bt{display:flex;gap:5px}
+
+.houses{display:grid;grid-template-columns:repeat(auto-fit,minmax(222px,1fr));gap:12px;margin-top:12px}
+.h{border:1px solid var(--g2);border-top:7px solid var(--navy);padding:12px 13px;background:#fff}
+.h .nm{font-family:Georgia,serif;font-size:20px;line-height:1.1}
+.h .vt{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--g4);margin:2px 0 4px}
+.h .cr{font-size:12px;color:var(--g4);font-style:italic;margin:0 0 8px;line-height:1.35}
+.h .dm{font-size:12.5px;font-weight:bold;margin:0 0 8px;line-height:1.3}
+.bar{height:9px;background:var(--g2);position:relative;margin:2px 0 3px;overflow:hidden}
+.bar > i{position:absolute;left:0;top:0;bottom:0;display:block}
+.bar .tgt{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55}
+.gb{display:flex;height:15px;margin:2px 0 3px;overflow:hidden}
+.gb .gg{background:#8e44ad}.gb .bb{background:#2471a3}
+.vs{display:flex;gap:2px;margin:5px 0 2px;height:28px;align-items:stretch}
+.vs div{flex:1;height:100%;background:var(--g2);position:relative}
+.vs div i{position:absolute;left:0;right:0;bottom:0;display:block}
+.vslab{display:flex;gap:2px;font-size:9px;color:var(--g3)}
+.vslab span{flex:1;text-align:center}
+.rowlab{display:flex;justify-content:space-between;font-size:11px;color:var(--g4);margin-top:7px}
+.rowlab b{color:var(--ink)}
+.h select{font-size:12px;padding:3px 5px;margin-bottom:5px}
+.h .sl{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--g3);margin-top:6px}
+.flag{font-size:11px;margin-top:8px;padding:5px 7px;line-height:1.35}
+.flag.bad{background:#fdeceb;color:#7d2018}.flag.warn{background:#fff8d8;color:#6b5300}.flag.ok{background:#eaf6ef;color:#14603a}
+
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--g2);vertical-align:top}
+th{background:var(--g1);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--g4);font-weight:bold}
+td.n,th.n{text-align:right}
+tr.lockB td:first-child{border-left:3px solid #2471a3}
+tr.lockG td:first-child{border-left:3px solid #8e44ad}
+.mini{font-size:11px;color:var(--g3)}
+.cell{display:block;font-size:12px}
+.cellbar{height:4px;background:var(--g2);margin-top:2px}
+.cellbar i{display:block;height:4px}
+td.win{background:#eaf6ef;font-weight:bold}td.lose{background:#fdeceb}
+
+.dossier{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:11px;margin-top:10px}
+.dos{border:1px solid var(--g2);border-left:6px solid var(--navy);padding:11px 14px}
+.dos h4{margin:0 0 1px;font-size:15px}
+.dos .yr{font-size:11px;color:var(--g3);margin-bottom:6px}
+.dos p{font-size:12.5px;margin:4px 0;color:var(--g4)}
+.dos .known{color:var(--ink)}
+.dos .disp{font-weight:bold;color:var(--navy);font-size:13px}
+.dos .awk{font-size:12px;color:#7d2018;border-top:1px dotted var(--g2);padding-top:5px;margin-top:6px}
+
+.stack > div{border:1px solid var(--g2);padding:11px 14px;margin-bottom:8px}
+.stack > div.on{border-left:5px solid var(--navy);background:var(--g1)}
+.stack h4{margin:0 0 3px}
+.stack p{font-size:13px;margin:3px 0;color:var(--g4)}
+.stack .ex{font-size:13.5px;color:var(--ink)}
+.stack .risk{font-size:12.5px;color:#7d2018;margin-top:4px}
+.note{font-size:12.5px;color:var(--g4);border-left:3px solid var(--g2);padding-left:10px;margin:8px 0}
+.note.hot{border-left-color:var(--red);color:#7d2018}
+footer{margin-top:44px;border-top:1px solid var(--g2);padding-top:12px;font-size:11.5px;color:var(--g3)}
+</style></head><body><div class="wrap">
+
+<header>
+<h1>House Studio</h1>
+<p class="sub">Hood, Jellicoe, Harwood, Sturdee and Fisher already exist. The naming question is closed. What is open is what each house is <i>for</i>: which Sport, Uniformed Group and Performing Art it flies, which talent domain it stewards for the whole school, and how a Beattyian comes to belong to it. Model any combination, save it, and compare it against the others.</p>
+<div class="thesis"><b>The through line, if you want one.</b> Beatty's motto is Non Vi Sed Arte, not by force but by skill, and the school then named its houses after five men whose profession was force. That reads as a contradiction until you look at what each is actually remembered for. Fisher for engineering. Jellicoe for judgement and restraint. Hood for going first. Sturdee for preparation. Harwood for reading a situation while outnumbered. Not one of the five is remembered for force. Each is remembered for a form of skill. The house system does not need new names. It needs the existing names taken seriously.</div>
+<p class="lede"><span class="tag src">measured</span> the seventeen CCAs and their gender eligibility, from the MOE School Finder record. <span class="tag unk">unverified</span> the colours of Harwood, Sturdee and Fisher, which are published nowhere I can reach: assign them yourself below. <span class="tag mod">modelled</span> CCA sizes, gender mix, attrition, class counts and first choice cost. Every modelled figure is a control.</p>
+</header>
+
+<div id="verdict"></div>
+<div class="metrics" id="metrics"></div>
+
+<div class="scen">
+<h4>Scenario slots</h4>
+<p class="lede" style="margin-bottom:9px">Load a preset, tune it, save it to a slot, then load another and save that. Once two slots are filled a comparison table appears at the bottom with the better figure in each row shaded.</p>
+<div class="btnrow" style="margin-top:0;margin-bottom:11px">
+  <span class="mini" style="font-weight:bold">Presets:</span>
+  <button class="act ghost sm" data-p="min">Minimum disturbance</button>
+  <button class="act ghost sm" data-p="full">Full talent architecture</button>
+  <button class="act ghost sm" data-p="hat">Sorting hat</button>
+  <button class="act ghost sm" data-p="abs">Balance absolutist</button>
+</div>
+<div class="slots" id="slots"></div>
+</div>
+
+<h2>Controls</h2>
+<div class="ctl">
+<div class="ctlgrid">
+  <div>
+    <label class="f">How a Beattyian gets a house</label>
+    <select id="mod"></select>
+    <div class="hint" id="modhint"></div>
+  </div>
+  <div>
+    <label class="f">What each house carries</label>
+    <select id="scheme"></select>
+    <div class="hint" id="schhint"></div>
+  </div>
+  <div>
+    <label class="f">Talent domains assigned</label>
+    <div class="seg" id="dmode"><button data-v="adm" class="on">By admiral</button><button data-v="free">Freely</button></div>
+    <div class="hint">By admiral maps each domain onto what that officer is actually remembered for. Switch to free and the dropdowns on each card unlock.</div>
+  </div>
+  <div>
+    <label class="f">Harwood's colour</label>
+    <select id="cHar"></select>
+    <div class="hint">Hood is Red and Jellicoe is Orange, from you. These three are unverified: swap them until they look right.</div>
+  </div>
+  <div>
+    <label class="f">Sturdee's colour</label>
+    <select id="cStu"></select>
+  </div>
+  <div>
+    <label class="f">Fisher's colour</label>
+    <select id="cFis"></select>
+  </div>
+  <div>
+    <label class="f">Form classes per level &middot; <span id="clv">8</span></label>
+    <input type="range" id="cl" min="4" max="12" step="1" value="8">
+    <div class="hint" id="clhint"></div>
+  </div>
+  <div>
+    <label class="f">Anchor concentration &middot; <span id="acv">45</span>%</label>
+    <input type="range" id="ac" min="20" max="100" step="5" value="45">
+    <div class="hint" id="achint"></div>
+  </div>
+  <div>
+    <label class="f">House competition runs</label>
+    <div class="seg" id="comp"><button data-v="lev" class="on">By level, then aggregated</button><button data-v="whole">Whole house</button></div>
+    <div class="hint" id="comphint"></div>
+  </div>
+  <div>
+    <label class="f">Anchors and domains</label>
+    <div class="seg" id="rot"><button data-v="fix" class="on">Permanent</button><button data-v="rot">Rotate every 4 years</button></div>
+    <div class="hint" id="rothint"></div>
+  </div>
+  <div>
+    <label class="f">Wushu counts as</label>
+    <div class="seg" id="wushu"><button data-v="S" class="on">A Sport</button><button data-v="PA">A Performing Art</button></div>
+    <div class="hint">MOE files Wushu under Visual and Performing Arts. Beatty has only four other sports, so this one call decides whether five houses can each hold a sport.</div>
+  </div>
+  <div>
+    <label class="f">Cohort size &middot; <span id="cohv">945</span></label>
+    <input type="range" id="coh" min="600" max="1400" step="5" value="945">
+  </div>
+  <div>
+    <label class="f">Levels in the house column</label>
+    <div class="seg" id="lv"><button data-v="4" class="on">Sec 1 to 4</button><button data-v="5">Sec 1 to 5</button></div>
+  </div>
+  <div>
+    <label class="f">School gender ratio &middot; <span id="grv">49</span>% girls</label>
+    <input type="range" id="gr" min="35" max="65" step="1" value="49">
+  </div>
+  <div>
+    <label class="f">Natural gender spread across classes &middot; &plusmn;<span id="cgvv">9</span> pts</label>
+    <input type="range" id="cgv" min="0" max="24" step="1" value="9">
+    <div class="hint">Form classes are not gender balanced by accident. Subject combination, Mother Tongue and banding all tilt them.</div>
+  </div>
+  <div>
+    <label class="f">House aware Sec 1 class allocation &middot; <span id="hgav">60</span>%</label>
+    <input type="range" id="hga" min="0" max="100" step="5" value="60">
+    <div class="hint">This, not the anchors, is what balances gender under the class model.</div>
+  </div>
+  <div>
+    <label class="f">Sec 1 CCA intake steering &middot; <span id="stv">30</span>%</label>
+    <input type="range" id="st" min="0" max="100" step="5" value="30">
+    <div class="hint">Only bites under the CCA model, where capping intake is the only lever there is.</div>
+  </div>
+  <div>
+    <label class="f">Sec 3 to 4 CCA attrition &middot; <span id="atv">25</span>%</label>
+    <input type="range" id="at" min="0" max="55" step="5" value="25">
+  </div>
+  <div>
+    <label class="f">Acceptable size spread &middot; &plusmn;<span id="tsv">8</span>%</label>
+    <input type="range" id="ts" min="3" max="25" step="1" value="8">
+  </div>
+  <div>
+    <label class="f">Acceptable gender spread &middot; &plusmn;<span id="tgv">7</span> pts</label>
+    <input type="range" id="tg" min="3" max="20" step="1" value="7">
+  </div>
+</div>
+<div class="btnrow">
+  <button class="act" id="solve">Auto balance the anchors</button>
+  <button class="act ghost" id="solveG">Balance gender only</button>
+  <button class="act ghost" id="solveN">Balance numbers only</button>
+  <button class="act ghost" id="solveR">Maximise anchor reach</button>
+  <span class="sep"></span>
+  <button class="act ghost" id="reset">Reset</button>
+</div>
+<div class="hint" id="solvehint" style="margin-top:9px"></div>
+</div>
+
+<h2>The five houses</h2>
+<p class="lede">Dropdowns swap: choose a CCA already held elsewhere and the two houses trade. One Sport, one Uniformed Group, one Performing Art each is held for you. The small column chart is the house's vertical column, one bar per level.</p>
+<div class="houses" id="cards"></div>
+<div id="spare"></div>
+
+<h2>The vertical column</h2>
+<p class="lede">A house is only vertical if it actually holds Beattyians at every level. This is where the CCA anchored model shows its weakness: CCAs thin at upper secondary, so a CCA anchored column narrows exactly where the Sec 3 and Sec 4 seniors who should be leading it are meant to be.</p>
+<div id="vmat"></div>
+
+<h2>Level, class and house</h2>
+<div id="nest"></div>
+
+<h2>Where the load falls</h2>
+<div id="loadtab"></div>
+
+<h2>Comparison</h2>
+<div id="cmp"></div>
+
+<h2>The five admirals</h2>
+<p class="lede">If the houses are going to carry these names, Beattyians should know whose names they carry, including the parts that are awkward. Each dossier below ends with the complication, because a house named after a man is a standing invitation to ask what he actually did. That is a history curriculum you already own.</p>
+<div class="dossier" id="dos"></div>
+
+<h2>What each house carries</h2>
+<div class="stack" id="schstack"></div>
+
+<h2>The three sorting models, and what each costs</h2>
+<div class="stack" id="modstack"></div>
+
+<h2>CCA inputs</h2>
+<p class="lede">Sizes and gender mixes are modelled starting points. Replace them with your roll figures and everything above recomputes. Blue edge is boys only, purple edge is girls only.</p>
+<div id="ccatab"></div>
+
+<footer>Beatty Secondary School &middot; House architecture modelling tool &middot; CCA roster from the MOE School Finder record; admiral biographies from Wikipedia, Royal Museums Greenwich, the Imperial War Museum and the US Naval Institute. House colours for Harwood, Sturdee and Fisher are not published and are set by you. Sizes, gender mixes, attrition, class counts and first choice cost are modelled, not measured. Non Vi Sed Arte.</footer>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const N=5;
+
+/* ---------- the five houses, as they exist ---------- */
+const HOUSE=[
+ {id:'hood', nm:'Hood',     col:'#C8102E', fixed:'Red'},
+ {id:'jell', nm:'Jellicoe', col:'#E8751A', fixed:'Orange'},
+ {id:'harw', nm:'Harwood',  col:null},
+ {id:'stur', nm:'Sturdee',  col:null},
+ {id:'fish', nm:'Fisher',   col:null}
+];
+const PAL={green:'#1A7F4B',yellow:'#D8A800',blue:'#1F5FA8'};
+const PALNM={green:'Green',yellow:'Yellow',blue:'Blue'};
+
+/* ---------- admiral dossiers ---------- */
+const ADM=[
+{h:'hood', full:'Rear-Admiral Sir Horace Hood', yr:'1870 to 1916',
+ known:'Commanded the 3rd Battlecruiser Squadron at Jutland. His flagship Invincible was destroyed by a magazine explosion; 1,015 of the 1,021 aboard died with him. He had served under a young Captain Beatty in the Sudan two decades earlier, and at Jutland his squadron fought as the vanguard attached to Beatty\'s fleet.',
+ disp:'The Vanguard. Going first.',
+ why:'Contemporaries called him the beau ideal of a naval officer: spirited, enterprising, marked for higher command. He is the only one of the five who died in action, and he died ahead of the fleet rather than behind it.',
+ awk:'The complication is not his conduct, it is the ships. Invincible blew up because of how British battlecruisers stored cordite, a design and drill failure the Navy had been warned about. Hood died of an institutional decision he did not make. There is a lesson in that worth more than the heroism.',
+ dom:'serv'},
+{h:'jell', full:'Admiral of the Fleet John Jellicoe, 1st Earl Jellicoe', yr:'1859 to 1935',
+ known:'Commander in Chief of the Grand Fleet at Jutland, the only full clash of dreadnought battle fleets in history. Churchill called him the only man on either side who could have lost the war in an afternoon.',
+ disp:'The Steward. Judgement and restraint.',
+ why:'Historians describe him consistently as a cautious, methodical systems thinker, preoccupied with gunnery, fire control, ship design and risk. At Jutland he refused to be drawn into torpedo ambush or night action, choosing to preserve naval supremacy over chasing a decisive victory.',
+ awk:'He was sacked as First Sea Lord in December 1917 in a manner widely seen as shabby, and criticised for the Admiralty\'s slowness to adopt convoys against U boats. His caution is still argued over. Beatty, as First Sea Lord after the war, was involved in revising the official Jutland record in ways that protected his own reputation at Jellicoe\'s expense. Your school is named after the man who did that to the man one of your houses is named after.',
+ dom:'world'},
+{h:'harw', full:'Admiral Sir Henry Harwood', yr:'1888 to 1950',
+ known:'As a Commodore in December 1939 he correctly anticipated where the German pocket battleship Graf Spee would go, intercepted her off the River Plate with three lighter cruisers, and forced her into Montevideo where she was scuttled. Britain\'s first major naval success of the Second World War.',
+ disp:'The Improviser. Reading a situation while outnumbered.',
+ why:'His defining act was inference: working out an opponent\'s intention from thin information and committing to it. That is an argument made under uncertainty, which is closer to a debate than to a battle.',
+ awk:'A 2019 US Naval Institute reassessment argues the heroic version is largely wartime propaganda: that he left the damaged Exeter unsupported, persisted with ineffective long range fire, lost track of his own ammunition, and broke off early believing he was nearly out when he was not. Historians still disagree. A house whose namesake\'s reputation is actively contested is a gift to a history department.',
+ dom:'word'},
+{h:'stur', full:'Admiral of the Fleet Sir Doveton Sturdee', yr:'1859 to 1925',
+ known:'Annihilated von Spee\'s East Asia Squadron at the Falkland Islands in December 1914, sinking four German ships for twenty two British casualties. His ships were still coaling when the enemy appeared; he was saved because he had kept them at two hours\' notice for sea.',
+ disp:'The Hunter. Preparation, then decisive pursuit.',
+ why:'The victory turned on a precaution taken before it was needed, and then on cool speed management to run the enemy down. Preparation converted into pursuit is exactly what a training season is.',
+ awk:'Fisher detested him, and had him removed from the Admiralty in November 1914 partly on professional grounds and partly to settle a score. Historians note the Falklands win owed much to overwhelming material superiority rather than brilliance, and Nicholas Lambert describes his pomposity and arrogance. Churchill\'s verdict: a good fighting admiral but not a clever man. Two of your houses are named after men who could not stand each other.',
+ dom:'body'},
+{h:'fish', full:'Admiral of the Fleet John "Jacky" Fisher, 1st Baron Fisher', yr:'1841 to 1920',
+ known:'As First Sea Lord he drove the design of HMS Dreadnought, launched 1906, which made every existing battleship in the world obsolete overnight. He also scrapped around 150 ships he called too weak to fight and too slow to run away.',
+ disp:'The Reformer. Making the old obsolete.',
+ why:'The single clearest case on this list of technical imagination changing an institution. Turbines, oil, submarines, all big gun design. His motto was Fear God and Dread Nought.',
+ awk:'Autocratic and feud prone. Anyone who opposes me, I crush is attributed to him. Edward VII reportedly asked him to stop shaking his fist in the King\'s face. His resignation in May 1915 over Gallipoli was so chaotic that Asquith concluded he was showing mental aberration, and it contributed to the fall of the government. Innovation and destructiveness in the same person is a genuinely useful thing for fifteen year olds to sit with.',
+ dom:'stem'}
+];
+const A=id=>ADM.find(a=>a.h===id);
+
+/* ---------- CCAs (MOE School Finder) ---------- */
+const CCA=[
+ {id:'bad', nm:'Badminton',          cat:'S',  lock:null, n:55, g:.50},
+ {id:'can', nm:'Canoeing',           cat:'S',  lock:null, n:50, g:.44},
+ {id:'foo', nm:'Football',           cat:'S',  lock:'B',  n:45, g:0},
+ {id:'vol', nm:'Volleyball',         cat:'S',  lock:'G',  n:45, g:1},
+ {id:'wus', nm:'Wushu',              cat:'PA', lock:null, n:40, g:.45, flex:'S'},
+ {id:'cho', nm:'Chinese Orchestra',  cat:'PA', lock:null, n:60, g:.60},
+ {id:'chr', nm:'Choir',              cat:'PA', lock:null, n:55, g:.70},
+ {id:'ban', nm:'Concert Band',       cat:'PA', lock:null, n:80, g:.55},
+ {id:'dra', nm:'English Drama',      cat:'PA', lock:null, n:45, g:.60},
+ {id:'mal', nm:'Malay Dance',        cat:'PA', lock:null, n:45, g:.75},
+ {id:'mod', nm:'Modern Dance',       cat:'PA', lock:null, n:50, g:.80},
+ {id:'bb',  nm:"Boys' Brigade",      cat:'UG', lock:'B',  n:55, g:0},
+ {id:'ncc', nm:'NCC (Land)',         cat:'UG', lock:'B',  n:60, g:0},
+ {id:'ncd', nm:'NCDCC',              cat:'UG', lock:null, n:60, g:.45},
+ {id:'npc', nm:'NPCC',               cat:'UG', lock:null, n:90, g:.48},
+ {id:'sco', nm:'Scouts',             cat:'UG', lock:null, n:65, g:.46},
+ {id:'inf', nm:'Infocomm (Media)',   cat:'CS', lock:null, n:45, g:.35}
+];
+const C=id=>CCA.find(c=>c.id===id);
+const BASE=CCA.reduce((a,c)=>a+c.n,0);
+
+/* ---------- talent domains ---------- */
+const DOM=[
+ {id:'serv', nm:'Service, Leadership and Community', cats:'Peer Support Leaders, student leadership, VIA'},
+ {id:'stem', nm:'STEM, Design and Making',           cats:'Mathematics olympiad, Applied STEM and NEXUS, design and sustainability tech'},
+ {id:'body', nm:'Sport, Health and the Outdoors',    cats:'fitness, recreational and inter class sport, outdoor education'},
+ {id:'word', nm:'Language, Oracy and Expression',    cats:'English writing and literature, oracy and debate, Mother Tongue'},
+ {id:'world',nm:'Humanities and Global Citizenship', cats:'historical and geographical inquiry, Model UN, exchange'}
+];
+const D=id=>DOM.find(d=>d.id===id);
+
+/* ---------- identity schemes ---------- */
+const SCH=[
+{id:'disp', label:'The admiral\'s disposition, drawn from the record  (my recommendation)',
+ vals:{hood:'The Vanguard',jell:'The Steward',harw:'The Improviser',stur:'The Hunter',fish:'The Reformer'},
+ why:'Each house carries what its namesake is actually remembered for, not an invented virtue bolted on. Hood went first and died doing it. Jellicoe held the line and was criticised for it. Harwood read a situation while outnumbered. Sturdee prepared, then pursued. Fisher made the old obsolete. Five real dispositions, each of them a way of being good at something, and none of them about force. This is what makes Non Vi Sed Arte true of the house names rather than in tension with them.',
+ risk:'It requires the school to actually teach the history, including the awkward parts, or the dispositions become decoration within two years. It also asks a Sec 1 to hold a nineteenth century naval officer in mind, which is a real cognitive ask on top of everything else in the first term.'},
+{id:'heart', label:'HEART elements mapped onto the five houses',
+ vals:{hood:'Honour',jell:'Relatedness',harw:'Agency',stur:'Engagement',fish:'Transformation'},
+ why:'HEART has exactly five elements and you have exactly five houses, which is either a coincidence or an argument. It makes the house system the delivery vehicle for a framework you already teach, so nothing new enters the curriculum. Hood carries Honour because he went first; Jellicoe Relatedness because he held a whole fleet as one system; Harwood Agency because he acted when outnumbered; Sturdee Engagement because his win was built on preparation; Fisher Transformation because he obsoleted a navy.',
+ risk:'The mappings are mine, not the historical record\'s, and a sharp student will notice they could be shuffled. Abstract nouns also do not chant. Go Relatedness is not a cheer.'},
+{id:'both', label:'Disposition and HEART element together',
+ vals:{hood:'The Vanguard &middot; Honour',jell:'The Steward &middot; Relatedness',harw:'The Improviser &middot; Agency',stur:'The Hunter &middot; Engagement',fish:'The Reformer &middot; Transformation'},
+ why:'The history gives the house its story and HEART gives it its language, so assembly, CCE and house competition all speak the same words. Richest option, and the only one where the naval inheritance and the school framework reinforce rather than compete for the same airtime.',
+ risk:'Three things per house for a Sec 1 to hold: a name, a disposition and a HEART word. That is where a good idea becomes a poster nobody reads.'},
+{id:'dom', label:'Talent domain only',
+ vals:{hood:'',jell:'',harw:'',stur:'',fish:''},
+ why:'Strip the meaning layer entirely. Each house is known for the domain it runs for the school and nothing else. Cleanest to communicate and quickest to launch.',
+ risk:'The admirals become five arbitrary syllables, which is roughly what they are now. You would be spending the institutional memory rather than investing it.'},
+{id:'none', label:'Names and colours only, as today',
+ vals:{hood:'',jell:'',harw:'',stur:'',fish:''},
+ why:'The baseline. Useful as a comparison column: it shows what the other schemes are actually buying.',
+ risk:'This is the status quo, and the status quo is why you are building this.'}
+];
+const S=()=>SCH.find(s=>s.id===cfg.scheme);
+
+/* ---------- sorting models ---------- */
+const MOD=[
+{id:'class', label:'Class anchored vertical  (my recommendation)',
+ how:'Whole form classes are assigned to a house at Sec 1 and stay four years. Sec 1-03, Sec 2-03, Sec 3-03 and Sec 4-03 are the same house.',
+ detail:'This is the model that survives the vertical requirement, for the reason you named yourself. You want intra and inter class activity inside each level. If a form class sits entirely in one house, every inter class competition at every level is already an inter house competition, and the house table fills from activities you run anyway. No new events, no new slot, no new collision with the enrichment band. If a class is split across houses that free scoring channel closes and every house point has to be earned in a separate event competing for the same Wednesday. The anchors become flagships the house champions rather than a membership rule, and the concentration dial sets how hard Sec 1 CCA allocation is steered toward the house flying that flag.'},
+{id:'cca', label:'CCA anchored, the pure sorting hat',
+ how:'Your CCA is your house. Football is one house, Concert Band another.',
+ detail:'The cleanest story a school can tell, vertical by construction since a CCA already mixes Sec 1 to Sec 4, and it fails on four counts. Sizes: Concert Band and NPCC run roughly twice Wushu and Football, and that spread transfers straight to house sizes. Gender: three boys only CCAs against one girls only is structural skew, not bad luck. Vertical evenness: CCAs thin at upper secondary so the column narrows where the seniors should be. Class nesting drops to zero. And note what it does to the admirals: under this model a Beattyian is sorted by talent on arrival, which is the Hogwarts move, and the whole point of the Gagne developmental argument is that fourteen year olds are not yet what they will become.'},
+{id:'indiv', label:'Individual allocation',
+ how:'Each Beattyian is assigned individually at Sec 1 to level headcount and gender exactly.',
+ detail:'Perfect balance on both axes, genuinely vertical, and it throws away class nesting. A form class of thirty splits across all five houses, so form teachers cannot run house business in class time and inter class events stop rolling up. Choose this only if balance is absolute and you will fund house time as its own slot.'}
+];
+const M=()=>MOD.find(m=>m.id===cfg.mod);
+
+/* ---------- config ---------- */
+const DEF={mod:'class',scheme:'disp',dmode:'adm',wushu:'S',cl:8,lv:4,coh:945,ac:45,gr:49,ts:8,tg:7,
+ at:25,cgv:9,hga:60,st:30,comp:'lev',rot:'fix',
+ col:{harw:'green',stur:'yellow',fish:'blue'},
+ H:[{s:'vol',u:'ncc',p:'ban',d:'serv'},
+    {s:'can',u:'npc',p:'cho',d:'world'},
+    {s:'bad',u:'bb', p:'chr',d:'word'},
+    {s:'foo',u:'ncd',p:'mod',d:'body'},
+    {s:'wus',u:'sco',p:'dra',d:'stem'}]};
+let cfg=JSON.parse(JSON.stringify(DEF));
+let SLOT={A:null,B:null,C:null};
+
+const PRESET={
+ min:{nm:'Minimum disturbance',d:'Keep the houses as they are, add the domains, steer nothing. The cheapest thing that is still a system.',
+      set:{mod:'class',scheme:'dom',ac:25,hga:40,st:10,comp:'lev',rot:'fix'}},
+ full:{nm:'Full talent architecture',d:'Class anchored, hard steered CCA allocation, disposition and HEART both carried, domains run for the whole school.',
+      set:{mod:'class',scheme:'both',ac:75,hga:85,st:40,comp:'lev',rot:'fix'}},
+ hat:{nm:'Sorting hat',d:'Your CCA is your house. Maximum identity, and every balance cost visible at once.',
+      set:{mod:'cca',scheme:'disp',ac:100,hga:0,st:45,comp:'whole',rot:'fix'}},
+ abs:{nm:'Balance absolutist',d:'Individual allocation. Perfect numbers and gender, class nesting sacrificed.',
+      set:{mod:'indiv',scheme:'disp',ac:30,hga:100,st:0,comp:'whole',rot:'fix'}}
+};
+
+/* ---------- helpers ---------- */
+const sportIds=()=>CCA.filter(c=>c.cat==='S'||(c.flex==='S'&&cfg.wushu==='S')).map(c=>c.id);
+const paIds   =()=>CCA.filter(c=>c.cat==='PA'&&!(c.flex==='S'&&cfg.wushu==='S')).map(c=>c.id);
+const ugIds   =()=>CCA.filter(c=>c.cat==='UG').map(c=>c.id);
+const scale   =()=>cfg.coh/BASE;
+const sz      =id=>C(id)?C(id).n*scale():0;
+function gf(id){const c=C(id);if(!c)return 0;if(c.lock==='B')return 0;if(c.lock==='G')return 1;
+  return Math.max(.05,Math.min(.95,c.g+(cfg.gr-49)/100));}
+function hcol(i){const h=HOUSE[i];return h.col?h.col:PAL[cfg.col[h.id]];}
+function hcolnm(i){const h=HOUSE[i];return h.col?h.fixed:PALNM[cfg.col[h.id]];}
+function levelW(){const L=cfg.lv,w=[];for(let i=0;i<L;i++)w.push(i===4?0.18:1);
+  const s=w.reduce((a,b)=>a+b,0);return w.map(x=>x/s);}
+function ccaLevelW(){const L=cfg.lv,a=cfg.at/100,w=[];
+  for(let i=0;i<L;i++){let f=1;if(i===2)f=1-a*0.55;if(i===3)f=1-a;if(i===4)f=(1-a)*0.18;w.push(f);}
+  const lw=levelW(),c=w.map((x,i)=>x*lw[i]),s=c.reduce((a,b)=>a+b,0);return c.map(x=>x/s);}
+
+/* ---------- core ---------- */
+function compute(){
+  const total=cfg.coh,L=cfg.lv,lw=levelW(),cw=ccaLevelW();
+  const anchored=new Set();cfg.H.forEach(h=>[h.s,h.u,h.p].forEach(id=>{if(id)anchored.add(id);}));
+  const freeIds=CCA.filter(c=>!anchored.has(c.id)).map(c=>c.id);
+  const freeN=freeIds.reduce((a,id)=>a+sz(id),0);
+
+  let hs=cfg.H.map((h,i)=>{const ids=[h.s,h.u,h.p].filter(Boolean);
+    return {i,ids,anchN:ids.reduce((a,id)=>a+sz(id),0),
+              anchG:ids.reduce((a,id)=>a+sz(id)*gf(id),0),n:0,g:0,lev:[]};});
+
+  const cpl=cfg.cl,base=Math.floor(cpl/N),rem=cpl%N,nestClean=(cpl%N===0);
+  const cph=[];for(let i=0;i<N;i++)cph.push([]);
+  for(let l=0;l<L;l++){
+    const nCl=(l===4)?Math.max(1,Math.round(cpl*0.18)):cpl;
+    const b=Math.floor(nCl/N),r=nCl%N;
+    for(let i=0;i<N;i++)cph[i].push(b+(((i+l)%N)<r?1:0));
+  }
+
+  if(cfg.mod==='class'){
+    const totCl=cph.reduce((a,r)=>a+r.reduce((x,y)=>x+y,0),0);
+    hs.forEach((h,i)=>{
+      h.lev=cph[i].map(c=>total*(c/totCl));
+      h.n=h.lev.reduce((a,b)=>a+b,0);
+      const k=Math.max(1,cph[i].reduce((a,b)=>a+b,0));
+      const sd=cfg.cgv/Math.sqrt(k), range=2.33*sd*(1-cfg.hga/100*0.92);
+      const off=((i/(N-1))-0.5)*range;
+      h.g=h.n*Math.max(.05,Math.min(.95,(cfg.gr+off)/100));
+    });
+  } else if(cfg.mod==='indiv'){
+    hs.forEach(h=>{h.lev=lw.map(w=>total*w/N);h.n=total/N;h.g=h.n*(cfg.gr/100);});
+  } else {
+    const k=cfg.st/100;
+    const mA=hs.reduce((a,h)=>a+h.anchN,0)/N,mG=hs.reduce((a,h)=>a+h.anchG,0)/N;
+    hs.forEach(h=>{h.n=h.anchN+(mA-h.anchN)*k;h.g=h.anchG+(mG-h.anchG)*k;h.lev=cw.map(w=>h.n*w);});
+    let r=total-hs.reduce((a,h)=>a+h.n,0);
+    if(r>0.5){
+      const srt=[...hs].sort((a,b)=>a.n-b.n),
+            tg=freeN?freeIds.reduce((a,id)=>a+sz(id)*gf(id),0)/freeN:cfg.gr/100;
+      const wts=srt.map((h,j)=>N-j),ws=wts.reduce((a,b)=>a+b,0);
+      srt.forEach((h,j)=>{const add=r*wts[j]/ws;h.n+=add;h.g+=add*tg;h.lev=h.lev.map((x,l)=>x+add*cw[l]);});
+      const t2=hs.reduce((a,h)=>a+h.n,0);
+      hs.forEach(h=>{const q=total/t2;h.n*=q;h.g*=q;h.lev=h.lev.map(x=>x*q);});
+    }
+  }
+
+  hs.forEach(h=>{
+    h.gp=h.n?100*h.g/h.n:0;
+    if(h.ids.length){
+      const gEl=h.ids.filter(id=>C(id).lock!=='B').length/h.ids.length;
+      const bEl=h.ids.filter(id=>C(id).lock!=='G').length/h.ids.length;
+      h.reach=(h.gp/100)*gEl+(1-h.gp/100)*bEl;
+    } else h.reach=0;
+  });
+
+  const ns=hs.map(h=>h.n),mean=ns.reduce((a,b)=>a+b,0)/N;
+  const sizeSpread=mean?100*(Math.max(...ns)-Math.min(...ns))/mean:0;
+  const gps=hs.map(h=>h.gp),genSpread=Math.max(...gps)-Math.min(...gps);
+  const minReach=Math.min(...hs.map(h=>h.reach));
+
+  let vdev=0;const LV=Math.min(L,4);
+  for(let l=0;l<LV;l++){const lvTot=hs.reduce((a,h)=>a+h.lev[l],0),exp=lvTot/N;
+    hs.forEach(h=>{vdev=Math.max(vdev,exp?Math.abs(h.lev[l]-exp)/exp*100:0);});}
+  const vertical=Math.max(0,100-vdev);
+
+  const housesPerClass=cfg.mod==='class'?1:N;
+  const conc=cfg.mod==='cca'?100:cfg.ac, natural=100/N;
+  const identity=Math.round(Math.max(0,Math.min(100,(conc-natural)/(100-natural)*100))*(cfg.mod==='indiv'?0.6:1));
+  const fc=cfg.mod==='cca'?Math.round(Math.max(38,88-cfg.st*0.42))
+                          :Math.round(Math.max(38,88-Math.max(0,cfg.ac-natural)*0.52));
+  // domain coherence: does each house steward what its admiral is remembered for
+  const coh=Math.round(100*cfg.H.filter((h,i)=>h.d===A(HOUSE[i].id).dom).length/N);
+  // rollup: how much of the house table fills from events already running
+  const rollup=cfg.mod==='class'?(cfg.comp==='lev'?100:55):0;
+
+  return {hs,mean,L,sizeSpread,genSpread,minReach,vertical,vdev,housesPerClass,identity,fc,coh,rollup,
+          freeIds,freeN,cph,nestClean,cpl,base,rem,natural};
+}
+
+/* ---------- solver ---------- */
+const W={both:{s:1,g:1.5,r:0.8},gender:{s:0.15,g:3.5,r:0.15},numbers:{s:2.2,g:0.2,r:0.3},reach:{s:0.3,g:0.3,r:3.0}};
+function score(mode){const r=compute(),w=W[mode]||W.both;
+  const rp=r.hs.reduce((a,h)=>a+Math.max(0,0.85-h.reach)*100,0);
+  return w.s*r.sizeSpread+w.g*r.genSpread+(100-r.vertical)*0.25+w.r*rp;}
+function autoBalance(mode){
+  const Sp=sportIds(),U=ugIds(),P=paIds();
+  let best=JSON.parse(JSON.stringify(cfg.H)),bs=score(mode);
+  const sh=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+  for(let rs=0;rs<16;rs++){
+    const ss=sh(Sp),us=sh(U),ps=sh(P);
+    for(let i=0;i<N;i++){cfg.H[i].s=ss[i]||null;cfg.H[i].u=us[i]||null;cfg.H[i].p=ps[i]||null;}
+    let cur=score(mode),imp=true,g=0;
+    while(imp&&g++<70){imp=false;
+      for(const k of ['s','u','p'])for(let a=0;a<N;a++)for(let b=a+1;b<N;b++){
+        const t=cfg.H[a][k];cfg.H[a][k]=cfg.H[b][k];cfg.H[b][k]=t;
+        const v=score(mode);
+        if(v<cur-1e-6){cur=v;imp=true;}else{const t2=cfg.H[a][k];cfg.H[a][k]=cfg.H[b][k];cfg.H[b][k]=t2;}}
+      for(const kk of [['p',P],['s',Sp],['u',U]]){
+        const used=cfg.H.map(h=>h[kk[0]]);
+        for(const cand of kk[1].filter(x=>!used.includes(x)))
+          for(let a=0;a<N;a++){const o=cfg.H[a][kk[0]];cfg.H[a][kk[0]]=cand;
+            const v=score(mode);if(v<cur-1e-6){cur=v;imp=true;break;}else cfg.H[a][kk[0]]=o;}}
+    }
+    if(cur<bs){bs=cur;best=JSON.parse(JSON.stringify(cfg.H));}
+  }
+  cfg.H=best;
+}
+
+/* ---------- render ---------- */
+const fmtn=x=>Math.round(x).toLocaleString();
+const LEVNM=['Sec 1','Sec 2','Sec 3','Sec 4','Sec 5'];
+function optlist(ids,sel,none){
+  return (none?'<option value="">'+none+'</option>':'')+
+    ids.map(id=>'<option value="'+id+'"'+(id===sel?' selected':'')+'>'+C(id).nm+
+      (C(id).lock?' ('+(C(id).lock==='B'?'boys':'girls')+' only)':'')+'</option>').join('');
+}
+
+function render(){
+  const r=compute(),sc=S();
+  const tsOK=r.sizeSpread<=cfg.ts*2,tgOK=r.genSpread<=cfg.tg*2,vOK=r.vertical>=80,nSport=sportIds().length;
+
+  $('#metrics').innerHTML=[
+   [fmtn(r.mean),'Beattyians per house','',''],
+   [r.sizeSpread.toFixed(1)+'%','largest to smallest spread',tsOK?'ok':'bad',tsOK?'within tolerance':'over your '+(cfg.ts*2)+'% tolerance'],
+   [r.genSpread.toFixed(1),'point gender spread',tgOK?'ok':'bad',tgOK?'within tolerance':'over your '+(cfg.tg*2)+' point tolerance'],
+   [Math.round(r.vertical),'vertical evenness',vOK?'ok':(r.vertical>=65?'warn':'bad'),vOK?'every level well held':'worst level off by '+Math.round(r.vdev)+'%'],
+   [r.housesPerClass,'houses per form class',r.housesPerClass===1?'ok':'bad',r.housesPerClass===1?'inter class equals inter house':'inter class cannot roll up'],
+   [r.rollup+'%','of house points from events you already run',r.rollup>=90?'ok':(r.rollup>=50?'warn':'bad'),r.rollup>=90?'no new slot needed':'new events must be funded'],
+   [r.identity+'%','talent identity strength',r.identity>=55?'ok':(r.identity>=30?'warn':'bad'),r.identity>=55?'anchors are felt':'anchors are decorative'],
+   [Math.round(r.minReach*100)+'%','worst anchor reach',r.minReach>=.75?'ok':(r.minReach>=.6?'warn':'bad'),r.minReach>=.75?'flagships open to all':'members locked out of own flagships'],
+   [r.coh+'%','domains matching the admiral',r.coh>=80?'ok':(r.coh>=50?'warn':'bad'),r.coh>=80?'history and domain agree':'domains drifting from the names'],
+   [r.fc+'%','get their first choice CCA',r.fc>=80?'ok':(r.fc>=68?'warn':'bad'),r.fc>=80?'choice preserved':'choice being spent'],
+   [nSport,'sports for five houses',nSport>=N?'ok':'bad',nSport>=N?'exactly enough':'short by '+(N-nSport)]
+  ].map(([v,lab,cl,note])=>'<div class="m '+cl+'"><b>'+v+'</b><span>'+lab+'</span>'+
+      (note?'<i class="'+cl+'">'+note+'</i>':'')+'</div>').join('');
+
+  const iss=[];
+  if(nSport<N) iss.push(['b','Only four sports exist if Wushu is a performing art. One of the five houses has no sport anchor and the symmetry does not close.']);
+  if(!r.nestClean&&cfg.mod==='class') iss.push(['b',cfg.cl+' form classes per level does not divide by five. Each house gets '+r.base+' class'+(r.base===1?'':'es')+' with '+r.rem+' left over, so at any given level some houses field a whole class more than others. Ten classes per level divides cleanly; eight does not. This is the constraint nobody names until Sec 1 registration week.']);
+  else if(cfg.mod==='class') iss.push(['g',cfg.cl+' classes divides cleanly by five: '+r.base+' per house per level, so the column is even all the way up.']);
+  if(!tsOK) iss.push(['b','House sizes spread '+r.sizeSpread.toFixed(1)+'%, past your tolerance.']);
+  if(!tgOK) iss.push(['b','Gender spreads '+r.genSpread.toFixed(1)+' points. '+(cfg.mod==='cca'
+    ?'Three boys only CCAs against one girls only is structural, not bad luck.'
+    :'Under this model gender comes from the form classes, not the anchors. Raise house aware Sec 1 allocation.')]);
+  if(r.minReach<0.75) iss.push([r.minReach<0.6?'b':'w','Worst anchor reach '+Math.round(r.minReach*100)+'%. At least one house flies flags a large part of its own membership cannot join. Balancing headcount does not fix this; only the pairing does, and fixing it usually costs gender balance. Try the two solver buttons against each other.']);
+  if(!vOK) iss.push(['b','Vertical evenness '+Math.round(r.vertical)+'. A house is short at some level by '+Math.round(r.vdev)+'%. A vertical house that thins at Sec 3 and 4 has no seniors to lead it, which is the one job the vertical structure exists to do.']);
+  if(r.housesPerClass>1) iss.push(['b','A form class splits across all five houses, so every inter class competition you already run stops feeding the house table. Every house point then needs a new event in a band that is already full.']);
+  if(r.coh<80) iss.push(['w','Only '+r.coh+'% of domains match what the admiral is remembered for. The names and the talent architecture are drifting apart, which costs you the one argument that makes the naval inheritance worth keeping.']);
+  if(cfg.mod==='class'&&cfg.ac>75) iss.push(['w','Concentration at '+cfg.ac+'% steers Sec 1 CCA allocation hard. First choice satisfaction falls to '+r.fc+'%.']);
+  if(cfg.mod==='cca') iss.push(['w','Under the sorting hat a Beattyian is sorted by talent on arrival. That is the Hogwarts move, and it sits against the Gagne developmental argument the rest of the design rests on.']);
+  if(cfg.rot==='rot') iss.push(['w','Rotating anchors and domains every four years means no Beattyian sees the same house twice, which protects against a house becoming typecast and destroys the accumulation of tradition. Worth modelling, hard to justify.']);
+  if(!iss.length) iss.push(['g','Balance, verticality, class nesting, anchor reach and domain coherence all hold at once. This is a configuration you can take to the SMC.']);
+
+  const bad=iss.some(x=>x[0]==='b'),warn=iss.some(x=>x[0]==='w');
+  $('#verdict').innerHTML='<div class="verdict '+(bad?'bad':warn?'warn':'ok')+'"><h3>'+
+   (bad?'This configuration does not hold':warn?'Workable, with a cost to name':'This configuration holds')+
+   '</h3><ul>'+iss.map(x=>'<li class="'+x[0]+'">'+x[1]+'</li>').join('')+'</ul></div>';
+
+  /* cards */
+  const Sp=sportIds(),U=ugIds(),P=paIds(),mx=Math.max(...r.hs.flatMap(x=>x.lev));
+  $('#cards').innerHTML=r.hs.map((h,i)=>{
+    const H=cfg.H[i],col=hcol(i),ad=A(HOUSE[i].id),dom=D(H.d)||DOM[i];
+    const dev=h.gp-cfg.gr,sizeDev=100*(h.n-r.mean)/r.mean;
+    let fl='ok',flag='Balanced, all three flagships open to '+Math.round(h.reach*100)+'% of members.';
+    if(h.reach<0.6){fl='bad';flag='Anchor reach '+Math.round(h.reach*100)+'%. Members shut out of most of their own flagships.';}
+    else if(Math.abs(dev)>cfg.tg){fl='bad';flag='Gender off the school line by '+dev.toFixed(1)+' points.';}
+    else if(Math.abs(sizeDev)>cfg.ts){fl='warn';flag='Size off the mean by '+sizeDev.toFixed(1)+'%.';}
+    else if(h.reach<0.75){fl='warn';flag='Anchor reach '+Math.round(h.reach*100)+'%. Two gender locked flagships here.';}
+    const carry=sc.vals[HOUSE[i].id];
+    return '<div class="h" style="border-top-color:'+col+'">'+
+      '<div class="nm" style="color:'+col+'">'+HOUSE[i].nm+'</div>'+
+      '<div class="vt">'+hcolnm(i)+(HOUSE[i].col?'':' <span class="tag unk" style="vertical-align:0">unverified</span>')+'</div>'+
+      (carry?'<div class="cr" style="color:'+col+';font-style:normal;font-weight:bold">'+carry+'</div>':'')+
+      (cfg.scheme==='disp'||cfg.scheme==='both'?'<div class="cr">'+ad.known.split('.')[0]+'.</div>':'')+
+      '<div class="dm" style="color:'+col+'">Stewards: '+dom.nm+'</div>'+
+      '<div class="rowlab"><span>Headcount</span><b>'+fmtn(h.n)+'</b></div>'+
+      '<div class="bar"><i style="width:'+Math.min(100,100*h.n/(r.mean*1.6))+'%;background:'+col+'"></i>'+
+        '<span class="tgt" style="left:62.5%"></span></div>'+
+      '<div class="rowlab"><span>Girls / boys</span><b>'+h.gp.toFixed(0)+' / '+(100-h.gp).toFixed(0)+'</b></div>'+
+      '<div class="gb"><span class="gg" style="width:'+h.gp+'%"></span><span class="bb" style="width:'+(100-h.gp)+'%"></span></div>'+
+      '<div class="rowlab"><span>Vertical column</span><b>'+fmtn(Math.min(...h.lev))+' to '+fmtn(Math.max(...h.lev))+'</b></div>'+
+      '<div class="vs">'+h.lev.map(v=>'<div><i style="height:'+(mx?100*v/mx:0)+'%;background:'+col+'"></i></div>').join('')+'</div>'+
+      '<div class="vslab">'+h.lev.map((v,l)=>'<span>S'+(l+1)+'</span>').join('')+'</div>'+
+      '<div class="sl">Sport</div><select data-i="'+i+'" data-k="s">'+optlist(Sp,H.s,'— none —')+'</select>'+
+      '<div class="sl">Uniformed group</div><select data-i="'+i+'" data-k="u">'+optlist(U,H.u,'— none —')+'</select>'+
+      '<div class="sl">Performing art</div><select data-i="'+i+'" data-k="p">'+optlist(P,H.p,'— none —')+'</select>'+
+      '<div class="sl">Talent domain'+(cfg.dmode==='adm'?' <span class="mini">(locked to the admiral)</span>':'')+'</div>'+
+      '<select data-i="'+i+'" data-k="d"'+(cfg.dmode==='adm'?' disabled':'')+'>'+
+        DOM.map(d=>'<option value="'+d.id+'"'+(d.id===H.d?' selected':'')+'>'+d.nm+'</option>').join('')+'</select>'+
+      '<div class="flag '+fl+'">'+flag+'</div></div>';
+  }).join('');
+
+  const spare=r.freeIds.map(id=>C(id).nm+' ('+fmtn(sz(id))+')').join(', ');
+  $('#spare').innerHTML='<div class="note"><b>Unanchored: </b>'+(spare||'none')+'. '+
+    (r.freeIds.length?'Infocomm is the natural school wide one. Make it the house system\'s storytelling arm, filming and publishing every house event, belonging to all five.':'Every CCA is anchored, which leaves nothing held in common.')+'</div>';
+
+  /* vertical matrix */
+  const lvTot=r.hs[0].lev.map((_,l)=>r.hs.reduce((a,h)=>a+h.lev[l],0));
+  $('#vmat').innerHTML='<table><thead><tr><th>House</th>'+r.hs[0].lev.map((v,l)=>'<th class="n">'+LEVNM[l]+'</th>').join('')+
+    '<th class="n">Total</th><th class="n">Thinnest</th></tr></thead><tbody>'+
+    r.hs.map((h,i)=>'<tr><td><b style="color:'+hcol(i)+'">'+HOUSE[i].nm+'</b></td>'+
+      h.lev.map((v,l)=>{const exp=lvTot[l]/N,d=exp?100*(v-exp)/exp:0;
+        return '<td class="n"><span class="cell">'+fmtn(v)+' <span class="mini">'+(d>=0?'+':'')+d.toFixed(0)+'%</span></span>'+
+          '<span class="cellbar"><i style="width:'+Math.min(100,100*v/(exp*1.5))+'%;background:'+hcol(i)+'"></i></span></td>';}).join('')+
+      '<td class="n"><b>'+fmtn(h.n)+'</b></td><td class="n">'+LEVNM[h.lev.indexOf(Math.min(...h.lev))]+'</td></tr>').join('')+
+    '</tbody></table><div class="note'+(r.vertical<80?' hot':'')+'">'+
+    (cfg.mod==='cca'?'Under the sorting hat the column is shaped by attrition rather than design. At '+cfg.at+'% upper secondary drop off the Sec 4 row runs well under Sec 1 in every house, and unevenly between houses because CCAs shed at different rates.'
+     :'Under this model the column is set by class allocation, so it is even by construction. Attrition still thins the anchor CCAs but no longer thins the house.')+'</div>';
+
+  /* nesting */
+  $('#nest').innerHTML='<table><thead><tr><th>House</th>'+r.cph[0].map((c,l)=>'<th class="n">'+LEVNM[l]+'</th>').join('')+
+    '<th class="n">Classes held</th></tr></thead><tbody>'+
+    r.cph.map((row,i)=>'<tr><td><b style="color:'+hcol(i)+'">'+HOUSE[i].nm+'</b></td>'+
+      row.map(c=>'<td class="n">'+c+'</td>').join('')+'<td class="n"><b>'+row.reduce((a,b)=>a+b,0)+'</b></td></tr>').join('')+
+    '</tbody></table><div class="note'+(r.nestClean?'':' hot')+'"><b>'+(r.nestClean?'Clean nesting. ':'Uneven nesting. ')+'</b>'+
+    cfg.cl+' classes per level across five houses is '+(cfg.cl/N).toFixed(2)+' per house per level. '+
+    (r.nestClean?'Each house holds '+(cfg.cl/N)+' whole classes at every level. Two consequences. Inter class competition at a level is inter house competition, so the house table fills from events you already run. And with '+(cfg.cl/N)+' classes per house per level there is a natural intra house pairing inside each level, which is the unit for the intra class activity you want.'
+     :'The remainder rotates across levels so it evens out over four years, which it does at whole house level but not at any single level. In a Sec 2 inter class carnival one house fields more classes than another. Class counts that divide by five: 5, 10, 15.')+'</div>'+
+    (cfg.mod!=='class'?'<div class="note hot">This is what the class structure would give you. Under the '+M().label.split('  ')[0]+' model it is not what happens: a form class splits across all five houses, so none of the roll up applies.</div>':'');
+
+  /* load */
+  $('#loadtab').innerHTML='<table><thead><tr><th>House</th><th>Carries</th><th>Sport</th><th>Uniformed group</th><th>Performing art</th>'+
+   '<th class="n">Total</th><th class="n">Girls %</th><th class="n">Reach</th><th>Stewards for the school</th></tr></thead><tbody>'+
+   r.hs.map((h,i)=>{const H=cfg.H[i],dom=D(H.d)||DOM[i];
+    return '<tr><td><b style="color:'+hcol(i)+'">'+HOUSE[i].nm+'</b><br><span class="mini">'+hcolnm(i)+'</span></td>'+
+     '<td>'+(sc.vals[HOUSE[i].id]||'<span class="mini">nothing</span>')+'</td>'+
+     '<td>'+(H.s?C(H.s).nm:'<span class="mini">none</span>')+'</td>'+
+     '<td>'+(H.u?C(H.u).nm:'<span class="mini">none</span>')+'</td>'+
+     '<td>'+(H.p?C(H.p).nm:'<span class="mini">none</span>')+'</td>'+
+     '<td class="n"><b>'+fmtn(h.n)+'</b></td><td class="n">'+h.gp.toFixed(0)+'</td>'+
+     '<td class="n">'+Math.round(h.reach*100)+'%</td>'+
+     '<td class="mini">'+dom.nm+'<br>'+dom.cats+'</td></tr>';}).join('')+'</tbody></table>';
+
+  /* dossiers */
+  $('#dos').innerHTML=ADM.map((a,i)=>{const idx=HOUSE.findIndex(h=>h.id===a.h);
+    return '<div class="dos" style="border-left-color:'+hcol(idx)+'"><h4 style="color:'+hcol(idx)+'">'+
+      HOUSE[idx].nm+'</h4><div class="yr">'+a.full+' &middot; '+a.yr+' &middot; '+hcolnm(idx)+'</div>'+
+      '<p class="disp">'+a.disp+'</p><p class="known">'+a.known+'</p><p>'+a.why+'</p>'+
+      '<p class="awk"><b>The complication. </b>'+a.awk+'</p></div>';}).join('');
+
+  /* scheme + model stacks */
+  $('#schstack').innerHTML=SCH.map(x=>'<div class="'+(x.id===cfg.scheme?'on':'')+'"><h4>'+x.label+'</h4>'+
+    '<p class="ex">'+HOUSE.map(h=>h.nm+(x.vals[h.id]?' &rarr; '+x.vals[h.id]:'')).join(' &nbsp;&middot;&nbsp; ')+'</p>'+
+    '<p>'+x.why+'</p><p class="risk"><b>Risk. </b>'+x.risk+'</p></div>').join('');
+  $('#modstack').innerHTML=MOD.map(x=>'<div class="'+(x.id===cfg.mod?'on':'')+'"><h4>'+x.label+'</h4>'+
+    '<p class="ex">'+x.how+'</p><p>'+x.detail+'</p></div>').join('');
+
+  /* cca table */
+  $('#ccatab').innerHTML='<table><thead><tr><th>CCA</th><th>Category</th><th>Eligibility</th>'+
+   '<th class="n">Size</th><th class="n">Girls %</th><th>Flies the flag for</th></tr></thead><tbody>'+
+   CCA.map(c=>{const isS=(c.cat==='S')||(c.flex==='S'&&cfg.wushu==='S');
+    const cat=isS?'Sport':c.cat==='UG'?'Uniformed group':c.cat==='CS'?'Club':'Performing art';
+    let hn='<span class="mini">unanchored</span>';
+    cfg.H.forEach((H,i)=>{if([H.s,H.u,H.p].includes(c.id))hn='<b style="color:'+hcol(i)+'">'+HOUSE[i].nm+'</b>';});
+    return '<tr class="'+(c.lock==='B'?'lockB':c.lock==='G'?'lockG':'')+'"><td>'+c.nm+'</td><td>'+cat+'</td>'+
+     '<td>'+(c.lock==='B'?'Boys only':c.lock==='G'?'Girls only':'Girls and boys')+'</td>'+
+     '<td class="n">'+fmtn(sz(c.id))+'</td><td class="n">'+Math.round(gf(c.id)*100)+'</td><td>'+hn+'</td></tr>';}).join('')+
+   '</tbody></table>';
+
+  renderSlots(r); renderCmp(r);
+
+  $('#modhint').textContent=M().how;
+  $('#schhint').textContent=HOUSE.map(h=>sc.vals[h.id]).filter(Boolean).join(' · ')||'nothing carried';
+  $('#clhint').textContent=r.nestClean?(cfg.cl+' ÷ 5 = '+(cfg.cl/N)+' classes per house per level'):(cfg.cl+' ÷ 5 leaves '+r.rem+' over');
+  $('#achint').textContent=cfg.mod==='cca'?'Fixed at 100% under the sorting hat.':'Chance alone gives 20%. Anything above that is deliberate steering.';
+  $('#solvehint').textContent=cfg.mod==='class'
+    ? 'Under class anchoring the first three buttons will barely move: house size comes from class allocation and gender comes from the classes themselves, so the anchors cannot touch either. The only thing the anchors control here is reach, which is why that button is the one that works. If you want the solver to fight over numbers and gender, switch to the sorting hat model.'
+    : cfg.mod==='indiv'
+    ? 'Under individual allocation size and gender are exact by construction, so only the reach button changes anything.'
+    : 'Under the sorting hat all four buttons bite, and they disagree. Run gender then reach and watch the pairing flip: levelling gender wants Volleyball beside a boys uniformed group, and reach wants them apart.';
+  $('#comphint').textContent=cfg.comp==='lev'?'Each level competes, points aggregate to the house. This is what makes inter class equal inter house.':'Houses compete as whole vertical units. Stronger house identity, but level based inter class events no longer roll up.';
+  $('#rothint').textContent=cfg.rot==='fix'?'Anchors and domains stay with the house permanently, so tradition accumulates.':'Anchors and domains move on a four year cycle, so no cohort sees the same pairing twice.';
+  ['coh','ac','gr','ts','tg','at','cl','cgv','hga','st'].forEach(k=>{const e=$('#'+k+'v');if(e)e.textContent=cfg[k];});
+  bindCards();
+}
+
+/* ---------- scenario slots ---------- */
+function snap(){const r=compute();return{cfg:JSON.parse(JSON.stringify(cfg)),
+  k:{size:r.sizeSpread,gen:r.genSpread,vert:r.vertical,hpc:r.housesPerClass,roll:r.rollup,
+     id:r.identity,reach:r.minReach*100,coh:r.coh,fc:r.fc,mean:r.mean}};}
+function renderSlots(){
+  $('#slots').innerHTML=['A','B','C'].map(k=>{const s=SLOT[k];
+    return '<div class="slot'+(s?' full':'')+'"><b>Slot '+k+'</b>'+
+      '<div class="d">'+(s?MOD.find(m=>m.id===s.cfg.mod).label.split('  ')[0]+', '+
+        SCH.find(x=>x.id===s.cfg.scheme).label.split(',')[0].split(' (')[0]+
+        '<br><span class="mini">spread '+s.k.size.toFixed(1)+'%, gender '+s.k.gen.toFixed(1)+', reach '+Math.round(s.k.reach)+'%</span>'
+        :'<span class="mini">empty</span>')+'</div>'+
+      '<div class="bt"><button class="act sm" data-save="'+k+'">Save here</button>'+
+      (s?'<button class="act ghost sm" data-load="'+k+'">Load</button>'+
+          '<button class="act ghost sm" data-clr="'+k+'">Clear</button>':'')+'</div></div>';}).join('');
+  document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>{SLOT[b.dataset.save]=snap();render();});
+  document.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{
+    cfg=JSON.parse(JSON.stringify(SLOT[b.dataset.load].cfg));syncUI();render();});
+  document.querySelectorAll('[data-clr]').forEach(b=>b.onclick=()=>{SLOT[b.dataset.clr]=null;render();});
+}
+const ROWS=[
+ ['mean','Beattyians per house',0,'n'],
+ ['size','Size spread %',-1,'d'],['gen','Gender spread pts',-1,'d'],
+ ['vert','Vertical evenness',1,'n'],['hpc','Houses per form class',-1,'n'],
+ ['roll','House points from existing events %',1,'n'],
+ ['id','Talent identity %',1,'n'],['reach','Worst anchor reach %',1,'n'],
+ ['coh','Domain matches admiral %',1,'n'],['fc','First choice CCA %',1,'n']];
+function renderCmp(){
+  const cols=[['Current',snap().k]].concat(['A','B','C'].filter(k=>SLOT[k]).map(k=>['Slot '+k,SLOT[k].k]));
+  if(cols.length<2){$('#cmp').innerHTML='<div class="note">Save at least one scenario to a slot and this table fills, comparing it against whatever is on screen. Better figure in each row is shaded green, worse red.</div>';return;}
+  let h='<table><thead><tr><th>Measure</th>'+cols.map(c=>'<th class="n">'+c[0]+'</th>').join('')+'</tr></thead><tbody>';
+  ROWS.forEach(([k,lab,dir])=>{
+    const vals=cols.map(c=>c[1][k]);
+    const best=dir>0?Math.max(...vals):dir<0?Math.min(...vals):null;
+    const worst=dir>0?Math.min(...vals):dir<0?Math.max(...vals):null;
+    h+='<tr><td>'+lab+'</td>'+vals.map(v=>{
+      let cl='';if(dir&&vals.length>1&&best!==worst){if(Math.abs(v-best)<1e-9)cl='win';else if(Math.abs(v-worst)<1e-9)cl='lose';}
+      return '<td class="n '+cl+'">'+(k==='mean'?fmtn(v):v.toFixed(k==='size'||k==='gen'?1:0))+'</td>';}).join('')+'</tr>';
+  });
+  $('#cmp').innerHTML=h+'</tbody></table><div class="note">Read this as a trade sheet, not a scoreboard. No column wins every row, and the rows are not equally important to you. Decide which two rows you will not compromise on, then pick the column that holds them.</div>';
+}
+
+/* ---------- bindings ---------- */
+function bindCards(){
+  document.querySelectorAll('#cards select').forEach(s=>{
+    s.onchange=e=>{const i=+e.target.dataset.i,k=e.target.dataset.k,v=e.target.value||null;
+      const j=cfg.H.findIndex((h,x)=>h[k]===v&&x!==i);
+      if(j>=0&&v)cfg.H[j][k]=cfg.H[i][k];
+      cfg.H[i][k]=v;render();};});
+}
+function applyDomains(){if(cfg.dmode==='adm')cfg.H.forEach((h,i)=>{h.d=A(HOUSE[i].id).dom;});}
+function reconcile(){
+  const pools={s:sportIds(),p:paIds(),u:ugIds()};
+  cfg.H.forEach(h=>['s','p','u'].forEach(k=>{if(h[k]&&!pools[k].includes(h[k]))h[k]=null;}));
+  ['s','p','u'].forEach(k=>{const seen=new Set();
+    cfg.H.forEach(h=>{if(h[k]){if(seen.has(h[k]))h[k]=null;else seen.add(h[k]);}});});
+  ['s','p','u'].forEach(k=>cfg.H.forEach(h=>{
+    if(!h[k]){const used=cfg.H.map(y=>y[k]);const c=pools[k].find(x=>!used.includes(x));if(c)h[k]=c;}}));
+  applyDomains();
+}
+function syncUI(){
+  $('#mod').value=cfg.mod;$('#scheme').value=cfg.scheme;
+  $('#cHar').value=cfg.col.harw;$('#cStu').value=cfg.col.stur;$('#cFis').value=cfg.col.fish;
+  [['wushu','wushu'],['lv','lv'],['dmode','dmode'],['comp','comp'],['rot','rot']].forEach(([id,k])=>
+    $('#'+id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v==String(cfg[k]))));
+  SLIDERS.forEach(k=>$('#'+k).value=cfg[k]);
+}
+const SLIDERS=['coh','ac','gr','ts','tg','at','cl','cgv','hga','st'];
+
+$('#mod').innerHTML=MOD.map(m=>'<option value="'+m.id+'">'+m.label+'</option>').join('');
+$('#scheme').innerHTML=SCH.map(s=>'<option value="'+s.id+'">'+s.label+'</option>').join('');
+['cHar','cStu','cFis'].forEach(id=>{$('#'+id).innerHTML=Object.keys(PAL).map(c=>'<option value="'+c+'">'+PALNM[c]+'</option>').join('');});
+$('#mod').onchange=e=>{cfg.mod=e.target.value;render();};
+$('#scheme').onchange=e=>{cfg.scheme=e.target.value;render();};
+const CMAP={cHar:'harw',cStu:'stur',cFis:'fish'};
+Object.keys(CMAP).forEach(id=>{$('#'+id).onchange=e=>{
+  const me=CMAP[id],v=e.target.value;
+  const other=Object.values(CMAP).find(k=>k!==me&&cfg.col[k]===v);
+  if(other)cfg.col[other]=cfg.col[me];
+  cfg.col[me]=v;syncUI();render();};});
+function segBind(id,key,cast){$('#'+id).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('#'+id).querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');cfg[key]=cast?cast(b.dataset.v):b.dataset.v;reconcile();render();});}
+segBind('wushu','wushu');segBind('lv','lv',Number);segBind('dmode','dmode');
+segBind('comp','comp');segBind('rot','rot');
+SLIDERS.forEach(k=>{$('#'+k).oninput=e=>{cfg[k]=+e.target.value;render();};});
+$('#solve').onclick=()=>{autoBalance('both');render();};
+$('#solveG').onclick=()=>{autoBalance('gender');render();};
+$('#solveN').onclick=()=>{autoBalance('numbers');render();};
+$('#solveR').onclick=()=>{autoBalance('reach');render();};
+$('#reset').onclick=()=>{cfg=JSON.parse(JSON.stringify(DEF));syncUI();render();};
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{
+  Object.assign(cfg,PRESET[b.dataset.p].set);reconcile();syncUI();render();});
+
+applyDomains();syncUI();render();
+</script></body></html>
