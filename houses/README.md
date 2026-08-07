@@ -1,21 +1,22 @@
-# house
+# houses
 
-House system design tools for Beatty Secondary School. Three self contained HTML models plus the written record behind them.
+House system design tools for Beatty Secondary School. Four self contained HTML models plus the written record behind them, in `references/`.
 
-Live: `https://harmanjohll.github.io/genapp/house/`
+Live: `https://harmanjohll.github.io/genapp/houses/`
 
 ## Contents
 
 | File | What it is |
 | --- | --- |
 | `index.html` | Overview, the five houses, what the modelling settled, data provenance |
-| `studio.html` | **House Studio.** The primary tool. Vertical house architecture modelling |
+| `studio2.html` | **House Dashboard.** Start here. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
+| `studio.html` | **House Studio.** First pass. Vertical house architecture modelling |
 | `audit.html` | **Enrichment audit.** What the Wednesday and Thursday band was actually used for, 2024 and 2025 |
 | `configurator.html` | **Band configurator.** Earlier pass. Capacity, staffing, choice and overcommitment modelling for the band |
-| `REPORT.md` | Written report: findings, the Gagné and Renzulli construct, house architecture, club catalogue, change management sequence |
-| `TAXONOMY.md` | The ten category classification applied to every activity record |
-| `NOTES.md` | **Start here.** Deploy steps, state of play, the four blocking unknowns, loose ends |
-| `data/enrichment-audit-2024-2025.xlsx` | 1,380 activity records with verbatim source text, frequency tables, band audit |
+| `references/REPORT.md` | Written report: findings, the Gagné and Renzulli construct, house architecture, club catalogue, change management sequence |
+| `references/TAXONOMY.md` | The ten category classification applied to every activity record |
+| `references/NOTES.md` | **Start here.** Deploy steps, state of play, the four blocking unknowns, loose ends |
+| `references/enrichment-audit-2024-2025.xlsx` | 1,380 activity records with verbatim source text, frequency tables, band audit |
 
 Every HTML file is standalone: no build step, no dependencies, no network calls. Open it or serve it.
 

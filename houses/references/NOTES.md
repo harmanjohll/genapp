@@ -4,28 +4,17 @@ Working notes for the `house/` folder. Written so this can be picked up cold, by
 
 ---
 
-## 1. What to do to get this live
+## 1. Live, and where things sit
 
-The folder is complete and self contained. Nothing here imports from, or is imported by, any other folder in `genapp`, so there is no merge risk.
+The folder is live and self contained. Nothing here imports from, or is imported by, any other folder in `genapp`.
 
-```bash
-# from the genapp repo root
-unzip house-folder.zip          # creates ./house/
-git add house
-git commit -m "Add house: BTY house system design tools"
-git push origin main
-```
+- `harmanjohll.github.io/genapp/houses/` overview
+- `harmanjohll.github.io/genapp/houses/studio2.html` the leadership dashboard
+- `harmanjohll.github.io/genapp/houses/studio.html` the first Studio, unchanged
 
-**It must land on `main`.** GitHub Pages serves `genapp` from `main`, so a feature branch or an open PR publishes nothing. A PR is fine if you prefer the audit trail, but it has to be merged before anything appears.
+**It must land on `main`.** GitHub Pages serves `genapp` from `main`, so a feature branch or an open PR publishes nothing. A PR is fine if you prefer the audit trail, but it has to be merged before anything appears. Root `.nojekyll` already exists, so no further configuration is needed. Give Pages a minute or two to rebuild after any push.
 
-Root `.nojekyll` already exists, so no further configuration is needed.
-
-Once pushed:
-
-- `harmanjohll.github.io/genapp/house/` overview
-- `harmanjohll.github.io/genapp/house/studio.html` the tool you actually want
-
-Give Pages a minute or two to rebuild.
+**Folder layout.** The written record and the source workbook live in `references/`. The interactive tools sit at the folder root beside `index.html`, because `index.html` links to them and Pages serves them directly.
 
 ---
 
@@ -35,15 +24,16 @@ The names changed during the build. This is the mapping.
 
 | File | Status | What it is |
 | --- | --- | --- |
-| `studio.html` | **Current** | House Studio. The primary tool. Built on the real five houses |
+| `studio2.html` | **Current** | House Dashboard. Seven tabs, analytics and presentation. The leadership facing tool. Treats the whole question as open, including whether to do this at all |
+| `studio.html` | Current | House Studio, first pass. Vertical house architecture only. Left untouched by the studio2 build |
 | `index.html` | Current | Overview page. Provenance table, open questions, the five houses |
 | `audit.html` | Current | Enrichment band audit, 2024 and 2025 |
 | `configurator.html` | Superseded on house architecture, still valid on band capacity | Earlier pass. Staffing, choice and overcommitment modelling |
-| `REPORT.md` | Reference | Written report from the first pass. Predates the discovery that the houses already exist, so its naming section is obsolete. Everything on band capacity, the club catalogue and change management still stands |
-| `TAXONOMY.md` | Reference | The ten category classification applied to every activity record |
-| `data/enrichment-audit-2024-2025.xlsx` | Source data | 1,380 activity records with verbatim source text |
+| `references/REPORT.md` | Reference | Written report from the first pass. Predates the discovery that the houses already exist, so its naming section is obsolete. Everything on band capacity, the club catalogue and change management still stands |
+| `references/TAXONOMY.md` | Reference | The ten category classification applied to every activity record |
+| `references/enrichment-audit-2024-2025.xlsx` | Source data | 1,380 activity records with verbatim source text |
 
-If you only open one thing, open `studio.html`.
+If you only open one thing, open `studio2.html`.
 
 ---
 

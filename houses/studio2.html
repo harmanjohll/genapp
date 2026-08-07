@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTY House Dashboard &middot; houses, the band, and talent development</title>
+<style>
+:root{--navy:#000C53;--yellow:#FFE200;--red:#EC3237;
+ --g1:#F6F7F9;--g2:#E4E6EC;--g3:#9aa0ae;--g4:#5b5f6b;--ink:#1a1c22;
+ --ok:#1a7f4b;--warn:#b8860b;--bad:#c0392b;
+ --hood:#C8102E;--jell:#E8751A;--harw:#1A7F4B;--stur:#D8A800;--fish:#1F5FA8;
+ --fs:15px;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:Calibri,"Segoe UI",system-ui,sans-serif;font-size:var(--fs);line-height:1.55}
+h1,h2,h3,h4{font-family:Georgia,serif;color:var(--navy);margin:0 0 .35em}
+h1{font-size:1.95em;line-height:1.12}h2{font-size:1.32em;margin:1.6em 0 .3em}
+h3{font-size:1.06em;margin:1.2em 0 .25em}h4{font-size:.92em;margin:1em 0 .2em}
+p{margin:.4em 0 .85em}
+a{color:var(--navy)}
+
+/* nav */
+.gnav{background:var(--navy);padding:0 18px;position:relative;z-index:5}
+.gnav .in{max-width:1340px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1px}
+.gnav a{color:#fff;text-decoration:none;font-size:12.5px;padding:9px 12px;opacity:.7;border-bottom:3px solid transparent;cursor:pointer}
+.gnav a:hover{opacity:1}
+.gnav a.on{opacity:1;border-bottom-color:var(--yellow);font-weight:bold}
+.gnav b{color:var(--yellow);font-family:Georgia,serif;font-size:13px;padding:9px 14px 9px 0;white-space:nowrap}
+.gnav .sp{flex:1}
+.gnav button{font-family:inherit;font-size:11.5px;padding:4px 10px;border:1px solid rgba(255,255,255,.35);
+ background:transparent;color:#fff;cursor:pointer;margin:0 0 0 6px}
+.gnav button:hover{background:rgba(255,255,255,.13)}
+.gnav button.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow);font-weight:bold}
+
+.shell{max-width:1340px;margin:0 auto;padding:0 18px 90px;display:flex;gap:24px;align-items:flex-start}
+.rail{width:288px;flex:0 0 288px;position:sticky;top:0;padding:18px 0 30px;max-height:100vh;overflow-y:auto}
+.main{flex:1;min-width:0;padding:22px 0 0}
+@media(max-width:1080px){.shell{display:block}.rail{width:auto;position:static;max-height:none;border-bottom:2px solid var(--g2);margin-bottom:10px}}
+
+/* rail controls */
+.grp{border:1px solid var(--g2);margin-bottom:9px;background:#fff}
+.grp>h5{margin:0;font-family:Georgia,serif;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+ color:var(--navy);background:var(--g1);padding:6px 10px;border-bottom:1px solid var(--g2);cursor:pointer;
+ display:flex;justify-content:space-between;align-items:center}
+.grp>h5 i{font-style:normal;color:var(--g3);font-size:13px}
+.grp .bd{padding:10px}
+.grp.cl .bd{display:none}
+.f{margin-bottom:11px}
+.f:last-child{margin-bottom:0}
+label.l{display:flex;justify-content:space-between;align-items:baseline;font-size:10.5px;text-transform:uppercase;
+ letter-spacing:.055em;color:var(--g4);margin:0 0 3px;font-weight:bold;gap:6px}
+label.l em{font-style:normal;font-family:Georgia,serif;font-size:13px;color:var(--navy);text-transform:none;letter-spacing:0}
+input[type=range]{width:100%;accent-color:var(--navy);margin:1px 0;display:block}
+select{width:100%;font-family:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--g2);background:#fff;color:var(--ink)}
+.hint{font-size:10.5px;color:var(--g3);margin-top:2px;line-height:1.35}
+.seg{display:flex;border:1px solid var(--g2);background:#fff;flex-wrap:wrap}
+.seg button{flex:1 1 auto;font-family:inherit;font-size:11.5px;padding:4px 3px;border:0;background:#fff;
+ color:var(--g4);cursor:pointer;border-right:1px solid var(--g2);white-space:nowrap}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+button.act{font-family:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+button.act.ghost{background:#fff;color:var(--navy)}
+button.act:hover{opacity:.87}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+
+/* content blocks */
+header.pg{border-bottom:3px solid var(--navy);padding-bottom:11px;margin-bottom:14px}
+.lede{color:var(--g4);font-size:.93em;max-width:74ch}
+.thesis{border-left:5px solid var(--yellow);background:#fffdf0;padding:11px 15px;margin:14px 0;font-size:.92em;max-width:82ch}
+.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+ background:var(--g1);border:1px solid var(--g2);color:var(--g4);padding:1px 6px;vertical-align:2px;white-space:nowrap}
+.tag.mea{background:#eef4ff;border-color:#c3d4f2;color:#1f3f8f}
+.tag.mod{background:#fff8d8;border-color:#e8d98a;color:#7a6300}
+.tag.unk{background:#fdeceb;border-color:#f0bfbc;color:#8d2b22}
+.tag.res{background:#eef7f0;border-color:#bcdcc6;color:#1a5c34}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:8px;margin:14px 0 6px}
+.m{border:1px solid var(--g2);border-top:4px solid var(--navy);padding:9px 11px;min-width:0}
+.m.ok{border-top-color:var(--ok)}.m.warn{border-top-color:var(--yellow)}.m.bad{border-top-color:var(--red)}
+.m b{display:block;font-family:Georgia,serif;font-size:1.5em;color:var(--navy);line-height:1.05;word-break:break-word}
+.m span{font-size:.75em;color:var(--g4);display:block;margin-top:3px;line-height:1.3}
+.m i{font-size:.72em;font-style:normal;display:block;margin-top:4px;font-weight:bold;line-height:1.3}
+.m i.ok{color:var(--ok)}.m i.warn{color:var(--warn)}.m i.bad{color:var(--bad)}
+
+.verdict{border-left:6px solid var(--navy);background:var(--g1);padding:12px 15px;margin:15px 0}
+.verdict.ok{border-left-color:var(--ok)}.verdict.warn{border-left-color:var(--yellow)}.verdict.bad{border-left-color:var(--red)}
+.verdict h3{margin:0 0 3px;font-size:1.03em}
+.verdict ul{margin:5px 0 0;padding-left:18px;font-size:.9em}
+.verdict li{margin-bottom:4px}
+.verdict li.b{color:var(--bad)}.verdict li.w{color:var(--warn)}.verdict li.g{color:var(--ok)}
+
+table{border-collapse:collapse;width:100%;font-size:.87em;margin:8px 0 4px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--g2);vertical-align:top}
+th{background:var(--g1);font-size:.83em;text-transform:uppercase;letter-spacing:.05em;color:var(--g4);font-weight:bold}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hi td{background:#fffdf0}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+.box{border:1px solid var(--g2);padding:12px 15px;margin:13px 0}
+.box.nav{border-left:4px solid var(--navy)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px}
+ul.t{margin:.3em 0 .9em;padding-left:19px}ul.t li{margin-bottom:5px}
+.note{font-size:.85em;color:var(--g4);border-left:3px solid var(--g2);padding-left:11px;margin:10px 0}
+.chart{margin:10px 0}
+svg{max-width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:11px;font-size:.78em;color:var(--g4);margin-top:5px}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend i{width:11px;height:11px;display:inline-block;border-radius:2px}
+
+.hrow{display:flex;flex-wrap:wrap;gap:7px;margin:11px 0}
+.hcard{flex:1 1 152px;border:1px solid var(--g2);border-top:6px solid var(--navy);padding:8px 10px;min-width:0}
+.hcard b{font-family:Georgia,serif;font-size:1.05em;display:block}
+.hcard span{font-size:.75em;color:var(--g4);display:block;margin-top:1px}
+.hcard i{font-size:.76em;color:var(--g4);font-style:normal;display:block;margin-top:5px;line-height:1.35}
+
+.dec{border:1px solid var(--g2);border-left:5px solid var(--navy);padding:11px 14px;margin:11px 0}
+.dec h4{margin:0 0 3px;font-size:1em}
+.dec .q{font-size:.86em;color:var(--g4);margin-bottom:6px}
+.dec .cons{font-size:.86em;background:var(--g1);padding:7px 10px;border-left:3px solid var(--yellow)}
+
+footer.bty{margin-top:46px;border-top:1px solid var(--g2);padding-top:0}
+.band{background:var(--navy);color:#fff;padding:9px 15px;display:flex;flex-wrap:wrap;
+ justify-content:space-between;align-items:center;gap:8px;font-size:11.5px}
+.band b{font-family:Georgia,serif;color:var(--yellow);font-size:12.5px}
+.band i{font-style:italic;opacity:.82}
+.foot2{font-size:11px;color:var(--g3);padding:8px 2px;line-height:1.45}
+
+/* presentation mode */
+body.pres{--fs:19px}
+body.pres .rail{display:none}
+body.pres .shell{display:block;max-width:1120px}
+body.pres .main{padding-top:26px}
+body.pres .ana{display:none}
+body.pres .metrics{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+body.pres h2{margin-top:1.9em;padding-top:.5em;border-top:1px solid var(--g2)}
+body.pres table{font-size:.8em}
+.presonly{display:none}
+body.pres .presonly{display:block}
+
+@media print{
+ .gnav,.rail{display:none}.shell{display:block;max-width:none;padding:0}
+ body{--fs:11pt}.m,.box,.verdict,table{break-inside:avoid}h2{break-after:avoid}
+}
+</style></head><body>
+
+<nav class="gnav"><div class="in"><b>BTY House Dashboard</b>
+<a data-t="case">The case</a><a data-t="arch">Architecture</a><a data-t="band">The band</a><a data-t="talent">Talent</a><a data-t="acts">Activities &amp; Cup</a><a data-t="staff">Teachers</a><a data-t="dec">Decisions</a>
+<span class="sp"></span>
+<button id="presBtn">Present</button><button id="printBtn">Print</button>
+</div></nav>
+
+<div class="shell">
+<aside class="rail" id="rail"></aside>
+<main class="main" id="main"></main>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pct=v=>Math.round(v*100)+'%';
+const r1=v=>Math.round(v*10)/10;
+const cm=v=>v.toLocaleString('en-SG');
+
+/* ============================================================ MEASURED
+   Every figure in AUD comes from references/enrichment-audit-2024-2025.xlsx
+   (1,148 calendar events, 1 Jan 2024 to 31 Dec 2025) or from the MOE
+   School Finder record. Nothing here is modelled.                        */
+const AUD={
+  events:1148, records:1380, enrich:605, programmes:134,
+  cards:83, cardDates:82, entries:315, entrichEnt:229, nonEnrich:86, blankCards:7,
+  meanOptions:1.33, levelSlots:375, slotsFilled:201, slotsMulti:36, slotsTotalDays:161,
+  prog1or2:67, prog6plus:32,
+  ccaDay:{Tue:29,Sat:29,Fri:26,Mon:18,Wed:12,Thu:12},
+  bandTop:[['10.1 Oral examinations',41,0],['1.1 Mathematics olympiad',33,1],['10.3 ICT training / device rollout',31,0],
+    ['6.2 Recreational and inter-class sport',25,1],['2.1 English writing and literature',24,1],
+    ['5.3 VIA and community service',20,1],['5.1 Peer Support Leader training',20,1],['2.2 Oracy, debate and performance',20,1],
+    ['3.1 Historical inquiry',15,1],['3.2 Geographical inquiry',12,1],['6.1 Fitness testing',11,1],
+    ['4.1 Model UN',10,1],['8.1 Post-secondary exposure',10,1],['10.5 Slot held but unfilled',7,0],
+    ['10.4 Surveys, briefings, admin',5,0]],
+  cat:[['Character, Leadership and Service',57,56],['Language Arts',43,48],['Aesthetics and Performing Arts',32,46],
+    ['Sports, Health and Outdoor',50,27],['STEM',37,32],['Uniformed Groups and CCA-linked',19,29],
+    ['Global and Civic Engagement',23,23],['Education and Career Guidance',28,14],['Humanities and Social Science',25,16]],
+  levelReach:{'Sec 1':86,'Sec 2':92,'Sec 3':65,'Sec 4':45,'Sec 5':18},
+  topProg:[['VIA Project',29],['Lighten Up Programme',28],['SMO Training',26],['Peer Support Leader Programme',24],
+    ['NCC Programme',20],['Termly Sports/Fitness Challenge',18],['CCA Performing Arts Session',15],
+    ['Model UN Programme',15],['SYF Preparation and Performance',15],['Creative Writing Programme',12],
+    ['PIL Industrial Attachment',12],['MTL Fortnight',11]],
+  // category x level coverage, from REPORT 1.6. Ten empty cells.
+  cov:[['STEM',11,32,6,0,0],['Language Arts',21,13,24,9,3],['Humanities & Social Science',10,9,6,10,0],
+    ['Global & Civic Engagement',0,2,13,2,0],['Character, Leadership, Service',4,30,15,7,3],
+    ['Sports, Health & Outdoor',6,9,12,7,5],['Aesthetics & Performing Arts',2,1,0,0,0],
+    ['Education & Career Guidance',1,5,2,6,4],['Uniformed Groups / CCA',5,4,2,0,0]]
+};
+
+const HOUSES=[
+  {k:'hood',n:'Hood',c:'#C8102E',col:'Red',colv:1,dis:'Going first',dom:'Service, Leadership & Community'},
+  {k:'jell',n:'Jellicoe',c:'#E8751A',col:'Orange',colv:1,dis:'Judgement and restraint',dom:'Humanities & Global Citizenship'},
+  {k:'harw',n:'Harwood',c:'#1A7F4B',col:'Green',colv:0,dis:'Reading a situation while outnumbered',dom:'Language, Oracy & Expression'},
+  {k:'stur',n:'Sturdee',c:'#D8A800',col:'Yellow',colv:0,dis:'Preparation, then pursuit',dom:'Sport, Health & the Outdoors'},
+  {k:'fish',n:'Fisher',c:'#1F5FA8',col:'Blue',colv:0,dis:'Making the old obsolete',dom:'STEM, Design & Making'}
+];
+const DREAM=[['D','Discipline'],['R','Resilience'],['E','Empathy'],['A','Adaptability'],['M','Mindfulness']];
+
+/* architectures */
+const ARCH={
+  class:{n:'Class anchored vertical',d:'Every form class Sec 1 to 4 or 5 permanently belongs to a house. Membership rides on the class list already produced at Sec 1 registration.',
+    persist:1,cohesion:1,nest:1,mix:.55,load:1,prec:'Kranji Secondary, 2022. Hua Yi Secondary, five houses.'},
+  random:{n:'Randomly sorted vertical',d:'Random at Sec 1, balanced for gender, banding and CCA, siblings kept together. Membership persists to graduation.',
+    persist:1,cohesion:.55,nest:0,mix:1,load:.72,prec:'Common in UK vertical tutoring schools.'},
+  cca:{n:'CCA anchored',d:'Each house owns a family of CCAs. A Beattyian belongs to the house that owns their CCA.',
+    persist:.9,cohesion:.5,nest:0,mix:.72,load:.8,prec:'Boon Lay Secondary, four gemstone houses, from 2021.'},
+  faculty:{n:'Faculty aligned',d:'Each house owns an academic domain and recruits on aptitude in it.',
+    persist:.9,cohesion:.4,nest:0,mix:.35,load:.6,prec:'No Singapore secondary precedent found.'},
+  guild:{n:'Interest guilds, reselected yearly',d:'Students choose their house each year on current interest.',
+    persist:.25,cohesion:.3,nest:0,mix:.85,load:.5,prec:'Closest analogue is Ron Clark Academy house culture, US elementary and middle.'}
+};
+
+/* strategy options for the Case tab */
+const STRAT={
+  none:{n:'Do nothing',d:'Leave the band as it runs today.'},
+  band:{n:'Fix the band only',d:'Fill the Wednesday and Thursday band properly. No house system.'},
+  house:{n:'Houses only',d:'Build the house system for belonging. Leave enrichment as it is.'},
+  full:{n:'Houses + talent development',d:'Houses own belonging and exploration; fields own pursuit. Both bands run.'}
+};
+
+/* ============================================================ ACTIVITIES
+   scope: H house-scored (Cup) | P pathway (field, not Cup) | W Wednesday house block
+   tier:  1 Explore | 2 Build | 3 Pursue
+   trace: what in the 2024-25 audit it converts from ('' = genuinely new)   */
+const ACTS=[
+ {id:'sportleague',n:'Inter-House Sports League',sc:'H',tier:1,dom:'DR',part:100,adults:10,sess:12,trace:'Inter-Class Games 8x, Termly Sports Challenge 18x',free:1},
+ {id:'crosscountry',n:'Inter-House Cross Country',sc:'H',tier:1,dom:'DR',part:100,adults:14,sess:1,trace:'NAPFA 11x, fitness challenge',free:1},
+ {id:'stem',n:'Inter-House STEM Challenge',sc:'H',tier:1,dom:'AM',part:60,adults:8,sess:3,trace:'',free:0},
+ {id:'mun',n:'Inter-House MUN &amp; Debate',sc:'H',tier:2,dom:'EA',part:25,adults:6,sess:4,trace:'Model UN 15x, EL Debate Workshop 6x',free:0},
+ {id:'pa',n:'House Performing Arts Night',sc:'H',tier:1,dom:'EM',part:45,adults:8,sess:3,trace:'CNY 6x, Chingay 8x, SYF 15x',free:1},
+ {id:'mtl',n:'Inter-House Mother Tongue Festival',sc:'H',tier:1,dom:'EM',part:70,adults:6,sess:2,trace:'MTL Fortnight 11x',free:1},
+ {id:'service',n:'House Service Challenge (VIA)',sc:'H',tier:1,dom:'ED',part:100,adults:12,sess:4,trace:'VIA Project 29x, Care Corner partner',free:1},
+ {id:'quiz',n:'Inter-House Quiz',sc:'H',tier:1,dom:'AM',part:35,adults:4,sess:2,trace:'',free:0},
+ {id:'showcase',n:'House Showcase (Pursue products)',sc:'H',tier:3,dom:'DAM',part:100,adults:10,sess:3,trace:'',free:0},
+ {id:'ihg',n:'CCA-run Inter-House Games',sc:'H',tier:1,dom:'DR',part:55,adults:8,sess:6,trace:'CCA sessions 15x',free:1},
+ {id:'organised',n:'Best Organised House award',sc:'H',tier:2,dom:'DM',part:12,adults:2,sess:0,trace:'',free:0},
+ {id:'tech',n:'Inter-House Coding &amp; Esports',sc:'H',tier:1,dom:'AM',part:30,adults:4,sess:3,trace:'Student Tech Champs 9x',free:0},
+
+ {id:'smo',n:'Mathematics Olympiad Guild',sc:'P',tier:3,dom:'DR',part:6,adults:3,sess:10,trace:'SMO Training 26x, Math Innovators 10x',free:1},
+ {id:'munD',n:'Model UN Delegation',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,trace:'Model UN Programme 15x',free:1},
+ {id:'debate',n:'Debate &amp; Oracy Society',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,trace:'EL Debate Workshop 6x, Readers Theatre',free:1},
+ {id:'nexus',n:'NEXUS Applied STEM Studio',sc:'P',tier:3,dom:'AM',part:6,adults:3,sess:10,trace:'NECTAR STEM Workshop 7x',free:0},
+ {id:'ai',n:'Data &amp; AI Craft',sc:'P',tier:3,dom:'AM',part:5,adults:2,sess:10,trace:'',free:0},
+ {id:'gi',n:'Geographical Investigation Unit',sc:'P',tier:3,dom:'AE',part:4,adults:2,sess:10,trace:'GI 5x, NUS Geography Challenge',free:1},
+ {id:'hist',n:'Junior Historical Society',sc:'P',tier:3,dom:'EM',part:4,adults:2,sess:10,trace:'Historical Investigation LJ, AR Trail',free:1},
+ {id:'authors',n:'Young Authors Guild',sc:'P',tier:3,dom:'EM',part:5,adults:2,sess:10,trace:'Creative Writing 12x, EL Writing 6x',free:1},
+ {id:'global',n:'Global Exchange Corps',sc:'P',tier:3,dom:'EA',part:4,adults:2,sess:8,trace:'Mihara, Estonia, Mutsuzawa exchanges',free:1},
+ {id:'sci',n:'Science Olympiad Guild',sc:'P',tier:3,dom:'DR',part:4,adults:2,sess:10,trace:'Physics/Chem Olympiad fragments',free:0},
+ {id:'futures',n:'Pathways &amp; Futures',sc:'P',tier:2,dom:'AM',part:18,adults:4,sess:6,trace:'NUS-CAPT 10x, NYP 7x, PIL 12x',free:1},
+
+ {id:'psl',n:'Peer Support Corps',sc:'W',tier:2,dom:'ED',part:14,adults:5,sess:10,trace:'PSL Programme 24x, all five levels',free:1},
+ {id:'cadre',n:'House Leadership Cadre',sc:'W',tier:2,dom:'DE',part:12,adults:5,sess:10,trace:'Tier Three 10x, Class Committee 6x',free:1},
+ {id:'corps',n:'House Service Corps',sc:'W',tier:2,dom:'ED',part:30,adults:6,sess:10,trace:'VIA Project 29x',free:1},
+ {id:'lighten',n:'Lighten Up Health Club',sc:'W',tier:1,dom:'RM',part:20,adults:4,sess:10,trace:'Lighten Up 28x, best cadence in the data',free:1},
+ {id:'makers',n:'Makers &amp; Sustainability Workshop',sc:'W',tier:1,dom:'AM',part:16,adults:4,sess:10,trace:'Upcycling 4x, composting 1x',free:0},
+ {id:'arts',n:'Visual Arts Collective',sc:'W',tier:1,dom:'EM',part:12,adults:3,sess:10,trace:'Art Learning Journey 4x',free:0},
+ {id:'broadcast',n:'Broadcast &amp; Podcast Studio',sc:'W',tier:2,dom:'AE',part:8,adults:2,sess:10,trace:'EL Podcast Training 1x',free:0}
+];
+
+/* ============================================================ STATE */
+const DEF={
+  tab:'case', pres:0,
+  cohort:200, classes:8, levels:4, houses:5, arch:'class',
+  cycles:3, sessions:10, protect:80, hours:3,
+  adults:16, cluster:20, skew:.8, twoTutor:0,
+  pursue:15, takeup:60, mentorLoad:8, houseOwns:0,
+  teachers:70, facilRate:60, nonTeach:0, tutors:6,
+  cup:'percap', showScope:'house', showcases:3,
+  strat:'full',
+  acts:ACTS.reduce((o,a)=>(o[a.id]=1,o),{})
+};
+let S=JSON.parse(JSON.stringify(DEF));
+let SCEN=[null,null,null];
+
+/* ============================================================ MODEL */
+function model(){
+  const M={};
+  M.N = S.cohort*S.levels;
+  M.houseSize = M.N/S.houses;
+  M.classSize = S.cohort/S.classes;
+  M.classesTotal = S.classes*S.levels;
+
+  /* --- class nesting --- */
+  const q=Math.floor(S.classes/S.houses), rem=S.classes%S.houses;
+  M.q=q; M.rem=rem;
+  M.nestClean = rem===0;
+  // at a single level, rem houses hold q+1 classes
+  M.levelMax = (rem>0? q+1 : q)*M.classSize;
+  M.levelMin = q*M.classSize;
+  M.levelGap = M.levelMin>0 ? (M.levelMax-M.levelMin)/M.levelMin : (rem>0?1:0);
+  // across all levels, extras rotate
+  const extras = rem*S.levels;
+  const baseEach = Math.floor(extras/S.houses), extraHouses = extras%S.houses;
+  M.houseClassMax = q*S.levels + baseEach + (extraHouses>0?1:0);
+  M.houseClassMin = q*S.levels + baseEach;
+  M.totalGap = M.houseClassMin>0 ? (M.houseClassMax-M.houseClassMin)/M.houseClassMin : 0;
+  if(S.arch!=='class'){ M.levelGap=0; M.totalGap=0; M.nestClean=true; }
+
+  /* --- band capacity and choice --- */
+  M.bandDays = S.cycles*S.sessions;                  // per track (Wed), per year
+  M.actualDays = M.bandDays*S.protect/100;
+  M.clusters = Math.floor(S.adults/(S.twoTutor?2:1));
+  M.capacity = M.clusters*S.cluster;
+  M.coverage = M.N>0 ? M.capacity/M.N : 0;
+  M.clustersNeeded = Math.ceil(M.N/S.cluster);
+  M.adultsNeeded = M.clustersNeeded*(S.twoTutor?2:1);
+  M.adultGap = M.adultsNeeded - S.adults;
+  const AL = allocate(M.clusters, S.cluster, M.N, S.skew);
+  M.fcs = AL.fc; M.top2 = AL.top2; M.placed = AL.placed;
+  M.topShare = AL.topShare;
+
+  /* --- cadence, Gagne --- */
+  M.weeks = S.cycles*S.sessions;
+  M.months = M.weeks/4.33;
+  M.perMonth = M.months>0 ? M.actualDays/M.months : 0;
+  M.gagneOk = M.perMonth>=3;
+  M.contactHrs = M.actualDays*S.hours;
+
+  /* --- talent tiers --- */
+  M.explore = M.N;
+  M.build = Math.round(M.N*S.takeup/100);
+  M.pursueN = Math.round(M.N*S.pursue/100);
+  M.mentorsNeeded = Math.ceil(M.pursueN/Math.max(1,S.mentorLoad));
+  M.thuClusters = Math.ceil(M.build/S.cluster);
+  M.pool = S.houseOwns ? M.N/S.houses : M.N;
+  M.poolTop = Math.round(M.pool*0.1);
+  M.fragLoss = S.houseOwns ? 1-1/S.houses : 0;
+
+  /* --- adult supply --- */
+  M.supply = Math.round(S.teachers*S.facilRate/100) + S.nonTeach;
+  M.demandWed = M.clustersNeeded*(S.twoTutor?2:1);
+  M.demandThu = M.thuClusters*(S.twoTutor?2:1);
+  M.supplyGapWed = M.demandWed - M.supply;
+  M.supplyGapThu = M.demandThu - M.supply;
+  M.staffPerHouse = S.teachers/S.houses;
+  M.tutorRatio = M.houseSize/Math.max(1,S.tutors);
+  M.teacherHrs = M.actualDays*S.hours*2; // a teacher running both bands
+
+  /* --- activities --- */
+  const on = ACTS.filter(a=>S.acts[a.id]);
+  M.actsOn = on;
+  M.cupEvents = on.filter(a=>a.sc==='H').length;
+  M.cupFree = on.filter(a=>a.sc==='H'&&a.free).length;
+  M.actAdultSess = on.reduce((s,a)=>s+a.adults*Math.max(a.sess,1),0);
+  M.actNew = on.filter(a=>!a.free).length;
+  M.reach = Math.min(100, on.filter(a=>a.sc==='H').reduce((s,a)=>Math.max(s,a.part),0));
+  // DREAM domain balance across Cup events
+  M.dom={}; DREAM.forEach(([k])=>M.dom[k]=0);
+  on.filter(a=>a.sc==='H').forEach(a=>[...a.dom].forEach(k=>{if(M.dom[k]!==undefined)M.dom[k]++;}));
+  const dvals=DREAM.map(([k])=>M.dom[k]);
+  const dmax=Math.max(...dvals), dmin=Math.min(...dvals);
+  M.domBal = dmax>0 ? dmin/dmax : 0;
+  M.domEmpty = dvals.filter(v=>v===0).length;
+
+  /* --- Cup fairness --- */
+  // size spread drives absolute-scoring bias
+  const spread = M.totalGap;
+  M.cupBias = S.cup==='absolute' ? spread : (S.cup==='percap' ? 0 : spread*0.15);
+  M.cupFair = 1-M.cupBias;
+
+  /* --- celebration / audience --- */
+  M.audiencePer = S.showScope==='house' ? M.houseSize : M.N;
+  M.witness = Math.min(1, S.showcases*M.audiencePer/Math.max(1,M.N));
+  M.presenters = M.pursueN + Math.round(M.build*0.25);
+  M.presentShare = M.presenters/Math.max(1,M.N);
+
+  /* --- affinity index (MODELLED, illustrative) ---
+     Calibrated so that a fully weekly, fully protected year at a tutor ratio of
+     15 is the only way to reach 100. Two components are properties of the
+     architecture and hold up even when delivery is thin, which is honest:
+     class-anchored membership gives some belonging whatever Wednesday looks like. */
+  const A=ARCH[S.arch];
+  const c_persist = A.persist;
+  const c_vert = S.levels>=5 ? 1 : .75;
+  const c_contact = clamp(M.contactHrs/120,0,1);          // 40 weekly sessions x 3h = a full year
+  const c_tutor = clamp(1-(M.tutorRatio-15)/45,0,1);      // 15 Beattyians per tutor is the benchmark
+  const c_coh = A.cohesion;
+  const c_ev = clamp(M.cupEvents/14,0,1);
+  const c_place = M.placed;                                // belonging needs a place to belong to
+  M.affinity = Math.round(100*(c_persist*.15 + c_vert*.10 + c_contact*.25 + c_tutor*.12
+                             + c_coh*.13 + c_ev*.10 + c_place*.15));
+  M.affParts=[['Persistence in one house',c_persist],['Vertical span Sec 1 to '+(S.levels===5?'5':'4'),c_vert],
+    ['Contact hours in the band',c_contact],['House tutor ratio',c_tutor],
+    ['Daily reinforcement by form class',c_coh],['Inter-house event density',c_ev],
+    ['Everyone actually placed',c_place]];
+
+  /* --- social mixing --- */
+  M.newPeople = Math.max(0, M.houseSize - (S.arch==='class'? M.classSize : M.classSize/S.houses));
+  M.mixScore = Math.round(100*A.mix);
+
+  /* --- talent depth index ---
+     Fragmentation is applied as a MULTIPLIER, not as one term among several.
+     Capping every field's pool at a fifth of the school does not cost you a few
+     points; it changes what the whole structure can produce, so it scales the
+     entire index down. */
+  const dose = clamp(M.perMonth/4.33,0,1);
+  const pursueAdeq = clamp(S.pursue/17.5,0,1);             // Renzulli's pool is 15 to 20 percent
+  const mentorF = clamp(M.supply/Math.max(1,M.mentorsNeeded+M.demandWed),0,1);
+  M.poolF = S.houseOwns ? 1/Math.sqrt(S.houses) : 1;
+  M.talent = Math.round(100*M.poolF*(dose*.40 + pursueAdeq*.25 + mentorF*.25 + M.top2*.10));
+  M.talParts=[['Cadence against the Gagné line',dose],['Pursue tier size',pursueAdeq],
+    ['Mentor and facilitator supply',mentorF],['Choice quality',M.top2]];
+
+  /* --- strategy comparison --- */
+  M.strat = stratScores(M);
+
+  /* --- verdict --- */
+  M.issues=[];
+  if(S.arch==='class' && rem!==0)
+    M.issues.push([M.totalGap>0.25?'b':'w',
+      `${S.classes} form classes per level does not divide by ${S.houses}. At any single level, ${rem} house${rem>1?'s':''} hold${rem>1?'':'s'} a whole class more than the others, a ${pct(M.levelGap)} gap &mdash; and a single level is exactly where a carnival is contested. Across all ${S.levels} levels the extra classes rotate and the gap falls to ${pct(M.totalGap)}. Ten classes divides cleanly; eight does not.`]);
+  if(M.coverage<1)
+    M.issues.push(['b',`Band capacity covers only ${pct(M.coverage)} of Beattyians. ${cm(Math.round(M.N-M.capacity))} have no place on a Wednesday. You need ${M.adultsNeeded} adults and have ${S.adults}.`]);
+  else if(M.top2<.8)
+    M.issues.push(['w',`Only ${pct(M.top2)} get their first or second choice. Below 80 percent the catalogue is too narrow; add clusters, not seats.`]);
+  if(!M.gagneOk)
+    M.issues.push(['w',`Cadence ${r1(M.perMonth)} sessions a month. Gagné dismisses provision at two or three a month as busywork. Below 3 you are running exposure, not talent development.`]);
+  if(S.houseOwns)
+    M.issues.push(['b',`Houses own the pathways, so every field's talent pool is capped at ${Math.round(M.pool)} Beattyians instead of ${cm(M.N)}. This inverts both Gagné and Renzulli at once.`]);
+  if(M.supplyGapWed>0)
+    M.issues.push(['b',`Wednesday needs ${M.demandWed} adults; supply is ${M.supply}. Short by ${M.supplyGapWed}. This is the binding constraint, not the pedagogy.`]);
+  if(S.cup==='absolute' && M.totalGap>0.02)
+    M.issues.push(['w',`Absolute Cup scoring with unequal houses hands the largest house a ${pct(M.cupBias)} structural advantage before anyone competes.`]);
+  if(M.domEmpty>0)
+    M.issues.push(['w',`${M.domEmpty} of the five DREAM domains carry no Cup event. The Cup cannot score what nothing measures.`]);
+  if(S.levels===4)
+    M.issues.push(['w','Sec 5 sits outside the house band. A vertical house that stops early has no senior tier to lead it, which is the one job the vertical structure exists to do.']);
+  if(S.protect<70)
+    M.issues.push(['w',`Only ${S.protect} percent of band days survive. Oral examinations alone took ${AUD.bandTop[0][1]} entries over two years.`]);
+  if(M.issues.length===0) M.issues.push(['g','No structural blocker at these settings. Every remaining risk is about delivery, not arithmetic.']);
+  M.ok = !M.issues.some(i=>i[0]==='b');
+  return M;
+}
+
+/* Allocation model. N Beattyians rank C clusters; popularity of rank i is
+   proportional to 1/i^skew (a Zipf distribution), and each cluster seats `cap`.
+   Students who miss their first choice are re-offered the clusters that still
+   have space, in proportion to how popular those are, and so on. This mirrors
+   Renzulli's mechanic, where students rank several choices rather than one.
+   Returns: fc share placed at first choice, top2 at first or second, placed at all. */
+function allocate(C,cap,N,skew){
+  if(C<1||N<=0) return {fc:0,top2:0,placed:0,topShare:0};
+  let H=0; for(let i=1;i<=C;i++) H+=1/Math.pow(i,skew);
+  const pop=[]; for(let i=1;i<=C;i++) pop.push((1/Math.pow(i,skew))/H);
+  const remain=new Array(C).fill(cap);
+  let un=N, round=0; const got=[];
+  while(un>0.5 && round<15){
+    const open=[]; let ph=0;
+    for(let i=0;i<C;i++) if(remain[i]>1e-6){ open.push(i); ph+=pop[i]; }
+    if(!open.length || ph<=0) break;
+    let placedThis=0;
+    const want=open.map(i=>un*pop[i]/ph);
+    open.forEach((i,j)=>{ const s=Math.min(want[j],remain[i]); remain[i]-=s; placedThis+=s; });
+    if(placedThis<=1e-9) break;
+    got.push(placedThis); un-=placedThis; round++;
+  }
+  return {fc:clamp((got[0]||0)/N,0,1), top2:clamp(((got[0]||0)+(got[1]||0))/N,0,1),
+          placed:clamp((N-un)/N,0,1), topShare:pop[0]||0};
+}
+
+function stratScores(M){
+  // four strategies scored on the same five outcomes, 0-100. MODELLED.
+  const full={bel:M.affinity, tal:M.talent, cel:Math.round(M.witness*100),
+    cost:Math.round(clamp(M.demandWed/Math.max(1,M.supply),0,2)*50), risk:0};
+  const o={};
+  o.none={n:STRAT.none.n, bel:22, tal:14, cel:8, cost:0, risk:10,
+    note:'The band keeps offering '+AUD.meanOptions+' options a level-day and dies before Term 4. Nothing gets worse. Nothing gets better.'};
+  o.band={n:STRAT.band.n, bel:30, tal:Math.round(full.tal*.85), cel:Math.round(full.cel*.45), cost:Math.round(full.cost*.8), risk:35,
+    note:'Cheapest real gain. Fixes cadence and choice without touching identity. Produces excellence that nobody watches.'};
+  o.house={n:STRAT.house.n, bel:Math.round(full.bel*.9), tal:18, cel:Math.round(full.cel*.7), cost:Math.round(full.cost*.35), risk:30,
+    note:'Belonging without depth. Houses are an environmental catalyst in Gagné; they develop nothing on their own.'};
+  o.full={n:STRAT.full.n, bel:full.bel, tal:full.tal, cel:full.cel, cost:full.cost, risk:60,
+    note:'The only option where the house supplies the audience that Renzulli Type III requires. Also the only one that can fail on facilitator supply.'};
+  return o;
+}
+
+/* ============================================================ SVG HELPERS */
+const esc=s=>String(s).replace(/&(?!\w+;)/g,'&amp;').replace(/</g,'&lt;');
+function svgWrap(w,h,inner){return `<svg viewBox="0 0 ${w} ${h}" role="img">${inner}</svg>`;}
+function hbar(rows,opts={}){
+  // rows: [label, value, colour, note]
+  const w=opts.w||620, rh=opts.rh||21, pad=opts.lw||190, gap=3;
+  const max=opts.max||Math.max(1,...rows.map(r=>r[1]));
+  const h=rows.length*(rh+gap)+16;
+  let s=`<g font-family="Calibri,sans-serif" font-size="11.5">`;
+  rows.forEach((r,i)=>{
+    const y=i*(rh+gap)+4, bw=Math.max(1,(r[1]/max)*(w-pad-70));
+    s+=`<text x="${pad-7}" y="${y+rh*0.7}" text-anchor="end" fill="#5b5f6b">${esc(r[0])}</text>`;
+    s+=`<rect x="${pad}" y="${y}" width="${bw}" height="${rh-4}" fill="${r[2]||'#000C53'}"/>`;
+    s+=`<text x="${pad+bw+6}" y="${y+rh*0.7}" fill="#1a1c22" font-weight="bold">${esc(r[3]!==undefined?r[3]:r[1])}</text>`;
+  });
+  return svgWrap(w,h,s+`</g>`);
+}
+function gauge(v,label,colour){
+  const w=150,h=76,cx=75,cy=62,rr=52;
+  const a=Math.PI*(1-clamp(v,0,1));
+  const x=cx+rr*Math.cos(a), y=cy-rr*Math.sin(a);
+  const big=0;
+  return svgWrap(w,h,
+    `<path d="M ${cx-rr} ${cy} A ${rr} ${rr} 0 0 1 ${cx+rr} ${cy}" fill="none" stroke="#E4E6EC" stroke-width="12"/>`+
+    `<path d="M ${cx-rr} ${cy} A ${rr} ${rr} 0 ${big} 1 ${x} ${y}" fill="none" stroke="${colour}" stroke-width="12"/>`+
+    `<text x="${cx}" y="${cy-8}" text-anchor="middle" font-family="Georgia,serif" font-size="21" fill="#000C53">${label}</text>`);
+}
+function stackRow(parts,w=620,h=26){
+  const tot=parts.reduce((s,p)=>s+p[1],0)||1; let x=0,s='';
+  parts.forEach(p=>{ const pw=p[1]/tot*w;
+    s+=`<rect x="${x}" y="0" width="${pw}" height="${h}" fill="${p[2]}"/>`;
+    if(pw>34) s+=`<text x="${x+pw/2}" y="${h*0.68}" text-anchor="middle" font-family="Calibri,sans-serif" font-size="11" fill="#fff" font-weight="bold">${esc(p[3]!==undefined?p[3]:p[1])}</text>`;
+    x+=pw;});
+  return svgWrap(w,h,s);
+}
+function heat(rows,cols,title){
+  const cw=64, rh=21, lw=178, w=lw+cols.length*cw+8, h=rows.length*rh+30;
+  let mx=1; rows.forEach(r=>r[1].forEach(v=>mx=Math.max(mx,v)));
+  let s=`<g font-family="Calibri,sans-serif" font-size="11">`;
+  cols.forEach((c,j)=>s+=`<text x="${lw+j*cw+cw/2}" y="14" text-anchor="middle" fill="#5b5f6b" font-weight="bold">${esc(c)}</text>`);
+  rows.forEach((r,i)=>{
+    const y=20+i*rh;
+    s+=`<text x="${lw-7}" y="${y+rh*0.68}" text-anchor="end" fill="#5b5f6b">${esc(r[0])}</text>`;
+    r[1].forEach((v,j)=>{
+      const t=v/mx, col= v===0 ? '#fdeceb' : `rgba(0,12,83,${0.10+t*0.85})`;
+      s+=`<rect x="${lw+j*cw}" y="${y}" width="${cw-2}" height="${rh-3}" fill="${col}"/>`;
+      s+=`<text x="${lw+j*cw+(cw-2)/2}" y="${y+rh*0.68}" text-anchor="middle" font-weight="bold" fill="${v===0?'#8d2b22':(t>0.5?'#fff':'#1a1c22')}">${v}</text>`;
+    });
+  });
+  return svgWrap(w,h,s+`</g>`);
+}
+function radar(items,size=210){
+  const cx=size/2, cy=size/2, R=size/2-32, n=items.length;
+  let poly='',axes='',labs='';
+  items.forEach((it,i)=>{
+    const a=-Math.PI/2 + i*2*Math.PI/n;
+    const px=cx+R*Math.cos(a), py=cy+R*Math.sin(a);
+    const vx=cx+R*clamp(it[1],0,1)*Math.cos(a), vy=cy+R*clamp(it[1],0,1)*Math.sin(a);
+    axes+=`<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="#E4E6EC"/>`;
+    poly+=`${vx},${vy} `;
+    const lx=cx+(R+16)*Math.cos(a), ly=cy+(R+16)*Math.sin(a);
+    labs+=`<text x="${lx}" y="${ly+3}" text-anchor="middle" font-family="Calibri,sans-serif" font-size="10" fill="#5b5f6b">${esc(it[0])}</text>`;
+  });
+  let rings='';[0.25,0.5,0.75,1].forEach(f=>{
+    let p='';items.forEach((it,i)=>{const a=-Math.PI/2+i*2*Math.PI/n;p+=`${cx+R*f*Math.cos(a)},${cy+R*f*Math.sin(a)} `;});
+    rings+=`<polygon points="${p}" fill="none" stroke="#E4E6EC"/>`;});
+  return svgWrap(size,size,rings+axes+`<polygon points="${poly}" fill="rgba(0,12,83,.17)" stroke="#000C53" stroke-width="2"/>`+labs);
+}
+
+/* ============================================================ RAIL */
+const RAIL=[
+ {t:'Cohort and houses',f:[
+   ['cohort','Beattyians per level','range',120,320,10,'Level size. Total in the house system is this times the number of levels.'],
+   ['classes','Form classes per level','range',5,12,1,'The single most consequential unknown. It must divide by the number of houses for clean nesting.'],
+   ['levels','Levels in the house band','seg',[[4,'Sec 1–4'],[5,'Sec 1–5']],0,'Vertical mentoring wants Sec 5 in. The examination calendar argues it out.'],
+   ['houses','Number of houses','seg',[[4,'4'],[5,'5'],[6,'6']],0,'Beatty already has five. Four and six are shown to test the nesting arithmetic.'],
+   ['arch','Sorting architecture','sel',0,0,0,'How a Beattyian comes to belong to a house.']]},
+ {t:'The band',f:[
+   ['cycles','Cycles a year','seg',[[2,'2'],[3,'3'],[4,'4']],0,'Three cycles releases Term 4 to the examination calendar by design.'],
+   ['sessions','Sessions per cycle','range',6,14,1,'Renzulli’s published floor is 8.'],
+   ['protect','Band days actually protected','range',40,100,5,'Orals took 41 entries and ICT training 31 across two years.'],
+   ['hours','Hours per band day','range',1,4,.5,'The card is currently a 3pm to 6pm block.']]},
+ {t:'Supply and choice',f:[
+   ['adults','Facilitating adults per band day','range',4,48,1,'Renzulli recruits teachers, support staff, parents and community. Content expertise is explicitly not required.'],
+   ['cluster','Cluster size','range',10,30,1,'Renzulli: 5 to 15, up to 25 with a second adult.'],
+   ['skew','Demand concentration','range',.2,1.6,.1,'How unevenly Beattyians want the same clusters. Higher means everyone chases the same few.'],
+   ['twoTutor','Two adults per cluster','seg',[[0,'One'],[1,'Two']],0,'Doubles quality and halves the number of clusters you can run.']]},
+ {t:'Talent development',f:[
+   ['takeup','Thursday elective take-up','range',20,100,5,'Share of Beattyians electing a pathway.'],
+   ['pursue','Pursue tier, percent','range',3,30,1,'Renzulli’s revolving talent pool is 15 to 20 percent.'],
+   ['mentorLoad','Students per Pursue mentor','range',3,16,1,'Type III needs a named mentor and a real external audience.'],
+   ['houseOwns','Houses own the pathways','seg',[[0,'No'],[1,'Yes']],0,'The single most destructive switch on this page. Watch the talent pool.']]},
+ {t:'Teachers',f:[
+   ['teachers','Teaching staff','range',30,120,1,'Total teaching establishment.'],
+   ['facilRate','Percent who facilitate','range',20,100,5,'The one house system dissertation found 25 percent disengagement produced measurable disparities.'],
+   ['nonTeach','Non-teacher facilitators','range',0,45,1,'Support staff, parents, alumni, community partners.'],
+   ['tutors','House tutors per house','range',2,20,1,'Vertical tutoring runs small mixed-age groups, ideally two tutors each.']]},
+ {t:'The Cup',f:[
+   ['cup','Scoring model','sel',0,0,0,'How house points accumulate.'],
+   ['showScope','Showcase audience','seg',[['house','House'],['school','Whole school']],0,'Who watches a Pursue product.'],
+   ['showcases','Showcases a year','range',0,8,1,'Renzulli requires an audience who voluntarily attend.']]}
+];
+const SELOPTS={
+  arch:Object.entries(ARCH).map(([k,v])=>[k,v.n]),
+  cup:[['absolute','Absolute points'],['percap','Per capita'],['participation','Participation weighted']]
+};
+let railOpen={};
+function buildRail(){
+  let h='';
+  h+=`<div class="grp"><h5>Presets</h5><div class="bd">
+   <div class="seg" style="flex-wrap:wrap">
+    <button data-p="today">Today</button><button data-p="mvp">Minimum viable</button>
+    <button data-p="rep">Report</button><button data-p="full">Full ambition</button></div>
+   <div class="btnrow"><button class="act ghost" id="reset">Reset</button>
+    <button class="act ghost" id="save0">Save A</button><button class="act ghost" id="save1">Save B</button></div>
+   <div class="hint" id="scenNote"></div></div></div>`;
+  RAIL.forEach((g,gi)=>{
+    const cl = railOpen[gi]===false ? ' cl':'';
+    h+=`<div class="grp${cl}" data-g="${gi}"><h5 data-tog="${gi}">${g.t}<i>${cl?'+':'−'}</i></h5><div class="bd">`;
+    g.f.forEach(f=>{
+      const [k,lab,type,a,b,st]=f;
+      const hint=f[f.length-1];   // seg rows carry no min/max/step, so read the hint from the end
+      h+=`<div class="f"><label class="l" for="c_${k}"><span>${lab}</span><em id="v_${k}"></em></label>`;
+      if(type==='range') h+=`<input type="range" id="c_${k}" data-k="${k}" min="${a}" max="${b}" step="${st}">`;
+      else if(type==='seg'){ h+=`<div class="seg" id="c_${k}" data-k="${k}">`+
+        a.map(o=>`<button data-v="${o[0]}">${o[1]}</button>`).join('')+`</div>`; }
+      else h+=`<select id="c_${k}" data-k="${k}">`+SELOPTS[k].map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')+`</select>`;
+      h+=`<div class="hint">${hint}</div></div>`;
+    });
+    h+=`</div></div>`;
+  });
+  $('#rail').innerHTML=h;
+  bindRail();
+}
+function bindRail(){
+  $$('#rail [data-tog]').forEach(el=>el.onclick=()=>{
+    const gi=el.dataset.tog, g=el.closest('.grp');
+    g.classList.toggle('cl'); railOpen[gi]=!g.classList.contains('cl');
+    el.querySelector('i').textContent = g.classList.contains('cl')?'+':'−';
+  });
+  $$('#rail input[type=range]').forEach(el=>el.oninput=()=>{S[el.dataset.k]=+el.value;render();});
+  $$('#rail select').forEach(el=>el.onchange=()=>{S[el.dataset.k]=el.value;render();});
+  $$('#rail .seg[data-k]').forEach(seg=>seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const k=seg.dataset.k, v=b.dataset.v;
+    S[k]= (k==='showScope') ? v : +v;
+    render();
+  }));
+  $$('#rail [data-p]').forEach(b=>b.onclick=()=>{applyPreset(b.dataset.p);});
+  $('#reset').onclick=()=>{S=JSON.parse(JSON.stringify(DEF));S.tab=curTab();render();};
+  $('#save0').onclick=()=>{SCEN[0]=JSON.parse(JSON.stringify(S));render();};
+  $('#save1').onclick=()=>{SCEN[1]=JSON.parse(JSON.stringify(S));render();};
+}
+function syncRail(){
+  RAIL.forEach(g=>g.f.forEach(f=>{
+    const k=f[0], el=$('#c_'+k), lab=$('#v_'+k);
+    if(!el) return;
+    if(f[2]==='range'){ el.value=S[k]; }
+    else if(f[2]==='sel'){ el.value=S[k]; }
+    else { el.querySelectorAll('button').forEach(b=>b.classList.toggle('on', String(b.dataset.v)===String(S[k]))); }
+    if(lab) lab.textContent=railLabel(k);
+  }));
+  const s=[];
+  if(SCEN[0]) s.push('A saved'); if(SCEN[1]) s.push('B saved');
+  $('#scenNote').textContent = s.length? s.join(' · ')+'. Compare on the Decisions tab.' : 'Save two configurations to compare them.';
+}
+function railLabel(k){
+  const v=S[k];
+  if(k==='arch') return ARCH[v].n.split(' ')[0];
+  if(k==='cup') return {absolute:'Absolute',percap:'Per capita',participation:'Participation'}[v];
+  if(k==='showScope') return v==='house'?'House':'School';
+  if(k==='houseOwns'||k==='twoTutor') return v?'Yes':'No';
+  if(k==='levels') return 'Sec 1–'+v;
+  if(k==='protect'||k==='facilRate'||k==='takeup'||k==='pursue') return v+'%';
+  if(k==='skew') return r1(v);
+  if(k==='hours') return v+'h';
+  return String(v);
+}
+/* Presets always start from the defaults, so clicking one is deterministic
+   however much the rail has been moved beforehand. */
+function applyPreset(p){
+  const P={
+    today:{cycles:2,sessions:10,protect:52,adults:3,cluster:20,pursue:6,takeup:20,
+           levels:4,houses:5,classes:8,facilRate:25,nonTeach:0,showcases:0,cup:'absolute'},
+    mvp:{cycles:2,sessions:10,protect:75,adults:37,cluster:22,pursue:8,takeup:35,levels:4,
+         houses:5,classes:8,facilRate:50,nonTeach:6,tutors:6,showcases:1,cup:'percap'},
+    rep:{cycles:3,sessions:10,protect:80,adults:32,cluster:25,pursue:15,takeup:60,levels:4,
+         houses:5,classes:10,facilRate:60,nonTeach:10,tutors:8,showcases:3,cup:'percap'},
+    full:{cycles:3,sessions:10,protect:88,adults:46,cluster:22,pursue:20,takeup:75,levels:5,
+          houses:5,classes:10,facilRate:75,nonTeach:22,tutors:10,showcases:4,cup:'percap'}
+  }[p];
+  const tab=S.tab;
+  S=JSON.parse(JSON.stringify(DEF));
+  Object.assign(S,P); S.tab=tab; render();
+}
+
+/* ============================================================ TABS */
+function curTab(){return S.tab;}
+const TABS={case:tabCase,arch:tabArch,band:tabBand,talent:tabTalent,acts:tabActs,staff:tabStaff,dec:tabDec};
+
+function metric(v,lab,note,cls){
+  return `<div class="m ${cls||''}"><b>${v}</b><span>${lab}</span>${note?`<i class="${cls||''}">${note}</i>`:''}</div>`;
+}
+function verdict(M){
+  const cls = M.issues.some(i=>i[0]==='b')?'bad':(M.issues.some(i=>i[0]==='w')?'warn':'ok');
+  const title = cls==='bad'?'This configuration does not hold':(cls==='warn'?'This configuration holds, with warnings':'This configuration holds');
+  return `<div class="verdict ${cls}"><h3>${title}</h3><ul>`+
+    M.issues.map(i=>`<li class="${i[0]}">${i[1]}</li>`).join('')+`</ul></div>`;
+}
+
+/* ---------------------------------------------------------- 1. CASE */
+function tabCase(M){
+  const st=M.strat;
+  const rows=['none','band','house','full'].map(k=>{
+    const s=st[k];
+    return `<tr class="${S.strat===k?'hi':''}"><td><b>${s.n}</b><div class="hint">${STRAT[k].d}</div></td>
+      <td class="n">${s.bel}</td><td class="n">${s.tal}</td><td class="n">${s.cel}</td>
+      <td class="n">${s.cost}</td><td class="n">${s.risk}</td>
+      <td style="font-size:.94em;color:var(--g4)">${s.note}</td></tr>`;}).join('');
+
+  const dayRows=Object.entries(AUD.ccaDay).sort((a,b)=>b[1]-a[1])
+    .map(([d,v])=>[d,v,(d==='Wed'||d==='Thu')?'#FFE200':'#000C53',v]);
+
+  return `
+<header class="pg"><h1>Should Beatty do this at all?</h1>
+<p class="lede">The question in front of leadership is not which house names to use. It is whether to spend two years of change capacity building a structure whose main documented effect is on participation and belonging rather than attainment, in order to make Wednesday and Thursday afternoons mean something. This page argues both sides from Beatty's own records, and from what the research does and does not support.</p></header>
+
+<div class="thesis"><b>The synthesis argument, stated once.</b> A talent development programme produces excellence that nobody witnesses. Renzulli's Type III explicitly requires a real product for a real audience who <i>voluntarily attend</i> &mdash; and that audience is the hardest thing in the whole model to manufacture. A house system is an audience that already exists, already cares, and already meets. That is the reason to build both together rather than either alone: <b>the house is the audience the pathway needs, and the pathway is the substance the house lacks.</b> Neither half solves its own problem.</div>
+
+<h2>What Beatty's own calendar already says <span class="tag mea">measured</span></h2>
+<div class="metrics">
+${metric(AUD.meanOptions,'Activities offered per level per band day','A menu of 1.33 is an allocation, not a choice','bad')}
+${metric(pct(1-AUD.slotsFilled/AUD.levelSlots),'Level-days offered nothing at all',cm(AUD.levelSlots-AUD.slotsFilled)+' of '+AUD.levelSlots+' possible slots','bad')}
+${metric(pct(AUD.nonEnrich/AUD.entries),'Of the protected band was not enrichment','Orals 41, ICT rollout 31, blank cards 7','bad')}
+${metric(AUD.prog1or2,'Programmes that ran once or twice','Of '+AUD.programmes+' named programmes','warn')}
+${metric(AUD.ccaDay.Wed+' &amp; '+AUD.ccaDay.Thu,'CCA occurrences on Wed and Thu','Against 29 on Tuesday and 29 on Saturday','ok')}
+</div>
+
+<div class="grid2">
+<div><h3>The finding that de-risks everything</h3>
+<p>Nationally, Wednesday is the busiest CCA day in Singapore secondary schools. At Beatty it is nearly the emptiest. Two years of calendar data, CCA and uniformed group and performing arts occurrences by day:</p>
+<div class="chart">${hbar(dayRows,{w:520,lw:64,rh:22})}</div>
+<p class="note">The band you want to guard is already structurally free. This is the strongest change-management argument available and it comes from the school's own records, not from a model.</p></div>
+
+<div><h3>Coverage inverts against developmental need <span class="tag mea">measured</span></h3>
+<p>Enrichment occurrences by category and level. Ten cells are empty.</p>
+<div class="chart scroll">${heat(AUD.cov.map(r=>[r[0],r.slice(1)]),['Sec 1','Sec 2','Sec 3','Sec 4','Sec 5'])}</div>
+<p class="note">Sec 4 has no STEM at all. Aesthetics is absent from Sec 3 upward in a school that runs SYF items, a concert band and a Chinese orchestra. Either upper secondary enrichment stops, or it happens through channels that never reach the card. Both are problems, and they need different fixes.</p></div>
+</div>
+
+<h2>Four strategies, scored on the same five outcomes <span class="tag mod">modelled</span></h2>
+<p class="lede">Scores respond live to the control rail. They are an illustrative composite, not a measurement, and they exist to make the shape of the trade visible rather than to produce a number worth quoting.</p>
+<div class="scroll"><table><thead><tr><th>Strategy</th><th class="n">Belonging</th><th class="n">Talent depth</th>
+<th class="n">Celebration</th><th class="n">Cost</th><th class="n">Delivery risk</th><th>What it actually gets you</th></tr></thead>
+<tbody>${rows}</tbody></table></div>
+<p class="note">Cost and delivery risk are scored so that <b>higher is worse</b>. "Do nothing" is genuinely on this table, and it is genuinely defensible: it carries no delivery risk and no cost. What it forfeits is any answer to the question of what a Beattyian actually gets across five years.</p>
+
+<h2>What the research supports, and what it does not <span class="tag res">researched</span></h2>
+<div class="grid2">
+<div class="box nav"><h4>Honest, in favour</h4><ul class="t">
+<li><b>Belonging is well evidenced as an outcome in itself.</b> School belonging predicts attendance, achievement, graduation and mental-health functioning across the primary-to-secondary transition. Teacher support is the strongest single predictor &mdash; which means a house structure only works through the adults in it.</li>
+<li><b>Structural reorganisation increases participation.</b> The largest study, across 119 funded high schools, found no significant achievement trend but did find increased extracurricular participation, higher promotion rates and fewer violent incidents.</li>
+<li><b>Vertical grouping has consistent qualitative support.</b> UK vertical tutoring schools report reduced in-year cliques, older students modelling behaviour, and tutors able to attend to four Sec 1s rather than thirty.</li>
+<li><b>Two Singapore precedents already run the recommended model.</b> Kranji allocates house with class at Sec 1; Hua Yi added a fifth house in 2020 specifically to integrate classes into houses.</li>
+</ul></div>
+<div class="box nav"><h4>Honest, against</h4><ul class="t">
+<li><b>There is no randomised evidence that house systems raise attainment.</b> Adopt this as a culture and participation structure or do not adopt it.</li>
+<li><b>Enrichment effect sizes are softer than they look.</b> An umbrella review puts effects on academic achievement at 0.68, collapsing to 0.32 once corrected for publication bias, and the largest effects come from intensive residential formats, not weekly in-school bands.</li>
+<li><b>Neither Renzulli nor Gagné appears in MOE guidance.</b> Singapore's language is school-based talent development and higher-ability learners. Citing these models internally is importing a framework, not aligning to national policy. Say so rather than let it be discovered.</li>
+<li><b>Complex whole-school change needs at least two years.</b> EEF's named failure modes &mdash; initiative overload, the implementation dip, undefined active ingredients, over-reliance on individuals, neglected de-implementation &mdash; map uncomfortably well onto this proposal.</li>
+<li><b>Teacher disengagement is the measured variance.</b> The one house-system dissertation found 25 percent staff disengagement producing performance disparities between houses.</li>
+</ul></div>
+</div>
+
+<div class="verdict warn"><h3>The uncomfortable question worth putting to leadership first</h3>
+<ul><li class="w">If the band's problem is that it offers 1.33 activities and dies in September, then <b>filling the band fixes that</b>, and it does not require a house system. Strategy "Fix the band only" is the honest comparator, and it is cheaper on every axis.</li>
+<li class="w">The house system earns its cost only if you want the <i>belonging</i> and the <i>audience</i> as well &mdash; and only if you accept that the attainment case is not there.</li>
+<li class="g">The counter-argument is that Beatty is not short of programmes; it is short of coherence. 134 programmes ran, 67 of them once or twice. That is a school doing a great deal and accumulating nothing. A house structure is one way of making four years add up to something a Beattyian can name.</li></ul></div>
+
+${verdict(M)}`;
+}
+
+/* ---------------------------------------------------------- 2. ARCHITECTURE */
+function tabArch(M){
+  const keys=Object.keys(ARCH);
+  const score=k=>{
+    const A=ARCH[k], saved=S.arch;
+    const nest = k==='class' ? (S.classes%S.houses===0?100:Math.round(100*(1-M.levelGap))) : 100;
+    return {n:A.n,persist:Math.round(A.persist*100),cohesion:Math.round(A.cohesion*100),
+      mix:Math.round(A.mix*100),nest,load:Math.round(A.load*100),prec:A.prec,d:A.d};
+  };
+  const rows=keys.map(k=>{const s=score(k);
+    return `<tr class="${S.arch===k?'hi':''}"><td><b>${s.n}</b><div class="hint">${s.d}</div></td>
+    <td class="n">${s.persist}</td><td class="n">${s.cohesion}</td><td class="n">${s.mix}</td>
+    <td class="n">${s.nest}</td><td class="n">${s.load}</td>
+    <td style="font-size:.93em;color:var(--g4)">${s.prec}</td></tr>`;}).join('');
+
+  // house size bars under current nesting
+  const q=M.q, rem=M.rem;
+  const hb=HOUSES.slice(0,S.houses).map((h,i)=>{
+    const cls = (i<rem? q+1 : q);
+    return [h.n, cls*M.classSize, h.c, Math.round(cls*M.classSize)+' at a level'];
+  });
+
+  return `
+<header class="pg"><h1>Architecture</h1>
+<p class="lede">Five ways a Beattyian could come to belong to a house, scored against each other. The arithmetic that actually decides this is not pedagogical: it is whether the form-class count divides by the house count.</p></header>
+
+${verdict(M)}
+
+<h2>The binding constraint nobody names <span class="tag mod">modelled</span></h2>
+<div class="metrics">
+${metric(S.classes+' ÷ '+S.houses, 'Form classes per level, divided by houses', M.nestClean?'Divides cleanly':`Remainder ${M.rem}`, M.nestClean?'ok':'bad')}
+${metric(M.nestClean?'0%':pct(M.levelGap),'Size gap between houses at one level',M.nestClean?'Every house fields the same':'One house fields a whole class more',M.nestClean?'ok':'bad')}
+${metric(cm(Math.round(M.houseSize)),'Beattyians per house','Across Sec 1 to '+S.levels,'')}
+${metric(cm(Math.round(M.classSize)),'Students per form class','Cohort '+cm(M.N)+' across '+S.levels+' levels','')}
+${metric(M.mixScore,'Social mixing index','How many new people a house puts you with',M.mixScore>70?'ok':'warn')}
+</div>
+
+<div class="grid2">
+<div><h3>House size at a single level</h3>
+<div class="chart">${hbar(hb,{w:520,lw:88,rh:23})}</div>
+<p class="note">${M.nestClean
+  ? 'Clean nesting. Every house holds the same number of whole form classes at every level, so a Sec 2 carnival is a fair fight before anyone turns up.'
+  : `With ${S.classes} classes and ${S.houses} houses, ${M.rem} house${M.rem>1?'s':''} hold${M.rem>1?'':'s'} an extra class at each level. Rotating the extra across levels evens it out over four years but never at any single level, which is exactly where inter-house competition happens. Ten classes divides cleanly. Eight does not.`}</p></div>
+
+<div><h3>Where the current architecture sits</h3>
+<div class="chart" style="display:flex;justify-content:center">${radar([
+  ['Persistence',ARCH[S.arch].persist],['Daily reinforcement',ARCH[S.arch].cohesion],
+  ['Social mixing',ARCH[S.arch].mix],['Clean nesting',S.arch==='class'?(M.nestClean?1:1-M.levelGap):1],
+  ['Low admin load',ARCH[S.arch].load]],230)}</div>
+<p class="note"><b>${ARCH[S.arch].n}.</b> ${ARCH[S.arch].d} Precedent: ${ARCH[S.arch].prec}</p></div>
+</div>
+
+<h2>The five architectures compared <span class="tag mod">modelled</span></h2>
+<div class="scroll"><table><thead><tr><th>Model</th><th class="n">Persistence</th><th class="n">Daily reinforcement</th>
+<th class="n">Social mixing</th><th class="n">Nesting</th><th class="n">Low admin load</th><th>Precedent</th></tr></thead>
+<tbody>${rows}</tbody></table></div>
+
+<div class="box nav"><h4>The honest tension in the recommended model</h4>
+<p>Class-anchored vertical is recommended because it is the only model where <b>every inter-class competition at a level is already an inter-house competition</b>. The house table fills from events the school already runs, which is why it is cheap. It also survives Full Subject Based Banding: under FSBB only six common-curriculum subjects hold a form class together, so a house keyed to form class is stable while a house keyed to banding would fragment.</p>
+<p>The cost is real and should be said out loud: <b>house composition inherits class composition.</b> Mixing is weaker than random assignment would give &mdash; the model scores ${Math.round(ARCH.class.mix*100)} on social mixing against ${Math.round(ARCH.random.mix*100)} for random sorting. If a class arrives with a social problem, the house inherits it for four years.</p></div>
+
+<div class="box"><h4>On Boon Lay, and why the CCA-anchored model deserves a hearing <span class="tag res">researched</span></h4>
+<p>Boon Lay Secondary runs four houses &mdash; Garnet, Emerald, Morganite, Sapphire &mdash; each owning four CCAs, built on a CCA-centric model dating to 2017. It is a working Singapore instance of the architecture this dashboard scores lowest on nesting and daily reinforcement. That is worth taking seriously rather than dismissing: it means the objections below are theoretical unless someone checks how Boon Lay handles them.</p>
+<p>The objections are that CCA rolls are uneven (Concert Band and NPCC roughly double Wushu and Football), that gender is structural rather than incidental (three boys-only CCAs against one girls-only), that CCAs thin at upper secondary so the vertical column narrows exactly where Sec 3 and 4 leaders should be, and that class nesting drops to zero. It is also, philosophically, the Hogwarts move: sorting by talent on arrival, against the developmental argument the rest of this design rests on.</p>
+<p class="note">Recommended action: a call to Boon Lay before this goes to the SMC. One conversation would settle whether the four objections bite in practice, and it is the cheapest piece of evidence available to this project.</p></div>
+
+<h2>The five houses as they stand</h2>
+<div class="hrow">${HOUSES.slice(0,S.houses).map(h=>`
+<div class="hcard" style="border-top-color:${h.c}"><b style="color:${h.c}">${h.n}</b>
+<span>${h.col}${h.colv?'':' <span class="tag unk">unverified</span>'}</span>
+<i>${h.dis}.<br>${h.dom}.</i></div>`).join('')}</div>
+<p class="note">Hood is Red and Jellicoe is Orange, confirmed. The other three colours are Green, Yellow and Blue in some order and that order is published nowhere reachable; the two commemorative histories in the NLB catalogue are the likely record. ${S.houses>5?`<b>You have set ${S.houses} houses but Beatty has five.</b> The sixth is shown only to test the arithmetic.`:''}</p>
+
+<div class="thesis"><b>Why the existing names are enough.</b> Beatty's motto is Non Vi Sed Arte, not by force but by skill, and the school named its houses after five men whose profession was force. That reads as a contradiction until you look at what each is actually remembered for. Fisher for engineering. Jellicoe for judgement and restraint. Hood for going first. Sturdee for preparation. Harwood for reading a situation while outnumbered. Not one of the five is remembered for force. Each is remembered for a form of skill. The house system does not need new names; it needs the existing ones taken seriously. The complications are a feature: Jellicoe was sacked shabbily, and Beatty as First Sea Lord was involved in revising the official Jutland record at Jellicoe's expense. The school is named after the man who did that to the man one of its houses is named after. That is not a problem to manage. It is a History curriculum the school already owns.</div>`;
+}
+
+/* ---------------------------------------------------------- 3. BAND */
+function tabBand(M){
+  const capParts=[
+    ['Seated',Math.min(M.capacity,M.N),'#000C53',cm(Math.round(Math.min(M.capacity,M.N)))],
+    ['Unseated',Math.max(0,M.N-M.capacity),'#EC3237',cm(Math.round(Math.max(0,M.N-M.capacity)))]
+  ];
+  const doseRows=[
+    ['This configuration',M.perMonth,M.gagneOk?'#1a7f4b':'#c0392b',r1(M.perMonth)+'/mth'],
+    ['Gagné busywork line',3,'#b8860b','3.0'],
+    ['Beatty best sustained today',1.5,'#9aa0ae','~1.5'],
+    ['Weekly, fully protected',4.33,'#E4E6EC','4.33']
+  ];
+  return `
+<header class="pg"><h1>The band</h1>
+<p class="lede">Wednesday and Thursday, 3pm to 6pm. Whether the choice architecture is real or nominal is decided here, and it is decided almost entirely by how many adults stand in front of a group.</p></header>
+
+${verdict(M)}
+
+<h2>Capacity and choice <span class="tag mod">modelled</span></h2>
+<div class="metrics">
+${metric(M.clusters,'Clusters running in parallel','From '+S.adults+' adults'+(S.twoTutor?' at two per cluster':''),'')}
+${metric(pct(M.coverage),'Seats against Beattyians',M.coverage>=1?'Everyone can be placed':cm(Math.round(M.N-M.capacity))+' with nowhere to go',M.coverage>=1?'ok':'bad')}
+${metric(pct(M.fcs),'Get their first choice','Second choices are normal and fine','')}
+${metric(pct(M.top2),'Get first or second choice',M.top2>=.8?'Above the 80 percent floor':'Catalogue too narrow',M.top2>=.8?'ok':'warn')}
+${metric(M.adultsNeeded,'Adults needed for full coverage',M.adultGap>0?'Short by '+M.adultGap:'Supply is sufficient',M.adultGap>0?'bad':'ok')}
+${metric(r1(M.perMonth),'Sessions per month',M.gagneOk?'Clears the Gagné line':'Below 3, this is exposure not development',M.gagneOk?'ok':'warn')}
+${metric(Math.round(M.contactHrs),'Contact hours a year','Per Beattyian, one band track','')}
+</div>
+
+<div class="grid2">
+<div><h3>Who gets a seat</h3>
+<div class="chart">${stackRow(capParts,520,30)}</div>
+<div class="legend"><span><i style="background:#000C53"></i>Seated in a cluster</span><span><i style="background:#EC3237"></i>No place</span></div>
+<h3 style="margin-top:1.4em">Choice, modelled honestly</h3>
+<p>Beattyians do not want the ${M.clusters} clusters equally. Demand is modelled as a Zipf distribution over ranked clusters at concentration ${r1(S.skew)}, so the most popular cluster attracts <b>${pct(M.topShare)}</b> of all first choices on its own. Each cluster seats ${S.cluster}. Anyone who cannot fit is re-offered whatever still has space, which is exactly Renzulli's mechanic of ranking several choices rather than one.</p>
+<p>At this configuration <b>${pct(M.fcs)}</b> get their first choice and <b>${pct(M.top2)}</b> get their first or second. The second figure is the one to publish: the report's own pilot test is the percentage receiving a first or second choice, with 80 percent as the floor below which the catalogue is too narrow.</p>
+<p class="note">This is why adding <i>seats</i> does not fix choice but adding <i>clusters</i> does. Raise cluster size and coverage improves while first-choice satisfaction barely moves; raise the number of adults and both improve together. Note also that first-choice satisfaction plateaus near 75 percent however many clusters you run &mdash; when everyone wants the same three things, some disappointment is structural, and chasing it past that point buys nothing.</p></div>
+
+<div><h3>Cadence against the Gagné threshold</h3>
+<div class="chart">${hbar(doseRows,{w:520,lw:186,rh:22,max:4.6})}</div>
+<p class="note">Gagné's best-practices model calls for systematic enrichment and explicitly dismisses provision offered two or three times a month, borrowing Julian Stanley's term, as <b>busywork</b>. Beatty's strongest sustained programmes today &mdash; Lighten Up at a 7-day gap, SYF at 11, Creative Writing and NECTAR at 18 &mdash; sit at roughly one to one-and-a-half sessions a month. Do not cite Gagné as validating the band. Cite him as the standard the band has to answer to.</p>
+<p class="note">A leadership programme meeting every 62 days, as Tier Three Student Leaders did, is a series of briefings. It is not a development pathway, and no amount of naming will make it one.</p></div>
+</div>
+
+<h2>What actually occupied the band, 2024 and 2025 <span class="tag mea">measured</span></h2>
+<div class="chart scroll">${hbar(AUD.bandTop.map(r=>[r[0],r[1],r[2]?'#000C53':'#EC3237',r[1]]),{w:640,lw:250,rh:20})}</div>
+<div class="legend"><span><i style="background:#000C53"></i>Genuine enrichment</span><span><i style="background:#EC3237"></i>Not enrichment</span></div>
+<p class="note">Red bars are category 10: time inside the enrichment band consumed by something else. ${AUD.nonEnrich} of ${AUD.entries} entries, ${pct(AUD.nonEnrich/AUD.entries)}. Oral examinations are immovable and that is not the point &mdash; the point is that they are invisible in the school's own account of what the band is for, so any design assuming a clean weekly block will collide with them every Term 2 and Term 3. <b>Publish the oral windows before cycles are set, and shorten Cycle 2 around them.</b></p>
+
+<h2>The year, if you build it <span class="tag mod">modelled</span></h2>
+<div class="scroll"><table><thead><tr><th>Track</th><th>Day</th><th>Who</th><th class="n">Sessions</th><th class="n">Clusters</th><th class="n">Adults</th><th>Renzulli type</th></tr></thead><tbody>
+<tr><td><b>House Band</b></td><td>Wednesday</td><td>All Beattyians, vertical within house</td><td class="n">${Math.round(M.actualDays)}</td><td class="n">${M.clustersNeeded}</td><td class="n">${M.demandWed}</td><td>Type I and II &mdash; exploration and process skills</td></tr>
+<tr><td><b>Pathway Band</b></td><td>Thursday</td><td>Elective, cross-house, by field (${S.takeup}%)</td><td class="n">${Math.round(M.actualDays)}</td><td class="n">${M.thuClusters}</td><td class="n">${M.demandThu}</td><td>Type II advanced and Type III &mdash; pursuit</td></tr>
+</tbody></table></div>
+<p class="note">${S.cycles} cycles of ${S.sessions} sessions gives ${M.bandDays} days per track; at ${S.protect} percent protection, ${Math.round(M.actualDays)} survive. Beatty currently manages roughly 41 band days a year in total. ${M.actualDays>41?`This is a ${r1(M.actualDays/41)}× increase and it is the ambition to argue about.`:'This is within what the school already sustains.'}</p>`;
+}
+
+/* ---------------------------------------------------------- 4. TALENT */
+function tabTalent(M){
+  const tiers=[
+    ['Explore',M.explore,'#000C53',cm(M.explore)],
+    ['Build',M.build,'#1F5FA8',cm(M.build)],
+    ['Pursue',M.pursueN,'#FFE200',cm(M.pursueN)]
+  ];
+  return `
+<header class="pg"><h1>Talent development</h1>
+<p class="lede">Gagné explains why cadence and provision matter. Renzulli explains what to put in the block and how a Beattyian enters and leaves it. The design question is which of the two structures &mdash; house or field &mdash; owns which part, and getting it wrong caps every talent pool in the school.</p></header>
+
+${verdict(M)}
+
+<h2>The three tiers <span class="tag mod">modelled</span></h2>
+<div class="metrics">
+${metric(cm(M.explore),'Explore &mdash; every Beattyian','Type I, Wednesday, one cycle per taster','')}
+${metric(cm(M.build),'Build &mdash; by election','Type II, Thursday, '+S.takeup+' percent take-up','')}
+${metric(cm(M.pursueN),'Pursue &mdash; revolving talent pool',S.pursue>=15?'Within Renzulli’s 15 to 20 percent':'Below the published pool size',S.pursue>=15?'ok':'warn')}
+${metric(M.mentorsNeeded,'Named mentors needed','At '+S.mentorLoad+' Beattyians per mentor',M.mentorsNeeded>M.supply?'bad':'ok')}
+${metric(cm(Math.round(M.pool)),'Talent pool per field',S.houseOwns?'Capped by house ownership':'Whole school, uncapped',S.houseOwns?'bad':'ok')}
+${metric(M.talent,'Talent depth index',M.talent>=60?'Depth is plausible':'Depth is thin',M.talent>=60?'ok':'warn')}
+</div>
+
+<div class="chart">${stackRow(tiers,640,32)}</div>
+<div class="legend"><span><i style="background:#000C53"></i>Explore, all</span><span><i style="background:#1F5FA8"></i>Build, elective</span><span><i style="background:#FFE200"></i>Pursue, revolving</span></div>
+
+<h2>The switch that breaks the model</h2>
+<div class="box ${S.houseOwns?'':'nav'}" ${S.houseOwns?'style="border-left:5px solid var(--red)"':''}>
+<h4>Do houses own the pathways?</h4>
+<p>Currently: <b>${S.houseOwns?'Yes — houses own pathways':'No — pathways are cross-house'}</b>.</p>
+${S.houseOwns
+ ? `<p style="color:var(--bad)"><b>Every field's talent pool is now ${Math.round(M.pool)} Beattyians instead of ${cm(M.N)}.</b> If you want the top decile of a field, you are choosing from ${M.poolTop} students rather than ${Math.round(M.N*0.1)}. A Beattyian who is the best mathematician in the school but sits in the house that flies debating cannot reach the Mathematics Olympiad Guild. This inverts Gagné, whose talent pools are drawn from a reference population, and Renzulli, whose Three Ring conception holds that gifted behaviour appears in some people at some times under some circumstances rather than being a fixed property assigned at Sec 1.</p>`
+ : `<p>Houses own belonging, vertical mentoring, the Wednesday exploration carousel, inter-house competition on the five DREAM domains, and the Total Talent Portfolio conversation with a tutor who follows a Beattyian for four or five years. Houses do <b>not</b> own the Thursday pathway rosters, Type III mentor allocation, or entry to any field. A Beattyian in any house can pursue any field.</p>
+    <p class="note">The operational rule that keeps this true: <b>keep House Cup points to the Wednesday band, to sport and to performance.</b> The moment a house earns points for its members' olympiad results, the talent pool fragments into ${S.houses} and the whole structure inverts without anyone deciding to invert it.</p>`}
+</div>
+
+<div class="grid2">
+<div><h3>Where the house genuinely adds what a pathway cannot</h3>
+<p>Renzulli's four authenticity tests for a Type III are personal relevance, <b>no predetermined solution</b>, creation of new product or information, and an audience who <b>voluntarily attend</b>. The fourth is the one that fails most often in implementations worldwide, because a real external audience is genuinely hard to find for a fifteen-year-old's research project.</p>
+<p>A house is a standing audience of ${Math.round(M.houseSize)} people who already know the presenter, already meet weekly, and already have a reason to care how it goes.</p>
+<div class="metrics" style="margin-top:10px">
+${metric(pct(M.presentShare),'Beattyians who present real work','Pursue plus a quarter of Build','')}
+${metric(pct(M.witness),'Who watch a peer present',S.showcases?S.showcases+' showcase'+(S.showcases>1?'s':'')+' a year to the '+(S.showScope==='house'?'house':'whole school'):'No showcases scheduled',M.witness>.6?'ok':'warn')}
+</div>
+<p class="note">This is the mechanism behind "celebrate the talents of others". It is not a slogan; it is a scheduling decision about how many showcases run and who is in the room.</p></div>
+
+<div><h3>The fidelity audits you can run yourself</h3>
+<div class="box"><h4>The audience audit</h4>
+<p>By week three of every cycle, what percentage of Pursue projects name a real external person or body who will voluntarily attend? Target 100 percent. This is the specific failure mode the published fidelity study found.</p></div>
+<div class="box"><h4>The predetermined-solution test</h4>
+<p>Ask every facilitator: do you already know what your students will produce? If yes, it is a mini-course, not a cluster, and you have renamed your extension classes.</p></div>
+<div class="box"><h4>The dosage test</h4>
+<p>Sessions per month per club. Currently <b>${r1(M.perMonth)}</b>. Below three, Gagné calls it busywork and you are running an exposure programme. Say which one you are running.</p></div></div>
+</div>
+
+<h2>Where the able Beattyians are currently being pulled apart <span class="tag mea">measured</span></h2>
+<p class="lede">120 of 605 enrichment occurrences carry selection language, drawn from just 26 programmes. Selective programmes competing for the same level in the same term average 2.3 and peak at 6.</p>
+<div class="box" style="border-left:4px solid var(--red)">
+<p><b>Sec 3, Term 1 of 2024 had six selective programmes live at once:</b> Creative Writing Programme, EL Debate Workshop, Model UN Programme, Peer Support Leader Programme, SIMC 2.0 Learning Festival, Sports Leaders Selection.</p>
+<p><b>Sec 2, Term 2 of 2024 had five:</b> Creative Writing, Geographical Investigation, Literature Play, NCC, SMO Training.</p>
+<p class="note">The Beattyian selected for SMO is very likely the Beattyian selected for MUN, for Tech Champs, for Tier Three leadership. Nothing in the calendar suggests anyone was reconciling those claims &mdash; and nobody currently owns the job of doing so. The house tutor is the obvious candidate and the Total Talent Portfolio the obvious instrument.</p></div>
+
+<div class="box nav"><h4>The load-management instrument: make substitutable activities collide on purpose</h4>
+<p><b>Substitutable activities collide. Complementary activities separate.</b> Two clubs recruiting the same profile run at the same hour, so a Beattyian must choose one. Two clubs developing different capacities run in different blocks, so a Beattyian can hold both.</p>
+<p>Set A, analytical pursuit &mdash; Mathematics Olympiad Guild, Science Olympiad Guild, NEXUS Applied STEM Studio, Data and AI Craft. Set B, discursive pursuit &mdash; Model UN Delegation, Debate and Oracy Society, Policy and Enterprise Forum. <b>A and B run against each other deliberately.</b> A Beattyian doing SMO cannot also do MUN in the same cycle; across ${S.cycles} cycles they can do both, sequentially, with proper depth in each. That is the point, not a side effect.</p>
+<p class="note">Ceiling: one Wednesday house commitment, at most one Thursday pathway commitment, plus CCA on its own days. Maximum two concurrent enrichment commitments, enforced through the timetable rather than through exhortation, which is why it will hold.</p></div>`;
+}
+
+/* ---------------------------------------------------------- 5. ACTIVITIES */
+function tabActs(M){
+  const grp={H:'Inter-house, Cup-scored',P:'Pathway, field-based, not Cup-scored',W:'Wednesday house block'};
+  let tbl='';
+  ['H','P','W'].forEach(sc=>{
+    const list=ACTS.filter(a=>a.sc===sc);
+    tbl+=`<tr><td colspan="7" style="background:var(--navy);color:#fff;font-weight:bold;font-size:.92em">${grp[sc]}</td></tr>`;
+    tbl+=list.map(a=>`<tr class="${S.acts[a.id]?'hi':''}">
+      <td><label style="cursor:pointer;display:flex;gap:7px;align-items:flex-start">
+        <input type="checkbox" data-a="${a.id}" ${S.acts[a.id]?'checked':''} style="margin-top:3px">
+        <span><b>${a.n}</b>${a.free?'':' <span class="tag unk">new</span>'}
+        <div class="hint">${a.trace||'Genuinely new. No 2024 or 2025 antecedent.'}</div></span></label></td>
+      <td class="n">${a.tier}</td><td>${[...a.dom].map(d=>`<span class="tag">${d}</span>`).join(' ')}</td>
+      <td class="n">${a.part}%</td><td class="n">${a.sess||'—'}</td><td class="n">${a.adults}</td>
+      <td class="n">${a.adults*Math.max(a.sess,1)}</td></tr>`).join('');
+  });
+  const domRows=DREAM.map(([k,n])=>[n,M.dom[k],M.dom[k]===0?'#EC3237':'#000C53',M.dom[k]]);
+
+  // Cup fairness simulation
+  const q=M.q, rem=M.rem;
+  const sizes=HOUSES.slice(0,S.houses).map((h,i)=>(i<rem?q+1:q)*M.classSize*S.levels/S.levels);
+  const mean=sizes.reduce((a,b)=>a+b,0)/sizes.length;
+  const cupRows=HOUSES.slice(0,S.houses).map((h,i)=>{
+    const sz=sizes[i];
+    const raw=sz*100/mean;
+    const scored = S.cup==='absolute'? raw : (S.cup==='percap'? 100 : 100+(raw-100)*0.15);
+    return `<tr><td><b style="color:${h.c}">${h.n}</b></td><td class="n">${Math.round(sz)}</td>
+      <td class="n">${Math.round(raw)}</td><td class="n"><b>${Math.round(scored)}</b></td></tr>`;
+  }).join('');
+
+  return `
+<header class="pg"><h1>Activities and the Cup</h1>
+<p class="lede">Thirty activities, every one either traced to something that actually ran in 2024 or 2025 or flagged as genuinely new. Toggle any of them and the adult cost, the DREAM coverage and the Cup design respond.</p></header>
+
+${verdict(M)}
+
+<h2>The shape of the offer <span class="tag mod">modelled</span></h2>
+<div class="metrics">
+${metric(M.actsOn.length,'Activities switched on','Of '+ACTS.length+' in the catalogue','')}
+${metric(M.cupEvents,'Cup-scored inter-house events',M.cupFree+' convert from things already running','')}
+${metric(M.actNew,'Genuinely new',M.actNew<=6?'Most of this already exists':'A lot to invent at once',M.actNew<=6?'ok':'warn')}
+${metric(cm(M.actAdultSess),'Adult-sessions a year','Total facilitation load across the catalogue','')}
+${metric(M.domEmpty?M.domEmpty+' empty':'All five','DREAM domains covered by the Cup',M.domEmpty?'The Cup cannot score what nothing measures':'Every domain has a scoring channel',M.domEmpty?'bad':'ok')}
+${metric(pct(M.domBal),'DREAM balance','Smallest domain against largest',M.domBal>.5?'ok':'warn')}
+</div>
+
+<div class="grid2">
+<div><h3>Cup events by DREAM domain</h3>
+<div class="chart">${hbar(domRows,{w:480,lw:118,rh:23})}</div>
+<p class="note"><b>Do not map the five houses onto the five DREAM values.</b> Five values and five houses is irresistibly neat and it is trait sorting: assigning a Beattyian to Discipline House tells them what they are, and tells the other four houses what they are not. Keep DREAM as the five <i>scoring domains</i> instead. Every house competes across all five, every term. It gives DREAM real operational teeth, prevents one strong domain carrying a house, and keeps identity and character separate.</p></div>
+
+<div><h3>The Principal's Cup, and whether it is fair <span class="tag mod">modelled</span></h3>
+<p>Scoring model: <b>${{absolute:'Absolute points',percap:'Per capita',participation:'Participation weighted'}[S.cup]}</b>. Indexed final standing with all houses performing identically, so any spread below is structural rather than earned.</p>
+<div class="scroll"><table><thead><tr><th>House</th><th class="n">Members</th><th class="n">Raw points</th><th class="n">Final index</th></tr></thead><tbody>${cupRows}</tbody></table></div>
+<p class="note">${S.cup==='absolute'
+  ? (M.totalGap>0.02
+     ? `<b style="color:var(--bad)">Absolute scoring hands the largest house a ${pct(M.cupBias)} advantage before anyone competes.</b> With unequal houses this is not a competition, it is a headcount.`
+     : 'With houses this evenly sized, absolute scoring is currently fair. It stops being fair the moment the class count stops dividing.')
+  : S.cup==='percap'
+  ? 'Per capita scoring removes the size advantage completely and is the only model that stays fair when the class count does not divide by the house count. It is also the model that makes a small house believe it can win.'
+  : 'Participation weighting rewards breadth over excellence: a house that fields everyone beats a house that fields stars. It retains a small size effect but makes the marginal Beattyian worth recruiting, which is the behaviour you actually want.'}</p>
+<p class="note">Borrow one more mechanic from RGS: a <b>Best Organised House</b> award scored on how well a house runs its own events. It gives credit for the organising work that otherwise goes unrewarded, and it is the only Cup channel where the quiet, reliable Beattyian outperforms the athlete.</p></div>
+</div>
+
+<h2>The catalogue</h2>
+<div class="scroll"><table><thead><tr><th style="width:38%">Activity</th><th class="n">Tier</th><th>DREAM</th>
+<th class="n">Reach</th><th class="n">Sessions</th><th class="n">Adults</th><th class="n">Adult-sessions</th></tr></thead>
+<tbody>${tbl}</tbody></table></div>
+<p class="note">Tier 1 Explore, 2 Build, 3 Pursue. Reach is the share of the relevant population the activity touches. <b>${M.cupFree} of ${M.cupEvents}</b> Cup events convert from things Beatty already runs, which is the whole change-management argument: rename and re-slot what already works before inventing anything.</p>
+
+<div class="box nav"><h4>Why class anchoring makes the Cup nearly free</h4>
+<p>If a form class sits entirely in one house, <b>every inter-class competition at a level is already an inter-house competition.</b> Inter-Class Games ran on 8 dates and the Termly Sports Challenge on 18 occurrences across two years. Under class anchoring those stop being a separate thing the school does and start filling the house table automatically, at zero marginal cost. Split the class across houses and that free scoring channel closes.</p></div>
+
+<div class="box"><h4>On the three activities you named</h4>
+<ul class="t">
+<li><b>Inter-house STEM Challenge.</b> Genuinely new, and it is the one gap that matters most: the school's Applied Learning Programme is STEM Cities and Urban Landscapes with a machine-learning strand, and it has <i>no enrichment expression in the band at all</i>. The school's own flagship identity is missing from its own enrichment offer. This event and the Data and AI Craft pathway are the two things that fix that.</li>
+<li><b>MUN and Debate.</b> Already has a visible pipeline &mdash; Model UN ran 15 times across Sec 2 to 4, EL Debate Workshop 6 times in both years. The design decision is that the <i>inter-house</i> debate is Cup-scored and open to all, while the <i>delegation</i> is a cross-house Thursday pathway that any Beattyian can enter. Same subject, two different structures, deliberately. Score the house event; never score the delegation.</li>
+<li><b>Principal's Cup.</b> Best used as the meta-trophy aggregating the five DREAM domain results rather than as a single event, so it cannot be won by one strong sporting house. Award the five domain titles separately and the Cup to the best aggregate: five celebrations instead of one, and four houses still leave with something.</li>
+</ul></div>`;
+}
+
+/* ---------------------------------------------------------- 6. TEACHERS */
+function tabStaff(M){
+  const supplyRows=[
+    ['Wednesday demand',M.demandWed,M.supplyGapWed>0?'#EC3237':'#1a7f4b',M.demandWed],
+    ['Thursday demand',M.demandThu,M.supplyGapThu>0?'#EC3237':'#1a7f4b',M.demandThu],
+    ['Adult supply',M.supply,'#000C53',M.supply],
+    ['Teaching staff facilitating',Math.round(S.teachers*S.facilRate/100),'#1F5FA8',Math.round(S.teachers*S.facilRate/100)],
+    ['Non-teacher facilitators',S.nonTeach,'#FFE200',S.nonTeach]
+  ];
+  return `
+<header class="pg"><h1>Organising teachers</h1>
+<p class="lede">Facilitator supply is the binding constraint on the entire design. Not the pedagogy, not the house names, not the Cup. If this number does not close, everything else on this dashboard is decoration.</p></header>
+
+${verdict(M)}
+
+<h2>Supply against demand <span class="tag mod">modelled</span></h2>
+<div class="metrics">
+${metric(M.supply,'Adults available','From '+S.teachers+' staff at '+S.facilRate+' percent, plus '+S.nonTeach+' non-teachers','')}
+${metric(M.demandWed,'Wednesday needs',M.supplyGapWed>0?'Short by '+M.supplyGapWed:'Covered',M.supplyGapWed>0?'bad':'ok')}
+${metric(M.demandThu,'Thursday needs',M.supplyGapThu>0?'Short by '+M.supplyGapThu:'Covered',M.supplyGapThu>0?'bad':'ok')}
+${metric(r1(M.staffPerHouse),'Teaching staff per house','House team size','')}
+${metric(Math.round(M.tutorRatio),'Beattyians per house tutor',M.tutorRatio<=25?'Small enough to know them':'Too large for a tutoring relationship',M.tutorRatio<=25?'ok':'warn')}
+${metric(Math.round(M.teacherHrs),'Hours a year','Per teacher running both bands','')}
+</div>
+
+<div class="chart">${hbar(supplyRows,{w:600,lw:216,rh:23})}</div>
+
+<div class="grid2">
+<div><h3>The arithmetic that has to close</h3>
+<p>A Wednesday house band covering ${cm(M.N)} Beattyians at clusters of ${S.cluster} needs <b>${M.clustersNeeded} clusters running simultaneously</b>. Beatty currently mounts a mean of 2.9 programmes per band day. That is a <b>${Math.round(M.clustersNeeded/2.9)}-fold increase in simultaneous adult deployment.</b></p>
+<p>There is exactly one way this arithmetic closes, and it is the thing most schools refuse to do: <b>Renzulli's model does not require content expertise from facilitators.</b> His enrichment clusters are facilitated rather than taught, and the published recruitment call goes to teachers, support staff, parents and community members alike. A parent who restores motorcycles can run a cluster. An admin officer who keeps bees can run a cluster. If facilitation stays inside the teaching establishment, the numbers do not close at any realistic staffing level.</p>
+<p class="note">Set non-teacher facilitators to 0 in the rail and watch the Wednesday gap. That is the honest picture of a teachers-only model.</p></div>
+
+<div><h3>How to structure the house team</h3>
+<div class="scroll"><table><thead><tr><th>Role</th><th class="n">Per house</th><th>What they own</th></tr></thead><tbody>
+<tr><td><b>Head of House</b></td><td class="n">1</td><td>The house's development and its Cup campaign. A middle-management line, not an add-on to a full teaching load.</td></tr>
+<tr><td><b>Assistant Head</b></td><td class="n">1</td><td>Wednesday cluster logistics and the house exco. The succession line.</td></tr>
+<tr><td><b>House Tutors</b></td><td class="n">${S.tutors}</td><td>A vertical tutor group each, ${Math.round(M.tutorRatio)} Beattyians spanning Sec 1 to ${S.levels}. Owns the Total Talent Portfolio conversation and follows the same students for ${S.levels} years.</td></tr>
+<tr><td><b>Cluster facilitators</b></td><td class="n">${Math.round(M.clustersNeeded/S.houses)}</td><td>One Wednesday cluster each. Drawn from the whole adult community, not only teachers.</td></tr>
+<tr><td><b>Pathway mentors</b></td><td class="n">${Math.round(M.mentorsNeeded/S.houses)}</td><td>Cross-house, attached to Type III projects, not to houses. Deliberately outside the house line.</td></tr>
+</tbody></table></div>
+<p class="note">Note the last row. Pathway mentors report to the field, not the house. That is the structural expression of the rule that houses own belonging and fields own pursuit &mdash; if mentors sat inside houses, the talent pool would fragment through the staffing chart even if the policy said otherwise.</p></div>
+</div>
+
+<h2>Vertical tutoring, and what makes it fail <span class="tag res">researched</span></h2>
+<div class="grid2">
+<div class="box nav"><h4>What it buys</h4><ul class="t">
+<li>Reduced in-year rivalry and cliques; students make friends across year groups.</li>
+<li>Older students behave more maturely because they feel a duty to model it.</li>
+<li>A tutor can attend to four Sec 1s in September rather than thirty &mdash; the single most cited practical advantage.</li>
+<li>No hierarchy by year, so belonging does not depend on seniority.</li>
+</ul></div>
+<div class="box" style="border-left:4px solid var(--red)"><h4>What makes it fail</h4><ul class="t">
+<li>Schools assume vertical tutoring is "just mixing up the kids and staff". It is not. It needs training and an explicit rationale or it becomes a differently shaped registration period.</li>
+<li>The one house-system dissertation found <b>25 percent teacher disengagement directly producing performance disparities between houses.</b> A house with a disengaged Head is not a neutral outcome; it is a visibly losing house full of students who notice.</li>
+<li>Vertical tutoring needs regular short sessions to work. If the only house contact is the Wednesday band, the tutoring relationship is ${Math.round(M.actualDays)} days a year and the "tutor who follows you for ${S.levels} years" is largely notional.</li>
+</ul></div>
+</div>
+
+<div class="box"><h4>The de-implementation question, which EEF says you must answer</h4>
+<p>EEF is explicit that complex whole-school initiatives fail when nothing is stopped. <b>${AUD.prog1or2} of ${AUD.programmes} programmes ran once or twice across two years.</b> They are the obvious candidates, and retiring them is also the fastest way to free adults &mdash; every one-off programme consumed planning time from someone who could instead run a ten-session cluster.</p>
+<p class="note">Ask each department which of its programmes it wants to <i>convert</i>, <i>rebuild</i> or <i>retire</i>. Publishing the 1.33 figure and the ten empty coverage cells is what makes that conversation possible, and it is a Term 4 job that costs nothing.</p></div>`;
+}
+
+/* ---------------------------------------------------------- 7. DECISIONS */
+function tabDec(M){
+  const D=[
+   ['Is Term 4 released by design?',
+    'Cards appear January to September and then stop: not one in October, November or December in either year. Either Term 4 is genuinely consumed by the examination calendar, in which case say so and build three cycles, or the band is abandoned when pressure rises, in which case it is not protected time. The data cannot separate these. The leadership decision can.',
+    `At ${S.cycles} cycles of ${S.sessions}, the year runs ${M.bandDays} days per track and ${Math.round(M.actualDays)} survive at ${S.protect} percent protection.`],
+   ['Are Sec 4 and 5 in the house band?',
+    'Vertical mentoring depends on having seniors. The examination calendar argues them out. A vertical house that stops at Sec 3 is not vertical, and the data shows Sec 4 and 5 already being written off: 45 and 18 entries against 92 for Sec 2.',
+    S.levels===5 ? 'Sec 1 to 5 included. '+cm(M.N)+' Beattyians, house of '+Math.round(M.houseSize)+', seniors available to lead.' : 'Sec 5 excluded. The house has no top tier, and the vertical structure loses the one job it exists to do.'],
+   ['How many facilitators will you actually field?',
+    'The design scales from five to forty parallel clusters. The honest answer determines whether choice is real or nominal. This is the single number that decides whether any of the rest happens.',
+    `${S.adults} adults gives ${M.clusters} clusters, ${pct(M.coverage)} coverage, ${pct(M.fcs)} first choice and ${pct(M.top2)} first-or-second. ${M.adultGap>0?'You are short '+M.adultGap+' adults.':'Supply is sufficient at this configuration.'}`],
+   ['Does Pursue reach 150 Beattyians or 50?',
+    'Both are defensible. Only one matches the models being cited. Renzulli’s revolving talent pool is 15 to 20 percent; today Beatty runs 26 selective programmes generating roughly 60 occurrences a year.',
+    `${S.pursue} percent is ${cm(M.pursueN)} places, needing ${M.mentorsNeeded} named mentors at ${S.mentorLoad} students each.`],
+   ['Who reconciles competing claims on a student?',
+    'Nobody currently does. Sec 3 in Term 1 of 2024 had six selective programmes live at once, all recruiting from the same pool. The house tutor is the obvious candidate and the Total Talent Portfolio the obvious instrument, but it has to be somebody’s named job.',
+    `At ${S.tutors} tutors per house, each holds ${Math.round(M.tutorRatio)} Beattyians. ${M.tutorRatio<=25?'Small enough to know them individually.':'Too many to reconcile anything meaningfully.'}`],
+   ['What are you stopping?',
+    'EEF is explicit that you must de-implement something. Seventy-odd programmes ran once or twice. Retiring them frees the adults this design needs.',
+    `${M.actNew} of the ${M.actsOn.length} activities you have switched on are genuinely new. ${M.cupFree} Cup events convert from things already running.`],
+   ['Do houses own the pathways?',
+    'The most consequential switch on this dashboard, and the one most likely to be decided by accident. It will be decided the first time someone proposes awarding House Cup points for an olympiad result.',
+    S.houseOwns ? 'Yes. Every field’s talent pool is capped at '+Math.round(M.pool)+'. Both models inverted.' : 'No. Talent pools stay whole-school at '+cm(M.N)+'. Cup points stay on the Wednesday band, sport and performance.'],
+   ['How is the Cup scored?',
+    'Absolute scoring rewards the biggest house. Per capita removes size entirely. Participation weighting rewards breadth. The choice signals what the school actually values, and students read it correctly within one term.',
+    `${{absolute:'Absolute',percap:'Per capita',participation:'Participation weighted'}[S.cup]}. Structural advantage to the largest house: ${pct(M.cupBias)}.`]
+  ];
+
+  let cmp='';
+  if(SCEN[0]||SCEN[1]){
+    const cols=[['Current',S],['A',SCEN[0]],['B',SCEN[1]]].filter(c=>c[1]);
+    const ms=cols.map(c=>{const sv=S;S=c[1];const m=model();S=sv;return m;});
+    const rowsDef=[['Architecture',(m,s)=>ARCH[s.arch].n],['Houses',(m,s)=>s.houses],['Classes per level',(m,s)=>s.classes],
+     ['Levels',(m,s)=>'Sec 1–'+s.levels],['Adults per band day',(m,s)=>s.adults],
+     ['Coverage',(m)=>pct(m.coverage)],['First choice',(m)=>pct(m.fcs)],['First or second',(m)=>pct(m.top2)],['Sessions/month',(m)=>r1(m.perMonth)],
+     ['Pursue places',(m)=>cm(m.pursueN)],['Talent pool per field',(m)=>cm(Math.round(m.pool))],
+     ['Affinity index',(m)=>m.affinity],['Talent depth index',(m)=>m.talent],
+     ['Adults short (Wed)',(m)=>m.supplyGapWed>0?m.supplyGapWed:'—'],
+     ['Holds?',(m)=>m.ok?'Yes':'No']];
+    cmp=`<h2>Scenario comparison</h2><div class="scroll"><table><thead><tr><th>Measure</th>${cols.map(c=>`<th class="n">${c[0]}</th>`).join('')}</tr></thead><tbody>`+
+      rowsDef.map(rd=>`<tr><td>${rd[0]}</td>${cols.map((c,i)=>`<td class="n">${rd[1](ms[i],c[1])}</td>`).join('')}</tr>`).join('')+
+      `</tbody></table></div>`;
+  }
+
+  return `
+<header class="pg"><h1>The decisions that are yours</h1>
+<p class="lede">Eight questions. Each one is genuinely open, each has a live consequence from the current settings, and none of them can be answered by more modelling. This is the page to put on the screen in the meeting.</p></header>
+
+${verdict(M)}
+
+<div class="metrics">
+${metric(M.affinity,'Affinity index','Belonging, modelled composite',M.affinity>=60?'ok':'warn')}
+${metric(M.talent,'Talent depth index','Dosage, pool, pursuit, mentoring',M.talent>=60?'ok':'warn')}
+${metric(pct(M.witness),'Celebration reach','Who watches a peer present real work',M.witness>.6?'ok':'warn')}
+${metric(M.supplyGapWed>0?'−'+M.supplyGapWed:'0','Adult shortfall on Wednesday',M.supplyGapWed>0?'The binding constraint':'Supply closes',M.supplyGapWed>0?'bad':'ok')}
+${metric(M.ok?'Holds':'Fails','Does this configuration hold?',M.issues.length+' finding'+(M.issues.length>1?'s':''),M.ok?'ok':'bad')}
+</div>
+
+<div class="box nav"><h4>How the affinity index is built <span class="tag mod">modelled</span></h4>
+<div class="chart">${hbar(M.affParts.map(p=>[p[0],p[1]*100,p[1]>.66?'#1a7f4b':(p[1]>.33?'#b8860b':'#c0392b'),Math.round(p[1]*100)]),{w:560,lw:238,rh:21,max:100})}</div>
+<p class="note">This is an illustrative composite, not a measurement, and it should never be quoted as one. It exists so the trade-offs between contact time, tutor ratio, persistence and event density are visible in one place rather than argued separately. Weights: contact 25, persistence 20, vertical span 15, tutor ratio 15, daily reinforcement 15, event density 10.</p></div>
+
+${D.map((d,i)=>`<div class="dec"><h4>${i+1}. ${d[0]}</h4><div class="q">${d[1]}</div>
+  <div class="cons"><b>At current settings:</b> ${d[2]}</div></div>`).join('')}
+
+${cmp}
+
+<h2>A sequence, if the answer is yes</h2>
+<div class="scroll"><table><thead><tr><th>When</th><th>EEF stage</th><th>What happens</th><th>The number that tells you it worked</th></tr></thead><tbody>
+<tr><td><b>Term 4, this year</b></td><td>Explore</td><td>Publish the audit. Let departments see the 1.33 figure and the ten empty coverage cells. Ask each which programmes to convert, rebuild or retire. Name the houses with students.</td><td>Departments returning a convert/rebuild/retire decision for every programme they own.</td></tr>
+<tr><td><b>Term 1, next year</b></td><td>Prepare and pilot</td><td>One cycle of the Wednesday house band only, with the convert-now clubs, Sec 1 to 3. Do not touch Thursday. Do not touch Sec 4 and 5.</td><td>Fill rate: percentage getting first or second choice. Below 80 percent means the catalogue is too narrow.</td></tr>
+<tr><td><b>Terms 2 and 3</b></td><td>Deliver</td><td>Add the Thursday pathway band and a first Pursue cohort of about 60, not 150. Attach a named mentor to each Type III.</td><td>By week three of each cycle, percentage of Type III projects naming a real external audience. Target 100.</td></tr>
+<tr><td><b>Year two</b></td><td>Sustain and extend</td><td>Add Sec 4. Rebuild the thin clubs. Introduce the Cup on the five DREAM domains with per-capita scoring and a termly reset.</td><td>Sessions per month per club, against the Gagné line of 3.</td></tr>
+</tbody></table></div>
+
+<h2>What breaks this</h2>
+<ul class="t">
+<li><b>Oral examinations reclaim the band.</b> Forty-one entries over two years say they will. Publish the oral windows before cycles are set and shorten Cycle 2 around them.</li>
+<li><b>Facilitator supply fails and the model shrinks back to 1.33 options.</b> The most likely single failure, and the one this dashboard is most insistent about.</li>
+<li><b>Type III becomes Type II in disguise.</b> The commonest failure of enrichment-model implementations worldwide. If Thursday becomes teacher-directed advanced content, the construct has collapsed and you have renamed your extension classes.</li>
+<li><b>Houses colonise pathways.</b> The moment a house earns points for members' olympiad results, the talent pool fragments into ${S.houses}.</li>
+<li><b>The invisible curriculum stays invisible.</b> Ten empty coverage cells may reflect recording failure rather than provision failure. Fixing recording discipline is a precondition, not an afterthought.</li>
+<li><b>Sec 4 and 5 get written off.</b> The data shows this already happening. A vertical house that stops at Sec 3 is not vertical.</li>
+</ul>
+
+<div class="box" style="border-left:4px solid var(--yellow)"><h4>Four numbers would replace most of this modelling</h4>
+<ol style="margin:.3em 0 0;padding-left:20px;font-size:.92em">
+<li><b>Form classes per level.</b> Decides whether five houses nest cleanly. It resolves itself at Sec 1 registration whether or not it is modelled first.</li>
+<li><b>CCA roll by CCA</b>, split by level and gender. Replaces the whole modelled layer.</li>
+<li><b>Facilitator supply per band day.</b> Determines whether the choice architecture is real or nominal.</li>
+<li><b>House colours for Harwood, Sturdee and Fisher.</b> Not published anywhere reachable; the NLB commemorative histories are the likely record.</li>
+</ol></div>`;
+}
+
+/* ============================================================ RENDER */
+function render(){
+  const M=model();
+  $$('.gnav a[data-t]').forEach(a=>a.classList.toggle('on',a.dataset.t===S.tab));
+  $('#main').innerHTML = TABS[S.tab](M) + footer();
+  syncRail();
+  $$('#main input[data-a]').forEach(cb=>cb.onchange=()=>{S.acts[cb.dataset.a]=cb.checked?1:0;render();});
+  window.scrollTo({top:0});
+}
+function footer(){
+  return `<footer class="bty"><div class="band">
+   <b>Beatty Secondary School</b>
+   <i>Non Vi Sed Arte &mdash; not by force but by skill</i>
+   <span>Every Beattyian A Purpose Driven Steward</span></div>
+   <div class="foot2">House Dashboard. <span class="tag mea">measured</span> comes from <code>references/enrichment-audit-2024-2025.xlsx</code>, 1,148 calendar events between 1 January 2024 and 31 December 2025, and from the MOE School Finder record.
+   <span class="tag mod">modelled</span> is an adjustable control on this page and is never a measurement.
+   <span class="tag res">researched</span> is from published sources outside Beatty.
+   <span class="tag unk">unverified</span> is not published anywhere reachable.
+   Composite indices are illustrative and exist to make trade-offs visible; they are not fit to quote.</div></footer>`;
+}
+
+/* nav */
+$$('.gnav a[data-t]').forEach(a=>a.onclick=()=>{S.tab=a.dataset.t;render();});
+$('#presBtn').onclick=()=>{document.body.classList.toggle('pres');
+  $('#presBtn').classList.toggle('on',document.body.classList.contains('pres'));};
+$('#printBtn').onclick=()=>window.print();
+
+buildRail(); render();
+</script></body></html>
