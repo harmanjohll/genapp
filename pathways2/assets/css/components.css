@@ -1376,6 +1376,27 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 /* The lesson plan is scanned in a corridor, not read in an armchair. */
 .tight-list li { margin-bottom: 4px; line-height: 1.45; }
 
+/* A run sheet. The minutes were bold text inside an ordered list, so a lesson
+   plan read "1. 5." and the reader had to work out which number was time. */
+.minlist { list-style: none; padding: 0; margin: var(--s-2) 0 0; }
+.minlist li { display: flex; gap: var(--s-3); align-items: baseline; margin-bottom: 6px; line-height: 1.45; }
+.minlist .min {
+  flex: 0 0 4.2rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: var(--t-small); color: var(--ink-soft);
+}
+
+/* The counsellor's reference table. It carries admission arithmetic, so it has
+   to stay a table rather than becoming stacked cards, which means it scrolls
+   inside its own box on a phone instead of pushing the page sideways. */
+.ctable-wrap { overflow-x: auto; margin-top: var(--s-3); }
+.ctable { width: 100%; border-collapse: collapse; font-size: var(--t-small); min-width: 30rem; }
+.ctable th, .ctable td { text-align: left; vertical-align: top; padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--rule); }
+.ctable thead th { font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-mute); }
+.ctable tbody th { font-weight: 700; width: 11rem; }
+.cmute { display: block; font-weight: 400; color: var(--ink-mute); font-size: var(--t-micro); }
+.cbar { display: block; margin-bottom: 2px; }
+.cprov { color: var(--longer); font-weight: 700; }
+
 /* --- universality fixes, found on a 56 combination device sweep -------------
    A text input will not shrink below its default intrinsic width, and a grid
    track sized 1fr will not go under its item's min-content. Together they push

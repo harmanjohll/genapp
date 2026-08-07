@@ -253,11 +253,12 @@
     "compareRoads": "Two starts that matched, and two roads that did not."
   },
   "footerDoors": {
-    "head": "This tool has three doors",
+    "head": "Who is reading this",
     "iAm": "I am a",
     "roleStudent": "student",
     "roleParent": "parent",
-    "roleTeacher": "teacher"
+    "roleTeacher": "teacher",
+    "roleCounsellor": "ECG counsellor"
   },
   "aim": {
     "playedChip": "you played this",

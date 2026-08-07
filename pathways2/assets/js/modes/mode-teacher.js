@@ -85,7 +85,7 @@ const ECG_MAP = [
   { name: 'Four scarcities, not one', src: 'Game design for realism',
     where: 'Time and energy are the year\'s points, and they move with real load: seven subjects or more makes a fuller year, four or fewer leaves room, a CCA taken seriously takes its share, and at 17 to 24 more of the day is yours to direct. The line under the points says which, in words about hours, never about whether the combination is right. Options are what is on the list to spend them on, and that grows with doors. Opportunity is what arrives uninvited, which is the chance deck. Courage is what asking costs, which is why superpowers are free: a student with no time still has the capacity to ask.' },
   { name: 'Help-seeking as a mechanic', src: 'ECG practice, MOE admissions',
-    where: 'The moves are the other half of the deck: chances happen to a student, moves are the student acting. Ask for help, book the ECG counsellor, ask the Year Head about moving up, tell parents the plan, shadow a job, build an EAE folder, ask about DSA-JC and its binding offer, treat the attachment as real, take the exchange, ask a working adult for an hour. They split in two. Asks are superpowers: teacher, ECG counsellor, Year Head, parents, mentor, held as a hand of at most three, free to play, one a year, and playing one draws another, because asking is how you find out who else there is to ask. Commitments take real time: shadowing, the EAE folder, DSA, the attachment, and the exchange at two points because three months is three months. Every move sets a flag, and flagged chance cards are preferred by the draw, so the game makes the true thing visible: asking opens doors. EAE and DSA are checked against moe.gov.sg.' },
+    where: 'The moves are the other half of the deck: chances happen to a student, moves are the student acting. Ask for help, book the ECG counsellor, ask the Year Head about moving up, tell parents the plan, shadow a job, build an EAE folder, ask about DSA-JC and its binding offer, treat the attachment as real, take the exchange, ask a working adult for an hour. They split in two. Asks are superpowers: teacher, ECG counsellor, Year Head, parents, mentor, held as a hand of at most three, free to play, one a year, and playing one draws another, because asking is how you find out who else there is to ask. Commitments take real time: shadowing, the EAE folder, DSA, the attachment, and the exchange at two points because three months is three months. Every move sets a flag, and flagged chance cards are preferred by the draw, so the game makes the true thing visible: asking opens doors. At the table it becomes a resource other people spend for you: thirty seven of the hundred and four cards carry an answer that needs somebody in your corner, each seat holds two backs for the whole game, and the seat that spends one gains the network, because vouching is how you come to know people. EAE and DSA are checked against moe.gov.sg.' },
   { name: 'The tool defers to people', src: 'ECG practice',
     where: 'Every mode ends at a person: take-one-question cards address the subject teacher, the form teacher and the ECG counsellor by name, and the footer says whose advice this is not.' },
 ];
@@ -244,6 +244,10 @@ export function renderTeacher(host, data, ctx, repaint) {
           </div>
         </div>
 
+        <p class="small mute" style="margin-top:var(--s-3)">Seeing one student rather than a class?
+          <a href="./?mode=counsellor">The ECG counsellor page</a> is the twenty minute version, with
+          the app's admission arithmetic laid out.</p>
+
         <div class="teacher-note">
           <h4>Say this first</h4>
           <p style="margin-bottom:0">Nothing here is ever closed to anyone. Students will look for the padlock. Name that there is none, and ask why they expected one.</p>
@@ -252,15 +256,22 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="section">
           <div class="panel">
             <h2>A 45 minute shape</h2>
-            <ol class="tight-list">
-              <li><strong>5.</strong> Ask what decides their future. Write the answers up. Correct none of them.</li>
-              <li><strong>8.</strong> Plan. The combination they are actually considering.</li>
-              <li><strong>4.</strong> Read the line above the list. That is the lever. Who shares one?</li>
-              <li><strong>10.</strong> Play, once through.</li>
-              <li><strong>8.</strong> Play again from the same start, choosing differently. Compare.</li>
-              <li><strong>5.</strong> Act. Three actions, and take the question out of the room.</li>
-              <li><strong>5.</strong> Back to minute five. What would they change?</li>
-            </ol>
+            <ul class="minlist">
+              <li><span class="min">5 min</span>
+                <span>Ask what decides their future. Write the answers up. Correct none of them.</span></li>
+              <li><span class="min">8 min</span>
+                <span>Plan. The combination they are actually considering.</span></li>
+              <li><span class="min">4 min</span>
+                <span>Read the line above the list. That is the lever. Who shares one?</span></li>
+              <li><span class="min">10 min</span>
+                <span>Play, once through.</span></li>
+              <li><span class="min">8 min</span>
+                <span>Play again from the same start, choosing differently. Compare.</span></li>
+              <li><span class="min">5 min</span>
+                <span>Act. Three actions, and take the question out of the room.</span></li>
+              <li><span class="min">5 min</span>
+                <span>Back to minute five. What would they change?</span></li>
+            </ul>
             <p class="small mute">Running early: Act is a second activity, not a replay. Groups of four:
               the table game is the same lesson with the arguing built in.</p>
           </div>

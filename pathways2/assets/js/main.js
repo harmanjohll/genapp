@@ -28,6 +28,7 @@ import { renderAim } from './modes/mode-aim.js';
 import { renderTeacher } from './modes/mode-teacher.js';
 import { renderTable, resetTable, tableSweep } from './modes/mode-table.js';
 import { renderParent } from './modes/mode-parent.js';
+import { renderCounsellor } from './modes/mode-counsellor.js';
 
 const app = document.getElementById('app');
 const head = document.getElementById('site-head');
@@ -39,7 +40,7 @@ const params = new URLSearchParams(location.search);
 
 // Modes a person links to on purpose. Plan, Play and Act are written into the
 // address bar by the app itself, so they never imply an intent to skip the door.
-const ENTRY_MODES = ['teacher', 'parent', 'table'];
+const ENTRY_MODES = ['teacher', 'parent', 'table', 'counsellor'];
 
 let extraMode = ENTRY_MODES.includes(params.get('mode')) ? params.get('mode') : null;
 if (params.get('board') === '1') document.body.dataset.board = 'true';
@@ -217,6 +218,7 @@ const MODE_NEEDS = {
   table: ['journey', 'chances', 'moves'],
   teacher: [],
   parent: ['parent'],
+  counsellor: [],
 };
 
 function missingFor(mode) {
@@ -234,6 +236,7 @@ function paint() {
     if (extraMode === 'table') { renderTable(app, data, ctx, paint); return; }
     if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
     if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
+    if (extraMode === 'counsellor') { renderCounsellor(app, data); return; }
     if (st.mode !== 'journey') document.body.dataset.era = 'school';
     switch (st.mode) {
       case 'journey': renderJourney(app, data, ctx, paint); break;
@@ -284,6 +287,7 @@ function mountAudience() {
     { id: 'student', href: './', label: f.roleStudent },
     { id: 'parent', href: './?mode=parent', label: f.roleParent },
     { id: 'teacher', href: './?mode=teacher', label: f.roleTeacher },
+    { id: 'counsellor', href: './?mode=counsellor', label: f.roleCounsellor },
   ];
   const div = document.createElement('div');
   div.className = 'audstrip';
