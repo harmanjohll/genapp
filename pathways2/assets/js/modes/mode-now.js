@@ -21,7 +21,7 @@
 import { esc, onAction, statusChip } from '../components/dom.js';
 import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
-import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js';
 import { reach, lever, STATES, classCode } from '../engine/reach.js';
 import { project, horizonMoves } from '../engine/project.js';
 import { pulse, leverLine } from '../engine/pulse.js';
@@ -464,19 +464,21 @@ function openActs(data, trigger) {
             </button>`;
         }).join('')}
       </div>`).join('');
-    const n = (st.activities || []).length;
     return `
       <h2 id="sheet-title">${esc(C.sheetHead)}</h2>
       <p class="small mute">${esc(C.hint)}</p>
       <div class="picker">${body}</div>
-      <p class="micro mute" style="margin-top:var(--s-3)">${esc(C.sheetNote)}</p>
-      <div class="btn-row" style="margin-top:var(--s-4)">
-        <button class="btn accent" type="button" data-action="actdone">${esc(C.done)}${n ? ` (${n})` : ''}</button>
-      </div>`;
+      <p class="micro mute" style="margin-top:var(--s-3)">${esc(C.sheetNote)}</p>`;
   };
-  const sheet = openSheet(paint(), trigger);
+  // Pinned, for the same reason as the subject picker: the list is longer than
+  // any phone, so a button after it is a button nobody finds.
+  const footFor = () => {
+    const n = (getState().activities || []).length;
+    return `<button class="btn accent" type="button" data-action="actdone">${esc(C.done)}${n ? ` (${n})` : ''}</button>`;
+  };
+  const sheet = openSheet(paint(), trigger, footFor());
   onSheetAction({
-    acttog: (btn) => { toggleActivity(btn.dataset.id); sheet.innerHTML = paint(); },
+    acttog: (btn) => { toggleActivity(btn.dataset.id); sheet.innerHTML = paint(); setSheetFoot(footFor()); },
     actdone: () => { closeSheet(); renderNow(host, DATA, CTX); },
   });
 }

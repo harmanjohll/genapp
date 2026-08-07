@@ -285,14 +285,29 @@ dialog.sheet {
   border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
+/* A column, so the body gives up height to the foot instead of shoving it past
+   the bottom edge. The previous version capped the body at the sheet height
+   minus a hardcoded 120px guess at the foot, which only held while the foot was
+   one small Close button. Scoped to [open] so the closed dialog stays hidden. */
+dialog.sheet[open] { display: flex; flex-direction: column; }
 dialog.sheet::backdrop { background: rgba(20, 24, 31, 0.42); }
 dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--rule); margin: var(--s-3) auto var(--s-1); }
-.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto;
-  max-height: calc(86vh - 120px); max-height: calc(86dvh - 120px); }
+.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+.sheet-grab, .sheet-foot { flex: 0 0 auto; }
 .sheet-body:focus { outline: none; }
 .sheet-foot { padding: var(--s-3) var(--s-5) var(--s-5); border-top: 1px solid var(--rule-soft); }
+/* A foot carrying real actions wraps them thumb first and lets Close go last,
+   and it is pinned, so the body shrinks to make room rather than pushing it
+   off the bottom of the sheet. */
+.sheet-foot.has-actions {
+  display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center;
+  background: var(--surface);
+}
+.sheet-foot.has-actions .btn { flex: 1 1 auto; justify-content: center; }
+.sheet-foot.has-actions .btn.ghost.small { flex: 0 0 auto; }
+.seedrow > summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; }
 
 /* Tablet portrait and up: a centred dialog sized to its content.
    Must come after the base rules, or the phone animation and the grab handle
@@ -306,7 +321,7 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
   dialog.sheet[open] { animation: modalIn 200ms var(--ease); }
   @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
   .sheet-grab { display: none; }
-  .sheet-body { max-height: calc(80vh - 124px); max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
+  .sheet-body { padding: var(--s-5) var(--s-6); }
   .sheet-foot { padding: var(--s-3) var(--s-6) var(--s-5); }
 }
 
@@ -486,6 +501,22 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 }
 .future-btn:hover { border-color: var(--accent); background: var(--accent-wash); }
 .future-btn .want { font-family: var(--display); font-size: 1.05rem; font-weight: 600; display: block; }
+.future-btn.on { border-color: var(--accent); background: var(--accent-wash); }
+
+/* The commit bar. Sticky only on a phone, only once armed, and it sits above
+   the safe area so a gesture bar cannot take the tap. */
+@media (max-width: 699px) {
+  .liverow.armed {
+    position: sticky; bottom: 0; z-index: 3;
+    margin-left: calc(var(--s-4) * -1); margin-right: calc(var(--s-4) * -1);
+    padding: var(--s-3) var(--s-4);
+    padding-bottom: calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+    background: var(--bg); border-top: 1px solid var(--rule-soft);
+  }
+  .liverow.armed .btn { flex: 1 1 auto; justify-content: center; }
+}
+.want-go { display: block; margin-top: 4px; font-size: var(--t-small); font-weight: 700; color: var(--accent-dk); }
+.wantknown { margin-top: var(--s-3); }
 .thisterm { border: 2px solid var(--accent); border-radius: var(--r-lg); padding: var(--s-5); background: var(--surface); }
 .thisterm ol { margin: var(--s-3) 0 0; padding-left: 1.3em; }
 .thisterm li { margin-bottom: var(--s-3); }

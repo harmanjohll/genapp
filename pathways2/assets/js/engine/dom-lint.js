@@ -64,6 +64,30 @@ export function domLint(root) {
     });
   });
 
+  // 5. A sheet's primary action may not live in the part of it that scrolls.
+  //
+  //    WHY. Tapping a want in Play opened a sheet whose two start buttons sat
+  //    at the bottom of the body, which is a capped scroll region. On a 658px
+  //    Android phone neither was on screen, so the student saw three lines of
+  //    explanation and nothing to press, and the way back was the same question
+  //    again. The subject picker had it worse: its confirm button was under two
+  //    thousand pixels of subject rows. Both are fixed by putting the action in
+  //    the pinned foot, and `.btn.accent` is this app's own mark for the thing
+  //    to do, so finding one in the body is the fault itself, no layout needed.
+  const sheet = document.querySelector('dialog.sheet[open]');
+  if (sheet) {
+    const body = sheet.querySelector('.sheet-body');
+    (body ? body.querySelectorAll('.btn.accent') : []).forEach((el) => {
+      failures.push({
+        why: 'a sheet keeps its primary action in the part that scrolls',
+        what: (el.textContent || '').trim().slice(0, 40),
+      });
+    });
+    if (!sheet.querySelector('.sheet-foot button')) {
+      failures.push({ why: 'an open sheet has no pinned control at all', what: 'sheet-foot' });
+    }
+  }
+
   const ok = failures.length === 0;
   console.log(
     `%cDOM: ${ok ? 'PASS' : 'FAIL'} (markup legal, nothing empty, nothing leaked)`,

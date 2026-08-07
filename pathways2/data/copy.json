@@ -260,7 +260,10 @@
   "efficacyPersistence2": "Nobody had shown you how to keep at that. You kept at it.",
   "efficacyCuriosity2": "A clumsy question, and an answer you would not have had.",
   "efficacyFlexibility2": "You changed the plan mid year. It cost something, and it moved.",
-  "efficacyOptimism2": "You acted as if it would work out. Half of it did."
+  "efficacyOptimism2": "You acted as if it would work out. Half of it did.",
+  "wantKnown": "You already said this in Act",
+  "wantKeep": "Start with this",
+  "wantOther": "Or start from something else"
  },
  "footerDoors": {
   "head": "Who is reading this",

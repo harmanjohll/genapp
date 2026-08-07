@@ -11,7 +11,7 @@
 import { esc, onAction } from '../components/dom.js';
 import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
-import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js';
 import { cue } from '../sound.js';
 import { drawStoryMap, saveStoryCard } from '../components/storymap.js';
 import {
@@ -168,23 +168,29 @@ function openPicker(data, trigger) {
             </div>`).join('')}
         </div>`;
     }).join('');
-    const n = Object.keys(plan).length;
     return `
       <h2 id="sheet-title">${esc(jc.comboPick)}</h2>
       <p class="small mute">${esc(jc.comboSheet)}</p>
-      <div class="picker">${body}</div>
-      <div class="btn-row" style="margin-top:var(--s-4)">
-        <button class="btn accent" type="button" data-action="pkdone">${esc(jc.comboDone)}${n ? ` (${n})` : ''}</button>
-      </div>`;
+      <div class="picker">${body}</div>`;
   };
 
-  const host = openSheet(paint(), trigger);
+  // The list of subjects is two thousand pixels long on a phone, so the button
+  // that accepts the combination is pinned rather than parked at the bottom of
+  // it. It also carries the running count, which is the only feedback that a
+  // tap landed when the row you tapped has scrolled out of view.
+  const footFor = () => {
+    const n = Object.keys(getState().plan).length;
+    return `<button class="btn accent" type="button" data-action="pkdone">${esc(jc.comboDone)}${n ? ` (${n})` : ''}</button>`;
+  };
+
+  const host = openSheet(paint(), trigger, footFor());
   onSheetAction({
     pklv: (btn) => {
       const { id, lv, name } = btn.dataset;
       const cur = getState().plan[id];
       setSubjectLevel(id, cur === lv ? null : lv, name);
       host.innerHTML = paint();
+      setSheetFoot(footFor());
     },
     pkdone: () => { closeSheet(); rerender(); },
   });
@@ -196,6 +202,8 @@ function openPicker(data, trigger) {
 function introScreen(host, data, st) {
   const jc = data.copy.journey;
   const wants = data.journey.wants || [];
+  // Act stores its answer as a future id, and the ids are shared with this list.
+  const known = st.aim ? wants.find((w) => w.id === st.aim && w.id !== 'unsure') : null;
   const rows = planRows(data, st.plan);
   const hasPlan = rows.length > 0;
 
@@ -236,8 +244,21 @@ function introScreen(host, data, st) {
           <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(jc.wantHint)}</p>
+          ${/* Act asks this same question with the same six kinds. A student
+                arriving from there should be shown their answer, not asked it
+                again, or the app looks like it was not listening. */ ''}
+          ${known ? `
+            <div class="wantknown">
+              <p class="micro mute">${esc(jc.wantKnown)}</p>
+              <button class="future-btn on" type="button" data-action="want" data-id="${known.id}">
+                <span class="want" style="font-size:1rem">${esc(known.label)}</span>
+                ${known.kind ? `<span class="kind-chip">${esc(known.kind)}</span>` : ''}
+                <span class="want-go">${esc(jc.wantKeep)}</span>
+              </button>
+            </div>
+            <p class="caps" style="margin-top:var(--s-4)">${esc(jc.wantOther)}</p>` : ''}
           <div class="grid two" style="margin-top:var(--s-3)">
-            ${wants.map((w) => `
+            ${wants.filter((w) => !known || w.id !== known.id).map((w) => `
               <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
                 <span class="want" style="font-size:1rem">${esc(w.label)}</span>
                 ${w.kind ? `<span class="kind-chip">${esc(w.kind)}</span>` : ''}
@@ -256,6 +277,10 @@ function introScreen(host, data, st) {
     want: (btn) => {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
       const want = w && w.id !== 'unsure' ? { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind } : null;
+      // Mark it before the sheet opens. Somebody who dismisses the sheet lands
+      // back here, and an unchanged screen reads as a tap that did nothing.
+      host.querySelectorAll('.future-btn.on').forEach((b) => b.classList.remove('on'));
+      btn.classList.add('on');
       openStartSheet(data, want, btn);
     },
     pickrun: (btn) => {
@@ -270,6 +295,9 @@ function introScreen(host, data, st) {
 
 function openStartSheet(data, want, trigger) {
   const jc = data.copy.journey;
+  // The two buttons go in the pinned foot. Everything above them is reading,
+  // and the class code is a teacher's tool, so it folds away rather than
+  // standing between a student and the start of the game.
   openSheet(`
     <h2 id="sheet-title">${esc(jc.tourHead)}</h2>
     <ol class="small tourlist">
@@ -277,19 +305,16 @@ function openStartSheet(data, want, trigger) {
       <li>${esc(jc.tour2)}</li>
       <li>${esc(jc.tour3)}</li>
     </ol>
-    <div class="seedrow">
-      <p class="caps" style="margin-top:var(--s-4)">${esc(jc.classSeedLabel)}</p>
+    <p class="small"><strong>${esc(jc.runLong)}</strong> ${esc(jc.runLongNote)}</p>
+    <p class="small"><strong>${esc(jc.runShort)}</strong> ${esc(jc.runShortNote)}</p>
+    <details class="seedrow">
+      <summary class="small">${esc(jc.classSeedLabel)}</summary>
       <input class="seedbox" type="text" maxlength="8" autocapitalize="characters"
              placeholder="${esc(jc.classSeedPlaceholder)}" data-ref="seed" aria-label="${esc(jc.classSeedLabel)}">
       <p class="micro mute">${esc(jc.classSeedHint)}</p>
-    </div>
-    <p class="caps" style="margin-top:var(--s-5)">${esc(jc.runPick)}</p>
-    <div class="runpick">
-      <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
-      <p class="micro mute">${esc(jc.runLongNote)}</p>
-      <button class="btn ghost" type="button" data-action="goshort" style="margin-top:var(--s-3)">${esc(jc.runShort)}</button>
-      <p class="micro mute">${esc(jc.runShortNote)}</p>
-    </div>`, trigger);
+    </details>`, trigger, `
+    <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
+    <button class="btn" type="button" data-action="goshort">${esc(jc.runShort)}</button>`);
   const seedVal = () => {
     const el = document.querySelector('dialog.sheet [data-ref="seed"]');
     return el ? el.value : '';
@@ -369,7 +394,12 @@ function turnScreen(host, stage, data, age) {
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
     ${possibleBlock(data, age)}
     ${yearSummary(data, stage, pool, age)}
-    <div class="btn-row" style="margin-top:var(--s-4)">
+    ${/* Sticky on a phone. Five choices plus the possibilities fold and the
+          year summary put this eleven hundred pixels down a six hundred pixel
+          window, so a student tapped a choice and saw nothing happen. It only
+          appears once there is something to commit, so it is never in the way
+          of reading the year. */ ''}
+    <div class="btn-row liverow${(picked.length || pickedAsks.length) ? ' armed' : ''}" style="margin-top:var(--s-4)">
       ${(picked.length || pickedAsks.length) ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
