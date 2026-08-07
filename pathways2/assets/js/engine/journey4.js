@@ -125,6 +125,27 @@ export function sequenceFor(j, run) {
  * because past thirty the argument is that the exact year has stopped
  * deciding anything.
  */
+/**
+ * How long this life is, and where in it we are, for the counter.
+ *
+ * Two faults it fixes. The total used to grow by two the moment the player
+ * answered the service question, because before the answer neither the serving
+ * chapters nor the civilian ones passed the filter. And the question itself
+ * consumed a number, so chapter four was never shown to anybody. Both are now
+ * counted the way a reader would count them.
+ */
+export function chapterCount(j, run) {
+  const real = (s) => (s.format || 'turn') !== 'ask-ns';
+  const seq = sequenceFor(j, run);
+  const done = seq.slice(0, run.stepIndex).filter(real).length;
+  // Resolve the length as if service were answered, either way, since both
+  // ladders are the same length and the player should not watch it change.
+  const settled = run.ns == null
+    ? sequenceFor(j, { ...run, ns: true, flags: [...(run.flags || []), 'ns_yes'] })
+    : seq;
+  return { n: done + 1, total: settled.filter(real).length };
+}
+
 export function ageAt(j, run, stepIndex) {
   const seq = sequenceFor(j, run);
   let age = run.startAge;
@@ -285,13 +306,18 @@ export function wantAffinity(obj, riasec) {
 // ---------------------------------------------------------------------------
 // The hand of asks and the visible choices. Ported, with door keys real.
 
-const asksFor = (moves, age) => (moves || []).filter((m) => m.kind === 'ask' && age >= m.ages[0] && age <= m.ages[1]);
+/** Still in school means the results fork has not been taken yet. */
+const inSchool = (run) => !run.path;
+
+const asksFor = (moves, age, run) => (moves || []).filter((m) => m.kind === 'ask'
+  && age >= m.ages[0] && age <= m.ages[1]
+  && (!m.schoolOnly || inSchool(run)));
 
 export function dealHand(run, moves, age) {
   if (!Array.isArray(run.hand)) run.hand = [];
   const made = new Set((run.movesMade || []).map((m) => m.id));
   const held = new Set(run.hand);
-  const pool = asksFor(moves, age).filter((m) => !made.has(m.id) && !held.has(m.id));
+  const pool = asksFor(moves, age, run).filter((m) => !made.has(m.id) && !held.has(m.id));
   if (!pool.length) return run.hand;
   const off = lcg(run.seed + age * 31) % pool.length;
   for (let i = 0; i < pool.length && run.hand.length < HAND_LIMIT; i += 1) {
@@ -335,7 +361,8 @@ export function visibleChoices(stage, run, moves, age) {
   if ((stage.format || 'turn') === 'turn' && Array.isArray(moves) && moves.length) {
     const made = new Set((run.movesMade || []).map((m) => m.id));
     const open = moves.filter((m) => m.kind === 'commit'
-      && age >= m.ages[0] && age <= m.ages[1] && !made.has(m.id));
+      && age >= m.ages[0] && age <= m.ages[1] && !made.has(m.id)
+      && (!m.schoolOnly || inSchool(run)));
     if (open.length) {
       const off = lcg(run.seed + age * 97) % open.length;
       commits = Array.from({ length: Math.min(MOVE_CHOICE_CAP, open.length) },
@@ -390,7 +417,12 @@ export function missedLine(stage, run, moves, indices, age, pool) {
   const unchosen = shown.filter((c, i) => !picked.has(i) && c.missed);
   if (!unchosen.length) return null;
   unchosen.sort((a, b) => (b.cost || 1) - (a.cost || 1));
-  return unchosen[0].missed;
+  // The costliest road not taken, unless this run has already been told about
+  // it. Three chapters in a row each ending "the exchange cohort flew without
+  // you" turns opportunity cost into wallpaper.
+  const already = new Set((run.steps || []).map((st) => st.missed).filter(Boolean));
+  const fresh = unchosen.find((c) => !already.has(c.missed));
+  return (fresh || unchosen[0]).missed;
 }
 
 export function applyChoices(run, j, stage, indices, cards, meta, moves) {

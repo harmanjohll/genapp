@@ -189,7 +189,7 @@ function turnScreen(host, data) {
                       aria-pressed="${on}" ${!on && cost > left ? 'data-dim="true"' : ''}>
                 ${isFork ? '' : `<span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>`}
                 <span class="c-label">${esc(c.label)}</span>
-                ${need ? `<span class="fork-need">${decorate(need)}</span>` : ''}
+                ${need ? `<span class="fork-need">${esc(need)}</span>` : ''}
               </button>`;
           }).join('')}
         </div>

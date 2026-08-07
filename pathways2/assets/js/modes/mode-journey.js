@@ -18,7 +18,7 @@ import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
 } from '../engine/possible.js';
 import {
-  createRun, sequenceFor, currentStage, ageAt, answerNS, visibleChoices,
+  createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
 } from '../engine/journey4.js';
@@ -313,16 +313,15 @@ function shell(inner, rail) {
 /** Chapter meta: where you are in the whole life, at a glance. */
 function chapterMeta(data, stage, age) {
   const jc = data.copy.journey;
-  const seq = sequenceFor(data.journey, run);
-  const n = run.stepIndex + 1;
+  const { n, total } = chapterCount(data.journey, run);
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
   const seedChip = run.classSeed ? `<span class="pathchip seed">${esc(fill(jc.classSeedChip, { code: run.classSeed }))}</span>` : '';
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
-  const strip = `<span class="lifestrip" role="img" aria-label="${esc(fill(jc.chapterOf, { n, total: seq.length }))}">${seq.map((s, i) =>
-    `<i class="${i < run.stepIndex ? 'on' : ''}${i === run.stepIndex ? ' now' : ''}"></i>`).join('')}</span>`;
+  const strip = `<span class="lifestrip" role="img" aria-label="${esc(fill(jc.chapterOf, { n, total }))}">${Array.from({ length: total }, (_, i) =>
+    `<i class="${i < n - 1 ? 'on' : ''}${i === n - 1 ? ' now' : ''}"></i>`).join('')}</span>`;
   const title = stage.chapter || stage.title;
   return `
-    <p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total: seq.length }))} ${strip} ${label} ${seedChip} ${want}</p>
+    <p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total }))} ${strip} ${label} ${seedChip} ${want}</p>
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${age}</span>
       <h1 class="serif" tabindex="-1">${esc(title)}</h1></div>`;
 }
@@ -662,7 +661,7 @@ function forkScreen(host, stage, data, age) {
             return `
             <button class="choice fork-c ${c.needsDoor ? 'unlocked' : ''}" type="button" data-action="fork" data-i="${i}">
               <span class="c-label">${esc(c.label)}</span>
-              ${need ? `<span class="fork-need"><em>${esc(data.copy.journey.possAsks)}</em> ${decorate(need)}</span>` : ''}
+              ${need ? `<span class="fork-need"><em>${esc(data.copy.journey.possAsks)}</em> ${esc(need)}</span>` : ''}
               <span class="c-chips">${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(data.copy.journey.doorTag)}</span>` : ''}${gainChips(c)}</span>
             </button>`;
           }).join('')}

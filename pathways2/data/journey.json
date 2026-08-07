@@ -353,7 +353,7 @@
      },
      "sets": "looked_around",
      "outcome": "You read all of it, even Electronics, even Drama. Two subjects you had dismissed stop being jokes.",
-     "missed": "You picked what your friends picked."
+     "missed": "The booklet stayed unread, and the form got filled from hearsay."
     },
     {
      "label": "Take the stage, or the pitch",
@@ -540,7 +540,7 @@
      },
      "sets": "asked_help",
      "outcome": "Ms D circles two questions in your script. Just these two habits, she says. She is right.",
-     "missed": "You revised alone, and guessed at what to fix."
+     "missed": "Nobody aimed the revision, so the weak paper stayed weak."
     },
     {
      "label": "Keep one made thing alive",
@@ -924,7 +924,7 @@
       "skills": 2
      },
      "outcome": "You shadow the senior tech at every fault call. Half a diploma's learning happens in that van.",
-     "missed": "You did what the sheet said and no more."
+     "missed": "The attachment stayed the tasks on the sheet, and nothing past them."
     },
     {
      "label": "Interview the adults at lunch",
@@ -1139,7 +1139,7 @@
      },
      "sets": "ecg_seen",
      "outcome": "The ECG officer draws the ladder on scrap paper: 2.5 applies, raw 3.5 guarantees. You photograph it.",
-     "missed": "You decided on vibes instead of the actual numbers."
+     "missed": "The exit decision got made on feel, with the GPA unread."
     }
    ]
   },
@@ -1992,7 +1992,7 @@
       "network": 1
      },
      "outcome": "You get a short honest sentence ready. Saying it out loud a few times makes it true.",
-     "missed": "You let other people describe your school for you."
+     "missed": "The question about the school kept getting answered by other people."
     },
     {
      "label": "Find the two who also want it",
@@ -2002,7 +2002,7 @@
      },
      "sets": "helped_someone",
      "outcome": "Two of you start meeting in the library on Fridays. It becomes the reason the year works.",
-     "missed": "You studied alone in a place built for company."
+     "missed": "Three years of Fridays in a library full of people, alone."
     },
     {
      "label": "Go hard at one A Level subject",
@@ -2037,7 +2037,7 @@
       "skills": 2
      },
      "outcome": "You learn the campus, the lecturers and the library before any of it counts. The head start is real.",
-     "missed": "You waited for the diploma to start before starting."
+     "missed": "The foundation year passed as a waiting room instead of a year one."
     },
     {
      "label": "Pick the course inside the cluster carefully",
@@ -2072,7 +2072,7 @@
      },
      "sets": "helped_someone",
      "outcome": "The foundation cohort becomes a group of people who understand the exact route you took.",
-     "missed": "You spent the year beside people you never spoke to."
+     "missed": "The cohort stayed a room of strangers who took the same route."
     },
     {
      "label": "Enter a cluster competition",
@@ -2199,7 +2199,7 @@
       "skills": 2
      },
      "outcome": "You use the standing you built to get into something that would have been closed to you at seventeen.",
-     "missed": "You took the safe module and finished it early."
+     "missed": "The safe module got taken, and finished, and taught nothing."
     },
     {
      "label": "Be the one who welcomes them back",

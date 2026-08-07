@@ -63,13 +63,15 @@ export function forkNeed(data, doorId) {
  * The ending uses this: not a scolding, a list of doors that are still there.
  */
 export function possibilitiesMissed(data, run, limit = 4) {
-  const shown = new Set(run.shownPossible || []);
   const ages = (run.steps || []).map((s) => s.age);
   if (!ages.length) return [];
   const lo = Math.min(...ages);
   const hi = Math.max(...ages);
+  // Deliberately NOT filtered by what the run was shown. Having read a route in
+  // a fold is not the same as having taken it, and excluding shown routes meant
+  // a long run reached its ending with nothing left to name, which is the one
+  // place the list has a job to do.
   const live = ALL(data).filter((p) => {
-    if (shown.has(p.id)) return false;
     if (p.ages[1] < lo || p.ages[0] > hi) return false;
     if (p.paths && run.path && !p.paths.includes(run.path)) return false;
     return true;
