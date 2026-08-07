@@ -81,6 +81,7 @@ function chooser(data, st) {
           return `
           <button class="future-btn" type="button" data-action="pick" data-id="${f.id}">
             <span class="want">${esc(f.want)}</span>
+            ${f.kind ? `<span class="kind-chip">${esc(f.kind)}</span>` : ''}
             ${played ? `<span class="kind-chip">${esc(ac.playedChip)}</span>` : ''}
           </button>`;
         }).join('')}

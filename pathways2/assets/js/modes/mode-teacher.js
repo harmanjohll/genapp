@@ -67,9 +67,9 @@ const ECG_MAP = [
   { name: 'The three guiding questions', src: 'MOE ECG',
     where: 'They head the rail beside every Journey turn, badge each stage with the question it leans on, and sit over the destination list and the take-a-question card in Now. Who am I, where do I want to go, how do I get there.' },
   { name: 'Planned happenstance', src: 'Krumboltz',
-    where: 'The five dispositions the game tracks are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check dispositions built by ordinary choices. The chip says "you built the footing for this".' },
+    where: 'The five dispositions tracked are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check what ordinary choices built.' },
   { name: 'Career as narrative', src: 'Savickas',
-    where: 'Every run is told as a story: your story so far in the rail, a written reflection at thirty eight, an ending in sentences rather than scores, and two stories compared, including what each wanted and who each became.' },
+    where: 'A run is a story, not a score: the rail keeps it, thirty eight asks for a written line, the ending is sentences, and two runs can be read side by side.' },
   { name: 'Life-span development', src: 'Super',
     where: 'One run spans thirteen to forty eight, and the want named at the start is re-asked at thirty eight. Changing it is treated as progress, and the ending tells both halves.' },
   { name: 'Circumscription and compromise', src: 'Gottfredson',
@@ -79,7 +79,7 @@ const ECG_MAP = [
   { name: 'Decision learning, then action', src: 'CASVE cycle',
     where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
   { name: 'Six kinds of working', src: 'Holland RIASEC',
-    where: 'The wants carry the six types in student words, codes kept to this page: Doers (R) good with my hands, Thinkers (I) work out how things work, Creators (A) make things people use, Helpers (S) there when people are struggling, Persuaders (E) run my own thing, Organisers (C) every detail exactly right. The want feeds the engine gently: choices pointing its way are marked "near your want", chances that fit it turn up more often without narrowing what can happen, and years lived near the want fill the love circle. Bridge to your profiler from here; remind students most people are a mix of two or three.' },
+    where: 'Six types in student words, codes kept to this page: Doers (R), Thinkers (I), Creators (A), Helpers (S), Persuaders (E), Organisers (C), and Not sure yet on purpose. The kind carries into Act, marks choices pointing that way, and tilts which chances appear without narrowing what can happen. Bridge to your own profiler from here, and remind students most people are a mix of two or three.' },
   { name: 'A reason to get up', src: 'Ikigai',
     where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
   { name: 'Four scarcities, not one', src: 'Game design for realism',
@@ -295,6 +295,19 @@ export function renderTeacher(host, data, ctx, repaint) {
             <h2>Run a field test</h2>
             <p class="small">Slips before and after, three questions: name two places you could go, one thing you could do this year, and who to ask. Watch for the student who taps and waits, and the one who turns their screen to a neighbour. Full protocol in FIELD_TEST.md.</p>
           </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>One to one, twenty minutes</h2></div>
+          <p class="small mute" style="max-width:60ch">For an ECG counsellor with one student, not a class.</p>
+          <ol class="tight-list" style="margin-top:var(--s-3)">
+            <li><strong>3.</strong> Plan, on their phone. Ask what they expected to be closed.</li>
+            <li><strong>4.</strong> Read the lever line together. That is the negotiable part of their year.</li>
+            <li><strong>8.</strong> Play the short run. Watch which chance they stall on.</li>
+            <li><strong>5.</strong> Open "what else is possible from here" and pick one route to check by Friday.</li>
+          </ol>
+          <p class="small mute" style="margin-top:var(--s-3)">They can bring a story card or a class code to the next session.
+            Both carry the reasoning and neither carries a grade.</p>
         </div>
 
         <div class="section">

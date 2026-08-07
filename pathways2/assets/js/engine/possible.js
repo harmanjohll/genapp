@@ -137,9 +137,35 @@ export function possibilitySweep(data) {
     });
   });
 
+  // --- the interest frame -------------------------------------------------
+  // The six kinds a student sees are Holland's RIASEC with the jargon removed.
+  // If a letter goes missing, or a want has no future to hand off to, the frame
+  // quietly stops being a frame.
+  const LETTERS = ['R', 'I', 'A', 'S', 'E', 'C'];
+  const wants = (data.journey && data.journey.wants) || [];
+  const futures = (data.futures && data.futures.futures) || [];
+  const wantLetters = new Set(wants.map((w) => w.riasec).filter(Boolean));
+  LETTERS.forEach((L) => {
+    if (!wantLetters.has(L)) failures.push({ riasec: L, why: 'no want carries this interest type' });
+  });
+  wants.forEach((w) => {
+    if (w.id === 'unsure') return;
+    if (!w.riasec) failures.push({ want: w.id, why: 'want with no interest type' });
+    if (!w.kind) failures.push({ want: w.id, why: 'want with no plain language kind' });
+    if (!futures.some((f) => f.id === w.id)) {
+      failures.push({ want: w.id, why: 'a want Act cannot hand off to' });
+    }
+  });
+  futures.forEach((f) => {
+    if (f.id === 'unsure') return;
+    if (!f.riasec) failures.push({ future: f.id, why: 'future with no interest type' });
+    else if (!LETTERS.includes(f.riasec)) failures.push({ future: f.id, why: `not a Holland letter: ${f.riasec}` });
+    if (!f.kind) failures.push({ future: f.id, why: 'future with no plain language kind' });
+  });
+
   const ok = failures.length === 0;
   console.log(
-    `%cPossibilities: ${ok ? 'PASS' : 'FAIL'} (${list.length} routes, ${Object.keys(needs).length} fork requirements)`,
+    `%cPossibilities: ${ok ? 'PASS' : 'FAIL'} (${list.length} routes, ${Object.keys(needs).length} fork requirements, RIASEC ${[...wantLetters].sort().join('')})`,
     ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700'
   );
   if (!ok) { console.table(failures.slice(0, 30)); console.error(`${failures.length} possibility failures`); }

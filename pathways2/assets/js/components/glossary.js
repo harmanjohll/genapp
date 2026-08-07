@@ -20,7 +20,11 @@ export function initGlossary(glossaryData) {
   // Longest first, so "Higher Nitec" wins over "Nitec".
   sorted = terms.slice().sort((a, b) => b.term.length - a.term.length);
   const alts = sorted.map((t) => t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-  matcher = alts ? new RegExp(`(?<![\\w-])(${alts})(?![\\w-])`, 'g') : null;
+  // Deliberately no lookbehind. Safari shipped it in 16.4, and this runs during
+  // init outside any try, so an older iPhone would have got a blank page instead
+  // of a page without tappable acronyms. The boundary character is captured and
+  // put back instead, which every browser has always supported.
+  matcher = alts ? new RegExp(`(^|[^\\w-])(${alts})(?![\\w-])`, 'g') : null;
 }
 
 /**
@@ -36,8 +40,8 @@ export function initGlossary(glossaryData) {
 export function decorate(text) {
   const out = esc(text);
   if (!matcher) return out;
-  return out.replace(matcher, (m) => (
-    `<button type="button" class="gloss" data-action="gloss" data-term="${esc(m)}">${m}</button>`
+  return out.replace(matcher, (_m, before, term) => (
+    `${before}<button type="button" class="gloss" data-action="gloss" data-term="${esc(term)}">${term}</button>`
   ));
 }
 
