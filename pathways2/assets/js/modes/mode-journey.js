@@ -783,6 +783,30 @@ function idWords(r, jc) {
  * The lived screen: the whole year in one beat. If a door opened, the beat
  * opens with it, full width, with the one sound in the app worth hearing.
  */
+/**
+ * What to say when a student reached past their footing and it half landed.
+ *
+ * Thirty seven cards now carry an answer that asks for more nerve, miles or
+ * curiosity than the run has built, so a bold player meets this about a fifth
+ * of the time. One line repeated that often becomes wallpaper, and it also
+ * wastes the teachable half: the card knows exactly which quality was short,
+ * so the line names it. Never a failure, always the same claim, which is that
+ * doing the thing is how the footing gets built.
+ *
+ * Two phrasings per quality, alternating, because a run that is short on one
+ * quality will meet that quality's line several times, and hearing the same
+ * sentence four times teaches a student that nobody is reading.
+ */
+function efficacyLine(data, chance) {
+  const jc = data.copy.journey;
+  const card = ((data.chances && data.chances.cards) || []).find((c) => c.id === chance.id);
+  const disp = card && card.asks && card.asks.disposition;
+  if (!disp) return jc.efficacyLine;
+  const stem = `efficacy${disp[0].toUpperCase()}${disp.slice(1)}`;
+  const alt = run && run.stepIndex % 2 === 1 ? jc[`${stem}2`] : null;
+  return alt || jc[stem] || jc.efficacyLine;
+}
+
 function livedScreen(host, data) {
   const jc = data.copy.journey;
   const { chapter, age, chosen, chance, stretch, missed, delta: d, doorOpened } = justLived;
@@ -811,7 +835,7 @@ function livedScreen(host, data) {
           <p class="kind">${icon(`ch_${chance.type}`)}${esc(chance.title)}</p>
           <p class="lived-choice serif">${esc(chance.response)}</p>
           <p class="lede">${decorate(chance.text)}</p>
-          ${stretch ? `<p class="small mute">${esc(jc.efficacyLine)}</p>` : ''}
+          ${stretch ? `<p class="small mute">${esc(efficacyLine(data, chance))}</p>` : ''}
         </div>` : ''}
       ${d.length ? `<p class="delta">${d.filter((x) => !x.door).map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
       ${missed ? `<p class="meanwhile">${esc(fill(jc.meanwhile, { missed }))}</p>` : ''}
