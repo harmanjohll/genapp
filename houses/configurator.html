@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTY House System Configurator</title>
+<style>
+:root{--navy:#000C53;--navy8:#0a1a6b;--navy6:#3a4a8c;--navy4:#7681b0;--navy2:#b6bdd6;
+ --yellow:#FFE200;--red:#EC3237;--g1:#F6F7F9;--g2:#E4E6EC;--g3:#9E9E9E;--g4:#5b5f6b;--ink:#1a1c22;
+ --ok:#1a7f4b;--warn:#b8860b;--bad:#c0392b;}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:Calibri,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3,h4{font-family:Georgia,serif;color:var(--navy);margin:0 0 .3em}
+h1{font-size:30px;line-height:1.15}h2{font-size:20px;margin-top:0}h3{font-size:16px}h4{font-size:14px}
+.wrap{max-width:1340px;margin:0 auto;padding:26px 22px 80px}
+header{border-bottom:3px solid var(--navy);padding-bottom:14px;margin-bottom:18px}
+.sub{color:var(--g4);font-size:14px;max-width:820px}
+.evbar{display:flex;gap:0;flex-wrap:wrap;background:var(--navy);color:#fff;margin:14px 0 22px}
+.evbar div{flex:1;min-width:150px;padding:9px 13px;border-right:1px solid rgba(255,255,255,.16)}
+.evbar b{display:block;font-family:Georgia,serif;font-size:19px;color:var(--yellow)}
+.evbar span{font-size:11.5px;opacity:.88;line-height:1.3;display:block}
+.cols{display:grid;grid-template-columns:335px 1fr;gap:26px;align-items:start}
+@media(max-width:1080px){.cols{grid-template-columns:1fr}}
+.panel{border:1px solid var(--g2);padding:15px 16px;margin-bottom:14px;background:#fff}
+.panel.sticky{/* sticky removed: it fought the preview frame and made the page scroll behind a nested scroller */}
+label.f{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--g4);margin:13px 0 4px;font-weight:bold}
+label.f:first-of-type{margin-top:0}
+select,input[type=number]{width:100%;font-family:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--g2);background:#fff;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--navy)}
+.seg{display:flex;gap:0;border:1px solid var(--g2)}
+.seg button{flex:1;font-family:inherit;font-size:13px;padding:6px 4px;border:0;background:#fff;color:var(--g4);cursor:pointer;border-right:1px solid var(--g2)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+.hint{font-size:11.5px;color:var(--g3);margin-top:3px}
+.verdict{padding:12px 14px;border-left:5px solid var(--navy);background:var(--g1);margin-bottom:16px}
+.verdict h3{margin:0 0 4px}
+.verdict.ok{border-left-color:var(--ok)}.verdict.warn{border-left-color:var(--yellow)}.verdict.bad{border-left-color:var(--red)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin-bottom:16px}
+.m{border:1px solid var(--g2);border-top:4px solid var(--navy);padding:10px 12px}
+.m b{display:block;font-family:Georgia,serif;font-size:25px;color:var(--navy);line-height:1.05}
+.m span{font-size:11.5px;color:var(--g4);display:block;margin-top:3px}
+.m .d{font-size:11.5px;margin-top:4px;font-weight:bold}
+.m .d.up{color:var(--ok)}.m .d.down{color:var(--bad)}
+.m.alert{border-top-color:var(--red)}.m.good{border-top-color:var(--yellow)}
+.checks{border:1px solid var(--g2)}
+.chk{display:flex;gap:11px;padding:9px 13px;border-bottom:1px solid var(--g2);align-items:flex-start;font-size:13.5px}
+.chk:last-child{border-bottom:0}
+.dot{width:11px;height:11px;border-radius:50%;margin-top:4px;flex:0 0 11px}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--yellow)}.dot.bad{background:var(--red)}
+.chk b{display:block;color:var(--navy);font-family:Georgia,serif;font-weight:normal}
+.chk i{font-style:normal;color:var(--g4);font-size:12.5px}
+.grid{display:grid;gap:9px;margin-bottom:6px}
+.blockcol{border:1px solid var(--g2);min-height:60px}
+.blockcol h4{background:var(--navy);color:#fff;margin:0;padding:6px 9px;font-size:12.5px;font-weight:normal}
+.blockcol.off h4{background:var(--g3)}
+.chip{display:block;padding:5px 8px;border-bottom:1px solid var(--g2);font-size:12.5px;cursor:pointer;position:relative}
+.chip:hover{background:var(--g1)}
+.chip small{display:block;color:var(--g3);font-size:10.5px}
+.chip .pf{position:absolute;right:6px;top:6px;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#fff;padding:1px 5px}
+.chip.leak{background:#fff6f5}
+.chip.leak .pf{outline:2px solid var(--red)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--navy);color:#fff;font-family:Georgia,serif;font-weight:normal;text-align:left;padding:7px 9px;font-size:12.5px;cursor:pointer}
+th:hover{background:var(--navy8)}
+td{padding:6px 9px;border-bottom:1px solid var(--g2);vertical-align:top}
+tr.dim{opacity:.42}
+.tag{display:inline-block;font-size:10.5px;padding:1px 6px;border:1px solid var(--g2);background:var(--g1);color:var(--g4);white-space:nowrap}
+.tag.convert{background:#eefaf2;border-color:#b7e3c9;color:#186a3f}
+.tag.rebuild{background:#fffbe6;border-color:var(--yellow);color:#7a6500}
+.tag.new{background:#fdeeed;border-color:#f3b8b4;color:#9e2b23}
+.tag.E{background:#eef1f9;border-color:var(--navy2);color:var(--navy)}
+.tag.B{background:var(--navy4);border-color:var(--navy4);color:#fff}
+.tag.P{background:var(--navy);border-color:var(--navy);color:#fff}
+details{border-left:3px solid var(--g2);padding-left:13px;margin-bottom:9px}
+details[open]{border-left-color:var(--yellow)}
+summary{cursor:pointer;font-family:Georgia,serif;color:var(--navy);padding:5px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"▸ ";color:var(--yellow)}
+details[open] summary:before{content:"▾ "}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+ul.tight{margin:5px 0;padding-left:18px}ul.tight li{margin-bottom:3px;font-size:13.5px}
+.pro li::marker{color:var(--ok)}.con li::marker{color:var(--red)}
+section{margin-bottom:30px}
+.note{background:var(--g1);border-left:4px solid var(--yellow);padding:11px 14px;font-size:13.5px;color:var(--g4);margin:12px 0}
+.note b{color:var(--navy)}
+.ribbon{background:var(--navy);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-top:36px;font-size:12px}
+.ribbon .motto{font-family:Georgia,serif;font-style:italic;color:var(--yellow)}
+button.act{font-family:inherit;font-size:13px;padding:7px 13px;border:1px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer}
+button.act:hover{background:var(--navy);color:#fff}
+button.act.pri{background:var(--navy);color:#fff}
+.bar{height:7px;background:var(--g2);margin-top:5px}.bar i{display:block;height:100%;background:var(--navy)}
+
+.gnav{background:#000C53;padding:0 20px;font-family:Calibri,"Segoe UI",system-ui,sans-serif}
+.gnav div{max-width:1300px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.gnav a{color:#fff;text-decoration:none;font-size:12.5px;padding:9px 13px;opacity:.72;border-bottom:3px solid transparent}
+.gnav a:hover{opacity:1}
+.gnav a.on{opacity:1;border-bottom-color:#FFE200;font-weight:bold}
+.gnav b{color:#FFE200;font-family:Georgia,serif;font-size:13px;padding:9px 13px 9px 0;letter-spacing:.02em}
+</style></head><body><nav class="gnav"><div><b>BTY House System</b><a href="./">Overview</a><a href="studio.html">House Studio</a><a href="audit.html">Enrichment audit</a><a href="configurator.html" class="on">Band configurator</a><a href="NOTES.md">Notes</a><a href="REPORT.md">Report</a></div></nav><div class="wrap">
+
+<header>
+<h1>House System Configurator</h1>
+<div class="sub">Configure a five house enrichment architecture on the Wednesday and Thursday band. Every metric is computed live and benchmarked against what the beattyadmin calendar actually recorded in 2024 and 2025. Fidelity checks are drawn from Renzulli's Schoolwide Enrichment Model and Gagné's Differentiating Model of Giftedness and Talent.</div>
+</header>
+
+<div class="evbar" id="evbar"></div>
+
+<div class="cols">
+<div class="panel sticky">
+<h2>Configure</h2>
+
+<label class="f">House model</label>
+<select id="hm"></select>
+<div class="hint" id="hmHint"></div>
+
+<label class="f">Naming scheme</label>
+<select id="nm"></select>
+<div class="hint" id="nmHint"></div>
+
+<label class="f">Band days</label>
+<div class="seg" id="days">
+ <button data-v="Wed">Wed only</button><button data-v="Thu">Thu only</button><button data-v="both" class="on">Wed + Thu</button>
+</div>
+<div class="hint">Beatty's own CCA and uniformed group activity falls on Tue 29, Sat 29, Fri 26, Mon 18, Wed 12, Thu 12. Wednesday and Thursday are already the emptiest days.</div>
+
+<label class="f">Blocks per band day</label>
+<div class="seg" id="bpd"><button data-v="1" class="on">One block</button><button data-v="2">Two blocks</button></div>
+
+<label class="f">Sessions per cycle <span id="csV"></span></label>
+<input type="range" id="cs" min="4" max="14" step="1" value="10">
+<div class="hint">Renzulli's published floor for an enrichment cluster is eight sessions. Below that, scope and audience collapse.</div>
+
+<label class="f">Cycles per year</label>
+<div class="seg" id="cy"><button data-v="2">Two</button><button data-v="3" class="on">Three</button></div>
+
+<label class="f">Term 4</label>
+<div class="seg" id="t4"><button data-v="rel" class="on">Released to exams</button><button data-v="pro">Protected</button></div>
+<div class="hint">No enrichment card was issued in October, November or December in either 2024 or 2025.</div>
+
+<label class="f">Levels in the band</label>
+<div class="seg" id="lv"><button data-v="3">Sec 1 to 3</button><button data-v="4" class="on">Sec 1 to 4</button><button data-v="5">Sec 1 to 5</button></div>
+
+<label class="f">Cohort size <span id="cohV"></span></label>
+<input type="range" id="coh" min="600" max="1400" step="50" value="1000">
+
+<label class="f">Cluster size cap <span id="ccV"></span></label>
+<input type="range" id="cc" min="10" max="40" step="5" value="25">
+<div class="hint">Renzulli: 5 to 15 typical, up to 25 with a second adult.</div>
+
+<label class="f">Facilitators available per band day <span id="fcV"></span></label>
+<input type="range" id="fc" min="5" max="60" step="1" value="30">
+<div class="hint">Teachers, partners, alumni and community facilitators. Content expertise is not required in the Renzulli model.</div>
+
+<label class="f">Pursue tier, share of cohort <span id="ptV"></span></label>
+<input type="range" id="pt" min="3" max="25" step="1" value="15">
+<div class="hint">Renzulli talent pool 15 to 20 percent. Gagné prevalence anchor 10 percent.</div>
+
+<label class="f">Max concurrent commitments per Beattyian <span id="mcV"></span></label>
+<input type="range" id="mc" min="1" max="4" step="1" value="2">
+
+<div style="margin-top:16px;display:flex;gap:7px;flex-wrap:wrap">
+<button class="act pri" id="auto">Auto place clubs</button>
+<button class="act" id="reset">Reset</button>
+</div>
+</div>
+
+<div>
+<div id="verdict"></div>
+<div class="metrics" id="metrics"></div>
+
+<section>
+<h2>Model fidelity</h2>
+<div class="sub" style="margin-bottom:9px">These are not preferences. Each is a published threshold from the two models the design cites, so failing one means the construct has slipped.</div>
+<div class="checks" id="checks"></div>
+</section>
+
+<section>
+<h2>Block plan and overcommitment</h2>
+<div class="sub" style="margin-bottom:9px">Click any club to move it to the next block. Clubs recruiting the same student profile are safe when they sit in the <b>same</b> block, because a Beattyian can then hold only one. The same profile spread across different blocks is a leak: it lets one student be claimed twice.</div>
+<div class="grid" id="blocks"></div>
+<div class="note" id="leaknote"></div>
+</section>
+
+<section>
+<h2>Club catalogue</h2>
+<div class="sub" style="margin-bottom:9px">Twenty nine clubs, every one traced to programmes that actually ran. <span class="tag convert">convert</span> already has cadence and persisted across both years. <span class="tag rebuild">rebuild</span> exists but is too thin to develop anything. <span class="tag new">new</span> is a coverage gap with no current provision.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:9px">
+<select id="fdom" style="width:auto"><option value="">All domains</option></select>
+<select id="ftier" style="width:auto"><option value="">All tiers</option><option value="E">Explore</option><option value="B">Build</option><option value="P">Pursue</option></select>
+<select id="fready" style="width:auto"><option value="">All readiness</option><option value="convert">Convert now</option><option value="rebuild">Rebuild</option><option value="new">New</option></select>
+<span id="ccount" style="font-size:13px;color:var(--g4);align-self:center"></span>
+</div>
+<table id="ctab"><thead><tr><th data-k="name">Club</th><th data-k="dom">Domain</th><th data-k="tier">Tier</th><th data-k="home">Home</th><th data-k="profile">Profile</th><th data-k="lvs">Levels</th><th data-k="readiness">Readiness</th></tr></thead><tbody></tbody></table>
+<div id="cdetail"></div>
+</section>
+
+<section>
+<h2>Tradeoffs of this configuration</h2>
+<div class="two"><div id="pros"></div><div id="cons"></div></div>
+</section>
+
+<section>
+<h2>House model comparison</h2>
+<div id="hmcmp"></div>
+</section>
+
+<section>
+<h2>Naming schemes weighed</h2>
+<div id="nmcmp"></div>
+</section>
+</div></div>
+
+<div class="ribbon"><span>Beatty Secondary School</span><span class="motto">Non Vi Sed Arte</span><span>Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</span></div>
+</div>
+
+<script>
+const D = {"clubs": [{"id": "mathguild", "name": "Mathematics Olympiad Guild", "dom": "STEM", "tier": "P", "home": "field", "profile": "analytic", "lv": [1, 2, 3], "size": 20, "readiness": "convert", "src": "SMO Training (26 dates, both years, 85% in band), Math Innovators (10 dates), SIMC 2.0 (5 dates)", "note": "The single strongest existing anchor. Already runs at a 20 day cadence, already selective, already in the band."}, {"id": "sciguild", "name": "Science Olympiad Guild", "dom": "STEM", "tier": "P", "home": "field", "profile": "analytic", "lv": [2, 3, 4], "size": 16, "readiness": "rebuild", "src": "Physics Olympiad (2 dates), Chemistry Olympiad (1), AstroChallenge (2), Science IgnITE (3)", "note": "Four separate single session fragments. Merge into one guild with a real cycle, or it stays busywork."}, {"id": "nexuslab", "name": "NEXUS Applied STEM Studio", "dom": "STEM", "tier": "B", "home": "field", "profile": "analytic", "lv": [2, 3], "size": 25, "readiness": "rebuild", "src": "NECTAR STEM Workshop (7 dates, 2024 only), NX201, NX3011 Research, OceanX, Rockwell, HCI Food Science", "note": "NECTAR had genuine 18 day cadence in 2024 then vanished in 2025. Rebuild it as the NX201 to NX301 bridge."}, {"id": "makers", "name": "Makers and Sustainability Workshop", "dom": "STEM", "tier": "B", "home": "house", "profile": "creative", "lv": [1, 2, 3], "size": 20, "readiness": "rebuild", "src": "Circular Classroom Upcycling (4 dates, 2025), Composting Workshop (1)", "note": "Both 2025 only and both fully inside the band. Cheap to scale, no external vendor dependency once trained."}, {"id": "datacraft", "name": "Data and AI Craft", "dom": "STEM", "tier": "B", "home": "field", "profile": "analytic", "lv": [2, 3, 4], "size": 25, "readiness": "new", "src": "No current provision. ALP is STEM Cities and Urban Landscapes with a machine learning strand.", "note": "Coverage gap. The school's own ALP identity has no enrichment expression in the band."}, {"id": "authors", "name": "Young Authors Guild", "dom": "Language Arts", "tier": "B", "home": "house", "profile": "creative", "lv": [1, 2, 3], "size": 18, "readiness": "convert", "src": "Creative Writing Programme (7 dates, 18 day cadence, 100% in band), EL Writing Workshop (6 dates), Live On Festival", "note": "Creative Writing ran 2024 only. It had the best cadence of any Language Arts programme and was dropped."}, {"id": "debate", "name": "Debate and Oracy Society", "dom": "Language Arts", "tier": "P", "home": "field", "profile": "discursive", "lv": [2, 3, 4], "size": 16, "readiness": "convert", "src": "EL Debate Workshop (6 dates, both years, 100% in band), EL Debate Fest (4 dates), Readers Theatre (3)", "note": "Persists across both years and sits wholly inside the band. Ready to convert as is."}, {"id": "broadcast", "name": "Broadcast and Podcast Studio", "dom": "Language Arts", "tier": "B", "home": "house", "profile": "creative", "lv": [1, 2, 3], "size": 15, "readiness": "rebuild", "src": "EL Podcast Training (1 date), EL Public Speaking assemblies (5 dates), 987 School Invasion", "note": "One session of podcast training in two years. Real audience is built in, which makes it good Type III soil."}, {"id": "mtl", "name": "Mother Tongue Culture Collective", "dom": "Language Arts", "tier": "B", "home": "house", "profile": "creative", "lv": [1, 2, 3], "size": 25, "readiness": "convert", "src": "MTL Fortnight (11 dates, both years), Comics Chinese Essay Writing (5 dates), CPCLL and CPEF exposure (4)", "note": "Only 36% of MTL Fortnight sits in the band. Moving it in costs nothing and fills a house block cheaply."}, {"id": "litstage", "name": "Literature and Stage", "dom": "Language Arts", "tier": "E", "home": "house", "profile": "creative", "lv": [1, 2, 3, 4], "size": 30, "readiness": "rebuild", "src": "Literature Play Viewing (2 dates, both years, 100% band), ACJC Drama Play, ML Drama Performance", "note": "Exists only as occasional theatre trips. Cheapest possible Type I exposure club."}, {"id": "history", "name": "Junior Historical Society", "dom": "Humanities", "tier": "B", "home": "house", "profile": "inquiry", "lv": [1, 2], "size": 25, "readiness": "convert", "src": "Historical Investigation LJ (2 dates, 4x), Historical AR Trail (2 dates, 4x), History LJ (3 dates, 5x)", "note": "Three separate history journeys, all Sec 1 and 2, all inside the band. One club, three itineraries."}, {"id": "geo", "name": "Geographical Investigation Unit", "dom": "Humanities", "tier": "P", "home": "field", "profile": "inquiry", "lv": [2, 3, 4], "size": 20, "readiness": "convert", "src": "Geographical Investigation (5 dates), NUS Geography Challenge (6 dates, both years), Sustainable Neighbourhood GI, Transport GI, Bali GI", "note": "Six related programmes, 21 occurrences, already fieldwork based with an authentic external site."}, {"id": "policy", "name": "Policy and Enterprise Forum", "dom": "Humanities", "tier": "P", "home": "field", "profile": "discursive", "lv": [3, 4, 5], "size": 16, "readiness": "rebuild", "src": "Raffles Policy Dialogue (2 dates, both years, 100% band), National Cashflow Competition (2), EBS Learning Journey (1)", "note": "Persists but tiny. The only upper secondary intellectual club in the data. Grow it or lose Sec 4 entirely."}, {"id": "mun", "name": "Model UN Delegation", "dom": "Global and Civic", "tier": "P", "home": "field", "profile": "discursive", "lv": [2, 3, 4], "size": 20, "readiness": "convert", "src": "Model UN Programme (12 dates, 15x, both years, 87% in band, spans Sec 2 to 4)", "note": "Full pipeline already visible in the data: publicity talk, selection, training, mock conference, external conferences."}, {"id": "exchange", "name": "Global Exchange Corps", "dom": "Global and Civic", "tier": "P", "home": "field", "profile": "global", "lv": [3, 4], "size": 25, "readiness": "convert", "src": "NX3011 Mihara (6 dates), NX3013 New Zealand (6 dates), NX3016 Estonia e-exchange (5 dates), NX3012 Mutsuzawa (3), Korea visits (2)", "note": "27 occurrences across five exchange strands. This is NEXUS NX301 and it is the school's strongest global asset."}, {"id": "enviro", "name": "Environment Action Group", "dom": "Global and Civic", "tier": "B", "home": "house", "profile": "service", "lv": [1, 2, 3], "size": 25, "readiness": "rebuild", "src": "Urban Farms LJ, National Youth Environment Conference, World Digital Cleanup Day, Earth Alive Challenge", "note": "Four single session events in two years, one occurrence each. Nothing sustained. Obvious house cluster."}, {"id": "psl", "name": "Peer Support Corps", "dom": "Character and Service", "tier": "B", "home": "house", "profile": "service", "lv": [1, 2, 3, 4, 5], "size": 30, "readiness": "convert", "src": "Peer Support Leader Programme (12 dates, 25x, both years, 96% in band, only programme reaching all five levels)", "note": "The natural house anchor. Already vertical, already in the band. But 51 day mean gap: cadence is the fix."}, {"id": "via", "name": "House Service Corps", "dom": "Character and Service", "tier": "B", "home": "house", "profile": "service", "lv": [2, 3, 4], "size": 30, "readiness": "convert", "src": "VIA Project (27 dates, 29x, both years, 93% in band, Toa Payoh Care Corner is the recurring partner)", "note": "Highest frequency enrichment programme in the entire dataset. Already house sized. Feeds LEAPS Service."}, {"id": "lead", "name": "House Leadership Cadre", "dom": "Character and Service", "tier": "B", "home": "house", "profile": "service", "lv": [2, 3, 4], "size": 25, "readiness": "convert", "src": "Tier Three Student Leaders (10 dates), Class Committee Leaders (6 dates), Student Leadership Workshop (3), Council elections (3)", "note": "Four leadership strands running at 62 day gaps. Consolidating them into one house cadre halves the claims on the same students."}, {"id": "tech", "name": "Student Tech Champs", "dom": "Character and Service", "tier": "B", "home": "house", "profile": "creative", "lv": [2, 3], "size": 15, "readiness": "convert", "src": "Student Tech Champs (9 dates, both years) but only 22% inside the band", "note": "Persists across both years yet mostly runs outside the band. Moving it in is pure gain."}, {"id": "cyber", "name": "Cyber Wellness Advocates", "dom": "Character and Service", "tier": "E", "home": "house", "profile": "service", "lv": [1, 2, 3], "size": 30, "readiness": "rebuild", "src": "Cyber Wellness Programme (4 dates, both years), Safer Internet Day, Sec 3 PSL Cyberwellness Advocacy", "note": "Currently assembly delivered. Converting to an advocacy cluster gives it a product and an audience."}, {"id": "league", "name": "House Sport League", "dom": "Sport and Health", "tier": "E", "home": "house", "profile": "physical", "lv": [1, 2, 3, 4, 5], "size": 60, "readiness": "convert", "src": "Inter-Class Games (8 dates, both years, 100% band), Termly Sports Challenge (8 dates, 18x, all five levels), Sports Carnival, Mass Run", "note": "Already cross level and already in the band. The single easiest thing to convert to house competition."}, {"id": "lighten", "name": "Lighten Up Health Club", "dom": "Sport and Health", "tier": "B", "home": "house", "profile": "physical", "lv": [1, 2], "size": 30, "readiness": "rebuild", "src": "Lighten Up Programme (28 dates, weekly 7 day cadence, but 2024 only and 0% inside the band)", "note": "The best cadence in the entire dataset, and it disappeared in 2025. Weekly rhythm already proven achievable."}, {"id": "outdoor", "name": "Outdoor and Expedition Club", "dom": "Sport and Health", "tier": "B", "home": "house", "profile": "physical", "lv": [2, 3], "size": 25, "readiness": "new", "src": "MOE-OBS Challenge (2 dates), Cohort Camp (2 dates). No sustained outdoor provision.", "note": "Outdoor education happens only as one off camps. A term long club would prepare for them properly."}, {"id": "visual", "name": "Visual Arts Collective", "dom": "Aesthetics", "tier": "E", "home": "house", "profile": "creative", "lv": [1, 2, 3], "size": 25, "readiness": "rebuild", "src": "Art Learning Journey to National Gallery (4 dates, 2025 only, 75% band)", "note": "The only visual arts enrichment in two years, and only at Sec 1. Aesthetics is empty at Sec 3, 4 and 5."}, {"id": "perform", "name": "House Performing Arts", "dom": "Aesthetics", "tier": "E", "home": "house", "profile": "creative", "lv": [1, 2, 3, 4, 5], "size": 40, "readiness": "convert", "src": "Performing Arts-Based Learning (2 dates, both years, 100% band), house concerts, CNY, Hari Raya, Deepavali, Teachers Day", "note": "Do NOT absorb CCA performing arts. This is for the majority who are not in Band, Choir, CO or Dance."}, {"id": "industry", "name": "Industry and Work Exposure", "dom": "Careers", "tier": "B", "home": "field", "profile": "career", "lv": [3, 4], "size": 25, "readiness": "convert", "src": "PIL Industrial Attachment (12 dates, both years, 75% in band), World Skills Singapore LJ, NX3022 PIL LJ", "note": "Twelve dates across two years with a real industry partner. One of only two things reaching Sec 4 reliably."}, {"id": "pathways", "name": "Pathways and Futures", "dom": "Careers", "tier": "E", "home": "field", "profile": "career", "lv": [3, 4, 5], "size": 40, "readiness": "convert", "src": "NUS-CAPT (10 dates), NYP Course Advising (7x), ITE Exposure (4 dates), Polytechnic Open House, ECG Programme", "note": "27 occurrences, mostly Sec 4 and 5. This is what upper secondary already gets. Formalise rather than replace."}, {"id": "finlit", "name": "Financial Literacy Lab", "dom": "Careers", "tier": "B", "home": "house", "profile": "career", "lv": [2, 3], "size": 25, "readiness": "rebuild", "src": "Financial Literacy (2 dates, 2024 only), National Cashflow Competition", "note": "Two sessions in two years. Low cost, high parent approval, easy vendor supply."}], "house_models": [{"id": "class", "name": "Class anchored vertical", "how": "Each form class from Sec 1 to Sec 5 is permanently assigned to a house. House membership is inherited from class allocation at Sec 1 registration.", "pros": ["Zero new allocation machinery: house rides on the existing class list", "Form teacher becomes house tutor with no timetable change", "Matches Hua Yi and Kranji, the two closest Singapore precedents", "Survives Full Subject Based Banding because it keys off form class, not subject class"], "cons": ["House composition inherits any class composition bias", "A class that gels badly drags a whole house cohort", "Weakest on mixing: students meet the same peers they already sit with"], "cm": 1, "fit": "Highest fit for BTY. Lowest change management cost of the four."}, {"id": "random", "name": "Randomly sorted vertical", "how": "Students are randomly assigned at Sec 1, balanced for gender, banding and CCA, siblings kept together. House cuts across every class.", "pros": ["Maximum social mixing, which is the main documented benefit of houses", "Avoids trait sorting entirely, which the evidence supports", "Balanced by design rather than by accident"], "cons": ["Requires a house roll separate from the class roll and someone to maintain it", "Attendance taking in the band becomes a new administrative object", "Harder to brief through form teachers"], "cm": 3, "fit": "Best pedagogically, but adds an administrative layer BTY does not currently have."}, {"id": "faculty", "name": "Faculty aligned houses", "how": "Each house owns a domain: one house owns STEM, one Language Arts, one Humanities, and so on. Students choose or are assigned by interest.", "pros": ["Deep identity, clear ownership, strong staff expertise alignment", "Easy to resource because each house maps to an existing department"], "cons": ["Caps every talent pool at one fifth of the cohort, which inverts Renzulli", "A Beattyian in the arts house cannot do olympiad without leaving their house", "Creates a de facto streaming structure that Full Subject Based Banding is designed to dismantle"], "cm": 4, "fit": "Do not use. It contradicts both models this design rests on."}, {"id": "guild", "name": "Interest guilds, reselected annually", "how": "Students choose their house each year based on interest. Houses are effectively large interest guilds.", "pros": ["Highest motivation because membership is chosen", "Naturally aligns with enrichment cluster logic"], "cons": ["Destroys vertical continuity and the five year mentoring relationship", "Annual reallocation is heavy administration", "House competition becomes meaningless when membership churns"], "cm": 4, "fit": "Attractive on paper, unworkable as a five year pastoral structure."}], "naming": [{"id": "star", "name": "Navigational stars", "ex": "Polaris, Vega, Sirius, Canopus, Antares", "why": "Inherits the NEXUS tagline Exploring New Skies. Naval heritage from Admiral Beatty. Navigation is the literal image of a Purpose Driven Steward. Trait neutral, achievement neutral, and it will not date.", "risk": "Low. No living people, no events, no personality claims.", "score": 5}, {"id": "colour", "name": "Colour first, name second", "ex": "Navy, Gold, Crimson, Jade, Slate", "why": "Colour is the one element that survives renaming, which is what the documented cases show. Schools that renamed houses kept the colour.", "risk": "Low, but thin identity. Colour alone gives students nothing to belong to.", "score": 4}, {"id": "value", "name": "DREAM values", "ex": "Discipline, Resilience, Empathy, Adaptability, Mindfulness", "why": "Five values, five houses. Irresistibly neat and already in the school's DNA.", "risk": "High. This is trait sorting. A Beattyian assigned to Discipline House is being told what they are. Use DREAM as the five scoring domains instead, so every house competes on all five.", "score": 2}, {"id": "founder", "name": "Founders and principals", "ex": "Meyer and successors", "why": "Traditional, historically grounded, common in Singapore schools including ACS and CHIJ.", "risk": "Medium. Named person houses carry ongoing reputational exposure, and at least one school needed an audited referendum to unwind one.", "score": 3}, {"id": "hive", "name": "Hive and bee heritage", "ex": "five named hives or swarms", "why": "The bee comes from Admiral Beatty's coat of arms and already symbolises industry at BTY.", "risk": "Medium. Risks reading as juvenile at upper secondary, and five bee variants are hard to distinguish.", "score": 3}], "baseline": {"band_dates_per_year": 41, "offers_per_level_day": 1.33, "level_days_with_choice": 0.22, "level_days_empty": 0.46, "programmes": 133, "sustained": 29, "fragile": 75, "enrichment_occurrences_per_year": 302, "band_entries": 315, "band_non_enrichment": 0.27, "selective_programmes": 26, "max_selective_competing": 6, "cca_wed": 12, "cca_thu": 12, "cca_tue": 29, "cca_sat": 29, "cca_fri": 26, "cca_mon": 18}};
+const $ = s => document.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e;};
+const PROF = {analytic:'#000C53',discursive:'#3a4a8c',inquiry:'#7681b0',creative:'#b8860b',
+              service:'#1a7f4b',physical:'#c0392b',global:'#5b5f6b',career:'#9E9E9E'};
+const B = D.baseline;
+
+const cfg = {hm:'class',nm:'star',days:'both',bpd:1,cs:10,cy:3,t4:'rel',lv:4,
+             coh:1000,cc:25,fc:30,pt:15,mc:2};
+let place = {};
+
+// ---- evidence bar
+[[B.band_dates_per_year,'band days a year, about half the available Wed and Thu'],
+ [B.offers_per_level_day,'activities offered to a level on a band day'],
+ [Math.round(B.level_days_empty*100)+'%','of level days had nothing offered at all'],
+ [B.fragile+' of '+B.programmes,'programmes ran on only one or two dates'],
+ [Math.round(B.band_non_enrichment*100)+'%','of the band was not enrichment'],
+ [B.max_selective_competing,'selective programmes competing for one level in one term']
+].forEach(([n,l])=>{const d=el('div');d.appendChild(el('b','',n));d.appendChild(el('span','',l));$('#evbar').appendChild(d);});
+
+// ---- selects
+D.house_models.forEach(h=>{const o=el('option','',h.name);o.value=h.id;$('#hm').appendChild(o);});
+D.naming.forEach(n=>{const o=el('option','',n.name+' ('+n.ex.split(',')[0].trim()+'…)');o.value=n.id;$('#nm').appendChild(o);});
+[...new Set(D.clubs.map(c=>c.dom))].sort().forEach(d=>{const o=el('option','',d);o.value=d;$('#fdom').appendChild(o);});
+
+function blocks(){
+  const ds = cfg.days==='both'?['Wed','Thu']:[cfg.days];
+  const out=[];
+  ds.forEach(d=>{for(let i=1;i<=cfg.bpd;i++) out.push(d+(cfg.bpd>1?' B'+i:''));});
+  return out;
+}
+function autoPlace(){
+  const bl=blocks(); place={};
+  const wed=bl.filter(b=>b.startsWith('Wed')), thu=bl.filter(b=>b.startsWith('Thu'));
+  const houseB = wed.length?wed:bl, fieldB = thu.length?thu:bl;
+  // group field clubs by profile so same-profile clubs land in the SAME block
+  const profs=[...new Set(D.clubs.filter(c=>c.home==='field').map(c=>c.profile))];
+  const pmap={}; profs.forEach((p,i)=>pmap[p]=fieldB[i%fieldB.length]);
+  const hprofs=[...new Set(D.clubs.filter(c=>c.home==='house').map(c=>c.profile))];
+  const hmap={}; hprofs.forEach((p,i)=>hmap[p]=houseB[i%houseB.length]);
+  D.clubs.forEach(c=>{ place[c.id] = c.home==='field'? pmap[c.profile] : hmap[c.profile]; });
+}
+function levelsIn(){const a=[];for(let i=1;i<=cfg.lv;i++)a.push(i);return a;}
+
+function compute(){
+  const bl=blocks();
+  const usableWeeks = cfg.t4==='rel'?30:40;
+  const wantSessions = cfg.cs*cfg.cy;
+  const sessions = Math.min(wantSessions, usableWeeks);
+  const bandDays = sessions * (cfg.days==='both'?2:1);
+  const inBand = Math.round(cfg.coh * cfg.lv/5);
+  const houseSize = Math.round(inBand/5);
+  const clustersNeeded = Math.ceil(inBand/cfg.cc);
+  const electRate = Math.min(0.95, 0.35 + cfg.pt/100*2);
+  const thuClusters = Math.ceil(inBand*electRate/cfg.cc);
+  const facPerCluster = cfg.cc>20?1.5:1;
+  const facWed = Math.ceil(clustersNeeded*facPerCluster);
+  const facThu = Math.ceil(thuClusters*facPerCluster);
+  const hasWed = cfg.days!=='Thu', hasThu = cfg.days!=='Wed';
+  const facNeeded = Math.max(hasWed?facWed:0, hasThu?facThu:0);
+  const clustersPerHouse = Math.ceil(houseSize/cfg.cc);
+  const activeClubs = D.clubs.filter(c=>levelsIn().some(l=>c.lv.includes(l)));
+  const fieldClubs = activeClubs.filter(c=>c.home==='field');
+  const houseClubs = activeClubs.filter(c=>c.home==='house');
+  const choiceHouse = Math.min(houseClubs.length, Math.max(clustersPerHouse, 1));
+  const choiceField = fieldClubs.length / Math.max(bl.filter(b=>b.startsWith('Thu')).length||bl.length,1);
+  const choice = cfg.days==='both'? (choiceHouse+choiceField)/2 : Math.max(choiceHouse,choiceField);
+  const seats = bandDays * clustersNeeded * 0; // placeholder, not used
+  const perMonth = (cfg.days==='both'?2:1) * 4.33 * (cfg.cs/Math.max(cfg.cs,10)>1?1:1);
+  const cadencePerMonth = (cfg.days==='both'?2:1)*4.33;
+  const pursueN = Math.round(cfg.coh*cfg.pt/100);
+  // leaks: profiles spread across more than one block
+  const spread={};
+  activeClubs.forEach(c=>{const b=place[c.id]; if(!b)return; (spread[c.profile]=spread[c.profile]||new Set()).add(b);});
+  const leakProfs = Object.entries(spread).filter(([p,s])=>s.size>1).map(([p])=>p);
+  const overIdx = Object.keys(spread).length? leakProfs.length/Object.keys(spread).length : 0;
+  return {bl,sessions,bandDays,inBand,houseSize,clustersNeeded,thuClusters,facWed,facThu,facNeeded,clustersPerHouse,hasWed,hasThu,electRate,
+          activeClubs,fieldClubs,houseClubs,choice,cadencePerMonth,pursueN,leakProfs,overIdx,usableWeeks,wantSessions};
+}
+
+function render(){
+  const r=compute();
+  // metrics
+  const M=$('#metrics'); M.innerHTML='';
+  const add=(n,l,d,cls)=>{const m=el('div','m'+(cls?' '+cls:''));m.appendChild(el('b','',n));m.appendChild(el('span','',l));
+    if(d)m.appendChild(el('div','d '+(d[0]==='+'?'up':'down'),d));M.appendChild(m);};
+  add(r.bandDays, 'band days a year', (r.bandDays>B.band_dates_per_year?'+':'')+(r.bandDays-B.band_dates_per_year)+' vs 2024/25');
+  add(r.choice.toFixed(1), 'choices open to a Beattyian per block', '+'+(r.choice-B.offers_per_level_day).toFixed(1)+' vs 1.33', r.choice>=5?'good':(r.choice<3?'alert':''));
+  add(r.hasWed?r.clustersNeeded:r.thuClusters, 'clusters running at once'+(r.hasWed&&r.hasThu?' (Wed)':''));
+  if(r.hasWed&&r.hasThu) add(r.thuClusters, 'clusters at once (Thu, elective)');
+  add(r.facNeeded, 'facilitators needed, peak day', (r.facNeeded>cfg.fc?'short by '+(r.facNeeded-cfg.fc):'+'+(cfg.fc-r.facNeeded)+' spare'), r.facNeeded>cfg.fc?'alert':'good');
+  add(r.cadencePerMonth.toFixed(1), 'sessions a month for one club', r.cadencePerMonth>3?'+above Gagné busywork line':'below Gagné line', r.cadencePerMonth>3?'good':'alert');
+  add(r.pursueN, 'Beattyians in the Pursue tier');
+  add(r.houseSize, 'Beattyians per house');
+  add(Math.round((1-r.overIdx)*100)+'%', 'of student profiles protected from double claiming', '', r.overIdx>0.34?'alert':'good');
+
+  // verdict
+  const probs=[];
+  if(r.facNeeded>cfg.fc) probs.push('you are short '+(r.facNeeded-cfg.fc)+' facilitators per band day');
+  if(cfg.cs<8) probs.push('a '+cfg.cs+' session cycle is below Renzulli’s eight session floor');
+  if(r.choice<5) probs.push('only '+r.choice.toFixed(1)+' choices per Beattyian, below the five needed to rank preferences');
+  if(r.cadencePerMonth<=3) probs.push('cadence sits at or below the level Gagné calls busywork');
+  if(r.wantSessions>r.usableWeeks) probs.push((r.wantSessions-r.usableWeeks)+' sessions do not fit the usable school year');
+  if(cfg.hm==='faculty'||cfg.hm==='guild') probs.push('the chosen house model conflicts with the talent development construct');
+  const v=$('#verdict'); v.className='verdict '+(probs.length===0?'ok':probs.length<=2?'warn':'bad');
+  v.innerHTML='<h3>'+(probs.length===0?'This configuration holds':probs.length<=2?'Workable with two things to fix':'This configuration will not hold')+'</h3>'+
+   (probs.length? '<div style="font-size:13.5px;color:var(--g4)">'+probs.map(p=>'• '+p).join('<br>')+'</div>'
+    : '<div style="font-size:13.5px;color:var(--g4)">Staffing, cadence, choice and cycle length all clear their thresholds. The binding constraint now is facilitator quality, not structure.</div>');
+
+  // fidelity checks
+  const C=$('#checks'); C.innerHTML='';
+  const chk=(state,title,detail)=>{const d=el('div','chk');d.appendChild(el('div','dot '+state));
+    const b=el('div');b.appendChild(el('b','',title));b.appendChild(el('i','',detail));d.appendChild(b);C.appendChild(d);};
+  chk(cfg.cs>=10?'ok':cfg.cs>=8?'warn':'bad','Renzulli · cluster cycle length',
+      cfg.cs+' sessions per cycle. Published floor is eight; the fidelity study found a single semester restricted scope and weakened audience authenticity.');
+  chk(r.choice>=5?'ok':r.choice>=3?'warn':'bad','Renzulli · students rank five choices',
+      r.choice.toFixed(1)+' options open to a Beattyian per block. The canonical mechanic asks students to rank five and bars repeats across cycles. Baseline today is 1.33.');
+  chk(cfg.cc<=25?'ok':'bad','Renzulli · cluster size',
+      'Cap set at '+cfg.cc+'. Target is 5 to 15, up to 25 with a second adult. Above 25 the facilitator cannot run investigation.');
+  chk(cfg.pt>=15&&cfg.pt<=20?'ok':(cfg.pt>=10?'warn':'bad'),'Renzulli · revolving talent pool',
+      cfg.pt+'% of cohort in Pursue, about '+r.pursueN+' Beattyians. Renzulli 15 to 20 percent, Gagné prevalence anchor 10 percent. Today the school runs 26 selective programmes, nowhere near this.');
+  chk(r.cadencePerMonth>3?'ok':'bad','Gagné · dosage above the busywork line',
+      r.cadencePerMonth.toFixed(1)+' sessions a month. Gagné dismisses enrichment offered two or three times a month as busywork. Beatty’s current programmes average a 20 to 51 day gap, which sits below that line.');
+  chk(cfg.mc<=2?'ok':'warn','Gagné · investment concentrated not scattered',
+      'Maximum '+cfg.mc+' concurrent commitments. Talent needs sustained investment in one field, not thin spread across four.');
+  chk(r.overIdx<=0.2?'ok':r.overIdx<=0.4?'warn':'bad','Load management · collision discipline',
+      r.leakProfs.length?('Profiles split across blocks: '+r.leakProfs.join(', ')+'. Each split lets the same Beattyian be claimed twice.'):'Every student profile is confined to a single block. No double claiming is structurally possible.');
+  chk(cfg.hm==='class'?'ok':cfg.hm==='random'?'warn':'bad','Construct · houses as milieu not as talent grouping',
+      D.house_models.find(h=>h.id===cfg.hm).fit);
+  chk(cfg.lv>=4?'ok':'warn','Coverage · upper secondary included',
+      cfg.lv>=5?'Sec 1 to 5 in the band. Sec 5 currently has zero recorded enrichment in five of nine categories.':
+      cfg.lv===4?'Sec 1 to 4. Sec 5 excluded, which matches the exam calendar but leaves the vertical house incomplete.':
+      'Sec 1 to 3 only. A vertical house that stops at Sec 3 is not vertical, and Sec 4 already has zero recorded STEM enrichment.');
+
+  // blocks
+  const G=$('#blocks'); G.innerHTML='';
+  G.style.gridTemplateColumns='repeat('+Math.min(r.bl.length+1,5)+',1fr)';
+  const cols={}; r.bl.concat(['Not running']).forEach(b=>{
+    const c=el('div','blockcol'+(b==='Not running'?' off':''));
+    c.appendChild(el('h4','',b==='Not running'?b:(b+(b.startsWith('Wed')?' · house band':' · pathway band'))));
+    cols[b]=c; G.appendChild(c);});
+  const spreadNow={};
+  r.activeClubs.forEach(c=>{const b=place[c.id]; if(b)(spreadNow[c.profile]=spreadNow[c.profile]||new Set()).add(b);});
+  r.activeClubs.forEach(c=>{
+    const b=place[c.id]&&cols[place[c.id]]?place[c.id]:'Not running';
+    const leak = spreadNow[c.profile] && spreadNow[c.profile].size>1;
+    const ch=el('div','chip'+(leak?' leak':''));
+    ch.innerHTML='<span class="pf" style="background:'+PROF[c.profile]+'">'+c.profile+'</span>'+
+      c.name+'<small>'+c.dom+' · tier '+c.tier+' · Sec '+c.lv.join('/')+'</small>';
+    ch.onclick=()=>{const all=r.bl.concat(['Not running']);const i=all.indexOf(b);place[c.id]=all[(i+1)%all.length];render();};
+    cols[b].appendChild(ch);});
+  $('#leaknote').innerHTML = r.leakProfs.length
+    ? '<b>'+r.leakProfs.length+' profile'+(r.leakProfs.length>1?'s are':' is')+' leaking: '+r.leakProfs.join(', ')+'.</b> Clubs recruiting these students sit in different blocks, so one Beattyian can be claimed by both. In 2024 Term 1, Secondary 3 had six selective programmes live at once for what was almost certainly the same forty or fifty students. Click a club to move it and close the leak.'
+    : '<b>No leaks.</b> Every recruiting profile is confined to one block, so a Beattyian can hold at most one commitment from each. This is the structural fix for the six way pile up the 2024 calendar shows at Secondary 3.';
+
+  // tradeoffs
+  const hm=D.house_models.find(h=>h.id===cfg.hm), nmv=D.naming.find(n=>n.id===cfg.nm);
+  const P=[], N=[];
+  P.push(...hm.pros); N.push(...hm.cons);
+  if(cfg.days==='both'){P.push('Two bands let exploration and pursuit sit on different days, so a house commitment never competes with a field commitment');}
+  else {N.push('A single band day forces exploration and pursuit into the same slot, which means a Beattyian must choose between belonging and mastery');}
+  if(cfg.bpd===2){P.push('Two blocks a day doubles the collision sets available, giving finer control over who can hold what');
+                  N.push('Two blocks doubles transition friction and roughly doubles facilitator demand');}
+  if(cfg.t4==='rel'){P.push('Releasing Term 4 turns the observed October to December collapse into a stated design choice rather than an annual failure');}
+  else {N.push('Protecting Term 4 fights the national examination calendar and every prior year of evidence from this calendar');}
+  if(cfg.lv===5){P.push('Sec 5 inclusion closes the five empty coverage cells at that level');N.push('Sec 5 is the hardest cohort to protect against prelims and the GCE timetable');}
+  if(cfg.lv===3){N.push('Sec 4 already shows zero recorded STEM enrichment; excluding it makes the gap permanent');}
+  if(r.facNeeded>cfg.fc){N.push('Peak facilitator demand of '+r.facNeeded+' exceeds the '+cfg.fc+' available, and the recorded mean today is 2.9 programmes per band day, so this is a large jump');}
+  else {P.push('Peak facilitator demand of '+r.facNeeded+' sits inside the '+cfg.fc+' available, and the Thursday pathway band needs only '+r.facThu+' because it is elective');}
+  if(cfg.mc===1){P.push('A single commitment guarantees depth');N.push('A single commitment prevents a Beattyian from pairing service with pursuit, which is the most common healthy combination');}
+  if(cfg.mc>=3){N.push('Three or more concurrent commitments reproduces exactly the pattern the 2024 data shows at Secondary 3');}
+  P.push('Naming: '+nmv.why);
+  N.push('Naming risk: '+nmv.risk);
+  $('#pros').innerHTML='<h3>What this buys you</h3><ul class="tight pro">'+P.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+  $('#cons').innerHTML='<h3>What it costs you</h3><ul class="tight con">'+N.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+
+  $('#hmHint').textContent=hm.how;
+  $('#nmHint').textContent=nmv.ex;
+  $('#csV').textContent='· '+cfg.cs; $('#cohV').textContent='· '+cfg.coh;
+  $('#ccV').textContent='· '+cfg.cc; $('#fcV').textContent='· '+cfg.fc;
+  $('#ptV').textContent='· '+cfg.pt+'%'; $('#mcV').textContent='· '+cfg.mc;
+  renderTable();
+}
+
+let sortK='readiness',sortD=1;
+function renderTable(){
+  const fd=$('#fdom').value, ft=$('#ftier').value, fr=$('#fready').value;
+  const ORD={convert:0,rebuild:1,new:2}, TORD={P:0,B:1,E:2};
+  let rows=D.clubs.filter(c=>(!fd||c.dom===fd)&&(!ft||c.tier===ft)&&(!fr||c.readiness===fr));
+  rows.sort((a,b)=>{
+    let x=a[sortK],y=b[sortK];
+    if(sortK==='readiness'){x=ORD[x];y=ORD[y];}
+    if(sortK==='tier'){x=TORD[x];y=TORD[y];}
+    if(sortK==='lvs'){x=a.lv[0];y=b.lv[0];}
+    if(typeof x==='string')return sortD*x.localeCompare(y);
+    return sortD*(x-y);});
+  const tb=$('#ctab tbody'); tb.innerHTML='';
+  rows.forEach(c=>{
+    const active=levelsIn().some(l=>c.lv.includes(l));
+    const tr=el('tr',active?'':'dim');
+    tr.innerHTML='<td><b>'+c.name+'</b></td><td>'+c.dom+'</td><td><span class="tag '+c.tier+'">'+
+      ({E:'Explore',B:'Build',P:'Pursue'}[c.tier])+'</span></td><td>'+(c.home==='house'?'House band':'Pathway band')+
+      '</td><td><span class="tag" style="border-color:'+PROF[c.profile]+';color:'+PROF[c.profile]+'">'+c.profile+'</span></td><td>Sec '+c.lv.join(', ')+
+      '</td><td><span class="tag '+c.readiness+'">'+c.readiness+'</span></td>';
+    tr.onclick=()=>{$('#cdetail').innerHTML='<div class="note"><b>'+c.name+'</b><br><b>Traced to:</b> '+c.src+'<br><b>Read:</b> '+c.note+'</div>';
+      $('#cdetail').scrollIntoView({behavior:'smooth',block:'nearest'});};
+    tr.style.cursor='pointer';
+    tb.appendChild(tr);});
+  $('#ccount').textContent=rows.length+' of '+D.clubs.length+' clubs · click a row for its evidence trail';
+}
+document.querySelectorAll('#ctab th').forEach(th=>th.onclick=()=>{
+  const k=th.dataset.k; if(k===sortK)sortD=-sortD; else{sortK=k;sortD=1;} renderTable();});
+['fdom','ftier','fready'].forEach(i=>$('#'+i).onchange=renderTable);
+
+// comparisons
+$('#hmcmp').innerHTML=D.house_models.map(h=>'<details'+(h.id==='class'?' open':'')+'><summary>'+h.name+
+ ' <span class="tag">change management load '+h.cm+' of 5</span></summary><p style="font-size:13.5px;color:var(--g4);margin:4px 0">'+h.how+'</p>'+
+ '<div class="two"><div><h4>For</h4><ul class="tight pro">'+h.pros.map(x=>'<li>'+x+'</li>').join('')+
+ '</ul></div><div><h4>Against</h4><ul class="tight con">'+h.cons.map(x=>'<li>'+x+'</li>').join('')+
+ '</ul></div></div><div class="note">'+h.fit+'</div></details>').join('');
+$('#nmcmp').innerHTML=D.naming.map(n=>'<details'+(n.id==='star'?' open':'')+'><summary>'+n.name+
+ ' <span class="tag">'+n.score+' of 5</span></summary><p style="font-size:13.5px;margin:4px 0"><b>Example set:</b> '+n.ex+
+ '</p><p style="font-size:13.5px;color:var(--g4);margin:4px 0">'+n.why+'</p><div class="note"><b>Risk.</b> '+n.risk+'</div></details>').join('');
+
+// bindings
+$('#hm').onchange=e=>{cfg.hm=e.target.value;render();};
+$('#nm').onchange=e=>{cfg.nm=e.target.value;render();};
+['cs','coh','cc','fc','pt','mc'].forEach(id=>$('#'+id).oninput=e=>{cfg[id]=+e.target.value;render();});
+[['days','days'],['bpd','bpd'],['cy','cy'],['t4','t4'],['lv','lv']].forEach(([id,key])=>{
+  $('#'+id).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    $('#'+id).querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const v=b.dataset.v; cfg[key]=isNaN(+v)?v:+v;
+    if(key==='days'||key==='bpd') autoPlace();
+    render();});});
+$('#auto').onclick=()=>{autoPlace();render();};
+$('#reset').onclick=()=>{Object.assign(cfg,{hm:'class',nm:'star',days:'both',bpd:1,cs:10,cy:3,t4:'rel',lv:4,coh:1000,cc:25,fc:30,pt:15,mc:2});
+  $('#hm').value='class';$('#nm').value='star';
+  $('#cs').value=10;$('#coh').value=1000;$('#cc').value=25;$('#fc').value=30;$('#pt').value=15;$('#mc').value=2;
+  [['days','both'],['bpd','1'],['cy','3'],['t4','rel'],['lv','4']].forEach(([id,v])=>{
+    $('#'+id).querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));});
+  autoPlace();render();};
+
+autoPlace(); render();
+</script></body></html>

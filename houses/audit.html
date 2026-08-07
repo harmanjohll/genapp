@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTY Enrichment Audit 2024 and 2025</title>
+<style>
+:root{
+  --navy:#000C53; --navy-8:#0a1a6b; --navy-6:#3a4a8c; --navy-4:#7681b0; --navy-2:#b6bdd6;
+  --yellow:#FFE200; --red:#EC3237;
+  --g1:#F5F5F5; --g2:#E4E6EC; --g3:#9E9E9E; --g4:#424242; --ink:#212121;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);
+  font-family:Calibri,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.55}
+h1,h2,h3{font-family:Georgia,serif;color:var(--navy);margin:0 0 .35em}
+h1{font-size:31px;line-height:1.2}
+h2{font-size:21px;margin-top:0}
+h3{font-size:15px;letter-spacing:.02em}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 26px 70px}
+header{border-bottom:3px solid var(--navy);padding-bottom:18px;margin-bottom:26px}
+.sub{color:var(--g4);font-size:14.5px;max-width:760px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin:24px 0 34px}
+.kpi{border:1px solid var(--g2);border-top:4px solid var(--navy);padding:13px 14px;background:#fff}
+.kpi .n{font-family:Georgia,serif;font-size:30px;color:var(--navy);line-height:1}
+.kpi .l{font-size:12.5px;color:var(--g4);margin-top:5px}
+.kpi.hl{border-top-color:var(--yellow)}
+.kpi.hl .n{color:var(--navy)}
+section{margin:0 0 42px}
+.lead{max-width:820px;color:var(--g4);margin:0 0 18px;font-size:14.5px}
+.bar-row{display:grid;grid-template-columns:250px 1fr 54px;gap:12px;align-items:center;margin-bottom:7px}
+.bar-lab{font-size:13.5px;text-align:right;color:var(--ink)}
+.bar-track{background:var(--g1);height:20px;position:relative;overflow:hidden}
+.bar-fill{height:100%;background:var(--navy)}
+.bar-val{font-size:13px;color:var(--g4);font-variant-numeric:tabular-nums}
+.split{display:flex;height:20px;background:var(--g1)}
+.split i{display:block;height:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--g4);margin:0 0 14px}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;display:inline-block}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{background:var(--navy);color:#fff;font-family:Georgia,serif;font-weight:normal;
+   text-align:left;padding:8px 9px;font-size:13px;cursor:pointer;user-select:none}
+th:hover{background:var(--navy-8)}
+td{padding:6px 9px;border-bottom:1px solid var(--g2);vertical-align:top}
+tr.dim td{color:var(--g3)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;padding:1px 7px;font-size:11.5px;background:var(--g1);
+      border:1px solid var(--g2);color:var(--g4);white-space:nowrap}
+.chip.enr{background:#fffbe0;border-color:var(--yellow);color:#5c5200}
+.chip.non{background:var(--g1);color:var(--g3)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+input[type=search],select{font-family:inherit;font-size:13.5px;padding:6px 9px;
+  border:1px solid var(--g2);background:#fff;color:var(--ink)}
+input[type=search]{min-width:250px}
+.tblwrap{max-height:520px;overflow:auto;border:1px solid var(--g2)}
+details{border-left:3px solid var(--g2);padding:0 0 0 14px;margin:0 0 10px}
+details[open]{border-left-color:var(--yellow)}
+summary{cursor:pointer;font-family:Georgia,serif;color:var(--navy);font-size:15px;
+  padding:6px 0;list-style:none;display:flex;justify-content:space-between;gap:14px}
+summary::-webkit-details-marker{display:none}
+summary .c{font-family:Calibri,sans-serif;font-size:13px;color:var(--g4);font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}.bar-row{grid-template-columns:150px 1fr 46px}}
+.heat{display:flex;gap:3px;align-items:flex-end;height:110px;margin-top:8px}
+.heat div{flex:1;background:var(--navy);min-height:2px;position:relative}
+.heat div.y25{background:var(--navy-6)}
+.heatlab{display:flex;gap:3px;font-size:9.5px;color:var(--g3);margin-top:5px}
+.heatlab span{flex:1;text-align:center;overflow:hidden}
+.note{background:var(--g1);border-left:4px solid var(--yellow);padding:13px 16px;font-size:14px;
+  color:var(--g4);margin:16px 0}
+.note b{color:var(--navy)}
+footer{margin-top:56px;border-top:1px solid var(--g2);padding-top:16px;font-size:12px;color:var(--g3)}
+.ribbon{background:var(--navy);color:#fff;padding:11px 18px;display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:10px;margin-top:44px;font-size:12.5px}
+.ribbon .motto{font-family:Georgia,serif;font-style:italic;color:var(--yellow)}
+
+.gnav{background:#000C53;padding:0 20px;font-family:Calibri,"Segoe UI",system-ui,sans-serif}
+.gnav div{max-width:1300px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
+.gnav a{color:#fff;text-decoration:none;font-size:12.5px;padding:9px 13px;opacity:.72;border-bottom:3px solid transparent}
+.gnav a:hover{opacity:1}
+.gnav a.on{opacity:1;border-bottom-color:#FFE200;font-weight:bold}
+.gnav b{color:#FFE200;font-family:Georgia,serif;font-size:13px;padding:9px 13px 9px 0;letter-spacing:.02em}
+</style></head><body><nav class="gnav"><div><b>BTY House System</b><a href="./">Overview</a><a href="studio.html">House Studio</a><a href="audit.html" class="on">Enrichment audit</a><a href="configurator.html">Band configurator</a><a href="NOTES.md">Notes</a><a href="REPORT.md">Report</a></div></nav><div class="wrap">
+
+<header>
+  <h1>Enrichment activity audit</h1>
+  <div class="sub">Every calendar item in the beattyadmin mailbox, 1 January 2024 to 31 December 2025, opened, decomposed and classified. The Wednesday and Thursday 3pm to 6pm band is treated as the unit of interest; everything else is included for contrast.</div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<section>
+  <h2>What the enrichment band was actually used for</h2>
+  <p class="lead">The band runs on a container card: a Level by banding-group table that departments fill in each week. Each filled cell is one entry. This is the honest picture of how the slot was spent, including the ways it was not spent on enrichment.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--navy)"></i>Enrichment</span>
+    <span><i class="sw" style="background:var(--g3)"></i>Not enrichment</span>
+  </div>
+  <div id="band"></div>
+  <div class="note" id="bandnote"></div>
+</section>
+
+<section>
+  <h2>Enrichment by category</h2>
+  <p class="lead">Counts are recorded occurrences, not student headcount. Expand a category to see its sub-categories and the year-on-year movement.</p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--navy)"></i>2024</span>
+    <span><i class="sw" style="background:var(--navy-4)"></i>2025</span>
+  </div>
+  <div id="cats"></div>
+</section>
+
+<section class="grid2">
+  <div>
+    <h2>Rhythm across the year</h2>
+    <p class="lead">Enrichment occurrences per month. The band thins sharply from October as the examination calendar takes over.</p>
+    <div class="heat" id="heat"></div>
+    <div class="heatlab" id="heatlab"></div>
+  </div>
+  <div>
+    <h2>Level reach</h2>
+    <p class="lead">Entries recorded against each level across all container cards.</p>
+    <div id="levels"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Every programme</h2>
+  <p class="lead">The working list. Sort by any column, filter by category, or search a name. Band share is the proportion of a programme's occurrences that fall inside the Wednesday and Thursday slot rather than elsewhere in the week.</p>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search programme, category or sub-category">
+    <select id="fc"><option value="">All categories</option></select>
+    <span id="count" style="font-size:13px;color:var(--g4)"></span>
+  </div>
+  <div class="tblwrap"><table id="ptab">
+    <thead><tr>
+      <th data-k="p">Programme</th><th data-k="sub">Sub-category</th>
+      <th data-k="y24" class="num">2024</th><th data-k="y25" class="num">2025</th>
+      <th data-k="n" class="num">Total</th><th data-k="bandpc" class="num">Band share</th>
+      <th data-k="first">First seen</th><th data-k="last">Last seen</th>
+    </tr></thead><tbody></tbody>
+  </table></div>
+</section>
+
+<div class="ribbon">
+  <span>Beatty Secondary School</span>
+  <span class="motto">Non Vi Sed Arte</span>
+  <span>Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</span>
+</div>
+
+<footer>
+  Built from the beattyadmin Outlook calendar. Frequency counts occurrences recorded on the calendar, not student headcount or contact hours. Where a department left a card blank, the activity is invisible to this audit; under-recording is likely and is itself a finding.
+</footer>
+</div>
+
+<script>
+const D = {"meta": {"total_events": 1148, "atomic": 1380, "enrichment": 605, "programmes": 133, "cards_2024": 38, "cards_2025": 45, "band_entries": 315, "band_enrichment": 229, "band_unfilled": 7}, "cats": [{"code": "1", "name": "STEM", "n": 69, "y24": 37, "y25": 32, "subs": [{"code": "1.1", "name": "Mathematics olympiad and contest", "n": 42, "y24": 21, "y25": 21}, {"code": "1.2", "name": "Science olympiad and competition", "n": 8, "y24": 6, "y25": 2}, {"code": "1.3", "name": "Applied STEM and NEXUS modules", "n": 14, "y24": 10, "y25": 4}, {"code": "1.4", "name": "Design, making and sustainability tech", "n": 5, "y24": 0, "y25": 5}]}, {"code": "2", "name": "Language Arts", "n": 91, "y24": 43, "y25": 48, "subs": [{"code": "2.1", "name": "English writing and literature", "n": 32, "y24": 20, "y25": 12}, {"code": "2.2", "name": "Oracy, debate and performance", "n": 35, "y24": 19, "y25": 16}, {"code": "2.3", "name": "Mother Tongue enrichment", "n": 20, "y24": 4, "y25": 16}, {"code": "2.4", "name": "Language benchmarking and external tests", "n": 4, "y24": 0, "y25": 4}]}, {"code": "3", "name": "Humanities and Social Science", "n": 41, "y24": 25, "y25": 16, "subs": [{"code": "3.1", "name": "Historical inquiry", "n": 15, "y24": 10, "y25": 5}, {"code": "3.2", "name": "Geographical inquiry", "n": 21, "y24": 11, "y25": 10}, {"code": "3.3", "name": "Policy, economics and social studies", "n": 5, "y24": 4, "y25": 1}]}, {"code": "4", "name": "Global and Civic Engagement", "n": 46, "y24": 23, "y25": 23, "subs": [{"code": "4.1", "name": "Model UN", "n": 15, "y24": 8, "y25": 7}, {"code": "4.2", "name": "International exchange", "n": 27, "y24": 12, "y25": 15}, {"code": "4.3", "name": "Environment and sustainability citizenship", "n": 4, "y24": 3, "y25": 1}]}, {"code": "5", "name": "Character, Leadership and Service", "n": 113, "y24": 57, "y25": 56, "subs": [{"code": "5.1", "name": "Peer Support Leader training", "n": 24, "y24": 9, "y25": 15}, {"code": "5.2", "name": "Student leadership development", "n": 43, "y24": 25, "y25": 18}, {"code": "5.3", "name": "VIA and community service", "n": 31, "y24": 18, "y25": 13}, {"code": "5.4", "name": "Cyber wellness and CCE advocacy", "n": 15, "y24": 5, "y25": 10}]}, {"code": "6", "name": "Sports, Health and Outdoor", "n": 77, "y24": 50, "y25": 27, "subs": [{"code": "6.1", "name": "Fitness testing", "n": 11, "y24": 5, "y25": 6}, {"code": "6.2", "name": "Recreational and inter-class sport", "n": 62, "y24": 42, "y25": 20}, {"code": "6.3", "name": "Outdoor and adventure education", "n": 4, "y24": 3, "y25": 1}]}, {"code": "7", "name": "Aesthetics and Performing Arts", "n": 78, "y24": 32, "y25": 46, "subs": [{"code": "7.1", "name": "Visual arts", "n": 4, "y24": 0, "y25": 4}, {"code": "7.2", "name": "Performing arts", "n": 74, "y24": 32, "y25": 42}]}, {"code": "8", "name": "Education and Career Guidance", "n": 42, "y24": 28, "y25": 14, "subs": [{"code": "8.1", "name": "Post-secondary exposure", "n": 27, "y24": 16, "y25": 11}, {"code": "8.2", "name": "Industry and work exposure", "n": 13, "y24": 10, "y25": 3}, {"code": "8.3", "name": "Financial literacy", "n": 2, "y24": 2, "y25": 0}]}, {"code": "9", "name": "Uniformed Groups and CCA-linked", "n": 48, "y24": 19, "y25": 29, "subs": [{"code": "9.1", "name": "Uniformed group training", "n": 46, "y24": 19, "y25": 27}, {"code": "9.2", "name": "Other CCA-linked enrichment", "n": 2, "y24": 0, "y25": 2}]}], "band": [{"code": "10.1", "name": "Oral examinations", "n": 41, "enr": false}, {"code": "1.1", "name": "Mathematics olympiad and contest", "n": 33, "enr": true}, {"code": "10.3", "name": "ICT training and device rollout", "n": 31, "enr": false}, {"code": "6.2", "name": "Recreational and inter-class sport", "n": 25, "enr": true}, {"code": "2.1", "name": "English writing and literature", "n": 24, "enr": true}, {"code": "5.3", "name": "VIA and community service", "n": 20, "enr": true}, {"code": "5.1", "name": "Peer Support Leader training", "n": 20, "enr": true}, {"code": "2.2", "name": "Oracy, debate and performance", "n": 20, "enr": true}, {"code": "3.1", "name": "Historical inquiry", "n": 15, "enr": true}, {"code": "3.2", "name": "Geographical inquiry", "n": 12, "enr": true}, {"code": "6.1", "name": "Fitness testing", "n": 11, "enr": true}, {"code": "4.1", "name": "Model UN", "n": 10, "enr": true}, {"code": "8.1", "name": "Post-secondary exposure", "n": 10, "enr": true}, {"code": "10.5", "name": "Slot held but unfilled", "n": 7, "enr": false}, {"code": "10.4", "name": "Surveys, briefings, staff and admin", "n": 5, "enr": false}, {"code": "1.4", "name": "Design, making and sustainability tech", "n": 5, "enr": true}, {"code": "4.2", "name": "International exchange", "n": 5, "enr": true}, {"code": "2.3", "name": "Mother Tongue enrichment", "n": 4, "enr": true}, {"code": "5.2", "name": "Student leadership development", "n": 3, "enr": true}, {"code": "1.3", "name": "Applied STEM and NEXUS modules", "n": 2, "enr": true}, {"code": "2.4", "name": "Language benchmarking and external tests", "n": 2, "enr": true}, {"code": "10.2", "name": "Examinations, prelims and supplementary academic support", "n": 2, "enr": false}, {"code": "7.1", "name": "Visual arts", "n": 2, "enr": true}, {"code": "4.3", "name": "Environment and sustainability citizenship", "n": 1, "enr": true}, {"code": "3.3", "name": "Policy, economics and social studies", "n": 1, "enr": true}, {"code": "6.3", "name": "Outdoor and adventure education", "n": 1, "enr": true}, {"code": "5.4", "name": "Cyber wellness and CCE advocacy", "n": 1, "enr": true}, {"code": "8.3", "name": "Financial literacy", "n": 1, "enr": true}, {"code": "9.1", "name": "Uniformed group training", "n": 1, "enr": true}], "progs": [{"p": "987 School Invasion", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 1, "y24": 1, "y25": 0, "band": 1, "first": "2024-04-04", "last": "2024-04-04", "levels": []}, {"p": "Aesthetics Week", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-07-08", "last": "2024-07-08", "levels": []}, {"p": "Art Learning Journey", "code": "7.1", "cat": "Aesthetics and Performing Arts", "sub": "Visual arts", "n": 4, "y24": 0, "y25": 4, "band": 3, "first": "2025-07-02", "last": "2025-07-10", "levels": ["Sec 1"]}, {"p": "AstroChallenge", "code": "1.2", "cat": "STEM", "sub": "Science olympiad and competition", "n": 2, "y24": 2, "y25": 0, "band": 0, "first": "2024-06-01", "last": "2024-06-03", "levels": []}, {"p": "Bali Geographical Investigation", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 3, "y24": 2, "y25": 1, "band": 0, "first": "2024-05-24", "last": "2025-06-23", "levels": ["Sec 3"]}, {"p": "Band Exchange", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-03-18", "last": "2025-03-18", "levels": []}, {"p": "Boys' Brigade Programme", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 3, "y24": 1, "y25": 2, "band": 0, "first": "2024-01-16", "last": "2025-10-18", "levels": []}, {"p": "CCA Performing Arts Session", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 15, "y24": 0, "y25": 15, "band": 0, "first": "2025-01-25", "last": "2025-04-05", "levels": []}, {"p": "CCA Trials and Experience", "code": "9.2", "cat": "Uniformed Groups and CCA-linked", "sub": "Other CCA-linked enrichment", "n": 2, "y24": 0, "y25": 2, "band": 0, "first": "2025-01-06", "last": "2025-01-07", "levels": ["Sec 1"]}, {"p": "CO Performance at Istana (Time TBC)", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-07-28", "last": "2024-07-28", "levels": []}, {"p": "Chemistry Olympiad", "code": "1.2", "cat": "STEM", "sub": "Science olympiad and competition", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-05-28", "last": "2025-05-28", "levels": []}, {"p": "Chinese New Year Celebrations", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 6, "y24": 3, "y25": 3, "band": 1, "first": "2024-01-31", "last": "2025-01-28", "levels": []}, {"p": "Chingay", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 8, "y24": 8, "y25": 0, "band": 1, "first": "2024-01-13", "last": "2024-02-24", "levels": []}, {"p": "Circular Classroom Upcycling Workshop", "code": "1.4", "cat": "STEM", "sub": "Design, making and sustainability tech", "n": 4, "y24": 0, "y25": 4, "band": 4, "first": "2025-03-13", "last": "2025-04-24", "levels": ["Sec 2"]}, {"p": "Class Bonding", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 2, "y24": 2, "y25": 0, "band": 1, "first": "2024-04-22", "last": "2024-10-23", "levels": ["Sec 3"]}, {"p": "Class Committee Leaders Development", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 6, "y24": 4, "y25": 2, "band": 5, "first": "2024-01-17", "last": "2025-04-23", "levels": ["Sec 1", "Sec 1-5"]}, {"p": "Cohort Camp / Cohesion", "code": "6.3", "cat": "Sports, Health and Outdoor", "sub": "Outdoor and adventure education", "n": 2, "y24": 2, "y25": 0, "band": 1, "first": "2024-04-22", "last": "2024-05-23", "levels": ["Sec 1", "Sec 3"]}, {"p": "Combined UG Training", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 2, "y24": 0, "y25": 2, "band": 0, "first": "2025-01-24", "last": "2025-02-21", "levels": ["Sec 2"]}, {"p": "Comics Chinese Essay Writing Workshop", "code": "2.3", "cat": "Language Arts", "sub": "Mother Tongue enrichment", "n": 5, "y24": 0, "y25": 5, "band": 5, "first": "2025-04-02", "last": "2025-05-21", "levels": ["Sec 1"]}, {"p": "Community Partnership Event", "code": "5.3", "cat": "Character, Leadership and Service", "sub": "VIA and community service", "n": 2, "y24": 2, "y25": 0, "band": 0, "first": "2024-03-02", "last": "2024-07-20", "levels": []}, {"p": "Composting Workshop", "code": "1.4", "cat": "STEM", "sub": "Design, making and sustainability tech", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-04-03", "last": "2025-04-03", "levels": ["Sec 2"]}, {"p": "Creative Writing Programme", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 12, "y24": 12, "y25": 0, "band": 12, "first": "2024-01-31", "last": "2024-05-15", "levels": ["Sec 2", "Sec 3"]}, {"p": "Cyber Wellness Programme", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 4, "y24": 1, "y25": 3, "band": 0, "first": "2024-10-22", "last": "2025-09-01", "levels": ["all levels"]}, {"p": "Deaf Awareness Week", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-08-25", "last": "2025-08-25", "levels": ["Sec 1-3"]}, {"p": "Deepavali Celebrations", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 1, "y25": 1, "band": 1, "first": "2024-10-14", "last": "2025-10-15", "levels": []}, {"p": "EBS Learning Journey", "code": "3.3", "cat": "Humanities and Social Science", "sub": "Policy, economics and social studies", "n": 1, "y24": 1, "y25": 0, "band": 1, "first": "2024-02-29", "last": "2024-02-29", "levels": ["Sec 4"]}, {"p": "ECG Programme", "code": "8.1", "cat": "Education and Career Guidance", "sub": "Post-secondary exposure", "n": 5, "y24": 5, "y25": 0, "band": 1, "first": "2024-04-22", "last": "2024-10-21", "levels": ["Sec 2", "Sec 3", "Sec 4", "Sec 5"]}, {"p": "EL AA Learning Journey", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 4, "y24": 4, "y25": 0, "band": 4, "first": "2024-03-28", "last": "2024-05-02", "levels": ["Sec 1"]}, {"p": "EL Benchmarking with GUI", "code": "2.4", "cat": "Language Arts", "sub": "Language benchmarking and external tests", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-05-15", "last": "2025-05-15", "levels": ["Sec 2"]}, {"p": "EL Comprehension Workshop", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-04-22", "last": "2024-04-22", "levels": ["Sec 5"]}, {"p": "EL Debate Fest", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 4, "y24": 3, "y25": 1, "band": 2, "first": "2024-08-27", "last": "2025-08-14", "levels": ["Sec 3"]}, {"p": "EL Debate Workshop", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 6, "y24": 3, "y25": 3, "band": 6, "first": "2024-02-29", "last": "2025-03-06", "levels": ["Sec 3"]}, {"p": "EL InConversation", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-10-27", "last": "2025-10-27", "levels": ["Sec 3"]}, {"p": "EL NIE Comprehension Test", "code": "2.4", "cat": "Language Arts", "sub": "Language benchmarking and external tests", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-05-08", "last": "2025-05-08", "levels": ["Sec 3"]}, {"p": "EL Oracy Workshop", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 2, "y24": 2, "y25": 0, "band": 0, "first": "2024-04-22", "last": "2024-04-22", "levels": ["Sec 4"]}, {"p": "EL Oral Mock Practice", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 6, "y24": 6, "y25": 0, "band": 0, "first": "2024-04-22", "last": "2024-04-22", "levels": ["Sec 4", "Sec 5"]}, {"p": "EL Oral Timed Practice", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 3, "y24": 0, "y25": 3, "band": 1, "first": "2025-04-29", "last": "2025-05-09", "levels": ["Sec 4", "Sec 4, Sec 5"]}, {"p": "EL Outreach Collaboration", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 2, "y24": 0, "y25": 2, "band": 0, "first": "2025-05-24", "last": "2025-05-31", "levels": ["Sec 2"]}, {"p": "EL PESA Competition Training", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 2, "y24": 2, "y25": 0, "band": 0, "first": "2024-05-20", "last": "2024-05-21", "levels": []}, {"p": "EL Podcast Training", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-03-13", "last": "2025-03-13", "levels": ["Sec 2"]}, {"p": "EL Public Speaking (Assembly)", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 5, "y24": 0, "y25": 5, "band": 0, "first": "2025-02-17", "last": "2025-07-28", "levels": []}, {"p": "EL Writing Workshop", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 6, "y24": 0, "y25": 6, "band": 3, "first": "2025-01-20", "last": "2025-02-06", "levels": ["Sec 1"]}, {"p": "Earth Alive Inter-School Challenge", "code": "4.3", "cat": "Global and Civic Engagement", "sub": "Environment and sustainability citizenship", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-07-08", "last": "2024-07-08", "levels": []}, {"p": "Financial Literacy", "code": "8.3", "cat": "Education and Career Guidance", "sub": "Financial literacy", "n": 2, "y24": 2, "y25": 0, "band": 1, "first": "2024-04-22", "last": "2024-10-23", "levels": ["Sec 1", "Sec 3"]}, {"p": "First Aid Certification", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-03-18", "last": "2025-03-18", "levels": []}, {"p": "Food Science Programme with HCI", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-10-14", "last": "2024-10-14", "levels": []}, {"p": "Founder Forge Leadership Training", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-10-16", "last": "2025-10-16", "levels": []}, {"p": "Geographical Investigation", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 5, "y24": 5, "y25": 0, "band": 5, "first": "2024-04-03", "last": "2024-07-11", "levels": ["Sec 2", "Sec 3"]}, {"p": "Geography Learning Journey", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 3, "y24": 1, "y25": 2, "band": 0, "first": "2024-06-28", "last": "2025-07-04", "levels": ["Sec 4"]}, {"p": "Hari Raya Celebrations", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 1, "y25": 1, "band": 1, "first": "2024-04-29", "last": "2025-04-24", "levels": []}, {"p": "Historical AR Trail", "code": "3.1", "cat": "Humanities and Social Science", "sub": "Historical inquiry", "n": 4, "y24": 4, "y25": 0, "band": 4, "first": "2024-07-04", "last": "2024-07-18", "levels": ["Sec 2"]}, {"p": "Historical Investigation LJ", "code": "3.1", "cat": "Humanities and Social Science", "sub": "Historical inquiry", "n": 4, "y24": 4, "y25": 0, "band": 4, "first": "2024-02-29", "last": "2024-03-07", "levels": ["Sec 1"]}, {"p": "History Learning Journey", "code": "3.1", "cat": "Humanities and Social Science", "sub": "Historical inquiry", "n": 5, "y24": 0, "y25": 5, "band": 5, "first": "2025-03-05", "last": "2025-04-10", "levels": ["Sec 1"]}, {"p": "Humanities/Museum LJ", "code": "3.1", "cat": "Humanities and Social Science", "sub": "Historical inquiry", "n": 2, "y24": 2, "y25": 0, "band": 1, "first": "2024-04-22", "last": "2024-05-02", "levels": ["Sec 1", "Sec 2"]}, {"p": "I Am Talented Programme", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 0, "y25": 2, "band": 0, "first": "2025-05-24", "last": "2025-05-31", "levels": []}, {"p": "IFD Fringe Activities", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-04-09", "last": "2025-04-09", "levels": []}, {"p": "IFD Lunch Time Concert", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-04-05", "last": "2024-04-05", "levels": []}, {"p": "ITE Exposure Programme", "code": "8.1", "cat": "Education and Career Guidance", "sub": "Post-secondary exposure", "n": 4, "y24": 3, "y25": 1, "band": 4, "first": "2024-03-06", "last": "2025-07-16", "levels": ["Sec 2", "Sec 4"]}, {"p": "Inter-Class Games", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 8, "y24": 5, "y25": 3, "band": 8, "first": "2024-06-26", "last": "2025-08-28", "levels": ["Sec 1", "Sec 2", "Sec 3"]}, {"p": "Korea School Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 2, "y24": 0, "y25": 2, "band": 1, "first": "2025-05-07", "last": "2025-11-11", "levels": []}, {"p": "Lighten Up Programme", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 28, "y24": 28, "y25": 0, "band": 0, "first": "2024-02-23", "last": "2024-08-30", "levels": ["Lower Sec"]}, {"p": "Literature Play Viewing", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 2, "y24": 1, "y25": 1, "band": 2, "first": "2024-05-02", "last": "2025-03-13", "levels": ["Sec 1", "Sec 2"]}, {"p": "Live On Festival Essay Competition", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 4, "y24": 1, "y25": 3, "band": 3, "first": "2024-03-12", "last": "2025-03-05", "levels": ["Sec 2", "Sec 3"]}, {"p": "MOE-OBS Challenge Programme", "code": "6.3", "cat": "Sports, Health and Outdoor", "sub": "Outdoor and adventure education", "n": 2, "y24": 1, "y25": 1, "band": 0, "first": "2024-05-27", "last": "2025-01-13", "levels": ["Sec 3"]}, {"p": "MTL Cultural Exposure Programme", "code": "2.3", "cat": "Language Arts", "sub": "Mother Tongue enrichment", "n": 4, "y24": 2, "y25": 2, "band": 2, "first": "2024-08-14", "last": "2025-09-19", "levels": ["Sec 1-3", "Sec 3"]}, {"p": "MTL Fortnight", "code": "2.3", "cat": "Language Arts", "sub": "Mother Tongue enrichment", "n": 11, "y24": 2, "y25": 9, "band": 4, "first": "2024-02-14", "last": "2025-02-21", "levels": ["Sec 1", "Sec 2", "Sec 3"]}, {"p": "Malay Dance Cultural Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-07-04", "last": "2025-07-04", "levels": []}, {"p": "Mass Run", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 2, "y24": 1, "y25": 1, "band": 0, "first": "2024-04-30", "last": "2025-04-28", "levels": []}, {"p": "Math Innovators", "code": "1.1", "cat": "STEM", "sub": "Mathematics olympiad and contest", "n": 10, "y24": 5, "y25": 5, "band": 10, "first": "2024-01-31", "last": "2025-04-09", "levels": ["Sec 1"]}, {"p": "Model UN Programme", "code": "4.1", "cat": "Global and Civic Engagement", "sub": "Model UN", "n": 15, "y24": 8, "y25": 7, "band": 13, "first": "2024-01-11", "last": "2025-02-05", "levels": ["Sec 2", "Sec 3", "Sec 4"]}, {"p": "NAPFA Test", "code": "6.1", "cat": "Sports, Health and Outdoor", "sub": "Fitness testing", "n": 11, "y24": 5, "y25": 6, "band": 11, "first": "2024-04-17", "last": "2025-04-23", "levels": ["Sec 2", "Sec 4", "Sec 5"]}, {"p": "NCC Programme", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 20, "y24": 10, "y25": 10, "band": 4, "first": "2024-02-07", "last": "2025-08-29", "levels": ["Sec 1", "Sec 2", "Sec 3"]}, {"p": "NCDCC Programme", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 3, "y24": 1, "y25": 2, "band": 1, "first": "2024-04-16", "last": "2025-07-30", "levels": []}, {"p": "NDP Training", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 5, "y24": 0, "y25": 5, "band": 0, "first": "2025-05-10", "last": "2025-08-04", "levels": []}, {"p": "NECTAR STEM Workshop", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 7, "y24": 7, "y25": 0, "band": 7, "first": "2024-01-24", "last": "2024-05-08", "levels": []}, {"p": "NEXUS Award Process", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 2, "y24": 0, "y25": 2, "band": 2, "first": "2025-02-20", "last": "2025-02-26", "levels": ["Sec 4"]}, {"p": "NEXUS Sharing", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-02-03", "last": "2025-02-03", "levels": ["Sec 3"]}, {"p": "NLB Book Buzz", "code": "2.1", "cat": "Language Arts", "sub": "English writing and literature", "n": 3, "y24": 1, "y25": 2, "band": 2, "first": "2024-07-15", "last": "2025-03-13", "levels": ["Sec 1"]}, {"p": "NPCC Programme", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 3, "y24": 1, "y25": 2, "band": 0, "first": "2024-05-14", "last": "2025-08-23", "levels": []}, {"p": "NUS Geography Challenge", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 6, "y24": 3, "y25": 3, "band": 3, "first": "2024-01-18", "last": "2025-03-29", "levels": ["Sec 4"]}, {"p": "NUS-CAPT Programme", "code": "8.1", "cat": "Education and Career Guidance", "sub": "Post-secondary exposure", "n": 10, "y24": 5, "y25": 5, "band": 5, "first": "2024-02-06", "last": "2025-03-26", "levels": []}, {"p": "NX201 Constructive Curiosities", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-04-22", "last": "2024-04-22", "levels": ["Sec 2"]}, {"p": "NX301 Creative Connections", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 2, "y24": 1, "y25": 1, "band": 1, "first": "2024-10-25", "last": "2025-11-05", "levels": []}, {"p": "NX3011 Mihara City Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 6, "y24": 5, "y25": 1, "band": 4, "first": "2024-08-06", "last": "2025-08-07", "levels": []}, {"p": "NX3011 Research Programme", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-05-15", "last": "2025-05-15", "levels": ["Sec 3"]}, {"p": "NX3012 Mutsuzawa Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 3, "y24": 2, "y25": 1, "band": 2, "first": "2024-08-22", "last": "2025-08-22", "levels": []}, {"p": "NX3013 New Zealand Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 6, "y24": 4, "y25": 2, "band": 3, "first": "2024-05-23", "last": "2025-06-19", "levels": []}, {"p": "NX3016 Estonia E-Exchange", "code": "4.2", "cat": "Global and Civic Engagement", "sub": "International exchange", "n": 6, "y24": 0, "y25": 6, "band": 6, "first": "2025-02-13", "last": "2025-05-08", "levels": ["Sec 3"]}, {"p": "NYP Course Advising / Experience", "code": "8.1", "cat": "Education and Career Guidance", "sub": "Post-secondary exposure", "n": 7, "y24": 3, "y25": 4, "band": 7, "first": "2024-04-03", "last": "2025-03-05", "levels": ["Sec 4", "Sec 4/5", "Sec 5"]}, {"p": "National Cashflow Competition", "code": "3.3", "cat": "Humanities and Social Science", "sub": "Policy, economics and social studies", "n": 2, "y24": 2, "y25": 0, "band": 1, "first": "2024-02-15", "last": "2024-03-09", "levels": ["Sec 4"]}, {"p": "National Day Celebrations", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 1, "y25": 1, "band": 1, "first": "2024-08-08", "last": "2025-08-08", "levels": []}, {"p": "National Education Show", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 2, "y24": 1, "y25": 1, "band": 0, "first": "2024-07-13", "last": "2025-07-05", "levels": ["Sec 3"]}, {"p": "National Youth Environment Conference", "code": "4.3", "cat": "Global and Civic Engagement", "sub": "Environment and sustainability citizenship", "n": 1, "y24": 1, "y25": 0, "band": 1, "first": "2024-04-17", "last": "2024-04-17", "levels": []}, {"p": "OceanX Classroom Connect", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-07-03", "last": "2025-07-03", "levels": []}, {"p": "PIL Industrial Attachment", "code": "8.2", "cat": "Education and Career Guidance", "sub": "Industry and work exposure", "n": 12, "y24": 10, "y25": 2, "band": 9, "first": "2024-06-03", "last": "2025-05-24", "levels": []}, {"p": "PISA Assessment", "code": "2.4", "cat": "Language Arts", "sub": "Language benchmarking and external tests", "n": 2, "y24": 0, "y25": 2, "band": 1, "first": "2025-04-14", "last": "2025-04-30", "levels": ["Sec 4"]}, {"p": "Peer Support Leader Programme", "code": "5.1", "cat": "Character, Leadership and Service", "sub": "Peer Support Leader training", "n": 24, "y24": 9, "y25": 15, "band": 24, "first": "2024-02-08", "last": "2025-08-27", "levels": ["Sec 1", "Sec 2", "Sec 3", "Sec 4", "Sec 5"]}, {"p": "Peer Support Leader Programme", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-02-24", "last": "2025-02-24", "levels": []}, {"p": "Performing Arts-Based Learning", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 1, "y25": 1, "band": 2, "first": "2024-07-11", "last": "2025-05-29", "levels": ["Sec 2"]}, {"p": "Physics Olympiad", "code": "1.2", "cat": "STEM", "sub": "Science olympiad and competition", "n": 2, "y24": 1, "y25": 1, "band": 2, "first": "2024-05-15", "last": "2025-05-21", "levels": []}, {"p": "Polytechnic Open House", "code": "8.1", "cat": "Education and Career Guidance", "sub": "Post-secondary exposure", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-01-09", "last": "2025-01-09", "levels": ["Sec 4/5"]}, {"p": "Racial Harmony Day", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-07-21", "last": "2025-07-21", "levels": []}, {"p": "Raffles Policy Dialogue", "code": "3.3", "cat": "Humanities and Social Science", "sub": "Policy, economics and social studies", "n": 2, "y24": 1, "y25": 1, "band": 2, "first": "2024-03-06", "last": "2025-03-12", "levels": ["Sec 4"]}, {"p": "Readers' Theatre Programme", "code": "2.2", "cat": "Language Arts", "sub": "Oracy, debate and performance", "n": 3, "y24": 3, "y25": 0, "band": 3, "first": "2024-03-21", "last": "2024-04-18", "levels": ["Sec 1"]}, {"p": "Rockwell Automation Engineering Week", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-02-23", "last": "2024-02-23", "levels": []}, {"p": "SIL Briefing", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 1, "y24": 1, "y25": 0, "band": 0, "first": "2024-01-23", "last": "2024-01-23", "levels": ["Sec 2, Sec 3"]}, {"p": "SIMC 2.0 Learning Festival", "code": "1.1", "cat": "STEM", "sub": "Mathematics olympiad and contest", "n": 5, "y24": 3, "y25": 2, "band": 0, "first": "2024-03-11", "last": "2025-05-30", "levels": ["Sec 3"]}, {"p": "SMO Training", "code": "1.1", "cat": "STEM", "sub": "Mathematics olympiad and contest", "n": 26, "y24": 12, "y25": 14, "band": 22, "first": "2024-02-01", "last": "2025-06-03", "levels": ["Sec 2"]}, {"p": "SSO Concert Programme", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 2, "y24": 2, "y25": 0, "band": 0, "first": "2024-04-29", "last": "2024-05-03", "levels": []}, {"p": "STEM Workshop (unnamed)", "code": "1.3", "cat": "STEM", "sub": "Applied STEM and NEXUS modules", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-10-21", "last": "2025-10-21", "levels": ["Sec 3"]}, {"p": "SYF Preparation and Performance", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 15, "y24": 0, "y25": 15, "band": 3, "first": "2025-03-04", "last": "2025-07-05", "levels": []}, {"p": "Science IgnITE Challenge", "code": "1.2", "cat": "STEM", "sub": "Science olympiad and competition", "n": 3, "y24": 3, "y25": 0, "band": 0, "first": "2024-03-18", "last": "2024-05-21", "levels": ["Sec 1, Sec 2", "Sec 2, Sec 3"]}, {"p": "Scouts Programme", "code": "9.1", "cat": "Uniformed Groups and CCA-linked", "sub": "Uniformed group training", "n": 9, "y24": 6, "y25": 3, "band": 2, "first": "2024-02-27", "last": "2025-06-12", "levels": ["Sec 2-3"]}, {"p": "Singapore Math Kangaroo Contest", "code": "1.1", "cat": "STEM", "sub": "Mathematics olympiad and contest", "n": 1, "y24": 1, "y25": 0, "band": 1, "first": "2024-04-17", "last": "2024-04-17", "levels": ["Sec 1"]}, {"p": "Social and Emotional Learning", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 2, "y24": 0, "y25": 2, "band": 1, "first": "2025-07-24", "last": "2025-10-28", "levels": ["Sec 1-3", "Sec 3"]}, {"p": "Sports Carnival", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 3, "y24": 1, "y25": 2, "band": 0, "first": "2024-06-28", "last": "2025-07-04", "levels": []}, {"p": "Sports Enrichment Block", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 3, "y24": 3, "y25": 0, "band": 0, "first": "2024-04-22", "last": "2024-04-22", "levels": ["Sec 1", "Sec 2", "Sec 3"]}, {"p": "Sports Leaders Selection", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 3, "y24": 3, "y25": 0, "band": 3, "first": "2024-02-07", "last": "2024-02-08", "levels": ["Sec 2", "Sec 3"]}, {"p": "Student Leaders' Investiture", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 5, "y24": 3, "y25": 2, "band": 2, "first": "2024-05-03", "last": "2025-05-27", "levels": []}, {"p": "Student Leadership Workshop", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 3, "y24": 2, "y25": 1, "band": 1, "first": "2024-03-11", "last": "2025-03-17", "levels": ["Sec 2"]}, {"p": "Student Tech Champs", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 9, "y24": 5, "y25": 4, "band": 2, "first": "2024-01-19", "last": "2025-08-28", "levels": ["Sec 2"]}, {"p": "Students' Council Elections", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 3, "y24": 2, "y25": 1, "band": 0, "first": "2024-03-25", "last": "2025-04-07", "levels": []}, {"p": "Sustainable Neighbourhood GI", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 2, "y24": 0, "y25": 2, "band": 2, "first": "2025-05-07", "last": "2025-07-10", "levels": ["Sec 3"]}, {"p": "Symphony of Dreams Concert", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 3, "y24": 3, "y25": 0, "band": 0, "first": "2024-10-29", "last": "2024-11-01", "levels": []}, {"p": "Teachers' Day Celebrations", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 6, "y24": 4, "y25": 2, "band": 3, "first": "2024-07-30", "last": "2025-09-04", "levels": []}, {"p": "Termly Sports/Fitness Challenge", "code": "6.2", "cat": "Sports, Health and Outdoor", "sub": "Recreational and inter-class sport", "n": 18, "y24": 4, "y25": 14, "band": 18, "first": "2024-02-28", "last": "2025-08-06", "levels": ["Sec 1", "Sec 1-5", "Sec 2", "Sec 3", "Sec 4", "Sec 5"]}, {"p": "Tier Three Student Leaders Development", "code": "5.2", "cat": "Character, Leadership and Service", "sub": "Student leadership development", "n": 10, "y24": 6, "y25": 4, "band": 8, "first": "2024-04-23", "last": "2025-10-30", "levels": []}, {"p": "Total Defence Day", "code": "5.4", "cat": "Character, Leadership and Service", "sub": "Cyber wellness and CCE advocacy", "n": 2, "y24": 0, "y25": 2, "band": 0, "first": "2025-02-10", "last": "2025-02-17", "levels": []}, {"p": "Transport GI (Toa Payoh Hub)", "code": "3.2", "cat": "Humanities and Social Science", "sub": "Geographical inquiry", "n": 2, "y24": 0, "y25": 2, "band": 2, "first": "2025-04-09", "last": "2025-04-24", "levels": ["Sec 2"]}, {"p": "Urban Farms Learning Journey", "code": "4.3", "cat": "Global and Civic Engagement", "sub": "Environment and sustainability citizenship", "n": 1, "y24": 1, "y25": 0, "band": 1, "first": "2024-02-28", "last": "2024-02-28", "levels": ["Sec 2"]}, {"p": "VIA Project", "code": "5.3", "cat": "Character, Leadership and Service", "sub": "VIA and community service", "n": 29, "y24": 16, "y25": 13, "band": 27, "first": "2024-01-31", "last": "2025-10-15", "levels": ["Sec 2", "Sec 3", "Sec 4"]}, {"p": "VPA Community of Practice", "code": "7.2", "cat": "Aesthetics and Performing Arts", "sub": "Performing arts", "n": 4, "y24": 4, "y25": 0, "band": 3, "first": "2024-05-09", "last": "2024-07-17", "levels": []}, {"p": "World Digital Cleanup Day", "code": "4.3", "cat": "Global and Civic Engagement", "sub": "Environment and sustainability citizenship", "n": 1, "y24": 0, "y25": 1, "band": 0, "first": "2025-03-15", "last": "2025-03-15", "levels": []}, {"p": "World Skills Singapore LJ", "code": "8.2", "cat": "Education and Career Guidance", "sub": "Industry and work exposure", "n": 1, "y24": 0, "y25": 1, "band": 1, "first": "2025-04-03", "last": "2025-04-03", "levels": ["Sec 2"]}], "months": [{"m": "2024-01", "enr": 22, "band": 18}, {"m": "2024-02", "enr": 45, "band": 29}, {"m": "2024-03", "enr": 42, "band": 20}, {"m": "2024-04", "enr": 55, "band": 45}, {"m": "2024-05", "enr": 49, "band": 22}, {"m": "2024-06", "enr": 15, "band": 3}, {"m": "2024-07", "enr": 30, "band": 8}, {"m": "2024-08", "enr": 29, "band": 16}, {"m": "2024-09", "enr": 3, "band": 3}, {"m": "2024-10", "enr": 16, "band": 0}, {"m": "2024-11", "enr": 8, "band": 0}, {"m": "2024-12", "enr": 0, "band": 0}, {"m": "2025-01", "enr": 21, "band": 7}, {"m": "2025-02", "enr": 54, "band": 18}, {"m": "2025-03", "enr": 60, "band": 32}, {"m": "2025-04", "enr": 46, "band": 38}, {"m": "2025-05", "enr": 43, "band": 23}, {"m": "2025-06", "enr": 6, "band": 0}, {"m": "2025-07", "enr": 22, "band": 13}, {"m": "2025-08", "enr": 25, "band": 17}, {"m": "2025-09", "enr": 4, "band": 3}, {"m": "2025-10", "enr": 8, "band": 0}, {"m": "2025-11", "enr": 2, "band": 0}, {"m": "2025-12", "enr": 0, "band": 0}], "levels": [["Sec 1", 86], ["Sec 1-5", 1], ["Sec 2", 92], ["Sec 3", 65], ["Sec 4", 45], ["Sec 5", 18], ["unknown", 8]]};
+const $ = s => document.querySelector(s);
+const el = (t,c,h) => { const e=document.createElement(t); if(c)e.className=c; if(h!==undefined)e.innerHTML=h; return e; };
+
+// KPIs
+const kpis = [
+ [D.meta.total_events,'calendar events read'],
+ [D.meta.atomic,'activity records extracted'],
+ [D.meta.enrichment,'genuine enrichment entries'],
+ [D.meta.programmes,'distinct programmes'],
+ [D.meta.cards_2024+D.meta.cards_2025,'enrichment band cards'],
+ [Math.round(100*D.meta.band_enrichment/D.meta.band_entries)+'%','of band entries are enrichment',1],
+];
+kpis.forEach(([n,l,hl])=>{
+  const k=el('div','kpi'+(hl?' hl':''));
+  k.appendChild(el('div','n',n)); k.appendChild(el('div','l',l)); $('#kpis').appendChild(k);
+});
+
+// Band audit
+const bandMax = Math.max(...D.band.map(b=>b.n));
+D.band.forEach(b=>{
+  const row=el('div','bar-row');
+  row.appendChild(el('div','bar-lab',b.code+'&nbsp; '+b.name));
+  const t=el('div','bar-track');
+  const f=el('div','bar-fill'); f.style.width=(100*b.n/bandMax)+'%';
+  if(!b.enr) f.style.background='var(--g3)';
+  t.appendChild(f); row.appendChild(t);
+  row.appendChild(el('div','bar-val',b.n));
+  $('#band').appendChild(row);
+});
+const nonEnr = D.meta.band_entries - D.meta.band_enrichment;
+$('#bandnote').innerHTML = '<b>'+nonEnr+' of '+D.meta.band_entries+' entries ('+
+  Math.round(100*nonEnr/D.meta.band_entries)+'%) in the protected enrichment band are not enrichment.</b> '+
+  'Oral examinations and the Secondary 1 ICT training series are the two largest occupants, and '+D.meta.band_unfilled+
+  ' cards were issued with no entry recorded against any level.';
+
+// Categories
+const catMax = Math.max(...D.cats.map(c=>c.n));
+D.cats.forEach(c=>{
+  const d=el('details');
+  const s=el('summary');
+  s.innerHTML = '<span>'+c.code+'&nbsp; '+c.name+'</span><span class="c">'+c.n+' &nbsp;·&nbsp; 2024: '+c.y24+' &nbsp;·&nbsp; 2025: '+c.y25+'</span>';
+  d.appendChild(s);
+  const row=el('div','bar-row'); row.style.margin='4px 0 12px';
+  row.appendChild(el('div','bar-lab',''));
+  const t=el('div','split'); t.style.width=(100*c.n/catMax)+'%';
+  const a=el('i'); a.style.background='var(--navy)'; a.style.width=(100*c.y24/c.n)+'%';
+  const b=el('i'); b.style.background='var(--navy-4)'; b.style.width=(100*c.y25/c.n)+'%';
+  t.appendChild(a); t.appendChild(b);
+  const tw=el('div'); tw.appendChild(t); row.appendChild(tw);
+  row.appendChild(el('div','bar-val',c.n));
+  d.appendChild(row);
+  const sm=Math.max(...c.subs.map(x=>x.n));
+  c.subs.sort((x,y)=>y.n-x.n).forEach(sc=>{
+    const r=el('div','bar-row');
+    r.appendChild(el('div','bar-lab',sc.name));
+    const tt=el('div','bar-track');
+    const ff=el('div','bar-fill'); ff.style.width=(100*sc.n/sm)+'%'; ff.style.background='var(--navy-6)';
+    tt.appendChild(ff); r.appendChild(tt);
+    r.appendChild(el('div','bar-val',sc.n));
+    d.appendChild(r);
+  });
+  $('#cats').appendChild(d);
+});
+
+// Heat
+const hm=Math.max(...D.months.map(m=>m.enr));
+D.months.forEach(m=>{
+  const b=el('div',m.m<'2025'?'':'y25');
+  b.style.height=Math.max(2,110*m.enr/hm)+'px';
+  b.title=m.m+': '+m.enr+' enrichment occurrences';
+  $('#heat').appendChild(b);
+  $('#heatlab').appendChild(el('span','',m.m.slice(5)));
+});
+
+// Levels
+const lm=Math.max(...D.levels.map(l=>l[1]));
+D.levels.forEach(([lv,n])=>{
+  const r=el('div','bar-row');
+  r.appendChild(el('div','bar-lab',lv));
+  const t=el('div','bar-track');
+  const f=el('div','bar-fill'); f.style.width=(100*n/lm)+'%';
+  if(lv==='unknown') f.style.background='var(--g3)';
+  t.appendChild(f); r.appendChild(t); r.appendChild(el('div','bar-val',n));
+  $('#levels').appendChild(r);
+});
+
+// Programme table
+D.progs.forEach(p=>p.bandpc = p.n ? p.band/p.n : 0);
+const cats=[...new Set(D.progs.map(p=>p.cat))].sort();
+cats.forEach(c=>{const o=el('option','',c);o.value=c;$('#fc').appendChild(o);});
+let sortK='n', sortD=-1;
+function render(){
+  const q=$('#q').value.toLowerCase(), fc=$('#fc').value;
+  let rows=D.progs.filter(p=>(!fc||p.cat===fc) &&
+    (!q || (p.p+' '+p.cat+' '+p.sub).toLowerCase().includes(q)));
+  rows.sort((a,b)=>{
+    const x=a[sortK], y=b[sortK];
+    if(typeof x==='string') return sortD*x.localeCompare(y);
+    return sortD*(x-y);
+  });
+  const tb=$('#ptab tbody'); tb.innerHTML='';
+  rows.forEach(p=>{
+    const tr=el('tr');
+    tr.innerHTML='<td>'+p.p+(p.levels.length?' <span class="chip">'+p.levels.join(', ')+'</span>':'')+'</td>'+
+      '<td><span class="chip enr">'+p.code+'</span> '+p.sub+'</td>'+
+      '<td class="num">'+(p.y24||'')+'</td><td class="num">'+(p.y25||'')+'</td>'+
+      '<td class="num"><b>'+p.n+'</b></td>'+
+      '<td class="num">'+Math.round(100*p.bandpc)+'%</td>'+
+      '<td>'+p.first+'</td><td>'+p.last+'</td>';
+    tb.appendChild(tr);
+  });
+  $('#count').textContent=rows.length+' of '+D.progs.length+' programmes';
+}
+document.querySelectorAll('#ptab th').forEach(th=>th.addEventListener('click',()=>{
+  const k=th.dataset.k; if(k===sortK) sortD=-sortD; else {sortK=k; sortD=(k==='p'||k==='sub'||k==='first'||k==='last')?1:-1;}
+  render();
+}));
+$('#q').addEventListener('input',render); $('#fc').addEventListener('change',render);
+render();
+</script></body></html>
