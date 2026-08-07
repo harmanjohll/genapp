@@ -1029,12 +1029,21 @@ function showDiff(host, data, pair) {
 
   const nDiff = d.rows.filter((r) => r.differs).length;
   const map = routeMap(d.rows.length, nDiff, d.tailA.length, d.tailB.length);
+  // Two runs that fork apart do not share their later chapters at all, so
+  // counting only the shared rows reported one difference for a life that went
+  // entirely elsewhere. The chapters only one of you lived are differences too.
+  const nApart = nDiff + d.tailA.length + d.tailB.length;
+  const bothRoads = d.paths[0] && d.paths[1] && d.paths[0] !== d.paths[1];
+  const headline = nApart === 0
+    ? jc.compareHeadSame
+    : (bothRoads && nApart > 4 ? jc.compareRoads
+      : (nApart === 1 ? jc.compareHead1 : fill(jc.compareHead, { n: nApart })));
 
   host.innerHTML = `
     <div class="wrap">
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">${esc(jc.compareCta)}</p>
-        <h1 class="serif" tabindex="-1" style="font-size:var(--t-h1)">Same start. ${nDiff} different chapter${nDiff === 1 ? '' : 's'}.</h1>
+        <h1 class="serif" tabindex="-1" style="font-size:var(--t-h1)">${esc(headline)}</h1>
         ${map}
         ${stopped}
         <div class="diff" style="margin-top:var(--s-4)">

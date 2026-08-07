@@ -124,7 +124,16 @@ function detail(f, st, data, ctx) {
   // What you committed to last time you were here. AIM was decide and forget:
   // a student ticked two things, closed the tab, and nothing ever asked again.
   // The CASVE cycle does not end at deciding, and neither should the mode.
-  const said = (st.actions || []).filter(Boolean);
+  // Only commitments that are NOT already on this screen. Without this filter a
+  // student ticks a move and immediately sees the same sentence twice: once
+  // under "you said you would" with a Done button, and once in the list they
+  // just ticked it in, with a tick. Worse, the heading claims it is from the
+  // last time they were here, ten seconds after they made it.
+  const onScreen = new Set([
+    ...moves.slice(0, 5).map((m) => m.label),
+    ...(f.thisTerm || []),
+  ]);
+  const said = (st.actions || []).filter(Boolean).filter((a) => !onScreen.has(a));
   const saidBlock = said.length ? `
     <div class="aim-linked">
       <p class="caps">${icon('q_how')}${esc(ac.saidHead)}</p>

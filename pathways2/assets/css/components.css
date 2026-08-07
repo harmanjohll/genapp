@@ -1358,8 +1358,12 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .pp-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4pt; }
   .pp-table th, .pp-table td { border: 1pt solid #999; padding: 5pt 6pt; text-align: left; vertical-align: top; }
   .pp-table th { background: #eee; }
+  .pp-talk { list-style: none; padding: 0; margin: 0; font-size: 10pt; }
+  .pp-talk li { border-top: 1pt solid #ccc; padding: 5pt 0; break-inside: avoid; }
+  .pp-talk li strong { display: block; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.04em; color: #444; }
 }
 .tcard-deal { display: block; font-weight: 700; color: var(--ink); }
+.tcard-took { display: block; }
 
 /* The fourth door: the group game was reachable only by typing a URL, which is
    the same as not shipping it. It sits under the three solo doors, full width,
@@ -1398,3 +1402,38 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 /* Inline links in prose are exempt from the target minimum, being part of a
    sentence, but the same trick as .gloss costs nothing and helps a thumb. */
 .wrap p a[href], .small a[href], .micro a[href] { padding: 4px 1px; margin: -4px -1px; }
+
+/* --- collaboration at the table -------------------------------------------
+   The only running total in the game is the one the table holds together, so
+   it is styled as a statement rather than a scoreboard: no number bigger than
+   the words around it. */
+.tbetween {
+  margin-top: var(--s-4); padding: var(--s-3);
+  border-left: 3px solid var(--open); background: var(--open-wash);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.tbetween p { margin: 0; }
+.tbetween .caps { color: var(--open-ink); margin-bottom: 4px; }
+.tasktable {
+  margin-top: var(--s-4); padding: var(--s-3);
+  border-left: 3px solid var(--open); background: var(--open-wash);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.tasktable .caps { color: var(--open-ink); }
+.tasktable p { margin: 0; }
+.tbacked { color: var(--open-ink); font-weight: 600; font-size: var(--t-small); margin: var(--s-2) 0 0; }
+.tcard-help { font-size: var(--t-micro); color: var(--open-ink); font-weight: 700; margin: 6px 0 0; }
+.cc-tag {
+  display: inline-block; padding: 1px 8px; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--rule);
+  font-size: var(--t-micro); font-weight: 700; color: var(--ink-soft);
+  text-transform: none; letter-spacing: 0;
+}
+.cc-list { list-style: none; padding: 0; margin: var(--s-3) 0 0; display: grid; gap: var(--s-2); }
+.cc-list li { display: flex; gap: var(--s-3); align-items: baseline; flex-wrap: wrap; }
+.tnote { margin: var(--s-2) 0 0; font-size: var(--t-small); color: var(--ink-soft); }
+.tfloor {
+  margin: var(--s-3) 0 0; padding-top: var(--s-2); border-top: 1px solid var(--rule);
+  font-size: var(--t-small); font-weight: 700; color: var(--open-ink);
+}
+.backdots { letter-spacing: 1px; font-size: 0.6em; opacity: 0.65; vertical-align: middle; }

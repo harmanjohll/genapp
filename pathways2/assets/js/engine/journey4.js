@@ -479,12 +479,20 @@ export function applyReflection(run, j, stage, text) {
   return run;
 }
 
-export function respondToChance(run, card, responseIndex) {
+/**
+ * Answer the year's chance card.
+ *
+ * `helped` is the table game's collaboration hook: when another player at the
+ * table vouches for you, a response that would have been a stretch resolves as
+ * met. That is not a cheat, it is the mechanism the app already teaches, which
+ * is that other people are how doors get opened.
+ */
+export function respondToChance(run, card, responseIndex, helped) {
   const r = (card.responses || [])[responseIndex];
   const step = run.steps[run.steps.length - 1];
   if (!r) { run.pending = null; run.stepIndex += 1; return run; }
 
-  const met = !r.needsAsk || askMet(run, card);
+  const met = !r.needsAsk || askMet(run, card) || !!helped;
   const text = met ? r.outcome : (r.stretch || r.outcome);
   const doorsBefore = run.doors.slice();
 
@@ -503,6 +511,7 @@ export function respondToChance(run, card, responseIndex) {
     };
     const fresh = run.doors.filter((d) => !doorsBefore.includes(d));
     if (fresh.length) step.opened = [...(step.opened || []), ...fresh];
+    if (helped) step.helpedBy = helped;
   }
   run.pending = null;
   run.stepIndex += 1;

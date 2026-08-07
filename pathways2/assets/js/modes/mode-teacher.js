@@ -227,6 +227,17 @@ export function renderTeacher(host, data, ctx, repaint) {
         <div class="panel" style="margin-top:var(--s-4);border:2px solid var(--accent)">
           <h2>${esc(data.copy.table.teacherLink)}</h2>
           <p class="small" style="margin-top:var(--s-2)">${esc(data.copy.table.teacherLinkNote)}</p>
+          <ul class="tight-list" style="margin-top:var(--s-3)">
+            <li><strong>Backs.</strong> Two per student, whole game. Spend one to vouch for someone
+              whose card needs it, and their harder answer becomes possible. Finite on purpose.</li>
+            <li><strong>The floor.</strong> A different student answers first every round. The app names them.</li>
+            <li><strong>Between you.</strong> One shared count, never per student. A table that all picks
+              the same road sees the fewest roads.</li>
+            <li><strong>E21CC.</strong> Each round's prompt is tagged with the competency it exercises,
+              and the ending lists what the table actually practised, with the evidence.</li>
+          </ul>
+          <p class="small mute" style="margin-top:var(--s-2)">Print the pack at the end: the board, the
+            chapter track, each seat's road and doors, and the debrief questions with their competencies.</p>
           <div class="btn-row" style="margin-top:var(--s-3)">
             <a class="btn accent" href="./?mode=table">${esc(data.copy.table.teacherLink)}</a>
             <a class="btn ghost" href="./?mode=teacher&amp;board=1">The projector reveal</a>

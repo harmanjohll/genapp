@@ -206,11 +206,15 @@ function renderHead() {
 // What each mode cannot work without. The global REQUIRED list in the loader
 // covers the files every screen needs; these are the per mode ones, kept here
 // because a missing deck should cost you Play and not the whole site.
+// What a mode cannot open without. `moves` belongs here: a chapter with no
+// moves in it renders a year with nothing to choose, which strands a student
+// on a screen that looks fine. Optional files (possibilities, stories) are
+// deliberately absent, because losing them costs a fold, not the lesson.
 const MODE_NEEDS = {
   now: [],
-  journey: ['journey', 'chances'],
+  journey: ['journey', 'chances', 'moves'],
   aim: ['futures'],
-  table: ['journey', 'chances'],
+  table: ['journey', 'chances', 'moves'],
   teacher: [],
   parent: ['parent'],
 };
