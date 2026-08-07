@@ -37,7 +37,11 @@ let ctx = null;
 let onLanding = false;
 const params = new URLSearchParams(location.search);
 
-let extraMode = ['teacher', 'parent', 'table'].includes(params.get('mode')) ? params.get('mode') : null;
+// Modes a person links to on purpose. Plan, Play and Act are written into the
+// address bar by the app itself, so they never imply an intent to skip the door.
+const ENTRY_MODES = ['teacher', 'parent', 'table'];
+
+let extraMode = ENTRY_MODES.includes(params.get('mode')) ? params.get('mode') : null;
 if (params.get('board') === '1') document.body.dataset.board = 'true';
 
 init();
@@ -77,9 +81,21 @@ async function init() {
     snapshotPlan(open);
   }
 
-  // First contact is one question, not thirty one subject rows. A device that
-  // has answered it, or arrived by a deep link, goes straight in.
-  onLanding = !getState().seenLanding && !extraMode;
+  // The landing is the front door, and every fresh load arrives at it.
+  //
+  // It used to be shown once per device and never again, which meant a refresh
+  // dropped you wherever you happened to have been. Worse, syncUrl writes the
+  // current mode into the address bar as you move, so reloading after a few
+  // clicks deep linked you into Plan and the front door became unreachable
+  // without clearing storage.
+  //
+  // A deliberate deep link still goes straight in: a shared plan, or one of the
+  // entry modes that exist precisely to be linked to. The three main modes do
+  // not count, because that parameter is written by the app rather than chosen
+  // by a person. A returning student is not re-quizzed: the landing renders in
+  // its revealed state, with the answer already on it and the doors below.
+  const deepLink = params.has('p') || ENTRY_MODES.includes(params.get('mode'));
+  onLanding = !deepLink;
 
   renderHead();
   paint();
