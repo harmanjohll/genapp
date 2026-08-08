@@ -40,6 +40,10 @@ a{color:var(--navy)}
 .sbar .kv b{font-family:Georgia,serif;font-size:14px;color:var(--navy);margin-right:3px}
 .sbar .kv.bad b{color:var(--bad)}.sbar .kv.ok b{color:var(--ok)}
 .sbar .sp{flex:1}
+.sbar .dlt{font-size:10px;margin-left:3px;font-weight:bold}
+.sbar .dlt.up{color:var(--ok)}.sbar .dlt.dn{color:var(--bad)}
+.grp.drv>h5{border-left:3px solid var(--yellow)}
+.grp:not(.drv)>h5{opacity:.62}
 .sbar .mdl{font-size:11px;color:var(--g3);white-space:nowrap}
 body.pres .sbar{display:none}
 @media print{.sbar{display:none}}
@@ -386,38 +390,38 @@ const STRAT={
    tier:  1 Explore | 2 Build | 3 Pursue
    trace: what in the 2024-25 audit it converts from ('' = genuinely new)   */
 const ACTS=[
- {id:'sportleague',n:'Inter-House Sports League',sc:'H',tier:1,dom:'DR',part:100,adults:10,sess:12,trace:'Inter-Class Games 8x, Termly Sports Challenge 18x',free:1},
- {id:'crosscountry',n:'Inter-House Cross Country',sc:'H',tier:1,dom:'DR',part:100,adults:14,sess:1,trace:'NAPFA 11x, fitness challenge',free:1},
- {id:'stem',n:'Inter-House STEM Challenge',sc:'H',tier:1,dom:'AM',part:60,adults:8,sess:3,trace:'',free:0},
- {id:'mun',n:'Inter-House MUN &amp; Debate',sc:'H',tier:2,dom:'EA',part:25,adults:6,sess:4,trace:'Model UN 15x, EL Debate Workshop 6x',free:0},
- {id:'pa',n:'House Performing Arts Night',sc:'H',tier:1,dom:'EM',part:45,adults:8,sess:3,trace:'CNY 6x, Chingay 8x, SYF 15x',free:1},
- {id:'mtl',n:'Inter-House Mother Tongue Festival',sc:'H',tier:1,dom:'EM',part:70,adults:6,sess:2,trace:'MTL Fortnight 11x',free:1},
- {id:'service',n:'House Service Challenge (VIA)',sc:'H',tier:1,dom:'ED',part:100,adults:12,sess:4,trace:'VIA Project 29x, Care Corner partner',free:1},
- {id:'quiz',n:'Inter-House Quiz',sc:'H',tier:1,dom:'AM',part:35,adults:4,sess:2,trace:'',free:0},
- {id:'showcase',n:'House Showcase (Pursue products)',sc:'H',tier:3,dom:'DAM',part:100,adults:10,sess:3,trace:'',free:0},
- {id:'ihg',n:'CCA-run Inter-House Games',sc:'H',tier:1,dom:'DR',part:55,adults:8,sess:6,trace:'CCA sessions 15x',free:1},
- {id:'organised',n:'Best Organised House award',sc:'H',tier:2,dom:'DM',part:12,adults:2,sess:0,trace:'',free:0},
- {id:'tech',n:'Inter-House Coding &amp; Esports',sc:'H',tier:1,dom:'AM',part:30,adults:4,sess:3,trace:'Student Tech Champs 9x',free:0},
+ {id:'sportleague',n:'Inter-House Sports League',sc:'H',tier:1,dom:'DR',part:100,adults:10,sess:12,ta:'sport',trace:'Inter-Class Games 8x, Termly Sports Challenge 18x',free:1},
+ {id:'crosscountry',n:'Inter-House Cross Country',sc:'H',tier:1,dom:'DR',part:100,adults:14,sess:1,ta:'sport',trace:'NAPFA 11x, fitness challenge',free:1},
+ {id:'stem',n:'Inter-House STEM Challenge',sc:'H',tier:1,dom:'AM',part:60,adults:8,sess:3,ta:'stem',trace:'',free:0},
+ {id:'mun',n:'Inter-House MUN &amp; Debate',sc:'H',tier:2,dom:'EA',part:25,adults:6,sess:4,ta:'hum',trace:'Model UN 15x, EL Debate Workshop 6x',free:0},
+ {id:'pa',n:'House Performing Arts Night',sc:'H',tier:1,dom:'EM',part:45,adults:8,sess:3,ta:'arts',trace:'CNY 6x, Chingay 8x, SYF 15x',free:1},
+ {id:'mtl',n:'Inter-House Mother Tongue Festival',sc:'H',tier:1,dom:'EM',part:70,adults:6,sess:2,ta:'arts',trace:'MTL Fortnight 11x',free:1},
+ {id:'service',n:'House Service Challenge (VIA)',sc:'H',tier:1,dom:'ED',part:100,adults:12,sess:4,ta:'serv',trace:'VIA Project 29x, Care Corner partner',free:1},
+ {id:'quiz',n:'Inter-House Quiz',sc:'H',tier:1,dom:'AM',part:35,adults:4,sess:2,ta:'stem',trace:'',free:0},
+ {id:'showcase',n:'House Showcase (Pursue products)',sc:'H',tier:3,dom:'DAM',part:100,adults:10,sess:3,ta:'none',trace:'',free:0},
+ {id:'ihg',n:'CCA-run Inter-House Games',sc:'H',tier:1,dom:'DR',part:55,adults:8,sess:6,ta:'sport',trace:'CCA sessions 15x',free:1},
+ {id:'organised',n:'Best Organised House award',sc:'H',tier:2,dom:'DM',part:12,adults:2,sess:0,ta:'serv',trace:'',free:0},
+ {id:'tech',n:'Inter-House Coding &amp; Esports',sc:'H',tier:1,dom:'AM',part:30,adults:4,sess:3,ta:'stem',trace:'Student Tech Champs 9x',free:0},
 
- {id:'smo',n:'Mathematics Olympiad Guild',sc:'P',tier:3,dom:'DR',part:6,adults:3,sess:10,trace:'SMO Training 26x, Math Innovators 10x',free:1},
- {id:'munD',n:'Model UN Delegation',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,trace:'Model UN Programme 15x',free:1},
- {id:'debate',n:'Debate &amp; Oracy Society',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,trace:'EL Debate Workshop 6x, Readers Theatre',free:1},
- {id:'nexus',n:'NEXUS Applied STEM Studio',sc:'P',tier:3,dom:'AM',part:6,adults:3,sess:10,trace:'NECTAR STEM Workshop 7x',free:0},
- {id:'ai',n:'Data &amp; AI Craft',sc:'P',tier:3,dom:'AM',part:5,adults:2,sess:10,trace:'',free:0},
- {id:'gi',n:'Geographical Investigation Unit',sc:'P',tier:3,dom:'AE',part:4,adults:2,sess:10,trace:'GI 5x, NUS Geography Challenge',free:1},
- {id:'hist',n:'Junior Historical Society',sc:'P',tier:3,dom:'EM',part:4,adults:2,sess:10,trace:'Historical Investigation LJ, AR Trail',free:1},
- {id:'authors',n:'Young Authors Guild',sc:'P',tier:3,dom:'EM',part:5,adults:2,sess:10,trace:'Creative Writing 12x, EL Writing 6x',free:1},
- {id:'global',n:'Global Exchange Corps',sc:'P',tier:3,dom:'EA',part:4,adults:2,sess:8,trace:'Mihara, Estonia, Mutsuzawa exchanges',free:1},
- {id:'sci',n:'Science Olympiad Guild',sc:'P',tier:3,dom:'DR',part:4,adults:2,sess:10,trace:'Physics/Chem Olympiad fragments',free:0},
- {id:'futures',n:'Pathways &amp; Futures',sc:'P',tier:2,dom:'AM',part:18,adults:4,sess:6,trace:'NUS-CAPT 10x, NYP 7x, PIL 12x',free:1},
+ {id:'smo',n:'Mathematics Olympiad Guild',sc:'P',tier:3,dom:'DR',part:6,adults:3,sess:10,ta:'stem',trace:'SMO Training 26x, Math Innovators 10x',free:1},
+ {id:'munD',n:'Model UN Delegation',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,ta:'hum',trace:'Model UN Programme 15x',free:1},
+ {id:'debate',n:'Debate &amp; Oracy Society',sc:'P',tier:3,dom:'EA',part:5,adults:2,sess:10,ta:'lang',trace:'EL Debate Workshop 6x, Readers Theatre',free:1},
+ {id:'nexus',n:'NEXUS Applied STEM Studio',sc:'P',tier:3,dom:'AM',part:6,adults:3,sess:10,ta:'stem',trace:'NECTAR STEM Workshop 7x',free:0},
+ {id:'ai',n:'Data &amp; AI Craft',sc:'P',tier:3,dom:'AM',part:5,adults:2,sess:10,ta:'stem',trace:'',free:0},
+ {id:'gi',n:'Geographical Investigation Unit',sc:'P',tier:3,dom:'AE',part:4,adults:2,sess:10,ta:'hum',trace:'GI 5x, NUS Geography Challenge',free:1},
+ {id:'hist',n:'Junior Historical Society',sc:'P',tier:3,dom:'EM',part:4,adults:2,sess:10,ta:'hum',trace:'Historical Investigation LJ, AR Trail',free:1},
+ {id:'authors',n:'Young Authors Guild',sc:'P',tier:3,dom:'EM',part:5,adults:2,sess:10,ta:'lang',trace:'Creative Writing 12x, EL Writing 6x',free:1},
+ {id:'global',n:'Global Exchange Corps',sc:'P',tier:3,dom:'EA',part:4,adults:2,sess:8,ta:'hum',trace:'Mihara, Estonia, Mutsuzawa exchanges',free:1},
+ {id:'sci',n:'Science Olympiad Guild',sc:'P',tier:3,dom:'DR',part:4,adults:2,sess:10,ta:'stem',trace:'Physics/Chem Olympiad fragments',free:0},
+ {id:'futures',n:'Pathways &amp; Futures',sc:'P',tier:2,dom:'AM',part:18,adults:4,sess:6,ta:'serv',trace:'NUS-CAPT 10x, NYP 7x, PIL 12x',free:1},
 
- {id:'psl',n:'Peer Support Corps',sc:'W',tier:2,dom:'ED',part:14,adults:5,sess:10,trace:'PSL Programme 24x, all five levels',free:1},
- {id:'cadre',n:'House Leadership Cadre',sc:'W',tier:2,dom:'DE',part:12,adults:5,sess:10,trace:'Tier Three 10x, Class Committee 6x',free:1},
- {id:'corps',n:'House Service Corps',sc:'W',tier:2,dom:'ED',part:30,adults:6,sess:10,trace:'VIA Project 29x',free:1},
- {id:'lighten',n:'Lighten Up Health Club',sc:'W',tier:1,dom:'RM',part:20,adults:4,sess:10,trace:'Lighten Up 28x, best cadence in the data',free:1},
- {id:'makers',n:'Makers &amp; Sustainability Workshop',sc:'W',tier:1,dom:'AM',part:16,adults:4,sess:10,trace:'Upcycling 4x, composting 1x',free:0},
- {id:'arts',n:'Visual Arts Collective',sc:'W',tier:1,dom:'EM',part:12,adults:3,sess:10,trace:'Art Learning Journey 4x',free:0},
- {id:'broadcast',n:'Broadcast &amp; Podcast Studio',sc:'W',tier:2,dom:'AE',part:8,adults:2,sess:10,trace:'EL Podcast Training 1x',free:0}
+ {id:'psl',n:'Peer Support Corps',sc:'W',tier:2,dom:'ED',part:14,adults:5,sess:10,ta:'serv',trace:'PSL Programme 24x, all five levels',free:1},
+ {id:'cadre',n:'House Leadership Cadre',sc:'W',tier:2,dom:'DE',part:12,adults:5,sess:10,ta:'serv',trace:'Tier Three 10x, Class Committee 6x',free:1},
+ {id:'corps',n:'House Service Corps',sc:'W',tier:2,dom:'ED',part:30,adults:6,sess:10,ta:'serv',trace:'VIA Project 29x',free:1},
+ {id:'lighten',n:'Lighten Up Health Club',sc:'W',tier:1,dom:'RM',part:20,adults:4,sess:10,ta:'sport',trace:'Lighten Up 28x, best cadence in the data',free:1},
+ {id:'makers',n:'Makers &amp; Sustainability Workshop',sc:'W',tier:1,dom:'AM',part:16,adults:4,sess:10,ta:'stem',trace:'Upcycling 4x, composting 1x',free:0},
+ {id:'arts',n:'Visual Arts Collective',sc:'W',tier:1,dom:'EM',part:12,adults:3,sess:10,ta:'arts',trace:'Art Learning Journey 4x',free:0},
+ {id:'broadcast',n:'Broadcast &amp; Podcast Studio',sc:'W',tier:2,dom:'AE',part:8,adults:2,sess:10,ta:'lang',trace:'EL Podcast Training 1x',free:0}
 ];
 
 /* ============================================================ STATE */
@@ -547,8 +551,47 @@ function model(){
   // how often a given teacher is on band duty across the year
   M.dutyShare = S.teachers>0 ? (S.duty*M.actualDays*2)/S.teachers : 0;
 
+  /* --- what the Setup tab assigns, made consequential ---------------------
+     Anchors decide how much of a house can actually join its own flagships,
+     and talent areas decide which house stewards which activity. Both feed
+     the affinity index, the verdict and the Activities tab. */
+  const HL = houseList();
+  M.hAnchor = HL.map(h=>{
+    const st=S.hset[h.k]||{};
+    // a slot only counts if what sits in it is still that kind of CCA, so moving
+    // Wushu between Sport and Performing Art empties a slot rather than lying
+    const valid=[[st.s,c=>isSport(c)],[st.u,c=>c.cat==='UG'],[st.p,c=>isPA(c)]]
+      .map(([id,ok])=>{const c=id?CC(id):null; return (c&&ok(c))?c:null;});
+    const cs=valid.filter(Boolean);
+    const slots=S.anchors?3:0;
+    const missing=Math.max(0,slots-cs.length);
+    // a gender-locked flagship is closed to roughly half the house
+    const reach = cs.length? cs.reduce((a,c)=>a+(c.lock?0.5:1),0)/Math.max(1,slots) : 0;
+    const roll = cs.reduce((a,c)=>a+c.n,0);
+    const girls = roll? cs.reduce((a,c)=>a+c.g*c.n,0)/roll : .5;
+    return {h,cs,missing,reach,roll,girls,dom:st.dom||'none'};
+  });
+  M.anchorReach = S.anchors && HL.length ? M.hAnchor.reduce((a,x)=>a+x.reach,0)/HL.length : 1;
+  M.worstReach  = S.anchors && HL.length ? Math.min(...M.hAnchor.map(x=>x.reach)) : 1;
+  M.unanchored  = S.anchors ? M.hAnchor.filter(x=>x.missing>0).length : 0;
+  const gs = M.hAnchor.filter(x=>x.roll>0).map(x=>x.girls);
+  M.anchorGenderSpread = (S.anchors && gs.length>1) ? Math.max(...gs)-Math.min(...gs) : 0;
+  // talent areas: coverage and clashes
+  const doms = M.hAnchor.map(x=>x.dom).filter(d=>d!=='none');
+  M.domSet = new Set(doms);
+  M.domDup = doms.length - M.domSet.size;
+  M.domUncovered = DOMAINS.filter(d=>d.k!=='none'&&d.k!=='arts'&&!M.domSet.has(d.k)).length;
+
   /* --- activities --- */
   const on = ACTS.filter(a=>S.acts[a.id]);
+  // which house stewards each activity, from the talent areas set on Setup
+  M.steward = {};
+  on.forEach(a=>{ const h=M.hAnchor.find(x=>x.dom===a.ta); if(h) M.steward[a.id]=h.h; });
+  M.stewardLoad = {};
+  HL.forEach(h=>M.stewardLoad[h.k]=on.filter(a=>M.steward[a.id]&&M.steward[a.id].k===h.k).length);
+  const sl=Object.values(M.stewardLoad);
+  M.stewardMax=sl.length?Math.max(...sl):0; M.stewardMin=sl.length?Math.min(...sl):0;
+  M.unstewarded = on.filter(a=>a.ta!=='none'&&!M.steward[a.id]).length;
   M.actsOn = on;
   M.cupEvents = on.filter(a=>a.sc==='H').length;
   M.cupFree = on.filter(a=>a.sc==='H'&&a.free).length;
@@ -588,12 +631,13 @@ function model(){
   const c_coh = A.cohesion;
   const c_ev = clamp(M.cupEvents/14,0,1);
   const c_place = M.placed;                                // belonging needs a place to belong to
-  M.affinity = Math.round(100*(c_persist*.15 + c_vert*.10 + c_contact*.25 + c_tutor*.12
-                             + c_coh*.13 + c_ev*.10 + c_place*.15));
+  const c_anchor = M.anchorReach;                          // can you join your own house's flagships?
+  M.affinity = Math.round(100*(c_persist*.13 + c_vert*.09 + c_contact*.22 + c_tutor*.11
+                             + c_coh*.12 + c_ev*.09 + c_place*.14 + c_anchor*.10));
   M.affParts=[['Persistence in one house',c_persist],['Vertical span Sec 1 to '+(S.levels===5?'5':'4'),c_vert],
     ['Contact hours in the band',c_contact],['House tutor ratio',c_tutor],
     ['Daily reinforcement by form class',c_coh],['Inter-house event density',c_ev],
-    ['Everyone actually placed',c_place]];
+    ['Everyone actually placed',c_place],['Reach of your own flagships',c_anchor]];
 
   /* --- social mixing --- */
   M.newPeople = Math.max(0, M.houseSize - (S.arch==='class'? M.classSize : M.classSize/S.houses));
@@ -641,6 +685,16 @@ function model(){
     M.issues.push(['b',`Wednesday needs ${M.demandWed} adults; supply is ${M.supply}. Short by ${M.supplyGapWed}. This is the binding constraint, not the pedagogy.`]);
   if(S.cup==='absolute' && M.totalGap>0.02)
     M.issues.push(['w',`Absolute Cup scoring with unequal houses hands the largest house a ${pct(M.cupBias)} structural advantage before anyone competes.`]);
+  if(S.anchors && M.unanchored>0)
+    M.issues.push(['w',`${M.unanchored} house${M.unanchored>1?'s have':' has'} an empty flagship slot. With Wushu counted as ${S.wushu==='S'?'a sport':'a performing art'} there are ${CCA.filter(isSport).length} sports, ${CCA.filter(c=>c.cat==='UG').length} uniformed groups and ${CCA.filter(isPA).length} performing arts for ${S.houses} houses.`]);
+  if(S.anchors && M.worstReach<0.85)
+    M.issues.push(['w',`Worst flagship reach ${pct(M.worstReach)}. At least one house flies a gender-locked CCA, so a large part of its own membership cannot join what it flies. Beatty has three boys-only CCAs against one girls-only, so this is structural rather than bad luck.`]);
+  if(M.domDup>0)
+    M.issues.push(['b',`${M.domDup} talent area${M.domDup>1?'s are':' is'} stewarded by more than one house. Each area should have exactly one steward, or nobody owns it.`]);
+  if(M.unstewarded>0)
+    M.issues.push(['w',`${M.unstewarded} activit${M.unstewarded>1?'ies have':'y has'} no stewarding house, because no house holds their talent area. Assign the area on the Model tab or accept that nobody owns them.`]);
+  if(M.stewardMax-M.stewardMin>4)
+    M.issues.push(['w',`Stewarding is lopsided: one house owns ${M.stewardMax} activities and another ${M.stewardMin}. Rebalance the talent areas or the workload follows the assignment.`]);
   if(M.domEmpty>0)
     M.issues.push(['w',`${M.domEmpty} of the five DREAM domains carry no Cup event. The Cup cannot score what nothing measures.`]);
   if(S.levels===4)
@@ -951,6 +1005,10 @@ function syncRail(){
   }));
   $$('#rail [data-mchip]').forEach(b=>b.classList.toggle('on',b.dataset.mchip===S.model));
   $$('#rail [data-p]').forEach(b=>b.classList.remove('on'));
+  // mark the control groups that drive whatever tab you are reading
+  const drives={setup:[1,5],explore:[0,1,2,3,4,5],case:[0,1,2,3],arch:[0,1],
+                band:[2,3],talent:[2,3,4],acts:[1,5],staff:[0,2,3],dec:[0,1,2,3,4,5]}[S.tab]||[];
+  $$('#rail .grp[data-g]').forEach(g=>g.classList.toggle('drv',drives.includes(+g.dataset.g)));
 }
 function railLabel(k){
   const v=S[k];
@@ -1165,6 +1223,12 @@ function tabSetup(M){
 <div class="hrow">${cards}</div>
 ${dups.length||domDup.length?`<div class="verdict bad"><h3>Clashes</h3><ul>
   ${dups.map(d=>`<li class="b">${d}</li>`).join('')}${domDup.map(d=>`<li class="b">${d}</li>`).join('')}</ul></div>`:''}
+<div class="metrics">
+${metric(pct(M.anchorReach),'Mean flagship reach',S.anchors?'Share of a house able to join what it flies':'No anchors set',M.anchorReach>=.9?'ok':'warn')}
+${metric(pct(M.worstReach),'Worst house',M.worstReach<0.85?'A gender-locked flagship closes half a house':'Every house can join its own',M.worstReach>=.85?'ok':'warn')}
+${metric(M.domSet.size,'Talent areas stewarded',M.domDup?M.domDup+' claimed twice':(M.domUncovered?M.domUncovered+' area(s) unclaimed':'One steward each'),M.domDup?'bad':(M.domUncovered?'warn':'ok'))}
+${metric(M.stewardMax+'/'+M.stewardMin,'Activities stewarded, most vs fewest','Follows the talent areas above',M.stewardMax-M.stewardMin>4?'warn':'ok')}
+</div>
 ${S.anchors?`<p class="note"><b>The Wushu arithmetic.</b> ${nS} sports, ${nU} uniformed groups, ${nP} performing arts for ${S.houses} houses.
 ${S.wushu==='S'
  ? (nS>=S.houses?'Counting Wushu as a sport closes it exactly.':'Still short: '+(S.houses-nS)+' house(s) cannot fly a sport.')
@@ -1423,7 +1487,7 @@ function tabBand(M){
   ];
   return `
 <header class="pg"><h1>The band</h1>
-<p class="lede">Wednesday and Thursday, 3pm to 6pm. Whether choice is real or nominal is decided here.</p></header>
+<p class="lede">Wednesday and Thursday, 3pm to 6pm. Whether choice is real or nominal is decided here. Running <b>${MODELS[S.model]?MODELS[S.model].n:'—'}</b>.</p></header>
 
 ${verdict(M)}
 
@@ -1434,6 +1498,7 @@ ${metric(pct(M.coverage),'Seats against Beattyians',M.coverage>=1?'Everyone can 
 ${metric(pct(M.fcs),'Get their first choice','Second choices are normal and fine','')}
 ${metric(pct(M.top2),'Get first or second choice',M.top2>=.8?'Above the 80 percent floor':'Catalogue too narrow',M.top2>=.8?'ok':'warn')}
 ${metric(M.clustersNeeded,'Groups needed to seat everyone',M.clusterGap>0?'Short by '+M.clusterGap:'Capacity closes',M.clusterGap>0?'bad':'ok')}
+${metric(M.roomCap,'Room ceiling',S.rooms+' rooms × '+S.perRoom+' group'+(S.perRoom>1?'s':'')+' each'+(M.roomBound?' — binds first':''),M.roomBound?'warn':'ok')}
 ${metric(Math.round(M.leadersNeeded),'Student leaders needed',pct(M.leaderRate)+' of Sec 3 and above',M.leaderRate<=.35?'ok':'warn')}
 ${metric(r1(M.perMonth),'Sessions per month',M.gagneOk?'Clears the Gagné line':'Below 3, this is exposure not development',M.gagneOk?'ok':'warn')}
 ${metric(Math.round(M.contactHrs),'Contact hours a year','Per Beattyian, one band track','')}
@@ -1476,7 +1541,7 @@ function tabTalent(M){
   ];
   return `
 <header class="pg"><h1>Talent development</h1>
-<p class="lede">Which structure owns which part &mdash; house or field. Getting it wrong caps every talent pool in the school.</p></header>
+<p class="lede">Which structure owns which part &mdash; house or field. Getting it wrong caps every talent pool in the school. Running <b>${MODELS[S.model]?MODELS[S.model].n:'—'}</b>.</p></header>
 
 ${verdict(M)}
 
@@ -1541,13 +1606,16 @@ function tabActs(M){
   let tbl='';
   ['H','P','W'].forEach(sc=>{
     const list=ACTS.filter(a=>a.sc===sc);
-    tbl+=`<tr><td colspan="7" style="background:var(--navy);color:#fff;font-weight:bold;font-size:.92em">${grp[sc]}</td></tr>`;
+    tbl+=`<tr><td colspan="8" style="background:var(--navy);color:#fff;font-weight:bold;font-size:.92em">${grp[sc]}</td></tr>`;
     tbl+=list.map(a=>`<tr class="${S.acts[a.id]?'hi':''}">
       <td><label style="cursor:pointer;display:flex;gap:7px;align-items:flex-start">
         <input type="checkbox" data-a="${a.id}" ${S.acts[a.id]?'checked':''} style="margin-top:3px">
         <span><b>${a.n}</b>${a.free?'':' <span class="tag unk">new</span>'}
         <div class="hint">${a.trace||'Genuinely new. No 2024 or 2025 antecedent.'}</div></span></label></td>
-      <td class="n">${a.tier}</td><td>${[...a.dom].map(d=>`<span class="tag">${d}</span>`).join(' ')}</td>
+      <td class="n">${a.tier}</td>
+      <td>${(()=>{const h=M.steward[a.id];return h?`<b style="color:${h.c}">${h.n}</b>`:
+        (a.ta==='none'?'<span style="color:var(--g3)">all houses</span>':'<span class="tag unk">none</span>');})()}</td>
+      <td>${[...a.dom].map(d=>`<span class="tag">${d}</span>`).join(' ')}</td>
       <td class="n">${a.part}%</td><td class="n">${a.sess||'—'}</td><td class="n">${a.adults}</td>
       <td class="n">${a.adults*Math.max(a.sess,1)}</td></tr>`).join('');
   });
@@ -1599,10 +1667,15 @@ ${metric(pct(M.domBal),'DREAM balance','Smallest domain against largest',M.domBa
 </div>
 
 <h2>The catalogue</h2>
-<div class="scroll"><table><thead><tr><th style="width:38%">Activity</th><th class="n">Tier</th><th>DREAM</th>
+<div class="scroll"><table><thead><tr><th style="width:34%">Activity</th><th class="n">Tier</th><th>Steward</th><th>DREAM</th>
 <th class="n">Reach</th><th class="n">Sessions</th><th class="n">Adults</th><th class="n">Adult-sessions</th></tr></thead>
 <tbody>${tbl}</tbody></table></div>
-<p class="note">Tier 1 Explore, 2 Build, 3 Pursue. Reach is the share of the relevant population the activity touches. <b>${M.cupFree} of ${M.cupEvents}</b> Cup events convert from things Beatty already runs, which is the whole change-management argument: rename and re-slot what already works before inventing anything.</p>
+<p class="note">Tier 1 Explore, 2 Build, 3 Pursue. <b>Steward</b> is the house holding that talent area on the Model tab &mdash; change an area there and this column moves. <b>${M.cupFree} of ${M.cupEvents}</b> Cup events convert from things Beatty already runs.</p>
+<div class="metrics">
+${metric(M.stewardMax+'/'+M.stewardMin,'Most vs fewest activities stewarded',M.stewardMax-M.stewardMin>4?'Lopsided, rebalance the talent areas':'Reasonably even',M.stewardMax-M.stewardMin>4?'warn':'ok')}
+${metric(M.unstewarded,'Activities with no steward',M.unstewarded?'No house holds their talent area':'Every area has an owner',M.unstewarded?'warn':'ok')}
+${metric(pct(M.anchorReach),'Mean flagship reach',S.anchors?'Share of a house that can join what it flies':'No CCA anchors set',M.anchorReach>=.9?'ok':'warn')}
+</div>
 
 <div class="box nav"><h4>Why class anchoring makes the Cup nearly free</h4>
 <p>If a form class sits entirely in one house, <b>every inter-class competition is already an inter-house competition.</b> Inter-Class Games ran 8 dates, Termly Sports Challenge 18 occurrences. Under class anchoring they fill the house table automatically, at zero marginal cost. Split the class and that channel closes.</p></div>
@@ -1638,7 +1711,10 @@ ${metric(M.adultsIfAdultLed,'Teachers needed if every group had one','Against '+
 ${metric(M.clusters,'Groups you can actually run',M.adultRun+' adult-led plus '+M.supervised+' student-led',M.clusterGap>0?'warn':'ok')}
 ${metric(Math.round(M.leadersNeeded),'Student leaders required',pct(M.leaderRate)+' of Sec 3 and above',M.leaderRate<=.35?'ok':'warn')}
 ${metric(Math.round(M.tutorRatio),'Beattyians per house tutor',M.tutorRatio<=25?'Small enough to know them':'Too large for a tutoring relationship',M.tutorRatio<=25?'ok':'warn')}
+${metric(M.roomCap,'Room ceiling',S.rooms+' × '+S.perRoom+(M.roomBound?' — binds before staffing':' — staffing binds first'),M.roomBound?'warn':'ok')}
+${metric(r1(M.dutyShare),'Band duties per teacher a year','Rotating '+S.duty+' of '+S.teachers+' across '+Math.round(M.actualDays*2)+' band days','')}
 </div>
+<p class="note">Running <b>${MODELS[S.model]?MODELS[S.model].n:'—'}</b>. ${MODELS[S.model]?MODELS[S.model].d:''} Change it from the rail or on Explore and every figure on this page moves.</p>
 
 <div class="chart">${hbar(supplyRows,{w:620,lw:250,rh:23})}</div>
 
@@ -1882,19 +1958,31 @@ function autoAnchor(){
   });
 }
 /* Always-visible consequence line, so the effect of a control is never off-screen. */
+let PREV=null;
 function statusBar(M){
   const bad=M.issues.filter(i=>i[0]==='b').length, warn=M.issues.filter(i=>i[0]==='w').length;
   const cls=bad?'bad':(warn?'warn':'ok');
   const label=bad?`Fails · ${bad} blocker${bad>1?'s':''}`:(warn?`Holds · ${warn} warning${warn>1?'s':''}`:'Holds');
-  const kv=(v,l,c)=>`<span class="kv ${c||''}"><b>${v}</b>${l}</span>`;
-  return `<span class="pill ${cls}">${label}</span>`+
-    kv(cm(M.N),'Beattyians')+
-    kv(M.running+'/'+M.clustersNeeded,'groups', M.clusters<M.clustersNeeded?'bad':'ok')+
-    kv(pct(M.top2),'1st or 2nd', M.top2>=.8?'ok':'')+
-    kv(r1(M.perMonth),'sess/month', M.perMonth>=3?'ok':'')+
-    kv(Math.round(M.leadersNeeded),'student leaders')+
-    kv(M.affinity,'affinity')+kv(M.talent,'talent')+
+  // arrow showing which way a number just moved, so a change is never silent
+  const arr=(k,now,fmt)=>{
+    if(!PREV||PREV[k]===undefined) return '';
+    const d=now-PREV[k];
+    if(Math.abs(d)<1e-9) return '';
+    return `<span class="dlt ${d>0?'up':'dn'}">${d>0?'▲':'▼'}${fmt?fmt(Math.abs(d)):Math.round(Math.abs(d))}</span>`;
+  };
+  const kv=(v,l,c,a)=>`<span class="kv ${c||''}"><b>${v}</b>${l}${a||''}</span>`;
+  const html=`<span class="pill ${cls}">${label}</span>`+
+    kv(cm(M.N),'Beattyians','',arr('N',M.N))+
+    kv(M.running+'/'+M.clustersNeeded,'groups', M.clusters<M.clustersNeeded?'bad':'ok', arr('running',M.running))+
+    kv(pct(M.top2),'1st or 2nd', M.top2>=.8?'ok':'', arr('top2',M.top2*100,v=>Math.round(v)+'pt'))+
+    kv(r1(M.perMonth),'sess/month', M.perMonth>=3?'ok':'', arr('perMonth',M.perMonth,r1))+
+    kv(Math.round(M.leadersNeeded),'student leaders','',arr('leadersNeeded',M.leadersNeeded))+
+    kv(M.affinity,'affinity','',arr('affinity',M.affinity))+
+    kv(M.talent,'talent','',arr('talent',M.talent))+
     `<span class="sp"></span><span class="mdl">${MODELS[S.model]?MODELS[S.model].n:''} · ${ARCH[S.arch].n} · ${S.houses} houses</span>`;
+  PREV={N:M.N,running:M.running,top2:M.top2*100,perMonth:M.perMonth,
+        leadersNeeded:M.leadersNeeded,affinity:M.affinity,talent:M.talent};
+  return html;
 }
 function footer(){
   return `<footer class="bty"><div class="band">
