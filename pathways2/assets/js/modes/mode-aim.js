@@ -72,7 +72,7 @@ function chooser(data, st) {
   return `
     <div class="section" style="margin-top:var(--s-6)">
       <p class="caps">Aim</p>
-      <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Start from what you want.</h1>
+      <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Start from what I want.</h1>
       <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_where')}${esc(jc.q2)}</p>
       <p class="lede" style="margin-top:var(--s-2);max-width:44ch">${esc(ac.chooserLede)}</p>
       <div class="grid two" style="margin-top:var(--s-5)">
@@ -124,7 +124,16 @@ function detail(f, st, data, ctx) {
   // What you committed to last time you were here. AIM was decide and forget:
   // a student ticked two things, closed the tab, and nothing ever asked again.
   // The CASVE cycle does not end at deciding, and neither should the mode.
-  const said = (st.actions || []).filter(Boolean);
+  // Only commitments that are NOT already on this screen. Without this filter a
+  // student ticks a move and immediately sees the same sentence twice: once
+  // under "you said you would" with a Done button, and once in the list they
+  // just ticked it in, with a tick. Worse, the heading claims it is from the
+  // last time they were here, ten seconds after they made it.
+  const onScreen = new Set([
+    ...moves.slice(0, 5).map((m) => m.label),
+    ...(f.thisTerm || []),
+  ]);
+  const said = (st.actions || []).filter(Boolean).filter((a) => !onScreen.has(a));
   const saidBlock = said.length ? `
     <div class="aim-linked">
       <p class="caps">${icon('q_how')}${esc(ac.saidHead)}</p>

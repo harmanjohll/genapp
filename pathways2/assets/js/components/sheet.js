@@ -11,7 +11,10 @@ import { el, onAction } from './dom.js';
 
 let dlg = null;
 let body = null;
+let foot = null;
 let lastTrigger = null;
+
+const CLOSE_BTN = '<button class="btn ghost small" data-action="sheet-close" type="button">Close</button>';
 
 function ensure() {
   if (dlg) return;
@@ -19,9 +22,10 @@ function ensure() {
   dlg.innerHTML = `
     <div class="sheet-grab" aria-hidden="true"></div>
     <div class="sheet-body" id="sheet-body" tabindex="-1"></div>
-    <div class="sheet-foot"><button class="btn ghost small" data-action="sheet-close" type="button">Close</button></div>`;
+    <div class="sheet-foot">${CLOSE_BTN}</div>`;
   document.body.appendChild(dlg);
   body = dlg.querySelector('.sheet-body');
+  foot = dlg.querySelector('.sheet-foot');
 
   onAction(dlg, { 'sheet-close': () => close() });
 
@@ -34,10 +38,21 @@ function ensure() {
   });
 }
 
-export function openSheet(html, trigger) {
+/**
+ * Open the sheet.
+ *
+ * `footHtml` is the part that must never scroll away. The body is a scroll
+ * region capped at the sheet height, so a sheet whose whole point is a button
+ * put that button below the fold on a 658px phone and the student saw only
+ * explanatory text with nothing to press. Anything a person has to do goes in
+ * the foot, which is pinned; anything they only have to read goes in the body.
+ */
+export function openSheet(html, trigger, footHtml) {
   ensure();
   lastTrigger = trigger || document.activeElement;
   body.innerHTML = html;
+  foot.innerHTML = footHtml ? `${footHtml}${CLOSE_BTN}` : CLOSE_BTN;
+  foot.classList.toggle('has-actions', !!footHtml);
   if (!dlg.open) dlg.showModal();
   body.scrollTop = 0;
   body.focus();
@@ -45,6 +60,19 @@ export function openSheet(html, trigger) {
 }
 
 export function sheetBody() { ensure(); return body; }
+
+/**
+ * Replace the pinned actions without touching the body.
+ *
+ * A sheet that repaints its own body as you tap (the subject picker counts what
+ * you have chosen) needs its foot to keep up, and reopening the whole sheet to
+ * do that would throw the reader back to the top of a two thousand pixel list.
+ */
+export function setSheetFoot(footHtml) {
+  ensure();
+  foot.innerHTML = footHtml ? `${footHtml}${CLOSE_BTN}` : CLOSE_BTN;
+  foot.classList.toggle('has-actions', !!footHtml);
+}
 
 export function close() {
   if (dlg && dlg.open) dlg.close();

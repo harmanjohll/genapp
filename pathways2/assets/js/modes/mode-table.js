@@ -19,12 +19,17 @@ import { cue } from '../sound.js';
 import { possibilitiesFor, forkNeed } from '../engine/possible.js';
 import {
   createRun, currentStage, ageAt, sequenceFor, visibleChoices, applyChoices,
-  answerNS, respondToChance, finish, pointsFor, strongestTrack,
+  answerNS, respondToChance, finish, pointsFor, strongestTrack, askMet, CAPACITY_CAP,
 } from '../engine/journey4.js';
 import { getState } from '../state.js';
 
 const MAX_PLAYERS = 6;
 const MIN_PLAYERS = 2;
+// Backing another seat is the game's only cooperative resource, and it is
+// finite on purpose. Social capital in a real life is finite too: you can
+// vouch for people, but not endlessly, so you spend it on someone who needs
+// it. Two per seat is enough that every table uses it and no table mashes it.
+const BACKS_PER_SEAT = 2;
 const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTUVWXYZ';
 const DISP_WORD = {
   curiosity: 'curious', persistence: 'persistent', flexibility: 'flexible',
@@ -132,12 +137,17 @@ function start(host, data, n) {
     round: 0,
     turn: 0,
     phase: 'turn',
+    helper: null,
+    helps: 0,
     players: Array.from({ length: n }, (_, i) => {
       const run = createRun(startAge, `Seat ${i + 1}`, null, st.plan);
       run.seed = seed;              // one deck, dealt to everybody
       run.short = true;
       run.classSeed = raw;
-      return { name: names[i] || `Player ${i + 1}`, run, lastChoices: [], lastCard: null };
+      return {
+        name: names[i] || `Player ${i + 1}`, run, lastChoices: [], lastCard: null,
+        backs: BACKS_PER_SEAT, helped: 0, spoke: 0,
+      };
     }),
   };
   picked = [];
@@ -189,6 +199,7 @@ function turnScreen(host, data) {
                       aria-pressed="${on}" ${!on && cost > left ? 'data-dim="true"' : ''}>
                 ${isFork ? '' : `<span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>`}
                 <span class="c-label">${esc(c.label)}</span>
+                ${c.capacity && p.run.capacity < CAPACITY_CAP ? `<span class="c-chips"><span class="grow-tag">${esc(data.copy.journey.growTag)}</span></span>` : ''}
                 ${need ? `<span class="fork-need">${esc(need)}</span>` : ''}
               </button>`;
           }).join('')}
@@ -254,6 +265,13 @@ function chanceScreen(host, data, p) {
   const t = data.copy.table;
   const card = data.chances.cards.find((c) => c.id === p.run.pending.cardId);
   if (!card) { p.run.pending = null; p.run.stepIndex += 1; return advance(host, data); }
+  // The ask is only offered when it would change something. A card whose hard
+  // answer this player can already reach on their own does not need the table,
+  // and a button that does nothing teaches nothing.
+  const stretch = (card.responses || []).find((r) => r.needsAsk);
+  const wouldHelp = !!stretch && !askMet(p.run, card);
+  const others = T.players.filter((x) => x !== p);
+  const canBack = others.filter((o) => (o.backs || 0) > 0);
   host.innerHTML = `
     <div class="wrap">
       <div class="tgame fade-up">
@@ -262,10 +280,28 @@ function chanceScreen(host, data, p) {
           <p class="caps">${esc(p.name)}${esc(t.dealt)}</p>
           <h1 class="serif" tabindex="-1">${esc(card.title)}</h1>
           <p class="lede">${decorate(card.body)}</p>
+          ${T.helper ? `<p class="tbacked">${esc(fill(t.askedBy, { helper: T.helper, asker: p.name }))}</p>` : ''}
+          ${/* The ask comes before the answers, because it changes which of
+                them the year will actually give you. */ ''}
+          ${!T.helper && wouldHelp && others.length ? `
+            <div class="tasktable">
+              <p class="caps">${esc(t.askHead)}</p>
+              <p class="small mute">${esc(t.askBody)}</p>
+              ${canBack.length ? `
+                <p class="micro mute" style="margin-top:var(--s-3)">${esc(t.askWho)}</p>
+                <div class="btn-row" style="margin-top:var(--s-2)">
+                  ${canBack.map((o) => `
+                    <button class="btn" type="button" data-action="helper" data-i="${T.players.indexOf(o)}">
+                      ${esc(o.name)} <span class="backdots" aria-label="${o.backs} left">${'●'.repeat(o.backs)}</span>
+                    </button>`).join('')}
+                </div>`
+              : `<p class="small mute" style="margin-top:var(--s-3)">${esc(t.askSpent)}</p>`}
+            </div>` : ''}
           <div class="grid j-choices" style="margin-top:var(--s-4)">
             ${(card.responses || []).map((r, i) => `
               <button class="choice sel" type="button" data-action="respond" data-i="${i}">
                 <span class="c-label">${esc(r.label)}</span>
+                ${r.needsAsk && T.helper ? `<span class="c-chips"><span class="near-chip">${esc(t.helpTag)}</span></span>` : ''}
               </button>`).join('')}
           </div>
         </div>
@@ -274,10 +310,28 @@ function chanceScreen(host, data, p) {
   focusHead(host);
   bindGlossary(host);
   onAction(host, {
+    // Someone at the table vouches. The harder answer becomes possible for the
+    // asker, and the helper is credited: this is the only mechanic in the game
+    // where one player's turn improves another player's year.
+    helper: (btn) => {
+      const h = T.players[Number(btn.dataset.i)];
+      if (!h || (h.backs || 0) <= 0) return;
+      T.helper = h.name;
+      h.backs -= 1;
+      h.helped = (h.helped || 0) + 1;
+      // Vouching for someone is how you come to know people, so the seat that
+      // spends the back gains the network, not the one that receives it.
+      h.run.ledger.network = Math.min(24, h.run.ledger.network + 1);
+      T.helps = (T.helps || 0) + 1;
+      cue('door');
+      repaint();
+    },
     respond: (btn) => {
-      respondToChance(p.run, card, Number(btn.dataset.i));
+      respondToChance(p.run, card, Number(btn.dataset.i), T.helper || null);
       const step = p.run.steps[p.run.steps.length - 1];
       p.lastCard = step && step.chance ? step.chance : null;
+      p.lastHelper = T.helper || null;
+      T.helper = null;
       advance(host, data);
     },
   });
@@ -324,13 +378,17 @@ function revealScreen(host, data) {
   const done = T.players[0].run.done || !currentStage(data.journey, T.players[0].run);
   const sameCard = new Set(T.players.map((p) => (p.lastCard ? p.lastCard.id : ''))).size === 1;
   const anyCard = T.players.some((p) => p.lastCard);
+  // How many ways the one card actually went, which is not the seat count: two
+  // seats can answer identically, and then the headline should say so.
+  const ways = new Set(T.players.map((p) => (p.lastCard ? p.lastCard.response : ''))).size;
+  const sameHead = ways > 1 ? fill(t.revealSame, { n: ways }) : t.revealSameOne;
   cue('door');
   host.innerHTML = `
     <div class="wrap">
       <div class="section fade-up" style="margin-top:var(--s-5)">
         ${boardStrip(data)}
         <p class="caps">${esc(t.revealHead)}</p>
-        <h1 class="serif" tabindex="-1">${esc(anyCard && sameCard ? t.revealSame : t.revealTitle)}</h1>
+        <h1 class="serif" tabindex="-1">${esc(anyCard && sameCard ? sameHead : t.revealTitle)}</h1>
         <div class="treveal">
           ${T.players.map((p) => `
             <article class="tcard">
@@ -340,14 +398,34 @@ function revealScreen(host, data) {
               </ul>
               ${p.lastCard ? `
                 <p class="tcard-card"><span class="tcard-deal">${esc(p.lastCard.title)}</span>
-                  ${esc(t.took)} ${esc(p.lastCard.response)}</p>` : ''}
+                  <span class="tcard-took">${esc(t.took)}: ${esc(p.lastCard.response)}</span></p>` : ''}
+              ${p.lastHelper ? `<p class="tcard-help">${esc(fill(t.askedBy, { helper: p.lastHelper, asker: p.name }))}</p>` : ''}
               ${p.run.doors.length ? `
                 <p class="chips doorchips small">${p.run.doors.slice(-3).map((d) => `<span>${icon(d)}${esc(doorLabel(data, d))}</span>`).join('')}</p>` : ''}
             </article>`).join('')}
         </div>
+        ${(() => {
+          const b = between(data);
+          if (!b.roads && !b.doors && !b.moves) return '';
+          const solo = T.players.length > 1 && (b.roads ? b.roads === 1 : b.moves === 1);
+          return `
+            <div class="tbetween">
+              <p class="caps">${esc(t.sharedHead)}</p>
+              <p>${b.roads
+                ? esc(fill(t.sharedRoads, { n: b.roads, total: b.total }))
+                : esc(b.moves === 1 ? t.sharedMoves1 : fill(t.sharedMoves, { n: b.moves }))}
+                 ${b.doors ? esc(doorsLine(t, b.doors)) : ''}</p>
+              ${solo ? `<p class="small mute">${esc(t.sharedNudge)}</p>` : ''}
+            </div>`;
+        })()}
         <div class="panel tight" style="margin-top:var(--s-4)">
-          <p class="caps">${esc(t.talkHead)}</p>
-          <p>${esc(prompt(data))}</p>
+          <p class="caps">${esc(t.talkHead)} <span class="cc-tag">${esc(prompt(data).cc || '')}</span></p>
+          <p>${esc(prompt(data).q || '')}</p>
+          ${(() => {
+            const note = tableNote(data, T.players, T.round);
+            return note ? `<p class="tnote">${esc(note)}</p>` : '';
+          })()}
+          <p class="tfloor">${esc(fill(t.floor, { name: floorSeat().name }))}</p>
         </div>
         <div class="btn-row" style="margin-top:var(--s-4)">
           <button class="btn accent" type="button" data-action="next">${esc(done ? t.toEnding : t.nextChapter)}</button>
@@ -359,7 +437,14 @@ function revealScreen(host, data) {
   onAction(host, {
     next: () => {
       if (done) { T.players.forEach((p) => finish(p.run, data)); T.phase = 'ending'; }
-      else { T.round += 1; T.phase = T.players.length > 1 ? 'pass' : 'turn'; }
+      else {
+        // A new round starts with nothing carried over, or a seat that draws no
+        // card this year would still be shown last year's card as if it were
+        // this year's news.
+        T.players.forEach((x) => { x.lastCard = null; x.lastHelper = null; x.lastChoices = []; });
+        T.round += 1;
+        T.phase = T.players.length > 1 ? 'pass' : 'turn';
+      }
       repaint();
     },
   });
@@ -367,7 +452,95 @@ function revealScreen(host, data) {
 
 function prompt(data) {
   const list = data.copy.table.prompts || [];
-  return list[T.round % list.length] || '';
+  return list[T.round % list.length] || { q: '', cc: '' };
+}
+
+/**
+ * Who answers first this round.
+ *
+ * Rotating the floor is the cheapest classroom fix there is. Without it the
+ * same confident student answers every prompt and the quiet ones learn to wait
+ * it out; with it, everybody has spoken first by the time the game ends. It
+ * rotates by seat, so it can never look like a ranking.
+ */
+const seatWithFloor = (players, round) => players[round % players.length];
+const floorSeat = () => seatWithFloor(T.players, T.round);
+
+/**
+ * One true, naming sentence about this table, so the argument has somewhere to
+ * start. Every note points at a difference between seats rather than at a
+ * placing, and it never says better or worse.
+ *
+ * Takes the seats rather than reading the module's table, so the dev sweep can
+ * hand it a made up table and check every branch produces a finished sentence.
+ */
+export function tableNote(data, players, round) {
+  const t = data.copy.table;
+  const notes = [];
+  const count = (key) => players.filter((x) => x.run.pathLabel === key).length;
+
+  // Alone on a road, or nobody alone at all.
+  const roads = players.map((x) => x.run.pathLabel).filter(Boolean);
+  const alone = players.find((x) => x.run.pathLabel && count(x.run.pathLabel) === 1);
+  if (alone) notes.push(fill(t.noteAlone, { name: alone.name, road: alone.run.pathLabel }));
+  else if (roads.length === players.length && new Set(roads).size === 1) {
+    notes.push(fill(t.noteAllSame, { road: roads[0] }));
+  }
+
+  // A door only one seat holds.
+  const held = {};
+  players.forEach((x) => x.run.doors.forEach((d) => { held[d] = (held[d] || 0) + 1; }));
+  const solo = players.find((x) => x.run.doors.some((d) => held[d] === 1));
+  if (solo) {
+    const d = solo.run.doors.find((k) => held[k] === 1);
+    notes.push(fill(t.noteDoor, { name: solo.name, door: midSentence(doorLabel(data, d)) }));
+  }
+
+  // The same card, answered two different ways.
+  const dealt = players.filter((x) => x.lastCard);
+  for (let i = 0; i < dealt.length; i += 1) {
+    for (let k = i + 1; k < dealt.length; k += 1) {
+      if (dealt[i].lastCard.id === dealt[k].lastCard.id
+        && dealt[i].lastCard.response !== dealt[k].lastCard.response) {
+        notes.push(fill(t.noteSplit, {
+          a: dealt[i].name, b: dealt[k].name, card: dealt[i].lastCard.title,
+        }));
+        i = dealt.length; break;
+      }
+    }
+  }
+
+  // Somebody spent a back this round.
+  const backed = players.find((x) => x.lastHelper);
+  if (backed) {
+    const h = players.find((x) => x.name === backed.lastHelper);
+    if (h) {
+      notes.push(h.backs
+        ? fill(t.noteBacked, { helper: h.name, asker: backed.name, n: h.backs })
+        : fill(t.noteBacked0, { helper: h.name, asker: backed.name }));
+    }
+  }
+
+  return notes.length ? notes[round % notes.length] : '';
+}
+
+/**
+ * What this table has between them, rather than what any one of them has.
+ *
+ * The point of playing together is that a table which all picks the same road
+ * learns the least, so the one running total on screen is the one that rewards
+ * spreading out. It is never per player and it is never a score.
+ */
+function between(data) {
+  const roads = new Set(T.players.map((x) => x.run.pathLabel).filter(Boolean));
+  const doors = new Set(T.players.flatMap((x) => x.run.doors));
+  // Roads and doors take a few years to appear. What the table has between it
+  // in year one is the spread of what each seat spent the year on, so that is
+  // the line that shows from the first reveal.
+  const moves = new Set(T.players.flatMap((x) => x.lastChoices || []));
+  const fork = (data.journey.stages || []).find((x) => x.id === 's_results');
+  const total = fork ? (fork.choices || []).length : 8;
+  return { roads: roads.size, total, doors: doors.size, moves: moves.size };
 }
 
 // --------------------------------------------------------------------------
@@ -392,6 +565,30 @@ function endingScreen(host, data) {
               <p class="chips doorchips small">${p.run.doors.map((d) => `<span>${icon(d)}${esc(doorLabel(data, d))}</span>`).join('') || `<span class="mute">${esc(t.noDoors)}</span>`}</p>
             </article>`).join('')}
         </div>
+        ${(() => {
+          const b = between(data);
+          const helps = T.helps || 0;
+          const backers = T.players.filter((x) => x.helped > 0);
+          const everyone = T.round + 1 >= T.players.length;   // rounds played, not the index
+          const used = [
+            ['Communication and Collaboration', helps
+              ? `${helps === 1 ? t.ccHelped1 : fill(t.ccHelped, { n: helps })} ${
+                fill(t.ccBackers, { names: listNames(backers.map((x) => x.name)) })}`
+              : t.ccHelpedNone],
+            ['Social Awareness', b.roads === 1 ? t.ccRoads1 : fill(t.ccRoads, { n: b.roads })],
+            ['Responsible Decision Making', doorsLine(t, b.doors)],
+            ['Self Awareness', everyone ? t.ccFloorAll : t.ccFloorSome],
+          ];
+          return `
+            <div class="section">
+              <p class="caps">${esc(t.ccHead)}</p>
+              <p class="small mute">${esc(t.ccNote)}</p>
+              <ul class="cc-list">
+                ${used.map(([name, ev]) => `
+                  <li><span class="cc-tag">${esc(name)}</span> <span>${esc(ev)}</span></li>`).join('')}
+              </ul>
+            </div>`;
+        })()}
         <div class="panel" style="margin-top:var(--s-5)">
           <p class="caps">${esc(t.closeHead)}</p>
           <p>${esc(t.closeBody)}</p>
@@ -434,13 +631,21 @@ function printPack(data) {
       </ol>
       <h3>${esc(data.copy.table.packSeats)}</h3>
       <table class="pp-table">
-        <thead><tr><th>${esc(data.copy.table.seat)}</th><th>${esc(data.copy.table.packRoad)}</th><th>${esc(data.copy.table.packDoors)}</th></tr></thead>
+        <thead><tr><th>${esc(data.copy.table.seat)}</th><th>${esc(data.copy.table.packRoad)}</th>
+          <th>${esc(data.copy.table.packDoors)}</th><th>${esc(data.copy.table.packBacked)}</th></tr></thead>
         <tbody>
           ${T.players.map((p) => `
             <tr><td>${esc(p.name)}</td><td>${esc(p.run.pathLabel || '')}</td>
-            <td>${esc(p.run.doors.map((d) => doorLabel(data, d)).join(', '))}</td></tr>`).join('')}
+            <td>${esc(p.run.doors.map((d) => doorLabel(data, d)).join(', '))}</td>
+            <td>${esc(String(p.helped || 0))}</td></tr>`).join('')}
         </tbody>
       </table>
+      ${/* The debrief, on paper, so the lesson does not end when the tab does. */ ''}
+      <h3>${esc(data.copy.table.packTalk)}</h3>
+      <ul class="pp-talk">
+        ${(data.copy.table.prompts || []).map((pr) => `
+          <li><strong>${esc(pr.cc)}</strong><span>${esc(pr.q)}</span></li>`).join('')}
+      </ul>
     </div>`;
 }
 
@@ -475,6 +680,24 @@ function possibleFold(data, run, age) {
     </details>`;
 }
 
+function fill(tpl, vars) {
+  return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
+}
+
+/** Door labels are written to open a line. Dropped into one, they need this. */
+const midSentence = (s) => String(s || '').replace(/^The /, 'the ').replace(/^A /, 'a ');
+
+/** One door reads differently from four, and a table notices bad grammar. */
+const doorsLine = (t, n) => (n === 1 ? t.sharedDoors1 : fill(t.sharedDoors, { n }));
+
+/** "Rina", "Rina and Danish", "Rina, Danish and Cheryl". Never a ranking. */
+function listNames(names) {
+  const n = names.filter(Boolean);
+  if (!n.length) return '';
+  if (n.length === 1) return n[0];
+  return `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}`;
+}
+
 function doorLabel(data, id) {
   const cat = (data.journey.doorsCatalog || {})[id] || {};
   return cat.label || id;
@@ -502,13 +725,15 @@ export function tableSweep(data) {
   const moves = (data.moves && data.moves.moves) || [];
   const meta = subjectMeta(data);
   for (let n = MIN_PLAYERS; n <= MAX_PLAYERS; n += 1) {
-    const players = Array.from({ length: n }, (_, i) => {
+    const seats = Array.from({ length: n }, (_, i) => {
       const run = createRun(15, `s${i}`, null, {});
       run.seed = 4242; run.short = true;
-      return run;
+      return { name: `S${i}`, run, backs: BACKS_PER_SEAT, helped: 0, lastCard: null, lastHelper: null };
     });
+    const players = seats.map((s) => s.run);
     let guard = 0;
     let sameFirstCard = null;
+    let asksOffered = 0;
     while (guard++ < 400) {
       const live = players.filter((r) => !r.done && currentStage(data.journey, r));
       if (!live.length) break;
@@ -521,7 +746,23 @@ export function tableSweep(data) {
         if (run.pending) {
           const card = data.chances.cards.find((c) => c.id === run.pending.cardId);
           if (run.stepIndex === 1 && k === 0) sameFirstCard = card ? card.id : null;
-          respondToChance(run, card, k % Math.max(1, (card.responses || []).length));
+          // Model the ask exactly as the screen offers it: only when the card
+          // has a stretch this seat cannot reach alone, and only from a seat
+          // with a back left to spend.
+          const seat = seats.find((s) => s.run === run);
+          const wants = (card.responses || []).findIndex((r) => r.needsAsk);
+          let helper = null;
+          if (wants >= 0 && !askMet(run, card)) {
+            asksOffered += 1;
+            const giver = seats.find((s) => s !== seat && s.backs > 0);
+            if (giver) { giver.backs -= 1; giver.helped += 1; helper = giver.name; }
+          }
+          respondToChance(run, card, helper ? wants : k % Math.max(1, (card.responses || []).length), helper);
+          const last = run.steps[run.steps.length - 1];
+          if (seat) { seat.lastCard = last && last.chance ? last.chance : null; seat.lastHelper = helper; }
+          if (helper && !(last && last.chance && last.chance.met)) {
+            failures.push({ n, card: card.id, why: 'a backed stretch still resolved as unmet' });
+          }
           return;
         }
         const pool = visibleChoices(stage, run, moves, age);
@@ -535,7 +776,49 @@ export function tableSweep(data) {
       if (r.steps.length < 4) failures.push({ n, seat: k, why: `seat lived only ${r.steps.length} turns` });
     });
     if (sameFirstCard === undefined) failures.push({ n, why: 'no shared card dealt' });
+
+    // Backing is a finite resource, spent on other people, and it can never go
+    // negative or be refilled by playing on.
+    seats.forEach((s, k) => {
+      if (s.backs < 0 || s.backs > BACKS_PER_SEAT) failures.push({ n, seat: k, why: `backs out of range at ${s.backs}` });
+      if (s.helped + s.backs !== BACKS_PER_SEAT) failures.push({ n, seat: k, why: 'backs given and backs left do not add up' });
+    });
+    if (!asksOffered) failures.push({ n, why: 'a whole table played and was never offered the ask' });
+
+    // The floor rotates by seat, so over one lap everybody has answered first.
+    const spoke = new Set();
+    for (let round = 0; round < n; round += 1) spoke.add(seatWithFloor(seats, round).name);
+    if (spoke.size !== n) failures.push({ n, why: `the floor reached only ${spoke.size} of ${n} seats in a lap` });
+
+    // Every table note is a finished sentence with nothing left unfilled.
+    for (let round = 0; round < 8; round += 1) {
+      const note = tableNote(data, seats, round);
+      if (note && /\{\w+\}/.test(note)) failures.push({ n, round, why: `table note left a blank: ${note}` });
+      if (note && /\bundefined\b/.test(note)) failures.push({ n, round, why: `table note said undefined: ${note}` });
+    }
   }
+  // Every discussion prompt names the competency it exercises, or a teacher
+  // cannot point at what just happened.
+  ((data.copy && data.copy.table && data.copy.table.prompts) || []).forEach((pr, i) => {
+    if (!pr || typeof pr !== 'object') failures.push({ prompt: i, why: 'prompt is not an object with a competency' });
+    else {
+      if (!pr.q) failures.push({ prompt: i, why: 'prompt with no question' });
+      if (!pr.cc) failures.push({ prompt: i, why: 'prompt with no competency named' });
+    }
+  });
+  // Every string this mode reaches for has to be in the copy file, or a table
+  // plays a round with a blank where a sentence should be.
+  [
+    'askHead', 'askBody', 'askWho', 'askSpent', 'askedBy', 'helpTag',
+    'sharedHead', 'sharedRoads', 'sharedDoors', 'sharedDoors1', 'sharedNudge',
+    'sharedMoves', 'sharedMoves1',
+    'floor', 'noteAlone', 'noteAllSame', 'noteDoor', 'noteSplit', 'noteBacked', 'noteBacked0',
+    'ccHead', 'ccNote', 'ccHelped', 'ccHelped1', 'ccBackers', 'ccHelpedNone',
+    'ccRoads', 'ccRoads1', 'ccFloorAll', 'ccFloorSome',
+    'revealTitle', 'revealSame', 'revealSameOne', 'took', 'packBacked', 'packTalk',
+  ].forEach((k) => {
+    if (!((data.copy && data.copy.table) || {})[k]) failures.push({ key: k, why: 'table copy missing' });
+  });
   const ok = failures.length === 0;
   console.log(
     `%cTable game: ${ok ? 'PASS' : 'FAIL'} (${MIN_PLAYERS} to ${MAX_PLAYERS} seats simulated)`,

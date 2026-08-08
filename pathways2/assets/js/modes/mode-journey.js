@@ -11,7 +11,7 @@
 import { esc, onAction } from '../components/dom.js';
 import { icon } from '../components/icons.js';
 import { decorate, bindGlossary } from '../components/glossary.js';
-import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js';
 import { cue } from '../sound.js';
 import { drawStoryMap, saveStoryCard } from '../components/storymap.js';
 import {
@@ -19,7 +19,7 @@ import {
 } from '../engine/possible.js';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
-  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns,
+  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
 } from '../engine/journey4.js';
 import {
@@ -168,23 +168,29 @@ function openPicker(data, trigger) {
             </div>`).join('')}
         </div>`;
     }).join('');
-    const n = Object.keys(plan).length;
     return `
       <h2 id="sheet-title">${esc(jc.comboPick)}</h2>
       <p class="small mute">${esc(jc.comboSheet)}</p>
-      <div class="picker">${body}</div>
-      <div class="btn-row" style="margin-top:var(--s-4)">
-        <button class="btn accent" type="button" data-action="pkdone">${esc(jc.comboDone)}${n ? ` (${n})` : ''}</button>
-      </div>`;
+      <div class="picker">${body}</div>`;
   };
 
-  const host = openSheet(paint(), trigger);
+  // The list of subjects is two thousand pixels long on a phone, so the button
+  // that accepts the combination is pinned rather than parked at the bottom of
+  // it. It also carries the running count, which is the only feedback that a
+  // tap landed when the row you tapped has scrolled out of view.
+  const footFor = () => {
+    const n = Object.keys(getState().plan).length;
+    return `<button class="btn accent" type="button" data-action="pkdone">${esc(jc.comboDone)}${n ? ` (${n})` : ''}</button>`;
+  };
+
+  const host = openSheet(paint(), trigger, footFor());
   onSheetAction({
     pklv: (btn) => {
       const { id, lv, name } = btn.dataset;
       const cur = getState().plan[id];
       setSubjectLevel(id, cur === lv ? null : lv, name);
       host.innerHTML = paint();
+      setSheetFoot(footFor());
     },
     pkdone: () => { closeSheet(); rerender(); },
   });
@@ -196,6 +202,8 @@ function openPicker(data, trigger) {
 function introScreen(host, data, st) {
   const jc = data.copy.journey;
   const wants = data.journey.wants || [];
+  // Act stores its answer as a future id, and the ids are shared with this list.
+  const known = st.aim ? wants.find((w) => w.id === st.aim && w.id !== 'unsure') : null;
   const rows = planRows(data, st.plan);
   const hasPlan = rows.length > 0;
 
@@ -230,14 +238,27 @@ function introScreen(host, data, st) {
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">Play</p>
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
-        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what you do each chapter, from now to 48. Life happens in between. No choice ends your story.</p>
+        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what I do each chapter, from now to 48. Life happens in between. No choice ends my story.</p>
         ${comboBlock}
         <div class="wantbox">
           <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(jc.wantHint)}</p>
+          ${/* Act asks this same question with the same six kinds. A student
+                arriving from there should be shown their answer, not asked it
+                again, or the app looks like it was not listening. */ ''}
+          ${known ? `
+            <div class="wantknown">
+              <p class="micro mute">${esc(jc.wantKnown)}</p>
+              <button class="future-btn on" type="button" data-action="want" data-id="${known.id}">
+                <span class="want" style="font-size:1rem">${esc(known.label)}</span>
+                ${known.kind ? `<span class="kind-chip">${esc(known.kind)}</span>` : ''}
+                <span class="want-go">${esc(jc.wantKeep)}</span>
+              </button>
+            </div>
+            <p class="caps" style="margin-top:var(--s-4)">${esc(jc.wantOther)}</p>` : ''}
           <div class="grid two" style="margin-top:var(--s-3)">
-            ${wants.map((w) => `
+            ${wants.filter((w) => !known || w.id !== known.id).map((w) => `
               <button class="future-btn" type="button" data-action="want" data-id="${w.id}">
                 <span class="want" style="font-size:1rem">${esc(w.label)}</span>
                 ${w.kind ? `<span class="kind-chip">${esc(w.kind)}</span>` : ''}
@@ -256,6 +277,10 @@ function introScreen(host, data, st) {
     want: (btn) => {
       const w = (data.journey.wants || []).find((x) => x.id === btn.dataset.id);
       const want = w && w.id !== 'unsure' ? { id: w.id, label: w.label, riasec: w.riasec, kind: w.kind } : null;
+      // Mark it before the sheet opens. Somebody who dismisses the sheet lands
+      // back here, and an unchanged screen reads as a tap that did nothing.
+      host.querySelectorAll('.future-btn.on').forEach((b) => b.classList.remove('on'));
+      btn.classList.add('on');
       openStartSheet(data, want, btn);
     },
     pickrun: (btn) => {
@@ -270,6 +295,9 @@ function introScreen(host, data, st) {
 
 function openStartSheet(data, want, trigger) {
   const jc = data.copy.journey;
+  // The two buttons go in the pinned foot. Everything above them is reading,
+  // and the class code is a teacher's tool, so it folds away rather than
+  // standing between a student and the start of the game.
   openSheet(`
     <h2 id="sheet-title">${esc(jc.tourHead)}</h2>
     <ol class="small tourlist">
@@ -277,19 +305,16 @@ function openStartSheet(data, want, trigger) {
       <li>${esc(jc.tour2)}</li>
       <li>${esc(jc.tour3)}</li>
     </ol>
-    <div class="seedrow">
-      <p class="caps" style="margin-top:var(--s-4)">${esc(jc.classSeedLabel)}</p>
+    <p class="small"><strong>${esc(jc.runLong)}</strong> ${esc(jc.runLongNote)}</p>
+    <p class="small"><strong>${esc(jc.runShort)}</strong> ${esc(jc.runShortNote)}</p>
+    <details class="seedrow">
+      <summary class="small">${esc(jc.classSeedLabel)}</summary>
       <input class="seedbox" type="text" maxlength="8" autocapitalize="characters"
              placeholder="${esc(jc.classSeedPlaceholder)}" data-ref="seed" aria-label="${esc(jc.classSeedLabel)}">
       <p class="micro mute">${esc(jc.classSeedHint)}</p>
-    </div>
-    <p class="caps" style="margin-top:var(--s-5)">${esc(jc.runPick)}</p>
-    <div class="runpick">
-      <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
-      <p class="micro mute">${esc(jc.runLongNote)}</p>
-      <button class="btn ghost" type="button" data-action="goshort" style="margin-top:var(--s-3)">${esc(jc.runShort)}</button>
-      <p class="micro mute">${esc(jc.runShortNote)}</p>
-    </div>`, trigger);
+    </details>`, trigger, `
+    <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
+    <button class="btn" type="button" data-action="goshort">${esc(jc.runShort)}</button>`);
   const seedVal = () => {
     const el = document.querySelector('dialog.sheet [data-ref="seed"]');
     return el ? el.value : '';
@@ -348,7 +373,7 @@ function turnScreen(host, stage, data, age) {
               aria-pressed="${on}" ${dim ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'\u25cf'.repeat(cost)}</span>
         <span class="c-label">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</span>
-        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${c.capacity && run.capacity < CAPACITY_CAP ? `<span class="grow-tag">${esc(jc.growTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -369,7 +394,12 @@ function turnScreen(host, stage, data, age) {
     <div class="grid j-choices" role="group" aria-label="Your choices">${choices}</div>
     ${possibleBlock(data, age)}
     ${yearSummary(data, stage, pool, age)}
-    <div class="btn-row" style="margin-top:var(--s-4)">
+    ${/* Sticky on a phone. Five choices plus the possibilities fold and the
+          year summary put this eleven hundred pixels down a six hundred pixel
+          window, so a student tapped a choice and saw nothing happen. It only
+          appears once there is something to commit, so it is never in the way
+          of reading the year. */ ''}
+    <div class="btn-row liverow${(picked.length || pickedAsks.length) ? ' armed' : ''}" style="margin-top:var(--s-4)">
       ${(picked.length || pickedAsks.length) ? `<button class="btn accent" type="button" data-action="live">${esc(jc.liveIt)}</button>` : ''}
       ${picked.length && left > 0 ? `<span class="small mute" style="align-self:center">${esc(jc.leftHint)}</span>` : ''}
     </div>
@@ -527,7 +557,8 @@ function pointsWhy(jc, n, reasons) {
     full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer,
     week: jc.whyWeek, room: jc.whyRoom, ns: jc.whyNs,
   };
-  const why = reasons.length ? reasons.map((r) => map[r.k]).filter(Boolean).join(' ') : jc.whyPlain;
+  const line = (r) => (r.k === 'grown' ? fill(jc.whyGrown, { why: r.why }) : map[r.k]);
+  const why = reasons.length ? reasons.map(line).filter(Boolean).join(' ') : jc.whyPlain;
   return fill(jc.pointsWhy, { n, why });
 }
 
@@ -783,6 +814,30 @@ function idWords(r, jc) {
  * The lived screen: the whole year in one beat. If a door opened, the beat
  * opens with it, full width, with the one sound in the app worth hearing.
  */
+/**
+ * What to say when a student reached past their footing and it half landed.
+ *
+ * Thirty seven cards now carry an answer that asks for more nerve, miles or
+ * curiosity than the run has built, so a bold player meets this about a fifth
+ * of the time. One line repeated that often becomes wallpaper, and it also
+ * wastes the teachable half: the card knows exactly which quality was short,
+ * so the line names it. Never a failure, always the same claim, which is that
+ * doing the thing is how the footing gets built.
+ *
+ * Two phrasings per quality, alternating, because a run that is short on one
+ * quality will meet that quality's line several times, and hearing the same
+ * sentence four times teaches a student that nobody is reading.
+ */
+function efficacyLine(data, chance) {
+  const jc = data.copy.journey;
+  const card = ((data.chances && data.chances.cards) || []).find((c) => c.id === chance.id);
+  const disp = card && card.asks && card.asks.disposition;
+  if (!disp) return jc.efficacyLine;
+  const stem = `efficacy${disp[0].toUpperCase()}${disp.slice(1)}`;
+  const alt = run && run.stepIndex % 2 === 1 ? jc[`${stem}2`] : null;
+  return alt || jc[stem] || jc.efficacyLine;
+}
+
 function livedScreen(host, data) {
   const jc = data.copy.journey;
   const { chapter, age, chosen, chance, stretch, missed, delta: d, doorOpened } = justLived;
@@ -811,7 +866,7 @@ function livedScreen(host, data) {
           <p class="kind">${icon(`ch_${chance.type}`)}${esc(chance.title)}</p>
           <p class="lived-choice serif">${esc(chance.response)}</p>
           <p class="lede">${decorate(chance.text)}</p>
-          ${stretch ? `<p class="small mute">${esc(jc.efficacyLine)}</p>` : ''}
+          ${stretch ? `<p class="small mute">${esc(efficacyLine(data, chance))}</p>` : ''}
         </div>` : ''}
       ${d.length ? `<p class="delta">${d.filter((x) => !x.door).map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
       ${missed ? `<p class="meanwhile">${esc(fill(jc.meanwhile, { missed }))}</p>` : ''}
@@ -1029,12 +1084,21 @@ function showDiff(host, data, pair) {
 
   const nDiff = d.rows.filter((r) => r.differs).length;
   const map = routeMap(d.rows.length, nDiff, d.tailA.length, d.tailB.length);
+  // Two runs that fork apart do not share their later chapters at all, so
+  // counting only the shared rows reported one difference for a life that went
+  // entirely elsewhere. The chapters only one of you lived are differences too.
+  const nApart = nDiff + d.tailA.length + d.tailB.length;
+  const bothRoads = d.paths[0] && d.paths[1] && d.paths[0] !== d.paths[1];
+  const headline = nApart === 0
+    ? jc.compareHeadSame
+    : (bothRoads && nApart > 4 ? jc.compareRoads
+      : (nApart === 1 ? jc.compareHead1 : fill(jc.compareHead, { n: nApart })));
 
   host.innerHTML = `
     <div class="wrap">
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">${esc(jc.compareCta)}</p>
-        <h1 class="serif" tabindex="-1" style="font-size:var(--t-h1)">Same start. ${nDiff} different chapter${nDiff === 1 ? '' : 's'}.</h1>
+        <h1 class="serif" tabindex="-1" style="font-size:var(--t-h1)">${esc(headline)}</h1>
         ${map}
         ${stopped}
         <div class="diff" style="margin-top:var(--s-4)">

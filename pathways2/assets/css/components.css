@@ -285,14 +285,29 @@ dialog.sheet {
   border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
+/* A column, so the body gives up height to the foot instead of shoving it past
+   the bottom edge. The previous version capped the body at the sheet height
+   minus a hardcoded 120px guess at the foot, which only held while the foot was
+   one small Close button. Scoped to [open] so the closed dialog stays hidden. */
+dialog.sheet[open] { display: flex; flex-direction: column; }
 dialog.sheet::backdrop { background: rgba(20, 24, 31, 0.42); }
 dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @keyframes sheetIn { from { transform: translateY(100%); } to { transform: none; } }
 .sheet-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--rule); margin: var(--s-3) auto var(--s-1); }
-.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto;
-  max-height: calc(86vh - 120px); max-height: calc(86dvh - 120px); }
+.sheet-body { padding: var(--s-4) var(--s-5); overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+.sheet-grab, .sheet-foot { flex: 0 0 auto; }
 .sheet-body:focus { outline: none; }
 .sheet-foot { padding: var(--s-3) var(--s-5) var(--s-5); border-top: 1px solid var(--rule-soft); }
+/* A foot carrying real actions wraps them thumb first and lets Close go last,
+   and it is pinned, so the body shrinks to make room rather than pushing it
+   off the bottom of the sheet. */
+.sheet-foot.has-actions {
+  display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center;
+  background: var(--surface);
+}
+.sheet-foot.has-actions .btn { flex: 1 1 auto; justify-content: center; }
+.sheet-foot.has-actions .btn.ghost.small { flex: 0 0 auto; }
+.seedrow > summary { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; }
 
 /* Tablet portrait and up: a centred dialog sized to its content.
    Must come after the base rules, or the phone animation and the grab handle
@@ -306,7 +321,7 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
   dialog.sheet[open] { animation: modalIn 200ms var(--ease); }
   @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
   .sheet-grab { display: none; }
-  .sheet-body { max-height: calc(80vh - 124px); max-height: calc(80dvh - 124px); padding: var(--s-5) var(--s-6); }
+  .sheet-body { padding: var(--s-5) var(--s-6); }
   .sheet-foot { padding: var(--s-3) var(--s-6) var(--s-5); }
 }
 
@@ -486,6 +501,30 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 }
 .future-btn:hover { border-color: var(--accent); background: var(--accent-wash); }
 .future-btn .want { font-family: var(--display); font-size: 1.05rem; font-weight: 600; display: block; }
+.future-btn.on { border-color: var(--accent); background: var(--accent-wash); }
+
+/* The chip on a choice that pays for itself in later years. Green, because it
+   is the same promise as a door: something opens and stays open. */
+.grow-tag {
+  display: inline-block; padding: 1px 8px; border-radius: var(--r-pill);
+  background: var(--open-wash); color: var(--open-ink);
+  border: 1px solid var(--open); font-size: var(--t-micro); font-weight: 700;
+}
+
+/* The commit bar. Sticky only on a phone, only once armed, and it sits above
+   the safe area so a gesture bar cannot take the tap. */
+@media (max-width: 699px) {
+  .liverow.armed {
+    position: sticky; bottom: 0; z-index: 3;
+    margin-left: calc(var(--s-4) * -1); margin-right: calc(var(--s-4) * -1);
+    padding: var(--s-3) var(--s-4);
+    padding-bottom: calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+    background: var(--bg); border-top: 1px solid var(--rule-soft);
+  }
+  .liverow.armed .btn { flex: 1 1 auto; justify-content: center; }
+}
+.want-go { display: block; margin-top: 4px; font-size: var(--t-small); font-weight: 700; color: var(--accent-dk); }
+.wantknown { margin-top: var(--s-3); }
 .thisterm { border: 2px solid var(--accent); border-radius: var(--r-lg); padding: var(--s-5); background: var(--surface); }
 .thisterm ol { margin: var(--s-3) 0 0; padding-left: 1.3em; }
 .thisterm li { margin-bottom: var(--s-3); }
@@ -1358,8 +1397,12 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .pp-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-top: 4pt; }
   .pp-table th, .pp-table td { border: 1pt solid #999; padding: 5pt 6pt; text-align: left; vertical-align: top; }
   .pp-table th { background: #eee; }
+  .pp-talk { list-style: none; padding: 0; margin: 0; font-size: 10pt; }
+  .pp-talk li { border-top: 1pt solid #ccc; padding: 5pt 0; break-inside: avoid; }
+  .pp-talk li strong { display: block; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.04em; color: #444; }
 }
 .tcard-deal { display: block; font-weight: 700; color: var(--ink); }
+.tcard-took { display: block; }
 
 /* The fourth door: the group game was reachable only by typing a URL, which is
    the same as not shipping it. It sits under the three solo doors, full width,
@@ -1371,6 +1414,27 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 .ldoor.wide:hover, .ldoor.wide:focus-visible { border-style: solid; }
 /* The lesson plan is scanned in a corridor, not read in an armchair. */
 .tight-list li { margin-bottom: 4px; line-height: 1.45; }
+
+/* A run sheet. The minutes were bold text inside an ordered list, so a lesson
+   plan read "1. 5." and the reader had to work out which number was time. */
+.minlist { list-style: none; padding: 0; margin: var(--s-2) 0 0; }
+.minlist li { display: flex; gap: var(--s-3); align-items: baseline; margin-bottom: 6px; line-height: 1.45; }
+.minlist .min {
+  flex: 0 0 4.2rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: var(--t-small); color: var(--ink-soft);
+}
+
+/* The counsellor's reference table. It carries admission arithmetic, so it has
+   to stay a table rather than becoming stacked cards, which means it scrolls
+   inside its own box on a phone instead of pushing the page sideways. */
+.ctable-wrap { overflow-x: auto; margin-top: var(--s-3); }
+.ctable { width: 100%; border-collapse: collapse; font-size: var(--t-small); min-width: 30rem; }
+.ctable th, .ctable td { text-align: left; vertical-align: top; padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--rule); }
+.ctable thead th { font-size: var(--t-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-mute); }
+.ctable tbody th { font-weight: 700; width: 11rem; }
+.cmute { display: block; font-weight: 400; color: var(--ink-mute); font-size: var(--t-micro); }
+.cbar { display: block; margin-bottom: 2px; }
+.cprov { color: var(--longer); font-weight: 700; }
 
 /* --- universality fixes, found on a 56 combination device sweep -------------
    A text input will not shrink below its default intrinsic width, and a grid
@@ -1398,3 +1462,38 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 /* Inline links in prose are exempt from the target minimum, being part of a
    sentence, but the same trick as .gloss costs nothing and helps a thumb. */
 .wrap p a[href], .small a[href], .micro a[href] { padding: 4px 1px; margin: -4px -1px; }
+
+/* --- collaboration at the table -------------------------------------------
+   The only running total in the game is the one the table holds together, so
+   it is styled as a statement rather than a scoreboard: no number bigger than
+   the words around it. */
+.tbetween {
+  margin-top: var(--s-4); padding: var(--s-3);
+  border-left: 3px solid var(--open); background: var(--open-wash);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.tbetween p { margin: 0; }
+.tbetween .caps { color: var(--open-ink); margin-bottom: 4px; }
+.tasktable {
+  margin-top: var(--s-4); padding: var(--s-3);
+  border-left: 3px solid var(--open); background: var(--open-wash);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.tasktable .caps { color: var(--open-ink); }
+.tasktable p { margin: 0; }
+.tbacked { color: var(--open-ink); font-weight: 600; font-size: var(--t-small); margin: var(--s-2) 0 0; }
+.tcard-help { font-size: var(--t-micro); color: var(--open-ink); font-weight: 700; margin: 6px 0 0; }
+.cc-tag {
+  display: inline-block; padding: 1px 8px; border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--rule);
+  font-size: var(--t-micro); font-weight: 700; color: var(--ink-soft);
+  text-transform: none; letter-spacing: 0;
+}
+.cc-list { list-style: none; padding: 0; margin: var(--s-3) 0 0; display: grid; gap: var(--s-2); }
+.cc-list li { display: flex; gap: var(--s-3); align-items: baseline; flex-wrap: wrap; }
+.tnote { margin: var(--s-2) 0 0; font-size: var(--t-small); color: var(--ink-soft); }
+.tfloor {
+  margin: var(--s-3) 0 0; padding-top: var(--s-2); border-top: 1px solid var(--rule);
+  font-size: var(--t-small); font-weight: 700; color: var(--open-ink);
+}
+.backdots { letter-spacing: 1px; font-size: 0.6em; opacity: 0.65; vertical-align: middle; }
