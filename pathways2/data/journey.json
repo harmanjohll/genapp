@@ -1471,7 +1471,8 @@
      },
      "outcome": "I shout commands I once ignored. Leading tired people politely turns out to be a career skill."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_ns_ord",
@@ -1544,7 +1545,8 @@
      "outcome": "The lump sum goes into a certificate instead of a phone. Nobody at the time thinks this is the fun choice.",
      "missed": "The payout went the way payouts go."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_uni",
@@ -1605,7 +1607,8 @@
      "missed": "The careers office knew everyone's name except mine.",
      "opens": "d_people"
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_paycheque",
@@ -1679,7 +1682,8 @@
      },
      "outcome": "Work Study route: employed, paid, studying. Tuesday nights hurt and the certificate is real."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_cross",
@@ -1747,7 +1751,8 @@
      },
      "outcome": "Family, or caring, or the community thing that needs hands. Work holds steady while life takes the lead."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_build",
@@ -1817,7 +1822,8 @@
      "sets": "told_home",
      "outcome": "Parents aging, maybe kids arriving, definitely laundry. I resize ambition to fit love, on purpose."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_quiet",
@@ -1825,7 +1831,8 @@
    "fixedAge": 38,
    "years": 1,
    "format": "reflect",
-   "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want me named as a teenager is still mine, or has quietly become something else."
+   "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want me named as a teenager is still mine, or has quietly become something else.",
+   "adultYears": true
   },
   {
    "id": "ch_mirror",
@@ -1895,7 +1902,8 @@
      },
      "outcome": "Fewer hours, closer commute, one deliberate downshift. The trade is explicit and I sign it."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_late",
@@ -1962,7 +1970,8 @@
      },
      "outcome": "I model something rare at my age: enough. The younger ones need to see it done once."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_mi_year",
@@ -2172,7 +2181,8 @@
      "outcome": "A committee, a shop floor, a team. Being responsible for other people's Tuesdays changes me.",
      "missed": "Nobody's Tuesday depended on me."
     }
-   ]
+   ],
+   "adultYears": true
   },
   {
    "id": "ch_own_time",
@@ -2239,7 +2249,8 @@
      "outcome": "A stint away, paid for carefully. I come home with a different sense of what is normal.",
      "missed": "The trip stayed a tab I never closed."
     }
-   ]
+   ],
+   "adultYears": true
   }
  ],
  "endingFrames": [

@@ -1497,3 +1497,12 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   font-size: var(--t-small); font-weight: 700; color: var(--open-ink);
 }
 .backdots { letter-spacing: 1px; font-size: 0.6em; opacity: 0.65; vertical-align: middle; }
+
+/* The build, printed where a teacher can read it. Quiet until it disagrees with
+   the data it loaded, which is the only time it matters. */
+.foot-build {
+  margin: var(--s-4) 0 0; padding-top: var(--s-3); border-top: 1px solid var(--rule-soft);
+  font-size: var(--t-micro); color: var(--ink-mute);
+}
+.foot-build strong { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.build-warn { color: var(--longer); font-weight: 700; }

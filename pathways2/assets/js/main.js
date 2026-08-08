@@ -4,31 +4,31 @@
 // Play lives it forward, Act turns the ending into things to do this term.
 // The landing asks one question before any of it, once.
 
-import { loadAll } from './data-loader.js';
+import { loadAll, BUILD } from './data-loader.js?v=2.4.0';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
   markVersionSeen, snapshotPlan, MODES, YEARS, currentYear,
-} from './state.js';
-import { initGlossary, openFullList } from './components/glossary.js';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
-import { onAction, esc } from './components/dom.js';
-import { icon } from './components/icons.js';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js';
-import { reach, runInvariantSweep } from './engine/reach.js';
-import { projectionSweep } from './engine/project.js';
-import { runCopyLint } from './engine/copy-lint.js';
-import { runJourneySweep } from './engine/journey4.js';
-import { possibilitySweep } from './engine/possible.js';
-import { ecgSweep } from './engine/ecg-lint.js';
-import { domLint } from './engine/dom-lint.js';
-import { renderLanding } from './modes/landing.js';
-import { renderNow } from './modes/mode-now.js';
-import { renderJourney, resetJourney } from './modes/mode-journey.js';
-import { renderAim } from './modes/mode-aim.js';
-import { renderTeacher } from './modes/mode-teacher.js';
-import { renderTable, resetTable, tableSweep } from './modes/mode-table.js';
-import { renderParent } from './modes/mode-parent.js';
-import { renderCounsellor } from './modes/mode-counsellor.js';
+} from './state.js?v=2.4.0';
+import { initGlossary, openFullList } from './components/glossary.js?v=2.4.0';
+import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.4.0';
+import { onAction, esc } from './components/dom.js?v=2.4.0';
+import { icon } from './components/icons.js?v=2.4.0';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.4.0';
+import { reach, runInvariantSweep } from './engine/reach.js?v=2.4.0';
+import { projectionSweep } from './engine/project.js?v=2.4.0';
+import { runCopyLint } from './engine/copy-lint.js?v=2.4.0';
+import { runJourneySweep } from './engine/journey4.js?v=2.4.0';
+import { possibilitySweep } from './engine/possible.js?v=2.4.0';
+import { ecgSweep } from './engine/ecg-lint.js?v=2.4.0';
+import { domLint } from './engine/dom-lint.js?v=2.4.0';
+import { renderLanding } from './modes/landing.js?v=2.4.0';
+import { renderNow } from './modes/mode-now.js?v=2.4.0';
+import { renderJourney, resetJourney } from './modes/mode-journey.js?v=2.4.0';
+import { renderAim } from './modes/mode-aim.js?v=2.4.0';
+import { renderTeacher } from './modes/mode-teacher.js?v=2.4.0';
+import { renderTable, resetTable, tableSweep } from './modes/mode-table.js?v=2.4.0';
+import { renderParent } from './modes/mode-parent.js?v=2.4.0';
+import { renderCounsellor } from './modes/mode-counsellor.js?v=2.4.0';
 
 const app = document.getElementById('app');
 const head = document.getElementById('site-head');
@@ -60,6 +60,7 @@ async function init() {
     return;
   }
 
+  stampBuild();
   initGlossary(data.glossary);
   reconcile(data);
 
@@ -274,6 +275,25 @@ function partLoaded(missing) {
     topl: () => { extraMode = null; setMode('now'); },
   });
   console.warn('[data] mode unavailable, missing:', missing.join(', '));
+}
+
+/**
+ * The build, on screen, on every page.
+ *
+ * A teacher who has just been told something changed needs to be able to check
+ * that their phone is running it, and the only honest way to answer that is to
+ * print the build where they can read it. Also states whether the data matched
+ * the build, so a stale cache shows up as a mismatch rather than as silence.
+ */
+function stampBuild() {
+  const el = document.getElementById('foot-build');
+  if (!el) return;
+  const dv = (data.version && data.version.version) || 'unknown';
+  const fresh = data._freshness || {};
+  const same = dv === BUILD;
+  el.innerHTML = `Paths version <strong>${esc(BUILD)}</strong>`
+    + (same ? '' : ` <span class="build-warn">data says ${esc(dv)}, so this page is part cached. Reload to catch up.</span>`)
+    + (fresh.known ? ` &middot; figures last checked ${fresh.days} days ago` : '');
 }
 
 // The audience strip: three quiet words above the header, because a parent

@@ -37,7 +37,46 @@ const ctx = {
   yearId: 'sec3',
 };
 
+/**
+ * The build stamp in index.html and the version in version.json must agree.
+ *
+ * They are two files because the browser treats them differently: the HTML is
+ * revalidated on a reload and the JSON is not, which is why the stamp had to
+ * move into the HTML. Two files means they can drift, and a drift means the
+ * footer tells a teacher their page is part cached when it is not, or worse,
+ * says nothing when it is. So it is checked.
+ */
+function versionSweep() {
+  const failures = [];
+  const html = readFileSync(join(root, 'index.html'), 'utf8');
+  const meta = (html.match(/<meta name="app-version" content="([^"]+)"/) || [])[1];
+  const declared = data.version && data.version.version;
+  if (!meta) failures.push({ why: 'index.html carries no app-version meta tag' });
+  if (!declared) failures.push({ why: 'version.json declares no version' });
+  if (meta && declared && meta !== declared) {
+    failures.push({ why: `index.html says ${meta} and version.json says ${declared}` });
+  }
+  if (meta && !(data.version.releases || []).some((r) => r.version === meta)) {
+    failures.push({ why: `no release notes for ${meta}, so the what changed sheet would be blank` });
+  }
+  // Every subresource in the document has to carry the buster, or a student on
+  // a cached stylesheet sees new copy in an old layout.
+  ['tokens2.css', 'base.css', 'components.css', 'main.js'].forEach((f) => {
+    if (!new RegExp(`${f.replace('.', '\\.')}\\?v=${meta}`).test(html)) {
+      failures.push({ why: `${f} is not cache busted to ${meta}` });
+    }
+  });
+  const ok = failures.length === 0;
+  console.log(
+    `%cVersion: ${ok ? 'PASS' : 'FAIL'}${meta ? ` (build ${meta})` : ''}`,
+    ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700'
+  );
+  if (!ok) console.table(failures);
+  return { ok, failures };
+}
+
 const results = [
+  ['version', versionSweep()],
   ['reach', runInvariantSweep(ctx)],
   ['projection', projectionSweep(ctx)],
   ['journey', runJourneySweep(data)],

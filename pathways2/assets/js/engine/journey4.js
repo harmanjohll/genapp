@@ -57,7 +57,6 @@ export const SUBJECT_CHOICE_CAP = 2;
 export const MOVE_CHOICE_CAP = 2;
 export const HAND_LIMIT = 5;
 export const ASKS_PER_YEAR = 2;
-export const SHORT_CHAPTERS = 2;   // family chapters a one lesson run lives
 export const SHORT_FLOOR = 5;      // turns a one lesson run gets at minimum
 
 // ---------------------------------------------------------------------------
@@ -103,17 +102,18 @@ export function sequenceFor(j, run) {
     .filter((s) => !s.excludesFlag || !flags.includes(s.excludesFlag));
   const all = [...school, ...tail];
   if (run.short) {
-    // One lesson, but a shape: school, the envelope, the service question, then
-    // TWO chapters of the road chosen, so the choice gets a consequence and not
-    // just an opening. Floored at five turns, because a Sec 5 student starting
-    // late was getting three.
+    // School, the envelope, the service question, and then the whole of the
+    // first qualification: every chapter of the road chosen, up to the year the
+    // adult life starts. That lands around twenty, which is where a secondary
+    // student's real horizon is. It used to stop after two chapters, which
+    // handed out a road and then took it away before it had finished.
     const out = [];
-    let chapters = 0;
     for (const s of all) {
+      if (s.adultYears) break;
       out.push(s);
-      if (s.chapter && s.format !== 'ask-ns' && (s.format || 'turn') !== 'fork') chapters += 1;
-      if (chapters >= SHORT_CHAPTERS && out.length >= SHORT_FLOOR) break;
     }
+    // A late starter can still fall short of a shape, so the floor stands.
+    if (out.length < SHORT_FLOOR) return all.slice(0, Math.max(SHORT_FLOOR, out.length));
     return out;
   }
   return all;
