@@ -3,9 +3,10 @@
 <title>BTY House Dashboard &middot; houses, the band, and talent development</title>
 <style>
 :root{--navy:#000C53;--yellow:#FFE200;--red:#EC3237;
- --g1:#F6F7F9;--g2:#E4E6EC;--g3:#9aa0ae;--g4:#5b5f6b;--ink:#1a1c22;
- --ok:#1a7f4b;--warn:#b8860b;--bad:#c0392b;
+ --g1:#F6F7F9;--g2:#E4E6EC;--g3:#666c78;--g4:#53575f;--ink:#1a1c22;
+ --ok:#15683d;--warn:#8a6508;--bad:#b3312a;
  --hood:#C8102E;--jell:#E8751A;--harw:#1A7F4B;--stur:#D8A800;--fish:#1F5FA8;
+ --hood-t:#A60D26;--jell-t:#8A4409;--harw-t:#146039;--stur-t:#7A5F00;--fish-t:#1A4F8C;
  --fs:15px;}
 *{box-sizing:border-box}
 body{margin:0;background:#fff;color:var(--ink);font-family:Calibri,"Segoe UI",system-ui,sans-serif;font-size:var(--fs);line-height:1.55}
@@ -44,14 +45,14 @@ a{color:var(--navy)}
 .sbar .dlt.up{color:var(--ok)}.sbar .dlt.dn{color:var(--bad)}
 .grp.drv>h5{border-left:3px solid var(--yellow)}
 .grp:not(.drv)>h5{opacity:.62}
-.sbar .mdl{font-size:11px;color:var(--g3);white-space:nowrap}
+.sbar .mdl{font-size:11.5px;color:var(--g3);white-space:nowrap}
 body.pres .sbar{display:none}
 @media print{.sbar{display:none}}
 
 /* chips */
 .chips{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 8px}
-.chip{font-family:inherit;font-size:11px;padding:3px 9px;border:1px solid var(--g2);background:#fff;
- color:var(--g4);cursor:pointer;border-radius:12px;white-space:nowrap}
+.chip{font-family:inherit;font-size:11.5px;padding:0 11px;min-height:26px;border:1px solid var(--g2);
+ background:#fff;color:var(--g4);cursor:pointer;border-radius:13px;white-space:nowrap}
 .chip:hover{border-color:var(--navy);color:var(--navy)}
 .chip.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:bold}
 .chip.alt.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow)}
@@ -59,19 +60,44 @@ label.l em.chg{color:var(--red)}
 
 /* explore grid */
 .gridmx{border-collapse:collapse;font-size:11.5px}
-.gridmx td,.gridmx th{border:1px solid var(--g2);padding:4px 7px;text-align:center}
+.gridmx td,.gridmx th{border:1px solid var(--g2);padding:6px 7px;text-align:center}
 .gridmx th{background:var(--g1);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
 .gridmx td.lab{text-align:left;background:var(--g1);font-weight:bold;white-space:nowrap}
 .gridmx td.cell{cursor:pointer}
 .gridmx td.cell:hover{outline:2px solid var(--navy)}
 .gridmx td.cur{outline:2px solid var(--yellow)}
 .gridmx b{font-family:Georgia,serif;font-size:13px;display:block}
-.gridmx i{font-style:normal;font-size:9.5px;display:block;color:var(--g4)}
+.gridmx i{font-style:normal;font-size:10.5px;display:block;color:var(--g4)}
 
 .shell{max-width:1340px;margin:0 auto;padding:0 18px 90px;display:flex;gap:24px;align-items:flex-start}
 .rail{width:288px;flex:0 0 288px;position:sticky;top:44px;padding:18px 0 30px;max-height:calc(100vh - 44px);overflow-y:auto}
 .main{flex:1;min-width:0;padding:22px 0 0;overflow-anchor:none}
-@media(max-width:1080px){.shell{display:block}.rail{width:auto;position:static;max-height:none;border-bottom:2px solid var(--g2);margin-bottom:10px}}
+/* Below 1080 the rail stops being a sidebar. 26 controls stacked above the
+   content pushed it 3,000px down the page, so it becomes a closed drawer and
+   the content comes first. */
+.railtoggle{display:none}
+@media(max-width:1080px){
+  .shell{display:block;padding-bottom:70px}
+  .rail{width:auto;flex:none;position:static;max-height:none;overflow:visible;padding:0;margin:12px 0 16px}
+  .railtoggle{display:flex;width:100%;align-items:center;justify-content:space-between;
+    font-family:Georgia,serif;font-size:14px;min-height:44px;padding:0 14px;
+    background:var(--navy);color:#fff;border:0;cursor:pointer}
+  .railtoggle i{font-style:normal;color:var(--yellow);font-size:18px}
+  .rail:not(.open) .railbody{display:none}
+  .railbody{border:1px solid var(--g2);border-top:0;padding:12px}
+  .main{padding-top:14px}
+  /* one swipeable line rather than four wrapped rows */
+  .gnav .in,.sbar .in{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .gnav .in::-webkit-scrollbar,.sbar .in::-webkit-scrollbar{height:3px}
+  .gnav .sp,.sbar .sp{display:none}
+  .gnav b{position:sticky;left:0;background:var(--navy);z-index:1}
+  .rail{position:sticky;top:0;z-index:3;background:#fff}
+}
+@media(max-width:560px){
+  .metrics{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}
+  .grid2,.grid3{grid-template-columns:1fr}
+  h1{font-size:1.6em}
+}
 
 /* rail controls */
 .grp{border:1px solid var(--g2);margin-bottom:9px;background:#fff}
@@ -83,18 +109,22 @@ label.l em.chg{color:var(--red)}
 .grp.cl .bd{display:none}
 .f{margin-bottom:11px}
 .f:last-child{margin-bottom:0}
-label.l{display:flex;justify-content:space-between;align-items:baseline;font-size:10.5px;text-transform:uppercase;
+label.l{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;text-transform:uppercase;
  letter-spacing:.055em;color:var(--g4);margin:0 0 3px;font-weight:bold;gap:6px}
 label.l em{font-style:normal;font-family:Georgia,serif;font-size:13px;color:var(--navy);text-transform:none;letter-spacing:0}
-input[type=range]{width:100%;accent-color:var(--navy);margin:1px 0;display:block}
+input[type=range]{width:100%;accent-color:var(--navy);margin:1px 0;display:block;min-height:24px}
+/* visible keyboard focus everywhere; the UA default is invisible on navy */
+:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+.gnav a:focus-visible,.gnav button:focus-visible{outline:3px solid var(--yellow);outline-offset:-3px}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 select{width:100%;font-family:inherit;font-size:13px;padding:4px 6px;border:1px solid var(--g2);background:#fff;color:var(--ink)}
-.hint{font-size:10.5px;color:var(--g3);margin-top:2px;line-height:1.35}
+.hint{font-size:11.5px;color:var(--g3);margin-top:2px;line-height:1.35}
 .seg{display:flex;border:1px solid var(--g2);background:#fff;flex-wrap:wrap}
-.seg button{flex:1 1 auto;font-family:inherit;font-size:11.5px;padding:4px 3px;border:0;background:#fff;
- color:var(--g4);cursor:pointer;border-right:1px solid var(--g2);white-space:nowrap}
+.seg button{flex:1 1 auto;font-family:inherit;font-size:12px;min-height:28px;padding:4px 3px;border:0;
+ background:#fff;color:var(--g4);cursor:pointer;border-right:1px solid var(--g2);white-space:nowrap}
 .seg button:last-child{border-right:0}
 .seg button.on{background:var(--navy);color:#fff}
-button.act{font-family:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+button.act{font-family:inherit;font-size:12px;min-height:28px;padding:5px 11px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
 button.act.ghost{background:#fff;color:var(--navy)}
 button.act:hover{opacity:.87}
 .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
@@ -103,7 +133,7 @@ button.act:hover{opacity:.87}
 header.pg{border-bottom:3px solid var(--navy);padding-bottom:11px;margin-bottom:14px}
 .lede{color:var(--g4);font-size:.93em;max-width:74ch}
 .thesis{border-left:5px solid var(--yellow);background:#fffdf0;padding:11px 15px;margin:14px 0;font-size:.92em;max-width:82ch}
-.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;
+.tag{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;
  background:var(--g1);border:1px solid var(--g2);color:var(--g4);padding:1px 6px;vertical-align:2px;white-space:nowrap}
 .tag.mea{background:#eef4ff;border-color:#c3d4f2;color:#1f3f8f}
 .tag.mod{background:#fff8d8;border-color:#e8d98a;color:#7a6300}
@@ -155,12 +185,15 @@ svg{max-width:100%;height:auto;display:block}
 .dec .q{font-size:.86em;color:var(--g4);margin-bottom:6px}
 .dec .cons{font-size:.86em;background:var(--g1);padding:7px 10px;border-left:3px solid var(--yellow)}
 
+/* .hcard span and .m span out-specify .tag and were shrinking it to 8.4px */
+.hcard span.tag,.m span.tag,.hint span.tag,.hb span.tag{font-size:10.5px;line-height:1.5}
+.grp>h5 i{color:var(--navy)}
 footer.bty{margin-top:46px;border-top:1px solid var(--g2);padding-top:0}
 .band{background:var(--navy);color:#fff;padding:9px 15px;display:flex;flex-wrap:wrap;
  justify-content:space-between;align-items:center;gap:8px;font-size:11.5px}
 .band b{font-family:Georgia,serif;color:var(--yellow);font-size:12.5px}
 .band i{font-style:italic;opacity:.82}
-.foot2{font-size:11px;color:var(--g3);padding:8px 2px;line-height:1.45}
+.foot2{font-size:11.5px;color:var(--g3);padding:8px 2px;line-height:1.45}
 
 /* presentation mode */
 body.pres{--fs:19px}
@@ -267,11 +300,11 @@ const AUD={
 const ROLL={p1:265,p2:355,p3:305,p4:265,p5:20, c1:7,c2:7,c3:8,c4:7};
 
 const HOUSES=[
-  {k:'hood',n:'Hood',c:'#C8102E',col:'Red',colv:1,dis:'Going first',dom:'Service, Leadership & Community'},
-  {k:'jell',n:'Jellicoe',c:'#E8751A',col:'Orange',colv:1,dis:'Judgement and restraint',dom:'Humanities & Global Citizenship'},
-  {k:'harw',n:'Harwood',c:'#1A7F4B',col:'Green',colv:0,dis:'Reading a situation while outnumbered',dom:'Language, Oracy & Expression'},
-  {k:'stur',n:'Sturdee',c:'#D8A800',col:'Yellow',colv:0,dis:'Preparation, then pursuit',dom:'Sport, Health & the Outdoors'},
-  {k:'fish',n:'Fisher',c:'#1F5FA8',col:'Blue',colv:0,dis:'Making the old obsolete',dom:'STEM, Design & Making'}
+  {k:'hood',n:'Hood',c:'#C8102E',t:'#A60D26',col:'Red',colv:1,dis:'Going first',dom:'Service, Leadership & Community'},
+  {k:'jell',n:'Jellicoe',c:'#E8751A',t:'#8A4409',col:'Orange',colv:1,dis:'Judgement and restraint',dom:'Humanities & Global Citizenship'},
+  {k:'harw',n:'Harwood',c:'#1A7F4B',t:'#146039',col:'Green',colv:0,dis:'Reading a situation while outnumbered',dom:'Language, Oracy & Expression'},
+  {k:'stur',n:'Sturdee',c:'#D8A800',t:'#7A5F00',col:'Yellow',colv:0,dis:'Preparation, then pursuit',dom:'Sport, Health & the Outdoors'},
+  {k:'fish',n:'Fisher',c:'#1F5FA8',t:'#1A4F8C',col:'Blue',colv:0,dis:'Making the old obsolete',dom:'STEM, Design & Making'}
 ];
 const DREAM=[['D','Discipline'],['R','Resilience'],['E','Empathy'],['A','Adaptability'],['M','Mindfulness']];
 
@@ -970,8 +1003,13 @@ function buildRail(){
     });
     h+=`</div></div>`;
   });
-  $('#rail').innerHTML=h;
+  $('#rail').innerHTML=
+    `<button class="railtoggle" id="railToggle" aria-expanded="false">`+
+    `<span>Controls &amp; presets</span><i>+</i></button><div class="railbody">${h}</div>`;
   bindRail();
+  const rt=$('#railToggle');
+  rt.onclick=()=>{const r=$('#rail'); const open=r.classList.toggle('open');
+    rt.setAttribute('aria-expanded',String(open)); rt.querySelector('i').textContent=open?'\u2212':'+';};
 }
 function bindRail(){
   $$('#rail [data-tog]').forEach(el=>el.onclick=()=>{
@@ -1076,7 +1114,7 @@ function tabExplore(M){
     cells.push({a,h,v:O.g(s),fail:s.issues.some(i=>i[0]==='b')});
   }));
   const vs=cells.map(c=>c.v), lo=Math.min(...vs), hi=Math.max(...vs);
-  const mx=`<table class="gridmx"><thead><tr><th></th>${houseOpts.map(h=>`<th>${h} houses</th>`).join('')}</tr></thead><tbody>`+
+  const mx=`<table class="gridmx"><thead><tr><th scope="col"></th>${houseOpts.map(h=>`<th scope="col">${h} houses</th>`).join('')}</tr></thead><tbody>`+
    archKeys.map(a=>`<tr><td class="lab">${ARCH[a].n}</td>`+
      houseOpts.map(h=>{const c=cells.find(x=>x.a===a&&x.h===h);
        const cur=(S.arch===a&&S.houses===h);
@@ -1123,9 +1161,9 @@ function tabExplore(M){
 ${Object.entries(OUTCOMES).map(([k,o])=>`<button class="chip ${S.outcome===k?'on':''}" data-out="${k}">${o.n}</button>`).join('')}</div>
 
 <h2>A · All seven delivery models at once</h2>
-<div class="scroll"><table><thead><tr><th>Model</th><th class="n">Groups</th><th class="n">1st/2nd</th>
-<th class="n">Sess/mth</th><th class="n">Leaders</th><th class="n">Affinity</th><th class="n">Talent</th>
-<th class="n">Celebration</th><th class="n">Verdict</th><th></th></tr></thead><tbody>${mrows}</tbody></table></div>
+<div class="scroll"><table><thead><tr><th scope="col">Model</th><th scope="col" class="n">Groups</th><th scope="col" class="n">1st/2nd</th>
+<th scope="col" class="n">Sess/mth</th><th scope="col" class="n">Leaders</th><th scope="col" class="n">Affinity</th><th scope="col" class="n">Talent</th>
+<th scope="col" class="n">Celebration</th><th scope="col" class="n">Verdict</th><th scope="col"></th></tr></thead><tbody>${mrows}</tbody></table></div>
 <p class="note">Each row is fully recomputed under that model's settings against your roll, rooms and duty teachers. Change the roll and the ranking changes.</p>
 
 <h2>B · Architecture × number of houses</h2>
@@ -1150,7 +1188,7 @@ ${LEVERS.map(l=>`<button class="chip ${sk===l[0]?'on':''}" data-sweep="${l[0]}">
 <div class="chips">
 ${[0,1,2,3].map(i=>`<button class="chip alt ${SCEN[i]?'on':''}" data-save="${i}">${SCEN[i]?'Overwrite '+'ABCD'[i]:'Save to '+'ABCD'[i]}</button>`).join('')}
 <button class="chip" data-save="clear">Clear all</button></div>
-<div class="scroll"><table><thead><tr><th>Setting</th>${['A','B','C','D'].map(x=>`<th class="n">${x}</th>`).join('')}</tr></thead><tbody>
+<div class="scroll"><table><thead><tr><th scope="col">Setting</th>${['A','B','C','D'].map(x=>`<th scope="col" class="n">${x}</th>`).join('')}</tr></thead><tbody>
 ${slotRows.map(r=>`<tr><td>${r[0]}</td>${SCEN.map(sc=>`<td class="n">${sc?r[1](sc):'—'}</td>`).join('')}</tr>`).join('')}
 <tr style="background:var(--g1)"><td><b>${O.n}</b></td>${slots}</tr>
 <tr><td>Verdict</td>${SCEN.map(sc=>{if(!sc)return '<td class="n">—</td>';
@@ -1162,8 +1200,8 @@ ${slotRows.map(r=>`<tr><td>${r[0]}</td>${SCEN.map(sc=>`<td class="n">${sc?r[1](s
 /* ---------------------------------------------------------- 0. SETUP */
 const HK=['hood','jell','harw','stur','fish','h6','h7'];
 function houseList(){ return HOUSES.slice(0,Math.min(S.houses,5))
-  .concat(S.houses>5?[{k:'h6',n:'House 6',c:'#6b4fa0',col:'—',colv:0}]:[])
-  .concat(S.houses>6?[{k:'h7',n:'House 7',c:'#5b5f6b',col:'—',colv:0}]:[]); }
+  .concat(S.houses>5?[{k:'h6',n:'House 6',c:'#6b4fa0',t:'#57408a',col:'—',colv:0}]:[])
+  .concat(S.houses>6?[{k:'h7',n:'House 7',c:'#5b5f6b',t:'#4a4e57',col:'—',colv:0}]:[]); }
 
 function tabSetup(M){
   const hs=houseList();
@@ -1174,7 +1212,7 @@ function tabSetup(M){
   const cards=hs.map(h=>{
     const st=S.hset[h.k];
     return `<div class="hcard" style="border-top-color:${h.c}">
-      <b style="color:${h.c}">${h.n}</b><span>${h.col}${h.colv?'':' <span class="tag unk">unverified</span>'}</span>
+      <b style="color:${h.t||h.c}">${h.n}</b><span>${h.col}${h.colv?'':' <span class="tag unk">unverified</span>'}</span>
       <div class="f" style="margin-top:7px"><label class="l">Talent area</label>
         <select data-h="${h.k}" data-f="dom">${domOpt(h.k)}</select></div>
       ${S.anchors?`
@@ -1199,7 +1237,7 @@ function tabSetup(M){
     const cat = isSport(c)?'Sport':(c.cat==='UG'?'Uniformed':(isPA(c)?'Performing art':'Club'));
     return `<tr><td><b>${c.nm}</b></td><td>${cat}${c.flex?' <span class="tag mod">switchable</span>':''}</td>
       <td class="n">${c.n}</td><td>${c.lock==='B'?'Boys only':(c.lock==='G'?'Girls only':Math.round(c.g*100)+'% girls')}</td>
-      <td>${owner?`<b style="color:${owner.c}">${owner.n}</b>`:'<span style="color:var(--g3)">unanchored</span>'}</td></tr>`;
+      <td>${owner?`<b style="color:${owner.t||owner.c}">${owner.n}</b>`:'<span style="color:var(--g3)">unanchored</span>'}</td></tr>`;
   }).join('');
 
   const permRows=Object.entries(ARCH).map(([k,a])=>
@@ -1236,14 +1274,14 @@ ${S.wushu==='S'
 `<p class="note">No CCA anchors. Houses own belonging and a talent area only. Simplest to run, and it gives up the free identity that a flagship CCA supplies.</p>`}
 
 <h2>2 · The seventeen CCAs <span class="tag mea">MOE School Finder</span></h2>
-<div class="scroll"><table><thead><tr><th>CCA</th><th>Category</th><th class="n">Roll <span class="tag mod">modelled</span></th><th>Gender</th><th>Flown by</th></tr></thead><tbody>${ccaRows}</tbody></table></div>
+<div class="scroll"><table><thead><tr><th scope="col">CCA</th><th scope="col">Category</th><th scope="col" class="n">Roll <span class="tag mod">modelled</span></th><th scope="col">Gender</th><th scope="col">Flown by</th></tr></thead><tbody>${ccaRows}</tbody></table></div>
 <p class="note">Rolls and gender mix are modelled defaults; replace with real figures and the anchor arithmetic becomes measured. Three boys-only CCAs against one girls-only is structural, so gender balance and anchor reach cannot both be maximised.</p>
 
 <h2>3 · Organisational models</h2>
-<div class="scroll"><table><thead><tr><th style="width:19%">Model</th><th style="width:44%">How members are assigned</th><th>Precedent</th><th></th></tr></thead><tbody>${permRows}</tbody></table></div>
+<div class="scroll"><table><thead><tr><th scope="col" style="width:19%">Model</th><th scope="col" style="width:44%">How members are assigned</th><th scope="col">Precedent</th><th scope="col"></th></tr></thead><tbody>${permRows}</tbody></table></div>
 
 <h2>4 · The other permutations</h2>
-<div class="scroll"><table><thead><tr><th>Choice</th><th>Options</th><th>In use</th><th>Consequence</th></tr></thead><tbody>
+<div class="scroll"><table><thead><tr><th scope="col">Choice</th><th scope="col">Options</th><th scope="col">In use</th><th scope="col">Consequence</th></tr></thead><tbody>
 <tr><td><b>Houses</b></td><td>4 · 5 · 6 · 7</td><td><b>${S.houses}</b></td><td>${M.nestClean?'Every level divides cleanly.':'No level divides. Worst gap '+pct(M.levelGap)+' at '+M.worstLevel.n+'.'}</td></tr>
 <tr><td><b>Levels</b></td><td>Sec 1–4 · Sec 1–5</td><td><b>Sec 1–${S.levels}</b></td><td>${S.levels===5?'Seniors available to lead.':'No senior tier. Vertical in name only.'}</td></tr>
 <tr><td><b>Who runs a group</b></td><td>Teacher-led · student-led with roaming supervision</td><td><b>${M.adultRun} adult, ${M.supervised} student-led</b></td><td>${M.clusterGap>0?'Short '+M.clusterGap+' groups.':'Capacity closes. '+Math.round(M.leadersNeeded)+' student leaders needed.'}</td></tr>
@@ -1346,8 +1384,8 @@ ${metric(AUD.ccaDay.Wed+' &amp; '+AUD.ccaDay.Thu,'CCA occurrences on Wed and Thu
 
 <h2>Four strategies, scored on the same five outcomes <span class="tag mod">modelled</span></h2>
 <p class="lede">Live from the control rail. Illustrative composite, not a measurement. Higher cost and risk are worse.</p>
-<div class="scroll"><table><thead><tr><th>Strategy</th><th class="n">Belonging</th><th class="n">Talent depth</th>
-<th class="n">Celebration</th><th class="n">Cost</th><th class="n">Delivery risk</th><th>What it actually gets you</th></tr></thead>
+<div class="scroll"><table><thead><tr><th scope="col">Strategy</th><th scope="col" class="n">Belonging</th><th scope="col" class="n">Talent depth</th>
+<th scope="col" class="n">Celebration</th><th scope="col" class="n">Cost</th><th scope="col" class="n">Delivery risk</th><th scope="col">What it actually gets you</th></tr></thead>
 <tbody>${rows}</tbody></table></div>
 <p class="note">"Do nothing" is on the table and is defensible: no cost, no risk. It forfeits any answer to what a Beattyian actually gets across five years.</p>
 
@@ -1424,8 +1462,8 @@ ${metric(M.mixScore,'Social mixing index','How many new people a house puts you 
 </div>
 
 <h2>Level by level, on the real roll <span class="tag mea">projection</span></h2>
-<div class="scroll"><table><thead><tr><th>Level</th><th class="n">Beattyians</th><th class="n">Form classes</th>
-<th class="n">Per class</th><th class="n">Split across ${S.houses} houses</th><th class="n">Gap at that level</th></tr></thead>
+<div class="scroll"><table><thead><tr><th scope="col">Level</th><th scope="col" class="n">Beattyians</th><th scope="col" class="n">Form classes</th>
+<th scope="col" class="n">Per class</th><th scope="col" class="n">Split across ${S.houses} houses</th><th scope="col" class="n">Gap at that level</th></tr></thead>
 <tbody>${levelRows}</tbody></table></div>
 ${M.overCap.length?`<p class="note" style="border-left-color:var(--red)"><b>Check this before anything else.</b> ${M.overCap.map(L=>L.n+' at '+Math.round(L.size)+' per class').join(', ')}. Singapore secondary form classes do not usually run above 40. Either that level has more classes than entered, or the projection needs revisiting. Move the class slider and watch the nesting change &mdash; ${S.p2>0&&S.c2>0?'Sec 2 at 9 classes would be '+Math.round(S.p2/9)+' per class':'the arithmetic shifts either way'}.</p>`:''}
 
@@ -1450,8 +1488,8 @@ ${M.overCap.length?`<p class="note" style="border-left-color:var(--red)"><b>Chec
 </div>
 
 <h2>The five architectures compared <span class="tag mod">modelled</span></h2>
-<div class="scroll"><table><thead><tr><th>Model</th><th class="n">Persistence</th><th class="n">Daily reinforcement</th>
-<th class="n">Social mixing</th><th class="n">Nesting</th><th class="n">Low admin load</th><th>Precedent</th></tr></thead>
+<div class="scroll"><table><thead><tr><th scope="col">Model</th><th scope="col" class="n">Persistence</th><th scope="col" class="n">Daily reinforcement</th>
+<th scope="col" class="n">Social mixing</th><th scope="col" class="n">Nesting</th><th scope="col" class="n">Low admin load</th><th scope="col">Precedent</th></tr></thead>
 <tbody>${rows}</tbody></table></div>
 
 <div class="box nav"><h4>The honest tension</h4>
@@ -1465,7 +1503,7 @@ ${M.overCap.length?`<p class="note" style="border-left-color:var(--red)"><b>Chec
 
 <h2>The five houses as they stand</h2>
 <div class="hrow">${HOUSES.slice(0,S.houses).map(h=>`
-<div class="hcard" style="border-top-color:${h.c}"><b style="color:${h.c}">${h.n}</b>
+<div class="hcard" style="border-top-color:${h.c}"><b style="color:${h.t||h.c}">${h.n}</b>
 <span>${h.col}${h.colv?'':' <span class="tag unk">unverified</span>'}</span>
 <i>${h.dis}.<br>${h.dom}.</i></div>`).join('')}</div>
 <p class="note">Hood Red and Jellicoe Orange are confirmed. The other three are Green, Yellow and Blue in an order published nowhere reachable; the NLB commemorative histories are the likely record. ${S.houses>5?`<b>You have set ${S.houses} houses but Beatty has five.</b> The sixth is shown only to test the arithmetic.`:''}</p>
@@ -1525,7 +1563,7 @@ ${metric(Math.round(M.contactHrs),'Contact hours a year','Per Beattyian, one ban
 <p class="note">Red is time inside the band consumed by something else: ${AUD.nonEnrich} of ${AUD.entries} entries, ${pct(AUD.nonEnrich/AUD.entries)}. Orals are immovable; the problem is that they are invisible in the school's account of what the band is for. <b>Publish the oral windows before cycles are set, and shorten Cycle 2 around them.</b></p>
 
 <h2>The year, if you build it <span class="tag mod">modelled</span></h2>
-<div class="scroll"><table><thead><tr><th>Track</th><th>Day</th><th>Who</th><th class="n">Sessions</th><th class="n">Clusters</th><th class="n">Adults</th><th>Renzulli type</th></tr></thead><tbody>
+<div class="scroll"><table><thead><tr><th scope="col">Track</th><th scope="col">Day</th><th scope="col">Who</th><th scope="col" class="n">Sessions</th><th scope="col" class="n">Clusters</th><th scope="col" class="n">Adults</th><th scope="col">Renzulli type</th></tr></thead><tbody>
 <tr><td><b>House Band</b></td><td>Wednesday</td><td>All Beattyians, vertical within house</td><td class="n">${Math.round(M.actualDays)}</td><td class="n">${M.clustersNeeded}</td><td class="n">${M.demandWed}</td><td>Type I and II &mdash; exploration and process skills</td></tr>
 <tr><td><b>Pathway Band</b></td><td>Thursday</td><td>Elective, cross-house, by field (${S.takeup}%)</td><td class="n">${Math.round(M.actualDays)}</td><td class="n">${M.thuClusters}</td><td class="n">${M.demandThu}</td><td>Type II advanced and Type III &mdash; pursuit</td></tr>
 </tbody></table></div>
@@ -1613,7 +1651,7 @@ function tabActs(M){
         <span><b>${a.n}</b>${a.free?'':' <span class="tag unk">new</span>'}
         <div class="hint">${a.trace||'Genuinely new. No 2024 or 2025 antecedent.'}</div></span></label></td>
       <td class="n">${a.tier}</td>
-      <td>${(()=>{const h=M.steward[a.id];return h?`<b style="color:${h.c}">${h.n}</b>`:
+      <td>${(()=>{const h=M.steward[a.id];return h?`<b style="color:${h.t||h.c}">${h.n}</b>`:
         (a.ta==='none'?'<span style="color:var(--g3)">all houses</span>':'<span class="tag unk">none</span>');})()}</td>
       <td>${[...a.dom].map(d=>`<span class="tag">${d}</span>`).join(' ')}</td>
       <td class="n">${a.part}%</td><td class="n">${a.sess||'—'}</td><td class="n">${a.adults}</td>
@@ -1628,7 +1666,7 @@ function tabActs(M){
     const sz=sizes[i];
     const raw=sz*100/mean;
     const scored = S.cup==='absolute'? raw : (S.cup==='percap'? 100 : 100+(raw-100)*0.15);
-    return `<tr><td><b style="color:${h.c}">${h.n}</b></td><td class="n">${Math.round(sz)}</td>
+    return `<tr><td><b style="color:${h.t||h.c}">${h.n}</b></td><td class="n">${Math.round(sz)}</td>
       <td class="n">${Math.round(raw)}</td><td class="n"><b>${Math.round(scored)}</b></td></tr>`;
   }).join('');
 
@@ -1655,7 +1693,7 @@ ${metric(pct(M.domBal),'DREAM balance','Smallest domain against largest',M.domBa
 
 <div><h3>The Principal's Cup, and whether it is fair <span class="tag mod">modelled</span></h3>
 <p>Scoring model: <b>${{absolute:'Absolute points',percap:'Per capita',participation:'Participation weighted'}[S.cup]}</b>. Indexed final standing with all houses performing identically, so any spread below is structural rather than earned.</p>
-<div class="scroll"><table><thead><tr><th>House</th><th class="n">Members</th><th class="n">Raw points</th><th class="n">Final index</th></tr></thead><tbody>${cupRows}</tbody></table></div>
+<div class="scroll"><table><thead><tr><th scope="col">House</th><th scope="col" class="n">Members</th><th scope="col" class="n">Raw points</th><th scope="col" class="n">Final index</th></tr></thead><tbody>${cupRows}</tbody></table></div>
 <p class="note">${S.cup==='absolute'
   ? (M.totalGap>0.02
      ? `<b style="color:var(--bad)">Absolute scoring hands the largest house a ${pct(M.cupBias)} advantage before anyone competes.</b> With unequal houses this is not a competition, it is a headcount.`
@@ -1667,8 +1705,8 @@ ${metric(pct(M.domBal),'DREAM balance','Smallest domain against largest',M.domBa
 </div>
 
 <h2>The catalogue</h2>
-<div class="scroll"><table><thead><tr><th style="width:34%">Activity</th><th class="n">Tier</th><th>Steward</th><th>DREAM</th>
-<th class="n">Reach</th><th class="n">Sessions</th><th class="n">Adults</th><th class="n">Adult-sessions</th></tr></thead>
+<div class="scroll"><table><thead><tr><th scope="col" style="width:34%">Activity</th><th scope="col" class="n">Tier</th><th scope="col">Steward</th><th scope="col">DREAM</th>
+<th scope="col" class="n">Reach</th><th scope="col" class="n">Sessions</th><th scope="col" class="n">Adults</th><th scope="col" class="n">Adult-sessions</th></tr></thead>
 <tbody>${tbl}</tbody></table></div>
 <p class="note">Tier 1 Explore, 2 Build, 3 Pursue. <b>Steward</b> is the house holding that talent area on the Model tab &mdash; change an area there and this column moves. <b>${M.cupFree} of ${M.cupEvents}</b> Cup events convert from things Beatty already runs.</p>
 <div class="metrics">
@@ -1738,7 +1776,7 @@ ${metric(r1(M.dutyShare),'Band duties per teacher a year','Rotating '+S.duty+' o
 <p class="note"><b>${AUD.deptTag[0][1]} of ${AUD.inBandEnrich}</b> student-facing enrichment records carry no department tag. The band is unclaimed, not contested &mdash; easier to redesign than if four departments were defending it, and it explains how the slot fell to 1.33 a level-day unnoticed.</p></div>
 
 <div><h3>How to structure the house team</h3>
-<div class="scroll"><table><thead><tr><th>Role</th><th class="n">Per house</th><th>What they own</th></tr></thead><tbody>
+<div class="scroll"><table><thead><tr><th scope="col">Role</th><th scope="col" class="n">Per house</th><th scope="col">What they own</th></tr></thead><tbody>
 <tr><td><b>Head of House</b></td><td class="n">1</td><td>The house's development and its Cup campaign. A middle-management line, not an add-on to a full teaching load.</td></tr>
 <tr><td><b>Assistant Head</b></td><td class="n">1</td><td>Wednesday cluster logistics and the house exco. The succession line.</td></tr>
 <tr><td><b>House Tutors</b></td><td class="n">${S.tutors}</td><td>A vertical tutor group each, ${Math.round(M.tutorRatio)} Beattyians spanning Sec 1 to ${S.levels}. Owns the Total Talent Portfolio conversation and follows the same students for ${S.levels} years.</td></tr>
@@ -1811,7 +1849,7 @@ function tabDec(M){
      ['Affinity index',(m)=>m.affinity],['Talent depth index',(m)=>m.talent],
      ['Adults short (Wed)',(m)=>m.supplyGapWed>0?m.supplyGapWed:'—'],
      ['Holds?',(m)=>m.ok?'Yes':'No']];
-    cmp=`<h2>Scenario comparison</h2><div class="scroll"><table><thead><tr><th>Measure</th>${cols.map(c=>`<th class="n">${c[0]}</th>`).join('')}</tr></thead><tbody>`+
+    cmp=`<h2>Scenario comparison</h2><div class="scroll"><table><thead><tr><th scope="col">Measure</th>${cols.map(c=>`<th scope="col" class="n">${c[0]}</th>`).join('')}</tr></thead><tbody>`+
       rowsDef.map(rd=>`<tr><td>${rd[0]}</td>${cols.map((c,i)=>`<td class="n">${rd[1](ms[i],c[1])}</td>`).join('')}</tr>`).join('')+
       `</tbody></table></div>`;
   }
@@ -1840,7 +1878,7 @@ ${D.map((d,i)=>`<div class="dec"><h4>${i+1}. ${d[0]}</h4><div class="q">${d[1]}<
 ${cmp}
 
 <h2>A sequence, if the answer is yes</h2>
-<div class="scroll"><table><thead><tr><th>When</th><th>EEF stage</th><th>What happens</th><th>The number that tells you it worked</th></tr></thead><tbody>
+<div class="scroll"><table><thead><tr><th scope="col">When</th><th scope="col">EEF stage</th><th scope="col">What happens</th><th scope="col">The number that tells you it worked</th></tr></thead><tbody>
 <tr><td><b>Term 4, this year</b></td><td>Explore</td><td>Publish the audit. Let departments see the 1.33 figure and the ten empty coverage cells. Ask each which programmes to convert, rebuild or retire. Name the houses with students.</td><td>Departments returning a convert/rebuild/retire decision for every programme they own.</td></tr>
 <tr><td><b>Term 1, next year</b></td><td>Prepare and pilot</td><td>One cycle of the Wednesday house band only, with the convert-now clubs, Sec 1 to 3. Do not touch Thursday. Do not touch Sec 4 and 5.</td><td>Fill rate: percentage getting first or second choice. Below 80 percent means the catalogue is too narrow.</td></tr>
 <tr><td><b>Terms 2 and 3</b></td><td>Deliver</td><td>Add the Thursday pathway band and a first Pursue cohort of about 60, not 150. Attach a named mentor to each Type III.</td><td>By week three of each cycle, percentage of Type III projects naming a real external audience. Target 100.</td></tr>
