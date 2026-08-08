@@ -7,11 +7,11 @@
 // which is where the learning actually happens. The evidence on career tools is
 // consistent that a screen on its own is the weakest form of the intervention.
 
-import { esc, onAction } from '../components/dom.js';
-import { icon } from '../components/icons.js';
-import { cue } from '../sound.js';
-import { getState, setOffer } from '../state.js';
-import { readClassCode } from '../engine/reach.js';
+import { esc, onAction } from '../components/dom.js?v=2.4.0';
+import { icon } from '../components/icons.js?v=2.4.0';
+import { cue } from '../sound.js?v=2.4.0';
+import { getState, setOffer } from '../state.js?v=2.4.0';
+import { readClassCode } from '../engine/reach.js?v=2.4.0';
 
 const KIND_NAME = { R: 'Doers', I: 'Thinkers', A: 'Creators', S: 'Helpers', E: 'Persuaders', C: 'Organisers', '-': 'Not sure yet' };
 
@@ -71,7 +71,7 @@ const ECG_MAP = [
   { name: 'Career as narrative', src: 'Savickas',
     where: 'A run is a story, not a score: the rail keeps it, thirty eight asks for a written line, the ending is sentences, and two runs can be read side by side.' },
   { name: 'Life-span development', src: 'Super',
-    where: 'One run spans thirteen to forty eight, and the want named at the start is re-asked at thirty eight. Changing it is treated as progress, and the ending tells both halves.' },
+    where: 'The short game, which is the default, runs from thirteen to the end of the first qualification, around twenty. The long game carries the same road to forty eight and re-asks at thirty eight what was wanted at the start. Changing the answer is treated as progress, and the ending tells both halves.' },
   { name: 'Circumscription and compromise', src: 'Gottfredson',
     where: 'The banner says nothing here can be closed to you, the engine holds a no-dead-end invariant for every plan, and the breadth counter nudges: rule things out after you look, not before.' },
   { name: 'Self efficacy', src: 'Bandura, SCCT',

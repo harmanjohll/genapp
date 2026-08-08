@@ -18,18 +18,18 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js';
-import { icon } from '../components/icons.js';
-import { decorate, bindGlossary } from '../components/glossary.js';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js';
-import { reach, lever, STATES, classCode } from '../engine/reach.js';
-import { project, horizonMoves } from '../engine/project.js';
-import { pulse, leverLine } from '../engine/pulse.js';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.4.0';
+import { icon } from '../components/icons.js?v=2.4.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.4.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.4.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.4.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.4.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.4.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js';
+} from '../state.js?v=2.4.0';
 
 const STATE_API = { setMode };
 

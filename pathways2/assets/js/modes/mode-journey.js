@@ -8,24 +8,24 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../components/dom.js';
-import { icon } from '../components/icons.js';
-import { decorate, bindGlossary } from '../components/glossary.js';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js';
-import { cue } from '../sound.js';
-import { drawStoryMap, saveStoryCard } from '../components/storymap.js';
+import { esc, onAction } from '../components/dom.js?v=2.4.0';
+import { icon } from '../components/icons.js?v=2.4.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.4.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.4.0';
+import { cue } from '../sound.js?v=2.4.0';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.4.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js';
+} from '../engine/possible.js?v=2.4.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
-} from '../engine/journey4.js';
+} from '../engine/journey4.js?v=2.4.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   setMode, setAim,
-} from '../state.js';
+} from '../state.js?v=2.4.0';
 
 let DOORS = {};
 let run = null;
@@ -305,16 +305,16 @@ function openStartSheet(data, want, trigger) {
       <li>${esc(jc.tour2)}</li>
       <li>${esc(jc.tour3)}</li>
     </ol>
-    <p class="small"><strong>${esc(jc.runLong)}</strong> ${esc(jc.runLongNote)}</p>
     <p class="small"><strong>${esc(jc.runShort)}</strong> ${esc(jc.runShortNote)}</p>
+    <p class="small"><strong>${esc(jc.runLong)}</strong> ${esc(jc.runLongNote)}</p>
     <details class="seedrow">
       <summary class="small">${esc(jc.classSeedLabel)}</summary>
       <input class="seedbox" type="text" maxlength="8" autocapitalize="characters"
              placeholder="${esc(jc.classSeedPlaceholder)}" data-ref="seed" aria-label="${esc(jc.classSeedLabel)}">
       <p class="micro mute">${esc(jc.classSeedHint)}</p>
     </details>`, trigger, `
-    <button class="btn accent" type="button" data-action="golong">${esc(jc.runLong)}</button>
-    <button class="btn" type="button" data-action="goshort">${esc(jc.runShort)}</button>`);
+    <button class="btn accent" type="button" data-action="goshort">${esc(jc.runShort)}</button>
+    <button class="btn" type="button" data-action="golong">${esc(jc.runLong)}</button>`);
   const seedVal = () => {
     const el = document.querySelector('dialog.sheet [data-ref="seed"]');
     return el ? el.value : '';
