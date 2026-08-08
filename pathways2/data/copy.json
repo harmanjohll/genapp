@@ -121,7 +121,7 @@
   "wantPrompt": "Before you start. What do you want by 25?",
   "wantHint": "You can change your mind later. People do.",
   "points": "Spend your year",
-  "liveIt": "Live this year",
+  "liveIt": "That is my year",
   "asks": "This one asks for {disp}. You have {have}.",
   "stretchChip": "a stretch for you right now",
   "metChip": "you built the footing for this",
@@ -176,9 +176,9 @@
   "kindsNote": "Six kinds of people at work. Most people are a mix of two or three.",
   "nearWant": "near your want",
   "tryContrast": "You played {a}. Try the opposite kind of life:",
-  "turnHint": "Points are your time this year. Pick what you do, then tap Live this year.",
+  "turnHint": "Points are your time this year. Pick what you do, then tap That is my year.",
   "handIntro": "New: people you can ask. Asking is free and does not spend points.",
-  "leftHint": "1 point left. Add one more, or live the year now.",
+  "leftHint": "1 point left. Add one more, or go with this.",
   "startOver": "Start this story over",
   "startOverArm": "Tap again. This story will be gone.",
   "movesYouMade": "Moves you made",
@@ -263,7 +263,9 @@
   "efficacyOptimism2": "You acted as if it would work out. Half of it did.",
   "wantKnown": "You already said this in Act",
   "wantKeep": "Start with this",
-  "wantOther": "Or start from something else"
+  "wantOther": "Or start from something else",
+  "whyGrown": "One more every year now, because you {why}.",
+  "growTag": "pays off every year after"
  },
  "footerDoors": {
   "head": "Who is reading this",

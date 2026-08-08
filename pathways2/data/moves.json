@@ -9,7 +9,7 @@
  "moves": [
   {
    "id": "ask_help",
-   "label": "Ask a teacher about the subject that scares you",
+   "label": "Get help with the subject you dread",
    "ages": [
     13,
     17
@@ -24,7 +24,8 @@
    },
    "sets": "asked_help",
    "ic": "persistence",
-   "kind": "ask"
+   "kind": "ask",
+   "missed": "The subject you dread stayed the subject you dread."
   },
   {
    "id": "ecg",
@@ -101,22 +102,23 @@
   },
   {
    "id": "eae_prep",
-   "label": "Start your EAE story",
+   "label": "Prepare for the Early Admissions interview",
    "ages": [
     15,
     17
    ],
-   "body": "Poly and ITE EAE take you on interest and aptitude, before results, in June. They ask what you have made and done. Start having an answer.",
-   "outcome": "A folder with your name on it: things made, things done, the story of why this course. EAE reads it before results.",
+   "body": "EAE shortlists you, then interviews you, and some courses set an aptitude test. Most people arrive having prepared nothing.",
+   "outcome": "You practise saying out loud why this course, with the folder open beside you. The panel asks exactly that, and you have an answer.",
    "gain": {
-    "portfolio": 2
+    "portfolio": 1,
+    "network": 1
    },
    "sets": "eae_ready",
    "ic": "d_portfolio",
-   "check": "Poly EAE and ITE EAE, at moe.gov.sg. Applications run in June, before exams.",
+   "check": "Ask the course whether it interviews, tests, or both.",
    "kind": "commit",
    "cost": 1,
-   "missed": "The EAE folder stayed a good intention.",
+   "missed": "The interview came around with no rehearsal behind it.",
    "opens": "d_eae",
    "schoolOnly": true
   },
@@ -142,7 +144,7 @@
   },
   {
    "id": "intern",
-   "label": "Treat the attachment as the real thing",
+   "label": "Treat your attachment like a real job",
    "ages": [
     17,
     19
@@ -162,7 +164,7 @@
   },
   {
    "id": "exchange",
-   "label": "Put your name down for an exchange",
+   "label": "Put your name down for a semester abroad",
    "ages": [
     17,
     24
@@ -351,7 +353,7 @@
   },
   {
    "id": "peer_ask",
-   "label": "Ask someone whose life you want how they arranged it",
+   "label": "Ask how somebody got the life you want",
    "ages": [
     30,
     55
@@ -371,7 +373,7 @@
   },
   {
    "id": "younger",
-   "label": "Ask a younger colleague to teach you something",
+   "label": "Ask somebody younger to teach you something",
    "ages": [
     34,
     55
@@ -408,6 +410,80 @@
    "sets": "told_home",
    "ic": "d_people",
    "kind": "ask"
+  },
+  {
+   "id": "lead_role",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "risk",
+   "label": "Put your name up for a leadership role",
+   "body": "Class committee, CCA committee, house, prefect, peer support.",
+   "outcome": "You get the role and the clipboard, and the term teaches you what carrying something actually costs.",
+   "missed": "Somebody else took the clipboard this year.",
+   "check": "Ask your form teacher when nominations open.",
+   "gain": {
+    "network": 1,
+    "skills": 1
+   },
+   "disp": {
+    "risk": 1,
+    "optimism": 1
+   },
+   "sets": "led_cca",
+   "ages": [
+    13,
+    18
+   ],
+   "schoolOnly": true
+  },
+  {
+   "id": "via_lead",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "optimism",
+   "label": "Lead your VIA project instead of attending it",
+   "body": "Values in Action, planned by you rather than handed to you.",
+   "outcome": "You pick who it serves, arrange it, and write what changed. It reads completely differently in an application.",
+   "missed": "The VIA hours got collected. Nothing else did.",
+   "check": "Ask who signs off a student proposed VIA project.",
+   "gain": {
+    "network": 1,
+    "portfolio": 1
+   },
+   "disp": {
+    "optimism": 1,
+    "persistence": 1
+   },
+   "sets": "helped_someone",
+   "ages": [
+    14,
+    17
+   ],
+   "schoolOnly": true
+  },
+  {
+   "id": "peer_tutor",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "persistence",
+   "label": "Volunteer to tutor a younger student",
+   "body": "One hour a week, same student, all term.",
+   "outcome": "Explaining it badly twice is how you find out you only half knew it. By June you know it cold.",
+   "missed": "Nobody was tutored, and the topic stayed half known.",
+   "check": "Ask whether your school runs a peer tutoring scheme.",
+   "gain": {
+    "skills": 1,
+    "network": 1
+   },
+   "disp": {
+    "persistence": 1
+   },
+   "sets": "helped_someone",
+   "ages": [
+    14,
+    19
+   ],
+   "schoolOnly": true
   }
  ]
 }

@@ -19,7 +19,7 @@ import {
 } from '../engine/possible.js';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
-  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns,
+  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
 } from '../engine/journey4.js';
 import {
@@ -373,7 +373,7 @@ function turnScreen(host, stage, data, age) {
               aria-pressed="${on}" ${dim ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'\u25cf'.repeat(cost)}</span>
         <span class="c-label">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</span>
-        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${c.capacity && run.capacity < CAPACITY_CAP ? `<span class="grow-tag">${esc(jc.growTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
@@ -557,7 +557,8 @@ function pointsWhy(jc, n, reasons) {
     full: jc.whyFull, light: jc.whyLight, cca: jc.whyCca, freer: jc.whyFreer,
     week: jc.whyWeek, room: jc.whyRoom, ns: jc.whyNs,
   };
-  const why = reasons.length ? reasons.map((r) => map[r.k]).filter(Boolean).join(' ') : jc.whyPlain;
+  const line = (r) => (r.k === 'grown' ? fill(jc.whyGrown, { why: r.why }) : map[r.k]);
+  const why = reasons.length ? reasons.map(line).filter(Boolean).join(' ') : jc.whyPlain;
   return fill(jc.pointsWhy, { n, why });
 }
 

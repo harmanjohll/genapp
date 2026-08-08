@@ -228,7 +228,7 @@
    "situation": "New school, new blazer, and by June you know which staircase floods. This year you take {subjects}, and everything is still moving.",
    "choices": [
     {
-     "label": "Join the CCA trial anyway",
+     "label": "Try out for a CCA you have never done",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -241,7 +241,7 @@
      "missed": "The trial happened without you. There is next year."
     },
     {
-     "label": "Fix your weakest subject first",
+     "label": "Go to remedial for your weakest subject",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -253,7 +253,7 @@
      "missed": "The Thursday remedial ran without you."
     },
     {
-     "label": "Ask to move a subject up",
+     "label": "Ask a teacher about taking a subject higher",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -272,7 +272,7 @@
      "sets": "moved_up"
     },
     {
-     "label": "Keep your primary school thing going",
+     "label": "Keep up what you did in primary school",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -284,19 +284,22 @@
      "missed": "The old thing goes quiet this year."
     },
     {
-     "label": "Go all in on settling well",
+     "label": "Build a study routine you can actually keep",
      "cost": 2,
      "disp": {
-      "flexibility": 1,
-      "optimism": 1
+      "persistence": 1,
+      "flexibility": 1
      },
      "gain": {
       "network": 1
      },
-     "outcome": "You learn names, bus routes and which auntie gives extra gravy. The year steadies under you."
+     "outcome": "Same desk, same hours, phone in the other room. It is dull in March and it is the reason October is calm.",
+     "capacity": 1,
+     "grew": "learned to run your own week",
+     "missed": "The year ran on whatever each evening felt like."
     },
     {
-     "label": "Build something after school",
+     "label": "Make something after school and finish it",
      "cost": 2,
      "needsSubject": [
       "computing",
@@ -321,7 +324,7 @@
    "situation": "Streaming is gone but the whisper survives at the void deck: which class are you in. This year the subject combination form is real, and {subjects} sit on your table.",
    "choices": [
     {
-     "label": "Chase the level move properly",
+     "label": "Train for the level you want in Sec 3",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -343,7 +346,7 @@
      "sets": "moved_up"
     },
     {
-     "label": "Interrogate the subject booklet",
+     "label": "Read the whole subject booklet, not just the usual",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -356,7 +359,7 @@
      "missed": "The booklet stayed unread, and the form got filled from hearsay."
     },
     {
-     "label": "Take the stage, or the pitch",
+     "label": "Take a real part in a performance or contest",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -370,7 +373,7 @@
      "outcome": "Concert, kids day, inter school heats. Your name gets read over a PA system."
     },
     {
-     "label": "Help somebody who is sinking",
+     "label": "Coach a classmate who is falling behind",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -383,15 +386,15 @@
      "missed": "The classmate who was sinking found someone else, eventually."
     },
     {
-     "label": "Guard your own oxygen",
+     "label": "Find a place you can actually study",
      "cost": 1,
      "disp": {
       "flexibility": 1
      },
-     "outcome": "Home is loud this year. You do your work at the library near the interchange and keep your head."
+     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven."
     },
     {
-     "label": "Turn the hobby serious",
+     "label": "Turn your hobby into something other people use",
      "cost": 2,
      "needsSubject": [
       "art",
@@ -417,7 +420,7 @@
    "situation": "The combination is set: {subjects} now, all the way to the SEC. New class, some old faces missing, and suddenly teachers say the word portfolio out loud.",
    "choices": [
     {
-     "label": "Go deep on your best subject",
+     "label": "Go deep on your strongest subject",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -429,7 +432,7 @@
      "missed": "Your best subject stayed merely good this year."
     },
     {
-     "label": "Start the EAE folder now",
+     "label": "Start collecting proof for Early Admissions",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -438,11 +441,11 @@
       "portfolio": 1
      },
      "sets": "eae_ready",
-     "outcome": "Screenshots, certs, the write up of the thing you built. Boring now, gold at Sec 4.",
+     "outcome": "Screenshots, certificates, the write up of the thing you built. Boring now, gold at Sec 4.",
      "missed": "The folder stayed empty. Sec 4 will mean one panicked typing weekend."
     },
     {
-     "label": "Lead something small",
+     "label": "Take a leadership role in class or CCA",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -455,32 +458,21 @@
      "missed": "Someone else carried the bazaar clipboard."
     },
     {
-     "label": "See a real workplace",
+     "label": "Apply for the overseas immersion trip",
      "cost": 2,
      "disp": {
-      "curiosity": 1,
-      "risk": 1
+      "risk": 1,
+      "flexibility": 1
      },
      "gain": {
-      "network": 1
-     },
-     "sets": "seen_work",
-     "outcome": "One day shadowing at a clinic, a workshop, an office in Ubi. Half your guesses about work were wrong."
-    },
-    {
-     "label": "Hold the line at home",
-     "cost": 1,
-     "disp": {
-      "flexibility": 1,
-      "persistence": 1
-     },
-     "gain": {
+      "network": 1,
       "skills": 1
      },
-     "outcome": "Grandma's appointments, the shop after school, your brother's spelling. Nobody grades it. It still counts."
+     "outcome": "Ten days in a partner school in Chiang Mai or Fuzhou. You come back with a class group chat in two languages.",
+     "missed": "The immersion list closed with somebody else on it."
     },
     {
-     "label": "Ship something real",
+     "label": "Make something real that other people use",
      "cost": 2,
      "needsSubject": [
       "computing",
@@ -498,6 +490,20 @@
      },
      "sets": "built_side",
      "outcome": "The bake sale ordering sheet, the class tee design, the two minute film. Used by strangers, kept in your folder."
+    },
+    {
+     "label": "Join a programme outside school",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "sets": "looked_around",
+     "outcome": "Saturday coding, a science olympiad squad, youth theatre at the CC. Nobody from your class is there, which is the point.",
+     "missed": "The Saturday programme ran without you in it."
     }
    ]
   },
@@ -508,7 +514,7 @@
    "situation": "SEC year. The class group chat becomes a study group chat, mostly. EAE opens before results, and everyone suddenly wants to know what Mother Tongue B3 converts to.",
    "choices": [
     {
-     "label": "Train for the paper",
+     "label": "Train for the papers like a sport",
      "cost": 2,
      "disp": {
       "persistence": 2
@@ -519,7 +525,7 @@
      "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone."
     },
     {
-     "label": "Balance the paper and the person",
+     "label": "Keep sleep and exercise through the exam year",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -527,10 +533,10 @@
      "gain": {
       "network": 1
      },
-     "outcome": "You keep Sunday football and your sanity. Your mocks wobble, then hold."
+     "outcome": "You keep Sunday football and your sleep. Your mocks wobble, then hold."
     },
     {
-     "label": "Ask a teacher to aim you",
+     "label": "Ask a teacher what to fix first",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -543,7 +549,7 @@
      "missed": "Nobody aimed the revision, so the weak paper stayed weak."
     },
     {
-     "label": "Keep one made thing alive",
+     "label": "Keep one thing going that is not the exam",
      "cost": 1,
      "needsSubject": [
       "art",
@@ -561,7 +567,7 @@
      "outcome": "Fifteen minutes a night on the thing that is yours. The exam year does not eat it."
     },
     {
-     "label": "Carry your household through it",
+     "label": "Carry more of the house through the exam year",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -573,7 +579,7 @@
      "outcome": "You cook Tuesdays and quiz your sister for her PSLE. The house passes its exams together."
     },
     {
-     "label": "Actually apply for EAE",
+     "label": "Submit the Early Admissions application",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -705,19 +711,21 @@
    "situation": "Lectures run at double speed and the reading list is not a suggestion. Project Work locks five strangers into one grade. Everyone here was top of some class.",
    "choices": [
     {
-     "label": "Learn to study, properly",
-     "cost": 1,
+     "label": "Work out how to study at this level",
+     "cost": 2,
      "disp": {
       "persistence": 1
      },
      "gain": {
       "skills": 2
      },
-     "outcome": "Mugging harder stops working by July. Notes, sleep, spaced practice: the H2s finally sit still.",
-     "missed": "Term three arrives before your study system does."
+     "outcome": "Notes you actually reread, a week that repeats, a tutor you stop avoiding. The jump stops feeling like a cliff.",
+     "missed": "Term three arrives before your study system does.",
+     "capacity": 1,
+     "grew": "worked out how you learn"
     },
     {
-     "label": "Carry your PW group",
+     "label": "Do your share of Project Work properly",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -730,7 +738,7 @@
      "missed": "The PW group limps without a chair."
     },
     {
-     "label": "Run for something",
+     "label": "Run for a council or committee seat",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -743,7 +751,7 @@
      "outcome": "Council, or captain, or the fest committee. Your Tuesdays vanish and your circle triples."
     },
     {
-     "label": "Keep a made thing breathing",
+     "label": "Keep one thing going outside lessons",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -756,7 +764,7 @@
      "missed": "The side thing hibernates under the reading list."
     },
     {
-     "label": "Hold a weekend job",
+     "label": "Hold a job at weekends",
      "cost": 2,
      "disp": {
       "persistence": 1
@@ -776,7 +784,7 @@
    "situation": "Prelims, then the real thing. The canteen empties after five as the study rooms fill. Someone laminates a countdown. It is a strange, close, purposeful year.",
    "choices": [
     {
-     "label": "Give the exam its year",
+     "label": "Give the A Levels the whole year",
      "cost": 2,
      "disp": {
       "persistence": 2
@@ -787,7 +795,7 @@
      "outcome": "You train like it is a season. Whatever the slip says, you finish knowing you emptied the tank."
     },
     {
-     "label": "Pace it like a human",
+     "label": "Pace the year so you last it",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -799,7 +807,7 @@
      "missed": "The year became only the exam."
     },
     {
-     "label": "Study in a pack",
+     "label": "Study with the same group every week",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -810,7 +818,7 @@
      "outcome": "Four of you, one whiteboard, economics until the library chases you out. The pack holds."
     },
     {
-     "label": "Apply sideways too",
+     "label": "Apply to more than one kind of course",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -832,19 +840,21 @@
    "situation": "A campus with escalators, modules with codes, and a GPA that starts counting from week one. Nobody checks your homework. That is the trap and the gift.",
    "choices": [
     {
-     "label": "Treat week one like week ten",
-     "cost": 1,
+     "label": "Set up a routine in week one",
+     "cost": 2,
      "disp": {
       "persistence": 1
      },
      "gain": {
       "skills": 2
      },
-     "outcome": "You learn the GPA math early: semester one counts the same as semester six. Your seniors wish they had.",
-     "missed": "Semester one graded you while you were settling in."
+     "outcome": "Deadlines in a calendar, readings before the lecture, one clear evening. Week ten arrives and nothing is on fire.",
+     "missed": "Semester one graded you while you were settling in.",
+     "capacity": 1,
+     "grew": "set up a week that holds"
     },
     {
-     "label": "Say yes to the studio crowd",
+     "label": "Get to know the people on your course",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -856,7 +866,7 @@
      "missed": "The supper table formed without you."
     },
     {
-     "label": "Join the freelance job board",
+     "label": "Take small paid jobs in your field",
      "cost": 2,
      "disp": {
       "risk": 1
@@ -869,7 +879,7 @@
      "outcome": "A real client, a real deadline, eighty real dollars. School suddenly has a point."
     },
     {
-     "label": "Guard the GPA and the gym",
+     "label": "Protect both your grades and your health",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -880,7 +890,7 @@
      "outcome": "Routine carries you: classes, training, home by eight. Boring, and it banks a 3.8 semester."
     },
     {
-     "label": "Take the club exco seat",
+     "label": "Take a committee seat in a club",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -901,7 +911,7 @@
    "situation": "Twenty weeks inside a real company, with a staff pass and a standup at nine fifteen. Your supervisor is thirty one and tired. What you do here follows you.",
    "choices": [
     {
-     "label": "Treat it as the real thing",
+     "label": "Treat the attachment as a real job",
      "cost": 2,
      "disp": {
       "persistence": 1,
@@ -915,7 +925,7 @@
      "outcome": "You take the ticket nobody wants and close it. On your last day the team lead says call me when you graduate."
     },
     {
-     "label": "Collect skills like receipts",
+     "label": "Collect every skill you can prove later",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -927,7 +937,7 @@
      "missed": "The attachment stayed the tasks on the sheet, and nothing past them."
     },
     {
-     "label": "Interview the adults at lunch",
+     "label": "Ask the adults there how they got in",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -940,7 +950,7 @@
      "missed": "Twenty lunches, headphones in."
     },
     {
-     "label": "Keep school ticking beside it",
+     "label": "Keep your coursework going alongside it",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -959,7 +969,7 @@
    "situation": "Final year project, then the square hat. The group chat splits three ways: job offers, uni applications, and one guy going full time on his sneaker resale thing.",
    "choices": [
     {
-     "label": "Make the FYP your flag",
+     "label": "Make your final year project the one you show",
      "cost": 2,
      "disp": {
       "persistence": 1,
@@ -972,7 +982,7 @@
      "outcome": "The project gets shown at the school showcase. A stranger photographs your poster and emails you."
     },
     {
-     "label": "Finish the friendships properly",
+     "label": "Keep the people you want to keep",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -983,7 +993,7 @@
      "outcome": "Chalet at Pasir Ris, photos at the jetty. These are the numbers you will still have at forty."
     },
     {
-     "label": "Chase the degree place",
+     "label": "Chase a place on a degree course",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1017,7 +1027,7 @@
    "situation": "Coveralls, toe capped boots, and a lecturer who spent nineteen years fixing lifts before he taught it. The workshop smells of cut metal. You are sixteen minutes in and useful.",
    "choices": [
     {
-     "label": "Get certified early",
+     "label": "Get a certificate employers actually ask for",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1029,7 +1039,7 @@
      "missed": "The cert runs filled up without your name."
     },
     {
-     "label": "Become the lecturer's shadow",
+     "label": "Learn from the lecturer who knows the trade",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1043,7 +1053,7 @@
      "missed": "Mr Rashid taught someone else his shortcuts."
     },
     {
-     "label": "Take the weekend site job",
+     "label": "Take weekend work on a real site",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -1057,18 +1067,20 @@
      "outcome": "Your uncle's aircon crew in Tampines, Saturdays. Cash, sweat, and the fastest learning you have done."
     },
     {
-     "label": "Keep the books tight too",
-     "cost": 1,
+     "label": "Build a work routine you can keep",
+     "cost": 2,
      "disp": {
       "flexibility": 1
      },
      "gain": {
       "skills": 1
      },
-     "outcome": "Theory modules count in the GPA that poly will read. You give the maths its hour before dinner."
+     "outcome": "Tools back where they belong, hours logged, invoices on time. Boring, and it is why people rehire you.",
+     "capacity": 1,
+     "grew": "built a routine that holds"
     },
     {
-     "label": "Fix things for the block",
+     "label": "Fix things for neighbours and get known",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1116,7 +1128,7 @@
      "missed": "The workshop kept your seat warm anyway."
     },
     {
-     "label": "Split the difference",
+     "label": "Work part time and keep studying",
      "cost": 2,
      "disp": {
       "flexibility": 1,
@@ -1129,7 +1141,7 @@
      "outcome": "Stay enrolled, work the school holidays on payroll. Both uncles half satisfied, you fully stretched."
     },
     {
-     "label": "Ask what the GPA buys",
+     "label": "Ask what your results would reach",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1162,7 +1174,7 @@
      "missed": "Results day arrived with nothing lined up behind it."
     },
     {
-     "label": "Teach the Year 1s",
+     "label": "Teach the first years what you know",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1174,7 +1186,7 @@
      "outcome": "You run the Saturday remedial in the workshop. Explaining torque settings turns out to be how you master them."
     },
     {
-     "label": "Chase the 3.5",
+     "label": "Push the grades as high as they go",
      "cost": 2,
      "disp": {
       "persistence": 2
@@ -1186,7 +1198,7 @@
      "outcome": "Raw 3.5 guarantees a poly place. You do the retest, keep the CCA points, and cross it."
     },
     {
-     "label": "Own the attachment",
+     "label": "Make the attachment count for something",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -1209,7 +1221,7 @@
    "situation": "First crit. Your work goes on the wall and strangers discuss it like you are not there. Materials cost more than food this month. Happier and more scared than ever.",
    "choices": [
     {
-     "label": "Make more than assigned",
+     "label": "Make more work than the brief asks for",
      "cost": 2,
      "disp": {
       "persistence": 1,
@@ -1221,7 +1233,7 @@
      "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot."
     },
     {
-     "label": "Learn to take the crit",
+     "label": "Learn to take criticism of your work",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -1233,7 +1245,7 @@
      "missed": "Every crit still feels like a verdict on you."
     },
     {
-     "label": "Freelance tiny jobs",
+     "label": "Take small paid jobs on the side",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -1246,7 +1258,7 @@
      "missed": "The paying gigs went to someone hungrier."
     },
     {
-     "label": "Find your material",
+     "label": "Find the material you want to work in",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1257,7 +1269,7 @@
      "outcome": "Riso, clay, After Effects, thread. One of them answers you back. You marry it."
     },
     {
-     "label": "Waitress the weekends",
+     "label": "Wait tables at weekends",
      "cost": 2,
      "disp": {
       "persistence": 1
@@ -1277,7 +1289,7 @@
    "situation": "The year the folder becomes a body of work. An open call at the library gallery, a zine fair at Bras Basah, a brand hunting student artists.",
    "choices": [
     {
-     "label": "Answer the open call",
+     "label": "Answer an open call for work",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -1290,7 +1302,7 @@
      "missed": "The gallery wall hung other people's work."
     },
     {
-     "label": "Table at the zine fair",
+     "label": "Sell your work at a fair or market",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1304,7 +1316,7 @@
      "missed": "The fair happened one table short."
     },
     {
-     "label": "Serve the craft, quietly",
+     "label": "Practise without chasing attention",
      "cost": 2,
      "disp": {
       "persistence": 2
@@ -1315,7 +1327,7 @@
      "outcome": "A thousand hours of unglamorous practice. The jump in your work is visible from across the room."
     },
     {
-     "label": "Assist a working artist",
+     "label": "Assist somebody already doing the work",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1337,7 +1349,7 @@
    "situation": "Grad show year. Everything goes on one wall with your name under it. Aunties ask what job this becomes; the honest answer is several, stitched together, at first.",
    "choices": [
     {
-     "label": "Make the grad show count",
+     "label": "Make the graduation show count",
      "cost": 2,
      "disp": {
       "persistence": 1,
@@ -1349,7 +1361,7 @@
      "outcome": "You rebuild the piece three times. On opening night a design studio leaves a card on your plinth."
     },
     {
-     "label": "Line up the stitched income",
+     "label": "Line up two or three sources of income",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -1361,7 +1373,7 @@
      "missed": "Month one after graduation starts with zero invoices."
     },
     {
-     "label": "Document everything properly",
+     "label": "Photograph and write up everything you made",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1373,7 +1385,7 @@
      "opens": "d_portfolio"
     },
     {
-     "label": "Apply for the degree top up",
+     "label": "Apply for a degree top up",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1410,7 +1422,7 @@
      "missed": "The vocation stayed a chore you did adequately."
     },
     {
-     "label": "Be the bunk's glue",
+     "label": "Be the one who holds the bunk together",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1424,7 +1436,7 @@
      "opens": "d_people"
     },
     {
-     "label": "Book out, keep learning",
+     "label": "Use your weekends to keep learning",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1435,7 +1447,7 @@
      "outcome": "Weekends: an online cert, driving lessons, the language app. The two years will not be a blank."
     },
     {
-     "label": "Get the licence",
+     "label": "Get a licence that counts outside",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1447,7 +1459,7 @@
      "missed": "The licence stayed a thing to do later."
     },
     {
-     "label": "Go for command school",
+     "label": "Put yourself forward for command school",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -1471,7 +1483,7 @@
    "situation": "The countdown app hits double digits. Half the bunk applies to uni on cookhouse wifi; the poly grads compare job ads on guard duty. ORD loh, someone yells, hourly.",
    "choices": [
     {
-     "label": "Apply for what is next, now",
+     "label": "Apply for what comes next straight away",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1484,7 +1496,7 @@
      "missed": "ORD arrived with no plan behind it, and the gap stretched."
     },
     {
-     "label": "Bank the specialist skills",
+     "label": "Write down every skill you were trained in",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1496,7 +1508,7 @@
      "opens": "d_workstudy"
     },
     {
-     "label": "Keep the bunk network warm",
+     "label": "Stay in touch with the people you served with",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1508,7 +1520,7 @@
      "missed": "The bunk chat went quiet before the cake did."
     },
     {
-     "label": "Save like it matters",
+     "label": "Save the allowance properly",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1519,7 +1531,7 @@
      "outcome": "Allowance is small so you make it deliberate. You ORD with a four figure buffer and options."
     },
     {
-     "label": "Spend the payout on a course",
+     "label": "Put the payout into a course",
      "cost": 2,
      "disp": {
       "persistence": 1,
@@ -1541,7 +1553,7 @@
    "situation": "Matriculation, a hall room that fits a bed and an ego, modules you finally chose yourself. Somewhere between orientation and final year project, you pick who you are becoming.",
    "choices": [
     {
-     "label": "Go deep in the major",
+     "label": "Go deep in your major",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1553,7 +1565,7 @@
      "missed": "The major stayed a timetable instead of becoming a craft."
     },
     {
-     "label": "Take the exchange semester",
+     "label": "Take a semester on exchange abroad",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -1567,7 +1579,7 @@
      "outcome": "Six months in another country on a student budget. You come back with range and a group chat in two time zones."
     },
     {
-     "label": "Build the side project",
+     "label": "Build something of your own alongside",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1580,7 +1592,7 @@
      "missed": "The side project stayed a note on your phone."
     },
     {
-     "label": "Work the career fairs",
+     "label": "Work the career fairs properly",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -1603,7 +1615,7 @@
    "situation": "The first full month of pay lands with a payslip you read twice. CPF is real now, and so is the question of whether this job teaches you anything.",
    "choices": [
     {
-     "label": "Learn the job cold",
+     "label": "Learn the job until it is easy",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1615,19 +1627,21 @@
      "missed": "Competence arrived on schedule instead of early."
     },
     {
-     "label": "Build the money habits",
-     "cost": 1,
+     "label": "Build money habits while it is easy",
+     "cost": 2,
      "disp": {
       "flexibility": 1
      },
      "gain": {
       "skills": 1
      },
-     "outcome": "Give some home, save some hard, keep some for living. The buffer buys you courage later.",
-     "missed": "The pay came and went without a plan."
+     "outcome": "A budget you keep, three months put aside, CPF understood. It buys you the freedom to say no later.",
+     "missed": "The pay came and went without a plan.",
+     "capacity": 1,
+     "grew": "got your money in order"
     },
     {
-     "label": "Keep a paying side thing",
+     "label": "Keep one thing that pays on the side",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -1641,7 +1655,7 @@
      "outcome": "Weekend shoots, tuition classes, small builds. A second income with your own name on it."
     },
     {
-     "label": "Show up for your people",
+     "label": "Keep showing up for the people around you",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1654,7 +1668,7 @@
      "missed": "Home kept guessing what you were up to."
     },
     {
-     "label": "Start the part time diploma",
+     "label": "Start a part time qualification",
      "cost": 2,
      "needsDoor": "d_workstudy",
      "disp": {
@@ -1743,7 +1757,7 @@
    "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what you learn on purpose while nobody is asking you to.",
    "choices": [
     {
-     "label": "Take the lead role",
+     "label": "Take the job that means leading people",
      "cost": 2,
      "disp": {
       "risk": 1,
@@ -1755,7 +1769,7 @@
      "outcome": "Managing is a different job from doing, and nobody trains you. You learn on live humans, gently."
     },
     {
-     "label": "Stay the craft person",
+     "label": "Stay the person who does the work",
      "cost": 1,
      "disp": {
       "persistence": 1
@@ -1767,7 +1781,7 @@
      "missed": "The lead role went to someone who wanted it less."
     },
     {
-     "label": "Scale the side thing up",
+     "label": "Grow the side thing into something bigger",
      "cost": 2,
      "needsDoor": "d_portfolio",
      "disp": {
@@ -1779,7 +1793,7 @@
      "outcome": "The folder of work becomes the pitch. You quote a real number, they pay it, and the weekend thing hires you."
     },
     {
-     "label": "Teach what you know",
+     "label": "Teach what you know to somebody newer",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1792,7 +1806,7 @@
      "missed": "The teaching slot went unstaffed another year."
     },
     {
-     "label": "Protect the home front",
+     "label": "Put the people at home first this year",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -1821,7 +1835,7 @@
    "situation": "A subject combination form is on your table again. Not yours: a thirteen year old you love is watching your face for a verdict. You remember this exact silence.",
    "choices": [
     {
-     "label": "Say what nobody told you",
+     "label": "Tell them what nobody told you",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1834,7 +1848,7 @@
      "missed": "The kid decoded your silence as a verdict anyway."
     },
     {
-     "label": "Walk the open house with them",
+     "label": "Walk an open house with them",
      "cost": 1,
      "disp": {
       "curiosity": 1
@@ -1846,7 +1860,7 @@
      "missed": "They shortlisted from hearsay instead of visits."
     },
     {
-     "label": "Vouch for a young person",
+     "label": "Vouch for somebody starting out",
      "cost": 1,
      "needsDoor": "d_people",
      "disp": {
@@ -1858,7 +1872,7 @@
      "outcome": "A reference letter, an intro, a first gig. The people who once vouched for you taught you the move."
     },
     {
-     "label": "Take the mid career credit",
+     "label": "Use your SkillsFuture credit",
      "cost": 2,
      "disp": {
       "curiosity": 1,
@@ -1871,7 +1885,7 @@
      "outcome": "The four thousand dollar top up at forty, spent on a course you chose like an adult. Homework at your age, gladly."
     },
     {
-     "label": "Reorganise around what matters",
+     "label": "Rebuild the year around what matters now",
      "cost": 1,
      "disp": {
       "flexibility": 1
@@ -1891,7 +1905,7 @@
    "situation": "Forty eight. One classmate just retrained as a nurse; the wedding relative who judged ITE now asks your advice. The road behind you looks nothing like the form at fourteen.",
    "choices": [
     {
-     "label": "Mentor on purpose",
+     "label": "Mentor somebody on purpose",
      "cost": 1,
      "disp": {
       "optimism": 1
@@ -1915,7 +1929,7 @@
      "outcome": "The software that was supposed to replace you becomes the thing you wield. Younger colleagues notice."
     },
     {
-     "label": "Turn the trade into a shop",
+     "label": "Turn the trade into your own shop",
      "cost": 2,
      "needsDoor": "d_trade",
      "disp": {

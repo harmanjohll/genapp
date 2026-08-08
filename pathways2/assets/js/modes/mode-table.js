@@ -19,7 +19,7 @@ import { cue } from '../sound.js';
 import { possibilitiesFor, forkNeed } from '../engine/possible.js';
 import {
   createRun, currentStage, ageAt, sequenceFor, visibleChoices, applyChoices,
-  answerNS, respondToChance, finish, pointsFor, strongestTrack, askMet,
+  answerNS, respondToChance, finish, pointsFor, strongestTrack, askMet, CAPACITY_CAP,
 } from '../engine/journey4.js';
 import { getState } from '../state.js';
 
@@ -199,6 +199,7 @@ function turnScreen(host, data) {
                       aria-pressed="${on}" ${!on && cost > left ? 'data-dim="true"' : ''}>
                 ${isFork ? '' : `<span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'●'.repeat(cost)}</span>`}
                 <span class="c-label">${esc(c.label)}</span>
+                ${c.capacity && p.run.capacity < CAPACITY_CAP ? `<span class="c-chips"><span class="grow-tag">${esc(data.copy.journey.growTag)}</span></span>` : ''}
                 ${need ? `<span class="fork-need">${esc(need)}</span>` : ''}
               </button>`;
           }).join('')}

@@ -50,6 +50,8 @@ export const PATHS = ['academic', 'applied', 'hands', 'arts'];
 const DISP_KEYS = ['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'];
 const TRACKS = ['skills', 'network', 'portfolio'];
 const TRACK_CAP = 24;
+// How much a run can ever grow its yearly points by investing in itself.
+export const CAPACITY_CAP = 2;
 export const POINTS_PER_TURN = 2;
 export const SUBJECT_CHOICE_CAP = 2;
 export const MOVE_CHOICE_CAP = 2;
@@ -193,6 +195,13 @@ export function createRun(startAge, label, want, plan) {
     doors: [],
     flags: [],
     disp: { curiosity: 0, persistence: 0, flexibility: 0, optimism: 0, risk: 0 },
+    // Capacity is the one thing in this game that compounds. Some choices are
+    // not about this year at all: learning to run your own week costs two of
+    // this year's points and hands back one point every year after it, for the
+    // rest of the run. It only ever grows, so no choice can shrink a later
+    // year, which keeps the monotonicity promise the whole app rests on.
+    capacity: 0,
+    capacityWhy: '',
     path: null,
     pathLabel: null,
     reflection: null,
@@ -250,7 +259,13 @@ export function pointsFor(run, stage, data, age) {
     else if (w > 0 && w <= 2) { pts += 1; reasons.push({ k: 'room', d: 1, n: w }); }
     if ((run.flags || []).includes('took_stage')) { pts -= 1; reasons.push({ k: 'cca', d: -1 }); }
   }
-  return { points: Math.max(2, Math.min(4, pts)), reasons };
+  // What an earlier year bought. Reported with the phrase from the choice that
+  // bought it, so the student can see which decision is still paying.
+  if (run.capacity) {
+    pts += run.capacity;
+    reasons.push({ k: 'grown', d: run.capacity, why: run.capacityWhy });
+  }
+  return { points: Math.max(2, Math.min(4 + CAPACITY_CAP, pts)), reasons };
 }
 
 export function activityYield(ids, data, age) {
@@ -437,6 +452,12 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
   const outcomes = [];
   chosen.forEach((choice) => {
     grant(run, choice);
+    // Paid for this year, collected from next year onward. Capped at two so a
+    // late run cannot turn into an eight point year.
+    if (choice.capacity && run.capacity < CAPACITY_CAP) {
+      run.capacity = Math.min(CAPACITY_CAP, (run.capacity || 0) + choice.capacity);
+      run.capacityWhy = choice.grew || run.capacityWhy;
+    }
     if (choice.isMove) {
       if (!run.movesMade) run.movesMade = [];
       run.movesMade.push({ id: choice.id, age });
@@ -770,6 +791,14 @@ export function runJourneySweep(data) {
       const base = (r.choices || []).filter((c) => !c.needsDoor && !c.needsSubject);
       const gated = (r.choices || []).filter((c) => c.needsDoor);
       (r.choices || []).forEach((c) => {
+        // A choice that grows capacity has to say what it grew, or the points
+        // line reads "One more every year now, because you ." It also has to
+        // cost two: a compounding return for one point would make every other
+        // choice in the year pointless.
+        if (c.capacity) {
+          if (!c.grew) failures.push({ stage: stage.id, why: `capacity with no phrase: ${c.label}` });
+          if ((c.cost || 1) < 2) failures.push({ stage: stage.id, why: `capacity going cheap: ${c.label}` });
+        }
         if (c.needsSubject) {
           const ids = Array.isArray(c.needsSubject) ? c.needsSubject : [c.needsSubject];
           ids.forEach((id) => {

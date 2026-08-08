@@ -503,6 +503,14 @@ details.perf summary { cursor: pointer; min-height: var(--tap); display: flex; a
 .future-btn .want { font-family: var(--display); font-size: 1.05rem; font-weight: 600; display: block; }
 .future-btn.on { border-color: var(--accent); background: var(--accent-wash); }
 
+/* The chip on a choice that pays for itself in later years. Green, because it
+   is the same promise as a door: something opens and stays open. */
+.grow-tag {
+  display: inline-block; padding: 1px 8px; border-radius: var(--r-pill);
+  background: var(--open-wash); color: var(--open-ink);
+  border: 1px solid var(--open); font-size: var(--t-micro); font-weight: 700;
+}
+
 /* The commit bar. Sticky only on a phone, only once armed, and it sits above
    the safe area so a gesture bar cannot take the tap. */
 @media (max-width: 699px) {
