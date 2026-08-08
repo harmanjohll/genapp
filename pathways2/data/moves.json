@@ -5,17 +5,17 @@
   "accessed": "2026-08-05",
   "notes": "Asks are free because asking costs courage, not hours: a hand of five, two playable a year, and playing one draws another. Commitments spend points because three months is three months. Every flag set here is read by a callback card, which is the whole promise of a move: do it now, and the story remembers."
  },
- "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches you another. Commitments take real time, so they sit among your choices and spend your points.",
+ "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches me another. Commitments take real time, so they sit among my choices and spend my points.",
  "moves": [
   {
    "id": "ask_help",
-   "label": "Get help with the subject you dread",
+   "label": "Get help with the subject I dread",
    "ages": [
     13,
     17
    ],
-   "body": "Go to the teacher after class. Say which part you do not get. That is the whole move.",
-   "outcome": "The teacher shows you where it actually went wrong, which is never where you thought.",
+   "body": "Go to the teacher after class. Say which part I do not get. That is the whole move.",
+   "outcome": "The teacher shows me where it actually went wrong, which is never where I thought.",
    "gain": {
     "skills": 1
    },
@@ -25,17 +25,17 @@
    "sets": "asked_help",
    "ic": "persistence",
    "kind": "ask",
-   "missed": "The subject you dread stayed the subject you dread."
+   "missed": "The subject I dread stayed the subject I dread."
   },
   {
    "id": "ecg",
-   "label": "Book a chat with the ECG counsellor",
+   "label": "Book a chat with my ECG counsellor",
    "ages": [
     13,
     17
    ],
    "body": "Every secondary school and JC has one, and it is free. Bring one question. Where could I go is a good one.",
-   "outcome": "They show you two roads you did not know existed. Nobody makes you take either.",
+   "outcome": "They show me two roads I did not know existed. Nobody makes me take either.",
    "disp": {
     "flexibility": 1,
     "optimism": 1
@@ -46,13 +46,13 @@
   },
   {
    "id": "yearhead",
-   "label": "Ask your Year Head what moving up takes",
+   "label": "Ask my Year Head what moving up takes",
    "ages": [
     13,
     16
    ],
    "body": "Not a promise. A question: what would my marks need to look like to take this at G3?",
-   "outcome": "Now you know the number. It is smaller than the rumour said.",
+   "outcome": "Now I know the number. It is smaller than the rumour said.",
    "disp": {
     "risk": 1
    },
@@ -62,12 +62,12 @@
   },
   {
    "id": "parents",
-   "label": "Tell your parents what you actually want",
+   "label": "Tell my parents what I actually want",
    "ages": [
     13,
     20
    ],
-   "body": "They have a plan for you. They cannot compare it with yours if yours stays secret.",
+   "body": "They have a plan for me. They cannot compare it with mine if mine stays secret.",
    "outcome": "One awkward dinner. After it, one fewer thing to carry alone.",
    "gain": {
     "network": 1
@@ -86,8 +86,8 @@
     15,
     17
    ],
-   "body": "Your school or a family friend can set one up. One day watching someone actually do the job.",
-   "outcome": "The job is not what you imagined. Better or worse, now you know which.",
+   "body": "My school or a family friend can set one up. One day watching someone actually do the job.",
+   "outcome": "The job is not what I imagined. Better or worse, now I know which.",
    "gain": {
     "portfolio": 1
    },
@@ -102,13 +102,13 @@
   },
   {
    "id": "eae_prep",
-   "label": "Prepare for the Early Admissions interview",
+   "label": "Prepare for my Early Admissions interview",
    "ages": [
     15,
     17
    ],
-   "body": "EAE shortlists you, then interviews you, and some courses set an aptitude test. Most people arrive having prepared nothing.",
-   "outcome": "You practise saying out loud why this course, with the folder open beside you. The panel asks exactly that, and you have an answer.",
+   "body": "EAE shortlists me, then interviews me, and some courses set an aptitude test. Most people arrive having prepared nothing.",
+   "outcome": "I practise saying out loud why this course, with the folder open beside me. The panel asks exactly that, and I have an answer.",
    "gain": {
     "portfolio": 1,
     "network": 1
@@ -124,19 +124,19 @@
   },
   {
    "id": "dsa",
-   "label": "Ask what your talent counts for",
+   "label": "Ask what my talent counts for in DSA",
    "ages": [
     15,
     16
    ],
-   "body": "DSA takes Sec 4s into JC on talent: sport, CCA, a subject you are unusually good at. Fair warning, an accepted offer is binding. You are choosing, not keeping options.",
-   "outcome": "Early Admissions weighs it for a polytechnic course, and an arts school reads it on a portfolio. Naming it changes how you treat it.",
+   "body": "DSA takes Sec 4s into JC on talent: sport, CCA, a subject I am unusually good at. Fair warning, an accepted offer is binding. I am choosing, not keeping options.",
+   "outcome": "Early Admissions weighs it for a polytechnic course, and an arts school reads it on a portfolio. Naming it changes how I treat it.",
    "disp": {
     "curiosity": 1
    },
    "sets": "dsa_aware",
    "ic": "g_elective",
-   "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit you to that JC.",
+   "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit I to that JC.",
    "kind": "commit",
    "cost": 1,
    "missed": "The talent stayed a hobby nobody at an admissions desk heard about.",
@@ -144,13 +144,13 @@
   },
   {
    "id": "intern",
-   "label": "Treat your attachment like a real job",
+   "label": "Treat my attachment like a real job",
    "ages": [
     17,
     19
    ],
-   "body": "Poly internships and ITE attachments are where employers first see you. Show up like it is the job, because it is.",
-   "outcome": "Your supervisor writes three sentences about you at the end. People read those.",
+   "body": "Poly internships and ITE attachments are where employers first see me. Show up like it is the job, because it is.",
+   "outcome": "My supervisor writes three sentences about me at the end. People read those.",
    "gain": {
     "skills": 1,
     "network": 1
@@ -164,13 +164,13 @@
   },
   {
    "id": "exchange",
-   "label": "Put your name down for a semester abroad",
+   "label": "Put my name down for a semester abroad",
    "ages": [
     17,
     24
    ],
    "body": "Poly, ITE and uni all run overseas stints. The form is shorter than the queue for it is.",
-   "outcome": "Three months somewhere nothing works the way you assume. You come back harder to rattle.",
+   "outcome": "Three months somewhere nothing works the way I assume. I come back harder to rattle.",
    "disp": {
     "flexibility": 2
    },
@@ -178,7 +178,7 @@
    "ic": "flexibility",
    "kind": "commit",
    "cost": 2,
-   "missed": "The exchange cohort flew without you."
+   "missed": "The exchange cohort flew without me."
   },
   {
    "id": "mentor",
@@ -187,7 +187,7 @@
     19,
     30
    ],
-   "body": "Find one person doing the thing you want. Ask for an hour and bring questions. Most people say yes and nobody asks them.",
+   "body": "Find one person doing the thing I want. Ask for an hour and bring questions. Most people say yes and nobody asks them.",
    "outcome": "One hour of how it really works, which no website has.",
    "gain": {
     "network": 2
@@ -198,13 +198,13 @@
   },
   {
    "id": "formteacher",
-   "label": "Ask your form teacher which subject suits how you learn",
+   "label": "Ask my form teacher which subject suits me",
    "ages": [
     13,
     17
    ],
-   "body": "They see you in class all week. They have an opinion and nobody ever asks for it.",
-   "outcome": "They name something you are good at that you had not counted as a skill.",
+   "body": "They see me in class all week. They have an opinion and nobody ever asks for it.",
+   "outcome": "They name something I am good at that I had not counted as a skill.",
    "disp": {
     "curiosity": 1
    },
@@ -218,13 +218,13 @@
   },
   {
    "id": "senior",
-   "label": "Ask a senior who took the road you want",
+   "label": "Ask a senior who took the road I want",
    "ages": [
     14,
     20
    ],
-   "body": "One year above you, same school, already there. Ask what they wish they had known.",
-   "outcome": "Straight answers, no brochure voice. Some of it puts you off, which is also useful.",
+   "body": "One year above me, same school, already there. Ask what they wish they had known.",
+   "outcome": "Straight answers, no brochure voice. Some of it puts me off, which is also useful.",
    "gain": {
     "network": 1
    },
@@ -243,7 +243,7 @@
     18
    ],
    "body": "Everyone walks around collecting flyers. Ask a lecturer what students find hardest in year one.",
-   "outcome": "The answer is specific and nothing like the flyer. You remember it for years.",
+   "outcome": "The answer is specific and nothing like the flyer. I remember it for years.",
    "gain": {
     "network": 1
    },
@@ -257,13 +257,13 @@
   },
   {
    "id": "cca",
-   "label": "Ask your CCA teacher for something harder",
+   "label": "Ask my CCA teacher for something harder",
    "ages": [
     13,
     17
    ],
    "body": "Not a bigger title. A real job nobody wants: run the thing, teach the juniors, fix what is broken.",
-   "outcome": "You are trusted with something before you feel ready, which is how it always goes.",
+   "outcome": "I am trusted with something before I feel ready, which is how it always goes.",
    "gain": {
     "portfolio": 1
    },
@@ -276,13 +276,13 @@
   },
   {
    "id": "family",
-   "label": "Ask someone in your family who took a different road",
+   "label": "Ask someone in my family who took another road",
    "ages": [
     13,
     24
    ],
    "body": "An uncle, a cousin, anyone who did not do what everyone expected. Ask how it worked out.",
-   "outcome": "Someone in your own family is proof the standard road is not the only one.",
+   "outcome": "Someone in my own family is proof the standard road is not the only one.",
    "gain": {
     "network": 1
    },
@@ -296,13 +296,13 @@
   },
   {
    "id": "lecturer",
-   "label": "Ask your lecturer how they got into this",
+   "label": "Ask my lecturer how they got into this",
    "ages": [
     17,
     22
    ],
    "body": "Poly and ITE lecturers worked in the trade before they taught it. Most are glad to be asked.",
-   "outcome": "They tell you the route they actually took, which was not the neat one on the website.",
+   "outcome": "They tell me the route they actually took, which was not the neat one on the website.",
    "gain": {
     "network": 1
    },
@@ -315,13 +315,13 @@
   },
   {
    "id": "careercoach",
-   "label": "Book a session with your school's career services",
+   "label": "Book a session with my school's career services",
    "ages": [
     17,
     24
    ],
-   "body": "Poly, ITE and every university run one. They know which employers hire from your course, and it is free while you are enrolled.",
-   "outcome": "They read your resume properly and tell you the two things wrong with it.",
+   "body": "Poly, ITE and every university run one. They know which employers hire from my course, and it is free while I am enrolled.",
+   "outcome": "They read my resume properly and tell me the two things wrong with it.",
    "gain": {
     "portfolio": 1
    },
@@ -334,13 +334,13 @@
   },
   {
    "id": "supervisor",
-   "label": "Ask your supervisor what would get you promoted",
+   "label": "Ask my supervisor what would get me promoted",
    "ages": [
     22,
     34
    ],
    "body": "Not a complaint. A question: what would I need to be doing for this to be the obvious next step?",
-   "outcome": "They name two things. One you expected. The other you had never thought about.",
+   "outcome": "They name two things. One I expected. The other I had never thought about.",
    "gain": {
     "skills": 1
    },
@@ -353,13 +353,13 @@
   },
   {
    "id": "peer_ask",
-   "label": "Ask how somebody got the life you want",
+   "label": "Ask how somebody got the life I want",
    "ages": [
     30,
     55
    ],
    "body": "Not their job. Their week. How they got the hours to look like that.",
-   "outcome": "It was arranged on purpose, in steps, and they will tell you the steps if you ask.",
+   "outcome": "It was arranged on purpose, in steps, and they will tell me the steps if I ask.",
    "gain": {
     "network": 1
    },
@@ -373,13 +373,13 @@
   },
   {
    "id": "younger",
-   "label": "Ask somebody younger to teach you something",
+   "label": "Ask somebody younger to teach me something",
    "ages": [
     34,
     55
    ],
-   "body": "They know the tools you have been avoiding. Asking costs you nothing but the admission.",
-   "outcome": "Half an hour, and the thing you were dreading turns out to be learnable.",
+   "body": "They know the tools I have been avoiding. Asking costs me nothing but the admission.",
+   "outcome": "Half an hour, and the thing I was dreading turns out to be learnable.",
    "gain": {
     "skills": 1,
     "network": 1
@@ -398,7 +398,7 @@
     30,
     55
    ],
-   "body": "A change at forty lands on everyone you live with. Say it out loud before it is decided.",
+   "body": "A change at forty lands on everyone I live with. Say it out loud before it is decided.",
    "outcome": "They had noticed. Saying it makes it a plan the household is in on, not a surprise.",
    "gain": {
     "network": 1
@@ -416,11 +416,11 @@
    "kind": "commit",
    "cost": 1,
    "ic": "risk",
-   "label": "Put your name up for a leadership role",
+   "label": "Put my name up for class comm or EXCO",
    "body": "Class committee, CCA committee, house, prefect, peer support.",
-   "outcome": "You get the role and the clipboard, and the term teaches you what carrying something actually costs.",
+   "outcome": "I get the role and the clipboard, and the term teaches me what carrying something actually costs.",
    "missed": "Somebody else took the clipboard this year.",
-   "check": "Ask your form teacher when nominations open.",
+   "check": "Ask my form teacher when nominations open.",
    "gain": {
     "network": 1,
     "skills": 1
@@ -441,9 +441,9 @@
    "kind": "commit",
    "cost": 1,
    "ic": "optimism",
-   "label": "Lead your VIA project instead of attending it",
-   "body": "Values in Action, planned by you rather than handed to you.",
-   "outcome": "You pick who it serves, arrange it, and write what changed. It reads completely differently in an application.",
+   "label": "Lead my VIA project instead of attending it",
+   "body": "Values in Action, planned by I rather than handed to me.",
+   "outcome": "I pick who it serves, arrange it, and write what changed. It reads completely differently in an application.",
    "missed": "The VIA hours got collected. Nothing else did.",
    "check": "Ask who signs off a student proposed VIA project.",
    "gain": {
@@ -466,11 +466,11 @@
    "kind": "commit",
    "cost": 1,
    "ic": "persistence",
-   "label": "Volunteer to tutor a younger student",
+   "label": "Tutor a younger student every week",
    "body": "One hour a week, same student, all term.",
-   "outcome": "Explaining it badly twice is how you find out you only half knew it. By June you know it cold.",
+   "outcome": "Explaining it badly twice is how I find out I only half knew it. By June I know it cold.",
    "missed": "Nobody was tutored, and the topic stayed half known.",
-   "check": "Ask whether your school runs a peer tutoring scheme.",
+   "check": "Ask whether my school runs a peer tutoring scheme.",
    "gain": {
     "skills": 1,
     "network": 1

@@ -72,7 +72,7 @@ function chooser(data, st) {
   return `
     <div class="section" style="margin-top:var(--s-6)">
       <p class="caps">Aim</p>
-      <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Start from what you want.</h1>
+      <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">Start from what I want.</h1>
       <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_where')}${esc(jc.q2)}</p>
       <p class="lede" style="margin-top:var(--s-2);max-width:44ch">${esc(ac.chooserLede)}</p>
       <div class="grid two" style="margin-top:var(--s-5)">

@@ -100,7 +100,7 @@ const MURKY = [
   /\byour flag\b/i, /\blike receipts\b/i, /\bthe crit\b/i, /\bstitched\b/i,
   /\bhold the line\b/i, /\ball in on\b/i, /\binterrogate\b/i, /\bthe pitch\b/i,
   /\blike a human\b/i, /\bin a pack\b/i, /\bbreathing\b/i, /\bcold\b/i,
-  /\bquietly\b/i, /\bthe block\b/i, /\bexco\b/i, /\bFYP\b/, /\bPW group\b/i,
+  /\bquietly\b/i, /\bthe block\b/i, /\bFYP\b/, /\bPW group\b/i,
 ];
 
 // A gendered job noun in a career tool tells half a class the job is not theirs.
@@ -129,7 +129,22 @@ export function runCopyLint(data) {
   const cadence = [];
   const murky = [];
 
+  // The phrase a capacity choice contributes to "One more every year now,
+  // because I ...". It is rendered, so it has to be in the same voice. It sat in
+  // the voice pass's skip list once and produced "because I learned to run your
+  // own week" on screen.
+  ((data.journey && data.journey.stages) || []).forEach((s) => {
+    (s.choices || []).forEach((c) => {
+      if (c.grew && /\b(you|your|yours)\b/i.test(c.grew)) {
+        murky.push({ path: `${s.id} grew`, why: 'a growth phrase in the second person', text: c.grew });
+      }
+    });
+  });
+
   optionLabels(data).forEach(({ where, label }) => {
+    if (/\b(you|your|yours|yourself)\b/i.test(label)) {
+      murky.push({ path: where, why: 'an option in the second person, not the student\'s voice', text: label });
+    }
     MURKY.forEach((re) => {
       if (re.test(label)) murky.push({ path: where, why: 'an option a student has to decode', text: label });
     });
@@ -185,7 +200,11 @@ export function runCopyLint(data) {
   });
 
   walkStudentText(data, (value, where) => {
-    if (/[-–—]/.test(value)) {
+    // The ban is on the dash as punctuation, which is the thing this house style
+    // does not use. A hyphen inside a word is part of a name: Co-Curricular
+    // Activity is how MOE spells it, and respelling it would be a different kind
+    // of wrong.
+    if (/\s[-–—]|[-–—]\s|[–—]/.test(value)) {
       dashes.push({ path: where, text: String(value).slice(0, 70) });
     }
     if (aphorismCount(value) > 1) {
@@ -202,11 +221,17 @@ export function runCopyLint(data) {
     });
   });
   if (outcomes.length) {
-    const youOpeners = outcomes.filter((o) => /^You\b/.test(o.text.trim()));
-    const ratio = youOpeners.length / outcomes.length;
-    if (ratio > 0.3) {
-      cadence.push({ path: 'chances', why: `${Math.round(ratio * 100)}% of outcomes open with "You" (cap 30%)` });
-    }
+    const opener = {};
+    outcomes.forEach((o) => {
+      const first = o.text.trim().split(/\s+/)[0].replace(/[^A-Za-z]/g, '');
+      if (first) opener[first] = (opener[first] || 0) + 1;
+    });
+    Object.entries(opener).forEach(([word, n]) => {
+      const ratio = n / outcomes.length;
+      if (ratio > 0.3) {
+        cadence.push({ path: 'chances', why: `${Math.round(ratio * 100)}% of outcomes open with "${word}" (cap 30%)` });
+      }
+    });
     const seen = new Map();
     outcomes.forEach((o) => {
       const clause = o.text.trim().toLowerCase().split(/\s+/).slice(0, 5).join(' ');

@@ -238,7 +238,7 @@ function introScreen(host, data, st) {
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">Play</p>
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
-        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what you do each chapter, from now to 48. Life happens in between. No choice ends your story.</p>
+        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what I do each chapter, from now to 48. Life happens in between. No choice ends my story.</p>
         ${comboBlock}
         <div class="wantbox">
           <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>

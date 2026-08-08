@@ -12,11 +12,11 @@
  "forkNeeds": {
   "d_alevels": "L1R4 of sixteen or better across five G3 subjects, with English at C6, G3 Maths at D7 and Mother Tongue at D7.",
   "d_polyroad": "Four G3 subjects and one G2 subject in the B slot. ELR2B2 of twenty two or better, and twenty four for nursing.",
-  "d_iteroad": "A pass that carries you in. Higher Nitec runs three years, and Nitec is the award you hold if you exit early.",
+  "d_iteroad": "A pass that carries me in. Higher Nitec runs three years, and Nitec is the award I hold if I exit early.",
   "d_portfolio": "A portfolio or an audition, and the year of practice sitting behind it.",
   "d_fifth": "The Sec 5 criteria. A fifth year taken at all G3 asks a gross ELMAB3 of nineteen or better.",
   "d_mi": "L1R4 of twenty or better across five G3 subjects. Wider at the door than a junior college, and a year longer.",
-  "d_pfp": "ELMAB3 of twelve or better at G2. You pick a cluster rather than a single course."
+  "d_pfp": "ELMAB3 of twelve or better at G2. I pick a cluster rather than a single course."
  },
  "possibilities": [
   {
@@ -29,9 +29,9 @@
    "paths": null,
    "label": "Move a subject up a level",
    "when": "At each year's review point",
-   "needs": "A teacher who thinks you can carry it, and one term of showing you can",
-   "leads": "A wider set of courses open to you at the end of Sec 4",
-   "truth": "Under Full Subject Based Banding your level is decided each year. It is not a label you were given once."
+   "needs": "A teacher who thinks I can carry it, and one term of showing I can",
+   "leads": "A wider set of courses open to me at the end of Sec 4",
+   "truth": "Under Full Subject Based Banding my level is decided each year. It is not a label I was given once."
   },
   {
    "id": "p_eae",
@@ -43,9 +43,9 @@
    "paths": null,
    "label": "Apply through Early Admissions",
    "when": "Around the middle of Sec 4",
-   "needs": "A course you can argue for, and something you have actually made or done",
-   "leads": "A conditional offer before results, held if you meet the course requirement",
-   "truth": "EAE weighs aptitude and interest. The offer still asks you to meet the course minimum, so the exam still counts."
+   "needs": "A course I can argue for, and something I have actually made or done",
+   "leads": "A conditional offer before results, held if I meet the course requirement",
+   "truth": "EAE weighs aptitude and interest. The offer still asks me to meet the course minimum, so the exam still counts."
   },
   {
    "id": "p_portfolio_build",
@@ -56,8 +56,8 @@
    ],
    "paths": null,
    "label": "Start the folder now",
-   "when": "This term, not the term you need it",
-   "needs": "One finished thing a month, kept somewhere you can find it again",
+   "when": "This term, not the term I need it",
+   "needs": "One finished thing a month, kept somewhere I can find it again",
    "leads": "Something to show at an interview, an audition, or an EAE round",
    "truth": "A folder is easier to fill over three years than over three weeks."
   },
@@ -72,8 +72,8 @@
    "label": "Ask a teacher what they see",
    "when": "Any week of any term",
    "needs": "One question, and the nerve to sit through the whole answer",
-   "leads": "A clearer view of what you carry that you cannot get from inside",
-   "truth": "Teachers hold a picture of you built from three years of watching. Most will hand it over if asked."
+   "leads": "A clearer view of what I carry that I cannot get from inside",
+   "truth": "Teachers hold a picture of me built from three years of watching. Most will hand it over if asked."
   },
   {
    "id": "p_fifth",
@@ -85,9 +85,9 @@
    "paths": null,
    "label": "Take a fifth year",
    "when": "After the Sec 4 results",
-   "needs": "The Sec 5 criteria met, and a reason that belongs to you",
+   "needs": "The Sec 5 criteria met, and a reason that belongs to me",
    "leads": "A second sitting, then polytechnic, Millennia Institute or junior college",
-   "truth": "A fifth year is a year. Some roads only open after it, and the year is not held against you afterwards."
+   "truth": "A fifth year is a year. Some roads only open after it, and the year is not held against me afterwards."
   },
   {
    "id": "p_mi",
@@ -113,9 +113,9 @@
    "paths": null,
    "label": "The Poly Foundation Programme",
    "when": "Applying after Sec 4",
-   "needs": "ELMAB3 of twelve or better, and a cluster you would be glad to be in",
+   "needs": "ELMAB3 of twelve or better, and a cluster I would be glad to be in",
    "leads": "One foundation year, then straight into the first year of a diploma",
-   "truth": "PFP admits you to a cluster rather than a course. From AY2028 it is open to any mix of subject levels."
+   "truth": "PFP admits I to a cluster rather than a course. From AY2028 it is open to any mix of subject levels."
   },
   {
    "id": "p_hn_direct",
@@ -155,8 +155,8 @@
    "paths": null,
    "label": "An arts school, on a portfolio",
    "when": "Audition and portfolio rounds, from Sec 4",
-   "needs": "Work you made, ready to show, and one honest person to look at it first",
-   "leads": "A diploma at an arts institution, entered on what you can do",
+   "needs": "Work I made, ready to show, and one honest person to look at it first",
+   "leads": "A diploma at an arts institution, entered on what I can do",
    "truth": "A portfolio is read as evidence of practice rather than proof of talent. It rewards the student who started early."
   },
   {
@@ -169,8 +169,8 @@
    "paths": null,
    "label": "Appeal a posting",
    "when": "The days straight after results",
-   "needs": "A course you can name, and a reason that is more than wanting it",
-   "leads": "A second look at where you were posted",
+   "needs": "A course I can name, and a reason that is more than wanting it",
+   "leads": "A second look at where I was posted",
    "truth": "Appealing is an ordinary part of the exercise. Ask early, ask in person, and ask about the next intake too."
   },
   {
@@ -181,11 +181,11 @@
     17
    ],
    "paths": null,
-   "label": "Order your choices carefully",
+   "label": "Order my choices carefully",
    "when": "When the posting portal opens",
-   "needs": "Your list ordered by what you actually want, not by what you think you can get",
-   "leads": "A posting decided by your order when scores tie",
-   "truth": "From 2028 one portal handles this. Where two students tie, the order you listed decides, so put the real first choice first."
+   "needs": "My list ordered by what I actually want, not by what I think I can get",
+   "leads": "A posting decided by my order when scores tie",
+   "truth": "From 2028 one portal handles this. Where two students tie, the order I listed decides, so put the real first choice first."
   },
   {
    "id": "p_switch_course",
@@ -200,9 +200,9 @@
    ],
    "label": "Switch course inside the school",
    "when": "Usually the end of the first year",
-   "needs": "Your first year grades, a place free in the other course, and a reason",
-   "leads": "The diploma you actually meant to take",
-   "truth": "Transfers happen every year. Ask the school what the window is long before you need to use it."
+   "needs": "My first year grades, a place free in the other course, and a reason",
+   "leads": "The diploma I actually meant to take",
+   "truth": "Transfers happen every year. Ask the school what the window is long before I need to use it."
   },
   {
    "id": "p_gpa_degree",
@@ -216,7 +216,7 @@
    ],
    "label": "The polytechnic to degree road",
    "when": "Built across all three years",
-   "needs": "A GPA the university you want will look at, and modules that match the degree",
+   "needs": "A GPA the university I want will look at, and modules that match the degree",
    "leads": "A degree place, sometimes with a year of credit already granted",
    "truth": "Polytechnic graduates enter local universities every year. Some enter with exemptions that shorten the degree."
   },
@@ -234,7 +234,7 @@
    "when": "The final year of Higher Nitec",
    "needs": "A net GPA of two point five to apply, three point five raw to be guaranteed",
    "leads": "A polytechnic diploma",
-   "truth": "The guarantee is written down, so it is not a favour anyone grants you. CCA points lift the net figure, never the raw one."
+   "truth": "The guarantee is written down, so it is not a favour anyone grants me. CCA points lift the net figure, never the raw one."
   },
   {
    "id": "p_ite_exit",
@@ -248,9 +248,9 @@
    ],
    "label": "Take the Nitec and start working",
    "when": "At the exit point inside the three years",
-   "needs": "A trade you can practise, and a first employer willing to teach you",
-   "leads": "Work now, with Higher Nitec still open to you later",
-   "truth": "Nitec is the award you exit with from the three year Higher Nitec course. Leaving is a decision, and it reverses."
+   "needs": "A trade I can practise, and a first employer willing to teach me",
+   "leads": "Work now, with Higher Nitec still open to me later",
+   "truth": "Nitec is the award I exit with from the three year Higher Nitec course. Leaving is a decision, and it reverses."
   },
   {
    "id": "p_intern_convert",
@@ -266,8 +266,8 @@
    ],
    "label": "Turn the attachment into an offer",
    "when": "The internship semester",
-   "needs": "Turning up early, asking for the harder task, and saying out loud that you want the job",
-   "leads": "A job offer before you have graduated",
+   "needs": "Turning up early, asking for the harder task, and saying out loud that I want the job",
+   "leads": "A job offer before I have graduated",
    "truth": "A great many first jobs began as an attachment somebody remembered clearly."
   },
   {
@@ -281,8 +281,8 @@
    "label": "Go on exchange",
    "when": "Usually the second year",
    "needs": "Grades that clear the bar, and the money planned for in advance",
-   "leads": "A semester somewhere else, and the nerve that comes back with you",
-   "truth": "Bursaries and grants exist for this. Ask the office rather than deciding on your own that it is not for you."
+   "leads": "A semester somewhere else, and the nerve that comes back with me",
+   "truth": "Bursaries and grants exist for this. Ask the office rather than deciding on my own that it is not for me."
   },
   {
    "id": "p_jc_poly",
@@ -296,7 +296,7 @@
    ],
    "label": "Go to polytechnic after A Levels",
    "when": "After the A Level results",
-   "needs": "A diploma course you want more than you want a degree right now",
+   "needs": "A diploma course I want more than I want a degree right now",
    "leads": "A diploma, often with some modules exempted",
    "truth": "The road runs in that direction too, and it is used more often than anyone says out loud."
   },
@@ -325,7 +325,7 @@
    "label": "Ask about money early",
    "when": "As soon as the fee letter appears",
    "needs": "Household income papers, and one appointment nobody enjoys making",
-   "leads": "Fees covered in part or in full, and a loan you understand",
+   "leads": "Fees covered in part or in full, and a loan I understand",
    "truth": "Bursaries, loans and hardship funds are ordinary. Nobody in this system is expected to fund it alone."
   },
   {
@@ -339,7 +339,7 @@
    "label": "Defer a place for service",
    "when": "When the enlistment letter arrives",
    "needs": "One form, filed before the deadline on it",
-   "leads": "The place kept for you until you finish serving",
+   "leads": "The place kept for me until I finish serving",
    "truth": "Deferment is routine and the place waits. Serving is done in the army, the police or the civil defence force."
   },
   {
@@ -351,8 +351,8 @@
    ],
    "paths": null,
    "label": "A degree part time, while working",
-   "when": "Any year you can carry both",
-   "needs": "A course that runs in the evening, and a manager who knows you are doing it",
+   "when": "Any year I can carry both",
+   "needs": "A course that runs in the evening, and a manager who knows I am doing it",
    "leads": "A degree over four or five years, without stopping earning",
    "truth": "SUSS and SIT build part time degrees around working adults. The classmates are mostly people with jobs."
   },
@@ -365,9 +365,9 @@
    ],
    "paths": null,
    "label": "Spend the SkillsFuture Credit",
-   "when": "From twenty five, whenever you like",
-   "needs": "A course that teaches something you will actually use",
-   "leads": "A skill, paid for out of the credit rather than your pocket",
+   "when": "From twenty five, whenever I like",
+   "needs": "A course that teaches something I will actually use",
+   "leads": "A skill, paid for out of the credit rather than my pocket",
    "truth": "The credit does not expire, which is exactly why most people forget they are holding any."
   },
   {
@@ -379,8 +379,8 @@
    ],
    "paths": null,
    "label": "The mid career top up",
-   "when": "From the year you turn forty",
-   "needs": "A course on the approved list, and a direction you have thought about",
+   "when": "From the year I turn forty",
+   "needs": "A course on the approved list, and a direction I have thought about",
    "leads": "Four thousand dollars of training paid for",
    "truth": "The top up was built for people changing direction, not only for people keeping current in the job they have."
   },
@@ -395,7 +395,7 @@
    "label": "Take the training allowance",
    "when": "While studying full time, mid career",
    "needs": "An eligible full time course, and the paperwork filed",
-   "leads": "An allowance that covers some of what you stop earning",
+   "leads": "An allowance that covers some of what I stop earning",
    "truth": "Lost income is the real barrier to retraining at forty. The allowance exists because that was obvious to everybody."
   },
   {
@@ -407,8 +407,8 @@
    ],
    "paths": null,
    "label": "A career conversion programme",
-   "when": "When you want a different industry entirely",
-   "needs": "An employer in the new field willing to take you on and train you",
+   "when": "When I want a different industry entirely",
+   "needs": "An employer in the new field willing to take me on and train me",
    "leads": "Paid training into a job in that industry",
    "truth": "Conversion programmes hire first and teach after, so the interview matters more than the certificate."
   },
@@ -422,7 +422,7 @@
    "paths": null,
    "label": "Enter university as a mature student",
    "when": "From twenty five",
-   "needs": "Work behind you, and a case for yourself you can write down",
+   "needs": "Work behind me, and a case for myself I can write down",
    "leads": "A degree begun late and finished anyway",
    "truth": "Mature entry routes exist at every local university, and the people using them are not unusual."
   },
@@ -438,7 +438,7 @@
    "when": "Over a few years, on purpose",
    "needs": "Courses that build on each other rather than courses that scatter",
    "leads": "A recognised qualification, assembled a piece at a time",
-   "truth": "Modular certificates can add up to a full qualification when you plan the order before you start."
+   "truth": "Modular certificates can add up to a full qualification when I plan the order before I start."
   },
   {
    "id": "p_side",
@@ -449,7 +449,7 @@
    ],
    "paths": null,
    "label": "Start the thing small",
-   "when": "Any evening you have spare",
+   "when": "Any evening I have spare",
    "needs": "One customer, and one month of trying",
    "leads": "A side thing that grows, or proof it was never going to",
    "truth": "Most businesses that lasted began beside a job that was paying the rent the whole time."
@@ -462,10 +462,10 @@
     48
    ],
    "paths": null,
-   "label": "Ask for the work you want",
+   "label": "Ask for the work I want",
    "when": "Before the appraisal, never during it",
    "needs": "A specific ask, and something finished to point at",
-   "leads": "Different work, or a clear answer you can plan around",
+   "leads": "Different work, or a clear answer I can plan around",
    "truth": "People who end up with the interesting work have usually asked for it out loud, more than once."
   },
   {
@@ -477,9 +477,9 @@
    ],
    "paths": null,
    "label": "Be the one who tells someone things",
-   "when": "Once five years sit behind you",
-   "needs": "An hour a month, and the honesty to say what you got wrong",
-   "leads": "A network that answers your messages, and a clearer head",
+   "when": "Once five years sit behind me",
+   "needs": "An hour a month, and the honesty to say what I got wrong",
+   "leads": "A network that answers my messages, and a clearer head",
    "truth": "Explaining a thing is how most people discover they already knew it."
   },
   {
@@ -491,9 +491,9 @@
    ],
    "paths": null,
    "label": "Go back to school later",
-   "when": "Any decade you decide to",
-   "needs": "A reason you can say out loud, and a timetable your household agrees to",
-   "leads": "The qualification you put down years ago",
+   "when": "Any decade I decide to",
+   "needs": "A reason I can say out loud, and a timetable my household agrees to",
+   "leads": "The qualification I put down years ago",
    "truth": "A classroom of forty year olds is an ordinary sight now. It was not always, and that changed on purpose."
   },
   {
@@ -504,8 +504,8 @@
     24
    ],
    "paths": null,
-   "label": "Ask your mentor or the counsellor",
-   "when": "Any week, and before you have a crisis",
+   "label": "Ask my mentor or the counsellor",
+   "when": "Any week, and before I have a crisis",
    "needs": "One booked appointment, and a question sharper than what should I do",
    "leads": "Someone who knows the transfer windows, the GPA bars and who is hiring",
    "truth": "Every polytechnic and ITE has mentors and an ECG counsellor. Almost nobody books them until something has already gone wrong."
