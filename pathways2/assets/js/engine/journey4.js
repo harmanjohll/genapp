@@ -328,8 +328,26 @@ const asksFor = (moves, age, run) => (moves || []).filter((m) => m.kind === 'ask
   && age >= m.ages[0] && age <= m.ages[1]
   && (!m.schoolOnly || inSchool(run)));
 
+/**
+ * Deal the hand, and take back anything that has stopped being true.
+ *
+ * WHY THE PRUNE. The hand was dealt through the gates and then never checked
+ * again, and nothing ever left it, so the five asks a student was given at
+ * thirteen were still the five they held at nineteen. Two consequences, both
+ * seen on a real device: "Ask my Year Head what moving up takes" was on screen
+ * in a polytechnic at eighteen, where there is no Year Head and where the ask
+ * had aged out two years earlier, and the asks written for later life never
+ * appeared at all because the hand was already full of school ones.
+ *
+ * So the same predicate that decides what may be dealt now also decides what
+ * may be kept. A hand is what is true this year, not a souvenir.
+ */
 export function dealHand(run, moves, age) {
   if (!Array.isArray(run.hand)) run.hand = [];
+  const byId = new Map((moves || []).map((m) => [m.id, m]));
+  const stillTrue = new Set(asksFor(moves, age, run).map((m) => m.id));
+  run.hand = run.hand.filter((id) => byId.has(id) && stillTrue.has(id));
+
   const made = new Set((run.movesMade || []).map((m) => m.id));
   const held = new Set(run.hand);
   const pool = asksFor(moves, age, run).filter((m) => !made.has(m.id) && !held.has(m.id));
@@ -341,9 +359,23 @@ export function dealHand(run, moves, age) {
   return run.hand;
 }
 
+/**
+ * The asks in hand that are still true this year, as a view.
+ *
+ * dealHand prunes the stored hand, but only chapters that deal get pruned, and
+ * the results fork does not deal. So the screen asks this instead of reading
+ * run.hand, and then no screen can show a stale ask however it was reached.
+ */
+export function heldAsks(run, moves, age) {
+  const eligible = new Map(asksFor(moves, age, run).map((m) => [m.id, m]));
+  return (run.hand || []).map((id) => eligible.get(id)).filter(Boolean);
+}
+
 export function playAsk(run, move, age, moves) {
   if ((run.asksThisYear || 0) >= ASKS_PER_YEAR) return false;
   if (!Array.isArray(run.hand) || !run.hand.includes(move.id)) return false;
+  // Cannot play what is no longer true, even if it is still sitting in the hand.
+  if (!heldAsks(run, moves, age).some((m) => m.id === move.id)) return false;
   grant(run, move);
   if (!run.movesMade) run.movesMade = [];
   run.movesMade.push({ id: move.id, age });
@@ -945,6 +977,24 @@ export function runJourneySweep(data) {
         respondToChance(run, card, si % Math.max(1, (card.responses || []).length));
         continue;
       }
+      // Nothing a student can see may be out of its age window or offered at an
+      // institution it does not exist in. This is the guard for a Year Head who
+      // followed a student into a polytechnic, two years after ageing out,
+      // because the hand was dealt once and then never checked again.
+      if (fmt === 'turn') dealHand(run, simMoves, age);
+      heldAsks(run, simMoves, age).forEach((m) => {
+        if (age < m.ages[0] || age > m.ages[1]) {
+          local.push(`ask ${m.id} in hand at ${age}, its window is ${m.ages[0]} to ${m.ages[1]}`);
+        }
+        if (m.schoolOnly && run.path) local.push(`school only ask ${m.id} in hand on the ${run.path} road`);
+      });
+      visibleChoices(stage, run, simMoves, age).filter((c) => c.isMove).forEach((c) => {
+        const m = simMoves.find((x) => x.id === c.id);
+        if (!m) return;
+        if (age < m.ages[0] || age > m.ages[1]) local.push(`move ${m.id} offered at ${age}, window ${m.ages[0]} to ${m.ages[1]}`);
+        if (m.schoolOnly && run.path) local.push(`school only move ${m.id} offered on the ${run.path} road`);
+      });
+
       const pool = visibleChoices(stage, run, simMoves, age);
       const baseN = pool.filter((c) => !c.needsSubject && !c.isMove).length;
       const span = mode === 'base' ? baseN : pool.length;
