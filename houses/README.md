@@ -1,6 +1,8 @@
 # houses
 
-House system design tools for Beatty Secondary School. Four self contained HTML models plus the written record behind them, in `references/`.
+House system design tools for Beatty Secondary School. One decision dashboard, four earlier working papers, and the written record behind them in `references/`.
+
+Start at `index.html`. Everything else is kept for traceability.
 
 Live: `https://harmanjohll.github.io/genapp/houses/`
 
@@ -8,17 +10,48 @@ Live: `https://harmanjohll.github.io/genapp/houses/`
 
 | File | What it is |
 | --- | --- |
-| `index.html` | Overview, the five houses, what the modelling settled, data provenance |
-| `studio2.html` | **House Dashboard.** Start here. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
+| `index.html` | **The decision dashboard.** Start here. Five tabs: Evidence, Design, Talent, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
+| `studio2.html` | **House Dashboard.** Earlier pass, superseded by `index.html`. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
 | `studio.html` | **House Studio.** First pass. Vertical house architecture modelling |
-| `audit.html` | **Enrichment audit.** What the Wednesday and Thursday band was actually used for, 2024 and 2025 |
-| `configurator.html` | **Band configurator.** Earlier pass. Capacity, staffing, choice and overcommitment modelling for the band |
+| `data.html` | **Calendar explorer.** The same 1,380 records standalone: filters, cross-tabs, calendar view |
+| `audit.html` | **Enrichment audit.** What the Wednesday and Thursday block was actually used for, 2024 and 2025 |
+| `configurator.html` | **Capacity configurator.** Earlier pass. Capacity, staffing, choice and overcommitment modelling for the enrichment block |
 | `references/REPORT.md` | Written report: findings, the Gagné and Renzulli construct, house architecture, club catalogue, change management sequence |
 | `references/TAXONOMY.md` | The ten category classification applied to every activity record |
-| `references/NOTES.md` | **Start here.** Deploy steps, state of play, the four blocking unknowns, loose ends |
-| `references/enrichment-audit-2024-2025.xlsx` | 1,380 activity records with verbatim source text, frequency tables, band audit |
+| `references/NOTES.md` | Deploy steps, state of play, the four blocking unknowns, loose ends |
+| `references/enrichment-audit-2024-2025.xlsx` | The primary source. 1,380 activity records with verbatim source text, frequency tables, block audit |
 
 Every HTML file is standalone: no build step, no dependencies, no network calls. Open it or serve it.
+
+## The dashboard
+
+| Tab | What it answers |
+| --- | --- |
+| 1 Evidence | What two years of the school's own calendar actually says. Findings, records, cross-tabs, calendar, summary, and the citation register |
+| 2 Design | Build a configuration: roll, house architecture, houses and what each stewards, delivery model, staffing, tiers, Cup scoring, activities |
+| 3 Talent | Simulate who gets a deep experience and for how long, under five published talent models, and what each house architecture does to that |
+| 4 Trade-offs | Every audit finding scored against the current configuration, model comparison, sensitivity, sweeps, saved scenarios |
+| 5 Decide | Nine genuinely open questions, each carrying the live consequence of the current settings |
+
+Settings propagate: change the Pursue share on Design and the Talent reach curves, the Trade-offs ledger and the Decide consequences all move with it.
+
+### Talent models simulated
+
+Five answers to "who gets a deep experience, and for how long", run over a whole school career because the difference between them only appears cumulatively.
+
+| Model | Pool | Turnover a cycle | Source |
+| --- | --- | --- | --- |
+| Renzulli revolving door | 15–20% | 55% | Schoolwide Enrichment Model, published talent pool |
+| Gagné sustained practice | 10% | 18% | DMGT, top-decile prevalence threshold |
+| Fixed selection, Beatty today | 7% | 6% | Calibrated on the audit, reference E13 |
+| Universal Pursue | 100% | 70% | No precedent at this scale; the upper bound |
+| Explore all, Pursue few | 35% | 40% | The compromise most schools land on |
+
+Pool shares are published; turnover rates are modelled and marked as such. The ordering of the curves is robust; the exact end points are not.
+
+### Citation register
+
+**Evidence → Sources & citations** gives every figure in the dashboard a stable reference id (`E1`–`E13` measured, `S1`–`S3` supplied by the school, `R1`–`R5` published research, `M1`–`M3` modelled here). Measured figures carry a *show the rows* button that opens the Records view on exactly the selection the figure was computed from. Reference chips appear inline wherever a figure is quoted.
 
 ## The five houses
 
@@ -49,7 +82,7 @@ No source states why these five admirals were chosen. The school's Wikipedia pag
 | Input | Status |
 | --- | --- |
 | The seventeen CCAs, categories, gender eligibility | Measured, MOE School Finder |
-| Band usage 2024–2025 | Measured, 1,148 calendar events |
+| Enrichment block usage 2024–2025 | Measured, 1,148 calendar events decomposed into 1,380 activity records |
 | Admiral biographies | Researched: Wikipedia, RMG, IWM, US Naval Institute |
 | House colours for Harwood, Sturdee, Fisher | **Unverified**, set by the user |
 | CCA sizes, gender mix, attrition | Modelled, adjustable |
@@ -61,10 +94,12 @@ Nothing modelled is presented as measured. Every modelled input is a control in 
 
 ## Needed before the next pass
 
-1. Form classes per level. Decides whether five houses nest cleanly.
-2. CCA roll by CCA, split by level and gender if possible. Replaces the whole modelled layer.
-3. Facilitator supply per band day. Determines whether the choice architecture is real or nominal.
-4. House colours for Harwood, Sturdee and Fisher.
+1. CCA roll by CCA, split by level and gender if possible. Replaces the whole modelled layer.
+2. House colours for Harwood, Sturdee and Fisher.
+3. Observed turnover: how often a Beattyian actually rotates out of a pathway. The single largest assumption in the Talent tab.
+4. Department tagging on enrichment records. 255 of 337 in-block enrichment records carry none, so next year's audit cannot answer the questions this one raised.
+
+Supplied and now built in: projected roll, form classes per level, the ten-teacher ceiling on a block day.
 
 ---
 

@@ -80,6 +80,7 @@ tr.hi td{background:#fffdf0}
 .tblbox th{position:sticky;top:0;z-index:1;cursor:pointer}
 
 .box{border:1px solid var(--g2);padding:11px 14px;margin:11px 0}
+.box h2,.box h3,.box h4{font-size:.98em;margin:0 0 .25em}
 .box.nav{border-left:4px solid var(--navy)}
 .box.ok{border-left:4px solid var(--ok)}
 .box.warn{border-left:4px solid var(--yellow)}
@@ -94,6 +95,14 @@ ul.t{margin:.25em 0 .8em;padding-left:19px}ul.t li{margin-bottom:4px}
 .tag.mod{background:var(--warnbg);border-color:#e8d98a;color:var(--warn)}
 .tag.unk{background:var(--badbg);border-color:#f0bfbc;color:var(--bad)}
 .tag.res{background:var(--okbg);border-color:#bcdcc6;color:var(--ok)}
+.tag.sch{background:#f3eefc;border-color:#d6c9ee;color:#553a86}
+.chart{margin:9px 0 4px}
+.chart.scroll svg{min-width:520px}
+.refid{font-family:Calibri,sans-serif;font-size:11.5px;letter-spacing:.03em;color:var(--navy)}
+button.ref{font-family:Calibri,sans-serif;font-size:10.5px;letter-spacing:.03em;font-weight:bold;
+ min-height:19px;padding:0 5px;margin:0 1px;vertical-align:baseline;cursor:pointer;
+ border:1px solid #c3d4f2;background:#eef4ff;color:#1f3f8f;border-radius:3px}
+button.ref:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
 .tag.y{background:var(--okbg);border-color:#bcdcc6;color:var(--ok)}
 .tag.n{background:var(--badbg);border-color:#f0bfbc;color:var(--bad)}
 .vb{color:var(--g4);font-size:11.5px;line-height:1.35;max-width:440px}
@@ -191,7 +200,7 @@ body.pres h2{margin-top:1.7em;padding-top:.4em;border-top:1px solid var(--g2)}
 </style></head><body>
 
 <nav class="gnav"><div class="in"><b>BTY House System</b>
-<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tr">3 Trade-offs</a><a data-t="dc">4 Decide</a>
+<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tal">3 Talent</a><a data-t="tr">4 Trade-offs</a><a data-t="dc">5 Decide</a>
 <span class="sp"></span>
 <button id="presBtn">Present</button><button id="printBtn">Print</button><button id="resetBtn">Reset</button>
 </div></nav>
@@ -207,9 +216,11 @@ body.pres h2{margin-top:1.7em;padding-top:.4em;border-top:1px solid var(--g2)}
  <span class="tag mea">measured</span> is computed live from the 1,380 activity records embedded in this page, decomposed from 1,148 beattyadmin calendar events between 1 January 2024 and 31 December 2025. No measured figure on this page is typed by hand; every one can be clicked through to the rows behind it.
  <span class="tag mod">modelled</span> is a control on the Design tab and is never presented as a measurement.
  <span class="tag res">researched</span> is from published sources outside Beatty.
+ <span class="tag sch">school</span> was supplied by Beatty and is not derived from anything here.
  <span class="tag unk">unverified</span> is not published anywhere reachable.
+ Every figure carries a reference id in <b>Evidence &rarr; Sources &amp; citations</b>, with the filter that reproduces it.
  Counts are recorded occurrences, not headcount and not contact hours. Where a department left a card blank the activity is invisible here, so under-recording is likely and its direction unknown.
- Working papers: <a href="studio2.html">House Dashboard</a> &middot; <a href="studio.html">House Studio</a> &middot; <a href="data.html">Calendar explorer</a> &middot; <a href="audit.html">Enrichment audit</a> &middot; <a href="configurator.html">Capacity configurator</a> &middot; <a href="references/REPORT.md">Report</a> &middot; <a href="references/NOTES.md">Notes</a>
+ Working papers: <a href="studio2.html">House Dashboard</a> &middot; <a href="studio.html">House Studio</a> &middot; <a href="data.html">Calendar explorer</a> &middot; <a href="audit.html">Enrichment audit</a> &middot; <a href="configurator.html">Capacity configurator</a> &middot; <a href="references/REPORT.md">Report</a> &middot; <a href="references/NOTES.md">Notes</a> &middot; <a href="references/TAXONOMY.md">Taxonomy</a> &middot; <a href="references/enrichment-audit-2024-2025.xlsx">Source workbook</a>
  </div></footer>
 </div>
 
@@ -295,6 +306,11 @@ const A=(()=>{
   // months, for the Term 4 collapse
   a.months={}; REC.filter(r=>r[F.inBlock]).forEach(r=>{const k=r[F.date].slice(0,7);if(k)a.months[k]=(a.months[k]||0)+1;});
   a.t4=c(r=>r[F.inBlock]&&r[F.term]==='T4'); a.t1=c(r=>r[F.inBlock]&&r[F.term]==='T1');
+  // selection language in enrichment records, for the fixed-selection talent model
+  const SELRE=/\bselect|\bshortlist|\bby invitation|\brepresent|\btrial\b|\baudition|\bnominat|\bmerit\b|\btop \d/i;
+  const selRows=REC.filter(r=>r[F.enr]&&SELRE.test([r[F.prog],r[F.act],r[F.verb]].join(' ')));
+  a.selOcc=selRows.length;
+  a.selProg=new Set(selRows.map(r=>r[F.prog])).size;
   return a;
 })();
 
@@ -406,7 +422,8 @@ const ACTS=[
 const ROLL={p1:265,p2:255,p3:305,p4:255,p5:20,c1:7,c2:7,c3:8,c4:7};
 
 const DEF={
-  tab:'ev', sub:{ev:'find',de:'all',tr:'ledger',dc:'slate'},
+  tab:'ev', sub:{ev:'find',de:'all',tal:'reach',tr:'ledger',dc:'slate'},
+  tmodel:'renzulli', citeHi:'',
   p1:ROLL.p1,p2:ROLL.p2,p3:ROLL.p3,p4:ROLL.p4,p5:ROLL.p5,
   c1:ROLL.c1,c2:ROLL.c2,c3:ROLL.c3,c4:ROLL.c4,
   levels:4, houses:5, arch:'class', model:'clusters', wushu:'S', anchors:1,
@@ -966,9 +983,284 @@ function vSummary(rows){
 }
 
 /* ================================================================= TAB 1 EVIDENCE */
+
+/* ================================================================= CITATION REGISTER
+   Every number this dashboard leans on, with a stable reference id, where it came
+   from, and, where it came from the calendar, the exact filter that reproduces it.
+   Provenance: mea = measured from the workbook, mod = modelled here,
+   res = published research, sch = supplied by the school. */
+const SRC={
+ wb:{n:'enrichment-audit-2024-2025.xlsx',
+     d:'The school’s own 2024 and 2025 calendar, 1,148 events, decomposed into '+1380+' activity records.',
+     href:'references/enrichment-audit-2024-2025.xlsx'},
+ rep:{n:'REPORT.md', d:'The written audit and the model argument.', href:'references/REPORT.md'},
+ tax:{n:'TAXONOMY.md', d:'How each record was categorised, and the rules used.', href:'references/TAXONOMY.md'},
+ not:{n:'NOTES.md', d:'Working notes, judgement calls and known gaps.', href:'references/NOTES.md'},
+ sch:{n:'Supplied by the school', d:'Projected roll, class structure, staffing ceiling, attire.', href:''},
+ pub:{n:'Published research', d:'Renzulli, Gagné, EEF, and school precedents. Cited in REPORT.md Part 2.', href:'references/REPORT.md'},
+ mod:{n:'Modelled in this dashboard', d:'Assumptions made here to make the arithmetic run. Never presented as measurements.', href:''}
+};
+const CITE=[
+ {id:'E1',src:'wb',prov:'mea',t:'Programmes offered per enrichment-block date',
+  v:()=>`${r1(A.meanPerDate)} mean &middot; ${A.oneProgDates} of ${A.blkDates} dates carried one`,
+  how:'Distinct programme names counted per date, over records flagged in-block, student-facing and enrichment.',
+  cut:{fb:'1',fs:'1',fe:'1'},led:'choice'},
+ {id:'E2',src:'wb',prov:'mea',t:'Student-facing block time that is not enrichment',
+  v:()=>`${pct(A.blkNonEnrich/A.blkStudent)} &middot; ${A.blkNonEnrich} of ${A.blkStudent} records`,
+  how:'In-block, student-facing records where the enrichment flag is 0: oral examinations, the Sec 1 ICT series, prelims, surveys, briefings.',
+  cut:{fb:'1',fs:'1',fe:'0'},led:'nonenr'},
+ {id:'E3',src:'wb',prov:'mea',t:'In-block records that are staff business',
+  v:()=>`${A.blkStaff} of ${A.blk} in-block records`,
+  how:'In-block records with no student audience. This is the arithmetic behind the ten-teacher ceiling: the other eighty are in meetings living in the same slot.',
+  cut:{fb:'1',fs:'0'}},
+ {id:'E4',src:'wb',prov:'mea',t:'Programme continuity from 2024 to 2025',
+  v:()=>`${pct(A.churnPct)} &middot; ${A.y24} ran in 2024, ${A.y25} in 2025, ${A.survived} the same`,
+  how:'Set intersection of distinct enrichment programme names by calendar year.',
+  cut:{fe:'1'},led:'churn'},
+ {id:'E5',src:'wb',prov:'mea',t:'Programmes appearing once or twice in two years',
+  v:()=>`${A.prog1or2} of ${A.progCount} &middot; only ${A.prog6plus} reach six or more`,
+  how:'Occurrence frequency per distinct enrichment programme name across both years.',
+  cut:{fe:'1'},led:'oneoff'},
+ {id:'E6',src:'wb',prov:'mea',t:'Enrichment entries by banding group, G3 against G1',
+  v:()=>`${A.banded.G3.enr} against ${A.banded.G1.enr}`,
+  hows:()=>`In-block enrichment records that carry an explicit banding group. Different in kind as well as volume: G3 draws ${A.bandedTop.G3}; G1 draws ${A.bandedTop.G1}.`,
+  cut:{fb:'1',fg:'G3'},led:'banding'},
+ {id:'E7',src:'wb',prov:'mea',t:'CCA occurrences by day of week',
+  v:()=>`Wed ${A.ccaDay.Wed||0}, Thu ${A.ccaDay.Thu||0}, busiest ${Math.max(...Object.values(A.ccaDay))}`,
+  how:'Records in the uniformed-group and performing-arts categories, counted by weekday. Nationally Wednesday is the busiest CCA day in Singapore secondary schools; at Beatty it is nearly the emptiest, so the block you want to guard is structurally free.',
+  cut:{fc:'Uniformed Groups and CCA-linked'},led:'ccaday'},
+ {id:'E8',src:'wb',prov:'mea',t:'Category-by-level cells with no enrichment at all',
+  v:()=>`${A.emptyCells} empty cells of ${A.cats.length*A.levels.length}`,
+  how:'Cross-tabulation of enrichment category against level, across both years. An empty cell is an area that never reached that level.',
+  cut:{fe:'1'},led:'coverage'},
+ {id:'E9',src:'wb',prov:'mea',t:'In-block enrichment records with no department tag',
+  v:()=>`${A.noDept} of ${A.blkEnrich}`,
+  how:'Department field empty or a dash. This is the limit on every ownership claim in this dashboard, and the reason next year’s audit cannot answer the same questions unless recording changes.',
+  cut:{fb:'1',fe:'1',fdept:'—'},led:'unowned'},
+ {id:'E10',src:'wb',prov:'mea',t:'Wednesday against Thursday, in-block enrichment',
+  v:()=>`Wed ${A.wed}, Thu ${A.thu}`,
+  how:'The two days are used identically, same category order. Nothing in the calendar distinguishes them, which is what makes a two-purpose split available rather than disruptive.',
+  cut:{fb:'1',fe:'1',fd:'Wed'},led:'wedthu'},
+ {id:'E11',src:'wb',prov:'mea',t:'Term 4 against Term 1, in-block records',
+  v:()=>`T4 ${A.t4} against T1 ${A.t1}`,
+  how:'In-block records by term. The year does not end evenly; the third cycle has to be planned around the collapse rather than through it.',
+  cut:{fb:'1',ft:'T4'},led:'term4'},
+ {id:'E12',src:'wb',prov:'mea',t:'In-block enrichment reach by level',
+  v:()=>A.levels.map(L=>L.replace('Sec ','S')+' '+A.levelReach[L]).join(', '),
+  how:'In-block, student-facing enrichment records naming each level. Upper secondary is thin, which is the finding the vertical house is meant to answer.',
+  cut:{fb:'1',fe:'1',fl:'Sec 4'},led:'upper'},
+ {id:'E13',src:'wb',prov:'mea',t:'Enrichment occurrences carrying selection language',
+  v:()=>`${A.selOcc} of ${A.enrich} occurrences, across ${A.selProg} distinct programmes`,
+  how:'Programme title, activity and description matched against selection words: select, shortlist, by invitation, represent, trial, audition, nominate, merit, top N. This is what the fixed-selection talent model on the Talent tab is calibrated against.',
+  cut:{fe:'1',q:'select'}},
+
+ {id:'S1',src:'sch',prov:'sch',t:'Projected roll for next year',
+  v:()=>`Sec 1 ${ROLL.p1}, Sec 2 ${ROLL.p2}, Sec 3 ${ROLL.p3}, Sec 4 ${ROLL.p4}, Sec 5 ${ROLL.p5}`,
+  how:'Supplied by the school as an estimated projection. Every headcount in this dashboard starts here and can be moved on the Design tab.'},
+ {id:'S2',src:'sch',prov:'sch',t:'Class structure',
+  v:()=>`${ROLL.c1}, ${ROLL.c2}, ${ROLL.c3}, ${ROLL.c4} classes for Sec 1 to 4, one Sec 5 class`,
+  how:'Seven classes a level except Sec 3, which has eight. Twenty-nine classes do not divide by five houses, which is where the house-size spread on the Design tab comes from.'},
+ {id:'S3',src:'sch',prov:'sch',t:'Staffing ceiling on a block day',
+  v:()=>`${S.teachers} teachers, ${S.duty} available on any one block day`,
+  how:'Supplied by the school. Ten adults against a thousand Beattyians is why every model here is student-led with roaming supervision rather than adult-run.'},
+
+ {id:'R1',src:'pub',prov:'res',t:'Renzulli talent pool share',
+  v:()=>'15 to 20 percent, refreshed by action information',
+  how:'Schoolwide Enrichment Model. The revolving door is the mechanism: a Beattyian enters on demonstrated interest and leaves on completing a product, so the same seats reach more people over a school career.'},
+ {id:'R2',src:'pub',prov:'res',t:'Renzulli’s four tests for a real Type III',
+  v:()=>'Personal relevance, no predetermined solution, a new product, an audience who voluntarily attend',
+  how:'The fourth is the one implementations fail. It is also the one a house system answers for free, which is the whole argument on the Talent tab.'},
+ {id:'R3',src:'pub',prov:'res',t:'Gagné prevalence threshold and the busywork line',
+  v:()=>'Top ten percent of the reference group; two to three sessions a month dismissed as busywork',
+  how:'Differentiating Model of Giftedness and Talent. The cadence test on the Trade-offs tab is scored against the line of three.'},
+ {id:'R4',src:'pub',prov:'res',t:'EEF effect sizes',
+  v:()=>'Peer tutoring +5 to +6 months; enrichment 0.68 raw, 0.32 once corrected',
+  how:'Education Endowment Foundation toolkit. The correction matters: enrichment claims are routinely quoted at the uncorrected figure.'},
+ {id:'R5',src:'pub',prov:'res',t:'Singapore and overseas house precedents',
+  v:()=>'Boon Lay Secondary runs four gemstone houses, each owning four CCAs',
+  how:'Re-sourced during this work. An earlier draft described Boon Lay as running domain stones; that could not be confirmed and has been corrected. Precedent notes per architecture appear on the Design tab.'},
+
+ {id:'M1',src:'mod',prov:'mod',t:'Choice allocation model',
+  v:()=>`Zipf demand at skew ${S.skew}, re-offered each round`,
+  how:'Ranked popularity across the groups on offer, with remaining places re-offered to unplaced Beattyians. Produces the first-choice and first-or-second figures. The skew is a slider; nobody has measured Beatty’s real demand curve.'},
+ {id:'M2',src:'mod',prov:'mod',t:'Talent model turnover rates',
+  v:()=>Object.values(TMODELS).map(t=>t.short+' '+pct(1-t.persist)).join(', '),
+  how:'Pool shares come from the published models. The rate at which a Beattyian rotates out has never been measured here, so the curve shapes on the Talent tab are robust and the exact end points are not.'},
+ {id:'M3',src:'mod',prov:'mod',t:'Affinity, spirit and connectedness index',
+  v:()=>`${simulate({}).affinity} of 100 at the current settings`,
+  how:'A weighted composite of persistence, cohesion, mixing, showcase reach and Cup fairness. It is an index for comparing configurations against each other, not a measurement of anything. Treat movement as meaningful and the absolute number as decoration.'}
+];
+const PROVN={mea:'measured',mod:'modelled',res:'researched',sch:'school'};
+function citeChip(id){const c=CITE.find(x=>x.id===id);if(!c)return '';
+  return `<button class="ref" data-cite="${id}" title="${esc(c.t)}. Source: ${esc(SRC[c.src].n)}">${id}</button>`;}
+
+/* ================================================================= TALENT MODELS
+   Each is a different answer to "who gets a deep experience, and for how long".
+   They are simulated over a whole school career, not a single year, because the
+   difference between them only appears cumulatively. */
+const TMODELS={
+ renzulli:{n:'Renzulli revolving door',short:'Revolving door',c:'#000C53',
+   pool:.20,persist:.45,cite:'R1',
+   d:'A talent pool of 15 to 20 percent, refreshed by action information. A Beattyian revolves in on demonstrated interest and out on completing a product.',
+   src:'Renzulli, Schoolwide Enrichment Model. Published pool 15 to 20 percent.'},
+ gagne:{n:'Gagn&eacute; sustained practice',short:'Sustained practice',c:'#1F5FA8',
+   pool:.10,persist:.82,cite:'R3',
+   d:'The top ten percent of the reference group, held through years of deliberate practice. Depth over breadth by design.',
+   src:'Gagn&eacute;, Differentiating Model of Giftedness and Talent. Prevalence threshold top 10 percent.'},
+ fixed:{n:'Fixed selection, Beatty today',short:'Fixed selection',c:'#b3312a',
+   pool:.07,persist:.94,cite:'E13',
+   d:`Select once and keep. This is already the pattern in the calendar: ${A.selProg} distinct enrichment programmes carry selection language across ${A.selOcc} of ${A.enrich} occurrences, and they recruit repeatedly from the same Beattyians.`,
+   src:'Calibrated on the audit: see reference E13.'},
+ universal:{n:'Universal Pursue',short:'Universal',c:'#15683d',
+   pool:1,persist:.30,cite:'',
+   d:'Everybody produces something for an outside audience. No selection at all.',
+   src:'No published precedent at this scale. Included as the upper bound.'},
+ twotier:{n:'Explore all, Pursue few',short:'Two tier',c:'#8a6508',
+   pool:.35,persist:.60,cite:'',
+   d:'A broad exploration tier for everyone with a deliberately small, deep pursuit tier that turns over slowly.',
+   src:'The compromise most schools land on in practice.'}
+};
+
+/* Simulate a whole cohort through the enrichment cycles of a school career.
+   Places per cycle come from the live model; who may occupy them, and how long
+   they hold a place, come from the talent model. */
+function simTalent(M,key){
+  const T=TMODELS[key]||TMODELS.renzulli;
+  const cycles=Math.max(1,Math.round(S.cycles*S.levels));
+  const N=Math.max(1,M.N);
+  // When pathways are not cross-house a Beattyian can only pursue what their own
+  // house stewards. Same access factor the Design tab already uses for pool size.
+  const access=M.crossDomain?1:(M.byInterest?0.72:1/Math.sqrt(Math.max(1,S.houses)));
+  // The most distinct Beattyians this model could ever reach.
+  const ceiling=Math.min(N,N*T.pool*access);
+  // Places available each cycle, capped by the pool that may occupy them.
+  const seats=Math.max(0,Math.min(M.pursueN,M.byInterest?M.hMax:N,ceiling));
+  const churn=seats*(1-T.persist);
+  let distinct=seats;
+  const series=[Math.round(distinct)];
+  for(let c=1;c<cycles;c++){
+    distinct+=Math.min(churn,Math.max(0,ceiling-distinct));
+    series.push(Math.round(distinct));
+  }
+  const seatCycles=seats*cycles;                 // total person-cycles of deep work
+  const meanTenure=distinct>0?seatCycles/distinct:0;
+  return {
+    key,T,cycles,ceiling,
+    distinct:Math.round(distinct),
+    reach:Math.min(1,distinct/N),
+    perCycle:Math.round(seats),
+    meanTenure,
+    sessions:meanTenure*S.sessions,           // sustained practice per Beattyian reached
+    depthOk:meanTenure*S.sessions>=20,        // two full cycles is the usual floor for a real product
+    series
+  };
+}
+
+/* ---- charts ---- */
+function waffle(parts,opts={}){
+  // parts: [label, count, colour]; one dot per `per` Beattyians
+  const per=opts.per||10, cols=opts.cols||36, r=opts.r||4.6, gap=opts.gap||11.5;
+  const total=parts.reduce((s,p)=>s+Math.max(0,p[1]),0);
+  const dots=Math.max(1,Math.round(total/per));
+  const rows=Math.max(1,Math.ceil(dots/cols));
+  const w=cols*gap+8, h=rows*gap+8;
+  const seq=[];
+  parts.forEach(p=>{const n=Math.max(0,Math.round(p[1]/per));for(let i=0;i<n;i++)seq.push([p[2],p[3]||'']);});
+  let s='';
+  for(let i=0;i<seq.length&&i<rows*cols;i++){
+    const x=(i%cols)*gap+r+2, y=Math.floor(i/cols)*gap+r+2;
+    s+=`<circle cx="${x}" cy="${y}" r="${seq[i][1]?r-0.6:r}" fill="${seq[i][0]}"${seq[i][1]?` stroke="${seq[i][1]}" stroke-width="1.2"`:''}/>`;
+  }
+  return svgWrap(w,h,s);
+}
+/* Push a set of label positions apart so none overlap, keeping them in range. */
+function spreadY(items,gap,lo,hi){
+  items.sort((a,b)=>a.y-b.y);
+  for(let i=1;i<items.length;i++) if(items[i].y-items[i-1].y<gap) items[i].y=items[i-1].y+gap;
+  const over=items.length?items[items.length-1].y-hi:0;
+  if(over>0) items.forEach(it=>it.y-=over);
+  for(let i=1;i<items.length;i++) if(items[i].y-items[i-1].y<gap) items[i].y=items[i-1].y+gap;
+  items.forEach(it=>it.y=Math.max(lo,Math.min(hi,it.y)));
+  return items;
+}
+function multiLine(series,opts={}){
+  const w=opts.w||620,h=opts.h||250,pad=48,padR=opts.padR||124,padT=12,padB=32;
+  const maxX=Math.max(1,...series.map(s=>s.pts.length-1));
+  const maxY=Math.max(1,...series.flatMap(s=>s.pts));
+  const X=v=>pad+v/maxX*(w-pad-padR), Y=v=>h-padB-v/maxY*(h-padT-padB);
+  let g='<g font-family="Calibri,sans-serif" font-size="10.5" fill="#53575f">';
+  [0,.25,.5,.75,1].forEach(f=>{const y=Y(maxY*f);
+    g+=`<line x1="${pad}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#E4E6EC"/>`+
+       `<text x="${pad-5}" y="${y+3}" text-anchor="end">${opts.fy?opts.fy(maxY*f):Math.round(maxY*f)}</text>`;});
+  for(let c=0;c<=maxX;c+=Math.max(1,Math.round(maxX/6)))
+    g+=`<text x="${X(c)}" y="${h-16}" text-anchor="middle">${c+1}</text>`;
+  g+=`<text x="${(pad+w-padR)/2}" y="${h-3}" text-anchor="middle" fill="#666c78">${esc(opts.xlab||'cycle')}</text></g>`;
+  const lab=series.map((s,i)=>({i,y:Y(s.pts[s.pts.length-1]),cy:Y(s.pts[s.pts.length-1])}));
+  spreadY(lab,13,padT+7,h-padB);          // sorts in place, so index back by series id
+  const byI={}; lab.forEach(l=>byI[l.i]=l);
+  series.forEach((s,i)=>{
+    g+=`<path d="${s.pts.map((v,j)=>(j?'L':'M')+X(j).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')}" fill="none" stroke="${s.c}" stroke-width="${s.hi?3:1.8}"${s.dash?' stroke-dasharray="4 3"':''}/>`;
+    const cy=byI[i].cy, ly=byI[i].y, lx=w-padR+9;
+    g+=`<circle cx="${X(s.pts.length-1)}" cy="${cy}" r="3.4" fill="${s.c}"/>`;
+    if(Math.abs(ly-cy)>1.5)
+      g+=`<path d="M${(w-padR+2).toFixed(1)} ${cy.toFixed(1)} L${(lx-2).toFixed(1)} ${ly.toFixed(1)}" fill="none" stroke="${s.c}" stroke-width="1" opacity=".55"/>`;
+    g+=`<text x="${lx}" y="${(ly+4).toFixed(1)}" font-family="Calibri,sans-serif" font-size="11" fill="${s.c}" font-weight="${s.hi?'bold':'normal'}">${esc(s.n)}</text>`;
+  });
+  return svgWrap(w,h,g);
+}
+function scatter(pts,opts={}){
+  const w=opts.w||560,h=opts.h||300,pad=54,padR=26,padT=30,padB=44;
+  const x1=Math.max(1,...pts.map(p=>p.x)),y1=Math.max(1,...pts.map(p=>p.y));
+  const X=v=>pad+v/x1*(w-pad-padR), Y=v=>h-padB-v/y1*(h-padT-padB);
+  let g='<g font-family="Calibri,sans-serif" font-size="10.5" fill="#53575f">';
+  [0,.25,.5,.75,1].forEach(f=>{const y=Y(y1*f),x=X(x1*f);
+    g+=`<line x1="${pad}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="#E4E6EC"/>`+
+       `<text x="${pad-5}" y="${y+3}" text-anchor="end">${opts.fy?opts.fy(y1*f):Math.round(y1*f)}</text>`+
+       `<text x="${x}" y="${h-26}" text-anchor="middle">${opts.fx?opts.fx(x1*f):Math.round(x1*f)}</text>`;});
+  g+=`<text x="${(pad+w-padR)/2}" y="${h-7}" text-anchor="middle" fill="#666c78">${esc(opts.xlab||'')}</text>`+
+     `<text transform="translate(13,${(padT+h-padB)/2}) rotate(-90)" text-anchor="middle" fill="#666c78">${esc(opts.ylab||'')}</text></g>`;
+  if(opts.thresh!==undefined&&opts.thresh<=y1)
+    g+=`<line x1="${pad}" y1="${Y(opts.thresh)}" x2="${w-padR}" y2="${Y(opts.thresh)}" stroke="#8a6508" stroke-dasharray="4 3"/>`+
+       `<text x="${pad+3}" y="${Y(opts.thresh)-5}" font-family="Calibri,sans-serif" font-size="10" fill="#8a6508">${esc(opts.threshLab||'')}</text>`;
+  // place each label above its dot, flipping below and nudging sideways on collision
+  const placed=[];
+  const put=p=>{
+    const cx=X(p.x),cy=Y(p.y),r=p.hi?8:6,hw=esc(p.n).length*2.9+6;
+    for(const [dy,ax] of [[-(r+6),0],[r+13,0],[-(r+6),1],[r+13,1],[-(r+20),0]]){
+      let lx=cx,anchor='middle';
+      if(ax){lx=cx+hw+r+4;anchor='start';if(lx+hw*2>w-padR){lx=cx-r-4;anchor='end';}}
+      const ly=Math.max(padT-8,Math.min(h-padB-2,cy+dy));
+      const box={x1:lx-(anchor==='middle'?hw:anchor==='start'?0:hw*2),
+                 x2:lx+(anchor==='middle'?hw:anchor==='start'?hw*2:0),y1:ly-9,y2:ly+3};
+      if(!placed.some(q=>box.x1<q.x2&&box.x2>q.x1&&box.y1<q.y2&&box.y2>q.y1)){
+        placed.push(box);return {lx,ly,anchor};}
+    }
+    return {lx:cx,ly:Math.max(padT-8,cy-(p.hi?14:12)),anchor:'middle'};
+  };
+  pts.slice().sort((a,b)=>(b.hi?1:0)-(a.hi?1:0)).forEach(p=>{
+    const L=put(p);
+    g+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${p.hi?8:6}" fill="${p.c}"${p.hi?' stroke="#1a1c22" stroke-width="2"':''}/>`+
+       `<text x="${L.lx.toFixed(1)}" y="${L.ly.toFixed(1)}" text-anchor="${L.anchor}" font-family="Calibri,sans-serif" font-size="10.5" fill="${p.c}" font-weight="bold">${esc(p.n)}</text>`;
+  });
+  return svgWrap(w,h,g);
+}
+function funnel(rows,w=600){
+  const rh=44,h=rows.length*(rh+8)+6,max=Math.max(1,...rows.map(r=>r[1]));
+  let s='<g font-family="Calibri,sans-serif">';
+  rows.forEach((r,i)=>{
+    const bw=Math.max(64,r[1]/max*(w-190)),y=i*(rh+8)+3,x=(w-190-bw)/2+150;
+    s+=`<rect x="${x}" y="${y}" width="${bw}" height="${rh}" fill="${r[3]}"/>`+
+       `<text x="145" y="${y+rh*0.45}" text-anchor="end" font-size="12.5" fill="#000C53" font-family="Georgia,serif">${esc(r[0])}</text>`+
+       `<text x="145" y="${y+rh*0.82}" text-anchor="end" font-size="10.5" fill="#53575f">${esc(r[4]||'')}</text>`+
+       `<text x="${x+bw/2}" y="${y+rh*0.64}" text-anchor="middle" font-size="15" fill="${r[5]||'#fff'}" font-weight="bold" font-family="Georgia,serif">${esc(r[2])}</text>`;
+  });
+  return svgWrap(w,h,s+'</g>');
+}
+
+/* ================================================================= TAB 1 EVIDENCE */
 function tabEv(M){
   const sub=S.sub.ev;
-  const subs=[['find','Findings'],['rec','Records'],['piv','Cross-tab'],['cal','Calendar'],['sum','Summary']];
+  const subs=[['find','Findings'],['rec','Records'],['piv','Cross-tab'],['cal','Calendar'],['sum','Summary'],['src','Sources &amp; citations']];
   let body='';
   if(sub==='find'){
     const dayRows=Object.entries(A.ccaDay).sort((a,b)=>b[1]-a[1])
@@ -999,6 +1291,7 @@ function tabEv(M){
     <h3>What the enrichment block is used for when it is not student facing</h3>
     <div class="scroll">${hbar(A.staffUse.map(r=>[r[0].slice(0,40),r[1],'#EC3237',r[1]]),{w:620,lw:250,rh:20})}</div>
     <p class="note">Context, not a problem for the house system to solve. It is simply why only about ten teachers are free on a block day: the other eighty are in meetings that live in the same slot. Every staffing figure on the Design tab already assumes that.</p>`;
+  } else if(sub==='src'){ body=vSources();
   } else {
     const rows=recFiltered();
     body=filterBar()+
@@ -1007,8 +1300,59 @@ function tabEv(M){
        : `<div class="box bad"><b>No records match.</b> Loosen a filter or press Clear.</div>`);
   }
   return `<header class="pg"><h1>Evidence</h1>
-   <p class="lede">Two years of the school's own calendar: 1,148 events decomposed into ${cm(REC.length)} activity records. Every figure here is computed from those records at load, not typed in, and every one can be clicked through to the rows behind it.</p></header>
+   <p class="lede">Two years of the school's own calendar: 1,148 events decomposed into ${cm(REC.length)} activity records. Every figure here is computed from those records at load, not typed in, and every one can be clicked through to the rows behind it. <b>Sources &amp; citations</b> gives each figure a reference id, its provenance and the filter that reproduces it.</p></header>
    <div class="subs">${subs.map(s=>`<button data-sub="ev:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
+}
+
+
+/* Sources and citations: every figure the dashboard leans on, with a stable id. */
+function vSources(){
+  const groups=[['wb','Measured from the calendar workbook'],['sch','Supplied by the school'],
+                ['pub','From published research'],['mod','Modelled here, and only here']];
+  const byProv=p=>CITE.filter(c=>c.prov===p).length;
+  let out=`
+  <div class="metrics">
+    <div class="m"><b>${cm(REC.length)}</b><span>activity records behind every figure</span><i>From 1,148 calendar events, 2024 and 2025</i></div>
+    <div class="m"><b>${byProv('mea')}</b><span>figures measured from the workbook</span><i>Recomputed at load, never typed in</i></div>
+    <div class="m"><b>${byProv('res')}</b><span>figures from published research</span><i>Renzulli, Gagn&eacute;, EEF, precedents</i></div>
+    <div class="m warn"><b>${byProv('mod')}</b><span>figures modelled here</span><i class="warn">Assumptions, not measurements</i></div>
+  </div>
+
+  <div class="box nav"><h2>The source files</h2>
+   <p style="font-size:.93em;margin:0 0 7px">All four sit in <code>references/</code> beside this file and travel with it. The workbook is the primary source; open it to check any measured figure by hand.</p>
+   <div class="scroll"><table><thead><tr><th scope="col">File</th><th scope="col">What it contributes</th></tr></thead><tbody>`+
+   ['wb','tax','rep','not'].map(k=>`<tr><td><a href="${SRC[k].href}"><b>${SRC[k].n}</b></a></td><td>${SRC[k].d}</td></tr>`).join('')+
+   `</tbody></table></div></div>
+
+  <h2>The register</h2>
+  <p class="note">Every number quoted anywhere in this dashboard has an id here. Measured figures carry the filter that reproduces them: press <b>show the rows</b> and the Records view opens on exactly the selection the figure was computed from. If a figure has no reproduce button, it did not come from the calendar, and the register says where it did come from.</p>`;
+
+  groups.forEach(([g,title])=>{
+    const rows=CITE.filter(c=>c.src===g);
+    if(!rows.length)return;
+    out+=`<h3 style="margin:18px 0 4px">${title}</h3>
+    <div class="scroll"><table><thead><tr><th scope="col" style="width:52px">Ref</th><th scope="col">Figure</th>
+      <th scope="col">Value at current settings</th><th scope="col" style="width:74px">Provenance</th>
+      <th scope="col" style="width:112px">Reproduce</th></tr></thead><tbody>`+
+      rows.map(c=>`<tr class="${S.citeHi===c.id?'hi':''}" id="cite_${c.id}"><td><b class="refid">${c.id}</b></td>
+        <td><b>${c.t}</b><div class="hint">${c.hows?c.hows():c.how}</div></td>
+        <td><b>${c.v()}</b></td>
+        <td><span class="tag ${c.prov}">${PROVN[c.prov]}</span></td>
+        <td>${c.cut?`<button class="chip" data-cite="${c.id}">show the rows</button>`
+          :`<span class="hint">${c.src==='mod'?'an assumption, not a measurement':'not from the calendar'}</span>`}</td></tr>`).join('')+
+      `</tbody></table></div>`;
+  });
+
+  out+=`
+  <div class="box warn"><h3>What the calendar cannot tell you</h3>
+   <ul class="t" style="font-size:.93em">
+    <li><b>Headcounts.</b> The workbook records events, not attendance. Every participation figure in this dashboard is derived from the roll and your settings, never measured.</li>
+    <li><b>Ownership.</b> ${A.noDept} of ${A.blkEnrich} in-block enrichment records carry no department tag ${citeChip('E9')}, so no claim about who ran what is safe below the level the register states.</li>
+    <li><b>Outcomes.</b> Nothing here measures whether a Beattyian learned anything. The affinity index ${citeChip('M3')} compares configurations against each other; it is not a measurement.</li>
+    <li><b>Turnover.</b> How often a Beattyian would rotate out of a pathway has never been observed here ${citeChip('M2')}. It is the single largest assumption in the Talent tab.</li>
+   </ul>
+   <p style="font-size:.93em;margin:0">Say all four out loud when presenting. A model whose limits are stated is far harder to argue with than one whose limits are discovered.</p></div>`;
+  return out;
 }
 
 /* ================================================================= TAB 2 DESIGN */
@@ -1152,6 +1496,135 @@ function tabDe(M){
 }
 
 /* ================================================================= TAB 3 TRADE-OFFS */
+
+/* ================================================================= TAB 3 TALENT */
+function tabTal(M){
+  const sub=S.sub.tal||'reach';
+  const subs=[['reach','Who actually gets there'],['models','The models compared'],['houses','How houses change it']];
+  const cur=simTalent(M,S.tmodel);
+  const all=Object.keys(TMODELS).map(k=>simTalent(M,k));
+  let body='';
+
+  if(sub==='reach'){
+    const reached=Math.min(cur.distinct,M.N);
+    const build=Math.max(0,Math.min(M.build,M.N)-reached);
+    const explore=Math.max(0,M.N-reached-build);
+    const never=Math.max(0,M.N-reached);
+    body=`
+    <div class="metrics">
+      <div class="m"><b>${cm(cur.perCycle)}</b><span>Pursue places each cycle</span><i>${S.pursue} percent of ${cm(M.N)}, capped by the pool</i></div>
+      <div class="m ${cur.reach>=.4?'ok':'warn'}"><b>${cm(reached)}</b><span>different Beattyians reached in ${S.levels} years</span><i class="${cur.reach>=.4?'ok':'warn'}">${pct(cur.reach)} of the cohort</i></div>
+      <div class="m ${cur.depthOk?'ok':'bad'}"><b>${r1(cur.sessions)}</b><span>sessions of sustained practice each</span><i class="${cur.depthOk?'ok':'bad'}">${cur.depthOk?'Enough for a real product':'Too thin for a real product'}</i></div>
+      <div class="m"><b>${r1(cur.meanTenure)}</b><span>cycles held, on average</span><i>Of ${cur.cycles} in a school career</i></div>
+      <div class="m ${never/M.N<.4?'ok':'warn'}"><b>${cm(never)}</b><span>never reach Pursue at all</span><i class="${never/M.N<.4?'ok':'warn'}">${pct(never/M.N)} of the cohort</i></div>
+    </div>
+
+    <h2>The whole cohort, one dot per ten Beattyians</h2>
+    <div class="chart scroll">${waffle([
+      ['Reach Pursue',reached,'#000C53'],
+      ['Reach Build only',build,'#5c6288'],
+      ['Explore only',explore,'#d3d6e0','#6b7085']],{per:10,cols:36})}</div>
+    <div class="chips" style="margin-top:6px">
+      <span class="kv"><b style="color:#000C53">&#9679;</b>reach Pursue, ${cm(reached)}</span>
+      <span class="kv"><b style="color:#5c6288">&#9679;</b>reach Build only, ${cm(build)}</span>
+      <span class="kv"><b style="color:#61667a">&#9679;</b>Explore only, ${cm(explore)}</span></div>
+    <p class="note">This is the picture to put in front of the SMC. Under <b>${TMODELS[S.tmodel].n}</b> at ${S.pursue} percent of places a cycle, <b>${pct(cur.reach)}</b> of a cohort gets a deep experience at some point in ${S.levels} years, and each of them gets about <b>${r1(cur.sessions)}</b> sessions of sustained practice. Move the Pursue share and the cycle count on the Design tab and this picture moves with it.</p>
+
+    <div class="box ${cur.depthOk?'ok':'bad'}"><b>Depth verdict.</b>
+      ${r1(cur.sessions)} sessions each is ${cur.depthOk?'above':'below'} the twenty-session floor for producing something real for an outside audience.
+      ${cur.depthOk?'':'At this setting Pursue is exposure with a different name. '}The same question is scored against Gagn&eacute;'s cadence line on the Trade-offs tab.
+      <button class="chip" data-jump="cadence" style="margin-left:6px">see the cadence finding</button>
+      <button class="chip" data-jump="oneoff">see the one-off finding</button></div>
+
+    <h2>The three tiers</h2>
+    <div class="chart scroll">${funnel([
+      ['Explore',M.explore,cm(M.explore),'#000C53','Type I, everyone, Wednesday'],
+      ['Build',M.build,cm(M.build),'#4a5490','Type II, elective, '+S.takeup+' percent'],
+      ['Pursue',cur.perCycle,cm(cur.perCycle),'#FFE200','Type III, per cycle','#1a1c22']
+    ])}</div>
+    <p class="note">Explore and Build are places this year. Pursue is places <i>per cycle</i>, which is why the cumulative figure above is larger than the tier: with ${cur.cycles} cycles in a school career and a turnover of ${pct(1-TMODELS[S.tmodel].persist)} a cycle, the same ${cm(cur.perCycle)} seats carry ${cm(reached)} different Beattyians. ${citeChip('R1')} ${citeChip('M2')}</p>`;
+  }
+
+  else if(sub==='models'){
+    const series=all.map(r=>({n:r.T.short,c:r.T.c,pts:r.series,hi:r.key===S.tmodel}));
+    const pts=all.map(r=>({x:r.reach*100,y:r.sessions,c:r.T.c,n:r.T.short,hi:r.key===S.tmodel}));
+    const fx=all.find(r=>r.key==='fixed'),rz=all.find(r=>r.key==='renzulli');
+    body=`<div class="chips"><span class="tag">Model in use</span>`+
+      Object.entries(TMODELS).map(([k,t])=>`<button class="chip ${S.tmodel===k?'on':''}" data-tm="${k}">${t.short}</button>`).join('')+`</div>
+    <div class="box nav"><b>${TMODELS[S.tmodel].n}.</b> ${TMODELS[S.tmodel].d}
+      <div class="note" style="margin:7px 0 0">${TMODELS[S.tmodel].src} ${TMODELS[S.tmodel].cite?citeChip(TMODELS[S.tmodel].cite):''}</div></div>
+
+    <h2>Different Beattyians reached, cumulatively, over a school career</h2>
+    <div class="chart scroll">${multiLine(series,{w:660,h:265,xlab:'cycle, of '+cur.cycles+' in '+S.levels+' years',fy:v=>cm(v)})}</div>
+    <p class="note">Same number of places every cycle. The only difference is how fast they turn over, and after ${cur.cycles} cycles that difference is the whole argument: fixed selection reaches <b>${cm(fx.distinct)}</b> Beattyians and the revolving door reaches <b>${cm(rz.distinct)}</b>. That is <b>${cm(Math.max(0,rz.distinct-fx.distinct))}</b> more, at no extra cost in places, adults or rooms.</p>
+
+    <h2>The real trade-off: how many against how deep</h2>
+    <div class="chart scroll">${scatter(pts,{w:620,h:330,xlab:'percent of the cohort reached over '+S.levels+' years',
+      ylab:'sessions of practice each',fx:v=>Math.round(v)+'%',thresh:20,threshLab:'20 sessions, enough for a real product'})}</div>
+    <p class="note">The amber line at 20 sessions is roughly two full cycles, the usual floor for producing something real for an outside audience. Anything below it is exposure, not talent development. Top right is unreachable: places are finite, so reach is bought with depth and depth is bought with reach. The decision is where on that curve Beatty wants to sit, and it is a decision, not a calculation.</p>
+
+    <div class="scroll"><table><thead><tr><th scope="col">Model</th><th scope="col" class="n">Places a cycle</th>
+      <th scope="col" class="n">Reached in ${S.levels} yr</th><th scope="col" class="n">Share of cohort</th>
+      <th scope="col" class="n">Cycles held</th><th scope="col" class="n">Sessions each</th>
+      <th scope="col" class="n">Deep enough</th><th scope="col"></th></tr></thead><tbody>`+
+      all.map(r=>`<tr class="${r.key===S.tmodel?'hi':''}"><td><b style="color:${r.T.c}">${r.T.n}</b><div class="hint">${r.T.src}</div></td>
+        <td class="n">${cm(r.perCycle)}</td><td class="n"><b>${cm(r.distinct)}</b></td><td class="n">${pct(r.reach)}</td>
+        <td class="n">${r1(r.meanTenure)}</td><td class="n">${r1(r.sessions)}</td>
+        <td class="n" style="color:${r.depthOk?'var(--ok)':'var(--bad)'};font-weight:bold">${r.depthOk?'yes':'no'}</td>
+        <td class="n"><button class="chip ${S.tmodel===r.key?'on':''}" data-tm="${r.key}">${S.tmodel===r.key?'in use':'use'}</button></td></tr>`).join('')+
+      `</tbody></table></div>
+    <div class="box warn"><h3>What this simulation is, and is not</h3>
+      <p style="font-size:.92em">Places a cycle come from your own settings on the Design tab. Pool share comes from the published models: Renzulli names a 15 to 20 percent talent pool refreshed by action information ${citeChip('R1')}, Gagn&eacute; a top-ten-percent threshold held through sustained practice ${citeChip('R3')}. Fixed selection is calibrated on what the audit actually found in the calendar ${citeChip('E13')}.</p>
+      <p style="font-size:.92em;margin:0">Turnover rates are <span class="tag mod">modelled</span> ${citeChip('M2')}. Nobody has measured how often a Beattyian would rotate out, and the calendar cannot tell you. The <i>shape</i> of these curves is robust to that; the exact end points are not. Present the ordering, not the decimals.</p></div>`;
+  }
+
+  else {
+    const archs=Object.keys(ARCH).map(a=>{const m=simulate({arch:a}),mo=simulate({arch:a,houseOwns:1});
+      return {a,m,r:simTalent(m,S.tmodel),ro:simTalent(mo,S.tmodel)};});
+    const owned=simulate({houseOwns:1,arch:'class'}),rOwned=simTalent(owned,S.tmodel);
+    const free=simulate({houseOwns:0,arch:'class'}),rFree=simTalent(free,S.tmodel);
+    const gap=Math.max(0,rFree.distinct-rOwned.distinct);
+    body=`
+    <div class="box nav"><h2>The one thing a house does that a pathway cannot</h2>
+     <p style="font-size:.94em">Renzulli's four tests for a real Type III are personal relevance, no predetermined solution, a new product, and <b>an audience who voluntarily attend</b> ${citeChip('R2')}. The fourth is the one implementations fail, because a genuine external audience is hard to find for a fifteen-year-old's project. A house is a standing audience of <b>${cm(M.houseSize)}</b> who already know the presenter and already meet weekly. It is the cheapest solution to the hardest of the four tests, and it is the strongest reason to tie the two systems together at all.</p>
+     <div class="metrics">
+      <div class="m"><b>${cm(M.presenters)}</b><span>Beattyians presenting real work a year</span><i>${pct(M.presentShare)} of the cohort</i></div>
+      <div class="m ${M.witness>.6?'ok':'warn'}"><b>${pct(M.witness)}</b><span>who watch a peer present</span><i class="${M.witness>.6?'ok':'warn'}">${S.showcases} showcase${S.showcases===1?'':'s'} a year to the ${S.showScope==='house'?'house':'whole school'}</i></div>
+      <div class="m"><b>${cm(M.audiencePer)}</b><span>in the room for each showcase</span><i>Set by the showcase scope</i></div>
+     </div>
+     <p class="note">Raise showcases, or switch the audience to the whole school, and celebration reach moves. That is the entire mechanism behind &ldquo;celebrate the talents of others&rdquo;: a scheduling decision, not a slogan.</p></div>
+
+    <h2>What each house architecture does to talent reach</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">Architecture</th><th scope="col" class="n">Pool a field draws on</th>
+      <th scope="col" class="n">Cross-domain</th><th scope="col" class="n">Reached, pathways open</th>
+      <th scope="col" class="n">Reached, houses own them</th><th scope="col" class="n">Sessions each</th><th scope="col"></th></tr></thead><tbody>`+
+      archs.map(({a,m,r,ro})=>`<tr class="${S.arch===a?'hi':''}"><td><b>${ARCH[a].n}</b></td>
+        <td class="n">${cm(m.pool)}</td>
+        <td class="n" style="color:${m.crossDomain?'var(--ok)':'var(--bad)'}">${m.crossDomain?'open':'closed'}</td>
+        <td class="n"><b>${cm(r.distinct)}</b><div class="hint">${pct(r.reach)}</div></td>
+        <td class="n">${cm(ro.distinct)}<div class="hint">${pct(ro.reach)}</div></td><td class="n">${r1(r.sessions)}</td>
+        <td class="n"><button class="chip ${S.arch===a?'on':''}" data-arch2="${a}">${S.arch===a?'in use':'use'}</button></td></tr>`).join('')+
+      `</tbody></table></div>
+    <p class="note">Read this against the Design tab, not instead of it. Talent-area houses buy the deepest pipeline in each field and pay for it in reach, because a Beattyian is sorted into one field at thirteen and the revolving door closes behind them. Class-anchored houses keep the door open and pay in pipeline depth.</p>
+
+    <h2>Cross-house pathways against house-owned pathways</h2>
+    <div class="chart scroll">${multiLine([
+      {n:'Cross-house',c:'#15683d',pts:rFree.series,hi:!S.houseOwns},
+      {n:'House-owned',c:'#b3312a',pts:rOwned.series,hi:!!S.houseOwns}],
+      {w:640,h:235,xlab:'cycle',fy:v=>cm(v)})}</div>
+    <p class="note">Same places, same turnover, one switch. House-owned pathways reach <b>${cm(rOwned.distinct)}</b> different Beattyians against <b>${cm(rFree.distinct)}</b> cross-house, because a Beattyian can only pursue what their own house stewards. The gap is <b>${cm(gap)}</b> Beattyians who would otherwise have got there. Houses should own the <i>stewardship</i> of a field, meaning its survival, its calendar and its showcase. They should not own the <i>door</i>.</p>
+    <div class="box ${M.crossDomain?'ok':'bad'}">
+     <b>Currently: pathways are ${M.crossDomain?'cross-house':'closed to the house that stewards them'}.</b>
+     ${M.crossDomain?' A Beattyian in any house can pursue any field, so every talent pool is the whole school.'
+       :` Every field draws on ${cm(M.pool)} rather than ${cm(M.N)}. ${M.byInterest?'Under talent-area houses this is structural rather than a setting: the house is the field.':'This is the pathway ownership switch on the Design tab.'}`}</div>`;
+  }
+
+  return `<header class="pg"><h1>Talent development</h1>
+   <p class="lede">Who gets a deep experience, for how long, and how the house system changes that. Places come from your settings on the Design tab; pool share and turnover come from the published models, marked and sourced.</p></header>
+   <div class="subs">${subs.map(s=>`<button data-sub="tal:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
+}
+
+/* ================================================================= TAB 4 TRADE-OFFS */
 function tabTr(M){
   const sub=S.sub.tr;
   const subs=[['ledger','What this attends to'],['models','Delivery models'],['matrix','Architecture matrix'],
@@ -1295,6 +1768,10 @@ function tabDc(M){
    ['Does Pursue reach 150 Beattyians or 50?',
     'Both are defensible; only one matches the models being cited. Renzulli’s revolving talent pool is 15 to 20 percent.',
     `${S.pursue} percent is ${cm(M.pursueN)} places, needing ${M.mentorsNeeded} named mentors at ${S.mentorLoad} students each.`],
+   ['Do Pursue places turn over, or are they held?',
+    'The question the Talent tab simulates, and the one nobody usually asks out loud. Renzulli’s revolving door refreshes the pool on completed products; a fixed selection keeps the same Beattyians for years. Same places, same cost, very different school.',
+    (()=>{const r=simTalent(M,S.tmodel),f=simTalent(M,'fixed');
+      return `${TMODELS[S.tmodel].n} at ${pct(1-TMODELS[S.tmodel].persist)} turnover a cycle reaches ${cm(r.distinct)} different Beattyians over ${S.levels} years, ${r1(r.sessions)} sessions each. Holding the same places fixed reaches ${cm(f.distinct)}.`;})()],
    ['Who reconciles competing claims on a student?',
     'Nobody currently does. Sec 3 in Term 1 of 2024 had six selective programmes live at once, all recruiting from the same pool.',
     `At ${S.tutors} tutors per house each holds ${Math.round(M.tutorRatio)} Beattyians. ${M.tutorRatio<=25?'Small enough to know them individually.':'Too many to reconcile anything meaningfully.'}`],
@@ -1314,6 +1791,7 @@ function tabDc(M){
     <div class="m"><b>${M.affinity}</b><span>affinity index <span class="tag mod">modelled</span></span></div>
     <div class="m"><b>${M.talent}</b><span>talent depth index <span class="tag mod">modelled</span></span></div>
     <div class="m"><b>${pct(M.witness)}</b><span>celebration reach</span></div>
+    <div class="m"><b>${cm(simTalent(M,S.tmodel).distinct)}</b><span>reached by Pursue over ${S.levels} years</span><i>${TMODELS[S.tmodel].short}, ${pct(simTalent(M,S.tmodel).reach)} of the cohort</i></div>
    </div>
    ${M.issues.map(i=>`<div class="box ${i[0]==='b'?'bad':(i[0]==='w'?'warn':'ok')}" style="margin:7px 0;font-size:.92em">${i[1]}</div>`).join('')}
    <h2>The decisions that are yours</h2>
@@ -1337,7 +1815,7 @@ function tabDc(M){
 }
 
 /* ================================================================= RENDER */
-const TABS={ev:tabEv,de:tabDe,tr:tabTr,dc:tabDc};
+const TABS={ev:tabEv,de:tabDe,tal:tabTal,tr:tabTr,dc:tabDc};
 let PREV=null;
 function statusBar(M){
   const bad=M.issues.filter(i=>i[0]==='b').length,warn=M.issues.filter(i=>i[0]==='w').length;
@@ -1411,6 +1889,16 @@ function autoAnchor(){
       if(free){S.hset[h.k][slot]=free;used.add(free);}});});
 }
 function applyModel(k){const m=MODELS[k];if(!m)return;Object.assign(S,m.set);S.model=k;render();}
+function citeTo(id){
+  const c=CITE.find(x=>x.id===id);
+  if(!c)return;
+  if(!c.cut){ S.citeHi=id;S.tab='ev';S.sub.ev='src';render({top:true});
+    const el=$('#cite_'+id); if(el)el.scrollIntoView({block:'center'}); return; }
+  S.citeHi=id;
+  Object.assign(S,{q:'',fy:'',ft:'',fd:'',fl:'',fg:'',fc:'',fdept:'',fe:'',fb:'',fs:''});
+  Object.assign(S,c.cut);
+  S.tab='ev';S.sub.ev='rec';render({top:true});
+}
 const CTX={'ctx-staff':{fb:'1',fs:'0'}};
 function jumpTo(id){
   const L=LEDGER.find(x=>x.id===id);
@@ -1433,6 +1921,9 @@ function bind(){
   $$('#view [data-sw]').forEach(b=>b.onclick=()=>{S.sweep=b.dataset.sw;render();});
   $$('#view [data-mx]').forEach(c=>c.onclick=()=>{const [a,h]=c.dataset.mx.split(':');S.arch=a;S.houses=+h;render();});
   $$('#view [data-jump]').forEach(b=>b.onclick=()=>jumpTo(b.dataset.jump));
+  $$('#view [data-tm]').forEach(b=>b.onclick=()=>{S.tmodel=b.dataset.tm;render();});
+  $$('#view [data-arch2]').forEach(b=>b.onclick=()=>{S.arch=b.dataset.arch2;fixAnchors();render();});
+  $$('#view [data-cite]').forEach(b=>b.onclick=()=>citeTo(b.dataset.cite));
   $$('#view [data-save]').forEach(b=>b.onclick=()=>{
     if(b.dataset.save==='clear')SCEN=[null,null,null,null];
     else SCEN[+b.dataset.save]=JSON.parse(JSON.stringify(S));
