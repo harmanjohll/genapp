@@ -145,26 +145,88 @@ const AFTER_I_NEVER = new Set([
   'now', 'afterwards', 'again', 'too', 'here', 'there', 'back',
 ]);
 
+/**
+ * Verbs that cannot take a bare clause, so anything after them is an object.
+ *
+ * THE THIRD SIGNAL, and why it is a list after all. The two rules above need
+ * both halves to agree, and fourteen faults got through because the word after
+ * "I" was an ordinary noun: "telling I things", "graded I while", "hate I and",
+ * "toughens I regardless", "catches I doing", "replace I becomes". Nouns cannot
+ * be enumerated, so that half can never be completed. Verbs can be, partly, and
+ * a partial list that catches a real shape beats a complete rule that does not
+ * exist. The union of the three rules catches every fault this corpus has ever
+ * had; the record of having read all five hundred and fifty three occurrences of
+ * the word by hand is what says so.
+ *
+ * The verbs here are chosen for one property: none of them can be followed by a
+ * clause with no object in between. "He tells me I am late" is grammatical and
+ * "He tells I am late" is not, so every hit is a fault with no exception to
+ * carve out. Verbs that DO take a bare clause, say, know, think, hear, feel,
+ * believe, are deliberately absent, because "she knows I asked" is correct
+ * English and a lint that fails good writing gets deleted.
+ *
+ * Half of these are also nouns, which is why the rule below refuses to fire on
+ * a word sitting behind a determiner: "the leave I am owed", "a business name I
+ * doodled" and "the grades I got" are all noun phrases, and all three were
+ * flagged before that guard went in.
+ */
+const TRANSITIVE_ONLY = [
+  'grade', 'hate', 'replace', 'toughen', 'catch', 'need', 'warn', 'train', 'bring',
+  'show', 'stop', 'help', 'teach', 'give', 'send', 'watch', 'call', 'keep', 'leave',
+  'put', 'thank', 'trust', 'pull', 'push', 'drive', 'treat', 'pay', 'owe', 'follow',
+  'join', 'beat', 'choose', 'pick', 'ignore', 'include', 'invite', 'hire',
+  'coach', 'carry', 'shortlist', 'reject', 'accept',
+  'ask', 'tell', 'make', 'let', 'take', 'want', 'miss', 'find', 'meet',
+];
+// A word behind one of these is a noun, whatever else it could have been.
+// Numerals are deliberately absent: "Semester one graded I while I was settling
+// in" put a number in front of the verb, and listing "one" here excused the one
+// fault the guard's own test then reported as missed.
+const DETERMINER = new Set([
+  'the', 'a', 'an', 'my', 'our', 'his', 'her', 'their', 'its', 'this', 'that',
+  'these', 'those', 'every', 'each', 'no', 'any', 'some', 'own', 'whole',
+  'same', 'other', 'another',
+]);
+const VERB_FORMS = new Set(TRANSITIVE_ONLY.flatMap((v) => {
+  const forms = [v, `${v}s`, `${v}ing`, `${v}ed`];
+  if (v.endsWith('e')) forms.push(`${v.slice(0, -1)}ing`, `${v}d`);
+  if (v.endsWith('y')) forms.push(`${v.slice(0, -1)}ies`, `${v.slice(0, -1)}ied`);
+  if (v.endsWith('ch') || v.endsWith('sh') || v.endsWith('s')) forms.push(`${v}es`);
+  if (/[^aeiou][aeiou][ptgmn]$/.test(v)) forms.push(`${v}${v.slice(-1)}ing`, `${v}${v.slice(-1)}ed`);
+  return forms;
+}));
+// "finds I am readier" is a clause; "finds I readier" is the fault. An auxiliary
+// or a modal straight after the pronoun is the signal that a clause has started.
+const CLAUSE_START = new Set([
+  'am', 'was', 'is', 'are', 'were', 'have', 'has', 'had', 'do', 'did', 'does',
+  'can', 'could', 'will', 'would', 'shall', 'should', 'may', 'might', 'must',
+  'never', 'always', 'still', 'already', 'just', 'only',
+]);
+
 /** A character that is not English has no business in student copy. */
 const NON_ENGLISH = /[^\x00-\x7F\u2018\u2019\u201c\u201d\u2026]/;
 
 /**
  * The pronoun faults the voice pass left behind.
  *
- * Two signals have to agree: the word in front of "I" cannot govern a subject,
- * and the word after it can never be one that follows a subject. Both together
- * caught five defects a verb list had missed, with nothing false on the corpus.
+ * Three rules, none of them complete on its own. The first two need both halves
+ * to agree: the word in front of "I" cannot govern a subject, and the word after
+ * it can never follow one. The third asks whether the word in front is a verb
+ * that only ever takes an object.
  */
 function pronounFaults(value, where) {
   const out = [];
   const text = String(value);
-  const re = /([A-Za-z']+)\s+I\s+([A-Za-z']+)/g;
+  const re = /(?:([A-Za-z']+)\s+)?([A-Za-z']+) I\s+([A-Za-z']+)/g;
   let m = re.exec(text);
   while (m) {
-    const prev = m[1].toLowerCase();
-    const next = m[2].toLowerCase();
+    const before = (m[1] || '').toLowerCase();
+    const prev = m[2].toLowerCase();
+    const next = m[3].toLowerCase();
     if (!BEFORE_I_OK.has(prev) && AFTER_I_NEVER.has(next)) {
-      out.push({ path: where, why: `"${m[1]} I ${m[2]}" reads as an object, so it wants "me"`, text: text.slice(0, 90) });
+      out.push({ path: where, why: `"${m[2]} I ${m[3]}" reads as an object, so it wants "me"`, text: text.slice(0, 90) });
+    } else if (VERB_FORMS.has(prev) && !CLAUSE_START.has(next) && !DETERMINER.has(before)) {
+      out.push({ path: where, why: `"${m[2]}" takes an object, so "${m[2]} I" wants "me"`, text: text.slice(0, 90) });
     }
     m = re.exec(text);
   }
@@ -181,6 +243,11 @@ function pronounFaults(value, where) {
   }
   return out;
 }
+
+// Exported for the guard's own test. A lint that has stopped biting looks
+// exactly like a corpus that is clean, and the only way to tell the two apart is
+// to feed it the faults it was built for and watch it name them.
+export const __test_pronounFaults = pronounFaults;
 
 // A gendered job noun in a career tool tells half a class the job is not theirs.
 const GENDERED = [

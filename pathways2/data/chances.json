@@ -83,7 +83,7 @@
     },
     {
      "label": "Let it slide",
-     "outcome": "The comparison fades on its own by Sec 3. Some fights resolve by outlasting them.",
+     "outcome": "The comparison fades on its own by the end of the year. Some fights resolve by outlasting them.",
      "disp": {
       "flexibility": 1
      }
@@ -99,7 +99,7 @@
    "minAge": 14,
    "maxAge": 15,
    "title": "The reclass",
-   "body": "Sec 3 reshuffles everyone by combination. My lunch table of three years is split across four classrooms, and so are four different sets of options.",
+   "body": "Sec 3 reshuffles everyone by combination. My lunch table of two years is split across four classrooms, and so are four different sets of options.",
    "responses": [
     {
      "label": "Ask what their combination opens",
@@ -230,7 +230,7 @@
     },
     {
      "label": "Not this year",
-     "outcome": "The form expires quietly. Next year's version finds I readier.",
+     "outcome": "The form expires quietly. Next year's version finds me readier.",
      "disp": {
       "flexibility": 1
      }
@@ -313,7 +313,7 @@
     },
     {
      "label": "Earn it myself",
-     "outcome": "Three weekends of flyer distribution at Tampines Hub covers the chalet and a little pride. Tiring, and entirely mine.",
+     "outcome": "One Saturday helping at my uncle's stall covers the chalet with two dollars left over. Tiring, and entirely mine.",
      "gain": {
       "skills": 1
      },
@@ -651,7 +651,7 @@
    "minAge": 17,
    "maxAge": 24,
    "title": "The one who tells me things",
-   "body": "The senior tech, the studio manager, the tutor on contract: one of them starts telling I things nobody writes down. Which clients pay late. Which cert actually matters.",
+   "body": "The senior tech, the studio manager, the tutor on contract: one of them starts telling me things nobody writes down. Which clients pay late. Which cert actually matters.",
    "responses": [
     {
      "label": "Ask for the next layer",
@@ -701,7 +701,7 @@
    "minAge": 17,
    "maxAge": 25,
    "title": "Different buses now",
-   "body": "My Sec school best friend is in camp, or JC, or already earning. The rhythm that made me close is gone; the chat is down to birthday messages.",
+   "body": "My Sec school best friend is in camp, or JC, or already earning. The rhythm that made us close is gone; the chat is down to birthday messages.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -727,7 +727,7 @@
     },
     {
      "label": "Say the honest thing",
-     "outcome": "I miss I and I am rubbish at this, I type. The reply takes nine minutes and fixes eight months.",
+     "outcome": "I miss the old rhythm and I am rubbish at this, I type. The reply takes nine minutes and fixes eight months.",
      "disp": {
       "risk": 1
      },
@@ -821,7 +821,7 @@
     },
     {
      "label": "Tell the school early",
-     "outcome": "The year tutor extends two deadlines without ceremony. Institutions bend for students who ask before breaking.",
+     "outcome": "My module lecturer extends two deadlines without ceremony. Institutions bend for students who ask before breaking.",
      "disp": {
       "risk": 1
      },
@@ -1106,7 +1106,7 @@
    "responses": [
     {
      "label": "Apply with open eyes",
-     "outcome": "Bond years are real years, I tell the mirror, and apply anyway. The interview toughens I regardless of the letter.",
+     "outcome": "Bond years are real years, I tell the mirror, and apply anyway. The interview toughens me regardless of the letter.",
      "disp": {
       "risk": 1
      },
@@ -1140,14 +1140,14 @@
    "minAge": 17,
    "maxAge": 20,
    "title": "The module goes live",
-   "body": "My group's class project, the booking system, the campaign, the prototype, gets picked by the module's real client to actually use. With my names in the footer.",
+   "body": "My group's class project, the booking system, the campaign, the prototype, gets picked by the module's real client to actually use. With my name in the footer.",
    "paths": [
     "applied"
    ],
    "responses": [
     {
      "label": "Own the handover",
-     "outcome": "Documentation, training video, a bugs channel. The client's thank you email becomes page one of my portfolio.",
+     "outcome": "Documentation, training video, a bugs channel. The client's grateful email becomes page one of my portfolio.",
      "gain": {
       "portfolio": 2
      },
@@ -1176,7 +1176,7 @@
    "minAge": 18,
    "maxAge": 21,
    "title": "The uni arithmetic",
-   "body": "A talk in the LT lays it out: what a 3.6 GPA reaches, what SIT weighs, what SMU's accelerated pathway takes from poly. Rows of calculators come out.",
+   "body": "A talk in the LT lays it out: what a 3.6 GPA reaches, what SIT weighs, which modules SUSS exempts for my diploma. Calculators come out.",
    "paths": [
     "applied"
    ],
@@ -1227,7 +1227,7 @@
    "responses": [
     {
      "label": "Do it right unwatched",
-     "outcome": "He catches I doing it properly at 5pm on a Friday. Monday I get the tasks with actual learning inside them.",
+     "outcome": "He catches me doing it properly at 5pm on a Friday. Monday I get the tasks with actual learning inside them.",
      "gain": {
       "skills": 1,
       "network": 1
@@ -1289,7 +1289,7 @@
     },
     {
      "label": "Learn it beside someone",
-     "outcome": "I and the quiet classmate split the manual. Half the glory, twice the speed, one lasting ally.",
+     "outcome": "The quiet classmate and I split the manual. Half the glory, twice the speed, one lasting ally.",
      "gain": {
       "skills": 1,
       "network": 1
@@ -1482,7 +1482,7 @@
    "responses": [
     {
      "label": "Collect their maps",
-     "outcome": "By ORD I understand poly GPA, JC rank points and site pay rates equally. Nobody leaves with a wider map than mine.",
+     "outcome": "By ORD I understand poly GPA, JC rank points and site pay rates equally. The map I leave with is wider than the one I came with.",
      "gain": {
       "network": 2
      },
@@ -1511,7 +1511,7 @@
    "minAge": 18,
    "maxAge": 22,
    "title": "The downgrade review",
-   "body": "Route march, uneven ground, a pop I hear before I feel. Crutches, a downgrade review, and a vocation that will not be mine now.",
+   "body": "Route march, uneven ground, a pop I hear before I feel. Crutches, a downgrade review, and a vocation that is on hold while they decide.",
    "requiresNS": true,
    "responses": [
     {
@@ -1607,8 +1607,8 @@
    "type": "encounter",
    "minAge": 19,
    "maxAge": 23,
-   "title": "The month after ORD",
-   "body": "Pink IC back, hair growing out, and a strange month where nobody tells me where to stand. Course starts in August; it is April.",
+   "title": "The months after ORD",
+   "body": "Pink IC back, hair growing out, and a strange stretch where nobody tells me where to stand. Course starts in August; it is April.",
    "requiresNS": true,
    "responses": [
     {
@@ -1666,7 +1666,7 @@
     },
     {
      "label": "Visit the camp gate",
-     "outcome": "Passing food over the fence at Pasir Laba teaches me what the two years actually cost. The friendship deepens oddly.",
+     "outcome": "Handing supper over at the Pasir Laba guardhouse teaches me what the two years actually cost. The friendship deepens oddly.",
      "gain": {
       "network": 1
      },
@@ -2056,7 +2056,7 @@
   {
    "id": "cv_reunion_table",
    "type": "encounter",
-   "minAge": 27,
+   "minAge": 34,
    "maxAge": 49,
    "title": "Twenty years later, one table",
    "body": "Class reunion at a tze char place. The ITE guy owns two shops; the JC scholar just quit law happily; the quiet one became the nurse everyone calls first.",
@@ -2102,7 +2102,7 @@
    "responses": [
     {
      "label": "Apply, age and all",
-     "outcome": "Oldest in the cohort by a decade, and the fastest through the practicum. Twenty years of adjacent skill was not nothing.",
+     "outcome": "Oldest in the cohort by a decade, and steadier through the practicum than I expected. Twenty years of adjacent skill was not nothing.",
      "gain": {
       "skills": 2
      },
@@ -2135,7 +2135,7 @@
    "minAge": 14,
    "maxAge": 16,
    "title": "The Year Head's list, done",
-   "body": "Subject review week. Two years ago I asked the Year Head what moving up takes; her checklist has lived in my phone since. Every box on it is ticked.",
+   "body": "Subject review week. Last year I asked the Year Head what moving up takes; her checklist has lived in my phone since. Every box on it is ticked.",
    "requiresFlag": "asked_up",
    "responses": [
     {
@@ -2276,7 +2276,7 @@
    "responses": [
     {
      "label": "Catch her eye",
-     "outcome": "The smallest nod passes between me. Telling them early, it turns out, recruited them.",
+     "outcome": "The smallest nod crosses the table. Telling them early, it turns out, recruited them.",
      "gain": {
       "network": 1
      },
@@ -2432,7 +2432,7 @@
    "responses": [
     {
      "label": "Take the interview",
-     "outcome": "Half interview, half reunion. The offer letter cites international experience, which is chat speak for me already know her.",
+     "outcome": "Half interview, half reunion. The offer letter cites international experience, which is polite wording for she already knows my work.",
      "gain": {
       "network": 1
      },
@@ -2500,7 +2500,7 @@
    "minAge": 15,
    "maxAge": 17,
    "title": "The form teacher was right",
-   "body": "Mid Sec 3, the subject my form teacher steered me toward is the one I stopped watching the clock in. I almost took the other one for the friend group.",
+   "body": "Mid Sec 3, the subject my form teacher steered me toward is the one I stopped watching the clock in. I almost picked the other for my friends.",
    "requiresFlag": "asked_form",
    "responses": [
     {
@@ -2534,7 +2534,7 @@
    "minAge": 17,
    "maxAge": 20,
    "title": "The senior's warning",
-   "body": "Week one of the course, and the exact trap the senior described appears on schedule: the module everyone fails by underestimating week three.",
+   "body": "Week one of the course, and the exact trap the senior described appears on schedule: the module people underestimate until week three lands.",
    "requiresFlag": "asked_senior",
    "responses": [
     {
@@ -2588,7 +2588,7 @@
     },
     {
      "label": "Find that second year",
-     "outcome": "They are final year now. The thank you turns into a coffee, the coffee into my first senior ally.",
+     "outcome": "They are final year now. My thanks turn into a coffee, and the coffee into my first senior ally.",
      "gain": {
       "network": 1
      },
@@ -2685,7 +2685,7 @@
    "minAge": 19,
    "maxAge": 24,
    "title": "The lecturer's one line",
-   "body": "Applying onward, I ask the lecturer whose road I once asked about. The recommendation arrives same week, with a line only someone who knows I could write.",
+   "body": "Applying onward, I ask the lecturer whose road I once asked about. The recommendation arrives same week, with a line only someone who knows me could write.",
    "requiresFlag": "asked_lecturer",
    "responses": [
     {
@@ -2698,7 +2698,7 @@
     },
     {
      "label": "Keep the relationship warm",
-     "outcome": "A thank you, then an update every semester. References age well when watered.",
+     "outcome": "I thank them properly, then send an update every semester. References age well when watered.",
      "gain": {
       "network": 1
      },
@@ -2796,7 +2796,7 @@
    "responses": [
     {
      "label": "Trade honest audits",
-     "outcome": "Two afternoons, two lives on the table, no varnish. I each leave with one change worth making.",
+     "outcome": "Two afternoons, two lives on the table, no varnish. We each leave with one change worth making.",
      "gain": {
       "network": 1
      },
@@ -2894,7 +2894,7 @@
    "minAge": 17,
    "maxAge": 27,
    "title": "The side thing gets found",
-   "body": "Someone I respect finds the thing I built on the side and asks the question every maker waits for: is this mine?",
+   "body": "Someone I respect finds the thing I built on the side and asks the question every maker waits for: who made this?",
    "requiresFlag": "built_side",
    "responses": [
     {
@@ -2957,7 +2957,7 @@
    "minAge": 20,
    "maxAge": 30,
    "title": "The client wants more",
-   "body": "The small paying gig from before sends a bigger brief: triple the scope, a real deadline, and the sentence we trust me with this.",
+   "body": "The small paying gig from before sends a bigger brief: triple the scope, a real deadline, and a line saying they trust me with this.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -3000,15 +3000,15 @@
   {
    "id": "cb_helped_returns",
    "type": "encounter",
-   "minAge": 18,
+   "minAge": 19,
    "maxAge": 30,
    "title": "The one I helped",
-   "body": "The classmate I once sat with, the one everyone gave up on, appears in my DMs: qualified, employed, and hiring for a junior role. I first, they typed.",
+   "body": "The classmate I once sat with through every worked example messages me: their team is hiring juniors, and my name went in first.",
    "requiresFlag": "helped_someone",
    "responses": [
     {
      "label": "Take the interview",
-     "outcome": "The loop closes: kindness at fourteen, shortlisted at twenty something. Nobody designs these returns; they just compound.",
+     "outcome": "The loop closes: kindness at fourteen, shortlisted years later. Nobody designs these returns; they just compound.",
      "gain": {
       "network": 1
      },
@@ -3127,8 +3127,8 @@
      "opens": "d_iteroad"
     },
     {
-     "label": "Defer for the savings year",
-     "outcome": "Offer accepted, start deferred, one year of full time pay banked first. The letter keeps; the plan compounds.",
+     "label": "Start now, keep the job",
+     "outcome": "I take the place and keep the weekend job. The pay comes in alongside the course instead of before it.",
      "gain": {
       "skills": 1
      },
@@ -3454,7 +3454,7 @@
    "body": "Four months of running at it, and one Tuesday nothing works. Reading the same paragraph five times, and none of it lands.",
    "responses": [
     {
-     "label": "Tell the tutor before the deadline",
+     "label": "Ask for an extension before the deadline",
      "outcome": "Two deadlines move and one module gets dropped cleanly. The semester becomes carryable instead of heroic.",
      "gain": {
       "network": 1
@@ -3467,8 +3467,8 @@
      "stretch": "I send it at one in the morning with too many apologies in it. One deadline moves, and the week becomes survivable."
     },
     {
-     "label": "Take one subject down a level",
-     "outcome": "Seven subjects at the top level was the problem, not me. Six done properly reads better everywhere it matters.",
+     "label": "Carry fewer modules this semester",
+     "outcome": "Three modules this semester instead of five, agreed in writing. The reduced load is the fix, and my marks come back.",
      "gain": {
       "skills": 1
      },
@@ -3555,8 +3555,8 @@
   {
    "id": "sc_the_body",
    "type": "setback",
-   "minAge": 17,
-   "maxAge": 34,
+   "minAge": 15,
+   "maxAge": 17,
    "title": "The brace, and the folder",
    "body": "Six weeks in a brace. The CCA that was going to be the whole middle of my Early Admissions folder is now somebody else's season.",
    "responses": [
@@ -4168,7 +4168,7 @@
   {
    "id": "cb_back_at_forty",
    "type": "opportunity",
-   "minAge": 38,
+   "minAge": 40,
    "maxAge": 50,
    "title": "The classroom at forty",
    "body": "The top up lands in the account the year I turn forty. Four thousand dollars, an approved list, and a decision to make.",
@@ -4724,7 +4724,7 @@
     },
     {
      "label": "Ask about the folder properly",
-     "outcome": "She explains what an audition portfolio actually contains. The list is shorter and harder than expected.",
+     "outcome": "She explains what a portfolio for the polytechnic Early Admissions Exercise actually contains. The list is shorter and harder than expected.",
      "gain": {
       "skills": 1
      },
