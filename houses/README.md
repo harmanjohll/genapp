@@ -10,7 +10,7 @@ Live: `https://harmanjohll.github.io/genapp/houses/`
 
 | File | What it is |
 | --- | --- |
-| `index.html` | **The decision dashboard.** Start here. Five tabs: Evidence, Design, Talent, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
+| `index.html` | **The decision dashboard.** Start here. Six tabs: Evidence, Design, Talent, Schooling, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
 | `studio2.html` | **House Dashboard.** Earlier pass, superseded by `index.html`. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
 | `studio.html` | **House Studio.** First pass. Vertical house architecture modelling |
 | `data.html` | **Calendar explorer.** The same 1,380 records standalone: filters, cross-tabs, calendar view |
@@ -30,8 +30,9 @@ Every HTML file is standalone: no build step, no dependencies, no network calls.
 | 1 Evidence | What two years of the school's own calendar actually says. Findings, records, cross-tabs, calendar, summary, and the citation register |
 | 2 Design | Build a configuration: roll, house architecture, houses and what each stewards, delivery model, staffing, tiers, Cup scoring, activities |
 | 3 Talent | Simulate who gets a deep experience and for how long, under five published talent models, and what each house architecture does to that |
-| 4 Trade-offs | Every audit finding scored against the current configuration, model comparison, sensitivity, sweeps, saved scenarios |
-| 5 Decide | Nine genuinely open questions, each carrying the live consequence of the current settings |
+| 4 Schooling | Teacher workload, the shared tier structure behind talent development and pastoral support, and what a house does and does not do for deployment |
+| 5 Trade-offs | Every audit finding scored against the current configuration, model comparison, sensitivity, sweeps, saved scenarios |
+| 6 Decide | Ten genuinely open questions, each carrying the live consequence of the current settings |
 
 Settings propagate: change the Pursue share on Design and the Talent reach curves, the Trade-offs ledger and the Decide consequences all move with it.
 
@@ -49,9 +50,19 @@ Five answers to "who gets a deep experience, and for how long", run over a whole
 
 Pool shares are published; turnover rates are modelled and marked as such. The ordering of the curves is robust; the exact end points are not.
 
+### The schooling argument
+
+Three claims, each with its own sub-view and its own honesty box.
+
+1. **The workload is invention, not delivery.** 42 enrichment programmes were invented in one year and 40 abandoned; 66 of 133 ran once or twice. A programme that runs once still costs a full design. A stable catalogue of about 44 groups, refreshed a quarter a year, replaces 42 designs with 11 while choice on a block day rises from 2.5 offerings to 44. Workload and opportunity were never the same axis.
+2. **Talent development and pastoral support are the same architecture.** Universal, targeted, intensive; Type I, II, III. The universal tier is the same tier. Run them as one standing structure and the adult who notices a Beattyian is flourishing is the adult who notices they have stopped turning up. Doing the differentiated tiers inside a block everybody is already in means nobody is visibly withdrawn from anything.
+3. **The house helps deployment, narrowly.** It is useful as a standing unit that already exists, already meets and already has a lead, so work can be handed to it without constituting anybody. It is not a curriculum, assessment or discipline unit, and level teams and departments are untouched.
+
+Hours are controls, not measurements: the calendar records events and never time. The counts those hours multiply are measured, and the argument rests on the counts.
+
 ### Citation register
 
-**Evidence → Sources & citations** gives every figure in the dashboard a stable reference id (`E1`–`E13` measured, `S1`–`S3` supplied by the school, `R1`–`R5` published research, `M1`–`M3` modelled here). Measured figures carry a *show the rows* button that opens the Records view on exactly the selection the figure was computed from. Reference chips appear inline wherever a figure is quoted.
+**Evidence → Sources & citations** gives every figure in the dashboard a stable reference id (`E1`–`E13` measured, `S1`–`S3` supplied by the school, `R1`–`R5` published research, `M1`–`M5` modelled here). Measured figures carry a *show the rows* button that opens the Records view on exactly the selection the figure was computed from. Reference chips appear inline wherever a figure is quoted.
 
 ## The five houses
 

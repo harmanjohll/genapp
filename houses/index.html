@@ -181,14 +181,26 @@ body.pres .wrap{max-width:1140px}
 body.pres h2{margin-top:1.7em;padding-top:.4em;border-top:1px solid var(--g2)}
 
 @media(max-width:900px){
-  .gnav .in{overflow-x:auto;flex-wrap:nowrap}
+  .gnav .in{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .gnav .in::-webkit-scrollbar{display:none}
   .gnav b{position:sticky;left:0;background:var(--navy);z-index:1}
   .sbar .in{overflow-x:auto;flex-wrap:nowrap}
   .sbar .sp,.gnav .sp{display:none}
+  /* the bars scroll sideways; say so, or half the tabs look unreachable */
+  .gnav,.sbar{position:relative}
+  .gnav::after,.sbar::after{content:'';position:absolute;top:0;right:0;width:28px;height:100%;
+    pointer-events:none;z-index:2}
+  .gnav::after{background:linear-gradient(to right,rgba(0,12,83,0),var(--navy))}
+  .sbar::after{background:linear-gradient(to right,rgba(255,255,255,0),#fff)}
   .dcards{grid-template-columns:1fr}
   .grid2{grid-template-columns:1fr}
   .tblbox{max-height:none}
   h1{font-size:1.6em}
+}
+@media(max-width:620px){
+  .gnav b{display:none}
+  .gnav a{font-size:12.5px;padding:11px 9px}
+  .gnav button{font-size:11px;padding:3px 7px}
 }
 @media print{
   .gnav,.sbar,.subs,.ana{display:none}
@@ -200,7 +212,7 @@ body.pres h2{margin-top:1.7em;padding-top:.4em;border-top:1px solid var(--g2)}
 </style></head><body>
 
 <nav class="gnav"><div class="in"><b>BTY House System</b>
-<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tal">3 Talent</a><a data-t="tr">4 Trade-offs</a><a data-t="dc">5 Decide</a>
+<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tal">3 Talent</a><a data-t="sc">4 Schooling</a><a data-t="tr">5 Trade-offs</a><a data-t="dc">6 Decide</a>
 <span class="sp"></span>
 <button id="presBtn">Present</button><button id="printBtn">Print</button><button id="resetBtn">Reset</button>
 </div></nav>
@@ -422,8 +434,9 @@ const ACTS=[
 const ROLL={p1:265,p2:255,p3:305,p4:255,p5:20,c1:7,c2:7,c3:8,c4:7};
 
 const DEF={
-  tab:'ev', sub:{ev:'find',de:'all',tal:'reach',tr:'ledger',dc:'slate'},
+  tab:'ev', sub:{ev:'find',de:'all',tal:'reach',sc:'load',tr:'ledger',dc:'slate'},
   tmodel:'renzulli', citeHi:'',
+  cttees:42, cttSize:6, cttHrs:8, designHrs:12, refresh:25, consol:70, tierT:15, tierI:4,
   p1:ROLL.p1,p2:ROLL.p2,p3:ROLL.p3,p4:ROLL.p4,p5:ROLL.p5,
   c1:ROLL.c1,c2:ROLL.c2,c3:ROLL.c3,c4:ROLL.c4,
   levels:4, houses:5, arch:'class', model:'clusters', wushu:'S', anchors:1,
@@ -594,6 +607,49 @@ function model(){
   M.domBal=Math.max(...dv)>0?Math.min(...dv)/Math.max(...dv):0;
 
   M.cupBias=S.cup==='absolute'?M.totalGap:(S.cup==='percap'?0:M.totalGap*0.15);
+  /* ---- schooling model: adult time, standing units, and who holds whom ----
+     The calendar records events, never hours, so every hours figure here is a
+     control rather than a measurement. What the calendar does give is the churn
+     rate, and churn is where the invention cost lives. */
+  M.newEach   = S.cttees;                                   // programmes invented a year
+  M.cttSeats  = M.newEach*S.cttSize;                        // teacher seats on ad-hoc groups
+  M.hInvent   = M.newEach*S.designHrs;                      // teacher-hours designing new things
+  M.hCoord    = M.cttSeats*S.cttHrs;                        // teacher-hours in ad-hoc groups
+  M.hNow      = (M.hInvent+M.hCoord)/Math.max(1,S.teachers);
+
+  M.catalogue = M.clustersNeeded;                           // groups needed to seat everyone
+  M.reNew     = Math.round(M.catalogue*S.refresh/100);       // refreshed each year, not reinvented
+  M.cttAfter  = M.newEach*(1-S.consol/100);
+  M.hInventA  = M.reNew*S.designHrs;
+  M.hCoordA   = M.cttAfter*S.cttSize*S.cttHrs;
+  M.hAfter    = (M.hInventA+M.hCoordA)/Math.max(1,S.teachers);
+  M.hSaved    = M.hNow-M.hAfter;
+  M.daysSaved = M.hSaved/7;                                 // a teaching day is about seven hours
+
+  // Standing units a teacher belongs to. The house team absorbs the ad-hoc groups.
+  M.teamN     = S.teachers/Math.max(1,S.houses);
+  M.unitsNow  = 4 + M.cttSeats/Math.max(1,S.teachers);       // dept, level, form class, CCA, ad-hoc
+  M.unitsAfter= 5 + M.cttAfter*S.cttSize/Math.max(1,S.teachers); // + house team, form becomes tutor group
+
+  // Duty. Ten adults on a block day, spread across the year.
+  M.dutySlots = M.blockDays*S.duty;
+  M.dutyPer   = M.dutySlots/Math.max(1,S.teachers);
+  M.dutyHouse = M.dutySlots/Math.max(1,S.houses)/Math.max(1,M.teamN);
+
+  // Opportunity, which is the thing that must not fall while workload does.
+  M.offersNow = A.meanPerDate;                              // choices on a block day today
+  M.offersNew = M.running;                                  // groups running concurrently
+  M.offerGain = M.offersNow>0?M.offersNew/M.offersNow:0;
+
+  // Who holds whom. A vertical tutor group holds the same Beattyian for years.
+  M.tutorLoad  = M.houseSize/Math.max(1,S.tutors);
+  M.holdYears  = ARCH[S.arch].persist>=.9?S.levels:1;        // years the same adult holds a student
+  M.targetedN  = Math.round(M.N*S.tierT/100);
+  M.intensiveN = Math.round(M.N*S.tierI/100);
+  M.caseload   = M.tutorLoad*S.tierT/100;                    // targeted students per tutor
+  M.caseOk     = M.caseload<=5;
+  M.tutorsAll  = S.houses*S.tutors;
+  M.namedAdult = M.tutorsAll>0?M.N/M.tutorsAll:0;
   M.audiencePer=S.showScope==='house'?M.houseSize:M.N;
   M.witness=Math.min(1,S.showcases*M.audiencePer/Math.max(1,M.N));
   M.presenters=M.pursueN+Math.round(M.build*0.25);
@@ -795,10 +851,11 @@ function heatCell(t){const i=clamp(Math.round(clamp(t,0,1)*(HEAT.length-1)),0,HE
 function svgWrap(w,h,i){return `<svg viewBox="0 0 ${w} ${h}" role="img">${i}</svg>`;}
 function hbar(rows,o={}){
   const w=o.w||560,rh=o.rh||21,pad=o.lw||190,gap=3;
-  const max=o.max||Math.max(1,...rows.map(r=>r[1]));
+  const sc=o.log?(v=>Math.log10(Math.max(0,v)+1)):(v=>v);
+  const max=sc(o.max||Math.max(1,...rows.map(r=>r[1])));
   const h=rows.length*(rh+gap)+14;
   let s='<g font-family="Calibri,sans-serif" font-size="11.5">';
-  rows.forEach((r,i)=>{const y=i*(rh+gap)+4,bw=Math.max(1,(r[1]/max)*(w-pad-72));
+  rows.forEach((r,i)=>{const y=i*(rh+gap)+4,bw=Math.max(1,(sc(r[1])/max)*(w-pad-72));
     s+=`<text x="${pad-7}" y="${y+rh*.7}" text-anchor="end" fill="#53575f">${esc(r[0])}</text>`;
     s+=`<rect x="${pad}" y="${y}" width="${bw}" height="${rh-4}" fill="${r[2]||'#000C53'}"/>`;
     s+=`<text x="${pad+bw+6}" y="${y+rh*.7}" fill="#1a1c22" font-weight="bold">${esc(r[3]!==undefined?r[3]:r[1])}</text>`;});
@@ -1027,7 +1084,7 @@ const CITE=[
   cut:{fb:'1',fg:'G3'},led:'banding'},
  {id:'E7',src:'wb',prov:'mea',t:'CCA occurrences by day of week',
   v:()=>`Wed ${A.ccaDay.Wed||0}, Thu ${A.ccaDay.Thu||0}, busiest ${Math.max(...Object.values(A.ccaDay))}`,
-  how:'Records in the uniformed-group and performing-arts categories, counted by weekday. Nationally Wednesday is the busiest CCA day in Singapore secondary schools; at Beatty it is nearly the emptiest, so the block you want to guard is structurally free.',
+  how:'Records in the uniformed-group and performing-arts categories, counted by weekday. Nationally Wednesday is the busiest CCA day in Singapore secondary schools; at Beatty it is nearly the emptiest, so the block you want to guard is structurally free. The reproduce button opens the larger of the two categories; switch the category filter to see the other.',
   cut:{fc:'Uniformed Groups and CCA-linked'},led:'ccaday'},
  {id:'E8',src:'wb',prov:'mea',t:'Category-by-level cells with no enrichment at all',
   v:()=>`${A.emptyCells} empty cells of ${A.cats.length*A.levels.length}`,
@@ -1066,7 +1123,7 @@ const CITE=[
 
  {id:'R1',src:'pub',prov:'res',t:'Renzulli talent pool share',
   v:()=>'15 to 20 percent, refreshed by action information',
-  how:'Schoolwide Enrichment Model. The revolving door is the mechanism: a Beattyian enters on demonstrated interest and leaves on completing a product, so the same seats reach more people over a school career.'},
+  how:'Schoolwide Enrichment Model. The published figure is how many are in the pool at any one moment, not how many pass through it. The revolving door is the mechanism that separates the two: a Beattyian enters on demonstrated interest and leaves on completing a product.'},
  {id:'R2',src:'pub',prov:'res',t:'Renzulli’s four tests for a real Type III',
   v:()=>'Personal relevance, no predetermined solution, a new product, an audience who voluntarily attend',
   how:'The fourth is the one implementations fail. It is also the one a house system answers for free, which is the whole argument on the Talent tab.'},
@@ -1084,8 +1141,14 @@ const CITE=[
   v:()=>`Zipf demand at skew ${S.skew}, re-offered each round`,
   how:'Ranked popularity across the groups on offer, with remaining places re-offered to unplaced Beattyians. Produces the first-choice and first-or-second figures. The skew is a slider; nobody has measured Beatty’s real demand curve.'},
  {id:'M2',src:'mod',prov:'mod',t:'Talent model turnover rates',
-  v:()=>Object.values(TMODELS).map(t=>t.short+' '+pct(1-t.persist)).join(', '),
-  how:'Pool shares come from the published models. The rate at which a Beattyian rotates out has never been measured here, so the curve shapes on the Talent tab are robust and the exact end points are not.'},
+  v:()=>Object.values(TMODELS).map(t=>t.short+' '+pct(1-t.persist)+', ever '+pct(t.ever)).join('; '),
+  how:'Seated-at-once shares are published. Turnover, and therefore the share ever reached across a school career, has never been measured here. The ordering of the models is robust to that; the exact end points are not.'},
+ {id:'M4',src:'mod',prov:'mod',t:'Coordination cost of a programme',
+  v:()=>`${S.designHrs} h to design one, ${S.cttSize} teachers &times; ${S.cttHrs} h a year to run the group`,
+  how:'The calendar records events and never hours, so nothing here measures teacher time. These are controls on the Schooling tab. What is measured is the count they multiply: 42 programmes invented in 2025, 66 of 133 running once or twice, 38 percent continuity. The argument rests on the counts, not the rates.'},
+ {id:'M5',src:'mod',prov:'mod',t:'Share of Beattyians needing targeted or intensive support',
+  v:()=>`${S.tierT} percent targeted, ${S.tierI} percent intensive`,
+  how:'A school judgement, set on the Schooling tab. Nothing in the calendar identifies a Beattyian in difficulty, and nothing here should be read as doing so. It sizes a tutor caseload, no more.'},
  {id:'M3',src:'mod',prov:'mod',t:'Affinity, spirit and connectedness index',
   v:()=>`${simulate({}).affinity} of 100 at the current settings`,
   how:'A weighted composite of persistence, cohesion, mixing, showcase reach and Cup fairness. It is an index for comparing configurations against each other, not a measurement of anything. Treat movement as meaningful and the absolute number as decoration.'}
@@ -1100,23 +1163,23 @@ function citeChip(id){const c=CITE.find(x=>x.id===id);if(!c)return '';
    difference between them only appears cumulatively. */
 const TMODELS={
  renzulli:{n:'Renzulli revolving door',short:'Revolving door',c:'#000C53',
-   pool:.20,persist:.45,cite:'R1',
+   at:.175,ever:.60,persist:.45,cite:'R1',
    d:'A talent pool of 15 to 20 percent, refreshed by action information. A Beattyian revolves in on demonstrated interest and out on completing a product.',
-   src:'Renzulli, Schoolwide Enrichment Model. Published pool 15 to 20 percent.'},
+   src:'Published: 15 to 20 percent seated at any one time. The share ever reached is modelled.'},
  gagne:{n:'Gagn&eacute; sustained practice',short:'Sustained practice',c:'#1F5FA8',
-   pool:.10,persist:.82,cite:'R3',
+   at:.10,ever:.12,persist:.82,cite:'R3',
    d:'The top ten percent of the reference group, held through years of deliberate practice. Depth over breadth by design.',
-   src:'Gagn&eacute;, Differentiating Model of Giftedness and Talent. Prevalence threshold top 10 percent.'},
+   src:'Published: top ten percent prevalence threshold. Held, so almost nobody new arrives.'},
  fixed:{n:'Fixed selection, Beatty today',short:'Fixed selection',c:'#b3312a',
-   pool:.07,persist:.94,cite:'E13',
+   at:.07,ever:.08,persist:.94,cite:'E13',
    d:`Select once and keep. This is already the pattern in the calendar: ${A.selProg} distinct enrichment programmes carry selection language across ${A.selOcc} of ${A.enrich} occurrences, and they recruit repeatedly from the same Beattyians.`,
    src:'Calibrated on the audit: see reference E13.'},
  universal:{n:'Universal Pursue',short:'Universal',c:'#15683d',
-   pool:1,persist:.30,cite:'',
+   at:1,ever:1,persist:.30,cite:'',
    d:'Everybody produces something for an outside audience. No selection at all.',
    src:'No published precedent at this scale. Included as the upper bound.'},
  twotier:{n:'Explore all, Pursue few',short:'Two tier',c:'#8a6508',
-   pool:.35,persist:.60,cite:'',
+   at:.15,ever:.45,persist:.60,cite:'',
    d:'A broad exploration tier for everyone with a deliberately small, deep pursuit tier that turns over slowly.',
    src:'The compromise most schools land on in practice.'}
 };
@@ -1131,10 +1194,11 @@ function simTalent(M,key){
   // When pathways are not cross-house a Beattyian can only pursue what their own
   // house stewards. Same access factor the Design tab already uses for pool size.
   const access=M.crossDomain?1:(M.byInterest?0.72:1/Math.sqrt(Math.max(1,S.houses)));
-  // The most distinct Beattyians this model could ever reach.
-  const ceiling=Math.min(N,N*T.pool*access);
-  // Places available each cycle, capped by the pool that may occupy them.
-  const seats=Math.max(0,Math.min(M.pursueN,M.byInterest?M.hMax:N,ceiling));
+  // Two different quantities, and conflating them is the commonest error here.
+  // at   = seated at any one time. Published, and a ceiling on your Pursue setting.
+  // ever = ever reached across a whole school career. Modelled, and the real argument.
+  const ceiling=Math.min(N,N*T.ever*access);
+  const seats=Math.max(0,Math.min(M.pursueN,M.byInterest?M.hMax:N,N*T.at,ceiling));
   const churn=seats*(1-T.persist);
   let distinct=seats;
   const series=[Math.round(distinct)];
@@ -1149,6 +1213,8 @@ function simTalent(M,key){
     distinct:Math.round(distinct),
     reach:Math.min(1,distinct/N),
     perCycle:Math.round(seats),
+    atShare:seats/N,
+    capped:M.pursueN>N*T.at+0.5,               // your setting exceeds the published pool
     meanTenure,
     sessions:meanTenure*S.sessions,           // sustained practice per Beattyian reached
     depthOk:meanTenure*S.sessions>=20,        // two full cycles is the usual floor for a real product
@@ -1564,17 +1630,18 @@ function tabTal(M){
     <p class="note">The amber line at 20 sessions is roughly two full cycles, the usual floor for producing something real for an outside audience. Anything below it is exposure, not talent development. Top right is unreachable: places are finite, so reach is bought with depth and depth is bought with reach. The decision is where on that curve Beatty wants to sit, and it is a decision, not a calculation.</p>
 
     <div class="scroll"><table><thead><tr><th scope="col">Model</th><th scope="col" class="n">Places a cycle</th>
-      <th scope="col" class="n">Reached in ${S.levels} yr</th><th scope="col" class="n">Share of cohort</th>
+      <th scope="col" class="n">Seated at once</th><th scope="col" class="n">Reached in ${S.levels} yr</th><th scope="col" class="n">Share of cohort</th>
       <th scope="col" class="n">Cycles held</th><th scope="col" class="n">Sessions each</th>
       <th scope="col" class="n">Deep enough</th><th scope="col"></th></tr></thead><tbody>`+
       all.map(r=>`<tr class="${r.key===S.tmodel?'hi':''}"><td><b style="color:${r.T.c}">${r.T.n}</b><div class="hint">${r.T.src}</div></td>
-        <td class="n">${cm(r.perCycle)}</td><td class="n"><b>${cm(r.distinct)}</b></td><td class="n">${pct(r.reach)}</td>
+        <td class="n">${cm(r.perCycle)}</td><td class="n">${pct(r.T.at)}<div class="hint">published</div></td>
+        <td class="n"><b>${cm(r.distinct)}</b></td><td class="n">${pct(r.reach)}</td>
         <td class="n">${r1(r.meanTenure)}</td><td class="n">${r1(r.sessions)}</td>
         <td class="n" style="color:${r.depthOk?'var(--ok)':'var(--bad)'};font-weight:bold">${r.depthOk?'yes':'no'}</td>
         <td class="n"><button class="chip ${S.tmodel===r.key?'on':''}" data-tm="${r.key}">${S.tmodel===r.key?'in use':'use'}</button></td></tr>`).join('')+
       `</tbody></table></div>
     <div class="box warn"><h3>What this simulation is, and is not</h3>
-      <p style="font-size:.92em">Places a cycle come from your own settings on the Design tab. Pool share comes from the published models: Renzulli names a 15 to 20 percent talent pool refreshed by action information ${citeChip('R1')}, Gagn&eacute; a top-ten-percent threshold held through sustained practice ${citeChip('R3')}. Fixed selection is calibrated on what the audit actually found in the calendar ${citeChip('E13')}.</p>
+      <p style="font-size:.92em">Two different quantities, and conflating them is the commonest error in this argument. <b>Seated at once</b> is published: Renzulli names 15 to 20 percent of the cohort in the talent pool at any moment ${citeChip('R1')}, Gagn&eacute; a top-ten-percent prevalence threshold ${citeChip('R3')}, and the audit found Beatty running at about seven ${citeChip('E13')}. <b>Reached over a school career</b> is what turnover does to that number, and it is modelled. Your Pursue setting of ${S.pursue} percent is ${cur.capped?`above ${TMODELS[S.tmodel].short}'s published pool, so the simulation caps it at ${cm(cur.perCycle)} places`:'within the published pool for this model'}.</p>
       <p style="font-size:.92em;margin:0">Turnover rates are <span class="tag mod">modelled</span> ${citeChip('M2')}. Nobody has measured how often a Beattyian would rotate out, and the calendar cannot tell you. The <i>shape</i> of these curves is robust to that; the exact end points are not. Present the ordering, not the decimals.</p></div>`;
   }
 
@@ -1624,7 +1691,189 @@ function tabTal(M){
    <div class="subs">${subs.map(s=>`<button data-sub="tal:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
 }
 
-/* ================================================================= TAB 4 TRADE-OFFS */
+
+/* ================================================================= TAB 4 SCHOOLING */
+/* Two ladders of the same shape, sharing a base. Talent points up, support points
+   down, and the universal tier is the same tier. */
+function twinLadder(M,w=660){
+  const h=278,cx=w/2,baseY=232,tierH=52,gap=26;
+  const L=[['Pursue',M.pursueN,'#000C53'],['Build',M.build,'#3c4677'],['Explore',M.explore,'#5c6288']];
+  const R=[['Intensive',M.intensiveN,'#6e1f1a'],['Targeted',M.targetedN,'#8c2f2a'],['Universal',M.N,'#a3522a']];
+  const wid=[112,196,268];
+  let g='<g font-family="Calibri,sans-serif">';
+  const side=(rows,dir)=>{let s='';
+    rows.forEach((r,i)=>{
+      const lvl=i, bw=wid[lvl], y=baseY-(2-lvl)*(tierH+8)-tierH;
+      const x=dir<0?cx-gap/2-bw:cx+gap/2;
+      s+=`<rect x="${x}" y="${y}" width="${bw}" height="${tierH}" fill="${r[2]}"/>`+
+         `<text x="${x+bw/2}" y="${y+22}" text-anchor="middle" font-family="Georgia,serif" font-size="13.5" fill="#fff">${esc(r[0])}</text>`+
+         `<text x="${x+bw/2}" y="${y+39}" text-anchor="middle" font-size="11.5" fill="#fff">${cm(r[1])}</text>`;
+    });
+    return s;};
+  g+=side(L,-1)+side(R,1);
+  g+=`<text x="${cx-gap/2-wid[2]}" y="20" font-family="Georgia,serif" font-size="14" fill="#000C53">Talent, sorted by readiness</text>`+
+     `<text x="${cx+gap/2+wid[2]}" y="20" text-anchor="end" font-family="Georgia,serif" font-size="14" fill="#6e1f1a">Support, sorted by need</text>`+
+     `<text x="${cx-gap/2-6}" y="42" text-anchor="end" font-size="11" fill="#666c78">few, deep, chosen</text>`+
+     `<text x="${cx+gap/2+6}" y="42" font-size="11" fill="#666c78">few, deep, referred</text>`;
+  // the shared base
+  g+=`<rect x="${cx-gap/2-wid[2]}" y="${baseY+10}" width="${2*wid[2]+gap}" height="34" fill="#FFE200"/>`+
+     `<text x="${cx}" y="${baseY+32}" text-anchor="middle" font-family="Georgia,serif" font-size="13.5" fill="#1a1c22">One house tutor group of ${cm(Math.round(M.tutorLoad))}, weekly, for ${M.holdYears} year${M.holdYears===1?'':'s'}</text>`;
+  return svgWrap(w,h+16,g+'</g>');
+}
+function tabSc(M){
+  const sub=S.sub.sc||'load';
+  const subs=[['load','Teacher workload'],['tiers','One structure, three jobs'],['deploy','Deployment']];
+  let body='';
+
+  if(sub==='load'){
+    const bars=[['Inventing new programmes',M.hInvent/S.teachers,'#b3312a'],
+                ['Ad-hoc working groups',M.hCoord/S.teachers,'#8c2f2a']];
+    const barsA=[['Refreshing the catalogue',M.hInventA/S.teachers,'#15683d'],
+                 ['Groups not yet folded in',M.hCoordA/S.teachers,'#3f6b4f']];
+    const mx=Math.max(1,M.hNow,M.hAfter);
+    const stack=(rows,y,lab)=>{let x=150,s=`<text x="142" y="${y+21}" text-anchor="end" font-family="Georgia,serif" font-size="13" fill="#000C53">${esc(lab)}</text>`;
+      rows.forEach(r=>{const bw=r[1]/mx*430;
+        s+=`<rect x="${x}" y="${y}" width="${Math.max(0,bw)}" height="30" fill="${r[2]}"/>`;
+        if(bw>44)s+=`<text x="${x+bw/2}" y="${y+20}" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">${r1(r[1])}</text>`;
+        x+=bw;});
+      return s+`<text x="${x+7}" y="${y+20}" font-size="12" fill="#000C53" font-weight="bold">${r1(rows.reduce((a,b)=>a+b[1],0))} h</text>`;};
+    body=`
+    <div class="metrics">
+      <div class="m bad"><b>${A.born}</b><span>programmes invented in a single year</span><i class="bad">${A.died} died the same year &middot; ${pct(A.churnPct)} continuity</i><button data-jump="churn">show the rows</button></div>
+      <div class="m bad"><b>${r1(M.hNow)} h</b><span>per teacher a year, inventing and coordinating</span><i class="bad">${cm(Math.round(M.hInvent+M.hCoord))} teacher-hours school-wide</i></div>
+      <div class="m ok"><b>${r1(M.hAfter)} h</b><span>the same work off a stable catalogue</span><i class="ok">${S.consol} percent of groups folded into house teams</i></div>
+      <div class="m ${M.daysSaved>=1?'ok':(M.daysSaved<0?'bad':'warn')}"><b>${r1(Math.abs(M.daysSaved))}</b><span>working days ${M.daysSaved<0?'<b style="color:var(--bad);display:inline">lost</b>':'back'}, per teacher, per year</span><i class="${M.daysSaved>=1?'ok':(M.daysSaved<0?'bad':'warn')}">${M.daysSaved<0?`This configuration costs ${r1(-M.hSaved)} hours more each than today`:`${r1(M.hSaved)} hours each, ${cm(Math.round(M.hSaved*S.teachers))} across the staff`}</i></div>
+      <div class="m ${M.offerGain>=3?'ok':'warn'}"><b>&times;${r1(M.offerGain)}</b><span>change in choice on a block day</span><i class="${M.offerGain>=3?'ok':'warn'}">${r1(M.offersNow)} programmes today, ${M.offersNew} groups under this design</i></div>
+    </div>
+
+    <div class="box nav"><h2>The workload is invention, not delivery</h2>
+     <p style="font-size:.94em">This is the finding that makes everything else possible. Beatty ran <b>${A.y24}</b> enrichment programmes in 2024 and <b>${A.y25}</b> in 2025, and only <b>${A.survived}</b> were the same ones ${citeChip('E4')}. <b>${A.prog1or2}</b> of <b>${A.progCount}</b> programmes appear on one or two dates in two years ${citeChip('E5')}. A programme that runs once still costs a full design: a concept, a vendor or a venue, a deployment, a risk assessment, a comms note, a debrief. The school is paying that cost about <b>${A.born}</b> times a year and getting <b>${r1(A.meanPerDate)}</b> choices on a block day for it ${citeChip('E1')}.</p>
+     <p style="font-size:.94em;margin:0">A stable catalogue inverts that. Design <b>${M.catalogue}</b> groups once, refresh <b>${S.refresh}</b> percent of them a year, and run them ${S.cycles} cycles: <b>${M.reNew}</b> new designs a year instead of ${A.born}, and <b>${M.offersNew}</b> things happening at once instead of ${r1(M.offersNow)}. Workload falls and opportunity rises, because they were never the same axis.</p></div>
+
+    <h2>Where the non-teaching hours go</h2>
+    <div class="chart scroll">${svgWrap(660,120,'<g>'+stack(bars,10,'Today')+stack(barsA,68,'Proposed')+'</g>')}</div>
+    <div class="chips">
+      <span class="kv"><b style="color:#b3312a">&#9679;</b>inventing</span>
+      <span class="kv"><b style="color:#8c2f2a">&#9679;</b>ad-hoc groups</span>
+      <span class="kv"><b style="color:#15683d">&#9679;</b>refreshing a catalogue</span>
+      <span class="kv"><b style="color:#3f6b4f">&#9679;</b>groups not folded in</span></div>
+    <p class="note">Hours are <span class="tag mod">modelled</span> ${citeChip('M4')}. The calendar records events, never hours, so these are controls below, not measurements. The <i>counts</i> they multiply &mdash; ${A.born} inventions, ${A.progCount} programmes, ${pct(A.churnPct)} continuity &mdash; are measured. Move the sliders to your own estimate of what a new programme costs and the argument survives, because it rests on the counts.</p>
+
+    <h2>Your assumptions</h2>
+    <div class="grid2">
+     <div>${rng('cttees','Programmes invented a year',0,80,1,`Measured at ${A.born} in 2025. This is the number the design attacks.`)}
+      ${rng('designHrs','Teacher-hours to design and mount one',2,40,1,'Concept, venue or vendor, deployment, risk, comms, debrief.')}
+      ${rng('cttSize','Teachers on a working group',2,12,1,'How many people a new programme pulls in.')}</div>
+     <div>${rng('cttHrs','Hours a year each of them spends on it',1,24,1,'Meetings, follow-up, chasing.')}
+      ${rng('refresh','Percent of the catalogue refreshed a year',0,60,5,`${M.reNew} new designs a year instead of ${A.born}.`)}
+      ${rng('consol','Percent of groups folded into house teams',0,100,5,'A house team already meets. A new committee does not.')}</div>
+    </div>
+    <div class="box warn"><h3>What this does not claim</h3>
+     <p style="font-size:.93em;margin:0">It does not claim teachers work fewer hours. It claims a different <i>mix</i>: fewer hours spent inventing things that will not survive the year, and the hours that remain spent on things that recur, which is where expertise compounds. It also does not touch marking, lesson preparation or contact time, which are the larger share of the load and are not what the house system can move.</p></div>`;
+  }
+
+  else if(sub==='tiers'){
+    body=`
+    <div class="box nav"><h2>The same shape, pointed two ways</h2>
+     <p style="font-size:.94em">Talent development and pastoral support are usually run as two structures, with two sets of meetings, two sets of records and two sets of people who each see half a Beattyian. They are the same architecture. A universal tier everybody is in, a targeted tier some are identified into, an intensive tier a few are referred to. Renzulli calls them Type I, II and III and points them at ability. Response-to-intervention calls them Tier 1, 2 and 3 and points them at need. <b>The universal tier is the same tier.</b></p></div>
+
+    <div class="chart scroll">${twinLadder(M)}</div>
+    <p class="note">Both ladders stand on one tutor group. That is the whole proposal on this tab: one standing structure carrying both jobs, so the adult who notices a Beattyian is flourishing is the adult who notices they have stopped turning up.</p>
+
+    <div class="metrics">
+      <div class="m"><b>${cm(Math.round(M.tutorLoad))}</b><span>Beattyians per tutor</span><i>${S.tutors} tutors in a house of ${cm(M.houseSize)}</i></div>
+      <div class="m ${M.holdYears>1?'ok':'warn'}"><b>${M.holdYears}</b><span>year${M.holdYears===1?'':'s'} the same adult holds them</span><i class="${M.holdYears>1?'ok':'warn'}">${M.holdYears>1?'Vertical: the relationship survives the level change':'Horizontal: the relationship restarts every year'}</i></div>
+      <div class="m ${M.caseOk?'ok':'bad'}"><b>${r1(M.caseload)}</b><span>targeted Beattyians per tutor</span><i class="${M.caseOk?'ok':'bad'}">${M.caseOk?'Small enough to actually hold':'Too many to hold properly'}</i></div>
+      <div class="m"><b>${cm(M.targetedN)}</b><span>need targeted support</span><i>${S.tierT} percent of ${cm(M.N)}</i></div>
+      <div class="m"><b>${cm(M.intensiveN)}</b><span>need intensive support</span><i>${S.tierI} percent, specialist referral</i></div>
+    </div>
+
+    <h2>The thing this buys that money cannot</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">Question</th><th scope="col">Form class, horizontal</th><th scope="col">House tutor group, vertical</th></tr></thead><tbody>
+     <tr><td><b>How long does one adult hold a Beattyian?</b></td><td>One year, sometimes two</td><td class="hi"><b>${M.holdYears} years</b>, the whole time they are here</td></tr>
+     <tr><td><b>Who notices a change?</b></td><td>An adult who met them in January</td><td class="hi">An adult who has three years of baseline</td></tr>
+     <tr><td><b>Where does a concern go?</b></td><td>Form teacher to level head to committee</td><td class="hi">Tutor to house lead, a standing team of ${S.tutors}</td></tr>
+     <tr><td><b>Who are the near-peers?</b></td><td>Same age, same pressures, same term</td><td class="hi">Beattyians who cleared it last year</td></tr>
+     <tr><td><b>Cost of the change</b></td><td>&mdash;</td><td class="hi">Zero marginal staffing. It is a grouping decision</td></tr>
+    </tbody></table></div>
+    <p class="note">Continuity of relationship is the one pastoral lever that costs nothing and cannot be bought later. It is a structural choice made once, at allocation, and everything downstream inherits it. ${citeChip('R4')} puts peer tutoring at five to six months of additional progress, which is the near-peer half of the same mechanism.</p>
+
+    <div class="box ok"><h3>Why the block is the right place to do it</h3>
+     <p style="font-size:.93em">Support that happens in curriculum time removes a Beattyian from a lesson, in front of the class, repeatedly. Support that happens after school competes with CCA and with the bus. Support that happens inside a protected block that <i>everybody</i> is already in is invisible: on Thursday some Beattyians are building a product, some are being tutored, some are with a counsellor, and from the corridor it all looks the same. Wednesday universal, Thursday differentiated, one slot, no withdrawal.</p>
+     <p style="font-size:.93em;margin:0">This is also why the two days should not be used identically, and today they are: ${A.wed} in-block enrichment records on Wednesday against ${A.thu} on Thursday, same categories in the same order ${citeChip('E10')}.</p></div>
+
+    <div class="grid2">
+     <div>${rng('tierT','Percent needing targeted support',0,40,1,'School judgement. Nothing in the calendar measures this.')}</div>
+     <div>${rng('tierI','Percent needing intensive support',0,15,1,'Specialist referral, outside what a tutor can hold.')}</div>
+    </div>
+    <div class="box warn"><h3>What breaks</h3>
+     <ul class="t" style="font-size:.93em;margin-bottom:0">
+      <li><b>A weak tutor is weak for ${M.holdYears} years, not one.</b> Vertical grouping raises the cost of a bad match and removes the annual reset that currently hides it. This argues for a light, named review each year, not for abandoning the structure.</li>
+      <li><b>Level teams still have to exist.</b> Assessment briefings, subject-based banding decisions and the examination calendar are all horizontal. The house does not replace the level team; it sits beside it, which is one more standing unit, not one fewer.</li>
+      <li><b>The house lead must not become a second discipline hierarchy.</b> If a house starts holding conduct records, the tutor stops being someone you tell things to. Say in writing which conversations stay with the tutor.</li>
+     </ul></div>`;
+  }
+
+  else {
+    const rows=[
+      ['Ad-hoc programme committee','Forms per programme, dissolves, reforms next year','The house team, standing, already meets in the block',
+        `${Math.round(M.newEach)} a year &rarr; ${Math.round(M.cttAfter)}`, M.cttAfter<M.newEach],
+      ['Duty roster',`Drawn school-wide, ${S.duty} adults a block day`,'Rotated inside the house team, so the same faces recur',
+        `${r1(M.dutyPer)} days each a year`, true],
+      ['Form class','Horizontal, one level, resets each year',`Vertical tutor group, holds for ${M.holdYears} years`,
+        `${cm(Math.round(M.tutorLoad))} per tutor`, M.holdYears>1],
+      ['Programme ownership',`${A.noDept} of ${A.blkEnrich} records carry no department at all`,'A named stewarding house per talent area',
+        M.unstewarded===0?'every area owned':`${M.unstewarded} unowned`, M.unstewarded===0],
+      ['Level team','Horizontal: assessment, banding, the examination calendar','Unchanged. The house does not replace it',
+        'no change', null],
+      ['Department','Subject, curriculum, marking','Unchanged. The house owns none of this',
+        'no change', null]
+    ];
+    body=`
+    <div class="box nav"><h2>Does the house help with deployment?</h2>
+     <p style="font-size:.94em">Yes, but narrowly, and the narrowness is the point. A house is useful as a <b>standing unit</b>: a group of ${Math.round(M.teamN)} adults and ${cm(M.houseSize)} Beattyians that already exists, already meets and already has a lead, so work can be handed to it without first constituting anybody. That is the whole deployment argument. It does not make a house a curriculum unit, an assessment unit or a discipline unit, and every school that has tried to make it one has ended up with two hierarchies arguing.</p></div>
+
+    <div class="metrics">
+      <div class="m"><b>${Math.round(M.teamN)}</b><span>teachers per house team</span><i>${S.teachers} across ${S.houses} houses</i></div>
+      <div class="m"><b>${r1(M.unitsNow)} &rarr; ${r1(M.unitsAfter)}</b><span>standing groups per teacher</span><i class="${M.unitsAfter<M.unitsNow?'ok':'warn'}">${M.unitsAfter<M.unitsNow?'One fewer thing to belong to':'No reduction at this setting'}</i></div>
+      <div class="m"><b>${r1(M.dutyPer)}</b><span>block duty days per teacher a year</span><i>${M.blockDays} block days &times; ${S.duty} on duty</i></div>
+      <div class="m ${M.leadersNeeded<=M.leaderPool?'ok':'bad'}"><b>${cm(M.leadersNeeded)}</b><span>student leaders doing the running</span><i class="${M.leadersNeeded<=M.leaderPool?'ok':'bad'}">${pct(M.leaderRate)} of Sec 3 and above</i></div>
+    </div>
+
+    <h2>What moves, and what deliberately does not</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">Unit</th><th scope="col">Today</th><th scope="col">Under a house system</th><th scope="col">Effect</th></tr></thead><tbody>`+
+      rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td>
+        <td style="color:${r[4]===null?'var(--g4)':(r[4]?'var(--ok)':'var(--warn)')};font-weight:${r[4]===null?'normal':'bold'}">${r[3]}</td></tr>`).join('')+
+      `</tbody></table></div>
+
+    <div class="box ${M.leadersNeeded<=M.leaderPool?'ok':'bad'}"><h3>The arithmetic that forces the design</h3>
+     <p style="font-size:.93em">${S.duty} adults are free on a block day against ${cm(M.N)} Beattyians ${citeChip('S3')}. That is one adult per ${Math.round(M.N/Math.max(1,S.duty))}. There is no version of an adult-led block that closes at that ratio, so the only question left is what the adults <i>are</i> doing. Under this design ${M.adultRun} run a group directly and ${M.supervisors} roam ${S.superRatio} groups each, and ${cm(M.leadersNeeded)} trained Beattyians in Sec 3 and above do the running.</p>
+     <p style="font-size:.93em;margin:0">${M.leadersNeeded<=M.leaderPool?`${cm(M.leaderPool)} are available, so the pool holds.`:`Only ${cm(M.leaderPool)} are available. The pool does not hold and groups will collapse into supervised study.`} The house is what makes the training tractable: ${S.houses} standing units training their own leaders every year, rather than a school-wide programme somebody has to convene.</p></div>
+
+    <h2>A block day, deployed</h2>
+    <div class="chart scroll">${hbar([
+      ['Beattyians in the block',M.N,'#000C53',cm(M.N)],
+      ['Groups running',M.running,'#1F5FA8',cm(M.running)],
+      ['Student leaders running them',M.leadersNeeded,'#FFB100',cm(M.leadersNeeded)],
+      ['Teachers roaming',M.supervisors,'#EC3237',cm(M.supervisors)],
+      ['Teachers running a group',M.adultRun,'#b3312a',cm(M.adultRun)]
+    ],{w:620,lw:200,rh:22,log:1})}</div>
+    <p class="note">Drawn on a log scale so the small numbers are visible at all. That distortion is the finding: the adult layer is two orders of magnitude smaller than the student layer, and any design that forgets it will be abandoned in week three.</p>
+
+    <div class="box warn"><h3>What breaks</h3>
+     <ul class="t" style="font-size:.93em;margin-bottom:0">
+      <li><b>Consolidation looks like reduced provision.</b> Going from ${A.progCount} programme names to ${M.catalogue} standing groups reads as a cut to anyone counting names, even though choice on a given day goes from ${r1(M.offersNow)} to ${M.offersNew}. Publish the day-level figure, not the annual list.</li>
+      <li><b>House teams inherit whoever is in the house.</b> An ad-hoc committee is chosen for the task. A standing team is not, so the first year will expose mismatches the old structure hid by reselecting every time.</li>
+      <li><b>Nothing here reduces marking or lesson preparation</b>, which are the larger part of the load. This tab moves the coordination layer only, and it should be presented that way or it will be read as a promise it cannot keep.</li>
+     </ul></div>`;
+  }
+
+  return `<header class="pg"><h1>The schooling model</h1>
+   <p class="lede">Reduce what adults spend on coordination, raise what Beattyians are offered, and put the ones who are struggling and the ones who are ready in the same protected block rather than two separate structures. Counts are measured; hours are yours to set.</p></header>
+   <div class="subs">${subs.map(s=>`<button data-sub="sc:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
+}
+
+/* ================================================================= TAB 5 TRADE-OFFS */
 function tabTr(M){
   const sub=S.sub.tr;
   const subs=[['ledger','What this attends to'],['models','Delivery models'],['matrix','Architecture matrix'],
@@ -1772,6 +2021,9 @@ function tabDc(M){
     'The question the Talent tab simulates, and the one nobody usually asks out loud. Renzulli’s revolving door refreshes the pool on completed products; a fixed selection keeps the same Beattyians for years. Same places, same cost, very different school.',
     (()=>{const r=simTalent(M,S.tmodel),f=simTalent(M,'fixed');
       return `${TMODELS[S.tmodel].n} at ${pct(1-TMODELS[S.tmodel].persist)} turnover a cycle reaches ${cm(r.distinct)} different Beattyians over ${S.levels} years, ${r1(r.sessions)} sessions each. Holding the same places fixed reaches ${cm(f.distinct)}.`;})()],
+   ['Do you stop inventing?',
+    `The audit found ${A.born} enrichment programmes invented in a single year and ${A.died} abandoned, with ${pct(A.churnPct)} surviving from one year to the next. Every invention costs a design whether or not it runs twice. The alternative is a catalogue that is refreshed rather than replaced, which is a decision about how the school signals effort, not about capacity.`,
+    `At ${S.refresh} percent refresh the catalogue of ${M.catalogue} groups needs ${M.reNew} new designs a year instead of ${A.born}, and choice on a block day goes from ${r1(M.offersNow)} to ${M.offersNew}. Modelled cost: ${r1(M.hNow)} teacher-hours a year each becomes ${r1(M.hAfter)}.`],
    ['Who reconciles competing claims on a student?',
     'Nobody currently does. Sec 3 in Term 1 of 2024 had six selective programmes live at once, all recruiting from the same pool.',
     `At ${S.tutors} tutors per house each holds ${Math.round(M.tutorRatio)} Beattyians. ${M.tutorRatio<=25?'Small enough to know them individually.':'Too many to reconcile anything meaningfully.'}`],
@@ -1783,7 +2035,7 @@ function tabDc(M){
     `${{absolute:'Absolute',percap:'Per capita',participation:'Participation weighted'}[S.cup]}. Structural advantage to the largest house: ${pct(M.cupBias)}.`]
   ];
   return `<header class="pg"><h1>Decide</h1>
-   <p class="lede">Nine questions. Each is genuinely open, each carries a live consequence from the current settings, and none can be answered by more modelling.</p></header>
+   <p class="lede">Ten questions. Each is genuinely open, each carries a live consequence from the current settings, and none can be answered by more modelling.</p></header>
    <div class="metrics">
     <div class="m ${M.ok?'ok':'bad'}"><b>${M.ok?'Holds':'Fails'}</b><span>Does this configuration hold?</span><i class="${M.ok?'ok':'bad'}">${M.issues.length} finding${M.issues.length===1?'':'s'}</i></div>
     <div class="m"><b>${res.filter(r=>r.st==='ok').length} of ${LEDGER.length}</b><span>audit findings attended to</span></div>
@@ -1815,7 +2067,7 @@ function tabDc(M){
 }
 
 /* ================================================================= RENDER */
-const TABS={ev:tabEv,de:tabDe,tal:tabTal,tr:tabTr,dc:tabDc};
+const TABS={ev:tabEv,de:tabDe,tal:tabTal,sc:tabSc,tr:tabTr,dc:tabDc};
 let PREV=null;
 function statusBar(M){
   const bad=M.issues.filter(i=>i[0]==='b').length,warn=M.issues.filter(i=>i[0]==='w').length;
