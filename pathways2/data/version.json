@@ -6,8 +6,20 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.8.0",
+  "version": "2.9.0",
   "releases": [
+    {
+      "version": "2.9.0",
+      "date": "2026-08-09",
+      "head": "The school I am actually in",
+      "changes": [
+        "Every other page in this app assumed one road: a government or government aided school, Full Subject Based Banding, the SEC at sixteen. That is most people and it is not everybody. There is a page now for all seven kinds of secondary school.",
+        "Each one says how much of this app actually fits it, including the ones where the honest answer is that it does not model that road at all. The ITE Skills Certificate, which NorthLight, Assumption Pathway, Crest and Spectra work toward, appeared nowhere in this app until now.",
+        "Named for anybody who needs school to work differently: access arrangements for exams, the Allied Educator for learning and behavioural support, transition planning in special education schools, and SG Enable. Named, not advised on, because this app has no business giving guidance on special educational needs.",
+        "The Plan screen now says out loud what it assumes, right next to the subject planner, with a way to the page for anybody whose school works differently.",
+        "A real phone bug fixed. Opening a card far down a long page could leave the Close button somewhere a thumb could not reach it, because a scrolled page lets the browser hide its own address bar and that slides the sheet's bottom into the strip the browser owns. The page now freezes while a sheet is open, and comes back to exactly where it was."
+      ]
+    },
     {
       "version": "2.8.0",
       "date": "2026-08-09",

@@ -1667,3 +1667,30 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .frame, .counter, .truth { break-inside: avoid; }
   .frames { gap: 12pt; }
 }
+
+/* The badge on each kind of school. Deliberately NOT a traffic light. "This app
+   does not model this road" is a fact about the app, not a verdict on a student,
+   so all three states carry the same weight and none of them is red. */
+.applies {
+  display: inline-block; padding: 2px 10px; border-radius: var(--r-pill);
+  font-size: var(--t-micro); font-weight: 700; border: 1px solid;
+}
+.ap-full { color: var(--open-ink); background: var(--open-wash); border-color: var(--open); }
+.ap-part { color: var(--within); background: var(--within-wash); border-color: var(--within); }
+.ap-none { color: var(--ink-soft); background: var(--paper-warm); border-color: var(--rule); }
+
+/* One line on the Plan screen, where the app makes its assumption out loud. */
+.notmyroad { margin: var(--s-2) 0 var(--s-3); }
+
+/* THE PAGE, FROZEN WHILE A SHEET IS OPEN.
+   See sheet.js for the measurement. Short version: a scrollable page behind an
+   open sheet lets mobile Chrome collapse its address bar, which makes the layout
+   viewport taller than the visual one and slides the sheet's pinned foot into the
+   strip the browser's own chrome owns. The Close button stops being reachable
+   without anything overlapping it. An unscrollable page cannot collapse the bar. */
+html.sheet-open, html.sheet-open body { overflow: hidden; }
+html.sheet-open body { position: fixed; width: 100%; }
+
+/* And the belt to that brace: the foot clears the gesture area on every phone,
+   whatever the address bar is doing. */
+.sheet-foot { padding-bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px)); }

@@ -16,7 +16,7 @@
 // frightened. A padlock is a claim about a person's future that no aggregate
 // entitles anyone to make.
 
-import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=2.8.0';
+import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=2.9.0';
 
 export const STATES = {
   'open':         { label: 'Open now',        order: 0 },

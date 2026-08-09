@@ -88,7 +88,9 @@
   "enterWork": "What the work actually is",
   "enterWorkSub": "Sixteen parts of working Singapore, and every way into each",
   "enterMoney": "What it costs, and what help there is",
-  "enterMoneySub": "Every route priced, and nine kinds of help by name"
+  "enterMoneySub": "Every route priced, and nine kinds of help by name",
+  "enterSchools": "The school I am actually in",
+  "enterSchoolsSub": "Seven kinds of secondary school, and how much of this fits each"
  },
  "pulse": {
   "opened": "{dest} is open now.",

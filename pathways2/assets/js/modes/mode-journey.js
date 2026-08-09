@@ -8,24 +8,24 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../components/dom.js?v=2.8.0';
-import { icon } from '../components/icons.js?v=2.8.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.8.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.8.0';
-import { cue } from '../sound.js?v=2.8.0';
-import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.8.0';
+import { esc, onAction } from '../components/dom.js?v=2.9.0';
+import { icon } from '../components/icons.js?v=2.9.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.9.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.9.0';
+import { cue } from '../sound.js?v=2.9.0';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.9.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=2.8.0';
+} from '../engine/possible.js?v=2.9.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
-} from '../engine/journey4.js?v=2.8.0';
+} from '../engine/journey4.js?v=2.9.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   setMode, setAim,
-} from '../state.js?v=2.8.0';
+} from '../state.js?v=2.9.0';
 
 let DOORS = {};
 let run = null;

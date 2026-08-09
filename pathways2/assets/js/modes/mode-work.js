@@ -18,10 +18,10 @@
 // sector figures would be dozens of numbers this build cannot defend, and
 // ranking sectors by pay is a prestige ladder wearing a dollar sign.
 
-import { esc, onAction } from '../components/dom.js?v=2.8.0';
-import { icon } from '../components/icons.js?v=2.8.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.8.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.8.0';
+import { esc, onAction } from '../components/dom.js?v=2.9.0';
+import { icon } from '../components/icons.js?v=2.9.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.9.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.9.0';
 
 const LEVEL_LABEL = {
   ite: 'From ITE', poly: 'From a polytechnic', arts: 'From an arts school', uni: 'From a university',

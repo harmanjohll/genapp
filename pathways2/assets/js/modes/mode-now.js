@@ -18,20 +18,21 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.8.0';
-import { icon } from '../components/icons.js?v=2.8.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.8.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.8.0';
-import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.8.0';
-import { costLineFor } from './mode-money.js?v=2.8.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.8.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.8.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.8.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.9.0';
+import { icon } from '../components/icons.js?v=2.9.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.9.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.9.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.9.0';
+import { costLineFor } from './mode-money.js?v=2.9.0';
+import { notMyRoadLink } from './mode-schools.js?v=2.9.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.9.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.9.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.9.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.8.0';
+} from '../state.js?v=2.9.0';
 
 const STATE_API = { setMode };
 
@@ -89,6 +90,7 @@ export function renderNow(container, data, ctx) {
               ? `<p class="micro mute">${esc(c.onTimetable)}</p>`
               : `<p class="micro mute avail-line">${esc(c.availDisclaimer)}
                   <button class="gloss" type="button" data-action="avail">${esc(c.availMore)}</button></p>`}
+            ${notMyRoadLink(DATA)}
             <div id="conflict">${conflictNotice(st.plan, data)}</div>
             ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan, st.year)).join('')}
             ${junctureLine(data, st, phase, showUpper)}
