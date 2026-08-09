@@ -401,7 +401,7 @@
     }
    ],
    "onwardMoves": [
-    "My year head can pair I with the department's other strong teacher.",
+    "My year head can pair me with the department's other strong teacher.",
     "A three person study group replaces about half of a good teacher."
    ],
    "schoolOnly": true,
@@ -772,7 +772,7 @@
    "minAge": 17,
    "maxAge": 19,
    "title": "The wrong course feeling",
-   "body": "Week eight. The module everyone else loves bores I to tears, and the course I dismissed keeps appearing in my search history at 1am.",
+   "body": "Week eight. The module everyone else loves bores me to tears, and the course I dismissed keeps appearing in my search history at 1am.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -1029,7 +1029,7 @@
    "responses": [
     {
      "label": "Own the handover",
-     "outcome": "Documentation, training video, a bugs channel. The client's thank I email becomes page one of my portfolio.",
+     "outcome": "Documentation, training video, a bugs channel. The client's thank you email becomes page one of my portfolio.",
      "gain": {
       "portfolio": 2
      },
@@ -1296,7 +1296,7 @@
    "minAge": 18,
    "maxAge": 21,
    "title": "The command school letter",
-   "body": "My sergeant recommends I for command school. Longer days, heavier bag, and a version of me that gives orders I used to dodge.",
+   "body": "My sergeant recommends me for command school. Longer days, heavier bag, and a version of me that gives orders I used to dodge.",
    "asks": {
     "disposition": "risk",
     "min": 2
@@ -1856,7 +1856,7 @@
    ],
    "onwardMoves": [
     "SkillsFuture Credit does not expire, which is why it goes unspent.",
-    "Conversion programmes place I with an employer before training me."
+    "Conversion programmes place me with an employer before training me."
    ]
   },
   {
@@ -1869,7 +1869,7 @@
    "responses": [
     {
      "label": "Compare maps openly",
-     "outcome": "Four roads, one table, nobody's straight. The form I all filled at fourteen decided the first step and almost nothing else.",
+     "outcome": "Four roads, one table, nobody's straight. The form we all filled at fourteen decided the first step and almost nothing else.",
      "gain": {
       "network": 1
      },
@@ -2242,7 +2242,7 @@
    "minAge": 15,
    "maxAge": 17,
    "title": "The form teacher was right",
-   "body": "Mid Sec 3, the subject my form teacher steered I toward is the one I stopped watching the clock in. I almost took the other one for the friend group.",
+   "body": "Mid Sec 3, the subject my form teacher steered me toward is the one I stopped watching the clock in. I almost took the other one for the friend group.",
    "requiresFlag": "asked_form",
    "responses": [
     {
@@ -2322,7 +2322,7 @@
     },
     {
      "label": "Find that second year",
-     "outcome": "They are final year now. The thank I turns into a coffee, the coffee into my first senior ally.",
+     "outcome": "They are final year now. The thank you turns into a coffee, the coffee into my first senior ally.",
      "gain": {
       "network": 1
      },
@@ -2415,7 +2415,7 @@
     },
     {
      "label": "Keep the relationship warm",
-     "outcome": "A thank me, then an update every semester. References age well when watered.",
+     "outcome": "A thank you, then an update every semester. References age well when watered.",
      "gain": {
       "network": 1
      },
@@ -2710,7 +2710,7 @@
    "responses": [
     {
      "label": "Take the mic",
-     "outcome": "Two rehearsals, one wardrobe crisis, zero disasters. Nine hundred people now file I under confident, inaccurately, usefully.",
+     "outcome": "Two rehearsals, one wardrobe crisis, zero disasters. Nine hundred people now file me under confident, inaccurately, usefully.",
      "gain": {
       "network": 1
      },
@@ -2813,7 +2813,7 @@
     },
     {
      "label": "Suggest a better fit",
-     "outcome": "I know the classmate who explains things even better. Ms D takes me both.",
+     "outcome": "I know the classmate who explains things even better. Ms D takes us both.",
      "gain": {
       "network": 1
      },
@@ -3019,7 +3019,7 @@
    "minAge": 17,
    "maxAge": 22,
    "title": "The letter that says approved",
-   "body": "An email nobody warned I about: the bursary is approved, backdated, and the fee portal now shows a number that fits.",
+   "body": "An email nobody warned me about: the bursary is approved, backdated, and the fee portal now shows a number that fits.",
    "responses": [
     {
      "label": "Bank the difference",
@@ -3207,7 +3207,7 @@
    "type": "setback",
    "minAge": 34,
    "maxAge": 50,
-   "title": "The parent who needs I now",
+   "title": "The parent who needs me now",
    "body": "Appointments, forms and medication times, all landing in the term I was meant to finish the part time diploma.",
    "responses": [
     {
@@ -3467,7 +3467,7 @@
     },
     {
      "label": "Perform certainty",
-     "outcome": "It holds for a quarter. The team works out the gap sooner than that, and stops bringing I problems.",
+     "outcome": "It holds for a quarter. The team works out the gap sooner than that, and stops bringing me problems.",
      "disp": {
       "risk": 1
      }
@@ -3496,7 +3496,7 @@
     },
     {
      "label": "Ask what changed their mind",
-     "outcome": "They tell me: the folder, and one line in the письме. Useful information for every application after.",
+     "outcome": "They tell me: the folder, and one line in the letter. Useful information for every application after.",
      "gain": {
       "skills": 1,
       "network": 1
@@ -3777,7 +3777,7 @@
     },
     {
      "label": "Get the conversion programme",
-     "outcome": "A growing field takes me on and trains I afterwards. The pay dips for a year.",
+     "outcome": "A growing field takes me on and trains me afterwards. The pay dips for a year.",
      "gain": {
       "skills": 2
      },
@@ -3788,7 +3788,7 @@
     }
    ],
    "onwardMoves": [
-    "Career conversion programmes place I with an employer first and train after.",
+    "Career conversion programmes place me with an employer first and train after.",
     "Adjacent industries value the same skills under different job titles."
    ]
   },
@@ -3937,7 +3937,7 @@
    "minAge": 19,
    "maxAge": 27,
    "title": "The bond I signed at nineteen",
-   "body": "A sponsorship paid the fees and named a number of years. Year two arrives, and so does an offer me cannot take.",
+   "body": "A sponsorship paid the fees and named a number of years. Year two arrives, and so does an offer I cannot take.",
    "responses": [
     {
      "label": "Serve it and use it",

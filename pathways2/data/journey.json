@@ -900,7 +900,7 @@
       "network": 1
      },
      "sets": "took_stage",
-     "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know I now."
+     "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know me now."
     }
    ]
   },
@@ -1759,7 +1759,7 @@
    "chapter": "Building",
    "fixedAge": 31,
    "years": 4,
-   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what I learn on purpose while nobody is asking I to.",
+   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what I learn on purpose while nobody is asking me to.",
    "choices": [
     {
      "label": "Take the job that means leading people",
