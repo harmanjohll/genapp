@@ -8,24 +8,24 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../components/dom.js?v=2.4.0';
-import { icon } from '../components/icons.js?v=2.4.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.4.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.4.0';
-import { cue } from '../sound.js?v=2.4.0';
-import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.4.0';
+import { esc, onAction } from '../components/dom.js?v=2.5.0';
+import { icon } from '../components/icons.js?v=2.5.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.5.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.5.0';
+import { cue } from '../sound.js?v=2.5.0';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.5.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=2.4.0';
+} from '../engine/possible.js?v=2.5.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
-} from '../engine/journey4.js?v=2.4.0';
+} from '../engine/journey4.js?v=2.5.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   setMode, setAim,
-} from '../state.js?v=2.4.0';
+} from '../state.js?v=2.5.0';
 
 let DOORS = {};
 let run = null;
@@ -360,7 +360,7 @@ function turnScreen(host, stage, data, age) {
   // The hand deals from the second turn: the first is pure picking, so the
   // systems arrive one at a time.
   const handOpen = run.stepIndex > 0;
-  if (handOpen) dealHand(run, MV(data), age);
+  if (handOpen) dealHand(run, MV(data), age, stage);
   const prev = lastStory();
 
   const choices = pool.map((c, i) => {
@@ -564,7 +564,7 @@ function pointsWhy(jc, n, reasons) {
 
 function handStrip(data, stage, age) {
   const jc = data.copy.journey;
-  const held = heldAsks(run, MV(data), age);
+  const held = heldAsks(run, MV(data), age, stage);
   const usedUp = (run.asksThisYear || 0) >= ASKS_PER_YEAR;
   const leftN = ASKS_PER_YEAR - (run.asksThisYear || 0);
   if (!held.length && !usedUp) return '';
@@ -611,7 +611,10 @@ function commit(data, age) {
   const askRows = [];
   pickedAsks.forEach((id) => {
     const m = MV(data).find((x) => x.id === id);
-    if (m && playAsk(run, m, age, MV(data))) {
+    // The stage, or playAsk falls back to secondary school and a Year Head
+    // becomes playable in a polytechnic. The screen already hides it; without
+    // this the guard behind the screen was the weaker of the two.
+    if (m && playAsk(run, m, age, MV(data), stage)) {
       askRows.push({ label: m.label, outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, gain: m.gain, disp: m.disp || {} });
     }
   });

@@ -177,6 +177,7 @@
  "flags": [
   "ns_yes",
   "ns_no",
+  "went_deep",
   "asked_help",
   "ecg_seen",
   "asked_up",
@@ -250,7 +251,8 @@
       "skills": 1
      },
      "outcome": "Thursday remedial with Mr Tan, week after week. October's paper comes back two grades kinder.",
-     "missed": "The Thursday remedial ran without me."
+     "missed": "The Thursday remedial ran without me.",
+     "sets": "went_deep"
     },
     {
      "label": "Ask about taking a subject higher",
@@ -315,6 +317,9 @@
      "sets": "built_side",
      "outcome": "A game in Scratch, a comic, a stool. Small, finished, and mine."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -391,7 +396,8 @@
      "disp": {
       "flexibility": 1
      },
-     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven."
+     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven.",
+     "sets": "went_deep"
     },
     {
      "label": "Turn my hobby into something people use",
@@ -411,6 +417,9 @@
      "sets": "built_side",
      "outcome": "Twelve people use the thing I made. Two send me bugs. I fix them."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -429,7 +438,8 @@
       "skills": 2
      },
      "outcome": "Past papers before anyone assigns them. The subject starts feeling like mine, not the school's.",
-     "missed": "My best subject stayed merely good this year."
+     "missed": "My best subject stayed merely good this year.",
+     "sets": "went_deep"
     },
     {
      "label": "Start my Early Admissions folder",
@@ -505,6 +515,9 @@
      "outcome": "Saturday coding, a science olympiad squad, youth theatre at the CC. Nobody from my class is there, which is the point.",
      "missed": "The Saturday programme ran without me in it."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -522,7 +535,8 @@
      "gain": {
       "skills": 1
      },
-     "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone."
+     "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone.",
+     "sets": "went_deep"
     },
     {
      "label": "Keep my sleep and exercise this year",
@@ -589,6 +603,9 @@
      "missed": "The EAE window closed. It does not reopen. The main round remains.",
      "sets": "eae_ready"
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -694,7 +711,10 @@
      "outcome": "One more year at a harder level, aimed at a specific course. Slower, and it works."
     }
    ],
-   "noChance": true
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "ch_ns_ask",
@@ -702,7 +722,10 @@
    "years": 0,
    "format": "ask-ns",
    "situation": "One question before the next part. Around now, most Singaporean sons spend two years in uniform. Some serve before their course, some after. Is National Service part of my road?",
-   "noChance": true
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "ch_jc1",
@@ -722,7 +745,8 @@
      "outcome": "Notes I actually reread, a week that repeats, a tutor I stop avoiding. The jump stops feeling like a cliff.",
      "missed": "Term three arrives before my study system does.",
      "capacity": 1,
-     "grew": "worked out how I learn"
+     "grew": "worked out how I learn",
+     "sets": "went_deep"
     },
     {
      "label": "Do my share of PW properly",
@@ -775,6 +799,10 @@
      },
      "outcome": "Cafe counter at Junction 8. My own transport money, and a manager who rates me."
     }
+   ],
+   "at": [
+    "jc",
+    "mi"
    ]
   },
   {
@@ -792,7 +820,10 @@
      "gain": {
       "skills": 1
      },
-     "outcome": "I train like it is a season. Whatever the slip says, I finish knowing I emptied the tank."
+     "outcome": "I train like it is a season. Whatever the slip says, I finish knowing I emptied the tank.",
+     "outcomeIf": {
+      "flag:went_deep": "The habit I built in secondary school does the work now. Whatever the slip says, I finish knowing I emptied the tank."
+     }
     },
     {
      "label": "Pace the year so I last it",
@@ -831,6 +862,10 @@
      "missed": "Plan B stayed unwritten.",
      "opens": "d_polyroad"
     }
+   ],
+   "at": [
+    "jc",
+    "mi"
    ]
   },
   {
@@ -849,9 +884,12 @@
       "skills": 2
      },
      "outcome": "Deadlines in a calendar, readings before the lecture, one clear evening. Week ten arrives and nothing is on fire.",
-     "missed": "Semester one graded I while I was settling in.",
+     "missed": "Semester one graded me while I was settling in.",
      "capacity": 1,
-     "grew": "set up a week that holds"
+     "grew": "set up a week that holds",
+     "outcomeIf": {
+      "flag:went_deep": "I already know how I study, so week one is setup and not discovery. Week ten arrives and nothing is on fire."
+     }
     },
     {
      "label": "Get to know the people on my course",
@@ -900,8 +938,11 @@
       "network": 1
      },
      "sets": "took_stage",
-     "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know I now."
+     "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know me now."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -960,6 +1001,9 @@
      },
      "outcome": "FYP proposal drafted on the evening MRT out of Tanjong Pagar. Tired, organised, on time."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -1018,6 +1062,9 @@
      "missed": "The callback went to voicemail and then to someone else.",
      "opens": "d_workstudy"
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -1077,7 +1124,10 @@
      },
      "outcome": "Tools back where they belong, hours logged, invoices on time. Boring, and it is why people rehire me.",
      "capacity": 1,
-     "grew": "built a routine that holds"
+     "grew": "built a routine that holds",
+     "outcomeIf": {
+      "flag:went_deep": "The routine came with me from school, so it only needs the tools added. Boring, and it is why people rehire me."
+     }
     },
     {
      "label": "Fix things for neighbours and get known",
@@ -1092,7 +1142,10 @@
      "outcome": "The kopitiam auntie's chiller, my neighbour's fan. Word gets around the block that I can fix."
     }
    ],
-   "excludesFlag": "hn_direct"
+   "excludesFlag": "hn_direct",
+   "at": [
+    "ite"
+   ]
   },
   {
    "id": "ch_exit",
@@ -1153,6 +1206,9 @@
      "outcome": "The ECG officer draws the ladder on scrap paper: 2.5 applies, raw 3.5 guarantees. I photograph it.",
      "missed": "The exit decision got made on feel, with the GPA unread."
     }
+   ],
+   "at": [
+    "ite"
    ]
   },
   {
@@ -1212,6 +1268,9 @@
      "missed": "The attachment stayed a timetable, not a foot in the door.",
      "opens": "d_people"
     }
+   ],
+   "at": [
+    "ite"
    ]
   },
   {
@@ -1230,7 +1289,10 @@
      "gain": {
       "portfolio": 2
      },
-     "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot."
+     "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot.",
+     "outcomeIf": {
+      "flag:went_deep": "Making more than asked is already how I work, so thirty drawings costs me nothing. Quantity teaches what taste alone cannot."
+     }
     },
     {
      "label": "Learn to take criticism of my work",
@@ -1278,8 +1340,11 @@
       "network": 1,
       "skills": 1
      },
-     "outcome": "Dim sum service pays for the paint. My feet hate I and my ledger balances."
+     "outcome": "Dim sum service pays for the paint. My feet hate me and my ledger balances."
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1340,6 +1405,9 @@
      "outcome": "I stretch canvas and hold lights for someone mid career. I learn what the job actually is.",
      "missed": "The studio assistant post went in a day."
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1381,7 +1449,7 @@
      "gain": {
       "portfolio": 1
      },
-     "outcome": "Photographed, captioned, on a site with my name as the URL. Future clients find I because of tonight.",
+     "outcome": "Photographed, captioned, on a site with my name as the URL. Future clients find me because of tonight.",
      "opens": "d_portfolio"
     },
     {
@@ -1398,6 +1466,9 @@
      "missed": "The degree deadline passed while the show consumed me.",
      "opens": "d_polyroad"
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1472,7 +1543,10 @@
      "outcome": "I shout commands I once ignored. Leading tired people politely turns out to be a career skill."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
   },
   {
    "id": "ch_ns_ord",
@@ -1546,7 +1620,10 @@
      "missed": "The payout went the way payouts go."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
   },
   {
    "id": "ch_uni",
@@ -1608,7 +1685,10 @@
      "opens": "d_people"
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "uni"
+   ]
   },
   {
    "id": "ch_paycheque",
@@ -1683,7 +1763,11 @@
      "outcome": "Work Study route: employed, paid, studying. Tuesday nights hurt and the certificate is real."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_cross",
@@ -1752,14 +1836,18 @@
      "outcome": "Family, or caring, or the community thing that needs hands. Work holds steady while life takes the lead."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_build",
    "chapter": "Building",
    "fixedAge": 31,
    "years": 4,
-   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what I learn on purpose while nobody is asking I to.",
+   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what I learn on purpose while nobody is asking me to.",
    "choices": [
     {
      "label": "Take the job that means leading people",
@@ -1823,7 +1911,11 @@
      "outcome": "Parents aging, maybe kids arriving, definitely laundry. I resize ambition to fit love, on purpose."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_quiet",
@@ -1832,7 +1924,11 @@
    "years": 1,
    "format": "reflect",
    "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want me named as a teenager is still mine, or has quietly become something else.",
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_mirror",
@@ -1903,7 +1999,11 @@
      "outcome": "Fewer hours, closer commute, one deliberate downshift. The trade is explicit and I sign it."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_late",
@@ -1934,7 +2034,7 @@
      "gain": {
       "skills": 2
      },
-     "outcome": "The software that was supposed to replace I becomes the thing I wield. Younger colleagues notice."
+     "outcome": "The software that was supposed to replace me becomes the thing I wield. Younger colleagues notice."
     },
     {
      "label": "Turn the trade into my own shop",
@@ -1971,7 +2071,11 @@
      "outcome": "I model something rare at my age: enough. The younger ones need to see it done once."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_mi_year",
@@ -2039,8 +2143,12 @@
       "portfolio": 1
      },
      "outcome": "I pick one and drive it. Depth in one paper reads better than flatness across four.",
-     "missed": "Every subject got the same middling hour."
+     "missed": "Every subject got the same middling hour.",
+     "sets": "went_deep"
     }
+   ],
+   "at": [
+    "mi"
    ]
   },
   {
@@ -2110,6 +2218,9 @@
      "outcome": "I build something with three strangers and lose, publicly, and learn more than the winners did.",
      "missed": "The competition happened without me in it."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -2182,7 +2293,14 @@
      "missed": "Nobody's Tuesday depended on me."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
   },
   {
    "id": "ch_own_time",
@@ -2250,7 +2368,14 @@
      "missed": "The trip stayed a tab I never closed."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
   }
  ],
  "endingFrames": [
@@ -2312,5 +2437,17 @@
    "head": "My road, walked my way.",
    "body": "Same start as thousands, same ending as no one. The doors I hold were opened by asking, making and showing up, none of which was printed on the form at fourteen."
   }
- ]
+ ],
+ "institutions": {
+  "sec": "Secondary school",
+  "jc": "Junior College",
+  "mi": "Millennia Institute",
+  "poly": "Polytechnic",
+  "ite": "ITE",
+  "arts": "Arts institution",
+  "ns": "National Service",
+  "uni": "University",
+  "work": "Work",
+  "cet": "Back to study"
+ }
 }

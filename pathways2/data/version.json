@@ -6,8 +6,22 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.4.0",
+  "version": "2.5.0",
   "releases": [
+    {
+      "version": "2.5.0",
+      "date": "2026-08-09",
+      "head": "The people in it belong where I am",
+      "changes": [
+        "Nobody offers me a Year Head in a polytechnic any more. Polys and ITEs have lecturers, course managers and a career centre; JCs have Year Heads; secondary schools have form teachers. Every option down the side and every option straight down is now one that exists where I am standing.",
+        "The card that turns up between years has to make sense. The lab technician now notices a term of staying back to redo the practical, not two titrations, and what he offers is the name of whoever runs the Science team.",
+        "Putting real hours into a subject counts later. Going to remedial, finding somewhere to actually study, going deeper into my best subject: any of those and the A Level year, the first semester, the workshop routine and the studio brief all read differently when I get there.",
+        "A replay is a different year. One card used to take almost two thirds of everything dealt in some chapters; now no card takes more than a quarter, so playing again is playing something new.",
+        "Six new cards for the JC and Millennia years: the Project Work group where two people have not read the brief, four H2 or three, the diploma course I actually want, council in the year the papers get real, the Mother Tongue paper I keep postponing, and the H3 letter.",
+        "Sixty two lines of broken English fixed, including fourteen sentences where the word I was doing the job of me.",
+        "A polytechnic will not hold an offer for a year so I can earn, the SkillsFuture top up arrives at forty and not before, and there is no shortcut from poly to SMU. All three said otherwise."
+      ]
+    },
     {
       "version": "2.4.0",
       "date": "2026-08-08",

@@ -103,6 +103,152 @@ const MURKY = [
   /\bquietly\b/i, /\bthe block\b/i, /\bFYP\b/, /\bPW group\b/i,
 ];
 
+// Pronouns that came out of the voice pass wrong.
+//
+// WHY STRUCTURAL AND NOT A WORD LIST. The check that ran during the voice pass
+// listed the verbs after which "I" would be a mistake, and so it caught
+// "shows I" and missed "needs I now", "warned I about", "trains I afterwards"
+// and "stops bringing I problems", all of which shipped. A list of verbs can
+// only ever catch the verbs on it, so this asks the opposite question: which
+// words can legitimately sit in front of "I"? Only a conjunction, a comparative,
+// a subordinator or an auxiliary in a question. Anything else in front of "I" is
+// a verb or a preposition taking an object, and the object form is "me".
+const BEFORE_I_OK = new Set([
+  'and', 'or', 'but', 'nor', 'so', 'yet', 'then',
+  'that', 'which', 'who', 'whom', 'whose', 'what', 'where', 'when', 'while', 'why', 'how',
+  'if', 'unless', 'because', 'since', 'until', 'till', 'though', 'although', 'whereas',
+  'before', 'after', 'once', 'as', 'than', 'whether', 'lest',
+  'am', 'is', 'are', 'was', 'were', 'do', 'did', 'does', 'have', 'has', 'had',
+  'here', 'there', 'now', 'today', 'yesterday', 'anyway', 'instead',
+]);
+
+/**
+ * Words after which "I" cannot be a subject, so the object form is wanted.
+ *
+ * Prepositions, determiners and quantifiers only. Deliberately NOT a list of
+ * verbs. A verb list was tried twice and failed twice: allowlisting the verbs
+ * that may follow "I" flagged "the roads I did not take", which is correct, and
+ * denylisting the verbs that may precede it missed "needs I now" and three more
+ * that shipped. Both directions require enumerating English. This asks a smaller
+ * question with a closed answer.
+ *
+ * KNOWN GAP, stated rather than papered over: a noun straight after "I", as in
+ * "bringing I problems", is not caught, because nouns cannot be enumerated
+ * either. That shape did ship once and was fixed by hand.
+ */
+const AFTER_I_NEVER = new Set([
+  'for', 'with', 'about', 'toward', 'towards', 'into', 'onto', 'at', 'on', 'in',
+  'to', 'from', 'of', 'by', 'through', 'across', 'against', 'upon', 'without',
+  'beside', 'behind', 'near', 'between', 'among', 'under', 'over', 'during',
+  'a', 'an', 'the', 'my', 'his', 'her', 'their', 'its', 'our',
+  'this', 'that', 'these', 'those', 'both', 'all', 'each', 'every',
+  'now', 'afterwards', 'again', 'too', 'here', 'there', 'back',
+]);
+
+/**
+ * Verbs that cannot take a bare clause, so anything after them is an object.
+ *
+ * THE THIRD SIGNAL, and why it is a list after all. The two rules above need
+ * both halves to agree, and fourteen faults got through because the word after
+ * "I" was an ordinary noun: "telling I things", "graded I while", "hate I and",
+ * "toughens I regardless", "catches I doing", "replace I becomes". Nouns cannot
+ * be enumerated, so that half can never be completed. Verbs can be, partly, and
+ * a partial list that catches a real shape beats a complete rule that does not
+ * exist. The union of the three rules catches every fault this corpus has ever
+ * had; the record of having read all five hundred and fifty three occurrences of
+ * the word by hand is what says so.
+ *
+ * The verbs here are chosen for one property: none of them can be followed by a
+ * clause with no object in between. "He tells me I am late" is grammatical and
+ * "He tells I am late" is not, so every hit is a fault with no exception to
+ * carve out. Verbs that DO take a bare clause, say, know, think, hear, feel,
+ * believe, are deliberately absent, because "she knows I asked" is correct
+ * English and a lint that fails good writing gets deleted.
+ *
+ * Half of these are also nouns, which is why the rule below refuses to fire on
+ * a word sitting behind a determiner: "the leave I am owed", "a business name I
+ * doodled" and "the grades I got" are all noun phrases, and all three were
+ * flagged before that guard went in.
+ */
+const TRANSITIVE_ONLY = [
+  'grade', 'hate', 'replace', 'toughen', 'catch', 'need', 'warn', 'train', 'bring',
+  'show', 'stop', 'help', 'teach', 'give', 'send', 'watch', 'call', 'keep', 'leave',
+  'put', 'thank', 'trust', 'pull', 'push', 'drive', 'treat', 'pay', 'owe', 'follow',
+  'join', 'beat', 'choose', 'pick', 'ignore', 'include', 'invite', 'hire',
+  'coach', 'carry', 'shortlist', 'reject', 'accept',
+  'ask', 'tell', 'make', 'let', 'take', 'want', 'miss', 'find', 'meet',
+];
+// A word behind one of these is a noun, whatever else it could have been.
+// Numerals are deliberately absent: "Semester one graded I while I was settling
+// in" put a number in front of the verb, and listing "one" here excused the one
+// fault the guard's own test then reported as missed.
+const DETERMINER = new Set([
+  'the', 'a', 'an', 'my', 'our', 'his', 'her', 'their', 'its', 'this', 'that',
+  'these', 'those', 'every', 'each', 'no', 'any', 'some', 'own', 'whole',
+  'same', 'other', 'another',
+]);
+const VERB_FORMS = new Set(TRANSITIVE_ONLY.flatMap((v) => {
+  const forms = [v, `${v}s`, `${v}ing`, `${v}ed`];
+  if (v.endsWith('e')) forms.push(`${v.slice(0, -1)}ing`, `${v}d`);
+  if (v.endsWith('y')) forms.push(`${v.slice(0, -1)}ies`, `${v.slice(0, -1)}ied`);
+  if (v.endsWith('ch') || v.endsWith('sh') || v.endsWith('s')) forms.push(`${v}es`);
+  if (/[^aeiou][aeiou][ptgmn]$/.test(v)) forms.push(`${v}${v.slice(-1)}ing`, `${v}${v.slice(-1)}ed`);
+  return forms;
+}));
+// "finds I am readier" is a clause; "finds I readier" is the fault. An auxiliary
+// or a modal straight after the pronoun is the signal that a clause has started.
+const CLAUSE_START = new Set([
+  'am', 'was', 'is', 'are', 'were', 'have', 'has', 'had', 'do', 'did', 'does',
+  'can', 'could', 'will', 'would', 'shall', 'should', 'may', 'might', 'must',
+  'never', 'always', 'still', 'already', 'just', 'only',
+]);
+
+/** A character that is not English has no business in student copy. */
+const NON_ENGLISH = /[^\x00-\x7F\u2018\u2019\u201c\u201d\u2026]/;
+
+/**
+ * The pronoun faults the voice pass left behind.
+ *
+ * Three rules, none of them complete on its own. The first two need both halves
+ * to agree: the word in front of "I" cannot govern a subject, and the word after
+ * it can never follow one. The third asks whether the word in front is a verb
+ * that only ever takes an object.
+ */
+function pronounFaults(value, where) {
+  const out = [];
+  const text = String(value);
+  const re = /(?:([A-Za-z']+)\s+)?([A-Za-z']+) I\s+([A-Za-z']+)/g;
+  let m = re.exec(text);
+  while (m) {
+    const before = (m[1] || '').toLowerCase();
+    const prev = m[2].toLowerCase();
+    const next = m[3].toLowerCase();
+    if (!BEFORE_I_OK.has(prev) && AFTER_I_NEVER.has(next)) {
+      out.push({ path: where, why: `"${m[2]} I ${m[3]}" reads as an object, so it wants "me"`, text: text.slice(0, 90) });
+    } else if (VERB_FORMS.has(prev) && !CLAUSE_START.has(next) && !DETERMINER.has(before)) {
+      out.push({ path: where, why: `"${m[2]}" takes an object, so "${m[2]} I" wants "me"`, text: text.slice(0, 90) });
+    }
+    m = re.exec(text);
+  }
+  // A fixed phrase the pass could eat: "thank you" is a noun here, not a pronoun.
+  if (/\bthank (I|me)\b/i.test(text)) {
+    out.push({ path: where, why: '"thank you" as a noun has lost its you', text: text.slice(0, 90) });
+  }
+  if (/(^|[.!?]\s)Me\b/.test(text)) {
+    out.push({ path: where, why: 'a sentence opening with "Me"', text: text.slice(0, 90) });
+  }
+  const odd = text.match(NON_ENGLISH);
+  if (odd) {
+    out.push({ path: where, why: `a character that is not English: ${JSON.stringify(odd[0])}`, text: text.slice(0, 90) });
+  }
+  return out;
+}
+
+// Exported for the guard's own test. A lint that has stopped biting looks
+// exactly like a corpus that is clean, and the only way to tell the two apart is
+// to feed it the faults it was built for and watch it name them.
+export const __test_pronounFaults = pronounFaults;
+
 // A gendered job noun in a career tool tells half a class the job is not theirs.
 const GENDERED = [
   /\bwaitress\b/i, /\bwaiter\b/i, /\bactress\b/i, /\bsalesman\b/i, /\bsaleswoman\b/i,
@@ -200,6 +346,7 @@ export function runCopyLint(data) {
   });
 
   walkStudentText(data, (value, where) => {
+    pronounFaults(value, where).forEach((f) => murky.push(f));
     // The ban is on the dash as punctuation, which is the thing this house style
     // does not use. A hyphen inside a word is part of a name: Co-Curricular
     // Activity is how MOE spells it, and respelling it would be a different kind
