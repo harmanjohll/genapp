@@ -331,15 +331,17 @@ const DOMAINS=[
 
 const ARCH={
  class:{n:'Class anchored vertical',d:'Every form class Sec 1 upward permanently belongs to a house.',
-   persist:1,cohesion:1,mix:.55,load:1,blind:1,prec:'Kranji 2022, Hua Yi five houses.'},
+   persist:1,cohesion:1,mix:.55,load:1,blind:1,late:1,cross:1,prec:'Kranji 2022, Hua Yi five houses.'},
  random:{n:'Randomly sorted vertical',d:'Random at Sec 1, balanced for gender, banding and CCA.',
-   persist:1,cohesion:.55,mix:1,load:.72,blind:1,prec:'UK vertical tutoring schools.'},
+   persist:1,cohesion:.55,mix:1,load:.72,blind:1,late:1,cross:1,prec:'UK vertical tutoring schools.'},
  cca:{n:'CCA anchored',d:'Each house owns a family of CCAs; you belong to the house that owns yours.',
-   persist:.9,cohesion:.5,mix:.72,load:.8,blind:0,prec:'Boon Lay, four gemstone houses.'},
- faculty:{n:'Faculty aligned',d:'Each house owns an academic domain and recruits on aptitude.',
-   persist:.9,cohesion:.4,mix:.35,load:.6,blind:0,prec:'No Singapore secondary precedent found.'},
+   persist:.9,cohesion:.5,mix:.72,load:.8,blind:0,late:1,cross:1,prec:'Boon Lay, four gemstone houses.'},
+ talent:{n:'Talent-area houses',
+   d:'The house IS the talent area. You join Fisher because you are a STEM Beattyian, Harwood because you are a writer. Membership is chosen or matched at Sec 1 and held.',
+   persist:1,cohesion:.35,mix:.30,load:.55,blind:0,late:0,cross:0,bySize:'interest',
+   prec:'No Singapore secondary precedent found. Closest analogues are specialist-school streams and US magnet academies.'},
  guild:{n:'Interest guilds, reselected yearly',d:'Students choose their house each year.',
-   persist:.25,cohesion:.3,mix:.85,load:.5,blind:0,prec:'Ron Clark Academy culture, US.'}};
+   persist:.25,cohesion:.3,mix:.85,load:.5,blind:1,late:1,cross:1,prec:'Ron Clark Academy culture, US.'}};
 
 const MODELS={
  clusters:{n:'Renzulli clusters',tag:'Orthodox',d:'Mixed-age interest groups, facilitated not taught, making something for an outside audience.',
@@ -411,7 +413,7 @@ const DEF={
   hset:{hood:{dom:'serv',s:'bad',u:'npc',p:'chr'},jell:{dom:'hum',s:'can',u:'sco',p:'cho'},
         harw:{dom:'lang',s:'foo',u:'bb',p:'dra'},stur:{dom:'sport',s:'vol',u:'ncc',p:'mal'},
         fish:{dom:'stem',s:'wus',u:'ncd',p:'ban'},h6:{dom:'arts',s:'',u:'',p:'mod'},h7:{dom:'none',s:'',u:'',p:''}},
-  cycles:3, sessions:10, protect:80, hours:3, cluster:25, skew:.8, rooms:48, perRoom:1,
+  cycles:3, sessions:10, protect:80, hours:3, cluster:25, skew:.8, rooms:48, perRoom:1, talentSkew:.6,
   teachers:90, duty:10, adultRun:2, superRatio:6, leadersPer:2, tutors:8,
   takeup:60, pursue:15, mentorLoad:8, houseOwns:0,
   cup:'percap', showScope:'house', showcases:3,
@@ -477,15 +479,30 @@ function model(){
   M.hMax=loads.length?Math.max(...loads):0;
   M.hMin=loads.length?Math.min(...loads):0;
   M.totalGap=M.hMin>0?(M.hMax-M.hMin)/M.hMin:0;
-  if(S.arch!=='class'){M.levelGap=0;M.totalGap=0;M.nestClean=true;
-    M.houseLoad=M.houseLoad.map(()=>({n:M.houseSize,cls:M.classesTotal/S.houses}));}
+  M.byInterest = S.arch==='talent';
+  if(S.arch!=='class'){
+    M.levelGap=0;M.nestClean=true;
+    if(M.byInterest){
+      // a talent-area house is as big as the number of Beattyians who pick it,
+      // so sizes follow interest and nothing balances them
+      let H=0;for(let k=1;k<=S.houses;k++)H+=1/Math.pow(k,S.talentSkew);
+      M.houseLoad=Array.from({length:S.houses},(_,k)=>
+        ({n:M.N*(1/Math.pow(k+1,S.talentSkew))/H, cls:0}));
+      const L2=M.houseLoad.map(h=>h.n);
+      M.hMax=Math.max(...L2);M.hMin=Math.min(...L2);
+      M.totalGap=M.hMin>0?(M.hMax-M.hMin)/M.hMin:0;
+    } else {
+      M.totalGap=0;
+      M.houseLoad=M.houseLoad.map(()=>({n:M.houseSize,cls:M.classesTotal/S.houses}));
+      M.hMax=M.houseSize;M.hMin=M.houseSize;
+    }
+  }
 
   M.blockDays=S.cycles*S.sessions;
   M.actualDays=M.blockDays*S.protect/100;
   M.weeks=M.blockDays; M.months=M.weeks/4.33;
   M.perMonth=M.months>0?M.actualDays/M.months:0;
   M.contactHrs=M.actualDays*S.hours;
-  M.spareWed=Math.max(0,40-M.actualDays);
 
   M.adultRun=Math.max(0,Math.floor(Math.min(S.adultRun,S.duty)));
   M.supervisors=Math.max(0,Math.floor(S.duty)-M.adultRun);
@@ -513,7 +530,11 @@ function model(){
   M.pursueN=Math.round(M.N*S.pursue/100);
   M.mentorsNeeded=Math.ceil(M.pursueN/Math.max(1,S.mentorLoad));
   M.thuClusters=Math.ceil(M.build/Math.max(1,S.cluster));
-  M.pool=S.houseOwns?M.N/S.houses:M.N;
+  // Talent-area houses own their pathway by construction: the house is the field.
+  M.effOwns = S.houseOwns || M.byInterest;
+  M.crossDomain = ARCH[S.arch].cross && !S.houseOwns;
+  M.pool = M.byInterest ? M.hMax : (S.houseOwns ? M.N/S.houses : M.N);
+  M.poolMin = M.byInterest ? M.hMin : M.pool;
   M.poolTop=Math.round(M.pool*0.1);
 
   M.staffPerHouse=S.teachers/S.houses;
@@ -575,7 +596,9 @@ function model(){
 
   const dose=clamp(M.perMonth/4.33,0,1),
         pursueAdeq=clamp(S.pursue/17.5,0,1);
-  M.poolF=S.houseOwns?1/Math.sqrt(S.houses):1;
+  // a talent-area house concentrates its own field but closes every other one,
+  // so the penalty is smaller than house-owned pathways but real
+  M.poolF = M.byInterest ? 0.72 : (S.houseOwns?1/Math.sqrt(S.houses):1);
   M.talent=Math.round(100*M.poolF*(dose*.40+pursueAdeq*.25+clamp(M.clusters/Math.max(1,M.clustersNeeded),0,1)*.25+M.top2*.10));
 
   /* verdict */
@@ -593,8 +616,14 @@ function model(){
     M.issues.push(['w',`Rooms bind before staffing: ${S.rooms} rooms × ${S.perRoom} hold ${M.roomCap}, but you could staff ${M.staffable}.`]);
   if(M.perMonth<3)
     M.issues.push(['w',`Cadence ${r1(M.perMonth)} a month. Gagné dismisses two or three a month as busywork.`]);
-  if(S.houseOwns)
+  if(S.houseOwns&&!M.byInterest)
     M.issues.push(['b',`Houses own the pathways, so every field's talent pool is capped at ${cm(M.pool)} instead of ${cm(M.N)}.`]);
+  if(M.byInterest){
+    M.issues.push(['b','Talent-area houses sort thirteen-year-olds by talent on arrival. Both Gagné and Renzulli argue the opposite: talent is developed, not detected, and gifted behaviour appears in some people at some times. A Beattyian who blooms in Sec 3 spends four years in the wrong house.']);
+    M.issues.push(['w',`Houses are sized by interest rather than headcount: largest ${cm(M.hMax)}, smallest ${cm(M.hMin)}, a ${pct(M.totalGap)} spread. Nothing balances them, and per capita Cup scoring becomes essential rather than preferable.`]);
+    M.issues.push(['w','A Beattyian can only pursue the field their own house stewards. Cross-domain access is closed by construction, so a mathematician who also writes has to pick one at Sec 1.']);
+    M.issues.push(['g',`Every talent area has exactly one owner and a concentrated pipeline: the stewarding house is the field, so its Pursue pool is ${cm(M.hMax)} rather than a slice of the school.`]);
+  }
   if(M.leaderRate>0.35)
     M.issues.push([S.model==='tutoring'?'g':'w',
       S.model==='tutoring'
@@ -635,16 +664,6 @@ const LEDGER=[
       :['warn',`Protection is set to ${S.protect} percent, which assumes a nearly clean block.`,
         `History says otherwise: ${A.blkNonEnrich} in-block records were consumed by assessment and admin. Every one of those will collide with a cycle.`]},
 
- {id:'staff',t:'The enrichment block is also the school’s own meeting time',
-  ev:()=>`${A.blkStaff} in-block records are not student facing at all: ${A.staffUse.slice(0,4).map(x=>x[0]+' '+x[1]).join(', ')}. This is why only about ten teachers are free on a block day.`,
-  cut:{fb:'1',fs:'0'},
-  test:M=>M.spareWed>=8?['ok',`${Math.round(M.actualDays)} block days used per track leaves roughly ${Math.round(M.spareWed)} Wednesdays free for staff business.`,
-        'Department PD, level meetings and committee work still have somewhere to live.']
-      :M.spareWed>=4?['warn',`Only about ${Math.round(M.spareWed)} Wednesdays are left unclaimed.`,
-        'Tight. Either PD moves to another slot or some cycles run on Thursday only.']
-      :['bad',`${Math.round(M.actualDays)} block days per track leaves almost nothing unclaimed.`,
-        'You have not answered where department PD, level meetings and the SMC go. EEF says you must de-implement something; this is the something.']},
-
  {id:'oneoff',t:'Half the programmes ran once or twice',
   ev:()=>`${A.prog1or2} of ${A.progCount} enrichment programmes appear on one or two dates across two years. Only ${A.prog6plus} reach six or more.`,
   cut:{fe:'1'},
@@ -655,7 +674,9 @@ const LEDGER=[
  {id:'churn',t:'Most programmes do not survive a year',
   ev:()=>`${A.y24} enrichment programmes ran in 2024 and ${A.y25} in 2025, but only ${A.survived} are the same ones. ${A.died} died, ${A.born} were invented. That is ${pct(A.churnPct)} continuity.`,
   cut:{fe:'1'},
-  test:M=>M.unstewarded===0&&M.domDup===0?['ok','Every activity has a named stewarding house, so somebody owns its survival.',
+  test:M=>M.byInterest?['ok','Talent-area houses make stewardship structural: the house is the field, so its survival is the house\u2019s own business.',
+        'The strongest continuity mechanism of any architecture here, and the reason to consider it despite what it costs elsewhere.']
+      :M.unstewarded===0&&M.domDup===0?['ok','Every activity has a named stewarding house, so somebody owns its survival.',
         'Stewardship is the cheapest continuity mechanism available. It costs nothing but an assignment.']
       :['warn',`${M.unstewarded} activit${M.unstewarded>1?'ies have':'y has'} no stewarding house${M.domDup?`, and ${M.domDup} talent area is claimed twice`:''}.`,
         'An activity nobody owns is an activity that quietly stops. That is exactly what the churn figure records.']},
@@ -680,7 +701,9 @@ const LEDGER=[
  {id:'upper',t:'Upper secondary is being written off',
   ev:()=>`Sec 4 draws ${A.levelReach['Sec 4']} in-block enrichment records and Sec 5 draws ${A.levelReach['Sec 5']}, against Sec 2's ${A.levelReach['Sec 2']}.`,
   cut:{fb:'1',fs:'1',fe:'1'},
-  test:M=>S.levels===5?['ok','Sec 1 to 5 are all in the enrichment block, so the house has a senior tier.',
+  test:M=>M.byInterest&&!ARCH[S.arch].late?['warn','Sec 1 to '+S.levels+' are in the block, but a talent-area house has no way back in for a late developer.',
+        'Renzulli\u2019s revolving door exists precisely for the Beattyian who becomes interesting in Sec 3. Sorting at Sec 1 closes it.']
+      :S.levels===5?['ok','Sec 1 to 5 are all in the enrichment block, so the house has a senior tier.',
         `${cm(M.leaderPool)} Beattyians in Sec 3 and above are available to lead, which is what makes the student-led model possible.`]
       :['warn','Sec 5 sits outside the enrichment block.',
         'A vertical house that stops early has no seniors to lead it, which is the one job the vertical structure exists to do. With only 20 in Sec 5 the cost of including them is small.']},
@@ -690,13 +713,17 @@ const LEDGER=[
   cut:{fb:'1',fg:'G3'},
   test:M=>ARCH[S.arch].blind?['ok',`${ARCH[S.arch].n} is blind to banding. Under Full Subject Based Banding the form class survives, and the house rides on it.`,
         'This becomes the only slot in the week where a G1 and a G3 Beattyian are in the same room by design. It is a stronger argument than attainment, which the evidence does not support.']
+      :M.byInterest?['bad','Talent-area houses sort on demonstrated aptitude, which tracks banding closely. The academic houses will fill with G3 and the streaming the audit found gets a name and a colour.',
+        'This is the sharpest cost of the model. It takes the clearest equity argument available and reverses it.']
       :['bad',`${ARCH[S.arch].n} sorts on something other than the form class, so the house inherits whatever selection that carries.`,
         'You lose the one structural answer to the streaming the audit found.']},
 
  {id:'overcommit',t:'The same Beattyians are claimed several times over',
   ev:()=>`Selection language appears across 26 programmes. Secondary 3 in Term 1 of 2024 had six selective programmes live at once, all recruiting from the same pool.`,
   cut:{fe:'1'},
-  test:M=>M.tutorRatio<=25&&!S.houseOwns?['ok',`Each house tutor holds ${Math.round(M.tutorRatio)} Beattyians, small enough to see a clash and reconcile it.`,
+  test:M=>M.byInterest?['ok','A talent-area house claims a Beattyian once, for one field, so the six-way pull the audit found cannot form.',
+        'It removes the clash by removing the choice. A Beattyian with two talents resolves it at Sec 1 instead of being fought over.']
+      :M.tutorRatio<=25&&!S.houseOwns?['ok',`Each house tutor holds ${Math.round(M.tutorRatio)} Beattyians, small enough to see a clash and reconcile it.`,
         'The Total Talent Portfolio conversation is the instrument. It has to be somebody’s named job or it does not happen.']
       :S.houseOwns?['bad','Houses own the pathways, which multiplies the problem rather than solving it.','A Beattyian is now claimed by their house and their field at once, with no route out.']
       :['warn',`Each house tutor holds ${Math.round(M.tutorRatio)} Beattyians.`,'Too many to reconcile competing claims individually. Nobody currently owns that job at all.']},
@@ -971,7 +998,7 @@ function tabEv(M){
     <p class="note">Red is time inside the enrichment block consumed by something else.</p>
     <h3>What the enrichment block is used for when it is not student facing</h3>
     <div class="scroll">${hbar(A.staffUse.map(r=>[r[0].slice(0,40),r[1],'#EC3237',r[1]]),{w:620,lw:250,rh:20})}</div>
-    <p class="note">This is why only about ten teachers are free on a block day: the other eighty are in meetings that live in the same slot.</p>`;
+    <p class="note">Context, not a problem for the house system to solve. It is simply why only about ten teachers are free on a block day: the other eighty are in meetings that live in the same slot. Every staffing figure on the Design tab already assumes that.</p>`;
   } else {
     const rows=recFiltered();
     body=filterBar()+
@@ -1043,7 +1070,11 @@ function tabDe(M){
       <select data-sel="arch">${Object.entries(ARCH).map(([k,a])=>`<option value="${k}"${S.arch===k?' selected':''}>${a.n}</option>`).join('')}</select>
       <div class="hint">${ARCH[S.arch].d} Precedent: ${ARCH[S.arch].prec}</div></div>
      ${rng('tutors','House tutors per house',1,30,1,'')}
-     <div class="out">Worst gap at a level <b>${pct(M.levelGap)}</b> &middot; school-wide spread <b>${pct(M.totalGap)}</b> &middot; <b>${Math.round(M.tutorRatio)}</b> per tutor</div></div>
+     ${M.byInterest?rng('talentSkew','How unevenly Beattyians pick a talent area',0.1,1.6,0.1,'Higher means everyone crowds the same two or three areas.',r1(S.talentSkew)):''}
+     <div class="out">${M.byInterest
+       ? `Sized by interest: largest <b>${cm(M.hMax)}</b>, smallest <b>${cm(M.hMin)}</b>, spread <b>${pct(M.totalGap)}</b> &middot; cross-domain access <b style="color:var(--bad)">closed</b>`
+       : `Worst gap at a level <b>${pct(M.levelGap)}</b> &middot; school-wide spread <b>${pct(M.totalGap)}</b> &middot; cross-domain access <b style="color:${M.crossDomain?'var(--ok)':'var(--bad)'}">${M.crossDomain?'open':'closed'}</b>`}
+       &middot; <b>${Math.round(M.tutorRatio)}</b> per tutor</div></div>
    </div>
    <h2>2 &middot; The houses, and what each flies</h2>
    <div class="chips">
@@ -1055,6 +1086,24 @@ function tabDe(M){
     <button class="chip ${S.wushu==='S'?'':'on'}" data-set="wushu:PA">Performing art</button>
     <button class="chip" id="autoAnchor">Auto-assign</button></div>
    <div class="dcards">${hcards}</div>
+   ${M.byInterest?`<div class="box warn"><h4>What a talent-area house actually is</h4>
+     <p style="font-size:.92em">The house stops being a neutral community that <i>stewards</i> a talent area and becomes the talent area itself. A Beattyian joins Fisher because they are a STEM Beattyian. That is a genuinely different school, not a variation on the others, so it is worth being explicit about the exchange.</p>
+     <div class="grid2">
+      <div><h4 style="color:var(--ok)">What it buys</h4><ul class="t">
+       <li>Identity and purpose line up exactly. You belong to the thing you are developing.</li>
+       <li>Stewardship is structural rather than assigned: the field&rsquo;s survival is the house&rsquo;s own business, which is the strongest answer here to ${pct(1-A.churnPct)} of programmes dying each year.</li>
+       <li>The deepest possible pipeline in each field: the Pursue pool is the whole house, ${cm(M.hMax)} at the largest.</li>
+       <li>The six-way pull on able Beattyians cannot form, because a house claims you once.</li>
+      </ul></div>
+      <div><h4 style="color:var(--bad)">What it costs</h4><ul class="t">
+       <li>It sorts thirteen-year-olds by talent on arrival, which is the move both Gagné and Renzulli argue against.</li>
+       <li>No way back in for a late developer. Renzulli&rsquo;s revolving door closes.</li>
+       <li>It tracks banding, so the academic houses fill with G3 and the streaming the audit found gets a name and a colour.</li>
+       <li>Houses are sized by interest, ${cm(M.hMax)} against ${cm(M.hMin)}, and nothing balances them.</li>
+       <li>Cross-domain access closes. A mathematician who also writes chooses at Sec 1.</li>
+       <li>Form-class nesting drops to zero, so no inter-class event is automatically an inter-house event.</li>
+      </ul></div></div>
+     <p class="note">The middle path is the default: houses rest on something neutral and <b>steward</b> a talent area for the whole school. You keep the ownership and the pipeline without sorting anyone. Switch the architecture above to compare them directly on the Trade-offs tab.</p></div>`:''}
    ${M.domDup||M.unanchored?`<div class="box bad"><b>Clashes.</b> ${M.domDup?`${M.domDup} talent area claimed by more than one house. `:''}${M.unanchored?`${M.unanchored} house has an empty flagship slot.`:''}</div>`:''}
    <h2>3 &middot; Delivery model, what actually happens in the room</h2>
    <div class="dcards">${mcards}</div>
@@ -1066,8 +1115,7 @@ function tabDe(M){
      ${rng('protect','Block days actually protected',20,100,5,'Orals, ICT and staff business all take days.',S.protect+'%')}
      ${rng('hours','Hours per block day',0.5,4,0.5,'',S.hours+'h')}
      <div class="out"><b>${Math.round(M.actualDays)}</b> days survive of ${M.blockDays} &middot; <b>${r1(M.perMonth)}</b> sessions a month
-      ${M.perMonth>=3?'<b style="color:var(--ok)">clears Gagne</b>':'<b style="color:var(--bad)">below the line of 3</b>'}
-      &middot; about <b>${Math.round(M.spareWed)}</b> Wednesdays left for staff business</div></div>
+      ${M.perMonth>=3?'<b style="color:var(--ok)">clears Gagne</b>':'<b style="color:var(--bad)">below the line of 3</b>'}</div></div>
     <div class="dc"><h3>Who is in the room</h3><div class="sub">Ten duty teachers is the constraint everything bends around.</div>
      ${rng('duty','Teachers on duty per block day',0,60,1,'')}
      ${rng('adultRun','Of those, running a group themselves',0,30,1,'The rest roam.')}
@@ -1250,9 +1298,6 @@ function tabDc(M){
    ['Who reconciles competing claims on a student?',
     'Nobody currently does. Sec 3 in Term 1 of 2024 had six selective programmes live at once, all recruiting from the same pool.',
     `At ${S.tutors} tutors per house each holds ${Math.round(M.tutorRatio)} Beattyians. ${M.tutorRatio<=25?'Small enough to know them individually.':'Too many to reconcile anything meaningfully.'}`],
-   ['Where does department PD go?',
-    `${A.blkStaff} in-block records are staff business. If Wednesday becomes a student activity block, that time has to exist somewhere else. EEF is explicit that you must de-implement something.`,
-    `${Math.round(M.actualDays)} block days used per track leaves about ${Math.round(M.spareWed)} Wednesdays unclaimed.`],
    ['Do houses own the pathways?',
     'The most consequential switch in the whole design, and the one most likely to be decided by accident. It will be decided the first time someone proposes awarding House Cup points for an olympiad result.',
     S.houseOwns?`Yes. Every field's talent pool is capped at ${cm(M.pool)}.`:`No. Pools stay whole-school at ${cm(M.N)}. Cup points stay on the Wednesday block, sport and performance.`],
@@ -1366,10 +1411,11 @@ function autoAnchor(){
       if(free){S.hset[h.k][slot]=free;used.add(free);}});});
 }
 function applyModel(k){const m=MODELS[k];if(!m)return;Object.assign(S,m.set);S.model=k;render();}
+const CTX={'ctx-staff':{fb:'1',fs:'0'}};
 function jumpTo(id){
   const L=LEDGER.find(x=>x.id===id);
   Object.assign(S,{q:'',fy:'',ft:'',fd:'',fl:'',fg:'',fc:'',fdept:'',fe:'',fb:'',fs:''});
-  if(L&&L.cut)Object.assign(S,L.cut);
+  if(L&&L.cut)Object.assign(S,L.cut); else if(CTX[id])Object.assign(S,CTX[id]);
   S.tab='ev';S.sub.ev='rec';render({top:true});
 }
 function bind(){
