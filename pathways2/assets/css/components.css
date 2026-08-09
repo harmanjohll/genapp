@@ -328,6 +328,12 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
 .sheet-head { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
 .sheet-head h2 { margin-right: auto; }
+
+/* Every sheet in the app opens with a title and then a line of prose, and they
+   were touching. Measured on the sector sheet, which is the first one to put a
+   full sentence directly under the heading. */
+.sheet-body > h2 + p { margin-top: var(--s-2); }
+
 .full { font-size: var(--t-small); color: var(--ink-mute); margin-bottom: var(--s-3); }
 .glossary-list { display: grid; gap: var(--s-1); }
 .glossary-list dt { font-weight: 700; margin-top: var(--s-3); }
@@ -1506,3 +1512,55 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 }
 .foot-build strong { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .build-warn { color: var(--longer); font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   THE WORK HALF. Sectors, the ways into each, and the pay ladder stated once.
+
+   The doorlist is the load bearing piece of design on the page. Every sector
+   shows three or four rows, each one a real way in at a different level of
+   qualification, and they are laid out as EQUAL rows rather than as a ladder:
+   same indent, same weight, same colour, in the order the data happens to hold
+   them. A visual hierarchy here would undo the argument the content is making,
+   so there is deliberately none. */
+
+.paylist { list-style: none; padding: 0; margin: var(--s-3) 0 0; }
+.paylist li {
+  display: grid; grid-template-columns: minmax(9rem, 14rem) auto;
+  gap: 2px var(--s-4); align-items: baseline;
+  padding: var(--s-3) 0; border-top: 1px solid var(--rule-soft);
+}
+.paylist li:first-child { border-top: 0; }
+.pay-when { font-weight: 650; font-size: var(--t-small); }
+.pay-band { font-family: var(--mono); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+.pay-note { grid-column: 1 / -1; font-size: var(--t-micro); color: var(--ink-mute); }
+.paylist .cprov { grid-column: 1 / -1; justify-self: start; }
+
+.doorlist { list-style: none; padding: 0; margin: var(--s-3) 0 var(--s-2); }
+.doorlist li {
+  display: grid; grid-template-columns: minmax(8rem, 11rem) 1fr; gap: 2px var(--s-4);
+  padding: var(--s-3) 0 var(--s-3) var(--s-4);
+  border-top: 1px solid var(--rule-soft); border-left: 3px solid var(--rule-soft);
+}
+.doorlist li:first-child { border-top: 0; }
+.door-level { font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); }
+.door-role { font-weight: 650; font-size: var(--t-small); }
+.door-route { grid-column: 2; font-size: var(--t-small); color: var(--ink-soft); }
+.door-note { grid-column: 1 / -1; font-size: var(--t-micro); color: var(--ink-mute); }
+
+/* The local misconception, said out loud and then answered. Marked off from the
+   rest of the sheet because it is the one block that quotes a belief rather
+   than stating a fact, and a reader has to be able to see which is which. */
+.mythbox {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+  border: 1px dashed var(--rule);
+}
+.mythbox .caps { color: var(--ink-mute); }
+
+.worksec .kind-chip { font-weight: 600; }
+
+@media (max-width: 560px) {
+  .paylist li, .doorlist li { grid-template-columns: 1fr; }
+  .pay-band, .door-route { grid-column: 1; }
+}

@@ -6,8 +6,21 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.5.0",
+  "version": "2.6.0",
   "releases": [
+    {
+      "version": "2.6.0",
+      "date": "2026-08-09",
+      "head": "The other half: what the work actually is",
+      "changes": [
+        "There is a whole new page about work. Sixteen parts of working Singapore, from building and care to computing and the arts, each one with what the job actually is, what a day holds, where the work is heading, and what people get wrong about it.",
+        "Every single one of those sixteen takes people in at three or more levels: from ITE, from a polytechnic, from a university, sometimes from an arts school. That is the point of the page and it is true.",
+        "What a first job pays is stated once, for each level of entry, and never per sector. Comparing sectors on pay is a ranking in disguise, and the spread inside a level is wider than the gap between levels anyway.",
+        "Naming a want in Act now shows the parts of working life that turn on it. Saying I honestly do not know yet shows one from each of the six kinds, because not knowing is the reason to look.",
+        "Every subject now says where it turns up in working life. Tap a subject in Plan and the answer to why am I learning this is right there.",
+        "That fix caught something worse. The G1 syllabus subjects named no work at all while the G3 ones named six, from the same screen, about the same subject. Every subject anybody can take now reaches at least two parts of working life, and the app refuses to build if one does not."
+      ]
+    },
     {
       "version": "2.5.0",
       "date": "2026-08-09",

@@ -7,12 +7,13 @@
 // Every future carries three or more structurally different roads, in no order,
 // with no ranking. The absence of the ranking is the content.
 
-import { esc, onAction } from '../components/dom.js?v=2.5.0';
-import { icon } from '../components/icons.js?v=2.5.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.5.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.5.0';
-import { getState, setAim, toggleAction, currentYear, setMode } from '../state.js?v=2.5.0';
-import { reach } from '../engine/reach.js?v=2.5.0';
+import { esc, onAction } from '../components/dom.js?v=2.6.0';
+import { icon } from '../components/icons.js?v=2.6.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.6.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.6.0';
+import { getState, setAim, toggleAction, currentYear, setMode } from '../state.js?v=2.6.0';
+import { reach } from '../engine/reach.js?v=2.6.0';
+import { wantWorkBlock, openSectorSheet } from './mode-work.js?v=2.6.0';
 
 // AIM was the only mode that knew nothing about the other two. It offered
 // roads and a static list of things to do this term, while NOW held the
@@ -61,6 +62,7 @@ export function renderAim(host, data, ctx, repaint) {
     back: () => { setAim(null); repaint(); },
     action: (btn) => { toggleAction(btn.dataset.text); repaint(); },
     road: (btn) => openRoad(future, Number(btn.dataset.i), btn),
+    sector: (btn) => openSectorSheet(data, btn.dataset.id, btn),
     card: () => makeCard(st, future, data),
     print: () => window.print(),
   });
@@ -86,6 +88,10 @@ function chooser(data, st) {
           </button>`;
         }).join('')}
       </div>
+      <p class="small" style="margin-top:var(--s-5)">
+        <a href="./?mode=work">${esc(ac.workBrowse || 'Or look at the work first')}</a>
+        <span class="mute"> ${esc(ac.workBrowseSub || '')}</span>
+      </p>
     </div>`;
 }
 
@@ -191,6 +197,7 @@ function detail(f, st, data, ctx) {
       ${saidBlock}
       ${playedBlock}
       ${reachBlock}
+      ${wantWorkBlock(data, f)}
 
       <p class="caps rail-q" style="margin-top:var(--s-5)">${icon('q_how')}${esc(jc.q3)}</p>
       <h2 class="h-sm">${f.routes.length} roads there, in no order</h2>

@@ -18,18 +18,19 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.5.0';
-import { icon } from '../components/icons.js?v=2.5.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.5.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.5.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.5.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.5.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.5.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.6.0';
+import { icon } from '../components/icons.js?v=2.6.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.6.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.6.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.6.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.6.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.6.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.6.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.5.0';
+} from '../state.js?v=2.6.0';
 
 const STATE_API = { setMode };
 
@@ -791,6 +792,25 @@ function fallbackCopy(text, done) {
 // --------------------------------------------------------------------------
 // Sheets
 
+/**
+ * Which parts of working Singapore this subject actually turns up in.
+ *
+ * The oldest unanswered question in a classroom is why am I learning this, and
+ * the subject sheet answered every other question about a subject except that
+ * one. It reads from the same sector file the work page uses, so a subject can
+ * never point at a sector that has been renamed or removed.
+ */
+function workBlock(s) {
+  const list = sectorsForSubject(DATA, s.id);
+  if (!list.length) return '';
+  return `
+    <p class="caps" style="margin-top:var(--s-4)">Where this turns up in working life</p>
+    <ul class="chipsel" style="margin-top:var(--s-2)">
+      ${list.map((x) => `<li><button class="chip-btn" type="button" data-action="sector" data-id="${x.id}" aria-haspopup="dialog">${esc(x.label)}</button></li>`).join('')}
+    </ul>
+    <p class="micro faint">Every one of those takes people in at more than one level.</p>`;
+}
+
 function openSubject(id, trigger) {
   const s = DATA.subjects.subjects.find((x) => x.id === id);
   if (!s) return;
@@ -811,10 +831,12 @@ function openSubject(id, trigger) {
     <ul class="chips">${s.showsUp.map((x) => `<li>${decorate(x)}</li>`).join('')}</ul>
     ${s.note ? `<p class="micro mute">${decorate(s.note)}</p>` : ''}
     ${s.caution ? `<p class="caution">${esc(s.caution)}</p>` : ''}
+    ${workBlock(s)}
     <p class="micro mute">${esc(DATA.copy.chrome.levelsMove)}</p>
     ${s.status === 'provisional' ? statusChip('provisional') : ''}`, trigger);
 
   onSheetAction({
+    sector: (b) => openSectorSheet(DATA, b.dataset.id, b),
     sheetlevel: (b) => {
       const cur = getState().plan[b.dataset.subject];
       const next = cur === b.dataset.level ? null : b.dataset.level;

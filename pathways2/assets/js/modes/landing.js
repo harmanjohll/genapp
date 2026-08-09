@@ -9,11 +9,11 @@
 // All eight get the identical treatment at the identical size, in data order.
 // No card is bigger, brighter or first for any reason except the alphabet.
 
-import { esc, onAction } from '../components/dom.js?v=2.5.0';
-import { icon } from '../components/icons.js?v=2.5.0';
-import { cue } from '../sound.js?v=2.5.0';
-import { getState, markLanding } from '../state.js?v=2.5.0';
-import { reach } from '../engine/reach.js?v=2.5.0';
+import { esc, onAction } from '../components/dom.js?v=2.6.0';
+import { icon } from '../components/icons.js?v=2.6.0';
+import { cue } from '../sound.js?v=2.6.0';
+import { getState, markLanding } from '../state.js?v=2.6.0';
+import { reach } from '../engine/reach.js?v=2.6.0';
 
 export function renderLanding(host, data, ctx, leave) {
   const L = data.copy.landing;
@@ -84,6 +84,11 @@ export function renderLanding(host, data, ctx, leave) {
               <span class="ldoor-ic">${icon('q_who')}</span>
               <span class="ldoor-name">${esc(L.enterTable)}</span>
               <span class="ldoor-sub">${esc(L.enterTableSub)}</span>
+            </a>
+            <a class="ldoor wide" href="./?mode=work">
+              <span class="ldoor-ic">${icon('t_skills')}</span>
+              <span class="ldoor-name">${esc(L.enterWork)}</span>
+              <span class="ldoor-sub">${esc(L.enterWorkSub)}</span>
             </a>
           </div>` : ''}
         <p class="micro faint landing-aud">${esc(L.audience)}</p>
