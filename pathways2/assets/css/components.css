@@ -1564,3 +1564,70 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .paylist li, .doorlist li { grid-template-columns: 1fr; }
   .pay-band, .door-route { grid-column: 1; }
 }
+
+/* ---------------------------------------------------------------------------
+   THE MONEY QUESTION. A fee table, nine kinds of help, and four sentences.
+
+   The truths are typographically the loudest thing on the page, above the tables
+   in weight if not in position, because they are the actual guidance and the
+   tables are the evidence for them. A page where the numbers shouted and the
+   framing whispered would be a price list. */
+
+.moneytable .pay-band { font-weight: 650; white-space: nowrap; }
+.moneytable td { vertical-align: top; }
+.moneytable .cprov { display: inline-block; margin-top: 2px; }
+
+.helplist { list-style: none; padding: 0; margin: var(--s-3) 0 0; display: grid; gap: var(--s-3); }
+
+.helpdl { margin: var(--s-4) 0 var(--s-3); }
+.helpdl dt {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); margin-top: var(--s-3);
+}
+.helpdl dd { margin: 2px 0 0; font-size: var(--t-small); }
+
+.truths { display: grid; gap: var(--s-4); margin-top: var(--s-3); }
+.truth { padding-left: var(--s-4); border-left: 3px solid var(--accent); }
+.truth-head { font-size: 1.06rem; font-weight: 600; margin: 0 0 var(--s-2); }
+
+/* The fee, on a destination sheet in Plan, where the question is actually being
+   asked. A route with no number beside it is the silence a family fills with a
+   guess, and the guess is always too high. */
+.costline {
+  margin: var(--s-3) 0; padding: var(--s-3) var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+}
+.costline .cprov { margin: 0 var(--s-2); }
+
+/* On a phone the fee table stopped being readable and started being a column of
+   single words: "Secondary", "school,", "government". Measured on a Pixel 7, and
+   the horizontal scroll the wrapper provides is not an answer when the very
+   first cell needs it. Under 620px it stops being a table and becomes what it
+   actually is, one block per route, with the column names carried on each row so
+   nothing is lost with the header. */
+@media (max-width: 800px) {
+  .moneytable, .moneytable tbody, .moneytable tr, .moneytable th, .moneytable td { display: block; }
+  .moneytable { min-width: 0; }
+  .moneytable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .moneytable tr { padding: var(--s-4) 0; border-top: 1px solid var(--rule-soft); }
+  .moneytable tr:first-child { border-top: 0; }
+  /* .ctable tbody th carries width: 11rem, which survives display: block and was
+     the real reason the route name still wrapped to six lines. It also outranks
+     a plain .moneytable th on specificity, one class and two elements against
+     one and one, so the selector has to match its shape to beat it. */
+  .moneytable tbody th { border: 0; padding: 0; font-size: var(--t-body); width: auto; }
+  .moneytable td { border: 0; padding: var(--s-2) 0 0; }
+  .moneytable td::before {
+    content: attr(data-label); display: block;
+    font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-mute);
+  }
+  .moneytable .cmute { display: block; margin-top: 2px; }
+  /* The unverified marker was breaking mid word inside a narrow cell. */
+  .moneytable .cprov { white-space: nowrap; }
+}
+
+@media print {
+  .moneytable { font-size: 11pt; }
+  .truth { break-inside: avoid; }
+}

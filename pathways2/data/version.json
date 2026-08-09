@@ -6,8 +6,21 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.6.0",
+  "version": "2.7.0",
   "releases": [
+    {
+      "version": "2.7.0",
+      "date": "2026-08-09",
+      "head": "What it costs, and what help there is",
+      "changes": [
+        "A new page about money. What every route costs a Singapore Citizen before any help, then nine kinds of help by name, then four things that are true whatever the numbers say.",
+        "The names are the point. MOE Financial Assistance, Edusave, the Post Secondary Education Account, bursaries at ITE and poly and university, the Tuition Fee Loan, the CPF Education Scheme, CDAC and MENDAKI and SINDA and the Eurasian Association, my school's own welfare fund, and SkillsFuture later. Almost none of it is offered. All of it has to be asked for.",
+        "Every route in Plan now shows what it costs right there on the card, so nobody has to go looking. A route with no number beside it is a silence a family fills with a guess, and the guess is always too high.",
+        "The parent page leads with the money question, because it is the first thing a parent asks.",
+        "Every figure says Not yet verified, in the same words the admission bars use. Fee schedules change every year and a precise wrong number is worse than an honest range.",
+        "The whole page prints on paper, so it can go to a general office with the scheme names already on it."
+      ]
+    },
     {
       "version": "2.6.0",
       "date": "2026-08-09",

@@ -12,8 +12,8 @@
 // this app does; what they do not know is what their student has just been
 // shown.
 
-import { esc } from '../components/dom.js?v=2.6.0';
-import { bindGlossary } from '../components/glossary.js?v=2.6.0';
+import { esc } from '../components/dom.js?v=2.7.0';
+import { bindGlossary } from '../components/glossary.js?v=2.7.0';
 
 /**
  * The app's own admission arithmetic, rendered from the same file the students

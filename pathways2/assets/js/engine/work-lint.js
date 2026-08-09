@@ -226,3 +226,110 @@ function report(failures, nSectors, nEntries) {
   if (!ok) console.table(failures);
   return { ok, failures };
 }
+
+// ---------------------------------------------------------------------------
+// THE MONEY QUESTION, checked in the same file and for the same reason.
+//
+// WHY IT SHARES A FILE WITH THE SECTORS. Both are the world outside school, both
+// state figures this build cannot verify, and both can close a door with a
+// number. They share the forbidden register list and the provisional discipline,
+// and two lints holding two copies of those is how two lints drift apart.
+//
+// WHAT MAKES THE MONEY PAGE DIFFERENT AND HARDER. A family that has quietly
+// decided a route is unaffordable never asks the counsellor about it. The
+// deciding happens at a kitchen table before anybody at school hears the
+// question, which makes this the one page where a wrong belief reliably closes a
+// door the system left open. So the rules below are not only about accuracy. They
+// check that the page's ARGUMENT survives: that every destination a student can
+// reach has a cost beside it, that help exists which needs no application, and
+// that help exists which is not means tested. Take either of those two away and
+// the page becomes a list of prices.
+
+const MONEY_CAPS = {
+  costs: { label: 9, fee: 9, misc: 16, note: 30 },
+  help: { label: 8, what: 24, who: 22, howMuch: 22, howToGet: 24 },
+};
+
+export function moneySweep(data) {
+  const failures = [];
+  const m = data.money || {};
+  const costs = m.costs || [];
+  const help = m.help || [];
+  const truths = m.truths || [];
+  const sources = m.sources || {};
+
+  if (!costs.length || !help.length) {
+    return moneyReport([{ why: 'the money page has no costs or no help, so it is half an answer' }], 0, 0);
+  }
+
+  const check = (rows, kind) => rows.forEach((r) => {
+    Object.entries(MONEY_CAPS[kind]).forEach(([k, cap]) => {
+      if (!r[k]) failures.push({ [kind]: r.id, why: `no ${k}` });
+      else if (words(r[k]) > cap) failures.push({ [kind]: r.id, why: `${k} runs ${words(r[k])} words over ${cap}` });
+    });
+    // Every figure on this page is one a parent may quote at a general office.
+    if (r.status && r.status !== 'provisional') {
+      failures.push({ [kind]: r.id, why: 'a fee or a scheme claimed as confirmed, from a build that cannot reach the page' });
+    }
+    if (r.sourceRef && !sources[r.sourceRef]) {
+      failures.push({ [kind]: r.id, why: `sourceRef ${r.sourceRef} is not in the sources list` });
+    }
+    if (!r.sourceRef) failures.push({ [kind]: r.id, why: 'a figure with nothing to check it against' });
+    const all = Object.values(r).filter((v) => typeof v === 'string').join(' ');
+    FORBIDDEN.forEach(([re, what]) => {
+      const hit = all.match(re);
+      // "not the least ambitious" and similar comparisons are the whole point of
+      // the truths block, so only the tables are held to this.
+      if (hit) failures.push({ [kind]: r.id, why: `${what}: "${hit[0]}"` });
+    });
+    const dash = all.match(/\s[-–—]|[-–—]\s|[–—]/);
+    if (dash) failures.push({ [kind]: r.id, why: `a dash used as punctuation: "${dash[0]}"` });
+  });
+  check(costs, 'costs');
+  check(help, 'help');
+
+  // EVERY DESTINATION HAS A PRICE BESIDE IT. A route on the Plan screen with no
+  // cost anywhere on the money page is the exact silence a family fills in with
+  // a guess, and the guess is always too high.
+  const covered = new Set(costs.flatMap((c) => c.covers || []));
+  ((data.pathways && data.pathways.destinations) || []).forEach((d) => {
+    if (!covered.has(d.id)) {
+      failures.push({ why: `${d.railName} has no cost beside it, and a family will guess` });
+    }
+  });
+
+  // THE TWO KINDS OF HELP THE ARGUMENT NEEDS.
+  //
+  //   Something automatic, so a family who never fills a form still has money.
+  //   Something not means tested, so a middle income family is not told the page
+  //   is about somebody else.
+  //
+  // Both were in the first draft by luck rather than by design, which is exactly
+  // the kind of thing that gets edited out later by somebody trimming for length.
+  const automatic = help.some((h) => /already there|automatic|nothing to apply/i.test(`${h.howToGet} ${h.who}`));
+  if (!automatic) failures.push({ why: 'no help that arrives without a form, so the page only speaks to families who know to ask' });
+  const untiered = help.some((h) => /not only on low income|available broadly|every Singapore Citizen/i.test(h.who));
+  if (!untiered) failures.push({ why: 'no help that is not means tested, so a middle income family reads this as somebody else\'s page' });
+
+  if (truths.length < 3) failures.push({ why: `${truths.length} truths: the tables are evidence and these are the actual guidance` });
+  truths.forEach((t) => {
+    if (words(t.head) > 9) failures.push({ why: `a truth heading over nine words: ${t.head}` });
+    if (words(t.body) > 46) failures.push({ why: `a truth over forty six words: ${t.head}` });
+  });
+
+  ['source', 'url', 'accessed'].forEach((k) => {
+    if (!(m._meta || {})[k]) failures.push({ why: `money _meta has no ${k}` });
+  });
+
+  return moneyReport(failures, costs.length, help.length);
+}
+
+function moneyReport(failures, nCosts, nHelp) {
+  const ok = failures.length === 0;
+  console.log(
+    `%cMoney sweep: ${ok ? 'PASS' : 'FAIL'} (${nCosts} routes priced, ${nHelp} kinds of help, every figure provisional)`,
+    ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700'
+  );
+  if (!ok) console.table(failures);
+  return { ok, failures };
+}

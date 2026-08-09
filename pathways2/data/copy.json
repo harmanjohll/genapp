@@ -86,7 +86,9 @@
   "enterTable": "Play it at a table",
   "enterTableSub": "Two to six of you on one screen, then compare",
   "enterWork": "What the work actually is",
-  "enterWorkSub": "Sixteen parts of working Singapore, and every way into each"
+  "enterWorkSub": "Sixteen parts of working Singapore, and every way into each",
+  "enterMoney": "What it costs, and what help there is",
+  "enterMoneySub": "Every route priced, and nine kinds of help by name"
  },
  "pulse": {
   "opened": "{dest} is open now.",

@@ -18,7 +18,7 @@ const load = (name) => JSON.parse(readFileSync(join(root, 'data', `${name}.json`
 const data = Object.fromEntries([
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
-  'moves', 'version', 'activities', 'possibilities', 'work',
+  'moves', 'version', 'activities', 'possibilities', 'work', 'money',
 ].map((n) => [n, load(n)]));
 
 const { runInvariantSweep } = await import(join(root, 'assets/js/engine/reach.js'));
@@ -28,7 +28,7 @@ const { runCopyLint, __test_pronounFaults } = await import(join(root, 'assets/js
 const { possibilitySweep } = await import(join(root, 'assets/js/engine/possible.js'));
 const { tableSweep } = await import(join(root, 'assets/js/modes/mode-table.js'));
 const { ecgSweep } = await import(join(root, 'assets/js/engine/ecg-lint.js'));
-const { workSweep } = await import(join(root, 'assets/js/engine/work-lint.js'));
+const { workSweep, moneySweep } = await import(join(root, 'assets/js/engine/work-lint.js'));
 
 const ctx = {
   subjects: data.subjects.subjects,
@@ -154,6 +154,7 @@ const results = [
   ['table', tableSweep(data)],
   ['ecg', ecgSweep(data)],
   ['work', workSweep(data)],
+  ['money', moneySweep(data)],
   ['copy', runCopyLint(data)],
   ['lint-bites', lintBitesSweep()],
 ];

@@ -4,9 +4,10 @@
 // decision, working from a system that no longer exists. One calm page,
 // printable, phone first, because parents arrive on their child's phone.
 
-import { esc, onAction } from '../components/dom.js?v=2.6.0';
-import { getState, currentYear } from '../state.js?v=2.6.0';
-import { reach, sortReaches, lever } from '../engine/reach.js?v=2.6.0';
+import { esc, onAction } from '../components/dom.js?v=2.7.0';
+import { getState, currentYear } from '../state.js?v=2.7.0';
+import { reach, sortReaches, lever } from '../engine/reach.js?v=2.7.0';
+import { parentMoneyBlock } from './mode-money.js?v=2.7.0';
 
 const fill = (t, v) => String(t || '').replace(/\{(\w+)\}/g, (_, k) => (v[k] == null ? '' : v[k]));
 
@@ -60,6 +61,7 @@ export function renderParent(host, data, ctx) {
           <h2 class="h-sm">${esc((data.copy.parentLive || {}).head || '')}</h2>
           ${liveBlock(data, ctx)}
         </section>
+        ${parentMoneyBlock(data)}
 
         ${p.sections.map((s) => `
           <section class="section">

@@ -18,19 +18,20 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.6.0';
-import { icon } from '../components/icons.js?v=2.6.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.6.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.6.0';
-import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.6.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.6.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.6.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.6.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.7.0';
+import { icon } from '../components/icons.js?v=2.7.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.7.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.7.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.7.0';
+import { costLineFor } from './mode-money.js?v=2.7.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.7.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.7.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.7.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.6.0';
+} from '../state.js?v=2.7.0';
 
 const STATE_API = { setMode };
 
@@ -876,6 +877,7 @@ function openDest(id, trigger) {
     </div>
     <p class="micro mute">${esc(r.duration)}. ${esc(r.leadsTo)}</p>
     <p>${decorate(r.feels)}</p>
+    ${costLineFor(DATA, r.id)}
     <h4 class="caps">${esc(c.metHead)}</h4>
     <ul class="checklist">${met}${gap}</ul>
     ${moves}
