@@ -12,8 +12,8 @@
 // this app does; what they do not know is what their student has just been
 // shown.
 
-import { esc } from '../components/dom.js';
-import { bindGlossary } from '../components/glossary.js';
+import { esc } from '../components/dom.js?v=2.4.0';
+import { bindGlossary } from '../components/glossary.js?v=2.4.0';
 
 /**
  * The app's own admission arithmetic, rendered from the same file the students
@@ -84,8 +84,8 @@ export function renderCounsellor(host, data) {
                 <span>Read the line above the list with them. That is
                 the single subject change that opens the most, and it is usually a surprise.</span></li>
               <li><span class="min">8 min</span>
-                <span>Play once, short. It ends at eighteen and takes
-                about that long.</span></li>
+                <span>Play once, short. It runs to the end of their first
+                qualification, around twenty, and takes about that long.</span></li>
               <li><span class="min">4 min</span>
                 <span>Act. Three things they will do this term, in
                 their own words.</span></li>

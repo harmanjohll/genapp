@@ -4,10 +4,25 @@
     "url": "",
     "accessed": "2026-08-05",
     "units": "not applicable",
-    "notes": "The app ships from a branch and a student's browser caches it, so a class can be sitting on three different builds without anyone knowing. The version is baked in here and compared against what the device last saw. On a change, one sheet, once, listing what moved in the student's own words. Bump `version` and put the newest block first in `releases`. Entries are for the person using it: what is different on their screen, never what changed in the code."
+    "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.0.0",
+  "version": "2.4.0",
   "releases": [
+    {
+      "version": "2.4.0",
+      "date": "2026-08-08",
+      "head": "The game talks the way I would",
+      "changes": [
+        "Every choice and every outcome is in my own words now. It says my best subject and my Early Admissions folder, not yours.",
+        "The options say what they actually mean. Guard your own oxygen is gone, and so is Keep one made thing alive.",
+        "The things that fill a real school year are in: class comm, CCA EXCO, the Sec 3 immersion trip, a programme outside school, leading a VIA project, tutoring somebody younger.",
+        "Some choices now pay off for the rest of the game. Build a study routine and every year after it gives me one more point.",
+        "CCA, VIA, PW, EXCO, DSA, ORD and NYAA are all in Words now, so anyone can look them up.",
+        "The button at the end of a year says That is my year.",
+        "On a phone, the button that starts the game and the button that ends a year are where a thumb can reach them. They were off the bottom of the screen.",
+        "The version is printed at the bottom of every page, so a teacher can check the class is on the same one."
+      ]
+    },
     {
       "version": "2.0.0",
       "date": "2026-08-05",

@@ -21,11 +21,27 @@ const FILES = [
 const REQUIRED = ['subjects', 'pathways', 'progressions', 'copy', 'glossary'];
 const STALE_DAYS = 90;
 
+/**
+ * The build, read from the one file a refresh always refetches.
+ *
+ * WHY THIS IS NOT IN A JSON FILE. It was: version.json carried it, and its own
+ * note said a class can be sitting on three different builds without anyone
+ * knowing. But a browser caches version.json exactly like every other data
+ * file, so the mechanism meant to detect staleness was itself served stale, and
+ * a whole rewrite of the game's language shipped without appearing on a device
+ * that had loaded the app before. index.html is the document, so a reload
+ * revalidates it, and the version it carries busts everything below it.
+ */
+export const BUILD = (() => {
+  const el = typeof document !== 'undefined' && document.querySelector('meta[name="app-version"]');
+  return (el && el.content) || 'dev';
+})();
+
 async function fetchOne(name, tries = 3) {
   let lastErr;
   for (let i = 0; i < tries; i += 1) {
     try {
-      const res = await fetch(`./data/${name}.json`);
+      const res = await fetch(`./data/${name}.json?v=${encodeURIComponent(BUILD)}`);
       if (!res.ok) throw new Error(`${res.status}`);
       return await res.json();
     } catch (e) {
