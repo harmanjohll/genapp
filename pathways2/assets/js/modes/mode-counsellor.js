@@ -12,8 +12,9 @@
 // this app does; what they do not know is what their student has just been
 // shown.
 
-import { esc } from '../components/dom.js?v=2.7.0';
-import { bindGlossary } from '../components/glossary.js?v=2.7.0';
+import { esc } from '../components/dom.js?v=2.8.0';
+import { bindGlossary } from '../components/glossary.js?v=2.8.0';
+import { evidenceLink } from './mode-evidence.js?v=2.8.0';
 
 /**
  * The app's own admission arithmetic, rendered from the same file the students
@@ -163,8 +164,11 @@ export function renderCounsellor(host, data) {
             noticing rather than accepting.</p>
         </div>
 
+        ${evidenceLink(data)}
+
         <div class="btn-row" style="margin-top:var(--s-5)">
           <a class="btn accent" href="./">Open the student view</a>
+          <a class="btn ghost" href="./?mode=evidence">What this is built on</a>
           <a class="btn ghost" href="./?mode=teacher">The class plan</a>
           <a class="btn ghost" href="./?mode=table">The table game</a>
         </div>

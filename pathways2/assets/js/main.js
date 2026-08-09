@@ -4,34 +4,36 @@
 // Play lives it forward, Act turns the ending into things to do this term.
 // The landing asks one question before any of it, once.
 
-import { loadAll, BUILD } from './data-loader.js?v=2.7.0';
+import { loadAll, BUILD } from './data-loader.js?v=2.8.0';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
   markVersionSeen, snapshotPlan, MODES, YEARS, currentYear,
-} from './state.js?v=2.7.0';
-import { initGlossary, openFullList } from './components/glossary.js?v=2.7.0';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.7.0';
-import { onAction, esc } from './components/dom.js?v=2.7.0';
-import { icon } from './components/icons.js?v=2.7.0';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.7.0';
-import { reach, runInvariantSweep } from './engine/reach.js?v=2.7.0';
-import { projectionSweep } from './engine/project.js?v=2.7.0';
-import { runCopyLint } from './engine/copy-lint.js?v=2.7.0';
-import { runJourneySweep } from './engine/journey4.js?v=2.7.0';
-import { possibilitySweep } from './engine/possible.js?v=2.7.0';
-import { ecgSweep } from './engine/ecg-lint.js?v=2.7.0';
-import { workSweep, moneySweep } from './engine/work-lint.js?v=2.7.0';
-import { domLint } from './engine/dom-lint.js?v=2.7.0';
-import { renderLanding } from './modes/landing.js?v=2.7.0';
-import { renderNow } from './modes/mode-now.js?v=2.7.0';
-import { renderJourney, resetJourney } from './modes/mode-journey.js?v=2.7.0';
-import { renderAim } from './modes/mode-aim.js?v=2.7.0';
-import { renderTeacher } from './modes/mode-teacher.js?v=2.7.0';
-import { renderTable, resetTable, tableSweep } from './modes/mode-table.js?v=2.7.0';
-import { renderParent } from './modes/mode-parent.js?v=2.7.0';
-import { renderCounsellor } from './modes/mode-counsellor.js?v=2.7.0';
-import { renderWork } from './modes/mode-work.js?v=2.7.0';
-import { renderMoney } from './modes/mode-money.js?v=2.7.0';
+} from './state.js?v=2.8.0';
+import { initGlossary, openFullList } from './components/glossary.js?v=2.8.0';
+import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.8.0';
+import { onAction, esc } from './components/dom.js?v=2.8.0';
+import { icon } from './components/icons.js?v=2.8.0';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.8.0';
+import { reach, runInvariantSweep } from './engine/reach.js?v=2.8.0';
+import { projectionSweep } from './engine/project.js?v=2.8.0';
+import { runCopyLint } from './engine/copy-lint.js?v=2.8.0';
+import { runJourneySweep } from './engine/journey4.js?v=2.8.0';
+import { possibilitySweep } from './engine/possible.js?v=2.8.0';
+import { ecgSweep } from './engine/ecg-lint.js?v=2.8.0';
+import { workSweep, moneySweep } from './engine/work-lint.js?v=2.8.0';
+import { evidenceSweep } from './engine/evidence-lint.js?v=2.8.0';
+import { domLint } from './engine/dom-lint.js?v=2.8.0';
+import { renderLanding } from './modes/landing.js?v=2.8.0';
+import { renderNow } from './modes/mode-now.js?v=2.8.0';
+import { renderJourney, resetJourney } from './modes/mode-journey.js?v=2.8.0';
+import { renderAim } from './modes/mode-aim.js?v=2.8.0';
+import { renderTeacher } from './modes/mode-teacher.js?v=2.8.0';
+import { renderTable, resetTable, tableSweep } from './modes/mode-table.js?v=2.8.0';
+import { renderParent } from './modes/mode-parent.js?v=2.8.0';
+import { renderCounsellor } from './modes/mode-counsellor.js?v=2.8.0';
+import { renderWork } from './modes/mode-work.js?v=2.8.0';
+import { renderMoney } from './modes/mode-money.js?v=2.8.0';
+import { renderEvidence } from './modes/mode-evidence.js?v=2.8.0';
 
 const app = document.getElementById('app');
 const head = document.getElementById('site-head');
@@ -43,7 +45,7 @@ const params = new URLSearchParams(location.search);
 
 // Modes a person links to on purpose. Plan, Play and Act are written into the
 // address bar by the app itself, so they never imply an intent to skip the door.
-const ENTRY_MODES = ['teacher', 'parent', 'table', 'counsellor', 'work', 'money'];
+const ENTRY_MODES = ['teacher', 'parent', 'table', 'counsellor', 'work', 'money', 'evidence'];
 
 let extraMode = ENTRY_MODES.includes(params.get('mode')) ? params.get('mode') : null;
 if (params.get('board') === '1') document.body.dataset.board = 'true';
@@ -124,6 +126,7 @@ async function init() {
     ecgSweep(data);
     workSweep(data);
     moneySweep(data);
+    evidenceSweep(data);
     domLint();
     runCopyLint(data);
   }
@@ -245,6 +248,7 @@ function paint() {
     if (extraMode === 'counsellor') { renderCounsellor(app, data); return; }
     if (extraMode === 'work') { renderWork(app, data); return; }
     if (extraMode === 'money') { renderMoney(app, data); return; }
+    if (extraMode === 'evidence') { renderEvidence(app, data); return; }
     if (st.mode !== 'journey') document.body.dataset.era = 'school';
     switch (st.mode) {
       case 'journey': renderJourney(app, data, ctx, paint); break;

@@ -1,0 +1,144 @@
+{
+ "_meta": {
+  "source": "Primary sources as cited per frame. The critical works are listed in full so a reader can go and disagree with the app using them.",
+  "url": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance",
+  "accessed": "2026-08-09",
+  "units": "none",
+  "status": "provisional",
+  "notes": "CITATIONS NEED A HUMAN AGAINST THE ORIGINALS. Volume and issue numbers are given where this build is confident and page ranges are omitted where it is not, because an invented page number in a reference list is the kind of error that discredits everything around it. Every frame carries its own criticism on purpose: a page that cited only supporting theory would be a brochure with footnotes, and the professionals this page is for will read the limits first."
+ },
+ "frames": [
+  {
+   "id": "moe_ecg",
+   "name": "The three guiding questions",
+   "cite": "Ministry of Education Singapore, Education and Career Guidance. The three questions: who am I, where do I want to go, how do I get there.",
+   "claims": "Guidance is a structure for self awareness, exploration and action planning, run across a school career rather than at one decision point.",
+   "inApp": "The three questions head the rail beside every turn, badge each stage with the question it leans on, and sit over the destination list in Plan.",
+   "limit": "It is a curriculum framework rather than an empirical model, so it says what to cover and not what works.",
+   "refuses": "The app does not claim the questions produce better decisions. They organise the screens because a student can hold three questions and not thirty."
+  },
+  {
+   "id": "holland",
+   "name": "Six kinds of working",
+   "cite": "Holland, J. L. (1997). Making Vocational Choices: A Theory of Vocational Personalities and Work Environments, third edition. Psychological Assessment Resources.",
+   "claims": "People and work environments both sort into six types, and satisfaction rises when a person and their environment resemble each other.",
+   "inApp": "The six become wants in student words with the letters kept off the student screens. A named want tilts which chance cards appear and which sectors are shown.",
+   "limit": "Congruence predicts satisfaction weakly, and measured interests are heavily shaped by who a child has already seen doing the work, so an inventory can record a restriction and report it as a preference.",
+   "refuses": "No type is ever reported back to a student, nothing is scored, and a want only ever ADDS to what is shown. It cannot remove anything, which is the difference between widening a search and narrowing a person."
+  },
+  {
+   "id": "krumboltz",
+   "name": "Planned happenstance",
+   "cite": "Krumboltz, J. D. (2009). The Happenstance Learning Theory. Journal of Career Assessment, 17(2). With Mitchell, K. E. and Levin, A. S. (1999), Planned Happenstance, Journal of Counseling and Development, 77(2).",
+   "claims": "Careers are built largely from unplanned events, and five dispositions decide whether somebody turns an accident into an opportunity.",
+   "inApp": "The five dispositions are the ones tracked. Chance cards are the unplanned events, and the demanding response on a card is gated on the disposition it needs.",
+   "limit": "Strong as description and thin as prescription. Nobody has shown that teaching curiosity to a fourteen year old changes what happens to them at twenty four.",
+   "refuses": "The app does not tell a student their dispositions are a result or a personality. They are a record of what this run did, and the ending says so."
+  },
+  {
+   "id": "savickas",
+   "name": "Career as narrative",
+   "cite": "Savickas, M. L. (2005). The theory and practice of career construction. In Brown, S. D. and Lent, R. W., editors, Career Development and Counseling. Wiley.",
+   "claims": "A career is a story a person tells to make their working life mean something, and counselling helps them author it.",
+   "inApp": "A run is a story rather than a score. The rail keeps it, a reflection turn asks for a written line, the ending is sentences, and two runs can be read side by side.",
+   "limit": "Narrative approaches have the weakest comparative outcome evidence in the field, largely because what they aim at is hard to measure.",
+   "refuses": "The app claims narrative makes the session worth sitting through, and does not claim it improves a decision. Nothing a student writes is scored or read by anybody else."
+  },
+  {
+   "id": "super",
+   "name": "A life, not a decision",
+   "cite": "Super, D. E. (1980). A life span, life space approach to career development. Journal of Vocational Behavior, 16(3).",
+   "claims": "Career development runs across a whole life through stages and roles, so any one choice is a moment inside a longer arc.",
+   "inApp": "The short game runs to the end of the first qualification, around twenty. The long game carries the same road to forty eight and asks again at thirty eight what was wanted at the start.",
+   "limit": "The stages were drawn largely from mid twentieth century careers in one country, and the orderly sequence they describe fits fewer working lives now than when it was written.",
+   "refuses": "The app keeps the idea that a want can change and drops the stage ages entirely. Changing the answer at thirty eight is rendered as progress, never as drift."
+  },
+  {
+   "id": "gottfredson",
+   "name": "Ruling things out too early",
+   "cite": "Gottfredson, L. S. (1981). Circumscription and compromise: a developmental theory of occupational aspirations. Journal of Counseling Psychology, 28(6).",
+   "claims": "Children eliminate whole fields of work early, by sex type and by perceived social standing, long before they know anything about the work.",
+   "inApp": "This is the most load bearing frame in the build. Nothing is ever shown as closed, the engine holds an invariant that no plan can produce a dead end, and futures are stated as wants rather than job titles.",
+   "limit": "The evidence is strongest for describing that elimination happens and weakest on what reverses it, so the theory diagnoses without prescribing.",
+   "refuses": "The response is structural rather than persuasive. The app does not tell students to keep an open mind; it removes the screens on which a door could appear shut."
+  },
+  {
+   "id": "scct",
+   "name": "Believing you can",
+   "cite": "Lent, R. W., Brown, S. D. and Hackett, G. (1994). Toward a unifying social cognitive theory of career and academic interest, choice and performance. Journal of Vocational Behavior, 45(1). Building on Bandura, A. (1997), Self Efficacy: The Exercise of Control.",
+   "claims": "Interests and choices grow from beliefs about what one can do and what it would lead to, and those beliefs come mostly from mastery experience.",
+   "inApp": "The Can do ledger grows from recorded actions rather than from asking. Taking a demanding response to a chance card is the mastery experience.",
+   "limit": "Self efficacy is among the better evidenced constructs here, and it is usually measured by asking people how confident they feel, which is exactly the thing most easily inflated by a good afternoon.",
+   "refuses": "The app never asks a student how confident they are. Confidence is inferred from what the run actually did, which is a weaker signal and a harder one to flatter."
+  },
+  {
+   "id": "casve",
+   "name": "Deciding, then acting",
+   "cite": "Sampson, J. P., Reardon, R. C., Peterson, G. W. and Lenz, J. G. (2004). Career Counseling and Services: A Cognitive Information Processing Approach. Brooks and Cole.",
+   "claims": "Career decisions run through a cycle of communication, analysis, synthesis, valuing and execution, and the cycle does not end at choosing.",
+   "inApp": "Act works backwards from a want to named actions, resurfaces what was committed to last time, and the discussion prompt turns an action into a commitment with a date.",
+   "limit": "A process model of how deciding proceeds, not a claim that following the process produces better outcomes.",
+   "refuses": "Nothing is called a decision. The app collects commitments a student can carry out this term, and asks about them again next time."
+  },
+  {
+   "id": "ikigai",
+   "name": "A reason to get up",
+   "cite": "The four circle diagram in common use is not from the Japanese literature on ikigai. It comes from a 2014 blog diagram merging ikigai with an unrelated purpose Venn, and the concept described by Japanese writers is broader and more everyday.",
+   "claims": "As popularly drawn: purpose sits where what you love, what you are good at, what the world needs and what you can be paid for overlap.",
+   "inApp": "The four circles are computed from the run as played and never asked as a quiz. The want and the appetite shown, the Can do ledger, who would vouch for you, and the doors and things made.",
+   "limit": "Not a research construct in the form usually drawn. It is a useful picture and it is presented as a lens rather than as a finding.",
+   "refuses": "The app does not ask a student to find their purpose, and does not treat an empty overlap as a problem. It draws what the run contains and stops."
+  },
+  {
+   "id": "e21cc",
+   "name": "The competencies, at a table",
+   "cite": "Ministry of Education Singapore, 21st Century Competencies and the Emerging 21CC framework.",
+   "claims": "Competencies including critical and inventive thinking, communication and collaboration, and civic and global literacy are outcomes of schooling in their own right.",
+   "inApp": "The table game names them where they actually happen: backing another seat is communication and collaboration, and reading another player's road is social awareness.",
+   "limit": "A policy framework rather than a measurement model, and competencies of this kind are notoriously hard to evidence at the level of one lesson.",
+   "refuses": "The app tags what a table did and calls it practised. It does not score a competency or report a level for any student."
+  }
+ ],
+ "critical": [
+  {
+   "id": "roberts",
+   "cite": "Roberts, K. (1977). The social conditions, consequences and limitations of careers guidance. British Journal of Guidance and Counselling, 5(1).",
+   "says": "What young people end up doing is shaped far more by the opportunity structure around them than by the quality of their guidance or the accuracy of their choices.",
+   "answer": "This is the strongest argument against a tool like this one, and it is the reason the app spends as much effort on what the system actually permits, the admission arithmetic, the fee tables, the ways into a sector, as on what a student wants. Widening what somebody knows is possible is a modest claim, and it is the claim being made."
+  },
+  {
+   "id": "whiston",
+   "cite": "Whiston, S. C., Li, Y., Goodrich Mitts, N. and Wright, L. (2017). Effectiveness of career choice interventions: a meta analytic replication and extension. Journal of Vocational Behavior, 100.",
+   "says": "Career choice interventions produce real but modest average effects, and what appears to matter most is a small number of critical ingredients rather than the volume of activity.",
+   "answer": "The ingredients the evidence favours, written exercises, individualised interpretation, attention to what the world of work actually contains, and support from a person, are the four things this app is built around. The last one is why every mode ends by pointing at a human being."
+  },
+  {
+   "id": "hooley",
+   "cite": "Hooley, T., Sultana, R. G. and Thomsen, R., editors (2018). Career Guidance for Emancipation: Reclaiming Justice for the Multitude. Routledge.",
+   "says": "Guidance that treats a labour market as a fixed fact and the individual as the only thing that can change quietly serves the market rather than the person.",
+   "answer": "Taken seriously in two places. Routes are never ranked, and pay is stated once per level of entry rather than per sector, so the app cannot be read as a price list of lives. Where a fact is uncomfortable, such as the hours in food service or the staffing in hospitality, the sector card says so."
+  }
+ ],
+ "refusals": [
+  {
+   "head": "It does not predict grades",
+   "body": "Nothing in the app estimates what a student will score, and nothing is gated on a predicted grade. Performance criteria are shown as published and never evaluated against a student."
+  },
+  {
+   "head": "It does not rank routes",
+   "body": "Destinations are ordered alphabetically and sectors are too, checked by a sweep, because any other order gets read as a league table. The app has no notion of a better route."
+  },
+  {
+   "head": "It reports no type and keeps no profile",
+   "body": "A student is never told they are a type. Everything stays in the browser on the device, with no account and no server, and the parent page deliberately shows less than the device holds."
+  },
+  {
+   "head": "It has no outcome evidence about itself",
+   "body": "There is no trial, no comparison group and no follow up. The claim is that it shows a student more of what is possible than they knew, and even that has not been measured. Anybody deciding whether to run this with a cohort should know that before they read anything else on this page."
+  },
+  {
+   "head": "Fifty seven of its figures are unverified",
+   "body": "The admission bars, the pay bands and the fee tables are marked Not yet verified wherever this build could not reach the source page. They need a human against moe.gov.sg and the institutions before a class uses them."
+  }
+ ]
+}

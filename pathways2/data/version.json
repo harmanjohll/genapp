@@ -6,8 +6,20 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.7.0",
+  "version": "2.8.0",
   "releases": [
+    {
+      "version": "2.8.0",
+      "date": "2026-08-09",
+      "head": "What this is built on, and what it will not claim",
+      "changes": [
+        "A page for anybody sceptical: the ten frames this app is built on, each with the full citation, what it changed in the build, and where the theory is weak.",
+        "Every frame says what the app refuses to do because the theory is weak. Interests are never reported back as a type, because a measured interest can be a record of what a child has already seen somebody like them doing.",
+        "Three works that argue against tools like this one, summarised fairly and then answered. Guidance cannot outrun the opportunity structure around a young person, and average effects in this field are real but modest.",
+        "Five things this app does not do. It does not predict grades, it does not rank routes, it reports no type and keeps no profile, fifty seven of its figures are still unverified, and it has no outcome evidence about itself at all. No trial, no comparison group, no follow up.",
+        "The teacher and counsellor pages both point here now, and the whole page prints."
+      ]
+    },
     {
       "version": "2.7.0",
       "date": "2026-08-09",

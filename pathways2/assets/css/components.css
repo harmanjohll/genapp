@@ -1631,3 +1631,39 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
   .moneytable { font-size: 11pt; }
   .truth { break-inside: avoid; }
 }
+
+/* ---------------------------------------------------------------------------
+   THE EVIDENCE PAGE. Ten frames, each with its own criticism attached.
+
+   The weakness and the refusal are given their own colour and their own left
+   rule, not because they are warnings but because they are the two rows a reader
+   goes looking for, and a page where they looked like the rest of the prose would
+   be read as a brochure with footnotes. */
+
+.frames { display: grid; gap: var(--s-5); margin-top: var(--s-3); }
+.frame { padding-top: var(--s-4); border-top: 1px solid var(--rule); }
+.frame:first-child { border-top: 0; padding-top: 0; }
+.frame-name { font-size: 1.14rem; font-weight: 600; margin: 0 0 var(--s-2); }
+.cite {
+  font-size: var(--t-micro); color: var(--ink-mute); margin: 0 0 var(--s-3);
+  padding-left: var(--s-3); border-left: 2px solid var(--rule-soft);
+}
+.framedl { margin: 0; }
+.framedl dt {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); margin-top: var(--s-3);
+}
+.framedl dd { margin: 2px 0 0; font-size: var(--t-small); }
+.framedl dd.weak { color: var(--ink-soft); border-left: 2px solid var(--longer); padding-left: var(--s-3); }
+.framedl dd.refuse { border-left: 2px solid var(--open); padding-left: var(--s-3); }
+
+.counter {
+  margin-top: var(--s-4); padding: var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+}
+.counter p:last-child { margin-bottom: 0; }
+
+@media print {
+  .frame, .counter, .truth { break-inside: avoid; }
+  .frames { gap: 12pt; }
+}
