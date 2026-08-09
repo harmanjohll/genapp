@@ -4512,7 +4512,7 @@
    "minAge": 14,
    "maxAge": 17,
    "title": "The lab technician notices",
-   "body": "Mr Rahim watches me set up the titration twice, correctly, without asking. Afterwards he mentions a competition and a form.",
+   "body": "A term of staying back to redo the practical properly, and Mr Rahim starts leaving the good glassware out for me. He mentions who runs the Science team.",
    "subjects": [
     "sci_pc",
     "sci_pb",
@@ -4524,8 +4524,8 @@
    ],
    "responses": [
     {
-     "label": "Enter the competition",
-     "outcome": "Six weeks of Saturdays in the lab. No prize, and a teacher who now writes me a real reference.",
+     "label": "Ask to join the Science team",
+     "outcome": "Six weeks of Thursdays in the lab. No medal at the end, and the teacher who runs it now writes me a real reference.",
      "gain": {
       "portfolio": 1,
       "skills": 1
@@ -4568,7 +4568,8 @@
     "sec",
     "jc",
     "mi"
-   ]
+   ],
+   "requiresFlag": "went_deep"
   },
   {
    "id": "cb_essay_reads_back",

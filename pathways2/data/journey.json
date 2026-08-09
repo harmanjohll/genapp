@@ -177,6 +177,7 @@
  "flags": [
   "ns_yes",
   "ns_no",
+  "went_deep",
   "asked_help",
   "ecg_seen",
   "asked_up",
@@ -250,7 +251,8 @@
       "skills": 1
      },
      "outcome": "Thursday remedial with Mr Tan, week after week. October's paper comes back two grades kinder.",
-     "missed": "The Thursday remedial ran without me."
+     "missed": "The Thursday remedial ran without me.",
+     "sets": "went_deep"
     },
     {
      "label": "Ask about taking a subject higher",
@@ -394,7 +396,8 @@
      "disp": {
       "flexibility": 1
      },
-     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven."
+     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven.",
+     "sets": "went_deep"
     },
     {
      "label": "Turn my hobby into something people use",
@@ -435,7 +438,8 @@
       "skills": 2
      },
      "outcome": "Past papers before anyone assigns them. The subject starts feeling like mine, not the school's.",
-     "missed": "My best subject stayed merely good this year."
+     "missed": "My best subject stayed merely good this year.",
+     "sets": "went_deep"
     },
     {
      "label": "Start my Early Admissions folder",
@@ -531,7 +535,8 @@
      "gain": {
       "skills": 1
      },
-     "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone."
+     "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone.",
+     "sets": "went_deep"
     },
     {
      "label": "Keep my sleep and exercise this year",
@@ -740,7 +745,8 @@
      "outcome": "Notes I actually reread, a week that repeats, a tutor I stop avoiding. The jump stops feeling like a cliff.",
      "missed": "Term three arrives before my study system does.",
      "capacity": 1,
-     "grew": "worked out how I learn"
+     "grew": "worked out how I learn",
+     "sets": "went_deep"
     },
     {
      "label": "Do my share of PW properly",
@@ -814,7 +820,10 @@
      "gain": {
       "skills": 1
      },
-     "outcome": "I train like it is a season. Whatever the slip says, I finish knowing I emptied the tank."
+     "outcome": "I train like it is a season. Whatever the slip says, I finish knowing I emptied the tank.",
+     "outcomeIf": {
+      "flag:went_deep": "The habit I built in secondary school does the work now. Whatever the slip says, I finish knowing I emptied the tank."
+     }
     },
     {
      "label": "Pace the year so I last it",
@@ -877,7 +886,10 @@
      "outcome": "Deadlines in a calendar, readings before the lecture, one clear evening. Week ten arrives and nothing is on fire.",
      "missed": "Semester one graded me while I was settling in.",
      "capacity": 1,
-     "grew": "set up a week that holds"
+     "grew": "set up a week that holds",
+     "outcomeIf": {
+      "flag:went_deep": "I already know how I study, so week one is setup and not discovery. Week ten arrives and nothing is on fire."
+     }
     },
     {
      "label": "Get to know the people on my course",
@@ -1112,7 +1124,10 @@
      },
      "outcome": "Tools back where they belong, hours logged, invoices on time. Boring, and it is why people rehire me.",
      "capacity": 1,
-     "grew": "built a routine that holds"
+     "grew": "built a routine that holds",
+     "outcomeIf": {
+      "flag:went_deep": "The routine came with me from school, so it only needs the tools added. Boring, and it is why people rehire me."
+     }
     },
     {
      "label": "Fix things for neighbours and get known",
@@ -1274,7 +1289,10 @@
      "gain": {
       "portfolio": 2
      },
-     "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot."
+     "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot.",
+     "outcomeIf": {
+      "flag:went_deep": "Making more than asked is already how I work, so thirty drawings costs me nothing. Quantity teaches what taste alone cannot."
+     }
     },
     {
      "label": "Learn to take criticism of my work",
@@ -2125,7 +2143,8 @@
       "portfolio": 1
      },
      "outcome": "I pick one and drive it. Depth in one paper reads better than flatness across four.",
-     "missed": "Every subject got the same middling hour."
+     "missed": "Every subject got the same middling hour.",
+     "sets": "went_deep"
     }
    ],
    "at": [

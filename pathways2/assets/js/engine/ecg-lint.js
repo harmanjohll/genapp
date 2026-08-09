@@ -180,12 +180,46 @@ const vocabFaults = (text, at) => {
   return faults;
 };
 
+// WHEN A CARD CLAIMS TO BE A CONSEQUENCE.
+//
+// The complaint was precise: a card had a lab technician watch the student set
+// up a titration twice, and then mention a competition. Two correct titrations
+// are not a skill anybody gets picked for, and the card felt unearned because it
+// WAS unearned. It claimed to be the second half of a story whose first half the
+// student had never played.
+//
+// So: a card whose text says an adult noticed, remembered, kept or came back
+// must be gated on a FLAG, which is one specific thing the student did on one
+// specific turn. Nothing softer will do, and the rule was written the softer way
+// first: it also accepted a disposition threshold, and because the titration
+// card asked for curiosity it passed with the antecedent stripped back out. A
+// rule that excuses the defect it was written for is decoration. A disposition
+// is a reading of a personality and a subject is a choice of timetable; neither
+// is an act anybody in the story could have witnessed.
+//
+// Moments are exempt by construction and not by exception: a paragraph read out
+// in a lesson, a topic clicking at midnight, a piece going up in the foyer,
+// none of those claim that anybody remembered anything, so none of them match.
+const CLAIMS_MEMORY = [
+  /\bremember(s|ed)\b/i, /\bnotice(s|d)\b/i, /\bhad not forgotten\b/i,
+  /\bkept my (number|name|card|details)\b/i, /\basks? back\b/i,
+  /\bbecause I asked\b/i, /\bthe (\w+ ){0,2}I (asked|shadowed|helped|met|coached)\b/i,
+  /\bas promised\b/i, /\bfrom (before|last year|that day)\b/i,
+  /\bstill has my\b/i, /\bthe one who (asked|helped|stayed)\b/i,
+];
+
 export function ecgSweep(data) {
   const failures = [];
   const cards = (data.chances && data.chances.cards) || [];
   cards.forEach((c) => {
     const why = judgeCard(c);
     if (why) failures.push({ card: c.id, title: c.title, why });
+    const claim = CLAIMS_MEMORY.map((re) => (`${c.title} ${c.body}`).match(re)).find(Boolean);
+    if (claim && !c.requiresFlag && !c.when) {
+      failures.push({
+        card: c.id, title: c.title, why: `says "${claim[0].trim()}" with nothing behind it`,
+      });
+    }
     // Every sentence on the card, checked against everywhere the card is dealt.
     const txt = [c.title, c.body, ...(c.responses || []).map((r) => `${r.label} ${r.outcome} ${r.stretch || ''}`),
       ...(c.onwardMoves || [])].join(' ');
