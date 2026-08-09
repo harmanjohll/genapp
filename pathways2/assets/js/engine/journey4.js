@@ -321,12 +321,34 @@ export function wantAffinity(obj, riasec) {
 // ---------------------------------------------------------------------------
 // The hand of asks and the visible choices. Ported, with door keys real.
 
-/** Still in school means the results fork has not been taken yet. */
-const inSchool = (run) => !run.path;
+/**
+ * Where the student is standing, as institution keys.
+ *
+ * WHY THIS REPLACED A BOOLEAN. The old gate was schoolOnly, meaning nothing more
+ * than "the results fork has not been taken", and it was wrong in both
+ * directions at once. It let "Ask my Year Head what moving up takes" follow a
+ * student into a polytechnic, which has no Year Heads, and it took the form
+ * teacher away from a Junior College student, who has one. One bit cannot
+ * express six institutions.
+ *
+ * The institution comes from the stage, not from the run. Every chapter already
+ * knows where it happens, so there is no state to keep in sync and no way for
+ * two gates to disagree. A chapter shared by two institutions says both:
+ * ch_jc1 is at jc and mi, because Millennia Institute students live it too.
+ */
+export const institutionsNow = (j, run) => {
+  const stage = currentStage(j, run);
+  return (stage && stage.at) || ['sec'];
+};
 
-const asksFor = (moves, age, run) => (moves || []).filter((m) => m.kind === 'ask'
+const atHere = (thing, here) => {
+  const at = thing.at || [];
+  return at.some((k) => here.includes(k));
+};
+
+const asksFor = (moves, age, run, here) => (moves || []).filter((m) => m.kind === 'ask'
   && age >= m.ages[0] && age <= m.ages[1]
-  && (!m.schoolOnly || inSchool(run)));
+  && atHere(m, here));
 
 /**
  * Deal the hand, and take back anything that has stopped being true.
@@ -342,15 +364,16 @@ const asksFor = (moves, age, run) => (moves || []).filter((m) => m.kind === 'ask
  * So the same predicate that decides what may be dealt now also decides what
  * may be kept. A hand is what is true this year, not a souvenir.
  */
-export function dealHand(run, moves, age) {
+export function dealHand(run, moves, age, stage) {
   if (!Array.isArray(run.hand)) run.hand = [];
+  const here = (stage && stage.at) || ['sec'];
   const byId = new Map((moves || []).map((m) => [m.id, m]));
-  const stillTrue = new Set(asksFor(moves, age, run).map((m) => m.id));
+  const stillTrue = new Set(asksFor(moves, age, run, here).map((m) => m.id));
   run.hand = run.hand.filter((id) => byId.has(id) && stillTrue.has(id));
 
   const made = new Set((run.movesMade || []).map((m) => m.id));
   const held = new Set(run.hand);
-  const pool = asksFor(moves, age, run).filter((m) => !made.has(m.id) && !held.has(m.id));
+  const pool = asksFor(moves, age, run, here).filter((m) => !made.has(m.id) && !held.has(m.id));
   if (!pool.length) return run.hand;
   const off = lcg(run.seed + age * 31) % pool.length;
   for (let i = 0; i < pool.length && run.hand.length < HAND_LIMIT; i += 1) {
@@ -366,22 +389,23 @@ export function dealHand(run, moves, age) {
  * the results fork does not deal. So the screen asks this instead of reading
  * run.hand, and then no screen can show a stale ask however it was reached.
  */
-export function heldAsks(run, moves, age) {
-  const eligible = new Map(asksFor(moves, age, run).map((m) => [m.id, m]));
+export function heldAsks(run, moves, age, stage) {
+  const here = (stage && stage.at) || ['sec'];
+  const eligible = new Map(asksFor(moves, age, run, here).map((m) => [m.id, m]));
   return (run.hand || []).map((id) => eligible.get(id)).filter(Boolean);
 }
 
-export function playAsk(run, move, age, moves) {
+export function playAsk(run, move, age, moves, stage) {
   if ((run.asksThisYear || 0) >= ASKS_PER_YEAR) return false;
   if (!Array.isArray(run.hand) || !run.hand.includes(move.id)) return false;
   // Cannot play what is no longer true, even if it is still sitting in the hand.
-  if (!heldAsks(run, moves, age).some((m) => m.id === move.id)) return false;
+  if (!heldAsks(run, moves, age, stage).some((m) => m.id === move.id)) return false;
   grant(run, move);
   if (!run.movesMade) run.movesMade = [];
   run.movesMade.push({ id: move.id, age });
   run.hand = run.hand.filter((id) => id !== move.id);
   run.asksThisYear = (run.asksThisYear || 0) + 1;
-  dealHand(run, moves, age);
+  dealHand(run, moves, age, stage);
   return true;
 }
 
@@ -409,7 +433,7 @@ export function visibleChoices(stage, run, moves, age) {
     const made = new Set((run.movesMade || []).map((m) => m.id));
     const open = moves.filter((m) => m.kind === 'commit'
       && age >= m.ages[0] && age <= m.ages[1] && !made.has(m.id)
-      && (!m.schoolOnly || inSchool(run)));
+      && atHere(m, (stage && stage.at) || ['sec']));
     if (open.length) {
       const off = lcg(run.seed + age * 97) % open.length;
       commits = Array.from({ length: Math.min(MOVE_CHOICE_CAP, open.length) },
@@ -622,17 +646,17 @@ function resolveOutcome(choice, run, raised) {
 // ---------------------------------------------------------------------------
 // The deck.
 
-export function eligibleCards(cards, run, age) {
+export function eligibleCards(cards, run, age, stage) {
   const used = new Set(run.steps.map((s) => s.chance && s.chance.id).filter(Boolean));
   return cards.filter((c) => {
     if (age < c.minAge || age > c.maxAge) return false;
     if (used.has(c.id)) return false;
     if (c.paths && run.path && !c.paths.includes(run.path)) return false;
     if (c.paths && !run.path) return false;
-    // A polytechnic has no form teacher and no year head. Cards written in
-    // secondary school vocabulary stop at the results fork, the same gate the
-    // move deck uses.
-    if (c.schoolOnly && run.path) return false;
+    // A card written in one institution's vocabulary is only dealt there. A
+    // form teacher and a Year Head belong to secondary school; a lecturer and a
+    // module belong to the places after it.
+    if (!atHere(c, (stage && stage.at) || ['sec'])) return false;
     if (c.requiresNS && run.ns !== true) return false;
     if (c.excludesNS && run.ns === true) return false;
     if (c.requiresFlag && !run.flags.includes(c.requiresFlag)) return false;
@@ -663,7 +687,7 @@ function pickChance(run, stage, cards, age) {
   // luck decided how big a life got. The rhythm is the same for everyone; which
   // cards arrive inside it is what varies.
   if (run.stepIndex % 5 === 3) return null;
-  const pool = eligibleCards(cards, run, age);
+  const pool = eligibleCards(cards, run, age, stage);
   if (!pool.length) return null;
   const rich = pool.filter((c) => c.requiresFlag || c.when);
   let pickFrom = rich.length && lcg(run.seed + run.stepIndex * 31) % 3 !== 0 ? rich : pool;
@@ -944,9 +968,17 @@ export function runJourneySweep(data) {
         // are eligible then. Modelling it otherwise made the sweep report a
         // starving deck for years that are in fact the best stocked.
         const probe = { ...bare, steps: [], path: s.chapter ? path : null };
-        const n = eligibleCards(cards, probe, age)
+        // Pass the stage. The deck is now gated by WHERE the student is, so a
+        // pool counted without the stage counts secondary school cards against
+        // a chapter set in a polytechnic and reports a famine that is the
+        // sweep's own fault.
+        const n = eligibleCards(cards, probe, age, s)
           .filter((c) => !c.requiresFlag && !c.when).length;
-        if (n < MIN_POOL) failures.push({ path, ns, stage: s.id, age, why: `pool ${n} below ${MIN_POOL}` });
+        if (n < MIN_POOL) {
+          failures.push({
+            path, ns, stage: s.id, age, why: `pool ${n} below ${MIN_POOL} at ${(s.at || []).join('/')}`,
+          });
+        }
       });
       });
     });
@@ -981,19 +1013,32 @@ export function runJourneySweep(data) {
       // institution it does not exist in. This is the guard for a Year Head who
       // followed a student into a polytechnic, two years after ageing out,
       // because the hand was dealt once and then never checked again.
-      if (fmt === 'turn') dealHand(run, simMoves, age);
-      heldAsks(run, simMoves, age).forEach((m) => {
+      const here = stage.at || [];
+      if (!here.length) local.push(`stage ${stage.id} declares no institution`);
+      if (fmt === 'turn') dealHand(run, simMoves, age, stage);
+      heldAsks(run, simMoves, age, stage).forEach((m) => {
         if (age < m.ages[0] || age > m.ages[1]) {
           local.push(`ask ${m.id} in hand at ${age}, its window is ${m.ages[0]} to ${m.ages[1]}`);
         }
-        if (m.schoolOnly && run.path) local.push(`school only ask ${m.id} in hand on the ${run.path} road`);
+        if (!(m.at || []).some((k) => here.includes(k))) {
+          local.push(`ask ${m.id} in hand at ${here.join('/')}, it belongs at ${(m.at || []).join('/') || 'nowhere'}`);
+        }
       });
       visibleChoices(stage, run, simMoves, age).filter((c) => c.isMove).forEach((c) => {
         const m = simMoves.find((x) => x.id === c.id);
         if (!m) return;
         if (age < m.ages[0] || age > m.ages[1]) local.push(`move ${m.id} offered at ${age}, window ${m.ages[0]} to ${m.ages[1]}`);
-        if (m.schoolOnly && run.path) local.push(`school only move ${m.id} offered on the ${run.path} road`);
+        if (!(m.at || []).some((k) => here.includes(k))) {
+          local.push(`move ${m.id} offered at ${here.join('/')}, it belongs at ${(m.at || []).join('/') || 'nowhere'}`);
+        }
       });
+      // A card dealt where its vocabulary does not exist is the same fault.
+      if (run.pending) {
+        const dealt = cards.find((x) => x.id === run.pending.cardId);
+        if (dealt && !(dealt.at || []).some((k) => here.includes(k))) {
+          local.push(`card ${dealt.id} dealt at ${here.join('/')}, it belongs at ${(dealt.at || []).join('/') || 'nowhere'}`);
+        }
+      }
 
       const pool = visibleChoices(stage, run, simMoves, age);
       const baseN = pool.filter((c) => !c.needsSubject && !c.isMove).length;

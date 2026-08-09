@@ -360,7 +360,7 @@ function turnScreen(host, stage, data, age) {
   // The hand deals from the second turn: the first is pure picking, so the
   // systems arrive one at a time.
   const handOpen = run.stepIndex > 0;
-  if (handOpen) dealHand(run, MV(data), age);
+  if (handOpen) dealHand(run, MV(data), age, stage);
   const prev = lastStory();
 
   const choices = pool.map((c, i) => {
@@ -564,7 +564,7 @@ function pointsWhy(jc, n, reasons) {
 
 function handStrip(data, stage, age) {
   const jc = data.copy.journey;
-  const held = heldAsks(run, MV(data), age);
+  const held = heldAsks(run, MV(data), age, stage);
   const usedUp = (run.asksThisYear || 0) >= ASKS_PER_YEAR;
   const leftN = ASKS_PER_YEAR - (run.asksThisYear || 0);
   if (!held.length && !usedUp) return '';

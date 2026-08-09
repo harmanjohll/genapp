@@ -25,7 +25,12 @@
    "sets": "asked_help",
    "ic": "persistence",
    "kind": "ask",
-   "missed": "The subject I dread stayed the subject I dread."
+   "missed": "The subject I dread stayed the subject I dread.",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "ecg",
@@ -42,7 +47,12 @@
    },
    "sets": "ecg_seen",
    "ic": "q_where",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "yearhead",
@@ -58,7 +68,10 @@
    },
    "sets": "asked_up",
    "ic": "risk",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "parents",
@@ -77,7 +90,19 @@
    },
    "sets": "told_parents",
    "ic": "d_people",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "shadow",
@@ -98,7 +123,12 @@
    "ic": "curiosity",
    "kind": "commit",
    "cost": 1,
-   "missed": "The shadowing day ran with somebody else asking the questions."
+   "missed": "The shadowing day ran with somebody else asking the questions.",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "eae_prep",
@@ -120,7 +150,9 @@
    "cost": 1,
    "missed": "The interview came around with no rehearsal behind it.",
    "opens": "d_eae",
-   "schoolOnly": true
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "dsa",
@@ -140,7 +172,9 @@
    "kind": "commit",
    "cost": 1,
    "missed": "The talent stayed a hobby nobody at an admissions desk heard about.",
-   "schoolOnly": true
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "intern",
@@ -160,7 +194,13 @@
    "kind": "commit",
    "cost": 1,
    "missed": "The attachment stayed a timetable entry.",
-   "opens": "d_people"
+   "opens": "d_people",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
   },
   {
    "id": "exchange",
@@ -178,7 +218,12 @@
    "ic": "flexibility",
    "kind": "commit",
    "cost": 2,
-   "missed": "The exchange cohort flew without me."
+   "missed": "The exchange cohort flew without me.",
+   "at": [
+    "poly",
+    "arts",
+    "uni"
+   ]
   },
   {
    "id": "mentor",
@@ -194,16 +239,25 @@
    },
    "sets": "found_mentor",
    "ic": "d_people",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "formteacher",
-   "label": "Ask my form teacher which subject suits me",
+   "label": "Ask the teacher who knows me best which subject fits",
    "ages": [
     13,
     17
    ],
-   "body": "They see me in class all week. They have an opinion and nobody ever asks for it.",
+   "body": "They see me every week and they have an opinion. Nobody ever asks for it.",
    "outcome": "They name something I am good at that I had not counted as a skill.",
    "disp": {
     "curiosity": 1
@@ -214,7 +268,11 @@
    "sets": "asked_form",
    "ic": "q_who",
    "kind": "ask",
-   "schoolOnly": true
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "senior",
@@ -233,7 +291,19 @@
    },
    "sets": "asked_senior",
    "ic": "d_people",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "openhouse",
@@ -253,7 +323,16 @@
    },
    "sets": "went_open",
    "ic": "curiosity",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns"
+   ]
   },
   {
    "id": "cca",
@@ -272,7 +351,12 @@
    },
    "sets": "led_cca",
    "ic": "t_portfolio",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "family",
@@ -292,7 +376,19 @@
    },
    "sets": "asked_family",
    "ic": "d_sflu",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "lecturer",
@@ -311,11 +407,17 @@
    },
    "sets": "asked_lecturer",
    "ic": "q_who",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
   },
   {
    "id": "careercoach",
-   "label": "Book a session with my school's career services",
+   "label": "Book a session with my campus career centre",
    "ages": [
     17,
     24
@@ -330,7 +432,13 @@
    },
    "sets": "used_careers",
    "ic": "q_where",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
   },
   {
    "id": "supervisor",
@@ -349,7 +457,10 @@
    },
    "sets": "asked_boss",
    "ic": "risk",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "work"
+   ]
   },
   {
    "id": "peer_ask",
@@ -369,7 +480,11 @@
    },
    "sets": "asked_peer",
    "ic": "d_people",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "younger",
@@ -389,7 +504,11 @@
    },
    "sets": "asked_younger",
    "ic": "curiosity",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "family_late",
@@ -409,7 +528,11 @@
    },
    "sets": "told_home",
    "ic": "d_people",
-   "kind": "ask"
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "lead_role",
@@ -434,7 +557,11 @@
     13,
     18
    ],
-   "schoolOnly": true
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "via_lead",
@@ -459,7 +586,11 @@
     14,
     17
    ],
-   "schoolOnly": true
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
   },
   {
    "id": "peer_tutor",
@@ -483,7 +614,13 @@
     14,
     19
    ],
-   "schoolOnly": true
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite"
+   ]
   }
  ]
 }

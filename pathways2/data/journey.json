@@ -315,6 +315,9 @@
      "sets": "built_side",
      "outcome": "A game in Scratch, a comic, a stool. Small, finished, and mine."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -411,6 +414,9 @@
      "sets": "built_side",
      "outcome": "Twelve people use the thing I made. Two send me bugs. I fix them."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -505,6 +511,9 @@
      "outcome": "Saturday coding, a science olympiad squad, youth theatre at the CC. Nobody from my class is there, which is the point.",
      "missed": "The Saturday programme ran without me in it."
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -589,6 +598,9 @@
      "missed": "The EAE window closed. It does not reopen. The main round remains.",
      "sets": "eae_ready"
     }
+   ],
+   "at": [
+    "sec"
    ]
   },
   {
@@ -694,7 +706,10 @@
      "outcome": "One more year at a harder level, aimed at a specific course. Slower, and it works."
     }
    ],
-   "noChance": true
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "ch_ns_ask",
@@ -702,7 +717,10 @@
    "years": 0,
    "format": "ask-ns",
    "situation": "One question before the next part. Around now, most Singaporean sons spend two years in uniform. Some serve before their course, some after. Is National Service part of my road?",
-   "noChance": true
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
   },
   {
    "id": "ch_jc1",
@@ -775,6 +793,10 @@
      },
      "outcome": "Cafe counter at Junction 8. My own transport money, and a manager who rates me."
     }
+   ],
+   "at": [
+    "jc",
+    "mi"
    ]
   },
   {
@@ -831,6 +853,10 @@
      "missed": "Plan B stayed unwritten.",
      "opens": "d_polyroad"
     }
+   ],
+   "at": [
+    "jc",
+    "mi"
    ]
   },
   {
@@ -902,6 +928,9 @@
      "sets": "took_stage",
      "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know me now."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -960,6 +989,9 @@
      },
      "outcome": "FYP proposal drafted on the evening MRT out of Tanjong Pagar. Tired, organised, on time."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -1018,6 +1050,9 @@
      "missed": "The callback went to voicemail and then to someone else.",
      "opens": "d_workstudy"
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -1092,7 +1127,10 @@
      "outcome": "The kopitiam auntie's chiller, my neighbour's fan. Word gets around the block that I can fix."
     }
    ],
-   "excludesFlag": "hn_direct"
+   "excludesFlag": "hn_direct",
+   "at": [
+    "ite"
+   ]
   },
   {
    "id": "ch_exit",
@@ -1153,6 +1191,9 @@
      "outcome": "The ECG officer draws the ladder on scrap paper: 2.5 applies, raw 3.5 guarantees. I photograph it.",
      "missed": "The exit decision got made on feel, with the GPA unread."
     }
+   ],
+   "at": [
+    "ite"
    ]
   },
   {
@@ -1212,6 +1253,9 @@
      "missed": "The attachment stayed a timetable, not a foot in the door.",
      "opens": "d_people"
     }
+   ],
+   "at": [
+    "ite"
    ]
   },
   {
@@ -1280,6 +1324,9 @@
      },
      "outcome": "Dim sum service pays for the paint. My feet hate I and my ledger balances."
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1340,6 +1387,9 @@
      "outcome": "I stretch canvas and hold lights for someone mid career. I learn what the job actually is.",
      "missed": "The studio assistant post went in a day."
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1398,6 +1448,9 @@
      "missed": "The degree deadline passed while the show consumed me.",
      "opens": "d_polyroad"
     }
+   ],
+   "at": [
+    "arts"
    ]
   },
   {
@@ -1472,7 +1525,10 @@
      "outcome": "I shout commands I once ignored. Leading tired people politely turns out to be a career skill."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
   },
   {
    "id": "ch_ns_ord",
@@ -1546,7 +1602,10 @@
      "missed": "The payout went the way payouts go."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
   },
   {
    "id": "ch_uni",
@@ -1608,7 +1667,10 @@
      "opens": "d_people"
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "uni"
+   ]
   },
   {
    "id": "ch_paycheque",
@@ -1683,7 +1745,11 @@
      "outcome": "Work Study route: employed, paid, studying. Tuesday nights hurt and the certificate is real."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_cross",
@@ -1752,7 +1818,11 @@
      "outcome": "Family, or caring, or the community thing that needs hands. Work holds steady while life takes the lead."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_build",
@@ -1823,7 +1893,11 @@
      "outcome": "Parents aging, maybe kids arriving, definitely laundry. I resize ambition to fit love, on purpose."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_quiet",
@@ -1832,7 +1906,11 @@
    "years": 1,
    "format": "reflect",
    "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want me named as a teenager is still mine, or has quietly become something else.",
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_mirror",
@@ -1903,7 +1981,11 @@
      "outcome": "Fewer hours, closer commute, one deliberate downshift. The trade is explicit and I sign it."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_late",
@@ -1971,7 +2053,11 @@
      "outcome": "I model something rare at my age: enough. The younger ones need to see it done once."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
   },
   {
    "id": "ch_mi_year",
@@ -2041,6 +2127,9 @@
      "outcome": "I pick one and drive it. Depth in one paper reads better than flatness across four.",
      "missed": "Every subject got the same middling hour."
     }
+   ],
+   "at": [
+    "mi"
    ]
   },
   {
@@ -2110,6 +2199,9 @@
      "outcome": "I build something with three strangers and lose, publicly, and learn more than the winners did.",
      "missed": "The competition happened without me in it."
     }
+   ],
+   "at": [
+    "poly"
    ]
   },
   {
@@ -2182,7 +2274,14 @@
      "missed": "Nobody's Tuesday depended on me."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
   },
   {
    "id": "ch_own_time",
@@ -2250,7 +2349,14 @@
      "missed": "The trip stayed a tab I never closed."
     }
    ],
-   "adultYears": true
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
   }
  ],
  "endingFrames": [
@@ -2312,5 +2418,17 @@
    "head": "My road, walked my way.",
    "body": "Same start as thousands, same ending as no one. The doors I hold were opened by asking, making and showing up, none of which was printed on the form at fourteen."
   }
- ]
+ ],
+ "institutions": {
+  "sec": "Secondary school",
+  "jc": "Junior College",
+  "mi": "Millennia Institute",
+  "poly": "Polytechnic",
+  "ite": "ITE",
+  "arts": "Arts institution",
+  "ns": "National Service",
+  "uni": "University",
+  "work": "Work",
+  "cet": "Back to study"
+ }
 }
