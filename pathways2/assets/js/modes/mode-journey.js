@@ -19,7 +19,7 @@ import {
 } from '../engine/possible.js?v=2.4.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
-  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP,
+  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
 } from '../engine/journey4.js?v=2.4.0';
 import {
@@ -564,7 +564,7 @@ function pointsWhy(jc, n, reasons) {
 
 function handStrip(data, stage, age) {
   const jc = data.copy.journey;
-  const held = (run.hand || []).map((id) => MV(data).find((m) => m.id === id)).filter(Boolean);
+  const held = heldAsks(run, MV(data), age);
   const usedUp = (run.asksThisYear || 0) >= ASKS_PER_YEAR;
   const leftN = ASKS_PER_YEAR - (run.asksThisYear || 0);
   if (!held.length && !usedUp) return '';
