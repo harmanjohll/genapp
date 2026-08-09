@@ -7,13 +7,13 @@
 // Every future carries three or more structurally different roads, in no order,
 // with no ranking. The absence of the ranking is the content.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.10.0';
-import { getState, setAim, toggleAction, currentYear, setMode } from '../state.js?v=2.10.0';
-import { reach } from '../engine/reach.js?v=2.10.0';
-import { wantWorkBlock, openSectorSheet } from './mode-work.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.11.0';
+import { getState, setAim, toggleAction, currentYear, setMode } from '../state.js?v=2.11.0';
+import { reach } from '../engine/reach.js?v=2.11.0';
+import { wantWorkBlock, openSectorSheet } from './mode-work.js?v=2.11.0';
 
 // AIM was the only mode that knew nothing about the other two. It offered
 // roads and a static list of things to do this term, while NOW held the

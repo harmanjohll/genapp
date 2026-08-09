@@ -12,16 +12,16 @@
 // is in seating order, always, so the layout itself cannot imply a placing.
 // Nothing is stored beyond the tab: a table is a lesson, not an account.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { cue } from '../sound.js?v=2.10.0';
-import { possibilitiesFor, forkNeed } from '../engine/possible.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { cue } from '../sound.js?v=2.11.0';
+import { possibilitiesFor, forkNeed } from '../engine/possible.js?v=2.11.0';
 import {
   createRun, currentStage, ageAt, sequenceFor, visibleChoices, applyChoices,
   answerNS, respondToChance, finish, pointsFor, strongestTrack, askMet, CAPACITY_CAP,
-} from '../engine/journey4.js?v=2.10.0';
-import { getState } from '../state.js?v=2.10.0';
+} from '../engine/journey4.js?v=2.11.0';
+import { getState } from '../state.js?v=2.11.0';
 
 const MAX_PLAYERS = 6;
 const MIN_PLAYERS = 2;

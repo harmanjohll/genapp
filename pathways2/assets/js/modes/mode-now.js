@@ -18,21 +18,21 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.10.0';
-import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.10.0';
-import { costLineFor } from './mode-money.js?v=2.10.0';
-import { notMyRoadLink } from './mode-schools.js?v=2.10.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.10.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.10.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.10.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.11.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.11.0';
+import { costLineFor } from './mode-money.js?v=2.11.0';
+import { notMyRoadLink } from './mode-schools.js?v=2.11.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.11.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.11.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.11.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
-  markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
+  markIntroSeen, shareUrl, carryUrl, carrySummary, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.10.0';
+} from '../state.js?v=2.11.0';
 
 const STATE_API = { setMode };
 
@@ -750,6 +750,43 @@ function onClear() {
   setTimeout(kill, 6000);
 }
 
+/**
+ * TAKE THE WHOLE THING WITH ME.
+ *
+ * The link above this one carries the subject plan, which is what a student sends
+ * a parent. This one carries the term: the plan, the want, the commitments ticked
+ * in Act, the activities, and which kind of school. It exists because a lesson run
+ * in a computer lab ends with thirty five students logging off machines that will
+ * be somebody else's on Thursday, and the commitments are the entire point of the
+ * last screen.
+ *
+ * The sentence beside it counts what the link is holding, out loud, because a
+ * student asked to trust a URL with their term should be able to see what is in it.
+ * And it says what is NOT in it, which is the reflection they wrote at thirty eight
+ * and the activities that might be looking after somebody at home. Those stay on
+ * the device. A link a student might paste into a group chat is not the place.
+ */
+function carryBlock() {
+  const n = carrySummary();
+  if (!n.subjects && !n.todo) return '';
+  const url = carryUrl();
+  const holds = [
+    n.subjects ? `${n.subjects} subject${n.subjects === 1 ? '' : 's'}` : '',
+    n.todo ? `${n.todo} thing${n.todo === 1 ? '' : 's'} I said I would do` : '',
+    n.want ? 'the want I named' : '',
+    n.activities ? 'my week' : '',
+    n.school ? 'which school I am in' : '',
+  ].filter(Boolean);
+  return `
+    <div class="carryblock">
+      <p class="caps">${icon('q_how')}Take the whole term with me</p>
+      <p class="small mute">This link holds ${esc(holds.join(', '))}. Mail it to myself, or keep it in my notes, and a different computer picks up where I left off. Nothing is stored anywhere: it is all in the link, which is why I can read it.</p>
+      <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="A link holding my whole term">
+      <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">Copy the long link</button>
+      <p class="micro faint">What it does not hold: anything I wrote at thirty eight, and it opens on a device that already has commitments by adding to them rather than replacing them.</p>
+    </div>`;
+}
+
 async function onShare() {
   const url = shareUrl();
   const c = DATA.copy.chrome;
@@ -762,8 +799,9 @@ async function onShare() {
   openSheet(`
     <h2 id="sheet-title">${esc(c.shareHead)}</h2>
     <p class="small mute">${esc(c.shareHint)}</p>
-    <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="Your link">
+    <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="A link to my subjects">
     <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">${esc(c.askCopy)}</button>
+    ${carryBlock()}
     <div class="classcode">
       <p class="caps">${esc(c.codeHead)}</p>
       <p class="code-big">${esc(code)}</p>

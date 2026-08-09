@@ -9,11 +9,11 @@
 // All eight get the identical treatment at the identical size, in data order.
 // No card is bigger, brighter or first for any reason except the alphabet.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { cue } from '../sound.js?v=2.10.0';
-import { getState, markLanding } from '../state.js?v=2.10.0';
-import { reach } from '../engine/reach.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { cue } from '../sound.js?v=2.11.0';
+import { getState, markLanding } from '../state.js?v=2.11.0';
+import { reach } from '../engine/reach.js?v=2.11.0';
 
 export function renderLanding(host, data, ctx, leave) {
   const L = data.copy.landing;

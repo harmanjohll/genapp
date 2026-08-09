@@ -21,10 +21,11 @@
 // ask for. The badge on each school is the load bearing element: a road the
 // planner does not fit says so, beside what to use instead.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js?v=2.11.0';
+import { getState, setSchoolKind } from '../state.js?v=2.11.0';
 
 // Deliberately not a traffic light. "Not this app" is a fact about the app, not a
 // verdict on the student, so it is rendered in the same neutral weight as the
@@ -35,19 +36,23 @@ const APPLIES = {
   no: { label: 'This app does not model this road', cls: 'ap-none' },
 };
 
-function kindCard(k) {
+function kindCard(k, mine) {
   const a = APPLIES[k.appliesHere] || APPLIES.partly;
+  const on = mine === k.id;
   return `
     <li>
-      <button class="future-btn" type="button" data-action="kind" data-id="${k.id}" aria-haspopup="dialog">
+      <button class="future-btn${on ? ' on' : ''}" type="button" data-action="kind" data-id="${k.id}" aria-haspopup="dialog">
         <span class="want">${esc(k.label)}</span>
         <span class="small mute" style="display:block;margin-top:var(--s-2)">${esc(k.examples)}</span>
-        <span class="chip-row"><span class="applies ${a.cls}">${esc(a.label)}</span></span>
+        <span class="chip-row">
+          <span class="applies ${a.cls}">${esc(a.label)}</span>
+          ${on ? '<span class="kind-chip">This is mine</span>' : ''}
+        </span>
       </button>
     </li>`;
 }
 
-function openKind(data, id, trigger) {
+function openKind(data, id, trigger, mine, repaint) {
   const k = ((data.schools && data.schools.kinds) || []).find((x) => x.id === id);
   if (!k) return;
   const a = APPLIES[k.appliesHere] || APPLIES.partly;
@@ -62,9 +67,18 @@ function openKind(data, id, trigger) {
       <dt>Which means</dt><dd>${decorate(k.note)}</dd>
     </dl>
     <span class="cprov">Not yet verified</span>
-    <p class="micro faint" style="margin-top:var(--s-3)">${esc(src)}</p>`, trigger);
+    <p class="micro faint" style="margin-top:var(--s-3)">${esc(src)}</p>`, trigger,
+  // In the pinned foot, because it is the one thing on this sheet a student might
+  // DO, and a sheet whose point is a button put that button below the fold once
+  // before.
+  mine === k.id
+    ? `<button class="btn ghost small" type="button" data-action="unclaim">${esc('This is not mine after all')}</button>`
+    : `<button class="btn small" type="button" data-action="claim" data-id="${k.id}">${esc('This is the school I am in')}</button>`);
   bindGlossary(body);
-  onSheetAction({});
+  onSheetAction({
+    claim: (b) => { setSchoolKind(b.dataset.id); closeSheet(); repaint(); },
+    unclaim: () => { setSchoolKind(null); closeSheet(); repaint(); },
+  });
 }
 
 function openSupport(data, id, trigger) {
@@ -86,9 +100,10 @@ function openSupport(data, id, trigger) {
   onSheetAction({});
 }
 
-export function renderSchools(host, data) {
+export function renderSchools(host, data, repaint) {
   const s = data.schools || {};
   const meta = s._meta || {};
+  const mine = getState().schoolKind;
   host.innerHTML = `
     <div class="wrap narrow">
       <div class="section fade-up" style="margin-top:var(--s-6)">
@@ -99,7 +114,7 @@ export function renderSchools(host, data) {
         <section class="section">
           <h2 class="h-sm">${icon('q_where')} Seven kinds of secondary school</h2>
           <ul class="helplist" style="margin-top:var(--s-3)">
-            ${(s.kinds || []).map(kindCard).join('')}
+            ${(s.kinds || []).map((k) => kindCard(k, mine)).join('')}
           </ul>
           <p class="micro mute" style="margin-top:var(--s-3)">Where it says this app does not model a road, that is a fact about the app. Every one of these roads leads somewhere, and the last column says what to use instead.</p>
         </section>
@@ -131,7 +146,7 @@ export function renderSchools(host, data) {
     </div>`;
   bindGlossary(host);
   onAction(host, {
-    kind: (btn) => openKind(data, btn.dataset.id, btn),
+    kind: (btn) => openKind(data, btn.dataset.id, btn, mine, repaint || (() => renderSchools(host, data, repaint))),
     support: (btn) => openSupport(data, btn.dataset.id, btn),
     print: () => window.print(),
   });
@@ -146,7 +161,18 @@ export function renderSchools(host, data) {
  * difference between a tool that assumed them away and one that noticed.
  */
 export function notMyRoadLink(data) {
-  const n = ((data.schools || {}).kinds || []).length;
-  if (!n) return '';
-  return `<p class="micro mute notmyroad"><a href="./?mode=schools">This assumes the SEC at sixteen. If my school works differently, start here.</a></p>`;
+  const kinds = (data.schools || {}).kinds || [];
+  if (!kinds.length) return '';
+  // Once a student has said which school they are in, the line stops being a
+  // disclaimer they read past every visit and becomes an acknowledgement. A
+  // student in a school the planner does not fit gets told so here, once, plainly,
+  // rather than discovering it by working through a planner built for somebody
+  // else.
+  const mine = kinds.find((k) => k.id === getState().schoolKind);
+  if (!mine) {
+    return `<p class="micro mute notmyroad"><a href="./?mode=schools">This assumes the SEC at sixteen. If my school works differently, start here.</a></p>`;
+  }
+  const fit = { fully: 'and this planner is built for it', partly: 'so parts of this planner do not apply to me', no: 'and this planner does not model that road' }[mine.appliesHere];
+  const named = mine.label.charAt(0).toLowerCase() + mine.label.slice(1);
+  return `<p class="micro mute notmyroad">I said I am in ${esc(named)}, ${esc(fit)}. <a href="./?mode=schools">Change that</a></p>`;
 }

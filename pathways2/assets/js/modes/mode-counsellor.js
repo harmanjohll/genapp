@@ -12,9 +12,9 @@
 // this app does; what they do not know is what their student has just been
 // shown.
 
-import { esc } from '../components/dom.js?v=2.10.0';
-import { bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { evidenceLink } from './mode-evidence.js?v=2.10.0';
+import { esc } from '../components/dom.js?v=2.11.0';
+import { bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { evidenceLink } from './mode-evidence.js?v=2.11.0';
 
 /**
  * The app's own admission arithmetic, rendered from the same file the students

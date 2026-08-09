@@ -42,6 +42,11 @@ const initial = () => ({
   soundOn: false,       // five small cues, opt in, remembered
   seenVersion: null,
   history: [],          // plan snapshots: { t, plan, open }, one a day at most
+  // Which kind of secondary school this is, if the student said. Null means the
+  // app carries on assuming the common one and saying so out loud, which is what
+  // it did before anybody could answer. Stored because a student in a specialised
+  // school should not have to re read the same disclaimer every visit.
+  schoolKind: null,
 });
 
 function load() {
@@ -63,6 +68,37 @@ function load() {
     if (p) { base.plan = decodePlan(p); base._fromLink = true; base.seenLanding = true; }
     const y = params.get('y');
     if (y && YEARS.some((v) => v.id === y)) base.year = y;
+    // A carry link, read back. Everything here is additive and everything is
+    // validated, because a link is the one input a stranger can hand a student and
+    // a malformed one must never break the app or overwrite more than it names.
+    const want = params.get('want');
+    if (want && /^[a-z_]{2,20}$/.test(want)) { base.aim = want; base._fromLink = true; }
+    const sk = params.get('sk');
+    if (sk && /^[a-z_]{2,20}$/.test(sk)) { base.schoolKind = sk; base._fromLink = true; }
+    const act = params.get('act');
+    if (act) {
+      const ids = act.split('~').filter((x) => /^[a-z_0-9]{2,24}$/.test(x)).slice(0, 20);
+      if (ids.length) { base.activities = ids; base._fromLink = true; }
+    }
+    const todo = params.get('todo');
+    if (todo) {
+      // A link is the one input a stranger fully controls, and this one writes into
+      // a child's list of things they said they would do. Everything is escaped on
+      // render, so nothing can execute, but escaped abuse is still abuse sitting in
+      // somebody's list. So a commitment arriving by link has to look like a
+      // sentence this app could have produced: ordinary words and ordinary
+      // punctuation, no angle brackets, no braces, no urls.
+      const SANE = /^[A-Za-z0-9 ,.'’()%:;?!$-]{3,120}$/;
+      const list = todo.split('|').map((x) => {
+        try { return decodeURIComponent(x).trim(); } catch { return ''; }
+      }).filter((x) => SANE.test(x) && !/https?:/i.test(x)).slice(0, 12);
+      // Merged rather than replaced, so opening a link on a device that already
+      // holds commitments adds to them instead of deleting somebody's term.
+      if (list.length) {
+        base.actions = [...new Set([...(base.actions || []), ...list])];
+        base._fromLink = true;
+      }
+    }
   } catch { /* a malformed link must never break the app */ }
   return base;
 }
@@ -150,6 +186,20 @@ export function markLooked(subjectId) {
 export function setAim(futureId) {
   state.aim = futureId;
   persist(); notify({ kind: 'aim' });
+}
+
+/**
+ * Which kind of secondary school this is.
+ *
+ * One string on the device, and the only reason it exists is that the app makes
+ * an assumption on the Plan screen and a student for whom the assumption is wrong
+ * should be able to say so once rather than reading past it every visit. Null is a
+ * real answer and the default: it means keep assuming the common road and keep
+ * saying that out loud.
+ */
+export function setSchoolKind(id) {
+  state.schoolKind = id || null;
+  persist(); notify({ kind: 'schoolKind' });
 }
 
 export function toggleAction(text) {
@@ -333,4 +383,56 @@ export function shareUrl() {
   url.searchParams.set('y', state.year);
   url.searchParams.set('mode', state.mode);
   return url.toString();
+}
+
+/**
+ * THE SCHOOL COMPUTER LAB, WHICH THIS APP HAD NO ANSWER FOR.
+ *
+ * Everything is on the device and nothing is sent anywhere, which is the right
+ * trade and it has one consequence nobody had dealt with: a class run in a
+ * computer lab loses everything at the bell. Thirty five students set a
+ * combination, tick three commitments, name a want, play a road, and then log off
+ * a machine that will be somebody else's on Thursday. The share link carried the
+ * subject plan and nothing else, so the commitments, which are the entire point of
+ * the last screen, did not survive the lesson.
+ *
+ * So there is a link that carries the whole of it. Still no account and still no
+ * server: the state travels IN THE URL, which means a student can mail it to
+ * themselves, put it in their notes, or scan it off the board, and a school that
+ * would never let an app store data about children does not have to.
+ *
+ * WHAT IS DELIBERATELY LEFT OUT. The written reflection at thirty eight, and the
+ * activities list. Both are on the private side of the line the parent page
+ * already draws: a student writes honestly at thirty eight because nothing is
+ * watching, and the activities include looking after somebody at home or working
+ * in a family business. A link a student might paste into a group chat is not the
+ * place for either.
+ *
+ * The encoding is deliberately plain rather than compact. A link somebody can read
+ * is a link somebody can trust, and a student who can see that it says el3~maths3
+ * and nothing about their reflection can check the promise for themselves.
+ */
+export function carryUrl() {
+  const url = new URL(location.href);
+  url.search = '';
+  url.searchParams.set('p', encodePlan());
+  url.searchParams.set('y', state.year);
+  if (state.aim) url.searchParams.set('want', state.aim);
+  if (state.schoolKind) url.searchParams.set('sk', state.schoolKind);
+  if ((state.activities || []).length) url.searchParams.set('act', state.activities.join('~'));
+  const acts = (state.actions || []).filter(Boolean);
+  if (acts.length) url.searchParams.set('todo', acts.map((a) => encodeURIComponent(a)).join('|'));
+  url.searchParams.set('mode', 'now');
+  return url.toString();
+}
+
+/** How much a carry link is currently holding, for the sentence beside it. */
+export function carrySummary() {
+  return {
+    subjects: Object.keys(state.plan || {}).length,
+    todo: (state.actions || []).filter(Boolean).length,
+    want: !!state.aim,
+    school: !!state.schoolKind,
+    activities: (state.activities || []).length,
+  };
 }

@@ -1706,3 +1706,28 @@ html.sheet-open body { position: fixed; width: 100%; }
    reference, and reference belongs on a line a reader's eye can skip. */
 .landing-aud a { color: var(--ink-soft); text-decoration-color: var(--rule); }
 .landing-aud a:hover { color: var(--accent-dk); text-decoration-color: currentColor; }
+
+/* The row of sectors a student's own subjects point at, above the full sixteen.
+   The count is on the chip because a claim about somebody's timetable should show
+   its working: four of my subjects is a reason to look, and the reader can see
+   that it is four and not a hunch. */
+.minework .chip-btn { text-align: left; }
+.mine-n { display: block; font-size: var(--t-micro); color: var(--ink-mute); font-weight: 500; }
+
+/* A fee row for a route this device's plan already reaches. Marked, never
+   filtered: removing the others would be the app deciding which futures a family
+   is allowed to price. */
+.minefee {
+  display: inline-block; margin-left: var(--s-2); padding: 1px 8px;
+  border-radius: var(--r-pill); background: var(--open-wash); color: var(--open-ink);
+  border: 1px solid var(--open); font-size: var(--t-micro); font-weight: 700;
+}
+
+/* The link that carries a whole term, under the one that carries a plan. Set off
+   because it is a different promise: the first is for showing somebody, the second
+   is for coming back on a machine that is not yours. */
+.carryblock {
+  margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule);
+}
+.carryblock .caps svg { vertical-align: -2px; margin-right: 5px; }
+.carryblock .sharebox { margin-top: var(--s-2); }

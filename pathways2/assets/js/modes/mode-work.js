@@ -18,10 +18,11 @@
 // sector figures would be dozens of numbers this build cannot defend, and
 // ranking sectors by pay is a prestige ladder wearing a dollar sign.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.11.0';
+import { getState } from '../state.js?v=2.11.0';
 
 const LEVEL_LABEL = {
   ite: 'From ITE', poly: 'From a polytechnic', arts: 'From an arts school', uni: 'From a university',
@@ -128,8 +129,54 @@ export function openSectorSheet(data, id, trigger) {
   onSheetAction({});
 }
 
+/**
+ * WHAT THE DEVICE ALREADY KNOWS, USED.
+ *
+ * Sixteen sectors in alphabetical order is honest and it is also sixteen identical
+ * cards, and a student who has already set a subject plan and played a road has
+ * told the app plenty about where to start reading. So the page keeps the
+ * alphabetical list underneath, unchanged, and puts a short row on top of the
+ * sectors their own subjects point at.
+ *
+ * It ADDS and never removes, which is the same rule the want block follows and the
+ * reason it is safe. Nothing drops out of the full list, nothing is marked as
+ * unsuitable, and a plan is a reason to look first rather than a reason to look
+ * only. A student with no plan sees the page exactly as it was.
+ */
+function mineBlock(data, st) {
+  const plan = Object.keys(st.plan || {});
+  const runs = st.runs || [];
+  const road = (runs.length && runs[runs.length - 1].path) || null;
+  const all = sectorsFor(data);
+
+  // Score by how many of my subjects a sector names, then by whether the road I
+  // actually played leads there. Ties keep alphabetical order, so the ranking is
+  // never finer than the evidence for it.
+  const scored = all.map((s) => {
+    const subj = (s.subjects || []).filter((id) => plan.includes(id)).length;
+    const onRoad = road && (s.families || []).includes(road) ? 1 : 0;
+    return { s, subj, onRoad };
+  }).filter((x) => x.subj > 0);
+  if (!scored.length) return '';
+  scored.sort((a, b) => (b.subj - a.subj) || (b.onRoad - a.onRoad));
+  const top = scored.slice(0, 4);
+
+  const why = road
+    ? `Counted from the ${plan.length} subjects on this device and the road played last time.`
+    : `Counted from the ${plan.length} subjects on this device.`;
+  return `
+    <div class="panel minework" style="margin-top:var(--s-5)">
+      <p class="caps">${icon('q_who')}Where my own subjects turn up</p>
+      <p class="small mute">${esc(why)} Nothing is ruled out by this, and the full sixteen are below.</p>
+      <ul class="chipsel" style="margin-top:var(--s-3)">
+        ${top.map((x) => `<li><button class="chip-btn" type="button" data-action="sector" data-id="${x.s.id}" aria-haspopup="dialog">${esc(x.s.label)}<span class="mine-n">${x.subj} of my subjects</span></button></li>`).join('')}
+      </ul>
+    </div>`;
+}
+
 export function renderWork(host, data) {
   const sectors = sectorsFor(data);
+  const st = getState();
   host.innerHTML = `
     <div class="wrap">
       <div class="section fade-up" style="margin-top:var(--s-6)">
@@ -137,6 +184,7 @@ export function renderWork(host, data) {
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)">What the work actually is.</h1>
         <p class="lede" style="margin-top:var(--s-3);max-width:46ch">Sixteen parts of working Singapore, in alphabetical order because no other order would be honest. Every one of them takes people in at more than one level, and that is the point of the page.</p>
 
+        ${mineBlock(data, st)}
         ${payLadder(data)}
 
         <p class="caps rail-q" style="margin-top:var(--s-6)">${icon('q_where')}Which of these is my kind of work?</p>

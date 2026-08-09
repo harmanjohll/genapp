@@ -16,7 +16,7 @@
 
 const words = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
 
-const FRAME_FIELDS = { name: 8, claims: 40, inApp: 40, limit: 40, refuses: 46 };
+const FRAME_FIELDS = { name: 8, who: 7, claims: 40, inApp: 40, limit: 40, refuses: 46 };
 
 // Language that turns a limit into a boast. A weakness written as a strength is
 // the polite version of deleting it.
@@ -102,6 +102,19 @@ export function evidenceSweep(data) {
 
   ['source', 'accessed'].forEach((k) => {
     if (!(e._meta || {})[k]) failures.push({ why: `evidence _meta has no ${k}` });
+  });
+
+  // THE JOIN THE TEACHER PAGE DEPENDS ON.
+  //
+  // That page used to hold its own copy of these ten frame names and author
+  // surnames, and two hand written lists of the same thing drift, with the drift
+  // always landing in the one nobody is looking at. It now reads the name and the
+  // citation from here by id. A row pointing at an id that has been renamed would
+  // render a card with a blank heading, silently, on the page a head of department
+  // is using to audit the tool, so the ids the teacher page asks for are named.
+  const NEEDED = ['moe_ecg', 'krumboltz', 'savickas', 'super', 'gottfredson', 'scct', 'casve', 'holland', 'ikigai'];
+  NEEDED.forEach((id) => {
+    if (!ids.has(id)) failures.push({ why: `the class plan asks for frame "${id}" and no frame has that id, so that card would render blank` });
   });
 
   const ok = failures.length === 0;

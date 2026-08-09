@@ -20,15 +20,40 @@
 // office holding the names of the schemes gets a different conversation than a
 // parent who arrives asking whether there is any help.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.11.0';
+import { getState } from '../state.js?v=2.11.0';
+import { reach } from '../engine/reach.js?v=2.11.0';
 
 const PROV = '<span class="cprov">Not yet verified</span>';
 
+/**
+ * WHICH OF THESE FEES IS ACTUALLY MINE TO THINK ABOUT.
+ *
+ * Seven rows is not a long table and it is still seven, and the row a family needs
+ * is the one for a route their child's plan currently opens. So a route this
+ * device's plan reaches is marked, using the same engine the Plan screen uses so
+ * the two can never disagree.
+ *
+ * MARKED AND NEVER FILTERED. Removing the other rows would be the app deciding
+ * which futures a family is allowed to price, which is the opposite of the point
+ * of the page. Everything stays, and a plan puts a word beside four of them.
+ */
+function openNow(data, ctx) {
+  const st = getState();
+  if (!ctx || !Object.keys(st.plan || {}).length) return new Set();
+  const open = new Set();
+  ((data.pathways && data.pathways.destinations) || []).forEach((d) => {
+    const r = reach(st.plan, d, { ...ctx, plan: st.plan });
+    if (r.state === 'open') open.add(d.id);
+  });
+  return open;
+}
+
 /** What each route costs, before any help. */
-function costTable(data) {
+function costTable(data, mine) {
   const rows = (data.money && data.money.costs) || [];
   return `
     <div class="ctable-wrap">
@@ -38,7 +63,9 @@ function costTable(data) {
         <tbody>
           ${rows.map((r) => `
             <tr>
-              <th scope="row">${esc(r.label)}<span class="cmute">${esc(r.note)}</span></th>
+              <th scope="row">${esc(r.label)}
+                ${(r.covers || []).some((id) => mine.has(id)) ? '<span class="minefee">My plan reaches this now</span>' : ''}
+                <span class="cmute">${esc(r.note)}</span></th>
               <td data-label="Fee"><span class="pay-band">${esc(r.fee)}</span> ${PROV}</td>
               <td data-label="And" class="cmute">${esc(r.misc)}</td>
             </tr>`).join('')}
@@ -96,8 +123,9 @@ function truthBlock(data) {
     </div>`;
 }
 
-export function renderMoney(host, data) {
+export function renderMoney(host, data, ctx) {
   const meta = (data.money && data.money._meta) || {};
+  const mine = openNow(data, ctx);
   host.innerHTML = `
     <div class="wrap narrow">
       <div class="section fade-up" style="margin-top:var(--s-6)">
@@ -107,8 +135,8 @@ export function renderMoney(host, data) {
 
         <section class="section">
           <h2 class="h-sm">${icon('q_how')} What it costs, before any help</h2>
-          <p class="small mute">For a Singapore Citizen. Every figure needs checking against the source below, because fee schedules change every year.</p>
-          ${costTable(data)}
+          <p class="small mute">For a Singapore Citizen. Every figure needs checking against the source below, because fee schedules change every year.${mine.size ? ' The routes this device\'s plan already reaches are marked, and nothing is hidden by that.' : ''}</p>
+          ${costTable(data, mine)}
         </section>
 
         <section class="section">

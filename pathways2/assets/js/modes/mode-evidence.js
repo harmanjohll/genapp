@@ -19,9 +19,9 @@
 // outcome data about itself. No trial, no comparison, no follow up. That sentence
 // is on the page, in the same typeface as everything else.
 
-import { esc, onAction } from '../components/dom.js?v=2.10.0';
-import { icon } from '../components/icons.js?v=2.10.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
 
 function frame(f) {
   return `
