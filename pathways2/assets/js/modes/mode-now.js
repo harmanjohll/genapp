@@ -18,21 +18,21 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.9.0';
-import { icon } from '../components/icons.js?v=2.9.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.9.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.9.0';
-import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.9.0';
-import { costLineFor } from './mode-money.js?v=2.9.0';
-import { notMyRoadLink } from './mode-schools.js?v=2.9.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.9.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.9.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.9.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.10.0';
+import { icon } from '../components/icons.js?v=2.10.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.10.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.10.0';
+import { costLineFor } from './mode-money.js?v=2.10.0';
+import { notMyRoadLink } from './mode-schools.js?v=2.10.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.10.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.10.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.10.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
   markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.9.0';
+} from '../state.js?v=2.10.0';
 
 const STATE_API = { setMode };
 
@@ -442,7 +442,7 @@ function weekPanel(st, data) {
 }
 
 const sentence = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-const TRACK_WORD = { skills: 'things you can do', network: 'people who know you', portfolio: 'work you can show' };
+const TRACK_WORD = { skills: 'things I can do', network: 'people who know me', portfolio: 'work I can show' };
 const DISP_WORD = {
   curiosity: 'curiosity', persistence: 'persistence', flexibility: 'flexibility',
   optimism: 'optimism', risk: 'willingness to try things',
@@ -830,7 +830,7 @@ function openSubject(id, trigger) {
       <div class="srow-levels">${chips}</div>
     </div>
     <p>${decorate(s.doing)}</p>
-    <p class="small mute">You will like it if ${esc(s.likeIf)}.</p>
+    <p class="small mute">I will like it if ${esc(s.likeIf)}.</p>
     <ul class="chips">${s.showsUp.map((x) => `<li>${decorate(x)}</li>`).join('')}</ul>
     ${s.note ? `<p class="micro mute">${decorate(s.note)}</p>` : ''}
     ${s.caution ? `<p class="caution">${esc(s.caution)}</p>` : ''}
@@ -860,7 +860,7 @@ function openDest(id, trigger) {
   const moves = r.moves.length ? `
     <div class="moves">
       <h4>${esc(c.moveHead)}</h4>
-      <ul>${r.moves.map((m) => `<li>${decorate(m.short)}. <span class="who">Ask your ${esc(m.who.split(',')[0])}, ${esc(m.when)}.</span></li>`).join('')}</ul>
+      <ul>${r.moves.map((m) => `<li>${decorate(m.short)}. <span class="who">Ask my ${esc(m.who.split(',')[0])}, ${esc(m.when)}.</span></li>`).join('')}</ul>
     </div>` : '';
 
   const routes = r.routes.length ? `

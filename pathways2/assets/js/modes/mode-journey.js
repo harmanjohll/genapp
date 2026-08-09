@@ -8,24 +8,24 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../components/dom.js?v=2.9.0';
-import { icon } from '../components/icons.js?v=2.9.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.9.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.9.0';
-import { cue } from '../sound.js?v=2.9.0';
-import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.9.0';
+import { esc, onAction } from '../components/dom.js?v=2.10.0';
+import { icon } from '../components/icons.js?v=2.10.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.10.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.10.0';
+import { cue } from '../sound.js?v=2.10.0';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.10.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=2.9.0';
+} from '../engine/possible.js?v=2.10.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
-} from '../engine/journey4.js?v=2.9.0';
+} from '../engine/journey4.js?v=2.10.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   setMode, setAim,
-} from '../state.js?v=2.9.0';
+} from '../state.js?v=2.10.0';
 
 let DOORS = {};
 let run = null;
@@ -741,8 +741,8 @@ function reflectScreen(host, stage, data) {
           ${r.options.map((o) => `<button class="btn ghost" type="button" data-action="rpick" data-t="${esc(o)}">${esc(o)}</button>`).join('')}
         </div>
         <label class="rfree">
-          <span class="sr-only">Or write your own</span>
-          <input type="text" maxlength="140" placeholder="Or write your own" data-ref="rtext">
+          <span class="sr-only">Or write my own</span>
+          <input type="text" maxlength="140" placeholder="Or write my own" data-ref="rtext">
         </label>
         <p class="micro mute">${esc(r.hint)}</p>
         <div class="btn-row" style="margin-top:var(--s-3)">
@@ -790,7 +790,7 @@ function chanceAsk(host, card, data) {
           </button>`).join('')}
       </div>
       ${card.type === 'setback' && card.onwardMoves ? `
-        <details style="margin-top:var(--s-3)"><summary class="small mute">What you can do from here</summary>
+        <details style="margin-top:var(--s-3)"><summary class="small mute">What I can do from here</summary>
         <ul class="small">${card.onwardMoves.map((m) => `<li>${decorate(m)}</li>`).join('')}</ul></details>` : ''}
     </div>`, rail(data, null, null));
 
@@ -951,7 +951,7 @@ function endingScreen(host, data, st) {
               <span>${esc(jc.mapReflect)}</span>
             </label>` : ''}
         </figure>
-        <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>You lived it steadily, which is a way of living it.</p>'}</div>
+        <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>I lived it steadily, which is a way of living it.</p>'}</div>
         <div class="section">
           <p class="caps">${esc(jc.becameHead)}</p>
           <p class="idwords serif">${esc(idWords(run, jc))}</p>
@@ -998,7 +998,7 @@ function endingScreen(host, data, st) {
                 </li>`).join('')}</ul>
             </div>`;
         })()}
-        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At 38 you wrote: ${esc(run.reflection)}</p>` : ''}
+        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At 38 I wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
           <h2>${esc(jc.playAgain)}</h2>
@@ -1127,7 +1127,7 @@ function showDiff(host, data, pair) {
           ${d.onlyB.length ? `<p class="small mute">${esc(b.label)} also holds: ${d.onlyB.map(doorName).map(esc).join(', ')}</p>` : ''}
         </div>
         ${d.reflections.some(Boolean) ? `
-          <div class="section"><p class="caps">At 38 you wrote</p>
+          <div class="section"><p class="caps">At 38 I wrote</p>
           <div class="grid two">
             <p class="small">${esc(d.reflections[0] || '\u00b7')}</p>
             <p class="small">${esc(d.reflections[1] || '\u00b7')}</p>
@@ -1285,7 +1285,7 @@ function subjectsPhrase(data, r) {
   const rows = planRows(data, r.plan);
   const chosen = rows.filter((s) => !s.compulsory);
   const use = (chosen.length ? chosen : rows).slice(0, 3).map((s) => s.shortName || s.name);
-  if (!use.length) return 'a combination you have not set yet';
+  if (!use.length) return 'a combination I have not set yet';
   if (use.length === 1) return use[0];
   return `${use.slice(0, -1).join(', ')} and ${use[use.length - 1]}`;
 }
@@ -1294,7 +1294,7 @@ function carriedPhrase(data) {
   const all = (data.activities && data.activities.activities) || [];
   const use = (run.activities || []).map((id) => all.find((a) => a.id === id))
     .filter(Boolean).map((a) => a.label.charAt(0).toLowerCase() + a.label.slice(1)).slice(0, 2);
-  if (!use.length) return 'what you carry';
+  if (!use.length) return 'what I carry';
   if (use.length === 1) return use[0];
   return `${use[0]} and ${use[1]}`;
 }

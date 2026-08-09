@@ -9,11 +9,11 @@
 // All eight get the identical treatment at the identical size, in data order.
 // No card is bigger, brighter or first for any reason except the alphabet.
 
-import { esc, onAction } from '../components/dom.js?v=2.9.0';
-import { icon } from '../components/icons.js?v=2.9.0';
-import { cue } from '../sound.js?v=2.9.0';
-import { getState, markLanding } from '../state.js?v=2.9.0';
-import { reach } from '../engine/reach.js?v=2.9.0';
+import { esc, onAction } from '../components/dom.js?v=2.10.0';
+import { icon } from '../components/icons.js?v=2.10.0';
+import { cue } from '../sound.js?v=2.10.0';
+import { getState, markLanding } from '../state.js?v=2.10.0';
+import { reach } from '../engine/reach.js?v=2.10.0';
 
 export function renderLanding(host, data, ctx, leave) {
   const L = data.copy.landing;
@@ -85,23 +85,16 @@ export function renderLanding(host, data, ctx, leave) {
               <span class="ldoor-name">${esc(L.enterTable)}</span>
               <span class="ldoor-sub">${esc(L.enterTableSub)}</span>
             </a>
-            <a class="ldoor wide" href="./?mode=work">
-              <span class="ldoor-ic">${icon('t_skills')}</span>
-              <span class="ldoor-name">${esc(L.enterWork)}</span>
-              <span class="ldoor-sub">${esc(L.enterWorkSub)}</span>
-            </a>
-            <a class="ldoor wide" href="./?mode=money">
-              <span class="ldoor-ic">${icon('d_workstudy')}</span>
-              <span class="ldoor-name">${esc(L.enterMoney)}</span>
-              <span class="ldoor-sub">${esc(L.enterMoneySub)}</span>
-            </a>
-            <a class="ldoor wide" href="./?mode=schools">
-              <span class="ldoor-ic">${icon('g_common')}</span>
-              <span class="ldoor-name">${esc(L.enterSchools)}</span>
-              <span class="ldoor-sub">${esc(L.enterSchoolsSub)}</span>
-            </a>
           </div>` : ''}
-        <p class="micro faint landing-aud">${esc(L.audience)}</p>
+        <p class="micro faint landing-aud">
+          ${esc(L.alsoHead)}:
+          <a href="./?mode=work">${esc(L.alsoWork)}</a>,
+          <a href="./?mode=money">${esc(L.alsoMoney)}</a>,
+          <a href="./?mode=schools">${esc(L.alsoSchools)}</a>,
+          <a href="./?mode=parent">${esc(L.alsoParent)}</a>,
+          <a href="./?mode=teacher">${esc(L.alsoTeacher)}</a>,
+          <a href="./?mode=evidence">${esc(L.alsoEvidence)}</a>.
+        </p>
       </div>
     </div>`;
 

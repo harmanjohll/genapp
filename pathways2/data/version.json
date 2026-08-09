@@ -6,8 +6,19 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.9.0",
+  "version": "2.10.0",
   "releases": [
+    {
+      "version": "2.10.0",
+      "date": "2026-08-09",
+      "head": "One voice, and a landing that is a moment again",
+      "changes": [
+        "Fifty five more strings are in my own words. The things to do this term, the five dispositions read back to me, every marker on my own timeline, and the notes on each road between institutions. The ribbon says I am here.",
+        "The rule is written down now and checked on every build. Anything I think, pick, commit to or am told about myself is in my own voice. The teacher, parent and counsellor pages, the glossary, the facilitator lines at the table and the disclaimer at the bottom address whoever is reading, because those are not my sentences.",
+        "The landing is four doors again, not seven. Three releases each added one and it had quietly turned into a menu. Plan, Play, Act and the table game are the way in; the work, the money, the kinds of school, the parent and teacher pages and the evidence sit on one quiet line underneath.",
+        "That took the landing from 2033 pixels to 1641 on a Pixel 7, and everything is still one tap away."
+      ]
+    },
     {
       "version": "2.9.0",
       "date": "2026-08-09",

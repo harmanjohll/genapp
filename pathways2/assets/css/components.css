@@ -1694,3 +1694,15 @@ html.sheet-open body { position: fixed; width: 100%; }
 /* And the belt to that brace: the foot clears the gesture area on every phone,
    whatever the address bar is doing. */
 .sheet-foot { padding-bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px)); }
+
+/* The quiet line under the landing, which now carries six pages instead of a
+   sentence about two of them.
+
+   WHY LINKS AND NOT DOORS. Three releases each added a wide door here and the
+   landing went from three tap targets to seven, from 900 pixels to 2033 on a
+   Pixel 7. A landing built as one moment had become a menu. Plan, Play and Act
+   are the moment and the table game is another way to play them; the work, the
+   money, the kinds of school, the parent and teacher pages and the evidence are
+   reference, and reference belongs on a line a reader's eye can skip. */
+.landing-aud a { color: var(--ink-soft); text-decoration-color: var(--rule); }
+.landing-aud a:hover { color: var(--accent-dk); text-decoration-color: currentColor; }
