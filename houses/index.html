@@ -212,7 +212,7 @@ body.pres h2{margin-top:1.7em;padding-top:.4em;border-top:1px solid var(--g2)}
 </style></head><body>
 
 <nav class="gnav"><div class="in"><b>BTY House System</b>
-<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tal">3 Talent</a><a data-t="sc">4 Schooling</a><a data-t="tr">5 Trade-offs</a><a data-t="dc">6 Decide</a>
+<a data-t="ev">1 Evidence</a><a data-t="de">2 Design</a><a data-t="tal">3 Talent</a><a data-t="sc">4 Schooling</a><a data-t="rx">5 Reimagine</a><a data-t="tr">6 Trade-offs</a><a data-t="dc">7 Decide</a>
 <span class="sp"></span>
 <button id="presBtn">Present</button><button id="printBtn">Print</button><button id="resetBtn">Reset</button>
 </div></nav>
@@ -323,6 +323,71 @@ const A=(()=>{
   const selRows=REC.filter(r=>r[F.enr]&&SELRE.test([r[F.prog],r[F.act],r[F.verb]].join(' ')));
   a.selOcc=selRows.length;
   a.selProg=new Set(selRows.map(r=>r[F.prog])).size;
+  // --- home-based learning, which the calendar shows is already a rhythm ---
+  const hblRows=REC.filter(r=>/HBL/i.test(r[F.prog]));
+  a.hblDates=[...new Set(hblRows.map(r=>r[F.date]))].sort();
+  a.hblN=a.hblDates.length;
+  a.hblWed=a.hblDates.filter(d=>hblRows.some(r=>r[F.date]===d&&r[F.day]==='Wed')).length;
+  a.wedDates=new Set(REC.filter(r=>r[F.day]==='Wed').map(r=>r[F.date])).size;
+  a.hblWedShare=a.wedDates?a.hblWed/a.wedDates:0;
+  const gaps=[];for(let i=1;i<a.hblDates.length;i++)
+    gaps.push(Math.round((new Date(a.hblDates[i])-new Date(a.hblDates[i-1]))/864e5));
+  const inTerm=gaps.filter(g=>g>0&&g<=40).sort((x,y)=>x-y);
+  a.hblGap=inTerm.length?inTerm[Math.floor(inTerm.length/2)]:0;
+  a.hblPerYear=Math.round(a.hblN/2);
+
+  // --- how much of the year is not an ordinary day ---
+  a.dates=new Set(REC.map(r=>r[F.date])).size;
+  const ad=REC.filter(r=>r[F.time]==='all-day');
+  a.allDay=ad.length;
+  const adS=ad.filter(r=>r[F.student]);
+  a.allDayStu=adS.length;
+  a.allDayDates=new Set(adS.map(r=>r[F.date])).size;
+  a.allDayPerYear=Math.round(a.allDayDates/2);
+  const adSub={};adS.forEach(r=>adSub[r[F.sub]]=(adSub[r[F.sub]]||0)+1);
+  a.allDayUse=Object.entries(adSub).sort((x,y)=>y[1]-x[1]).slice(0,8);
+
+  // --- where learning happens, and how little of it is off campus ---
+  const onSite=/hall|library|ava|com ?lab|itr|classroom|innospace|school|ish|tbc|canteen|parade|field|court|studio|^lt|room/i;
+  const offRows=REC.filter(r=>r[F.venue]&&r[F.venue]!=='—'&&!onSite.test(r[F.venue]));
+  a.offN=offRows.length;
+  a.offVenues=new Set(offRows.map(r=>r[F.venue])).size;
+  a.offDates=new Set(offRows.map(r=>r[F.date])).size;
+  a.precinct=REC.filter(r=>/toa payoh|braddell/i.test(r[F.venue]+' '+r[F.prog]+' '+r[F.act])).length;
+  a.noVenue=REC.filter(r=>!r[F.venue]||r[F.venue]==='—').length;
+  const vv={};REC.filter(r=>r[F.venue]&&r[F.venue]!=='—').forEach(r=>{
+    const k=r[F.venue].toLowerCase().replace(/[^a-z0-9]/g,'');vv[k]=vv[k]||{n:0,lab:r[F.venue]};vv[k].n++;});
+  const merge={};Object.values(vv).forEach(o=>{
+    const k=/hall/.test(o.lab.toLowerCase())?'Hall':/librar/.test(o.lab.toLowerCase())?'Library'
+      :/ava/.test(o.lab.toLowerCase())?'AVA':/com ?lab|itr/.test(o.lab.toLowerCase())?'Computer or IT room'
+      :/classroom/.test(o.lab.toLowerCase())?'Classrooms':o.lab;
+    merge[k]=(merge[k]||0)+o.n;});
+  a.venueTop=Object.entries(merge).sort((x,y)=>y[1]-x[1]).slice(0,8);
+
+  // --- when in the day anything happens ---
+  const todOf=t=>{if(!t||t==='—')return 'unrecorded';if(t==='all-day')return 'all day';
+    const m=String(t).match(/(\d{1,2})[:.]?(\d{2})?\s*(am|pm)?/i);if(!m)return 'unrecorded';
+    let h=+m[1];const ap=(m[3]||'').toLowerCase();
+    if(ap==='pm'&&h<12)h+=12;else if(ap==='am'&&h===12)h=0;
+    else if(!ap&&h<7)h+=12;   // "3:00 - 5:30 pm" and "3-6pm" start at 3, not 3am
+    if(h<7||h>23)return 'unrecorded';
+    if(h<10)return 'before 10, inside curriculum';
+    if(h<14)return '10 to 14, inside curriculum';
+    if(h<15)return '14 to 15, the block edge';
+    return 'after 15, after school';};
+  a.tod={};REC.filter(r=>r[F.student]&&r[F.enr]).forEach(r=>{const k=todOf(r[F.time]);a.tod[k]=(a.tod[k]||0)+1;});
+  a.todOrder=['before 10, inside curriculum','10 to 14, inside curriculum','14 to 15, the block edge','after 15, after school','all day','unrecorded'];
+  a.afterSchool=a.tod['after 15, after school']||0;
+  a.blockEdge=a.tod['14 to 15, the block edge']||0;
+
+  // --- the school does one thing at a time ---
+  const perDate={};REC.forEach(r=>perDate[r[F.date]]=(perDate[r[F.date]]||0)+1);
+  a.soloDates=Object.values(perDate).filter(v=>v===1).length;
+  a.maxDate=Math.max(...Object.values(perDate));
+
+  // --- and cannot compute anything about time ---
+  a.timeFmts=new Set(REC.map(r=>String(r[F.time])).filter(t=>t!=='all-day'&&t!=='—')).size;
+  a.timed=REC.filter(r=>r[F.time]!=='all-day'&&r[F.time]!=='—').length;
   return a;
 })();
 
@@ -434,9 +499,10 @@ const ACTS=[
 const ROLL={p1:265,p2:255,p3:305,p4:255,p5:20,c1:7,c2:7,c3:8,c4:7};
 
 const DEF={
-  tab:'ev', sub:{ev:'find',de:'all',tal:'reach',sc:'load',tr:'ledger',dc:'slate'},
+  tab:'ev', sub:{ev:'find',de:'all',tal:'reach',sc:'load',rx:'week',tr:'ledger',dc:'slate'},
   tmodel:'renzulli', citeHi:'',
   cttees:42, cttSize:6, cttHrs:8, designHrs:12, refresh:25, consol:70, tierT:15, tierI:4,
+  smodel:'alt', async:0, asyncMode:'whole',
   p1:ROLL.p1,p2:ROLL.p2,p3:ROLL.p3,p4:ROLL.p4,p5:ROLL.p5,
   c1:ROLL.c1,c2:ROLL.c2,c3:ROLL.c3,c4:ROLL.c4,
   levels:4, houses:5, arch:'class', model:'clusters', wushu:'S', anchors:1,
@@ -455,6 +521,7 @@ const DEF={
 let S=JSON.parse(JSON.stringify(DEF));
 let SCEN=[null,null,null,null];
 
+const STRSEG=new Set(['showScope','asyncMode']);
 function houseList(){return HOUSES.slice(0,clamp(S.houses,1,7));}
 
 /* ================================================================= MODEL */
@@ -528,8 +595,22 @@ function model(){
     }
   }
 
+  /* ---- home-based learning as a design variable, not an interruption ----
+     split  = half the cohort is home-based on any block day, so rooms and adults
+              at any instant serve twice as many distinct groups across a fortnight.
+     whole  = everybody is home-based on the same day, which buys nothing in rooms
+              but cannot be eaten by an assembly, an invigilation or a rehearsal. */
+  M.rxSplit  = S.asyncMode==='split' && S.async>0;
+  M.rxWhole  = S.asyncMode==='whole' && S.async>0;
+  M.rxFactor = Math.max(0.05,1-S.async/100);
+  M.rxLiveSess = Math.round(S.sessions*M.rxFactor);
+  M.rxHomeSess = S.sessions-M.rxLiveSess;
+  M.rxOnSite = Math.round(M.N*M.rxFactor);
+
   M.blockDays=S.cycles*S.sessions;
-  M.actualDays=M.blockDays*S.protect/100;
+  // a home-based day cannot be taken by an assembly or an invigilation
+  M.rxProtect=M.rxWhole?Math.min(100,S.protect+S.async*(100-S.protect)/100):S.protect;
+  M.actualDays=M.blockDays*M.rxProtect/100;
   M.weeks=M.blockDays; M.months=M.weeks/4.33;
   M.perMonth=M.months>0?M.actualDays/M.months:0;
   M.contactHrs=M.actualDays*S.hours;
@@ -537,10 +618,13 @@ function model(){
   M.adultRun=Math.max(0,Math.floor(Math.min(S.adultRun,S.duty)));
   M.supervisors=Math.max(0,Math.floor(S.duty)-M.adultRun);
   M.supervised=Math.floor(M.supervisors*S.superRatio);
-  M.staffable=Math.max(0,Math.floor(M.adultRun+M.supervised));
-  M.roomCap=Math.max(0,Math.floor(S.rooms*S.perRoom));
+  M.staffable=Math.max(0,Math.floor((M.adultRun+M.supervised)/(M.rxSplit?M.rxFactor:1)));
+  // under a cohort split only part of the school is in the building at once,
+  // so the same estate and the same duty roster carry more distinct groups
+  M.roomCap=Math.max(0,Math.floor(S.rooms*S.perRoom/(M.rxSplit?M.rxFactor:1)));
   M.clusters=Math.max(0,Math.floor(Math.min(M.staffable,M.roomCap)));
   M.roomBound=M.roomCap<M.staffable;
+  M.rxMinGroup=M.clusters>0?Math.ceil(M.N/M.clusters):0;
   M.capacity=M.clusters*S.cluster;
   M.coverage=M.N>0?M.capacity/M.N:0;
   M.clustersNeeded=Math.ceil(M.N/Math.max(1,S.cluster));
@@ -734,8 +818,10 @@ const LEDGER=[
   cut:{fb:'1',fs:'1',fe:'0'},
   test:M=>S.protect<=85?['ok',`You have set protection to ${S.protect} percent, so ${Math.round(M.blockDays-M.actualDays)} of ${M.blockDays} planned days are conceded to the examination calendar.`,
         'That is honest planning. Publish the oral windows before cycles are set and shorten the middle cycle around them.']
+      :M.rxWhole?['ok',`Protection reads ${Math.round(M.rxProtect)} percent, which would be wishful on its own. It holds here because ${S.async} percent of sessions are home-based, and a home-based day cannot be taken by an invigilation, an assembly or a rehearsal.`,
+        'Earned rather than assumed. The cost moves to writing asynchronous material worth a Beattyian\u2019s Wednesday, which the workload model does not yet price.']
       :['warn',`Protection is set to ${S.protect} percent, which assumes a nearly clean block.`,
-        `History says otherwise: ${A.blkNonEnrich} in-block records were consumed by assessment and admin. Every one of those will collide with a cycle.`]},
+        `History says otherwise: ${A.blkNonEnrich} in-block records were consumed by assessment and admin. Every one of those will collide with a cycle unless part of the block moves home.`]},
 
  {id:'oneoff',t:'Half the programmes ran once or twice',
   ev:()=>`${A.prog1or2} of ${A.progCount} enrichment programmes appear on one or two dates across two years. Only ${A.prog6plus} reach six or more.`,
@@ -909,6 +995,11 @@ function tornado(rows,w=580){
 }
 function simulate(patch){const sv=S;S=Object.assign(JSON.parse(JSON.stringify(sv)),patch||{});
   let m;try{m=model();}finally{S=sv;}return m;}
+/* Ledger findings depend on the settings as well as the model, so they have to be
+   scored while those settings are in force. Returns the model and the statuses. */
+function simLedger(patch){const sv=S;S=Object.assign(JSON.parse(JSON.stringify(sv)),patch||{});
+  let out;try{const m=model();out={m,st:LEDGER.map(L=>L.test(m)[0])};}finally{S=sv;}
+  out.done=out.st.filter(x=>x==='ok').length; return out;}
 const OUT={
  affinity:{n:'Affinity',g:m=>m.affinity,f:v=>Math.round(v),hi:1},
  talent:{n:'Talent depth',g:m=>m.talent,f:v=>Math.round(v),hi:1},
@@ -1143,6 +1234,22 @@ const CITE=[
  {id:'M2',src:'mod',prov:'mod',t:'Talent model turnover rates',
   v:()=>Object.values(TMODELS).map(t=>t.short+' '+pct(1-t.persist)+', ever '+pct(t.ever)).join('; '),
   how:'Seated-at-once shares are published. Turnover, and therefore the share ever reached across a school career, has never been measured here. The ordering of the models is robust to that; the exact end points are not.'},
+ {id:'E14',src:'wb',prov:'mea',t:'Home-based days, and their rhythm',
+  v:()=>`${A.hblN} days, ${A.hblWed} of them Wednesdays &middot; median gap in term ${A.hblGap} days`,
+  how:'Records whose programme name contains HBL, deduplicated to distinct dates, with the gap between consecutive dates measured and gaps over forty days treated as school holidays. This is the finding the Reimagine tab is built on: the alternation already exists.',
+  cut:{q:'HBL'}},
+ {id:'E15',src:'wb',prov:'mea',t:'What the calendar cannot be asked',
+  v:()=>`${A.timeFmts} distinct time formats over ${cm(A.timed)} records &middot; ${cm(A.noVenue)} of ${cm(REC.length)} name no venue`,
+  how:'Free-text time and venue fields. Nothing here can be recomputed reliably next year, and no question about when or where anything happened can be answered better than approximately. A start and end time from a picker and a venue from a list would fix it at no cost.',
+  cut:{}},
+ {id:'E16',src:'wb',prov:'mea',t:'Days consumed by an all-day event',
+  v:()=>`${A.allDayDates} student-facing dates over two years, about ${A.allDayPerYear} a year`,
+  how:'Records timed all-day with a student audience, deduplicated to dates. Largest single category is examinations and prelims. These days are already cleared of lessons and already staffed, which is what makes converting a few of them cheap.',
+  cut:{fs:'1'}},
+ {id:'E17',src:'wb',prov:'mea',t:'Learning that happens outside school',
+  v:()=>`${A.offN} records at ${A.offVenues} external venues, of which ${A.precinct} in Toa Payoh`,
+  how:'Venue field naming somewhere that is not a school room. About one and a half percent of all records. The precinct venues that already appear are the care corner, the transport hub and the neighbourhood itself.',
+  cut:{}},
  {id:'M4',src:'mod',prov:'mod',t:'Coordination cost of a programme',
   v:()=>`${S.designHrs} h to design one, ${S.cttSize} teachers &times; ${S.cttHrs} h a year to run the group`,
   how:'The calendar records events and never hours, so nothing here measures teacher time. These are controls on the Schooling tab. What is measured is the count they multiply: 42 programmes invented in 2025, 66 of 133 running once or twice, 38 percent continuity. The argument rests on the counts, not the rates.'},
@@ -1873,7 +1980,202 @@ function tabSc(M){
    <div class="subs">${subs.map(s=>`<button data-sub="sc:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
 }
 
-/* ================================================================= TAB 5 TRADE-OFFS */
+
+/* ================================================================= TAB 5 REIMAGINE */
+/* Six models of the week and the year, each a settings patch so the whole dashboard
+   answers for it, and each scored on the same machinery as everything else. */
+const SCHOOL={
+ weekly:{n:'Weekly on-campus block',short:'Weekly',c:'#000C53',
+   set:{async:0,asyncMode:'whole',cycles:3,sessions:10,protect:80},
+   d:'Every Wednesday, everybody on campus. This is what the rest of this dashboard assumes and it is the honest baseline: no home-based learning, no change to the year.',
+   buys:'Simplicity. One rhythm, one place, nothing to explain.',
+   costs:'Rooms bind first, and every block day competes with the examination calendar.',
+   prec:'The default. Most Singapore secondary schools run their enrichment this way.'},
+ alt:{n:'The alternating Wednesday, cohort split',short:'Alternating',c:'#15683d',
+   set:{async:50,asyncMode:'split',cycles:3,sessions:10,protect:80,cluster:15},
+   d:'Half the school is home-based on any Wednesday and the other half is on campus, swapping the following week. Every Beattyian still gets the same number of sessions; they are simply not all in the building at once.',
+   buys:'Rooms, and what rooms buy is group size. The same estate carries twice as many distinct groups across a fortnight, so clusters of fifteen become affordable. Fifteen is inside Renzulli&rsquo;s published range; twenty-five is not.',
+   costs:'Two cohorts to track, two sets of materials in flight, and a fortnightly rather than weekly live cadence for each Beattyian.',
+   prec:'Common in UK sixth forms and in university seminar scheduling. No Singapore secondary precedent found for the enrichment block specifically.'},
+ fortnight:{n:'Whole-school home-based fortnight',short:'Fortnight',c:'#1F5FA8',
+   set:{async:50,asyncMode:'whole',cycles:3,sessions:10,protect:92},
+   d:'Alternate Wednesdays are home-based for everybody, exactly as the calendar already records. On-campus Wednesdays are for what needs a room and other people: making, rehearsing, competing, presenting. Home Wednesdays carry reading, research, drafting and reflection.',
+   buys:'Protection. A home-based Wednesday cannot be taken by an assembly, an invigilation or a rehearsal, so the sessions that survive are the ones you planned.',
+   costs:'Nothing in rooms. Home sessions need designed asynchronous material, which is a real design cost the workload model on the Schooling tab does not currently carry.',
+   prec:'Already Beatty practice. The calendar records a median gap of fourteen days between home-based days.'},
+ precinct:{n:'The precinct is the campus',short:'Precinct',c:'#8a6508',
+   set:{async:25,asyncMode:'split',cycles:3,sessions:10,protect:80,cluster:19},
+   d:'A quarter of groups meet somewhere in Toa Payoh rather than in a classroom: the library, the transport hub, the care corner, the hawker centre, the town council. The neighbourhood supplies both the venue and the audience that Renzulli’s fourth test demands.',
+   buys:'Rooms, an authentic external audience, and civic contact that no timetable change can manufacture.',
+   costs:'Supervision ratios outside school are stricter than inside, so it consumes the scarcest thing there is. Weather, transport and consent all become live risks.',
+   prec:'Beatty already does this occasionally and unsystematically. Place-based learning is established in Finland and in US expeditionary-learning schools.'},
+ intensive:{n:'Fewer, longer, designed intensives',short:'Intensive',c:'#b3312a',
+   set:{async:0,asyncMode:'whole',cycles:2,sessions:15,protect:90},
+   d:'Stop spreading the block thinly across the year. Run two long cycles and convert some of the days the year already loses to whole-school events into deliberate multi-day intensives with a published product at the end.',
+   buys:'Depth. Fifteen sessions is comfortably past the floor for producing something real, and a designed intensive replaces a day that was going to be lost anyway.',
+   costs:'A Beattyian who misses an intensive misses a great deal of it. Long cycles are less forgiving of absence than short ones.',
+   prec:'Expeditionary learning, and the Singapore practice of week-long values-in-action and outdoor-education blocks.'},
+ open:{n:'Four-day curriculum, one open day',short:'Open day',c:'#6e1f1a',
+   set:{async:0,asyncMode:'whole',cycles:4,sessions:10,protect:96,hours:6},
+   d:'Compress the taught curriculum into four days and leave Wednesday genuinely open: no lessons, no competing claim, six hours of it. This is the boundary case, included so the others can be judged against something.',
+   buys:'Everything the other models are trying to buy, at once.',
+   costs:'It is almost certainly not available. MOE curriculum time requirements, subject contact hours and Full Subject Based Banding movement all assume a five-day taught week. Treat this as the limit, not the proposal.',
+   prec:'Four-day school weeks exist in rural US districts, driven by cost rather than pedagogy, with mixed attainment evidence.'}
+};
+
+/* A strip of the two calendar years with a mark on every home-based day. */
+function hblStrip(w=660){
+  const years=['2024','2025'],rowH=44,h=years.length*rowH+34,pad=44;
+  const doy=d=>{const t=new Date(d);return Math.round((t-new Date(t.getFullYear(),0,1))/864e5);};
+  let g='<g font-family="Calibri,sans-serif" font-size="10.5" fill="#53575f">';
+  ['Jan','Mar','May','Jul','Sep','Nov'].forEach((m,i)=>{
+    const x=pad+(i*61)/366*(w-pad-14);
+    g+=`<text x="${x}" y="12" fill="#666c78">${m}</text>`;});
+  years.forEach((y,yi)=>{
+    const cy=26+yi*rowH+12;
+    g+=`<text x="${pad-8}" y="${cy+4}" text-anchor="end" font-family="Georgia,serif" font-size="12.5" fill="#000C53">${y}</text>`+
+       `<line x1="${pad}" y1="${cy}" x2="${w-14}" y2="${cy}" stroke="#E4E6EC" stroke-width="2"/>`;
+    A.hblDates.filter(d=>d.startsWith(y)).forEach(d=>{
+      const x=pad+doy(d)/366*(w-pad-14);
+      g+=`<line x1="${x}" y1="${cy-11}" x2="${x}" y2="${cy+11}" stroke="#15683d" stroke-width="2.6"/>`;});
+  });
+  g+=`<text x="${pad}" y="${h-6}" fill="#15683d" font-weight="bold">Each mark is a home-based day. Median gap in term: ${A.hblGap} days.</text>`;
+  return svgWrap(w,h,g+'</g>');
+}
+function tabRx(M){
+  const sub=S.sub.rx||'week';
+  const subs=[['week','The week you already have'],['year','The year you already have'],['models','Six models, scored']];
+  let body='';
+
+  if(sub==='week'){
+    const todRows=A.todOrder.filter(k=>A.tod[k]).map(k=>[k,A.tod[k],
+      /block edge/.test(k)?'#FFB100':/after 15/.test(k)?'#b3312a':/unrecorded/.test(k)?'#8c8f9a':'#000C53',A.tod[k]]);
+    body=`
+    <div class="metrics">
+      <div class="m ok"><b>${A.hblN}</b><span>home-based days already in the calendar</span><i class="ok">${A.hblWed} of them Wednesdays &middot; median gap ${A.hblGap} days</i><button data-jump="hbl">show the rows</button></div>
+      <div class="m ok"><b>${pct(A.hblWedShare)}</b><span>of recorded Wednesdays are home-based</span><i class="ok">Roughly ${A.hblPerYear} a year, fortnightly in term</i></div>
+      <div class="m bad"><b>${A.blockEdge}</b><span>enrichment records at the block edge</span><i class="bad">Against ${A.afterSchool} after 15:00 and ${A.tod['before 10, inside curriculum']||0} before 10:00</i></div>
+      <div class="m bad"><b>${A.soloDates}</b><span>dates carrying exactly one thing</span><i class="bad">Of ${A.dates} dated entries. Busiest day held ${A.maxDate}</i></div>
+      <div class="m warn"><b>${A.timeFmts}</b><span>different ways of writing a time</span><i class="warn">Across ${cm(A.timed)} timed records</i></div>
+    </div>
+
+    <div class="box ok"><h2>Beatty already runs a fortnightly home-based Wednesday</h2>
+     <p style="font-size:.94em">This is the most useful thing in the whole dataset and it was not put there deliberately. There are <b>${A.hblN}</b> home-based days across the two years, <b>${A.hblWed}</b> of them Wednesdays, and the median gap between them <i>inside a term</i> is <b>${A.hblGap} days</b> ${citeChip('E14')}. The school is not choosing between a Wednesday block and home-based learning. It already alternates them, and nobody has used the alternation as a design.</p>
+     <p style="font-size:.94em;margin:0">That matters because rooms bind before anything else. ${M.roomBound?`At your current settings rooms bind first: ${S.rooms} rooms hold ${M.roomCap} groups against ${M.staffable} you could staff.`:`At your current settings staffing binds first, but push group size down and rooms bind immediately.`} A cohort split on alternate Wednesdays doubles what the same estate carries. A whole-school home Wednesday buys nothing in rooms but cannot be taken by an assembly.</p></div>
+
+    <div class="chart scroll">${hblStrip()}</div>
+    <p class="note">Gaps of seventy and a hundred and forty days are school holidays, not lapses. Inside a term the rhythm is unmistakable.</p>
+
+    <h2>When enrichment actually happens</h2>
+    <div class="chart scroll">${hbar(todRows,{w:640,lw:230,rh:22})}</div>
+    <p class="note">Only <b>${A.blockEdge}</b> student-facing enrichment records sit at the 14:00 to 15:00 block edge. <b>${A.afterSchool}</b> are after 15:00, competing with CCA and the bus, and <b>${A.tod['before 10, inside curriculum']||0}</b> are before 10:00, in slots that belong to assembly and form time. <b>The protected block barely exists as a time of day.</b> It is a name for two weekdays, not for an hour anybody has actually defended.</p>
+
+    <h2>The two Wednesdays you could build</h2>
+    <div class="grid2">
+     <div class="box ok"><h3>Cohort split: buys rooms</h3>
+      <p style="font-size:.93em">Half the school home-based, half on campus, swapping weekly. Each Beattyian gets the same session count and meets live fortnightly. The estate carries <b>twice</b> as many distinct groups.</p>
+      <p style="font-size:.93em;margin:0"><b>${cm(M.rxOnSite)}</b> on campus at once at your current setting of ${S.async} percent, against ${cm(M.N)} today.</p>
+      <button class="chip" data-rx="alt">model this</button></div>
+     <div class="box nav"><h3>Whole school home: buys protection</h3>
+      <p style="font-size:.93em">Everybody home on the same Wednesday, exactly as the calendar already records. On-campus days are for what needs a room and other people; home days carry reading, drafting and reflection.</p>
+      <p style="font-size:.93em;margin:0"><b>${M.rxLiveSess}</b> live sessions and <b>${M.rxHomeSess}</b> home sessions of a ${S.sessions}-session cycle at ${S.async} percent.</p>
+      <button class="chip" data-rx="fortnight">model this</button></div>
+    </div>
+
+    <div class="grid2">
+     <div>${rng('async','Percent of block sessions that are home-based',0,75,5,'Zero is the baseline the rest of the dashboard assumes.')}</div>
+     <div>${seg('asyncMode','How the home-based share is taken',[['split','Cohort split'],['whole','Whole school']],'Split buys rooms. Whole buys protection. They are not the same lever.')}</div>
+    </div>
+
+    <div class="box warn"><h3>The cheapest fix on this page</h3>
+     <p style="font-size:.93em;margin:0">There are <b>${A.timeFmts}</b> distinct ways of writing a time across <b>${cm(A.timed)}</b> records: <i>15:00-17:00</i>, <i>3:00 &ndash; 5:30 pm</i>, <i>2.55pm to 4.30pm</i>, <i>3-6pm</i>. And <b>${cm(A.noVenue)}</b> of ${cm(REC.length)} records name no venue at all ${citeChip('E15')}. Nothing above can be recomputed next year unless that changes. A start and end time from a picker, and a venue from a list, costs nobody anything and is the difference between an audit and an anecdote.</p></div>`;
+  }
+
+  else if(sub==='year'){
+    const mo=Object.keys(A.months).sort();
+    const moRows=mo.map(k=>[k,A.months[k],/-(06|11|12)$/.test(k)?'#b3312a':'#000C53',A.months[k]]);
+    body=`
+    <div class="metrics">
+      <div class="m bad"><b>${A.allDayPerYear}</b><span>days a year carrying an all-day event</span><i class="bad">${A.allDayDates} dates over two years, student facing</i></div>
+      <div class="m bad"><b>${A.allDayUse[0]?A.allDayUse[0][1]:0}</b><span>of them are examinations or prelims</span><i class="bad">The single largest claim on the year</i></div>
+      <div class="m warn"><b>${A.t4} v ${A.t1}</b><span>in-block records, Term 4 against Term 1</span><i class="warn">The year does not end evenly</i><button data-jump="term4">show the rows</button></div>
+      <div class="m warn"><b>${A.offN}</b><span>records anywhere but school</span><i class="warn">${A.offVenues} venues over ${A.offDates} dates, ${pct(A.offN/REC.length)} of everything</i></div>
+      <div class="m ok"><b>${A.precinct}</b><span>already in Toa Payoh</span><i class="ok">Care Corner, the transport hub, the precinct itself</i></div>
+    </div>
+
+    <div class="box nav"><h2>The year is not made of ordinary days</h2>
+     <p style="font-size:.94em">Roughly <b>${A.allDayPerYear}</b> days a year carry something that runs all day and involves students ${citeChip('E16')}. The largest single category is examinations and prelims. A three-cycle block of ${S.sessions} sessions needs ${M.blockDays} usable block days a year, and you have set protection at ${S.protect} percent, so <b>${Math.round(M.actualDays)}</b> survive.</p>
+     <p style="font-size:.94em;margin:0">The reimagining is not to fight those days. It is to notice that a day already lost to a whole-school event is a day already cleared of lessons, already staffed and already deployed. The only question is whether what happens on it was <i>designed</i>.</p></div>
+
+    <h2>What consumes a whole day</h2>
+    <div class="chart scroll">${hbar(A.allDayUse.map(r=>[r[0].slice(0,44),r[1],/[Ee]xam|[Oo]ral|prelim/.test(r[0])?'#b3312a':'#000C53',r[1]]),{w:640,lw:250,rh:21})}</div>
+    <p class="note">Red is the examination calendar, which is not negotiable and should not be treated as if it were. Navy is everything else, and everything else is a choice.</p>
+
+    <h2>In-block activity, month by month</h2>
+    <div class="chart scroll">${hbar(moRows,{w:640,lw:80,rh:17})}</div>
+    <p class="note">June, November and December in red. The year has two collapses, not one: the mid-year break and the whole of Term 4. Any design that assumes four even terms will lose its third cycle, which is exactly what the audit found ${citeChip('E11')}.</p>
+
+    <div class="box ok"><h2>Three things the year already gives you free</h2>
+     <ul class="t" style="font-size:.94em;margin-bottom:0">
+      <li><b>A fortnightly home-based day</b> ${citeChip('E14')}. Already running, already accepted by parents, already staffed. It is the only genuinely uncontested slot in the week.</li>
+      <li><b>About ${A.allDayPerYear} cleared days a year</b> ${citeChip('E16')}. Lessons already suspended, adults already deployed. Convert a handful into designed intensives and the cost is a change of purpose, not a change of timetable.</li>
+      <li><b>A neighbourhood</b>. ${A.precinct} records already happen in Toa Payoh and ${A.offN} anywhere outside school at all. The precinct solves the audience problem the Talent tab identifies ${citeChip('R2')}, and it costs no rooms because it uses none.</li>
+     </ul></div>
+
+    <div class="box warn"><h3>What the calendar cannot tell you here</h3>
+     <p style="font-size:.93em;margin:0">Whether an all-day event was worth the day. Nothing in these records carries an outcome, an attendance count or a cost. Every judgement about which days to convert is a professional one, and this tab sizes it rather than makes it.</p></div>`;
+  }
+
+  else {
+    const keys=Object.keys(SCHOOL);
+    const runs=keys.map(k=>{const r=simLedger(SCHOOL[k].set);
+      return {k,S:SCHOOL[k],m:r.m,done:r.done};});
+    const base=runs.find(r=>r.k==='weekly');
+    const cur=SCHOOL[S.smodel]||SCHOOL.weekly;
+    body=`<div class="chips"><span class="tag">Model shown</span>`+
+      keys.map(k=>`<button class="chip ${S.smodel===k?'on':''}" data-sm="${k}">${SCHOOL[k].short}</button>`).join('')+`</div>
+    <div class="box nav"><h2 style="color:${cur.c}">${cur.n}</h2><p style="font-size:.94em;margin:0">${cur.d}</p>
+     <div class="grid2" style="margin-top:9px">
+      <div class="box ok" style="margin:0"><h3>What it buys</h3><p style="font-size:.92em;margin:0">${cur.buys}</p></div>
+      <div class="box bad" style="margin:0"><h3>What it costs</h3><p style="font-size:.92em;margin:0">${cur.costs}</p></div>
+     </div>
+     <div class="note" style="margin:9px 0 0">Precedent: ${cur.prec}</div>
+     <button class="chip" data-sm-adopt="${S.smodel}" style="margin-top:8px">apply these settings to the whole dashboard</button></div>
+
+    <h2>All six on the same machinery</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">Model</th>
+      <th scope="col" class="n">Group size</th><th scope="col" class="n">Smallest it could run</th>
+      <th scope="col" class="n">Groups, running of needed</th>
+      <th scope="col" class="n">1st or 2nd choice</th><th scope="col" class="n">Sessions a month</th>
+      <th scope="col" class="n">Block days surviving</th><th scope="col" class="n">On campus at once</th>
+      <th scope="col" class="n">Audit findings met</th><th scope="col"></th></tr></thead><tbody>`+
+      runs.map(({k,S:sm,m,done})=>`<tr class="${S.smodel===k?'hi':''}"><td><b style="color:${sm.c}">${sm.n}</b></td>
+        <td class="n">${sm.set.cluster||DEF.cluster}</td>
+        <td class="n" style="color:${m.rxMinGroup<=15?'var(--ok)':''};font-weight:${m.rxMinGroup<=15?'bold':'normal'}">${m.rxMinGroup}<div class="hint">${m.rxMinGroup<=15?'inside Renzulli':'above Renzulli'}</div></td>
+        <td class="n">${m.running} of ${m.clustersNeeded}<div class="hint" style="color:${m.coverage>=1?'var(--ok)':'var(--bad)'}">${m.coverage>=1?'all seated':pct(m.coverage)+' seated'}</div></td>
+        <td class="n">${pct(m.top2)}</td><td class="n" style="color:${m.perMonth>=3?'var(--ok)':'var(--bad)'}">${r1(m.perMonth)}</td>
+        <td class="n">${Math.round(m.actualDays)}<div class="hint">of ${m.blockDays}</div></td>
+        <td class="n">${cm(m.rxOnSite)}</td>
+        <td class="n"><b>${done}</b> of ${LEDGER.length}${done>base.done?`<div class="hint" style="color:var(--ok)">+${done-base.done}</div>`:(done<base.done?`<div class="hint" style="color:var(--bad)">${done-base.done}</div>`:'')}</td>
+        <td class="n"><button class="chip ${S.smodel===k?'on':''}" data-sm="${k}">show</button></td></tr>`).join('')+
+      `</tbody></table></div>
+    <p class="note">Every row is the whole dashboard re-run with that model's settings, so these are not scores invented for this table. <b>Smallest it could run</b> is the column that matters: it is the group size the model's capacity would allow if you spent all of it, and it is the difference between a Renzulli enrichment cluster and a class with a different name. Renzulli's published range is five to fifteen, up to twenty-five only with a second adult ${citeChip('R1')}. The baseline cannot get below ${runs.find(r=>r.k==='weekly').m.rxMinGroup}; the cohort split gets to ${runs.find(r=>r.k==='alt').m.rxMinGroup} using the same rooms and the same ten duty teachers.</p>
+
+    <div class="box warn"><h3>Reading this table honestly</h3>
+     <ul class="t" style="font-size:.93em;margin-bottom:0">
+      <li><b>Four-day week is in the table so the others can be judged, not because it is available.</b> Curriculum time requirements almost certainly rule it out. If it scores best, that tells you what the others are trading away, not what to do.</li>
+      <li><b>Home-based sessions carry a design cost this model does not price.</b> Asynchronous material that is worth a Beattyian's Wednesday is harder to write than a lesson, not easier. The workload figures on the Schooling tab assume live delivery throughout.</li>
+      <li><b>Audit findings met is a count, not a weight.</b> Some of the fourteen matter far more than others; the Trade-offs tab is where they are argued individually.</li>
+      <li><b>None of these change what is taught.</b> Every model here moves the block, the year and the place. Curriculum, assessment and banding are untouched, which is both the limit of this work and the reason it is decidable at school level.</li>
+     </ul></div>`;
+  }
+
+  return `<header class="pg"><h1>Reimagine</h1>
+   <p class="lede">What the calendar says about the shape of a week and a year, and six models that take the shape seriously. Home-based learning is already a fortnightly rhythm here; the year already loses days it did not design. Both are assets nobody has spent.</p></header>
+   <div class="subs">${subs.map(s=>`<button data-sub="rx:${s[0]}" class="${sub===s[0]?'on':''}">${s[1]}</button>`).join('')}</div>${body}`;
+}
+
+/* ================================================================= TAB 6 TRADE-OFFS */
 function tabTr(M){
   const sub=S.sub.tr;
   const subs=[['ledger','What this attends to'],['models','Delivery models'],['matrix','Architecture matrix'],
@@ -1901,8 +2203,8 @@ function tabTr(M){
 
   else if(sub==='models'){
     const rows=Object.entries(MODELS).map(([k,m])=>{
-      const s=simulate(Object.assign({model:k},m.set));
-      const led=LEDGER.map(L=>L.test(s)[0]);
+      const r=simLedger(Object.assign({model:k},m.set));
+      const s=r.m, led=r.st;
       const bad=s.issues.filter(i=>i[0]==='b').length;
       return `<tr class="${S.model===k?'hi':''}"><td><b>${m.n}</b> <span class="tag ${m.tag==='Avant garde'?'mod':(m.tag==='Best evidenced'?'res':'')}">${m.tag}</span></td>
         <td class="n">${s.running}/${s.clustersNeeded}</td><td class="n">${pct(s.top2)}</td><td class="n">${r1(s.perMonth)}</td>
@@ -1977,7 +2279,7 @@ function tabTr(M){
     const outs=[['Groups running',m=>m.running+' of '+m.clustersNeeded],['1st or 2nd choice',m=>pct(m.top2)],
       ['Sessions a month',m=>r1(m.perMonth)],['Student leaders',m=>cm(m.leadersNeeded)],
       ['Affinity',m=>m.affinity],['Talent depth',m=>m.talent],
-      ['Findings attended to',m=>LEDGER.filter(L=>L.test(m)[0]==='ok').length+' of '+LEDGER.length],
+      ['Findings attended to',(m,set)=>simLedger(set).done+' of '+LEDGER.length],
       ['Verdict',m=>m.issues.some(i=>i[0]==='b')?'fails':'holds']];
     body=`<div class="chips">`+
       [0,1,2,3].map(i=>`<button class="chip alt ${SCEN[i]?'on':''}" data-save="${i}">${SCEN[i]?'Overwrite ':'Save to '}${'ABCD'[i]}</button>`).join('')+
@@ -1985,7 +2287,7 @@ function tabTr(M){
      <div class="scroll"><table><thead><tr><th scope="col">Setting</th>${['A','B','C','D'].map(x=>`<th scope="col" class="n">${x}</th>`).join('')}</tr></thead><tbody>`+
       defs.map(d=>`<tr><td>${d[0]}</td>${SCEN.map(s=>`<td class="n">${s?d[1](s):'-'}</td>`).join('')}</tr>`).join('')+
       `<tr style="background:var(--g1)"><td colspan="5"><b>Outcomes</b></td></tr>`+
-      outs.map(o=>`<tr><td>${o[0]}</td>${SCEN.map(s=>`<td class="n">${s?o[1](simulate(s)):'-'}</td>`).join('')}</tr>`).join('')+
+      outs.map(o=>`<tr><td>${o[0]}</td>${SCEN.map(s=>`<td class="n">${s?o[1](simulate(s),s):'-'}</td>`).join('')}</tr>`).join('')+
       `</tbody></table></div>
      <p class="note">Save the configuration you are on into a slot, change something, save again, and compare. Slots survive until you clear them or reload.</p>`;
   }
@@ -2021,6 +2323,10 @@ function tabDc(M){
     'The question the Talent tab simulates, and the one nobody usually asks out loud. Renzulli’s revolving door refreshes the pool on completed products; a fixed selection keeps the same Beattyians for years. Same places, same cost, very different school.',
     (()=>{const r=simTalent(M,S.tmodel),f=simTalent(M,'fixed');
       return `${TMODELS[S.tmodel].n} at ${pct(1-TMODELS[S.tmodel].persist)} turnover a cycle reaches ${cm(r.distinct)} different Beattyians over ${S.levels} years, ${r1(r.sessions)} sessions each. Holding the same places fixed reaches ${cm(f.distinct)}.`;})()],
+   ['Is Wednesday one day, or two half-schools?',
+    `The calendar already records ${A.hblN} home-based days, ${A.hblWed} of them Wednesdays, at a median gap of ${A.hblGap} days in term. The alternation exists. The decision is what it is for: everybody home on the same day, which buys protection no assembly can take back, or half the school home and half on campus, which buys rooms and therefore group size.`,
+    (()=>{const w=simulate({async:50,asyncMode:'whole',protect:92}),sp=simulate({async:50,asyncMode:'split',cluster:15});
+      return `Whole school home: ${Math.round(w.actualDays)} of ${w.blockDays} block days survive against ${Math.round(M.actualDays)} now. Cohort split: groups of ${sp.rxMinGroup} become possible against ${M.rxMinGroup} now, and ${pct(sp.top2)} get a first or second choice against ${pct(M.top2)}.`;})()],
    ['Do you stop inventing?',
     `The audit found ${A.born} enrichment programmes invented in a single year and ${A.died} abandoned, with ${pct(A.churnPct)} surviving from one year to the next. Every invention costs a design whether or not it runs twice. The alternative is a catalogue that is refreshed rather than replaced, which is a decision about how the school signals effort, not about capacity.`,
     `At ${S.refresh} percent refresh the catalogue of ${M.catalogue} groups needs ${M.reNew} new designs a year instead of ${A.born}, and choice on a block day goes from ${r1(M.offersNow)} to ${M.offersNew}. Modelled cost: ${r1(M.hNow)} teacher-hours a year each becomes ${r1(M.hAfter)}.`],
@@ -2035,7 +2341,7 @@ function tabDc(M){
     `${{absolute:'Absolute',percap:'Per capita',participation:'Participation weighted'}[S.cup]}. Structural advantage to the largest house: ${pct(M.cupBias)}.`]
   ];
   return `<header class="pg"><h1>Decide</h1>
-   <p class="lede">Ten questions. Each is genuinely open, each carries a live consequence from the current settings, and none can be answered by more modelling.</p></header>
+   <p class="lede">Eleven questions. Each is genuinely open, each carries a live consequence from the current settings, and none can be answered by more modelling.</p></header>
    <div class="metrics">
     <div class="m ${M.ok?'ok':'bad'}"><b>${M.ok?'Holds':'Fails'}</b><span>Does this configuration hold?</span><i class="${M.ok?'ok':'bad'}">${M.issues.length} finding${M.issues.length===1?'':'s'}</i></div>
     <div class="m"><b>${res.filter(r=>r.st==='ok').length} of ${LEDGER.length}</b><span>audit findings attended to</span></div>
@@ -2067,7 +2373,7 @@ function tabDc(M){
 }
 
 /* ================================================================= RENDER */
-const TABS={ev:tabEv,de:tabDe,tal:tabTal,sc:tabSc,tr:tabTr,dc:tabDc};
+const TABS={ev:tabEv,de:tabDe,tal:tabTal,sc:tabSc,rx:tabRx,tr:tabTr,dc:tabDc};
 let PREV=null;
 function statusBar(M){
   const bad=M.issues.filter(i=>i[0]==='b').length,warn=M.issues.filter(i=>i[0]==='w').length;
@@ -2151,7 +2457,7 @@ function citeTo(id){
   Object.assign(S,c.cut);
   S.tab='ev';S.sub.ev='rec';render({top:true});
 }
-const CTX={'ctx-staff':{fb:'1',fs:'0'}};
+const CTX={'ctx-staff':{fb:'1',fs:'0'},hbl:{q:'HBL'}};
 function jumpTo(id){
   const L=LEDGER.find(x=>x.id===id);
   Object.assign(S,{q:'',fy:'',ft:'',fd:'',fl:'',fg:'',fc:'',fdept:'',fe:'',fb:'',fs:''});
@@ -2162,7 +2468,7 @@ function bind(){
   $$('#view [data-sub]').forEach(b=>b.onclick=()=>{const [t,v]=b.dataset.sub.split(':');S.sub[t]=v;render({top:true});});
   $$('#view [data-d]').forEach(el=>el.oninput=()=>{S[el.dataset.d]=+el.value;render();});
   $$('#view [data-seg]').forEach(sg=>sg.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    const k=sg.dataset.seg,v=b.dataset.v;S[k]=(k==='showScope')?v:+v;render();}));
+    const k=sg.dataset.seg,v=b.dataset.v;S[k]=STRSEG.has(k)?v:+v;render();}));
   $$('#view [data-sel]').forEach(s=>s.onchange=()=>{S[s.dataset.sel]=s.value;render();});
   $$('#view [data-h]').forEach(s=>s.onchange=()=>{S.hset[s.dataset.h][s.dataset.hf]=s.value;render();});
   $$('#view [data-set]').forEach(b=>b.onclick=()=>{const [k,v]=b.dataset.set.split(':');
@@ -2176,6 +2482,10 @@ function bind(){
   $$('#view [data-tm]').forEach(b=>b.onclick=()=>{S.tmodel=b.dataset.tm;render();});
   $$('#view [data-arch2]').forEach(b=>b.onclick=()=>{S.arch=b.dataset.arch2;fixAnchors();render();});
   $$('#view [data-cite]').forEach(b=>b.onclick=()=>citeTo(b.dataset.cite));
+  $$('#view [data-sm]').forEach(b=>b.onclick=()=>{S.smodel=b.dataset.sm;render();});
+  $$('#view [data-rx]').forEach(b=>b.onclick=()=>{S.smodel=b.dataset.rx;S.sub.rx='models';render({top:true});});
+  $$('#view [data-sm-adopt]').forEach(b=>b.onclick=()=>{const m=SCHOOL[b.dataset.smAdopt];
+    if(m){Object.assign(S,m.set);S.smodel=b.dataset.smAdopt;render();}});
   $$('#view [data-save]').forEach(b=>b.onclick=()=>{
     if(b.dataset.save==='clear')SCEN=[null,null,null,null];
     else SCEN[+b.dataset.save]=JSON.parse(JSON.stringify(S));

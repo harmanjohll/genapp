@@ -10,7 +10,7 @@ Live: `https://harmanjohll.github.io/genapp/houses/`
 
 | File | What it is |
 | --- | --- |
-| `index.html` | **The decision dashboard.** Start here. Six tabs: Evidence, Design, Talent, Schooling, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
+| `index.html` | **The decision dashboard.** Start here. Seven tabs: Evidence, Design, Talent, Schooling, Reimagine, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
 | `studio2.html` | **House Dashboard.** Earlier pass, superseded by `index.html`. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
 | `studio.html` | **House Studio.** First pass. Vertical house architecture modelling |
 | `data.html` | **Calendar explorer.** The same 1,380 records standalone: filters, cross-tabs, calendar view |
@@ -31,8 +31,9 @@ Every HTML file is standalone: no build step, no dependencies, no network calls.
 | 2 Design | Build a configuration: roll, house architecture, houses and what each stewards, delivery model, staffing, tiers, Cup scoring, activities |
 | 3 Talent | Simulate who gets a deep experience and for how long, under five published talent models, and what each house architecture does to that |
 | 4 Schooling | Teacher workload, the shared tier structure behind talent development and pastoral support, and what a house does and does not do for deployment |
-| 5 Trade-offs | Every audit finding scored against the current configuration, model comparison, sensitivity, sweeps, saved scenarios |
-| 6 Decide | Ten genuinely open questions, each carrying the live consequence of the current settings |
+| 5 Reimagine | What the calendar says about the shape of a week and a year, and six models of schooling scored on the same machinery |
+| 6 Trade-offs | Every audit finding scored against the current configuration, model comparison, sensitivity, sweeps, saved scenarios |
+| 7 Decide | Eleven genuinely open questions, each carrying the live consequence of the current settings |
 
 Settings propagate: change the Pursue share on Design and the Talent reach curves, the Trade-offs ledger and the Decide consequences all move with it.
 
@@ -60,9 +61,32 @@ Three claims, each with its own sub-view and its own honesty box.
 
 Hours are controls, not measurements: the calendar records events and never time. The counts those hours multiply are measured, and the argument rests on the counts.
 
+### What the calendar gave up on a closer read
+
+Three things nobody had asked it for, and all three change the design space.
+
+1. **Beatty already runs a fortnightly home-based Wednesday.** 25 home-based days across the two years, 19 of them Wednesdays, median gap in term exactly 14 days. The school is not choosing between a Wednesday block and home-based learning; it already alternates them and has never used the alternation as a design. A cohort split buys rooms, and rooms buy group size: clusters of 12 become possible against 23 on the same estate with the same ten duty teachers. A whole-school home day buys protection instead, because an invigilation cannot take a day nobody is in school for.
+2. **The protected block barely exists as a time of day.** Of student-facing enrichment records, 271 happen after 15:00 and only 58 at the 14:00–15:00 block edge. "The block" is a name for two weekdays, not for an hour anyone has defended.
+3. **About 82 days a year already carry an all-day event**, the largest category being examinations. Those days are already cleared of lessons and already staffed. Converting a few into designed intensives costs a change of purpose, not a change of timetable.
+
+Two operational findings sit underneath all of it: 246 distinct ways of writing a time across 956 records, and 991 of 1,380 records naming no venue. A picker for start and end time and a list for venue would cost nobody anything and is the difference between an audit and an anecdote.
+
+### Six models of schooling
+
+Each is a settings patch, so selecting one re-runs the entire dashboard and the audit ledger answers for it.
+
+| Model | Buys | Costs |
+| --- | --- | --- |
+| Weekly on-campus block | Simplicity | Rooms bind first; every block day competes with the exam calendar |
+| Alternating Wednesday, cohort split | Rooms, and therefore Renzulli-sized groups | Two cohorts to track; fortnightly live cadence |
+| Whole-school home-based fortnight | Protection that cannot be taken back | Asynchronous material is harder to write than a lesson |
+| The precinct is the campus | Rooms, an authentic audience, civic contact | Stricter supervision ratios outside school |
+| Fewer, longer, designed intensives | Depth past the twenty-session floor | Absence costs far more |
+| Four-day curriculum, one open day | Everything, at once | Almost certainly unavailable. In the table as the limit, not the proposal |
+
 ### Citation register
 
-**Evidence → Sources & citations** gives every figure in the dashboard a stable reference id (`E1`–`E13` measured, `S1`–`S3` supplied by the school, `R1`–`R5` published research, `M1`–`M5` modelled here). Measured figures carry a *show the rows* button that opens the Records view on exactly the selection the figure was computed from. Reference chips appear inline wherever a figure is quoted.
+**Evidence → Sources & citations** gives every figure in the dashboard a stable reference id (`E1`–`E17` measured, `S1`–`S3` supplied by the school, `R1`–`R5` published research, `M1`–`M5` modelled here). Measured figures carry a *show the rows* button that opens the Records view on exactly the selection the figure was computed from. Reference chips appear inline wherever a figure is quoted.
 
 ## The five houses
 
