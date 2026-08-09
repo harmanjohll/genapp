@@ -4740,6 +4740,247 @@
     "jc",
     "mi"
    ]
+  },
+  {
+   "id": "ac_pw_group",
+   "type": "encounter",
+   "minAge": 17,
+   "maxAge": 18,
+   "title": "The Project Work group",
+   "body": "Project Work group of five, and two of them have not read the brief. The oral presentation is graded and my name is on the same slide deck.",
+   "responses": [
+    {
+     "label": "Reassign the work in writing",
+     "outcome": "A shared document with names beside tasks, sent to everyone including the tutor. Two of them turn up because the list is public.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Ask the tutor how to split it",
+     "outcome": "She has seen this every year and hands me a template for it. Some problems that feel personal already have a form.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "flexibility": 1
+     }
+    },
+    {
+     "label": "Write their sections myself",
+     "outcome": "The deck gets finished and the grade holds. I learn nothing at all about how to get people to move.",
+     "gain": {
+      "skills": 1
+     }
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ac_h2_load",
+   "type": "encounter",
+   "minAge": 17,
+   "maxAge": 18,
+   "title": "Four H2 or three",
+   "body": "The promo results are back and one H2 is eating the other three. Dropping it to H1 is allowed, and everybody has an opinion about what that means.",
+   "responses": [
+    {
+     "label": "Take that one at H1",
+     "outcome": "Three H2 done properly, one at H1, and the local university requirement is still fully met. The week stops being a scramble.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "flexibility": 1
+     }
+    },
+    {
+     "label": "Keep four and reorganise",
+     "outcome": "The heavy paper gets my mornings and the rest fit around it. Same load, different shape, and the marks move.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Check what each course needs",
+     "outcome": "The indicative grade profiles are public reading. Two of my three shortlisted courses never look at the fourth subject at all.",
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around"
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ac_diploma_pull",
+   "type": "encounter",
+   "minAge": 18,
+   "maxAge": 19,
+   "title": "The course I actually want",
+   "body": "The A Level year is going fine and the thing I actually want to do is a diploma course. Nobody in the staff room says that part out loud.",
+   "responses": [
+    {
+     "label": "Find out what my results reach",
+     "outcome": "A Level holders can be granted exemptions on some diplomas. The page has been public the whole time and nobody showed me.",
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around"
+    },
+    {
+     "label": "Talk to somebody on that course",
+     "outcome": "A cousin's friend, second year, tells me the timetable and the hours. Real detail beats a prospectus every time.",
+     "gain": {
+      "network": 1
+     },
+     "sets": "asked_senior"
+    },
+    {
+     "label": "Finish the A Levels first",
+     "outcome": "Two more terms, then the same choice with a certificate in my hand. Options like this one do not expire in June.",
+     "disp": {
+      "persistence": 1
+     }
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ac_council_year",
+   "type": "opportunity",
+   "minAge": 17,
+   "maxAge": 18,
+   "title": "Council, in this year",
+   "body": "Council wants me on the executive committee in the same year the papers get real. The teacher in charge says most people manage both.",
+   "responses": [
+    {
+     "label": "Take the seat and timetable it",
+     "outcome": "Two hours on Tuesdays, blocked and visible to everybody. The role gets done and the revision does not quietly vanish.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "sets": "took_stage"
+    },
+    {
+     "label": "Take one portfolio instead",
+     "outcome": "One portfolio and not the whole committee. I do it properly and still sleep, and doing one thing well is also leading.",
+     "gain": {
+      "network": 1
+     }
+    },
+    {
+     "label": "Say no and say why",
+     "outcome": "I tell the teacher what I am protecting this year. She writes my name down for the year after instead.",
+     "disp": {
+      "flexibility": 1
+     }
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ac_mtl_clear",
+   "type": "encounter",
+   "minAge": 17,
+   "maxAge": 18,
+   "title": "The paper I keep postponing",
+   "body": "Mother Tongue has to be cleared before the A Levels, and it is the paper I keep pushing down the list. The first sitting is one term away.",
+   "responses": [
+    {
+     "label": "Give it eight weeks properly",
+     "outcome": "Past papers, help with the composition, one hour daily. It clears at the first sitting and stops following me around.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Ask about the exemption rules",
+     "outcome": "There are grounds and there is a form, and neither of them is a secret. I find out which one applies to me.",
+     "gain": {
+      "skills": 1
+     },
+     "sets": "asked_help"
+    },
+    {
+     "label": "Carry it into next year",
+     "outcome": "It sits there, one more thing on a heavier year. Nothing breaks, and I would rather have finished it early.",
+     "disp": {
+      "optimism": 1
+     }
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ac_h3_letter",
+   "type": "opportunity",
+   "minAge": 17,
+   "maxAge": 18,
+   "title": "The H3 letter",
+   "body": "A letter about an H3 paper, run with a university department. Extra work, an extra grade, and the tutor says plainly that I would cope.",
+   "responses": [
+    {
+     "label": "Take it and pick my question",
+     "outcome": "Six months on one narrow thing with a real supervisor. I find out what research is before I have to choose a course.",
+     "gain": {
+      "skills": 1,
+      "portfolio": 1
+     },
+     "sets": "found_mentor"
+    },
+    {
+     "label": "Ask what it costs in hours",
+     "outcome": "Eight hours a week in term time, paper due in October. Knowing the number is how I decide anything at all.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "curiosity": 1
+     }
+    },
+    {
+     "label": "Not this year, and say so",
+     "outcome": "I tell the tutor plainly and ask what else is around. She names two shorter things I had never heard of.",
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     }
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
   }
  ]
 }

@@ -689,15 +689,44 @@ function pickChance(run, stage, cards, age) {
   if (run.stepIndex % 5 === 3) return null;
   const pool = eligibleCards(cards, run, age, stage);
   if (!pool.length) return null;
-  const rich = pool.filter((c) => c.requiresFlag || c.when);
-  let pickFrom = rich.length && lcg(run.seed + run.stepIndex * 31) % 3 !== 0 ? rich : pool;
-  const fitting = pickFrom.filter((c) => c.subjects && takesSubject(run, c.subjects));
-  if (fitting.length && lcg(run.seed + run.stepIndex * 53) % 3 !== 0) pickFrom = fitting;
-  if (run.want && run.want.riasec) {
-    const liked = pickFrom.filter((c) => wantAffinity(c, run.want.riasec) >= 2);
-    if (liked.length && lcg(run.seed + run.stepIndex * 101) % 3 !== 0) pickFrom = liked;
+  return pool[weightedIndex(pool.map((c) => cardWeight(c, run)), run.seed + run.stepIndex * 7919)];
+}
+
+/**
+ * How much this card wants to be the one dealt here.
+ *
+ * WHY WEIGHTS AND NOT FILTERS. The preferences were right and the mechanism was
+ * not. Each preference used to REPLACE the pool: two times in three, deal only
+ * from the cards that pay off something the student did, then two times in three
+ * again, only from the cards about a subject they take. That is graceful when
+ * five cards qualify and a rut when one does. Measured over eleven hundred runs,
+ * one card took sixty three percent of everything dealt at enlistment, another
+ * sixty one percent at the crossroads, and nine chapters had a single card
+ * above thirty percent. A student who replays sees the same year twice, which is
+ * exactly the complaint that arrived from a phone: this looks familiar.
+ *
+ * Weighting keeps the preference and loses the rut. A card that pays off an
+ * earlier act is worth three ordinary cards, a card about a subject the student
+ * takes is worth three, both together six, and against ten ordinary cards the
+ * favourite lands about a quarter of the time instead of two thirds.
+ */
+function cardWeight(card, run) {
+  let w = 1;
+  if (card.requiresFlag || card.when) w += 2;
+  if (card.subjects && takesSubject(run, card.subjects)) w += 2;
+  if (run.want && run.want.riasec && wantAffinity(card, run.want.riasec) >= 2) w += 1;
+  return w;
+}
+
+/** A deterministic weighted draw, so a shared seed still replays exactly. */
+function weightedIndex(weights, seed) {
+  const total = weights.reduce((a, b) => a + b, 0);
+  let target = lcg(seed) % total;
+  for (let i = 0; i < weights.length; i += 1) {
+    target -= weights[i];
+    if (target < 0) return i;
   }
-  return pickFrom[lcg(run.seed + run.stepIndex * 7919) % pickFrom.length];
+  return weights.length - 1;
 }
 
 function lcg(seed) {
@@ -949,6 +978,7 @@ export function runJourneySweep(data) {
 
   // 5. The pool can never starve, on any family, with or without NS.
   const MIN_POOL = 8;
+  const TOP_SHARE = 0.4;
   const FLAG_SETS = [[], ['at_mi'], ['at_pfp'], ['hn_direct']];
   PATHS.forEach((path) => {
     [true, false].forEach((ns) => {
@@ -978,6 +1008,24 @@ export function runJourneySweep(data) {
           failures.push({
             path, ns, stage: s.id, age, why: `pool ${n} below ${MIN_POOL} at ${(s.at || []).join('/')}`,
           });
+        }
+        // And no card may own the chapter. A pool of twelve is no use if the
+        // weighting hands one of them two draws in three, which is what the
+        // filter-based picker did: sixty three percent of everything dealt at
+        // enlistment was one card, and a student who replayed got the same year
+        // back. Flags are all set here on purpose, because that is the state
+        // where a card that pays off an earlier act is at its most favoured.
+        const loaded = { ...probe, flags: (j.flags || []).slice() };
+        const pool = eligibleCards(cards, loaded, age, s);
+        if (pool.length >= MIN_POOL) {
+          const w = pool.map((c) => cardWeight(c, loaded));
+          const share = Math.max(...w) / w.reduce((a, b) => a + b, 0);
+          if (share > TOP_SHARE) {
+            const worst = pool[w.indexOf(Math.max(...w))];
+            failures.push({
+              path, ns, stage: s.id, age, why: `${worst.id} takes ${Math.round(share * 100)}% of the chapter`,
+            });
+          }
         }
       });
       });
