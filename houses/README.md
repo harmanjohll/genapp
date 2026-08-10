@@ -95,12 +95,12 @@ Beatty's houses already exist and are named after Royal Navy officers connected 
 | House | Colour | Namesake | Remembered for | Stewards |
 | --- | --- | --- | --- | --- |
 | Hood | Red | Rear-Admiral Sir Horace Hood, 1870–1916 | Going first. Died at Jutland commanding the vanguard attached to Beatty's fleet | Service, Leadership and Community |
-| Jellicoe | Orange | Admiral of the Fleet John Jellicoe, 1859–1935 | Judgement and restraint. Commanded the Grand Fleet at Jutland | Humanities and Global Citizenship |
-| Harwood | *unverified* | Admiral Sir Henry Harwood, 1888–1950 | Reading a situation while outnumbered. River Plate, 1939 | Language, Oracy and Expression |
-| Sturdee | *unverified* | Admiral of the Fleet Sir Doveton Sturdee, 1859–1925 | Preparation, then pursuit. Falkland Islands, 1914 | Sport, Health and the Outdoors |
-| Fisher | *unverified* | Admiral of the Fleet John "Jacky" Fisher, 1841–1920 | Making the old obsolete. Drove HMS Dreadnought | STEM, Design and Making |
+| Jellicoe | Green | Admiral of the Fleet John Jellicoe, 1859–1935 | Judgement and restraint. Commanded the Grand Fleet at Jutland | Humanities and Global Citizenship |
+| Harwood | Yellow | Admiral Sir Henry Harwood, 1888–1950 | Reading a situation while outnumbered. River Plate, 1939 | Language, Oracy and Expression |
+| Sturdee | Orange | Admiral of the Fleet Sir Doveton Sturdee, 1859–1925 | Preparation, then pursuit. Falkland Islands, 1914 | Sport, Health and the Outdoors |
+| Fisher | Blue | Admiral of the Fleet John "Jacky" Fisher, 1841–1920 | Making the old obsolete. Drove HMS Dreadnought | STEM, Design and Making |
 
-Hood is Red and Jellicoe is Orange. The remaining three colours are Green, Yellow and Blue, but which house holds which is not published anywhere reachable. The Studio lets you assign them.
+All five colours are confirmed by the school: Hood Red, Jellicoe Green, Harwood Yellow, Sturdee Orange, Fisher Blue. No published source states them, so the school's own confirmation is the record.
 
 No source states why these five admirals were chosen. The school's Wikipedia page, its own history page, the MOE Heritage Centre profile and NewspaperSG were all checked. The two commemorative histories in the NLB catalogue (*Forward to Glory*, 1953–1991; *50th Anniversary*, 1953–2003) are the likely record if a founding era answer exists.
 
@@ -119,7 +119,7 @@ No source states why these five admirals were chosen. The school's Wikipedia pag
 | The seventeen CCAs, categories, gender eligibility | Measured, MOE School Finder |
 | Enrichment block usage 2024–2025 | Measured, 1,148 calendar events decomposed into 1,380 activity records |
 | Admiral biographies | Researched: Wikipedia, RMG, IWM, US Naval Institute |
-| House colours for Harwood, Sturdee, Fisher | **Unverified**, set by the user |
+| House colours, all five | Confirmed by the school |
 | CCA sizes, gender mix, attrition | Modelled, adjustable |
 | Form classes per level, cohort size | Modelled, adjustable |
 | First choice CCA satisfaction | Modelled, illustrative |
@@ -130,7 +130,6 @@ Nothing modelled is presented as measured. Every modelled input is a control in 
 ## Needed before the next pass
 
 1. CCA roll by CCA, split by level and gender if possible. Replaces the whole modelled layer.
-2. House colours for Harwood, Sturdee and Fisher.
 3. Observed turnover: how often a Beattyian actually rotates out of a pathway. The single largest assumption in the Talent tab.
 4. Department tagging on enrichment records. 255 of 337 in-block enrichment records carry none, so next year's audit cannot answer the questions this one raised.
 

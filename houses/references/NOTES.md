@@ -59,7 +59,7 @@ Everything modelled in `studio.html` is a slider with a defensible default. Four
 1. **Form classes per level.** The single most consequential unknown. Five houses can only hold whole classes evenly if the class count divides by five. Eight does not; ten does. With eight, the remainder has to rotate across levels, which evens out over four years but not at any single level, so one house fields more classes than another in a Sec 2 carnival. This resolves itself at Sec 1 registration whether or not it is modelled first.
 2. **CCA roll by CCA**, split by level and gender if the data allows. Replaces the modelled sizes and gender mixes wholesale.
 3. **Facilitator supply per band day.** Determines whether the choice architecture is real or nominal. This was the open question from the first pass and it is still open.
-4. **House colours for Harwood, Sturdee and Fisher.** Hood is Red and Jellicoe is Orange, confirmed. The remaining three are Green, Yellow and Blue in some order, and the order is published nowhere reachable. See section 6.
+4. ~~**House colours.**~~ **Settled.** Confirmed by the school: Hood Red, Jellicoe Green, Harwood Yellow, Sturdee Orange, Fisher Blue. No published source states them; the school's confirmation is the record. An earlier draft had Jellicoe Orange, Harwood Green and Sturdee Yellow, all three now corrected.
 
 ---
 

@@ -301,10 +301,10 @@ const ROLL={p1:265,p2:355,p3:305,p4:265,p5:20, c1:7,c2:7,c3:8,c4:7};
 
 const HOUSES=[
   {k:'hood',n:'Hood',c:'#C8102E',t:'#A60D26',col:'Red',colv:1,dis:'Going first',dom:'Service, Leadership & Community'},
-  {k:'jell',n:'Jellicoe',c:'#E8751A',t:'#8A4409',col:'Orange',colv:1,dis:'Judgement and restraint',dom:'Humanities & Global Citizenship'},
-  {k:'harw',n:'Harwood',c:'#1A7F4B',t:'#146039',col:'Green',colv:0,dis:'Reading a situation while outnumbered',dom:'Language, Oracy & Expression'},
-  {k:'stur',n:'Sturdee',c:'#D8A800',t:'#7A5F00',col:'Yellow',colv:0,dis:'Preparation, then pursuit',dom:'Sport, Health & the Outdoors'},
-  {k:'fish',n:'Fisher',c:'#1F5FA8',t:'#1A4F8C',col:'Blue',colv:0,dis:'Making the old obsolete',dom:'STEM, Design & Making'}
+  {k:'jell',n:'Jellicoe',c:'#1A7F4B',t:'#146039',col:'Green',colv:1,dis:'Judgement and restraint',dom:'Humanities & Global Citizenship'},
+  {k:'harw',n:'Harwood',c:'#D8A800',t:'#7A5F00',col:'Yellow',colv:1,dis:'Reading a situation while outnumbered',dom:'Language, Oracy & Expression'},
+  {k:'stur',n:'Sturdee',c:'#E8751A',t:'#8A4409',col:'Orange',colv:1,dis:'Preparation, then pursuit',dom:'Sport, Health & the Outdoors'},
+  {k:'fish',n:'Fisher',c:'#1F5FA8',t:'#1A4F8C',col:'Blue',colv:1,dis:'Making the old obsolete',dom:'STEM, Design & Making'}
 ];
 const DREAM=[['D','Discipline'],['R','Resilience'],['E','Empathy'],['A','Adaptability'],['M','Mindfulness']];
 
@@ -1506,7 +1506,7 @@ ${M.overCap.length?`<p class="note" style="border-left-color:var(--red)"><b>Chec
 <div class="hcard" style="border-top-color:${h.c}"><b style="color:${h.t||h.c}">${h.n}</b>
 <span>${h.col}${h.colv?'':' <span class="tag unk">unverified</span>'}</span>
 <i>${h.dis}.<br>${h.dom}.</i></div>`).join('')}</div>
-<p class="note">Hood Red and Jellicoe Orange are confirmed. The other three are Green, Yellow and Blue in an order published nowhere reachable; the NLB commemorative histories are the likely record. ${S.houses>5?`<b>You have set ${S.houses} houses but Beatty has five.</b> The sixth is shown only to test the arithmetic.`:''}</p>
+<p class="note">All five colours are confirmed by the school: Hood Red, Jellicoe Green, Harwood Yellow, Sturdee Orange, Fisher Blue. ${S.houses>5?`<b>You have set ${S.houses} houses but Beatty has five.</b> The sixth is shown only to test the arithmetic.`:''}</p>
 
 `;
 }
