@@ -18,6 +18,41 @@ const FILES = [
   'activities', 'possibilities', 'work', 'money', 'evidence', 'schools',
 ];
 
+/**
+ * WHAT THE FIRST SCREEN ACTUALLY NEEDS, AND WHAT CAN ARRIVE AFTER IT.
+ *
+ * Twenty files, 399 KB, all fetched before a student saw a subject. The largest is
+ * the chance deck at 129 KB, which only the game and the table use, and the second
+ * largest after that is the sector file, which the Plan screen uses for one row of
+ * chips in a sheet nobody has opened yet.
+ *
+ * Measured on a throttled school access point before any of this: 988 KB across 58
+ * requests, first contentful paint at 7.3 seconds, 23 seconds before the page
+ * settled. Thirty five devices share one access point in a computer lab, which is
+ * the situation the paragraph at the top of this file has always worried about and
+ * never acted on.
+ *
+ * EAGER is what the landing and the Plan screen cannot be correct without. DEFERRED
+ * is fetched when a mode that needs it opens, and also topped up in the background
+ * once the first screen is on the glass, so the parts of Plan that use a deferred
+ * file appear a moment later rather than never. Everything that reads a deferred
+ * file already guards for its absence, because every read in this app goes through
+ * `(data.x && data.x.y) || []`.
+ */
+const EAGER = [
+  'subjects', 'pathways', 'progressions', 'copy', 'glossary',
+  'activities', 'journey', 'lifelong', 'version', 'moves', 'possibilities',
+];
+const DEFERRED = FILES.filter((f) => !EAGER.includes(f));
+
+/** Which deferred files a mode cannot render without. */
+export const MODE_DATA = {
+  now: [], journey: ['chances', 'dispositions'], aim: ['futures'],
+  table: ['chances'], teacher: ['chances', 'futures', 'dispositions', 'stories'],
+  parent: ['parent'], counsellor: [], work: ['work', 'futures'],
+  money: ['money'], evidence: ['evidence'], schools: ['schools'],
+};
+
 const REQUIRED = ['subjects', 'pathways', 'progressions', 'copy', 'glossary'];
 const STALE_DAYS = 90;
 
@@ -52,28 +87,68 @@ async function fetchOne(name, tries = 3) {
   throw lastErr;
 }
 
-export async function loadAll() {
-  const settled = await Promise.all(
-    FILES.map(async (name) => {
-      try { return [name, await fetchOne(name), null]; }
-      catch (e) { return [name, null, e]; }
-    })
-  );
+let store = null;
+const inflight = new Map();
 
-  const missing = settled.filter(([, v]) => v === null).map(([n]) => n);
-  const fatal = missing.filter((n) => REQUIRED.includes(n));
+async function fetchInto(names) {
+  const want = names.filter((n) => FILES.includes(n) && !store[`_have_${n}`]);
+  if (!want.length) return;
+  await Promise.all(want.map(async (name) => {
+    if (!inflight.has(name)) {
+      inflight.set(name, fetchOne(name)
+        .then((v) => { store[name] = v; store[`_have_${name}`] = true; })
+        .catch(() => { store[name] = store[name] || {}; store._missing.push(name); })
+        .finally(() => inflight.delete(name)));
+    }
+    await inflight.get(name);
+  }));
+  restat();
+}
+
+function restat() {
+  store._freshness = freshness(store);
+  store._provisionalCount = countProvisional(store);
+}
+
+export async function loadAll() {
+  store = Object.fromEntries(FILES.map((n) => [n, {}]));
+  store._missing = [];
+  await fetchInto(EAGER);
+  const fatal = store._missing.filter((n) => REQUIRED.includes(n));
   if (fatal.length) {
     const err = new Error(`missing: ${fatal.join(', ')}`);
     err.missing = fatal;
     throw err;
   }
-
-  const data = Object.fromEntries(settled.map(([n, v]) => [n, v || {}]));
-  data._missing = missing;
-  data._freshness = freshness(data);
-  data._provisionalCount = countProvisional(data);
-  return data;
+  return store;
 }
+
+/**
+ * Make sure these files are in hand. Mutates the same object every mode holds, so
+ * nothing has to be rewired when a file arrives late.
+ */
+export async function ensureData(names) {
+  if (!store) return;
+  await fetchInto(names || []);
+}
+
+/**
+ * Everything else, once the first screen is on the glass.
+ *
+ * Called after first paint with a repaint callback, so the parts of the Plan screen
+ * that use a deferred file appear when it lands rather than waiting for a mode
+ * change. Failures are silent on purpose: a top up that does not arrive leaves the
+ * app exactly as usable as it was a second earlier, and `_missing` already carries
+ * the fact for anything that asks.
+ */
+export async function topUp(then) {
+  if (!store) return;
+  try { await fetchInto(DEFERRED); } catch { /* the app is already usable */ }
+  if (typeof then === 'function') then();
+}
+
+/** Whether a file is actually in hand, for a screen deciding what to show. */
+export function have(name) { return !!(store && store[`_have_${name}`]); }
 
 function freshness(data) {
   let oldest = null;
