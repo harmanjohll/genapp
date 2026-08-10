@@ -65,3 +65,46 @@ eyeball the confirmed rows once against moe.gov.sg before a class uses this.
 2. Read `DESIGN.md`'s verification gates and the style rules.
 3. The teacher layer (`?mode=teacher`) carries the class code round, the
    45 minute shape and the field test protocol.
+
+## Hosting it, and the one setting that matters
+
+Static files, no build step, no server code. Copy the folder anywhere that serves
+files over HTTPS.
+
+**Turn on compression.** This is the only hosting decision that changes what a
+student experiences, and it changes it by a factor of three.
+
+Measured on a throttled connection standing in for a school access point with
+thirty five devices on it:
+
+| | requests | first screen | first contentful paint |
+|---|---|---|---|
+| Everything up front, uncompressed | 58 | 988 KB | 7.3 s |
+| First screen only, uncompressed | 27 | 391 KB | 5.1 s |
+| First screen only, compressed | 27 | **121 KB** | **1.6 s** |
+
+The app now fetches only what the first screen needs and tops the rest up in the
+background, which is where the request count and two thirds of the bytes went.
+The last row is compression, and it is free: GitHub Pages, Netlify, Cloudflare
+Pages and Firebase Hosting all do it by default. A plain `python3 -m http.server`
+or `npx http-server` does not, which is why a local preview feels slower than the
+real thing.
+
+If a school hosts this behind its own web server, check that `gzip` or `brotli` is
+on for `text/css`, `text/javascript` and `application/json`. The stylesheet is
+91 KB and compresses to 22; the chance deck is 129 KB and compresses to 31.
+
+## What loads when
+
+- **Eager**, because the first screen cannot be correct without it: subjects,
+  pathways, progressions, copy, glossary, activities, journey, lifelong, version,
+  moves, possibilities.
+- **On opening the mode that needs it**: the chance deck for Play and the table,
+  futures for Act, the sector file for the work page, and so on. `MODE_DATA` in
+  `data-loader.js` is the list.
+- **Background, right after first paint**: everything else, with one repaint when
+  it lands, so the parts of Plan that use a deferred file appear a second late
+  rather than never.
+
+Every read of a deferred file already guards for its absence, so a top up that
+never arrives leaves the app exactly as usable as it was a second earlier.

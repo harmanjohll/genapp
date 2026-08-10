@@ -25,7 +25,7 @@
 //    single cruellest thing this app could do and it is why projectionSweep
 //    tests additions as well as raises.
 
-import { reach } from './reach.js?v=2.11.0';
+import { reach } from './reach.js?v=2.12.0';
 
 const LV = { G1: 1, G2: 2, G3: 3 };
 

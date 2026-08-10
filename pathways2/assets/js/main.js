@@ -4,38 +4,71 @@
 // Play lives it forward, Act turns the ending into things to do this term.
 // The landing asks one question before any of it, once.
 
-import { loadAll, BUILD } from './data-loader.js?v=2.11.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD } from './data-loader.js?v=2.12.0';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
   markVersionSeen, snapshotPlan, MODES, YEARS, currentYear,
-} from './state.js?v=2.11.0';
-import { initGlossary, openFullList } from './components/glossary.js?v=2.11.0';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.11.0';
-import { onAction, esc } from './components/dom.js?v=2.11.0';
-import { icon } from './components/icons.js?v=2.11.0';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.11.0';
-import { reach, runInvariantSweep } from './engine/reach.js?v=2.11.0';
-import { projectionSweep } from './engine/project.js?v=2.11.0';
-import { runCopyLint } from './engine/copy-lint.js?v=2.11.0';
-import { runJourneySweep } from './engine/journey4.js?v=2.11.0';
-import { possibilitySweep } from './engine/possible.js?v=2.11.0';
-import { ecgSweep } from './engine/ecg-lint.js?v=2.11.0';
-import { workSweep, moneySweep } from './engine/work-lint.js?v=2.11.0';
-import { evidenceSweep } from './engine/evidence-lint.js?v=2.11.0';
-import { schoolsSweep } from './engine/schools-lint.js?v=2.11.0';
-import { domLint } from './engine/dom-lint.js?v=2.11.0';
-import { renderLanding } from './modes/landing.js?v=2.11.0';
-import { renderNow } from './modes/mode-now.js?v=2.11.0';
-import { renderJourney, resetJourney } from './modes/mode-journey.js?v=2.11.0';
-import { renderAim } from './modes/mode-aim.js?v=2.11.0';
-import { renderTeacher } from './modes/mode-teacher.js?v=2.11.0';
-import { renderTable, resetTable, tableSweep } from './modes/mode-table.js?v=2.11.0';
-import { renderParent } from './modes/mode-parent.js?v=2.11.0';
-import { renderCounsellor } from './modes/mode-counsellor.js?v=2.11.0';
-import { renderWork } from './modes/mode-work.js?v=2.11.0';
-import { renderMoney } from './modes/mode-money.js?v=2.11.0';
-import { renderEvidence } from './modes/mode-evidence.js?v=2.11.0';
-import { renderSchools } from './modes/mode-schools.js?v=2.11.0';
+} from './state.js?v=2.12.0';
+import { initGlossary, openFullList } from './components/glossary.js?v=2.12.0';
+import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.12.0';
+import { onAction, esc } from './components/dom.js?v=2.12.0';
+import { icon } from './components/icons.js?v=2.12.0';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.12.0';
+import { reach } from './engine/reach.js?v=2.12.0';
+import { renderLanding } from './modes/landing.js?v=2.12.0';
+
+/**
+ * ONE MODE AT A TIME, WHICH IS HOW STUDENTS USE IT.
+ *
+ * Eleven mode modules were imported at the top of this file, so a student opening
+ * Plan downloaded the table game, the class plan, the parent page, the counsellor
+ * page, the work page, the money page, the evidence page, the schools page and the
+ * whole journey engine before seeing a single subject. Measured on a throttled
+ * school access point: 988 KB, 58 requests, first contentful paint at 7.3 seconds,
+ * and 23 seconds before the page settled. Thirty five devices share one access
+ * point in a computer lab, which is the situation this app's own loader has a
+ * paragraph worrying about.
+ *
+ * Each mode is now fetched when it is opened and remembered after. The landing
+ * stays eager because it is the first thing anybody sees.
+ *
+ * WHAT MAKES THIS SAFE. paint() has a synchronous fast path for a mode already in
+ * hand, so the common case, tapping between modes a student has used, has no
+ * awaiting and no flicker. A mode not yet in hand gets one short waiting line and
+ * a repaint, and a fetch that fails says so and offers the modes that did load
+ * rather than leaving a blank screen.
+ */
+const MODE_MODULE = {
+  now: 'mode-now', journey: 'mode-journey', aim: 'mode-aim',
+  table: 'mode-table', teacher: 'mode-teacher', parent: 'mode-parent',
+  counsellor: 'mode-counsellor', work: 'mode-work', money: 'mode-money',
+  evidence: 'mode-evidence', schools: 'mode-schools',
+};
+const held = new Map();
+let loadingId = null;
+
+async function bring(id) {
+  const file = MODE_MODULE[id];
+  if (!file) return null;
+  // The module and the data it cannot render without, in parallel, because a
+  // screen that arrives without its deck is not a screen that has arrived.
+  const [mod] = await Promise.all([
+    held.get(id) || import(`./modes/${file}.js?v=${encodeURIComponent(BUILD)}`),
+    ensureData(MODE_DATA[id] || []),
+  ]);
+  held.set(id, mod);
+  return mod;
+}
+
+/** Ready means the module is in hand AND so is every file it needs. */
+function ready(id) {
+  if (!held.has(id)) return false;
+  return (MODE_DATA[id] || []).every((n) => data[n] && Object.keys(data[n]).length);
+}
+
+/** Whatever the journey module holds, if it is in hand. Reset is a no op otherwise. */
+const resetJourney = () => { const m = held.get('journey'); if (m && m.resetJourney) m.resetJourney(); };
+const resetTable = () => { const m = held.get('table'); if (m && m.resetTable) m.resetTable(); };
 
 const app = document.getElementById('app');
 const head = document.getElementById('site-head');
@@ -119,20 +152,49 @@ async function init() {
 
   showVersionNote();
 
-  if (params.get('dev') === '1') {
-    runInvariantSweep(ctx);
-    projectionSweep(ctx);
-    runJourneySweep(data);
-    possibilitySweep(data);
-    tableSweep(data);
-    ecgSweep(data);
-    workSweep(data);
-    moneySweep(data);
-    evidenceSweep(data);
-    schoolsSweep(data);
-    domLint();
-    runCopyLint(data);
-  }
+  // Everything else, now that the first screen is on the glass. The Plan screen
+  // uses three deferred files for one row of chips, a fee line and one sentence,
+  // so a single repaint when they land is the difference between those appearing a
+  // second late and never appearing at all.
+  topUp(() => { if (!onLanding) paint(); });
+
+  // The dev sweeps need every file, so they wait for the top up rather than racing
+  // it and reporting an empty deck as a starving one.
+  if (params.get('dev') === '1') topUp().then(runSweeps);
+}
+
+/**
+ * THE SWEEPS WERE ON EVERY STUDENT'S CRITICAL PATH.
+ *
+ * Twelve checks, none of which a student runs, all of which shipped inside the
+ * first payload because they were imported at the top of this file. Measured on a
+ * throttled school access point the whole app was 988 KB across 58 requests with
+ * first contentful paint at 7.3 seconds, and roughly sixty of those kilobytes were
+ * lint engines nobody outside a browser console has ever asked for.
+ *
+ * They are dynamically imported now, so ?dev=1 pays for them and a fourteen year
+ * old on a shared access point does not. Everything they check still runs on every
+ * build through tools/verify.mjs, which reads the same modules from disk.
+ */
+async function runSweeps() {
+  const load = (f) => import(`./engine/${f}.js?v=${encodeURIComponent(BUILD)}`);
+  const [reachM, project, journey4, possible, ecg, work, evidence, schools, dom, copy, table] = await Promise.all([
+    load('reach'), load('project'), load('journey4'), load('possible'), load('ecg-lint'),
+    load('work-lint'), load('evidence-lint'), load('schools-lint'), load('dom-lint'), load('copy-lint'),
+    import(`./modes/mode-table.js?v=${encodeURIComponent(BUILD)}`),
+  ]);
+  reachM.runInvariantSweep(ctx);
+  project.projectionSweep(ctx);
+  journey4.runJourneySweep(data);
+  possible.possibilitySweep(data);
+  table.tableSweep(data);
+  ecg.ecgSweep(data);
+  work.workSweep(data);
+  work.moneySweep(data);
+  evidence.evidenceSweep(data);
+  schools.schoolsSweep(data);
+  dom.domLint();
+  copy.runCopyLint(data);
 }
 
 export function leaveLanding(mode) {
@@ -243,21 +305,29 @@ function paint() {
   document.getElementById('site-foot').style.display = onLanding ? 'none' : '';
   try {
     if (onLanding) { renderLanding(app, data, ctx, leaveLanding); return; }
-    const gone = missingFor(extraMode || st.mode);
+    const id = extraMode || st.mode;
+    const gone = missingFor(id);
     if (gone.length) { partLoaded(gone); return; }
-    if (extraMode === 'table') { renderTable(app, data, ctx, paint); return; }
-    if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
-    if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
-    if (extraMode === 'counsellor') { renderCounsellor(app, data); return; }
-    if (extraMode === 'work') { renderWork(app, data); return; }
-    if (extraMode === 'money') { renderMoney(app, data, ctx); return; }
-    if (extraMode === 'evidence') { renderEvidence(app, data); return; }
-    if (extraMode === 'schools') { renderSchools(app, data, paint); return; }
+
+    // The fast path: a mode already in hand renders with no awaiting, so tapping
+    // between modes a student has used feels the same as it always did.
+    if (!ready(id)) { waitFor(id); return; }
+    const mod = held.get(id);
+
+    if (st.mode !== 'journey' || extraMode) document.body.dataset.era = extraMode ? 'school' : document.body.dataset.era;
     if (st.mode !== 'journey') document.body.dataset.era = 'school';
-    switch (st.mode) {
-      case 'journey': renderJourney(app, data, ctx, paint); break;
-      case 'aim':     renderAim(app, data, ctx, paint); break;
-      default:        renderNow(app, data, ctx); break;
+    switch (id) {
+      case 'table':      mod.renderTable(app, data, ctx, paint); break;
+      case 'teacher':    mod.renderTeacher(app, data, ctx, paint); break;
+      case 'parent':     mod.renderParent(app, data, ctx); break;
+      case 'counsellor': mod.renderCounsellor(app, data); break;
+      case 'work':       mod.renderWork(app, data); break;
+      case 'money':      mod.renderMoney(app, data, ctx); break;
+      case 'evidence':   mod.renderEvidence(app, data); break;
+      case 'schools':    mod.renderSchools(app, data, paint); break;
+      case 'journey':    mod.renderJourney(app, data, ctx, paint); break;
+      case 'aim':        mod.renderAim(app, data, ctx, paint); break;
+      default:           mod.renderNow(app, data, ctx); break;
     }
   } catch (e) {
     console.error('paint failed', e);
@@ -343,3 +413,39 @@ try {
   const t = localStorage.getItem('pathways2.theme');
   if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
 } catch { /* fine */ }
+
+/**
+ * One line while a mode arrives, and a real answer if it does not.
+ *
+ * Deliberately not a spinner. On a school access point this is a second or two,
+ * and a sentence that names what is coming is more use than a shape that turns.
+ * A fetch that fails is the case that matters: the app already survives a missing
+ * data file, and it now survives a missing screen the same way, by saying so and
+ * offering the screens that did arrive.
+ */
+function waitFor(id) {
+  if (loadingId === id) return;
+  loadingId = id;
+  const name = (MODES[id] && MODES[id].label) || 'this screen';
+  app.innerHTML = `
+    <div class="wrap"><div class="section" style="margin-top:var(--s-7)">
+      <p class="caps">${esc(name)}</p>
+      <p class="lede">Getting this screen ready.</p>
+      <p class="small mute">It arrives once and then it is on this device for good.</p>
+    </div></div>`;
+  bring(id).then(() => { loadingId = null; paint(); }).catch((e) => {
+    console.error('mode failed to load', id, e);
+    loadingId = null;
+    const others = [...held.keys()].filter((k) => MODES[k]);
+    app.innerHTML = `
+      <div class="wrap"><div class="section" style="margin-top:var(--s-6)"><div class="notice">
+        <strong>That screen did not arrive.</strong>
+        <p style="margin:8px 0 0">The connection dropped partway. Nothing on this device is lost.</p>
+        <div class="btn-row" style="margin-top:var(--s-3)">
+          <button class="btn accent" type="button" data-action="retry">Try again</button>
+          ${others.map((k) => `<button class="btn ghost" type="button" data-action="goto" data-id="${k}">${esc(MODES[k].label)}</button>`).join('')}
+        </div>
+      </div></div></div>`;
+    onAction(app, { retry: () => paint(), goto: (b) => setMode(b.dataset.id) });
+  });
+}
