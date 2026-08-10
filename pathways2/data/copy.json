@@ -27,7 +27,7 @@
   "askCopied": "Copied",
   "levelsMove": "Levels move. Students change them every year.",
   "shareHead": "Carry this to another device",
-  "shareHint": "Copy the link. It holds my plan and nothing else.",
+  "shareHint": "The short link holds my subjects, and nothing else. It is the one to send a parent.",
   "undo": "Undo",
   "cleared": "Cleared.",
   "footer": "A thinking tool, not official advice. Check with your ECG counsellor.",
@@ -84,7 +84,14 @@
   "audience": "Also here: a page for parents, and one for teachers.",
   "roadTag": "a road in",
   "enterTable": "Play it at a table",
-  "enterTableSub": "Two to six of you on one screen, then compare"
+  "enterTableSub": "Two to six of you on one screen, then compare",
+  "alsoHead": "Also here",
+  "alsoWork": "what the work actually is",
+  "alsoMoney": "what it costs, and what help there is",
+  "alsoSchools": "the school I am actually in",
+  "alsoParent": "a page for parents",
+  "alsoTeacher": "one for teachers",
+  "alsoEvidence": "what this is built on"
  },
  "pulse": {
   "opened": "{dest} is open now.",
@@ -289,7 +296,11 @@
   "chooserLede": "Not a job title. A shape of life, and more than one road to it.",
   "saidHead": "I said I would",
   "saidBody": "From the last time I was here. Tick what I have done.",
-  "saidDone": "Done"
+  "saidDone": "Done",
+  "workBrowse": "Or look at the work first",
+  "workBrowseSub": "Sixteen parts of working Singapore, before naming anything",
+  "workHead": "Where that kind of work actually happens",
+  "workUnsure": "Not knowing yet is the reason to look"
  },
  "teacher": {
   "classHead": "What this room holds",

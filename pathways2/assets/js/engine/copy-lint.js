@@ -256,6 +256,59 @@ const GENDERED = [
   /\bpoliceman\b/i, /\bfireman\b/i, /\bstewardess\b/i, /\bheadmaster\b/i, /\bheadmistress\b/i,
 ];
 
+
+/**
+ * TWO VOICES, AND WHICH ONE OWNS THE SENTENCE.
+ *
+ * The game was converted to the student's first person in 2.4.0, and the parts
+ * that were not converted then read wrong now because they sit on the same screen
+ * as the parts that were: a list of things to do this term where eight items said
+ * "your school" printed directly beneath a list of moves that all said "I". Forty
+ * more strings across four files were still in the old voice, and nothing was
+ * stopping the forty first.
+ *
+ * The rule is not about which FILE a string lives in, it is about WHOSE SENTENCE
+ * IT IS:
+ *
+ *   The student's own voice, first person, for anything the student thinks, picks,
+ *   commits to, or is told about themselves. Options, outcomes, roads offered,
+ *   dispositions read back, markers on their own timeline.
+ *
+ *   Addressing the reader, second person, on the surfaces written FOR somebody
+ *   about somebody else. That is the whole of the teacher, parent, counsellor and
+ *   evidence material, the facilitator lines in the table game where "your turn"
+ *   is the game speaking to one player, the glossary, whose eighteen definitions
+ *   are read by parents and teachers from the same sheet and where "my school has
+ *   an ECG counsellor" is not a definition, and the app's own chrome, where the
+ *   disclaimer on every page has to say "check with your ECG counsellor" because
+ *   it is the app talking and not the student.
+ *
+ * So the allowlist below is the second list, by path prefix, and everything else
+ * is held to the student's voice. Adding a path to it is a decision somebody has
+ * to write down, which is the point.
+ */
+const ADDRESSES_READER = [
+  'parent.', 'copy.parentLive.', 'copy.teacher.', 'copy.table.', 'copy.chrome.',
+  'copy.footerDoors.', 'copy.landing.', 'glossary.', 'evidence.', 'work.', 'money.',
+  'schools.', 'stories.', 'lifelong.ribbon.', 'possibilities.',
+  // Release notes are the app reporting on itself, and the older ones quote copy
+  // that has since been rewritten. Holding them to the student's voice would mean
+  // editing the history of the app to match its present.
+  'version.',
+];
+const SECOND_PERSON = /\b(you|your|yours|yourself)\b/i;
+
+function voiceFaults(value, where) {
+  if (ADDRESSES_READER.some((p) => where.startsWith(p))) return [];
+  const m = String(value).match(SECOND_PERSON);
+  if (!m) return [];
+  return [{
+    path: where,
+    why: `"${m[0]}" in the student's own voice, which the rest of this screen speaks in the first person`,
+    text: String(value).slice(0, 80),
+  }];
+}
+
 /** Every label a student picks from: stage choices, variants, and moves. */
 function optionLabels(data) {
   const out = [];
@@ -347,6 +400,7 @@ export function runCopyLint(data) {
 
   walkStudentText(data, (value, where) => {
     pronounFaults(value, where).forEach((f) => murky.push(f));
+    voiceFaults(value, where).forEach((f) => murky.push(f));
     // The ban is on the dash as punctuation, which is the thing this house style
     // does not use. A hyphen inside a word is part of a name: Co-Curricular
     // Activity is how MOE spells it, and respelling it would be a different kind

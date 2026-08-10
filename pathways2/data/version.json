@@ -1,53 +1,128 @@
 {
-  "_meta": {
-    "source": "Hand maintained with each release",
-    "url": "",
-    "accessed": "2026-08-05",
-    "units": "not applicable",
-    "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
+ "_meta": {
+  "source": "Hand maintained with each release",
+  "url": "",
+  "accessed": "2026-08-05",
+  "units": "not applicable",
+  "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
+ },
+ "version": "2.11.0",
+ "releases": [
+  {
+   "version": "2.11.0",
+   "date": "2026-08-09",
+   "head": "It knows what is on my device, and I can take it with me",
+   "changes": [
+    "A second link that carries my whole term rather than only my subjects. My plan, the want I named, the things I said I would do, my week, and which school I am in. Mail it to myself and a different computer picks up where I left off. Still no account and still nothing stored anywhere: it is all in the link, which is why I can read it.",
+    "That exists because a lesson in a computer lab used to end at the bell. Everything was on a machine that would be somebody else's on Thursday, and the commitments are the whole point of the last screen.",
+    "The link does not carry what I wrote at thirty eight. That stays on my own device, and so does the reason I write honestly there.",
+    "Opening the link on a device that already has commitments adds to them instead of deleting somebody's term.",
+    "The work page now starts with the parts of working life my own subjects point at, with the count shown so I can see it is four subjects and not a hunch. Nothing is removed by that and all sixteen are still below.",
+    "The money page marks the routes my plan already reaches. Nothing is hidden, because deciding which futures a family is allowed to price is not this app's business.",
+    "I can say which kind of school I am in, once, and the Plan screen stops telling me what it assumes and starts telling me what that means for me."
+   ]
   },
-  "version": "2.5.0",
-  "releases": [
-    {
-      "version": "2.5.0",
-      "date": "2026-08-09",
-      "head": "The people in it belong where I am",
-      "changes": [
-        "Nobody offers me a Year Head in a polytechnic any more. Polys and ITEs have lecturers, course managers and a career centre; JCs have Year Heads; secondary schools have form teachers. Every option down the side and every option straight down is now one that exists where I am standing.",
-        "The card that turns up between years has to make sense. The lab technician now notices a term of staying back to redo the practical, not two titrations, and what he offers is the name of whoever runs the Science team.",
-        "Putting real hours into a subject counts later. Going to remedial, finding somewhere to actually study, going deeper into my best subject: any of those and the A Level year, the first semester, the workshop routine and the studio brief all read differently when I get there.",
-        "A replay is a different year. One card used to take almost two thirds of everything dealt in some chapters; now no card takes more than a quarter, so playing again is playing something new.",
-        "Six new cards for the JC and Millennia years: the Project Work group where two people have not read the brief, four H2 or three, the diploma course I actually want, council in the year the papers get real, the Mother Tongue paper I keep postponing, and the H3 letter.",
-        "Sixty two lines of broken English fixed, including fourteen sentences where the word I was doing the job of me.",
-        "A polytechnic will not hold an offer for a year so I can earn, the SkillsFuture top up arrives at forty and not before, and there is no shortcut from poly to SMU. All three said otherwise."
-      ]
-    },
-    {
-      "version": "2.4.0",
-      "date": "2026-08-08",
-      "head": "The game talks the way I would",
-      "changes": [
-        "Every choice and every outcome is in my own words now. It says my best subject and my Early Admissions folder, not yours.",
-        "The options say what they actually mean. Guard your own oxygen is gone, and so is Keep one made thing alive.",
-        "The things that fill a real school year are in: class comm, CCA EXCO, the Sec 3 immersion trip, a programme outside school, leading a VIA project, tutoring somebody younger.",
-        "Some choices now pay off for the rest of the game. Build a study routine and every year after it gives me one more point.",
-        "CCA, VIA, PW, EXCO, DSA, ORD and NYAA are all in Words now, so anyone can look them up.",
-        "The button at the end of a year says That is my year.",
-        "On a phone, the button that starts the game and the button that ends a year are where a thumb can reach them. They were off the bottom of the screen.",
-        "The version is printed at the bottom of every page, so a teacher can check the class is on the same one."
-      ]
-    },
-    {
-      "version": "2.0.0",
-      "date": "2026-08-05",
-      "head": "This is version 2",
-      "changes": [
-        "The game plays in chapters now: school year by year, then the milestones that actually shape the years after, National Service included if it is part of your road.",
-        "Every figure that could be checked against MOE has been, and the ones that could not still say so.",
-        "The list of places never changes order. It never did rank you, and now it cannot.",
-        "Your class code now means what your teacher says it means.",
-        "A landing page that asks you one question before anything else."
-      ]
-    }
-  ]
+  {
+   "version": "2.10.0",
+   "date": "2026-08-09",
+   "head": "One voice, and a landing that is a moment again",
+   "changes": [
+    "Fifty five more strings are in my own words. The things to do this term, the five dispositions read back to me, every marker on my own timeline, and the notes on each road between institutions. The ribbon says I am here.",
+    "The rule is written down now and checked on every build. Anything I think, pick, commit to or am told about myself is in my own voice. The teacher, parent and counsellor pages, the glossary, the facilitator lines at the table and the disclaimer at the bottom address whoever is reading, because those are not my sentences.",
+    "The landing is four doors again, not seven. Three releases each added one and it had quietly turned into a menu. Plan, Play, Act and the table game are the way in; the work, the money, the kinds of school, the parent and teacher pages and the evidence sit on one quiet line underneath.",
+    "That took the landing from 2033 pixels to 1641 on a Pixel 7, and everything is still one tap away."
+   ]
+  },
+  {
+   "version": "2.9.0",
+   "date": "2026-08-09",
+   "head": "The school I am actually in",
+   "changes": [
+    "Every other page in this app assumed one road: a government or government aided school, Full Subject Based Banding, the SEC at sixteen. That is most people and it is not everybody. There is a page now for all seven kinds of secondary school.",
+    "Each one says how much of this app actually fits it, including the ones where the honest answer is that it does not model that road at all. The ITE Skills Certificate, which NorthLight, Assumption Pathway, Crest and Spectra work toward, appeared nowhere in this app until now.",
+    "Named for anybody who needs school to work differently: access arrangements for exams, the Allied Educator for learning and behavioural support, transition planning in special education schools, and SG Enable. Named, not advised on, because this app has no business giving guidance on special educational needs.",
+    "The Plan screen now says out loud what it assumes, right next to the subject planner, with a way to the page for anybody whose school works differently.",
+    "A real phone bug fixed. Opening a card far down a long page could leave the Close button somewhere a thumb could not reach it, because a scrolled page lets the browser hide its own address bar and that slides the sheet's bottom into the strip the browser owns. The page now freezes while a sheet is open, and comes back to exactly where it was."
+   ]
+  },
+  {
+   "version": "2.8.0",
+   "date": "2026-08-09",
+   "head": "What this is built on, and what it will not claim",
+   "changes": [
+    "A page for anybody sceptical: the ten frames this app is built on, each with the full citation, what it changed in the build, and where the theory is weak.",
+    "Every frame says what the app refuses to do because the theory is weak. Interests are never reported back as a type, because a measured interest can be a record of what a child has already seen somebody like them doing.",
+    "Three works that argue against tools like this one, summarised fairly and then answered. Guidance cannot outrun the opportunity structure around a young person, and average effects in this field are real but modest.",
+    "Five things this app does not do. It does not predict grades, it does not rank routes, it reports no type and keeps no profile, fifty seven of its figures are still unverified, and it has no outcome evidence about itself at all. No trial, no comparison group, no follow up.",
+    "The teacher and counsellor pages both point here now, and the whole page prints."
+   ]
+  },
+  {
+   "version": "2.7.0",
+   "date": "2026-08-09",
+   "head": "What it costs, and what help there is",
+   "changes": [
+    "A new page about money. What every route costs a Singapore Citizen before any help, then nine kinds of help by name, then four things that are true whatever the numbers say.",
+    "The names are the point. MOE Financial Assistance, Edusave, the Post Secondary Education Account, bursaries at ITE and poly and university, the Tuition Fee Loan, the CPF Education Scheme, CDAC and MENDAKI and SINDA and the Eurasian Association, my school's own welfare fund, and SkillsFuture later. Almost none of it is offered. All of it has to be asked for.",
+    "Every route in Plan now shows what it costs right there on the card, so nobody has to go looking. A route with no number beside it is a silence a family fills with a guess, and the guess is always too high.",
+    "The parent page leads with the money question, because it is the first thing a parent asks.",
+    "Every figure says Not yet verified, in the same words the admission bars use. Fee schedules change every year and a precise wrong number is worse than an honest range.",
+    "The whole page prints on paper, so it can go to a general office with the scheme names already on it."
+   ]
+  },
+  {
+   "version": "2.6.0",
+   "date": "2026-08-09",
+   "head": "The other half: what the work actually is",
+   "changes": [
+    "There is a whole new page about work. Sixteen parts of working Singapore, from building and care to computing and the arts, each one with what the job actually is, what a day holds, where the work is heading, and what people get wrong about it.",
+    "Every single one of those sixteen takes people in at three or more levels: from ITE, from a polytechnic, from a university, sometimes from an arts school. That is the point of the page and it is true.",
+    "What a first job pays is stated once, for each level of entry, and never per sector. Comparing sectors on pay is a ranking in disguise, and the spread inside a level is wider than the gap between levels anyway.",
+    "Naming a want in Act now shows the parts of working life that turn on it. Saying I honestly do not know yet shows one from each of the six kinds, because not knowing is the reason to look.",
+    "Every subject now says where it turns up in working life. Tap a subject in Plan and the answer to why am I learning this is right there.",
+    "That fix caught something worse. The G1 syllabus subjects named no work at all while the G3 ones named six, from the same screen, about the same subject. Every subject anybody can take now reaches at least two parts of working life, and the app refuses to build if one does not."
+   ]
+  },
+  {
+   "version": "2.5.0",
+   "date": "2026-08-09",
+   "head": "The people in it belong where I am",
+   "changes": [
+    "Nobody offers me a Year Head in a polytechnic any more. Polys and ITEs have lecturers, course managers and a career centre; JCs have Year Heads; secondary schools have form teachers. Every option down the side and every option straight down is now one that exists where I am standing.",
+    "The card that turns up between years has to make sense. The lab technician now notices a term of staying back to redo the practical, not two titrations, and what he offers is the name of whoever runs the Science team.",
+    "Putting real hours into a subject counts later. Going to remedial, finding somewhere to actually study, going deeper into my best subject: any of those and the A Level year, the first semester, the workshop routine and the studio brief all read differently when I get there.",
+    "A replay is a different year. One card used to take almost two thirds of everything dealt in some chapters; now no card takes more than a quarter, so playing again is playing something new.",
+    "Six new cards for the JC and Millennia years: the Project Work group where two people have not read the brief, four H2 or three, the diploma course I actually want, council in the year the papers get real, the Mother Tongue paper I keep postponing, and the H3 letter.",
+    "Sixty two lines of broken English fixed, including fourteen sentences where the word I was doing the job of me.",
+    "A polytechnic will not hold an offer for a year so I can earn, the SkillsFuture top up arrives at forty and not before, and there is no shortcut from poly to SMU. All three said otherwise."
+   ]
+  },
+  {
+   "version": "2.4.0",
+   "date": "2026-08-08",
+   "head": "The game talks the way I would",
+   "changes": [
+    "Every choice and every outcome is in my own words now. It says my best subject and my Early Admissions folder, not yours.",
+    "The options say what they actually mean. Guard your own oxygen is gone, and so is Keep one made thing alive.",
+    "The things that fill a real school year are in: class comm, CCA EXCO, the Sec 3 immersion trip, a programme outside school, leading a VIA project, tutoring somebody younger.",
+    "Some choices now pay off for the rest of the game. Build a study routine and every year after it gives me one more point.",
+    "CCA, VIA, PW, EXCO, DSA, ORD and NYAA are all in Words now, so anyone can look them up.",
+    "The button at the end of a year says That is my year.",
+    "On a phone, the button that starts the game and the button that ends a year are where a thumb can reach them. They were off the bottom of the screen.",
+    "The version is printed at the bottom of every page, so a teacher can check the class is on the same one."
+   ]
+  },
+  {
+   "version": "2.0.0",
+   "date": "2026-08-05",
+   "head": "This is version 2",
+   "changes": [
+    "The game plays in chapters now: school year by year, then the milestones that actually shape the years after, National Service included if it is part of your road.",
+    "Every figure that could be checked against MOE has been, and the ones that could not still say so.",
+    "The list of places never changes order. It never did rank you, and now it cannot.",
+    "Your class code now means what your teacher says it means.",
+    "A landing page that asks you one question before anything else."
+   ]
+  }
+ ]
 }

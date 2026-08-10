@@ -18,18 +18,21 @@
 //    everything, and without a counterweight this screen is a maximiser that
 //    rewards over committing a fourteen year old.
 
-import { esc, onAction, statusChip } from '../components/dom.js?v=2.5.0';
-import { icon } from '../components/icons.js?v=2.5.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.5.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.5.0';
-import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.5.0';
-import { project, horizonMoves } from '../engine/project.js?v=2.5.0';
-import { pulse, leverLine } from '../engine/pulse.js?v=2.5.0';
+import { esc, onAction, statusChip } from '../components/dom.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.11.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.11.0';
+import { openSectorSheet, sectorsForSubject } from './mode-work.js?v=2.11.0';
+import { costLineFor } from './mode-money.js?v=2.11.0';
+import { notMyRoadLink } from './mode-schools.js?v=2.11.0';
+import { reach, lever, STATES, classCode } from '../engine/reach.js?v=2.11.0';
+import { project, horizonMoves } from '../engine/project.js?v=2.11.0';
+import { pulse, leverLine } from '../engine/pulse.js?v=2.11.0';
 import {
   getState, setYear, setSubjectLevel, clearPlan, restorePlan, markLooked,
-  markIntroSeen, shareUrl, YEARS, currentYear, toggleActivity, setMode,
+  markIntroSeen, shareUrl, carryUrl, carrySummary, YEARS, currentYear, toggleActivity, setMode,
   snapshotPlan, sincePoint,
-} from '../state.js?v=2.5.0';
+} from '../state.js?v=2.11.0';
 
 const STATE_API = { setMode };
 
@@ -87,6 +90,7 @@ export function renderNow(container, data, ctx) {
               ? `<p class="micro mute">${esc(c.onTimetable)}</p>`
               : `<p class="micro mute avail-line">${esc(c.availDisclaimer)}
                   <button class="gloss" type="button" data-action="avail">${esc(c.availMore)}</button></p>`}
+            ${notMyRoadLink(DATA)}
             <div id="conflict">${conflictNotice(st.plan, data)}</div>
             ${data.subjects.groups.map((g) => groupBlock(g, subjects, st.plan, st.year)).join('')}
             ${junctureLine(data, st, phase, showUpper)}
@@ -438,7 +442,7 @@ function weekPanel(st, data) {
 }
 
 const sentence = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-const TRACK_WORD = { skills: 'things you can do', network: 'people who know you', portfolio: 'work you can show' };
+const TRACK_WORD = { skills: 'things I can do', network: 'people who know me', portfolio: 'work I can show' };
 const DISP_WORD = {
   curiosity: 'curiosity', persistence: 'persistence', flexibility: 'flexibility',
   optimism: 'optimism', risk: 'willingness to try things',
@@ -746,6 +750,43 @@ function onClear() {
   setTimeout(kill, 6000);
 }
 
+/**
+ * TAKE THE WHOLE THING WITH ME.
+ *
+ * The link above this one carries the subject plan, which is what a student sends
+ * a parent. This one carries the term: the plan, the want, the commitments ticked
+ * in Act, the activities, and which kind of school. It exists because a lesson run
+ * in a computer lab ends with thirty five students logging off machines that will
+ * be somebody else's on Thursday, and the commitments are the entire point of the
+ * last screen.
+ *
+ * The sentence beside it counts what the link is holding, out loud, because a
+ * student asked to trust a URL with their term should be able to see what is in it.
+ * And it says what is NOT in it, which is the reflection they wrote at thirty eight
+ * and the activities that might be looking after somebody at home. Those stay on
+ * the device. A link a student might paste into a group chat is not the place.
+ */
+function carryBlock() {
+  const n = carrySummary();
+  if (!n.subjects && !n.todo) return '';
+  const url = carryUrl();
+  const holds = [
+    n.subjects ? `${n.subjects} subject${n.subjects === 1 ? '' : 's'}` : '',
+    n.todo ? `${n.todo} thing${n.todo === 1 ? '' : 's'} I said I would do` : '',
+    n.want ? 'the want I named' : '',
+    n.activities ? 'my week' : '',
+    n.school ? 'which school I am in' : '',
+  ].filter(Boolean);
+  return `
+    <div class="carryblock">
+      <p class="caps">${icon('q_how')}Take the whole term with me</p>
+      <p class="small mute">This link holds ${esc(holds.join(', '))}. Mail it to myself, or keep it in my notes, and a different computer picks up where I left off. Nothing is stored anywhere: it is all in the link, which is why I can read it.</p>
+      <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="A link holding my whole term">
+      <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">Copy the long link</button>
+      <p class="micro faint">What it does not hold: anything I wrote at thirty eight, and it opens on a device that already has commitments by adding to them rather than replacing them.</p>
+    </div>`;
+}
+
 async function onShare() {
   const url = shareUrl();
   const c = DATA.copy.chrome;
@@ -758,8 +799,9 @@ async function onShare() {
   openSheet(`
     <h2 id="sheet-title">${esc(c.shareHead)}</h2>
     <p class="small mute">${esc(c.shareHint)}</p>
-    <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="Your link">
+    <input class="sharebox" type="text" readonly value="${esc(url)}" aria-label="A link to my subjects">
     <button class="btn" type="button" data-action="copylink" data-url="${esc(url)}">${esc(c.askCopy)}</button>
+    ${carryBlock()}
     <div class="classcode">
       <p class="caps">${esc(c.codeHead)}</p>
       <p class="code-big">${esc(code)}</p>
@@ -791,6 +833,25 @@ function fallbackCopy(text, done) {
 // --------------------------------------------------------------------------
 // Sheets
 
+/**
+ * Which parts of working Singapore this subject actually turns up in.
+ *
+ * The oldest unanswered question in a classroom is why am I learning this, and
+ * the subject sheet answered every other question about a subject except that
+ * one. It reads from the same sector file the work page uses, so a subject can
+ * never point at a sector that has been renamed or removed.
+ */
+function workBlock(s) {
+  const list = sectorsForSubject(DATA, s.id);
+  if (!list.length) return '';
+  return `
+    <p class="caps" style="margin-top:var(--s-4)">Where this turns up in working life</p>
+    <ul class="chipsel" style="margin-top:var(--s-2)">
+      ${list.map((x) => `<li><button class="chip-btn" type="button" data-action="sector" data-id="${x.id}" aria-haspopup="dialog">${esc(x.label)}</button></li>`).join('')}
+    </ul>
+    <p class="micro faint">Every one of those takes people in at more than one level.</p>`;
+}
+
 function openSubject(id, trigger) {
   const s = DATA.subjects.subjects.find((x) => x.id === id);
   if (!s) return;
@@ -807,14 +868,16 @@ function openSubject(id, trigger) {
       <div class="srow-levels">${chips}</div>
     </div>
     <p>${decorate(s.doing)}</p>
-    <p class="small mute">You will like it if ${esc(s.likeIf)}.</p>
+    <p class="small mute">I will like it if ${esc(s.likeIf)}.</p>
     <ul class="chips">${s.showsUp.map((x) => `<li>${decorate(x)}</li>`).join('')}</ul>
     ${s.note ? `<p class="micro mute">${decorate(s.note)}</p>` : ''}
     ${s.caution ? `<p class="caution">${esc(s.caution)}</p>` : ''}
+    ${workBlock(s)}
     <p class="micro mute">${esc(DATA.copy.chrome.levelsMove)}</p>
     ${s.status === 'provisional' ? statusChip('provisional') : ''}`, trigger);
 
   onSheetAction({
+    sector: (b) => openSectorSheet(DATA, b.dataset.id, b),
     sheetlevel: (b) => {
       const cur = getState().plan[b.dataset.subject];
       const next = cur === b.dataset.level ? null : b.dataset.level;
@@ -835,7 +898,7 @@ function openDest(id, trigger) {
   const moves = r.moves.length ? `
     <div class="moves">
       <h4>${esc(c.moveHead)}</h4>
-      <ul>${r.moves.map((m) => `<li>${decorate(m.short)}. <span class="who">Ask your ${esc(m.who.split(',')[0])}, ${esc(m.when)}.</span></li>`).join('')}</ul>
+      <ul>${r.moves.map((m) => `<li>${decorate(m.short)}. <span class="who">Ask my ${esc(m.who.split(',')[0])}, ${esc(m.when)}.</span></li>`).join('')}</ul>
     </div>` : '';
 
   const routes = r.routes.length ? `
@@ -854,6 +917,7 @@ function openDest(id, trigger) {
     </div>
     <p class="micro mute">${esc(r.duration)}. ${esc(r.leadsTo)}</p>
     <p>${decorate(r.feels)}</p>
+    ${costLineFor(DATA, r.id)}
     <h4 class="caps">${esc(c.metHead)}</h4>
     <ul class="checklist">${met}${gap}</ul>
     ${moves}

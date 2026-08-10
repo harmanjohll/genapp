@@ -328,6 +328,12 @@ dialog.sheet[open] { animation: sheetIn 260ms var(--ease); }
 @media (prefers-reduced-motion: reduce) { dialog.sheet[open] { animation: none; } }
 .sheet-head { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-3); }
 .sheet-head h2 { margin-right: auto; }
+
+/* Every sheet in the app opens with a title and then a line of prose, and they
+   were touching. Measured on the sector sheet, which is the first one to put a
+   full sentence directly under the heading. */
+.sheet-body > h2 + p { margin-top: var(--s-2); }
+
 .full { font-size: var(--t-small); color: var(--ink-mute); margin-bottom: var(--s-3); }
 .glossary-list { display: grid; gap: var(--s-1); }
 .glossary-list dt { font-weight: 700; margin-top: var(--s-3); }
@@ -1506,3 +1512,222 @@ body[data-board="true"] .stage-grid .dest-card { min-height: 140px; }
 }
 .foot-build strong { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .build-warn { color: var(--longer); font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   THE WORK HALF. Sectors, the ways into each, and the pay ladder stated once.
+
+   The doorlist is the load bearing piece of design on the page. Every sector
+   shows three or four rows, each one a real way in at a different level of
+   qualification, and they are laid out as EQUAL rows rather than as a ladder:
+   same indent, same weight, same colour, in the order the data happens to hold
+   them. A visual hierarchy here would undo the argument the content is making,
+   so there is deliberately none. */
+
+.paylist { list-style: none; padding: 0; margin: var(--s-3) 0 0; }
+.paylist li {
+  display: grid; grid-template-columns: minmax(9rem, 14rem) auto;
+  gap: 2px var(--s-4); align-items: baseline;
+  padding: var(--s-3) 0; border-top: 1px solid var(--rule-soft);
+}
+.paylist li:first-child { border-top: 0; }
+.pay-when { font-weight: 650; font-size: var(--t-small); }
+.pay-band { font-family: var(--mono); font-size: var(--t-small); font-variant-numeric: tabular-nums; }
+.pay-note { grid-column: 1 / -1; font-size: var(--t-micro); color: var(--ink-mute); }
+.paylist .cprov { grid-column: 1 / -1; justify-self: start; }
+
+.doorlist { list-style: none; padding: 0; margin: var(--s-3) 0 var(--s-2); }
+.doorlist li {
+  display: grid; grid-template-columns: minmax(8rem, 11rem) 1fr; gap: 2px var(--s-4);
+  padding: var(--s-3) 0 var(--s-3) var(--s-4);
+  border-top: 1px solid var(--rule-soft); border-left: 3px solid var(--rule-soft);
+}
+.doorlist li:first-child { border-top: 0; }
+.door-level { font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); }
+.door-role { font-weight: 650; font-size: var(--t-small); }
+.door-route { grid-column: 2; font-size: var(--t-small); color: var(--ink-soft); }
+.door-note { grid-column: 1 / -1; font-size: var(--t-micro); color: var(--ink-mute); }
+
+/* The local misconception, said out loud and then answered. Marked off from the
+   rest of the sheet because it is the one block that quotes a belief rather
+   than stating a fact, and a reader has to be able to see which is which. */
+.mythbox {
+  margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+  border: 1px dashed var(--rule);
+}
+.mythbox .caps { color: var(--ink-mute); }
+
+.worksec .kind-chip { font-weight: 600; }
+
+@media (max-width: 560px) {
+  .paylist li, .doorlist li { grid-template-columns: 1fr; }
+  .pay-band, .door-route { grid-column: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   THE MONEY QUESTION. A fee table, nine kinds of help, and four sentences.
+
+   The truths are typographically the loudest thing on the page, above the tables
+   in weight if not in position, because they are the actual guidance and the
+   tables are the evidence for them. A page where the numbers shouted and the
+   framing whispered would be a price list. */
+
+.moneytable .pay-band { font-weight: 650; white-space: nowrap; }
+.moneytable td { vertical-align: top; }
+.moneytable .cprov { display: inline-block; margin-top: 2px; }
+
+.helplist { list-style: none; padding: 0; margin: var(--s-3) 0 0; display: grid; gap: var(--s-3); }
+
+.helpdl { margin: var(--s-4) 0 var(--s-3); }
+.helpdl dt {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); margin-top: var(--s-3);
+}
+.helpdl dd { margin: 2px 0 0; font-size: var(--t-small); }
+
+.truths { display: grid; gap: var(--s-4); margin-top: var(--s-3); }
+.truth { padding-left: var(--s-4); border-left: 3px solid var(--accent); }
+.truth-head { font-size: 1.06rem; font-weight: 600; margin: 0 0 var(--s-2); }
+
+/* The fee, on a destination sheet in Plan, where the question is actually being
+   asked. A route with no number beside it is the silence a family fills with a
+   guess, and the guess is always too high. */
+.costline {
+  margin: var(--s-3) 0; padding: var(--s-3) var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+}
+.costline .cprov { margin: 0 var(--s-2); }
+
+/* On a phone the fee table stopped being readable and started being a column of
+   single words: "Secondary", "school,", "government". Measured on a Pixel 7, and
+   the horizontal scroll the wrapper provides is not an answer when the very
+   first cell needs it. Under 620px it stops being a table and becomes what it
+   actually is, one block per route, with the column names carried on each row so
+   nothing is lost with the header. */
+@media (max-width: 800px) {
+  .moneytable, .moneytable tbody, .moneytable tr, .moneytable th, .moneytable td { display: block; }
+  .moneytable { min-width: 0; }
+  .moneytable thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .moneytable tr { padding: var(--s-4) 0; border-top: 1px solid var(--rule-soft); }
+  .moneytable tr:first-child { border-top: 0; }
+  /* .ctable tbody th carries width: 11rem, which survives display: block and was
+     the real reason the route name still wrapped to six lines. It also outranks
+     a plain .moneytable th on specificity, one class and two elements against
+     one and one, so the selector has to match its shape to beat it. */
+  .moneytable tbody th { border: 0; padding: 0; font-size: var(--t-body); width: auto; }
+  .moneytable td { border: 0; padding: var(--s-2) 0 0; }
+  .moneytable td::before {
+    content: attr(data-label); display: block;
+    font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-mute);
+  }
+  .moneytable .cmute { display: block; margin-top: 2px; }
+  /* The unverified marker was breaking mid word inside a narrow cell. */
+  .moneytable .cprov { white-space: nowrap; }
+}
+
+@media print {
+  .moneytable { font-size: 11pt; }
+  .truth { break-inside: avoid; }
+}
+
+/* ---------------------------------------------------------------------------
+   THE EVIDENCE PAGE. Ten frames, each with its own criticism attached.
+
+   The weakness and the refusal are given their own colour and their own left
+   rule, not because they are warnings but because they are the two rows a reader
+   goes looking for, and a page where they looked like the rest of the prose would
+   be read as a brochure with footnotes. */
+
+.frames { display: grid; gap: var(--s-5); margin-top: var(--s-3); }
+.frame { padding-top: var(--s-4); border-top: 1px solid var(--rule); }
+.frame:first-child { border-top: 0; padding-top: 0; }
+.frame-name { font-size: 1.14rem; font-weight: 600; margin: 0 0 var(--s-2); }
+.cite {
+  font-size: var(--t-micro); color: var(--ink-mute); margin: 0 0 var(--s-3);
+  padding-left: var(--s-3); border-left: 2px solid var(--rule-soft);
+}
+.framedl { margin: 0; }
+.framedl dt {
+  font-size: var(--t-micro); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute); margin-top: var(--s-3);
+}
+.framedl dd { margin: 2px 0 0; font-size: var(--t-small); }
+.framedl dd.weak { color: var(--ink-soft); border-left: 2px solid var(--longer); padding-left: var(--s-3); }
+.framedl dd.refuse { border-left: 2px solid var(--open); padding-left: var(--s-3); }
+
+.counter {
+  margin-top: var(--s-4); padding: var(--s-4);
+  background: var(--paper-warm); border-radius: var(--r-md);
+}
+.counter p:last-child { margin-bottom: 0; }
+
+@media print {
+  .frame, .counter, .truth { break-inside: avoid; }
+  .frames { gap: 12pt; }
+}
+
+/* The badge on each kind of school. Deliberately NOT a traffic light. "This app
+   does not model this road" is a fact about the app, not a verdict on a student,
+   so all three states carry the same weight and none of them is red. */
+.applies {
+  display: inline-block; padding: 2px 10px; border-radius: var(--r-pill);
+  font-size: var(--t-micro); font-weight: 700; border: 1px solid;
+}
+.ap-full { color: var(--open-ink); background: var(--open-wash); border-color: var(--open); }
+.ap-part { color: var(--within); background: var(--within-wash); border-color: var(--within); }
+.ap-none { color: var(--ink-soft); background: var(--paper-warm); border-color: var(--rule); }
+
+/* One line on the Plan screen, where the app makes its assumption out loud. */
+.notmyroad { margin: var(--s-2) 0 var(--s-3); }
+
+/* THE PAGE, FROZEN WHILE A SHEET IS OPEN.
+   See sheet.js for the measurement. Short version: a scrollable page behind an
+   open sheet lets mobile Chrome collapse its address bar, which makes the layout
+   viewport taller than the visual one and slides the sheet's pinned foot into the
+   strip the browser's own chrome owns. The Close button stops being reachable
+   without anything overlapping it. An unscrollable page cannot collapse the bar. */
+html.sheet-open, html.sheet-open body { overflow: hidden; }
+html.sheet-open body { position: fixed; width: 100%; }
+
+/* And the belt to that brace: the foot clears the gesture area on every phone,
+   whatever the address bar is doing. */
+.sheet-foot { padding-bottom: calc(var(--s-5) + env(safe-area-inset-bottom, 0px)); }
+
+/* The quiet line under the landing, which now carries six pages instead of a
+   sentence about two of them.
+
+   WHY LINKS AND NOT DOORS. Three releases each added a wide door here and the
+   landing went from three tap targets to seven, from 900 pixels to 2033 on a
+   Pixel 7. A landing built as one moment had become a menu. Plan, Play and Act
+   are the moment and the table game is another way to play them; the work, the
+   money, the kinds of school, the parent and teacher pages and the evidence are
+   reference, and reference belongs on a line a reader's eye can skip. */
+.landing-aud a { color: var(--ink-soft); text-decoration-color: var(--rule); }
+.landing-aud a:hover { color: var(--accent-dk); text-decoration-color: currentColor; }
+
+/* The row of sectors a student's own subjects point at, above the full sixteen.
+   The count is on the chip because a claim about somebody's timetable should show
+   its working: four of my subjects is a reason to look, and the reader can see
+   that it is four and not a hunch. */
+.minework .chip-btn { text-align: left; }
+.mine-n { display: block; font-size: var(--t-micro); color: var(--ink-mute); font-weight: 500; }
+
+/* A fee row for a route this device's plan already reaches. Marked, never
+   filtered: removing the others would be the app deciding which futures a family
+   is allowed to price. */
+.minefee {
+  display: inline-block; margin-left: var(--s-2); padding: 1px 8px;
+  border-radius: var(--r-pill); background: var(--open-wash); color: var(--open-ink);
+  border: 1px solid var(--open); font-size: var(--t-micro); font-weight: 700;
+}
+
+/* The link that carries a whole term, under the one that carries a plan. Set off
+   because it is a different promise: the first is for showing somebody, the second
+   is for coming back on a machine that is not yours. */
+.carryblock {
+  margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--rule);
+}
+.carryblock .caps svg { vertical-align: -2px; margin-right: 5px; }
+.carryblock .sharebox { margin-top: var(--s-2); }

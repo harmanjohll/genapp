@@ -7,11 +7,12 @@
 // which is where the learning actually happens. The evidence on career tools is
 // consistent that a screen on its own is the weakest form of the intervention.
 
-import { esc, onAction } from '../components/dom.js?v=2.5.0';
-import { icon } from '../components/icons.js?v=2.5.0';
-import { cue } from '../sound.js?v=2.5.0';
-import { getState, setOffer } from '../state.js?v=2.5.0';
-import { readClassCode } from '../engine/reach.js?v=2.5.0';
+import { esc, onAction } from '../components/dom.js?v=2.11.0';
+import { evidenceLink } from './mode-evidence.js?v=2.11.0';
+import { icon } from '../components/icons.js?v=2.11.0';
+import { cue } from '../sound.js?v=2.11.0';
+import { getState, setOffer } from '../state.js?v=2.11.0';
+import { readClassCode } from '../engine/reach.js?v=2.11.0';
 
 const KIND_NAME = { R: 'Doers', I: 'Thinkers', A: 'Creators', S: 'Helpers', E: 'Persuaders', C: 'Organisers', '-': 'Not sure yet' };
 
@@ -63,25 +64,24 @@ const PROMPTS = [
 // The counselling underneath, named, with where each piece is visible on the
 // screen. This exists so a teacher or school leader can audit the resource
 // against the ECG frame without reverse engineering it from the interface.
+//
+// WHY THE NAMES AND SOURCES ARE NOT IN THIS FILE ANY MORE. evidence.json now holds
+// the same ten frames with full citations, what each one claims, where it is weak,
+// and what the app refuses to do because it is weak. Two hand written lists of the
+// same frames drift, and the one that drifts is always the one nobody is looking
+// at. So the name and the source come from the data and only the `where` line
+// lives here, because where a frame shows up on screen is the thing the teacher
+// page uniquely needs and the evidence page has no use for.
 const ECG_MAP = [
-  { name: 'The three guiding questions', src: 'MOE ECG',
-    where: 'They head the rail beside every Journey turn, badge each stage with the question it leans on, and sit over the destination list and the take-a-question card in Now. Who am I, where do I want to go, how do I get there.' },
-  { name: 'Planned happenstance', src: 'Krumboltz',
-    where: 'The five dispositions tracked are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check what ordinary choices built.' },
-  { name: 'Career as narrative', src: 'Savickas',
-    where: 'A run is a story, not a score: the rail keeps it, thirty eight asks for a written line, the ending is sentences, and two runs can be read side by side.' },
-  { name: 'Life-span development', src: 'Super',
-    where: 'The short game, which is the default, runs from thirteen to the end of the first qualification, around twenty. The long game carries the same road to forty eight and re-asks at thirty eight what was wanted at the start. Changing the answer is treated as progress, and the ending tells both halves.' },
-  { name: 'Circumscription and compromise', src: 'Gottfredson',
-    where: 'The banner says nothing here can be closed to you, the engine holds a no-dead-end invariant for every plan, and the breadth counter nudges: rule things out after you look, not before.' },
-  { name: 'Self efficacy', src: 'Bandura, SCCT',
-    where: 'The Can do ledger grows from doing. Taking the demanding response to a chance is the mastery experience, and the outcome screen says where believing you can starts.' },
-  { name: 'Decision learning, then action', src: 'CASVE cycle',
-    where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
-  { name: 'Six kinds of working', src: 'Holland RIASEC',
-    where: 'Six types in student words, codes kept to this page: Doers (R), Thinkers (I), Creators (A), Helpers (S), Persuaders (E), Organisers (C), and Not sure yet on purpose. The kind carries into Act, marks choices pointing that way, and tilts which chances appear without narrowing what can happen. Bridge to your own profiler from here, and remind students most people are a mix of two or three.' },
-  { name: 'A reason to get up', src: 'Ikigai',
-    where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
+  { frame: 'moe_ecg', where: 'They head the rail beside every Journey turn, badge each stage with the question it leans on, and sit over the destination list and the take-a-question card in Now. Who am I, where do I want to go, how do I get there.' },
+  { frame: 'krumboltz', where: 'The five dispositions tracked are his: curiosity, persistence, flexibility, optimism, risk. Chance cards are the unplanned events, and the demanding responses check what ordinary choices built.' },
+  { frame: 'savickas', where: 'A run is a story, not a score: the rail keeps it, thirty eight asks for a written line, the ending is sentences, and two runs can be read side by side.' },
+  { frame: 'super', where: 'The short game, which is the default, runs from thirteen to the end of the first qualification, around twenty. The long game carries the same road to forty eight and re-asks at thirty eight what was wanted at the start. Changing the answer is treated as progress, and the ending tells both halves.' },
+  { frame: 'gottfredson', where: 'The banner says nothing here can be closed to you, the engine holds a no-dead-end invariant for every plan, and the breadth counter nudges: rule things out after you look, not before.' },
+  { frame: 'scct', where: 'The Can do ledger grows from doing. Taking the demanding response to a chance is the mastery experience, and the outcome screen says where believing you can starts.' },
+  { frame: 'casve', where: 'Aim works backwards from a destination to a saved plan with named actions, and the discussion prompt below turns those actions into a commitment.' },
+  { frame: 'holland', where: 'Six types in student words, codes kept to this page: Doers (R), Thinkers (I), Creators (A), Helpers (S), Persuaders (E), Organisers (C), and Not sure yet on purpose. The kind carries into Act, marks choices pointing that way, and tilts which chances appear without narrowing what can happen. Bridge to your own profiler from here, and remind students most people are a mix of two or three.' },
+  { frame: 'ikigai', where: 'The four circles are computed from the story as played, never asked as a quiz: the want and the appetite shown are what you love, Can do and levels moved are what you are good at, people who would vouch for you are what the world needs, doors and things made are what can pay you. Drawn at thirty eight before the want re-check, and again at the ending.' },
   { name: 'Four scarcities, not one', src: 'Game design for realism',
     where: 'Time and energy are the year\'s points, and they move with real load: seven subjects or more makes a fuller year, four or fewer leaves room, a CCA taken seriously takes its share, and at 17 to 24 more of the day is yours to direct. The line under the points says which, in words about hours, never about whether the combination is right. Options are what is on the list to spend them on, and that grows with doors. Opportunity is what arrives uninvited, which is the chance deck. Courage is what asking costs, which is why superpowers are free: a student with no time still has the capacity to ask.' },
   { name: 'Help-seeking as a mechanic', src: 'ECG practice, MOE admissions',
@@ -336,13 +336,24 @@ export function renderTeacher(host, data, ctx, repaint) {
           <div class="section-head"><h2>The counselling underneath</h2></div>
           <p class="small mute" style="max-width:60ch">What it is built on, and where each principle shows on screen.</p>
           <div class="grid two" style="margin-top:var(--s-3)">
-            ${ECG_MAP.map((m) => `
+            ${ECG_MAP.map((m) => {
+              // The name and the source come from evidence.json where there is a
+              // counterpart, so the two pages cannot disagree about what a frame is
+              // called or who wrote it. Rows with no counterpart, the two that are
+              // about this app's own game design rather than about a published
+              // frame, carry their own and always have.
+              const f = m.frame && ((data.evidence || {}).frames || []).find((x) => x.id === m.frame);
+              const name = f ? f.name : m.name;
+              const src = f ? f.who : m.src;
+              return `
               <div class="card">
-                <p class="caps">${esc(m.src)}</p>
-                <h3 style="margin-bottom:var(--s-2)">${esc(m.name)}</h3>
+                <p class="caps">${esc(src)}</p>
+                <h3 style="margin-bottom:var(--s-2)">${esc(name)}</h3>
                 <p class="small mute" style="margin-bottom:0">${esc(m.where)}</p>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
           </div>
+          ${evidenceLink(data)}
         </div>
 
         <div class="section">

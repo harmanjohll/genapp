@@ -7,7 +7,7 @@
 //
 // Focus is trapped while open and returned to whatever opened it.
 
-import { el, onAction } from './dom.js?v=2.5.0';
+import { el, onAction } from './dom.js?v=2.11.0';
 
 let dlg = null;
 let body = null;
@@ -33,6 +33,7 @@ function ensure() {
   // a click whose target is the dialog is a click outside the panel.
   dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
   dlg.addEventListener('close', () => {
+    unlockPage();
     if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
     lastTrigger = null;
   });
@@ -53,10 +54,45 @@ export function openSheet(html, trigger, footHtml) {
   body.innerHTML = html;
   foot.innerHTML = footHtml ? `${footHtml}${CLOSE_BTN}` : CLOSE_BTN;
   foot.classList.toggle('has-actions', !!footHtml);
-  if (!dlg.open) dlg.showModal();
+  if (!dlg.open) { lockPage(); dlg.showModal(); }
   body.scrollTop = 0;
   body.focus();
   return body;
+}
+
+/**
+ * Freeze the page behind the sheet, and why that is a bug fix rather than a nicety.
+ *
+ * FOUND BY MEASUREMENT, on a Pixel 7. Open a sheet from a card far down a long
+ * page and the Close button becomes untappable. The mechanism: the page behind
+ * stays scrollable, a scrolled mobile page collapses the browser's own address
+ * bar, and collapsing it makes the LAYOUT viewport taller than the VISUAL one and
+ * offsets the visual viewport downward. The sheet is pinned to the bottom of the
+ * layout viewport, so its foot slides into the strip that the browser's chrome and
+ * the gesture area own. Nothing in the page is over the button. The button is
+ * simply not where a thumb can reach it.
+ *
+ * Two things had hidden it. The sheet body is a scroll region, so the sheet
+ * usually looked fine, and the two sheets that reproduced it were the two newest
+ * pages, which are long enough to need scrolling before a card is reached.
+ *
+ * Locking the page is the root fix, because an unscrollable page cannot collapse
+ * the address bar mid interaction. It also stops the background scrolling under
+ * a student's finger while a sheet is open, which is correct for a modal anyway.
+ * The scroll position is restored on close, because losing a reader's place in a
+ * long page is its own bug.
+ */
+let lockedAt = 0;
+function lockPage() {
+  lockedAt = window.scrollY || 0;
+  document.documentElement.classList.add('sheet-open');
+  document.body.style.top = `${-lockedAt}px`;
+}
+
+function unlockPage() {
+  document.documentElement.classList.remove('sheet-open');
+  document.body.style.top = '';
+  window.scrollTo({ top: lockedAt, behavior: 'instant' });
 }
 
 export function sheetBody() { ensure(); return body; }
