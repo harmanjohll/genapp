@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BTY House System — The Decision</title>
+<style>
+:root{--navy:#000C53;--yellow:#FFE200;--red:#EC3237;--ink:#1a1c22;
+ --g1:#F4F5F8;--g2:#E4E6EC;--g4:#53575f;--ok:#15683d;--bad:#b3312a;--warn:#8a6508;
+ --hood:#C8102E;--jell:#1A7F4B;--harw:#D8A800;--stur:#E8751A;--fish:#1F5FA8}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font-family:Calibri,'Segoe UI',sans-serif;color:var(--ink);background:#fff;
+ font-size:17px;line-height:1.55}
+h1,h2,h3{font-family:Georgia,serif;color:var(--navy);line-height:1.15}
+main{max-width:820px;margin:0 auto;padding:0 20px}
+section{padding:44px 0 12px}
+p{margin:0 0 .9em;max-width:72ch}
+a{color:var(--navy)}
+svg{max-width:100%;height:auto;display:block}
+
+/* cover */
+.cover{background:var(--navy);color:#fff;padding:56px 20px 0}
+.cover .in{max-width:820px;margin:0 auto}
+.cover h1{color:#fff;font-size:2.5em;margin:.2em 0 .25em}
+.cover .k{color:var(--yellow);font-family:Georgia,serif;font-size:.95em;letter-spacing:.14em;text-transform:uppercase}
+.cover p{color:#d8dae6;font-size:1.06em;max-width:64ch;margin-bottom:1.6em}
+.hband{display:flex;height:12px;margin-top:34px}
+.hband span{flex:1}
+.houses{display:flex;flex-wrap:wrap;gap:4px 22px;margin:0 0 8px;font-size:.86em;color:#c6c9da}
+.houses b{color:#fff;font-weight:normal;font-family:Georgia,serif}
+.houses i{font-style:normal;display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+/* nav */
+nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--g2);z-index:5}
+nav .in{max-width:820px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav .in::-webkit-scrollbar{display:none}
+nav a{font-family:Georgia,serif;font-size:14px;color:var(--g4);text-decoration:none;
+ padding:12px 13px;border-bottom:3px solid transparent;white-space:nowrap}
+nav a:hover{color:var(--navy)}
+nav a:focus-visible{outline:3px solid var(--navy);outline-offset:-3px}
+
+/* the three big numbers */
+.big3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:20px 0 6px}
+.big3 div{border-top:6px solid var(--red);background:var(--g1);padding:16px 18px}
+.big3 b{display:block;font-family:Georgia,serif;font-size:2.6em;color:var(--navy);line-height:1}
+.big3 span{display:block;margin-top:8px;font-size:.92em;color:var(--g4);line-height:1.35}
+.big3 .good{border-top-color:var(--ok)}
+
+/* asset cards */
+.assets{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:18px 0}
+.assets div{border:1px solid var(--g2);border-left:6px solid var(--yellow);padding:15px 17px}
+.assets h3{font-size:1.02em;margin-bottom:6px}
+.assets p{font-size:.9em;color:var(--g4);margin:0}
+.assets b{color:var(--navy)}
+
+/* possibility cards */
+.poss{border:1px solid var(--g2);margin:26px 0;scroll-margin-top:70px}
+.poss header{padding:16px 20px 13px;color:#fff}
+.poss header h3{color:#fff;font-size:1.35em}
+.poss header p{color:rgba(255,255,255,.85);margin:4px 0 0;font-size:.95em}
+.poss .body{padding:16px 20px 8px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 26px}
+.poss h4{font-family:Georgia,serif;color:var(--navy);font-size:.95em;margin:10px 0 4px}
+.poss ul{padding-left:19px;font-size:.92em;margin:0 0 10px}
+.poss li{margin-bottom:4px}
+.pnum{display:flex;flex-wrap:wrap;gap:10px 26px;background:var(--g1);padding:11px 20px;font-size:.92em}
+.pnum b{font-family:Georgia,serif;font-size:1.25em;color:var(--navy)}
+.pnum span{color:var(--g4)}
+.risk{border-left:4px solid var(--bad);background:#fdf3f2;padding:9px 13px;font-size:.92em;margin:8px 0 14px}
+.risk b{color:var(--bad)}
+
+/* week strips */
+.wk{margin:8px 0 4px}
+.wk table{border-collapse:collapse;width:100%;font-size:.82em}
+.wk td,.wk th{border:1px solid #fff;padding:7px 4px;text-align:center}
+.wk th{background:var(--g1);color:var(--g4);font-weight:normal;text-transform:uppercase;font-size:.78em;letter-spacing:.05em}
+.wk .les{background:var(--g2);color:var(--g4)}
+.wk .blk{background:var(--navy);color:#fff;font-weight:bold}
+.wk .hme{background:var(--harw);color:#1a1c22;font-weight:bold}
+.wk .cca{background:#c6cadb;color:var(--ink)}
+.wklegend{display:flex;flex-wrap:wrap;gap:5px 18px;font-size:.8em;color:var(--g4);margin:5px 0 0}
+.wklegend i{font-style:normal;display:inline-block;width:11px;height:11px;margin-right:5px;vertical-align:-1px}
+
+/* compare */
+.scroll{overflow-x:auto}
+.cmp{border-collapse:collapse;width:100%;font-size:.92em;margin:14px 0}
+.cmp th,.cmp td{padding:9px 12px;border-bottom:1px solid var(--g2);text-align:left;vertical-align:top}
+.cmp th{font-family:Georgia,serif;color:var(--navy);font-weight:normal;font-size:.98em}
+.cmp thead th{border-bottom:2px solid var(--navy);vertical-align:bottom}
+.cmp td.c{text-align:center}
+.cmp .win{background:#f2f7f3;font-weight:bold}
+.cmp tbody th{font-family:Calibri,sans-serif;font-size:.9em;color:var(--g4)}
+
+/* moves + questions */
+ol.moves{counter-reset:m;list-style:none;margin:16px 0}
+ol.moves li{counter-increment:m;position:relative;padding:0 0 16px 58px;max-width:74ch}
+ol.moves li::before{content:counter(m);position:absolute;left:0;top:-2px;width:38px;height:38px;
+ background:var(--navy);color:var(--yellow);font-family:Georgia,serif;font-size:1.25em;
+ display:flex;align-items:center;justify-content:center}
+ol.moves b{color:var(--navy)}
+ol.moves p{font-size:.94em;color:var(--g4);margin:2px 0 0}
+.q{border:1px solid var(--g2);border-left:6px solid var(--navy);padding:14px 18px;margin:14px 0}
+.q h3{font-size:1.08em;margin-bottom:5px}
+.q p{font-size:.94em;margin:0}
+.q p+p{margin-top:6px}
+
+/* provenance + footer */
+.prov{background:var(--g1);border-left:4px solid var(--g2);padding:11px 15px;font-size:.85em;color:var(--g4);margin:22px 0}
+.tag{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;
+ border:1px solid var(--g2);padding:0 6px;white-space:nowrap;line-height:1.6;vertical-align:1px}
+.tag.mea{background:#eef4ff;border-color:#c3d4f2;color:#1f3f8f}
+.tag.mod{background:#fdf6dc;border-color:#e8d98a;color:var(--warn)}
+.ref{font-size:.72em;font-weight:bold;color:#1f3f8f;background:#eef4ff;border:1px solid #c3d4f2;
+ padding:0 4px;text-decoration:none;vertical-align:2px;border-radius:3px}
+.ref:hover{background:var(--navy);color:#fff}
+footer{background:var(--navy);color:#c6c9da;margin-top:52px;padding:26px 20px;font-size:.85em}
+footer .in{max-width:820px;margin:0 auto}
+footer b{color:var(--yellow);font-family:Georgia,serif}
+footer a{color:#fff}
+
+.lead{font-size:1.12em}
+.side{border-left:4px solid var(--g2);padding:2px 0 2px 15px;color:var(--g4);font-size:.92em;max-width:70ch;margin:14px 0}
+@media(max-width:560px){body{font-size:16px}.cover h1{font-size:1.9em}.big3 b{font-size:2.1em}}
+@media print{
+ nav{display:none}.cover{padding-top:26px}
+ body{font-size:11pt}
+ .poss,.q,.big3 div,.assets div{break-inside:avoid}
+ h2{break-after:avoid}
+ a.ref{border:none;background:none}
+}
+</style></head>
+<body>
+
+<div class="cover">
+ <div class="in">
+  <div class="k">Beatty Secondary School &middot; For the SMC</div>
+  <h1>One block, one house,<br>every Beattyian.</h1>
+  <p>Two years of our own calendar say the Wednesday and Thursday block is under-used, under-chosen
+   and quietly consumed. The houses to fix it already exist. This paper puts three workable
+   possibilities on the table and names the decisions only this room can make.</p>
+  <div class="houses">
+   <span><i style="background:var(--hood)"></i><b>Hood</b> Red</span>
+   <span><i style="background:var(--jell)"></i><b>Jellicoe</b> Green</span>
+   <span><i style="background:var(--harw)"></i><b>Harwood</b> Yellow</span>
+   <span><i style="background:var(--stur)"></i><b>Sturdee</b> Orange</span>
+   <span><i style="background:var(--fish)"></i><b>Fisher</b> Blue</span>
+  </div>
+ </div>
+ <div class="hband">
+  <span style="background:var(--hood)"></span><span style="background:var(--jell)"></span>
+  <span style="background:var(--harw)"></span><span style="background:var(--stur)"></span>
+  <span style="background:var(--fish)"></span>
+ </div>
+</div>
+
+<nav><div class="in">
+ <a href="#problem">The problem</a>
+ <a href="#assets">What we already have</a>
+ <a href="#possibilities">Three possibilities</a>
+ <a href="#compare">Side by side</a>
+ <a href="#moves">First moves</a>
+ <a href="#decide">The decision</a>
+</div></nav>
+
+<main>
+
+<section id="problem">
+ <h2>The problem, in three numbers</h2>
+ <p class="lead">These are measured from 1,148 calendar events across 2024 and 2025, decomposed into
+  1,380 activity records. Nothing here is an impression.</p>
+ <div class="big3">
+  <div><b>2.5</b><span>programmes offered per block day, school-wide. 38 of 112 block dates
+   carried exactly one. Students are not choosing; they are being assigned.
+   <a class="ref" href="index.html" title="Register E1 in the full dashboard">E1</a></span></div>
+  <div><b>38%</b><span>of enrichment programmes survive from one year to the next.
+   91 ran in 2024, 93 in 2025 — only 51 the same. We invent roughly 42 a year and abandon 40,
+   and every invention costs a full design. <a class="ref" href="index.html" title="Register E4">E4</a></span></div>
+  <div><b>1 : 108</b><span>the adult ratio on a block day. Ten teachers are free against 1,080
+   Beattyians; the other eighty are in meetings that live in the same slot. No adult-led
+   design closes this. <a class="ref" href="index.html" title="Register S3, E3">S3</a></span></div>
+ </div>
+ <p class="side">Underneath these: the block is already streamed — G3 students draw 51 enrichment
+  entries where G1 draw 9 <a class="ref" href="index.html">E6</a> — and 36% of student-facing block
+  time is not enrichment at all <a class="ref" href="index.html">E2</a>. Sec 4 and 5 barely feature.
+  The block exists on paper; nobody has defended the hour.</p>
+</section>
+
+<section id="assets">
+ <h2>Three assets nobody has spent</h2>
+ <p>The same calendar shows we already own the raw material. None of these cost anything new.</p>
+ <div class="assets">
+  <div><h3>A fortnightly home-based Wednesday</h3>
+   <p>25 HBL days over two years, <b>19 of them Wednesdays, median gap 14 days in term</b>.
+   The alternation between an on-campus Wednesday and a home one is already running and already
+   accepted by parents. It has just never been used as a design.
+   <a class="ref" href="index.html">E14</a></p></div>
+  <div><h3>Five houses, named and coloured</h3>
+   <p>Hood, Jellicoe, Harwood, Sturdee, Fisher — real naval history, colours now confirmed.
+   A house is a standing unit of <b>~216 Beattyians and ~18 staff</b> that already exists,
+   so work can be handed to it without constituting a single new committee.</p></div>
+  <div><h3>An empty midweek</h3>
+   <p>Nationally, Wednesday is the busiest CCA day in Singapore. At Beatty it is nearly the
+   emptiest — <b>13 CCA occurrences against 29 on our busiest day</b>. The block we want to
+   guard is structurally free. <a class="ref" href="index.html">E7</a></p></div>
+ </div>
+ <p class="side">One asset with a warning on it: about 82 days a year already carry an all-day event,
+  mostly examinations <a class="ref" href="index.html">E16</a>. Those days are cleared of lessons and
+  staffed. A handful can become designed intensives — but the exam calendar itself is not negotiable,
+  and every possibility below plans around it rather than through it.</p>
+</section>
+
+<section id="possibilities">
+ <h2>Three possibilities</h2>
+ <p class="lead">All three share the same foundation: five class-anchored vertical houses, a stable
+  catalogue of activities refreshed rather than reinvented, student leaders doing the running with
+  teachers roaming, and <b>Wednesday for everyone, Thursday for depth</b> — Renzulli's Explore tier
+  universal, a Build tier by choice, a small Pursue tier that turns over so the same seats reach
+  more Beattyians. They differ in exactly one thing: <b>what we do with the Wednesday rhythm</b>.</p>
+
+ <!-- P1 -->
+ <article class="poss" id="p1">
+  <header style="background:var(--navy)">
+   <h3>1 &middot; The Steady House</h3>
+   <p>Keep the week as it is. Change what happens inside it.</p>
+  </header>
+  <div class="wk"><table aria-label="Week under the Steady House">
+   <tr><th></th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
+   <tr><td style="font-size:.78em;color:var(--g4)">PM</td>
+    <td class="les">lessons</td><td class="cca">CCA</td>
+    <td class="blk">House block<br>all 1,080 in</td>
+    <td class="blk">Pathways<br>Build &amp; Pursue</td><td class="les">lessons</td></tr>
+  </table></div>
+  <div class="body"><div class="pgrid">
+   <div><h4>What a Beattyian gets</h4>
+    <ul><li>A weekly house afternoon: 44 clusters running at once instead of 2.5 programmes</li>
+     <li>A first-or-second-choice place, 92% of the time</li>
+     <li>A vertical tutor group of ~27, same adult for four years</li></ul></div>
+   <div><h4>What it asks of staff</h4>
+    <ul><li>Build the catalogue once; refresh a quarter of it yearly — ~11 new designs instead of 42</li>
+     <li>Train ~84 Sec 3–4 student leaders (15% of upper sec)</li>
+     <li>Ten duty teachers: two running groups, eight roaming six each</li></ul></div>
+  </div>
+  <div class="risk"><b>What breaks it:</b> the examination calendar. History says a quarter of
+   block time gets consumed; expect 24 of 30 planned days to survive, and plan cycles around
+   the oral and prelim windows, published first.</div>
+  </div>
+  <div class="pnum">
+   <span><b>25</b> per group</span><span><b>92%</b> get 1st/2nd choice</span>
+   <span><b>24/30</b> days survive</span><span><b>~2.8</b> staff days back per teacher <span class="tag mod">modelled</span></span>
+  </div>
+ </article>
+
+ <!-- P2 -->
+ <article class="poss" id="p2">
+  <header style="background:var(--ok)">
+   <h3>2 &middot; The Fortnight Rhythm</h3>
+   <p>Name the alternation we already run. Home Wednesday, house Wednesday, repeat.</p>
+  </header>
+  <div class="wk"><table aria-label="Fortnight under the Fortnight Rhythm">
+   <tr><th></th><th>Wed (week A)</th><th>Thu</th><th>Wed (week B)</th><th>Thu</th></tr>
+   <tr><td style="font-size:.78em;color:var(--g4)">PM</td>
+    <td class="blk">House block<br>on campus</td><td class="blk">Pathways</td>
+    <td class="hme">Home-based<br>read &middot; draft &middot; reflect</td><td class="blk">Pathways</td></tr>
+  </table>
+  <div class="wklegend"><span><i style="background:var(--navy)"></i>on campus</span>
+   <span><i style="background:var(--harw)"></i>home-based</span></div></div>
+  <div class="body"><div class="pgrid">
+   <div><h4>What a Beattyian gets</h4>
+    <ul><li>On-campus Wednesdays for what needs a room and other people: making, rehearsing, presenting</li>
+     <li>Home Wednesdays carry the reading and drafting that currently eats live time</li>
+     <li>Live cadence rises to ~4.2 sessions a month because almost nothing is lost</li></ul></div>
+   <div><h4>Why it protects the block</h4>
+    <ul><li>A home-based day <b>cannot</b> be taken by an assembly, an invigilation or a rehearsal</li>
+     <li>29 of 30 planned days survive — protection that is earned, not asserted</li>
+     <li>It is already parent-accepted practice; the change is purpose, not timetable</li></ul></div>
+  </div>
+  <div class="risk"><b>What breaks it:</b> weak asynchronous material. A home task worth a
+   Beattyian's Wednesday is harder to design than a lesson, and that cost is not yet priced.
+   If home days become worksheet days, this is Possibility 1 with worse optics.</div>
+  </div>
+  <div class="pnum">
+   <span><b>25</b> per group</span><span><b>92%</b> get 1st/2nd choice</span>
+   <span><b>29/30</b> days survive</span><span><b>14-day</b> rhythm already measured <a class="ref" href="index.html">E14</a></span>
+  </div>
+ </article>
+
+ <!-- P3 -->
+ <article class="poss" id="p3">
+  <header style="background:var(--fish)">
+   <h3>3 &middot; The Half-School Wednesday</h3>
+   <p>Half home, half on campus, swapping weekly. Spend the space on small groups.</p>
+  </header>
+  <div class="wk"><table aria-label="Week under the Half-School Wednesday">
+   <tr><th></th><th>Wed (week A)</th><th>Wed (week B)</th></tr>
+   <tr><td style="font-size:.78em;color:var(--g4)">Houses Hood&nbsp;&middot;&nbsp;Jellicoe&nbsp;&middot;&nbsp;Harwood&frac12;</td>
+    <td class="blk">on campus, groups of 15</td><td class="hme">home-based</td></tr>
+   <tr><td style="font-size:.78em;color:var(--g4)">Houses Sturdee&nbsp;&middot;&nbsp;Fisher&nbsp;&middot;&nbsp;Harwood&frac12;</td>
+    <td class="hme">home-based</td><td class="blk">on campus, groups of 15</td></tr>
+  </table></div>
+  <div class="body"><div class="pgrid">
+   <div><h4>What a Beattyian gets</h4>
+    <ul><li><b>Groups of 15 — inside Renzulli's published cluster range.</b> 25 is a class with a
+     different name; 15 is an enrichment cluster</li>
+     <li>95% get a first or second choice, because 72 groups run instead of 44</li>
+     <li>540 on campus at once: the same rooms and the same ten duty teachers carry twice the choice</li></ul></div>
+   <div><h4>What it asks of staff</h4>
+    <ul><li>Everything Possibility 2 asks, plus two cohorts to track</li>
+     <li>Two sets of materials in flight each fortnight</li>
+     <li>Attendance and safeguarding sight-lines across a split school</li></ul></div>
+  </div>
+  <div class="risk"><b>What breaks it:</b> operational complexity. This is the boldest and best
+   for students on paper, and the easiest to fumble in Term 1. If chosen, pilot with two levels
+   before going whole-school.</div>
+  </div>
+  <div class="pnum">
+   <span><b>15</b> per group</span><span><b>95%</b> get 1st/2nd choice</span>
+   <span><b>72</b> groups running</span><span><b>&times;2</b> estate capacity <span class="tag mod">modelled</span></span>
+  </div>
+ </article>
+
+ <div class="q">
+  <h3>The road examined and set aside: talent-area houses</h3>
+  <p>We modelled houses <em>as</em> talent areas — join Fisher because you are a STEM Beattyian.
+   It buys the deepest pipeline per field and loses everything else: sorting thirteen-year-olds
+   by aptitude tracks banding so closely that the streaming the audit found would get a name and
+   a colour, and the door closes on every late developer. The full dashboard keeps it for
+   inspection. It is not recommended.</p>
+ </div>
+</section>
+
+<section id="compare">
+ <h2>Side by side</h2>
+ <div class="scroll"><table class="cmp">
+  <thead><tr><th></th><th>1 &middot; Steady House</th><th>2 &middot; Fortnight Rhythm</th><th>3 &middot; Half-School Wednesday</th></tr></thead>
+  <tbody>
+   <tr><th scope="row">Everyone seated, every cycle</th><td class="c">yes</td><td class="c">yes</td><td class="c">yes</td></tr>
+   <tr><th scope="row">Group size</th><td class="c">25</td><td class="c">25</td><td class="c win">15</td></tr>
+   <tr><th scope="row">First-or-second choice</th><td class="c">92%</td><td class="c">92%</td><td class="c win">95%</td></tr>
+   <tr><th scope="row">Block days that survive the year</th><td class="c">24 of 30</td><td class="c win">29 of 30</td><td class="c">24 of 30</td></tr>
+   <tr><th scope="row">Live cadence per student</th><td class="c win">weekly</td><td class="c">fortnightly live, home between</td><td class="c">fortnightly live, home between</td></tr>
+   <tr><th scope="row">New designs per year (now ~42)</th><td class="c">~11</td><td class="c">~11 + async material</td><td class="c">~18 + async material</td></tr>
+   <tr><th scope="row">Operational risk</th><td class="c win">lowest</td><td class="c">medium — async quality</td><td class="c">highest — split school</td></tr>
+   <tr><th scope="row">Reversibility</th><td class="c win">trivial</td><td class="c">easy — stop naming home days</td><td class="c">harder mid-year</td></tr>
+  </tbody>
+ </table></div>
+ <p class="side">Reading it honestly: <b>1 is the floor, not the compromise</b> — it fixes choice,
+  churn and the adult ratio on its own. <b>2 buys protection</b>, the thing history says we lose.
+  <b>3 buys the pedagogy</b>, real Renzulli-sized clusters. 2 and 3 can be sequenced: run 1 for a
+  year, name the fortnight in year two, split in year three if the async material has proven itself.</p>
+</section>
+
+<section id="moves">
+ <h2>First moves — the same under all three</h2>
+ <p>These are no-regrets. Whichever possibility the room prefers, these start now.</p>
+ <ol class="moves">
+  <li><b>Publish the examination and oral windows before cycles are set.</b>
+   <p>The single biggest cause of lost block days is collision with assessment that was always
+    going to happen. Sequence the calendar the other way round.</p></li>
+  <li><b>Freeze the catalogue.</b>
+   <p>Stop inventing. Convert the ~16 programmes that already persist into named house clusters,
+    retire the one-offs, and refresh a quarter a year. ~11 designs instead of 42.</p></li>
+  <li><b>Train the 84.</b>
+   <p>Student-led is the only arithmetic that works at 1:108. The training of Sec 3–4 leaders is
+    the deliverable of Term 1, not a nice-to-have — each house trains its own.</p></li>
+  <li><b>Score the Cup per capita, and keep it out of the pathways.</b>
+   <p>Per-capita scoring removes house-size advantage. And the moment a house earns points for its
+    members' olympiad results, the talent pool fragments into five — houses steward fields;
+    they never own the door.</p></li>
+  <li><b>Fix the recording.</b>
+   <p>246 different ways of writing a time; 991 of 1,380 records with no venue. A time picker and
+    a venue list cost nothing and are the difference between next year's audit and next year's
+    anecdote. <a class="ref" href="index.html">E15</a></p></li>
+ </ol>
+</section>
+
+<section id="decide">
+ <h2>The decision — three questions only this room can answer</h2>
+ <div class="q"><h3>1 &middot; Do we trust a home Wednesday?</h3>
+  <p>Not "is HBL possible" — we already run it fortnightly. The question is whether we will invest
+   in asynchronous material good enough that a home Wednesday is learning rather than absence.
+   <b>Yes</b> opens Possibilities 2 and 3. <b>No</b> means Possibility 1, honestly chosen.</p></div>
+ <div class="q"><h3>2 &middot; Are groups of 25 acceptable, or do we need 15?</h3>
+  <p>Renzulli's published cluster range is 5–15, up to 25 only with a second adult. At 25 we are
+   running small classes; at 15 we are running enrichment clusters. Only Possibility 3 reaches 15
+   without new rooms or new staff.</p></div>
+ <div class="q"><h3>3 &middot; How much depth for how many?</h3>
+  <p>The Pursue tier at 15% of the cohort with a revolving door reaches roughly 60% of Beattyians
+   at some point in four years, ~30 sessions each. Hold the same seats fixed and the same money
+   reaches 8%. This is a values choice about breadth against depth — the dashboard shows the curve,
+   but the room picks the point.</p></div>
+ <p class="side"><b>A recommendation, if one is wanted:</b> adopt Possibility 1 now as the floor,
+  commit the five first moves this term, and set one gate for Possibility 2 — a bank of home-Wednesday
+  tasks that two HODs certify as worth the afternoon. If the gate is passed by Term 3, name the
+  fortnight for next year. Possibility 3 waits for one clean year of 2.</p>
+</section>
+
+<div class="prov">
+ <span class="tag mea">measured</span> figures come from the school's own 2024–25 calendar —
+ 1,148 events, 1,380 activity records — and every one is recomputed live and traceable to its rows
+ in the <a href="index.html">full dashboard</a> (reference ids E1–E17, S1–S3, R1–R5).
+ <span class="tag mod">modelled</span> figures are assumptions with controls attached; the dashboard
+ lets you move them. The calendar records events, not hours, attendance or outcomes — no figure here
+ claims otherwise. Talent-model turnover is the largest single assumption.
+</div>
+
+</main>
+
+<footer><div class="in">
+ <b>Beatty Secondary School</b> &middot; Non Vi Sed Arte — not by force but by skill<br>
+ This is the decision paper. The working instrument, with every slider, ledger test and record
+ behind it: <a href="index.html">the full dashboard</a> &middot;
+ <a href="data.html">calendar explorer</a> &middot;
+ <a href="references/REPORT.md">written report</a> &middot;
+ <a href="references/enrichment-audit-2024-2025.xlsx">source workbook</a>
+</div></footer>
+
+<script>
+/* highlight the nav link for the section in view */
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+const io=new IntersectionObserver(es=>{
+ es.forEach(e=>{if(e.isIntersecting){
+  links.forEach(a=>a.style.cssText=a.getAttribute('href')==='#'+e.target.id
+   ?'color:#000C53;border-bottom-color:#FFE200;font-weight:bold':'');}});
+},{rootMargin:'-40% 0px -55% 0px'});
+secs.forEach(s=>s&&io.observe(s));
+</script>
+</body></html>

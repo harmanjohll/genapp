@@ -2,7 +2,7 @@
 
 House system design tools for Beatty Secondary School. One decision dashboard, four earlier working papers, and the written record behind them in `references/`.
 
-Start at `index.html`. Everything else is kept for traceability.
+Start at `decide.html` for the meeting, `index.html` for the instrument behind it. Everything else is kept for traceability.
 
 Live: `https://harmanjohll.github.io/genapp/houses/`
 
@@ -10,7 +10,8 @@ Live: `https://harmanjohll.github.io/genapp/houses/`
 
 | File | What it is |
 | --- | --- |
-| `index.html` | **The decision dashboard.** Start here. Seven tabs: Evidence, Design, Talent, Schooling, Reimagine, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
+| `decide.html` | **The decision paper.** One scrolling page for the SMC meeting: the problem in three numbers, three assets already owned, three named possibilities with a side-by-side, five no-regrets first moves, and the three questions only the room can answer. No sliders; every figure traceable to the dashboard's register |
+| `index.html` | **The full dashboard.** The working instrument behind the paper.  Seven tabs: Evidence, Design, Talent, Schooling, Reimagine, Trade-offs, Decide. All 1,380 activity records are embedded and every figure is computed at load |
 | `studio2.html` | **House Dashboard.** Earlier pass, superseded by `index.html`. Seven tabs, analytics and presentation. Couples the house system to talent development and treats the whole question as open, including whether to do this at all |
 | `studio.html` | **House Studio.** First pass. Vertical house architecture modelling |
 | `data.html` | **Calendar explorer.** The same 1,380 records standalone: filters, cross-tabs, calendar view |
