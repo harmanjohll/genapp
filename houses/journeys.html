@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Five Beattyians, Four Years — Talent Development Journeys</title>
+<style>
+:root{--navy:#000C53;--yellow:#FFE200;--ink:#1a1c22;
+ --g1:#F4F5F8;--g2:#E4E6EC;--g3:#c9ccd8;--g4:#53575f;
+ --ok:#15683d;--bad:#b3312a;--warn:#8a6508;
+ --stem:#1F5FA8;--hum:#8a6508;--lang:#15683d;--aes:#8c2f2a;--serv:#5b3d8f;--spine:#53575f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Calibri,'Segoe UI',sans-serif;color:var(--ink);background:#fff;font-size:16px;line-height:1.5}
+h1,h2,h3,h4{font-family:Georgia,serif;color:var(--navy);line-height:1.18}
+main{max-width:960px;margin:0 auto;padding:0 20px 60px}
+p{margin:0 0 .8em;max-width:74ch}
+svg{max-width:100%;height:auto;display:block}
+a{color:var(--navy)}
+
+.cover{background:var(--navy);color:#fff;padding:40px 20px 34px}
+.cover .in{max-width:960px;margin:0 auto}
+.cover .k{color:var(--yellow);font-family:Georgia,serif;font-size:.85em;letter-spacing:.14em;text-transform:uppercase}
+.cover h1{color:#fff;font-size:2.1em;margin:.25em 0 .3em}
+.cover p{color:#d5d8e6;max-width:66ch;margin:0}
+.cover b{color:var(--yellow);font-weight:normal}
+
+/* controls */
+.bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--g2);z-index:9;padding:10px 0 9px}
+.bar .in{max-width:960px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--g4);margin-right:4px}
+button.m{font-family:Georgia,serif;font-size:13.5px;padding:7px 14px;border:1px solid var(--g2);
+ background:#fff;color:var(--g4);cursor:pointer;border-radius:16px;white-space:nowrap;min-height:32px}
+button.m:hover{border-color:var(--navy);color:var(--navy)}
+button.m.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:bold}
+button.m:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+section{padding:28px 0 4px}
+.mbox{border:1px solid var(--g2);border-left:6px solid var(--navy);padding:14px 18px;margin:14px 0}
+.mbox h2{font-size:1.3em;margin-bottom:4px}
+.mbox p{font-size:.95em;margin:0}
+.rules{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.rule{font-size:11.5px;border:1px solid var(--g2);background:var(--g1);padding:2px 9px;border-radius:3px;color:var(--g4)}
+.rule b{color:var(--navy)}
+.rule.y{background:#eef6f0;border-color:#bcdcc6;color:var(--ok)}
+.rule.n{background:#fdf3f2;border-color:#f0bfbc;color:var(--bad)}
+
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.verdict div{border-top:5px solid var(--g3);padding:11px 14px;background:var(--g1)}
+.verdict b{display:block;font-family:Georgia,serif;font-size:1.9em;color:var(--navy);line-height:1}
+.verdict span{display:block;font-size:.86em;color:var(--g4);margin-top:5px}
+.verdict .g{border-top-color:var(--ok)}.verdict .r{border-top-color:var(--bad)}
+
+.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-size:.82em;color:var(--g4);margin:6px 0 2px}
+.legend i{font-style:normal;display:inline-block;width:12px;height:12px;margin-right:5px;vertical-align:-2px}
+
+/* kid card */
+.kid{border:1px solid var(--g2);margin:20px 0;background:#fff}
+.kid>header{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;
+ padding:13px 18px;border-bottom:1px solid var(--g2);background:var(--g1)}
+.kid h3{font-size:1.25em}
+.kid .who{font-size:.9em;color:var(--g4);flex:1;min-width:220px}
+.pill{font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:11px;
+ font-weight:bold;white-space:nowrap}
+.pill.flourish{background:#e6f2ea;color:var(--ok)}
+.pill.plateau{background:#fdf6dc;color:var(--warn)}
+.pill.bored{background:#fdf6dc;color:var(--warn)}
+.pill.lost{background:#fbe9e7;color:var(--bad)}
+.pill.blocked{background:#fbe9e7;color:var(--bad)}
+.kid .body{padding:14px 18px 6px}
+.tl{overflow-x:auto}
+.sum{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:.87em;color:var(--g4);margin:8px 0 4px}
+.sum b{color:var(--navy);font-family:Georgia,serif;font-size:1.1em}
+
+/* empathy */
+.emp{width:100%;border-collapse:collapse;font-size:.89em;margin:12px 0 6px}
+.emp th,.emp td{border:1px solid var(--g2);padding:8px 11px;vertical-align:top;text-align:left}
+.emp thead th{background:var(--navy);color:#fff;font-family:Georgia,serif;font-weight:normal;font-size:.95em}
+.emp tbody th{background:var(--g1);color:var(--g4);font-family:Calibri,sans-serif;font-weight:normal;
+ width:74px;font-size:.86em;text-transform:uppercase;letter-spacing:.05em}
+.emp td:nth-child(2){color:var(--g4)}
+.emp .pg th{background:#fff}
+.emp .pg td{font-size:.92em}
+.emp .pain{background:#fdf3f2}.emp .gain{background:#f2f8f4}
+
+.scroll{overflow-x:auto}
+table.mx{border-collapse:collapse;width:100%;font-size:.9em;margin:12px 0}
+table.mx th,table.mx td{border-bottom:1px solid var(--g2);padding:8px 10px;text-align:left}
+table.mx thead th{border-bottom:2px solid var(--navy);font-family:Georgia,serif;font-weight:normal;color:var(--navy)}
+table.mx td.c{text-align:center;font-weight:bold;font-size:.82em}
+table.mx tbody th{font-family:Calibri,sans-serif;font-weight:normal;color:var(--g4);font-size:.9em}
+.cell-flourish{background:#e6f2ea;color:var(--ok)}
+.cell-plateau,.cell-bored{background:#fdf6dc;color:var(--warn)}
+.cell-lost,.cell-blocked{background:#fbe9e7;color:var(--bad)}
+
+.note{font-size:.88em;color:var(--g4);border-left:3px solid var(--g2);padding-left:12px;margin:10px 0;max-width:74ch}
+.box{border:1px solid var(--g2);padding:13px 17px;margin:16px 0}
+.box.warn{border-left:5px solid var(--warn);background:#fffdf5}
+.box.nav{border-left:5px solid var(--navy)}
+.box h3{font-size:1.05em;margin-bottom:5px}
+.box ul{padding-left:20px;font-size:.93em}
+.box li{margin-bottom:5px}
+footer{background:var(--navy);color:#c6c9da;margin-top:44px;padding:24px 20px;font-size:.87em}
+footer .in{max-width:960px;margin:0 auto}
+footer b{color:var(--yellow);font-family:Georgia,serif}
+footer a{color:#fff}
+@media(max-width:620px){body{font-size:15px}.cover h1{font-size:1.6em}.emp tbody th{width:58px}}
+@media print{.bar{display:none}.kid{break-inside:avoid}h2{break-after:avoid}}
+</style></head><body>
+
+<div class="cover"><div class="in">
+ <div class="k">Beatty Secondary School &middot; Talent development, modelled</div>
+ <h1>Five Beattyians, four years.</h1>
+ <p>The test of a talent development model is not the average student. It is the five who usually get
+  lost. Pick a model and watch what happens to each of them.
+  <b>These five are personas, not students.</b> The structure underneath them &mdash; the roll, the
+  cycles, the block days, the group sizes &mdash; is measured from the school's own calendar.</p>
+</div></div>
+
+<div class="bar"><div class="in">
+ <span class="lab">Model</span>
+ <button class="m" data-m="ladder">Sample, then commit</button>
+ <button class="m" data-m="fixed">Choose at Sec 1, stay</button>
+ <button class="m" data-m="free">Free choice, every cycle</button>
+ <button class="m" data-m="houseowns">Houses own the pathways</button>
+</div></div>
+
+<main id="view"></main>
+
+<footer><div class="in">
+ <b>Beatty Secondary School</b> &middot; Non Vi Sed Arte<br>
+ The one-page decision paper: <a href="decide.html">decide.html</a> &middot;
+ the full instrument and every measured figure: <a href="index.html">the dashboard</a> &middot;
+ <a href="data.html">calendar explorer</a>
+</div></footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- the five pathway domains, plus the universal spine ---------- */
+const DOM={
+ stem:{n:'STEM',c:'var(--stem)',h:'#1F5FA8'},
+ hum :{n:'Humanities',c:'var(--hum)',h:'#8a6508'},
+ lang:{n:'Language Arts',c:'var(--lang)',h:'#15683d'},
+ aes :{n:'Aesthetics',c:'var(--aes)',h:'#8c2f2a'},
+ serv:{n:'Service &amp; Leadership',c:'var(--serv)',h:'#5b3d8f'},
+ sport:{n:'Sport &amp; Health',c:'var(--spine)',h:'#53575f'}
+};
+const PATH=['stem','hum','lang','aes','serv'];      // sport is the universal spine, not a pathway
+const TIER=['—','Explore','Build','Pursue','Integrate'];
+
+/* ---------- the models: they differ only in the flags shown on screen ---------- */
+const MODELS={
+ ladder:{n:'Sample, then commit',
+  d:'Sec 1 meets all five domains, no choice at all. Sec 2 picks two, Sec 3 picks one, Sec 4 makes one real thing for a real audience. Nobody applies &mdash; the tutor who has held them for four years taps them on the shoulder. A Beattyian who drops out can come back.',
+  sample:1,commit:'progressive',entry:'invite',reentry:1,prior:1,houseGate:0},
+ fixed:{n:'Choose at Sec 1, stay',
+  d:'A Beattyian picks a domain in their first term and stays in it for four years. Entry to the deep tier is by application. This is the talent-area house model, and it is what the calendar shows the school already does with its sixteen selective programmes.',
+  sample:0,commit:'sec1',entry:'apply',reentry:0,prior:0,houseGate:0},
+ free:{n:'Free choice, every cycle',
+  d:'Anything, any cycle, no commitment asked. Maximum liberty, maximum churn. Nothing accumulates because depth needs consecutive cycles in the same field.',
+  sample:0,commit:'none',entry:'apply',reentry:1,prior:0,houseGate:0},
+ houseowns:{n:'Houses own the pathways',
+  d:'Each house stewards one domain and only its own members may go deep in it. Sorting at Sec 1 therefore decides what a Beattyian may become. Included because it is the version everyone imagines first.',
+  sample:1,commit:'progressive',entry:'invite',reentry:1,prior:0,houseGate:1}
+};
+
+/* ---------- the five ---------- */
+const KIDS=[
+{id:'mei',n:'Mei',house:'Fisher',hd:'stem',
+ who:'Concert band since Primary 5, grade five piano. In the practice room before the bell.',
+ aff:{stem:.45,hum:.30,lang:.40,aes:.95,serv:.35}, reveal:1, prior:{aes:3},
+ agency:.75, visible:.9, risk:.10, deflt:'aes'},
+{id:'arif',n:'Arif',house:'Jellicoe',hd:'hum',
+ who:'Quiet, middling grades. Nothing lights up until a Sec 3 project on Toa Payoh’s redevelopment.',
+ aff:{stem:.35,hum:.88,lang:.55,aes:.25,serv:.45}, reveal:3, prior:{},
+ agency:.35, visible:.25, risk:.30, deflt:'stem'},
+{id:'jing',n:'Jing',house:'Hood',hd:'serv',
+ who:'Turns up. Says little. Has never in his life put his name down for anything.',
+ aff:{stem:.42,hum:.30,lang:.28,aes:.32,serv:.40}, reveal:2, prior:{},
+ agency:.12, visible:.15, risk:.45, deflt:'stem'},
+{id:'priya',n:'Priya',house:'Harwood',hd:'lang',
+ who:'Good at everything. Class chair, netball, choir, maths club. Finishes none of it.',
+ aff:{stem:.68,hum:.66,lang:.70,aes:.64,serv:.72}, reveal:1, prior:{},
+ agency:.90, visible:.85, risk:.10, deflt:'serv'},
+{id:'danish',n:'Danish',house:'Fisher',hd:'stem',
+ who:'Three detentions by March. Reads a room better than anyone in it. Attendance is the problem.',
+ aff:{stem:.30,hum:.40,lang:.35,aes:.30,serv:.82}, reveal:2, prior:{},
+ agency:.30, visible:.80, risk:.60, deflt:'stem'}
+];
+const KID=Object.fromEntries(KIDS.map(k=>[k.id,k]));
+const TAP=.65;                     // affinity at which a tutor would invite
+const CAROUSEL=[['stem','hum'],['lang','aes'],['serv','sport']];
+
+/* ---------- the engine ----------
+   Twelve cycles, three a year, Sec 1 to Sec 4. Every outcome below is produced by
+   the flags printed on screen, not written by hand. Disagree with a flag and the
+   whole picture changes, which is the point of showing them. */
+function sim(k,mk){
+  const M=MODELS[mk], cells=[];
+  const rank=Object.entries(k.aff).sort((a,b)=>b[1]-a[1]);
+  const top=rank[0];                                   // the field they would love, whether or not they know it
+  const reveal=M.sample?Math.max(1,k.reveal-1):k.reveal;  // meeting a field brings its discovery forward
+  const priorDeep=Object.keys(k.prior).find(d=>k.prior[d]>=3)||null;
+  let dropped=false,returned=false,tappedIn=null,committed=null,gated=false,note='';
+
+  for(let y=1;y<=4;y++) for(let c=1;c<=3;c++){
+    const cell={y,c,doms:[],tier:0,marks:[]};
+    if(y===1){
+      if(M.sample){
+        cell.doms=CAROUSEL[c-1]; cell.tier=1;
+        if(c===3&&top[1]>=TAP){tappedIn=top[0];cell.marks.push('tap');}   // the carousel is the observation
+      } else {
+        const known=(1>=reveal)?top[0]:k.deflt;         // choosing from ignorance lands on what friends chose
+        committed=known; cell.doms=[known]; cell.tier=1;
+        if(c===3&&M.entry==='apply'&&k.agency>=.6&&k.aff[known]>=TAP){tappedIn=known;cell.marks.push('tap');}
+      }
+    } else {
+      const shutOut=x=>top[1]>=TAP&&(top[1]-k.aff[x])>.1;   // an all-rounder is fine anywhere; a specialist is not
+      let d;
+      if(M.houseGate){ d=k.hd; if(shutOut(d))gated=true; }
+      else if(M.commit==='sec1'){ d=committed; if(shutOut(d))gated=true; }
+      else if(M.commit==='none'){ d=(y>=reveal)?rank[(y+c)%2][0]:k.deflt; }
+      else { d=(y>=reveal)?top[0]:k.deflt; committed=d; }
+
+      // an invitation is into the field they lit up in, not into whatever is available
+      if(!tappedIn&&y>=reveal&&k.aff[d]>=TAP){
+        const invited=M.entry==='invite'&&(M.sample||k.visible>=.5);
+        const applied=M.entry==='apply'&&k.agency>=.6;
+        if(invited||applied){tappedIn=d;cell.marks.push('tap');}
+      }
+
+      let t;
+      if(M.commit==='none') t=1;                        // nothing accumulates without consecutive cycles
+      else if(y===2) t=2;
+      else t=(tappedIn===d)?3:2;
+
+      if(priorDeep===d){
+        if(M.prior){t=4;note='skips the practice tier and makes her own work';}
+        else{t=Math.min(t,2);note='taught, again, what she can already do';}
+      }
+
+      // some Beattyians disengage whatever the model. What differs is whether there is a way back.
+      if(!dropped&&k.risk>=.5&&y===2&&c===2){dropped=true;cell.marks.push('drop');}
+      if(dropped&&!returned){
+        const back=M.houseGate?k.hd:top[0];
+        const canReturn=M.reentry&&y>=3&&(M.sample||k.visible>=.5)&&k.aff[back]>=TAP;
+        if(canReturn){returned=true;tappedIn=back;d=back;committed=back;
+          t=(M.commit==='none')?1:3;cell.marks.push('back');}
+        else t=0;
+      }
+      cell.doms=t?[d]:[]; cell.tier=t;
+      if(y===4&&c===3&&t>=3){cell.marks.push('make','seen');}
+    }
+    cells.push(cell);
+  }
+
+  const maxT=Math.max(...cells.map(c=>c.tier));
+  const made=cells.some(c=>c.marks.includes('make'));
+  const priorIgnored=!!priorDeep&&!M.prior;
+  let out;
+  if(priorIgnored) out=gated?'blocked':'bored';        // a Beattyian with a CCA is never simply lost
+  else if(maxT<=1) out='lost';
+  else if(gated) out='blocked';
+  else if(maxT>=3&&made) out='flourish';
+  else out='plateau';
+
+  return {cells,out,maxT,made,tapped:!!tappedIn,dropped,returned,note,gated,
+    domsTouched:[...new Set(cells.flatMap(c=>c.doms))].filter(d=>d!=='sport').length,
+    sessions:cells.reduce((s,c)=>s+(c.tier?10:0),0)};
+}
+
+/* ---------- the life-line ---------- */
+function lifeline(k,S){
+  const w=760,pad=8,n=12,cw=(w-pad*2)/n,bw=cw-5,base=76,H={0:0,1:10,2:20,3:32,4:32};
+  let g='<g font-family="Calibri,sans-serif">';
+  // year bands
+  for(let y=0;y<4;y++){
+    const x=pad+y*3*cw;
+    g+=`<rect x="${x}" y="${base+6}" width="${3*cw-4}" height="21" fill="${y%2?'#F4F5F8':'#ECEEF4'}"/>`+
+       `<text x="${x+(3*cw-4)/2}" y="${base+20}" text-anchor="middle" font-size="11.5" fill="#53575f">Sec ${y+1}</text>`;
+  }
+  g+=`<line x1="${pad}" y1="${base+2}" x2="${w-pad}" y2="${base+2}" stroke="#c9ccd8" stroke-width="1.5"/>`;
+  S.cells.forEach((c,i)=>{
+    const x=pad+i*cw+2.5, h=H[c.tier], y=base+2-h;
+    if(!c.tier){
+      g+=`<rect x="${x}" y="${base-8}" width="${bw}" height="10" fill="none" stroke="#c9ccd8" stroke-dasharray="3 2"/>`;
+    } else if(c.doms.length===2){
+      c.doms.forEach((d,j)=>{g+=`<rect x="${x+j*bw/2}" y="${y}" width="${bw/2-.5}" height="${h}" fill="${DOM[d].h}"/>`;});
+    } else {
+      g+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${DOM[c.doms[0]].h}"/>`;
+      if(c.tier===4)g+=`<rect x="${x}" y="${y-4}" width="${bw}" height="4" fill="#FFE200"/>`;
+    }
+    const mk={tap:['&#9650;','#000C53'],make:['&#9733;','#8a6508'],seen:['&#9673;','#15683d'],
+              drop:['&#10005;','#b3312a'],back:['&#9650;','#15683d']};
+    c.marks.forEach((m,j)=>{
+      const [gl,col]=mk[m];
+      g+=`<text x="${x+bw/2}" y="${y-9-j*13}" text-anchor="middle" font-size="12" fill="${col}">${gl}</text>`;});
+  });
+  return `<svg viewBox="0 0 ${w} ${base+34}" width="${w}" role="img" aria-label="${esc(k.n)}'s four-year pathway">${g}</g></svg>`;
+}
+
+/* ---------- what they see, say, do and feel ---------- */
+const V={
+ mei:{
+  s1:{sample:['Four fields she has never tried, and one she already lives in','&ldquo;Do I have to do the STEM one? I have band.&rdquo;','Turns up, plays along, watches the clock','Impatient, but curious about the makers'],
+      choose:['A form asking her to pick one thing for four years','&ldquo;Music, obviously.&rdquo;','Ticks the box in ninety seconds','Certain, and a little insulted to be asked']},
+  s4:{flourish:['Her own arrangement on stands in front of forty players','&ldquo;Bar 34 is wrong. Can we take it again?&rdquo;','Writes, rehearses, conducts, argues with the sound desk','Trusted with something that is hers'],
+      bored:['A worksheet on note values she could have taught','&ldquo;I do this at a higher level on Tuesdays.&rdquo;','Attends, disengages, does homework under the desk','Patronised, and quietly furious'],
+      blocked:['A robotics kit, because that is what her house does','&ldquo;Why can I not do the thing I am good at?&rdquo;','Complies on Wednesday, gives everything to band on Saturday','Split in two, and resentful of the school for it'],
+      plateau:['Another ensemble rehearsal she did not choose','&ldquo;It is fine. It is just not mine.&rdquo;','Plays her part well and adds nothing','Competent, uncredited']}},
+ arif:{
+  s1:{sample:['Sources, maps, a museum, a lab, a soup kitchen','Almost nothing, out loud','Tries all of it because nobody asked him to choose','Unbothered. None of it has landed yet'],
+      choose:['A list of options and his friends already deciding','&ldquo;I will go where Faiz goes.&rdquo;','Signs up for the thing his friend signed up for','Indifferent, then mildly trapped']},
+  s4:{flourish:['His own exhibition boards on the corridor wall, and a resident reading them','&ldquo;The 1968 plan moved these families twice. Nobody wrote it down.&rdquo;','Interviews, transcribes, argues with a primary source, presents','Late, and entirely his own'],
+      lost:['Three more years of something he never chose','&ldquo;It is fine.&rdquo;','Complies. Produces nothing anyone keeps','Never found out what he was for'],
+      blocked:['The thing he wants, run by a house he is not in','&ldquo;That is not for us.&rdquo;','Waits. Then stops waiting','Shut out of a door he only just found'],
+      plateau:['A project he half likes, one term too short','&ldquo;I would have kept going.&rdquo;','Starts well, hands in something unfinished','Interested, and out of runway']}},
+ jing:{
+  s1:{sample:['Rooms he would never have walked into','&ldquo;OK.&rdquo;','Goes because everybody goes','Neutral. Faintly relieved nobody made him pick'],
+      choose:['A sign-up sheet','Nothing','Does not sign up','Invisible, which is comfortable']},
+  s4:{flourish:['A workbench with his name on the rota','&ldquo;I will do the soldering.&rdquo;','Turns up early, fixes things, says little','Useful, and known for it'],
+      lost:['The same four walls, four years running','Nothing','Attends. Is marked present. Is not otherwise recorded','Nobody has ever asked him anything'],
+      plateau:['The workshop he keeps drifting back to','&ldquo;Can I stay and finish this?&rdquo;','Never volunteers, always returns','Quietly attached to one room and one adult'],
+      blocked:['A door with a list on it and his name not on the list','Nothing','Stops going','Confirmed in what he already suspected']}},
+ priya:{
+  s1:{sample:['Five fields, all of which she is immediately good at','&ldquo;Can I do all of them?&rdquo;','Excels at each for three weeks','Delighted, and slightly restless'],
+      choose:['A choice that costs her four other things','&ldquo;This is unfair. I want all of them.&rdquo;','Picks the one with the best-known teacher','Anxious about what she is giving up']},
+  s4:{flourish:['A piece of work with her name on it, finished','&ldquo;This one I am actually seeing through.&rdquo;','Says no to two committees to protect a Thursday','Relieved to be deep in one thing at last'],
+      plateau:['Nine certificates and nothing she made','&ldquo;I have done loads.&rdquo;','Joins everything, completes nothing, chairs the committee','Busy, decorated, and privately hollow'],
+      lost:['A timetable with no depth in it anywhere','&ldquo;I did lots of things.&rdquo;','Collects roles','Successful by every measure except the one that matters'],
+      blocked:['One field, chosen for her by an allocation','&ldquo;Fine, I will be excellent at this one too.&rdquo;','Adapts, thrives adequately, wonders about the others','Untroubled, and slightly under-used']}},
+ danish:{
+  s1:{sample:['A soup kitchen where an elderly man talks only to him','&ldquo;He would not speak to anyone else. He spoke to me.&rdquo;','Turns up to that one. Misses two others','First time school has looked like something he is good at'],
+      choose:['A form he does not hand in','&ldquo;Whatever.&rdquo;','Nothing','Already outside it']},
+  s4:{flourish:['A partnership he runs, and a centre manager who calls him by name','&ldquo;They need this by Friday. I said we would do it.&rdquo;','Organises, shows up, chases the others','The most reliable person in the room, for the first time'],
+      lost:['Detention during the block, again','&ldquo;I was not allowed to go.&rdquo;','Serves the sanction','Certain the good things are not for him'],
+      plateau:['A programme he is in and out of','&ldquo;I missed a few.&rdquo;','Returns after every absence, never quite catches up','Half in, and expecting to be removed'],
+      blocked:['A robotics bench, because of a sorting he had no say in','&ldquo;This is not me.&rdquo;','Disrupts, then disappears','Miscast, and blamed for it']}}
+};
+const PG={
+ flourish:['Nothing here is easy, and finishing costs a lot','Made something real, in front of people who chose to come'],
+ plateau :['Ran out of depth, or of runway, or of somebody asking','Was in the room, every week, for four years'],
+ lost    :['Four years, and no one field ever became theirs','Attended. That is the whole of it'],
+ blocked :['Wanted a door that a structural decision had closed','Found out what they wanted, which is not nothing']
+};
+PG.bored=['Given, repeatedly, what they had already mastered elsewhere','Kept their real development going outside the school day'];
+
+/* ---------- render ---------- */
+let CUR='ladder';
+function card(k){
+  const S=sim(k,CUR), M=MODELS[CUR];
+  const s1=V[k.id].s1[M.sample?'sample':'choose'];
+  const s4=(V[k.id].s4[S.out])||V[k.id].s4.plateau;
+  const rows=[['Sees',0],['Says',1],['Does',2],['Feels',3]];
+  const pg=PG[S.out]||PG.plateau;
+  return `<article class="kid">
+   <header><h3>${k.n}</h3><span class="who">${k.who}</span>
+    <span class="pill ${S.out}">${{flourish:'flourishes',plateau:'plateaus',bored:'bored',lost:'lost',blocked:'blocked'}[S.out]}</span></header>
+   <div class="body">
+    <div class="tl">${lifeline(k,S)}</div>
+    <div class="sum">
+     <span><b>${S.domsTouched}</b> of 5 fields met</span>
+     <span>deepest tier <b>${TIER[S.maxT]}</b></span>
+     <span><b>${S.sessions}</b> sessions</span>
+     <span>${S.made?'made something for an audience':'made nothing anyone came to see'}</span>
+     ${S.dropped?`<span style="color:var(--bad)">dropped out${S.returned?', came back':', never came back'}</span>`:''}
+     ${S.note?`<span style="color:var(--warn)">${S.note}</span>`:''}
+    </div>
+    <table class="emp">
+     <thead><tr><th></th><th>At Sec 1</th><th>At Sec 4</th></tr></thead>
+     <tbody>
+      ${rows.map(([lab,i])=>`<tr><th scope="row">${lab}</th><td>${s1[i]}</td><td>${s4[i]}</td></tr>`).join('')}
+      <tr class="pg"><th scope="row">Pain</th><td colspan="2" class="pain">${pg[0]}</td></tr>
+      <tr class="pg"><th scope="row">Gain</th><td colspan="2" class="gain">${pg[1]}</td></tr>
+     </tbody></table>
+   </div></article>`;
+}
+function render(){
+  const M=MODELS[CUR];
+  const sims=KIDS.map(k=>({k,S:sim(k,CUR)}));
+  const served=sims.filter(x=>x.S.out==='flourish').length;
+  const failed=sims.filter(x=>['lost','blocked','bored'].includes(x.S.out));
+  const flag=(on,t)=>`<span class="rule ${on?'y':'n'}"><b>${on?'yes':'no'}</b> &middot; ${t}</span>`;
+
+  $('#view').innerHTML=`
+  <section>
+   <div class="mbox"><h2>${M.n}</h2><p>${M.d}</p>
+    <div class="rules">
+     ${flag(M.sample,'Sec 1 meets every field')}
+     ${flag(M.entry==='invite','entry by invitation, not application')}
+     ${flag(M.reentry,'a Beattyian who drops out can return')}
+     ${flag(M.prior,'depth already built in a CCA is recognised')}
+     ${flag(!M.houseGate,'any field open to any house')}
+     <span class="rule">commitment: <b>${{progressive:'narrows each year',sec1:'fixed at Sec 1',none:'never asked'}[M.commit]}</b></span>
+    </div></div>
+
+   <div class="verdict">
+    <div class="${served>=3?'g':(served?'':'r')}"><b>${served} of 5</b><span>reach a deep tier and make something an audience comes to see</span></div>
+    <div class="${failed.length?'r':'g'}"><b>${failed.length}</b><span>${failed.length?'failed by this model: '+failed.map(x=>x.k.n).join(', '):'nobody is failed outright'}</span></div>
+    <div><b>${Math.round(sims.reduce((s,x)=>s+x.S.domsTouched,0)/5*10)/10}</b><span>fields met, on average, out of five</span></div>
+    <div><b>${sims.filter(x=>x.S.tapped).length}</b><span>were ever invited in by an adult</span></div>
+   </div>
+
+   <div class="legend">
+    ${PATH.map(d=>`<span><i style="background:${DOM[d].h}"></i>${DOM[d].n}</span>`).join('')}
+    <span><i style="background:${DOM.sport.h}"></i>Sport &amp; Health, the universal spine</span>
+   </div>
+   <div class="legend">
+    <span style="color:var(--navy)">&#9650; invited by a tutor</span>
+    <span style="color:#8a6508">&#9733; made something</span>
+    <span style="color:var(--ok)">&#9673; a real audience came</span>
+    <span style="color:var(--bad)">&#10005; dropped out</span>
+    <span style="color:var(--ok)">&#9650; came back</span>
+    <span style="color:var(--g4)">bar height = Explore, Build, Pursue &middot; gold edge = already deep, so making their own</span>
+   </div>
+  </section>
+
+  <section>${KIDS.map(card).join('')}</section>
+
+  <section>
+   <h2>All four models, all five Beattyians</h2>
+   <div class="scroll"><table class="mx">
+    <thead><tr><th>Model</th>${KIDS.map(k=>`<th style="text-align:center">${k.n}</th>`).join('')}<th style="text-align:center">Served</th></tr></thead>
+    <tbody>${Object.entries(MODELS).map(([mk,m])=>{
+      const r=KIDS.map(k=>sim(k,mk));
+      const ok=r.filter(s=>s.out==='flourish').length;
+      return `<tr${mk===CUR?' style="background:#fffdf0"':''}><th scope="row">${m.n}</th>`+
+        r.map(s=>`<td class="c cell-${s.out}">${s.out}</td>`).join('')+
+        `<td class="c">${ok} of 5</td></tr>`;}).join('')}
+    </tbody></table></div>
+   <p class="note">Read the columns, not the rows. A model that serves Priya and fails Danish is not a
+    better model than one that serves both slightly less well &mdash; Priya was always going to be fine.</p>
+   <div class="box warn"><h3>Two things this matrix says that are easy to miss</h3>
+    <ul style="margin-bottom:0">
+     <li><b>Choosing at Sec 1 works, for the students who need it least.</b> Priya is the only Beattyian
+      it serves, and she is the one with the most agency and the clearest sense of herself. Every model
+      flatters the confident. The question is what happens to the other four.</li>
+     <li><b>Houses owning the pathways is a lottery, not a design.</b> Arif flourishes under it &mdash;
+      but only because the allocation happened to put him in the house that stewards the field he would
+      later discover he loved. Mei and Danish were sorted into the wrong one and never recover. Nothing
+      in the model earned Arif's outcome.</li>
+    </ul></div>
+  </section>
+
+  <section>
+   <div class="box nav"><h3>What this says about Jing, and it is the important part</h3>
+    <p>Jing has no strong field. His highest affinity is 0.42 against an invitation threshold of 0.65,
+     so <b>no talent model reaches him</b>, and any model that claims to is lying. Under
+     <i>sample, then commit</i> he still gets four years of meeting things, one adult who knows him,
+     and a workshop he keeps drifting back to. That is not a talent outcome. It is the universal tier
+     doing its job, and it is the honest ceiling for perhaps a third of any cohort.</p>
+    <p style="margin:0">This is why <b>Sport &amp; Health sits outside the five pathway domains</b> as a
+     universal spine everybody is in. Talent development is for the ones who find a field. School is
+     for everybody.</p></div>
+
+   <div class="box nav"><h3>So are houses needed?</h3>
+    <p>Not by this engine. The five domains, the tiers and the ladder all run without them. Houses do
+     three jobs the ladder cannot do for itself:</p>
+    <ul>
+     <li><b>Somebody notices.</b> Every triangle on these charts is a tutor deciding to invite someone.
+      A tutor who has held twenty-seven Beattyians for four years makes that call; a subject teacher
+      who has them for one year, in one field, mostly cannot.</li>
+     <li><b>Somebody watches.</b> Renzulli's fourth test of real work is an audience who attend
+      voluntarily. A house is 216 people who already know the presenter and already meet weekly.</li>
+     <li><b>Somebody runs it.</b> A standing unit takes work without a new committee being formed. The
+      calendar shows 42 programmes invented a year and 38 percent surviving; that is the cost of having
+      nowhere to put things.</li>
+    </ul>
+    <p style="margin:0">Houses are not the engine. They are the eyes, the crowd and the hands.</p></div>
+
+   <div class="box warn"><h3>What is measured, what is assumed</h3>
+    <ul style="margin-bottom:0">
+     <li><b>Measured</b>, from the school's 2024&ndash;25 calendar: 1,080 Beattyians in five houses of 216,
+      three cycles of ten sessions a year with 24 of 30 block days surviving, tutor groups of 27, ten duty
+      teachers against the cohort, 42 programmes invented a year at 38 percent survival, and 16 selective
+      programmes that currently recruit by application. Every one of those is traceable in
+      <a href="index.html">the dashboard</a>.</li>
+     <li><b>Personas.</b> The five are invented, deliberately, to sit at the corners of the cohort. They
+      are not students and no student should be recognised in them.</li>
+     <li><b>The engine.</b> Affinity scores, the 0.65 invitation threshold, drop-out risk and the reveal
+      year are assumptions. They are visible in the source and every model runs on the same ones, so the
+      comparison between models is fair even where the absolute picture is not.</li>
+     <li><b>Placeholders awaiting your answer.</b> Language Arts and Aesthetics are split here into two
+      domains because they have opposite onsets and opposite existing provision; the performance calendar
+      is not yet anchored; VIA is modelled as service-learning rather than episodic service; and the
+      catalogue is not yet seeded from the 51 programmes that survived both years.</li>
+    </ul></div>
+  </section>`;
+  $$('.bar button.m').forEach(b=>b.classList.toggle('on',b.dataset.m===CUR));
+}
+$$('.bar button.m').forEach(b=>b.onclick=()=>{CUR=b.dataset.m;render();
+  window.scrollTo({top:0,behavior:'smooth'});});
+render();
+</script>
+</body></html>
