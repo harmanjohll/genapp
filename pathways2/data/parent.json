@@ -54,5 +54,69 @@
       ]
     }
   ],
-  "status": "confirmed"
+  "status": "confirmed",
+  "windows": [
+    {
+      "label": "Subject combination exercise",
+      "when": "Mid Sec 2, around May to July",
+      "what": "The school runs briefings and the form goes home. Levels can still move after it, every year.",
+      "check": "The school's own circular"
+    },
+    {
+      "label": "Direct admission, DSA",
+      "when": "May to July of Sec 4, for JC",
+      "what": "Talent based entry to a JC before results, on CCA and portfolio evidence. The Sec 1 version is behind you; this one is not.",
+      "check": "MOE DSA JC page"
+    },
+    {
+      "label": "Early Admissions, EAE",
+      "when": "About June of Sec 4, before results",
+      "what": "Poly and ITE admission on interest and evidence, before the exam. The folder it needs is built in Sec 3.",
+      "check": "Polytechnic EAE and ITE EAE pages"
+    },
+    {
+      "label": "Open houses",
+      "when": "November to January, mostly",
+      "what": "JC, MI, poly and ITE campuses open around results season. Going to one changes more minds than any brochure.",
+      "check": "Each campus's page"
+    },
+    {
+      "label": "The main posting round",
+      "when": "Days after results, January",
+      "what": "One PSE portal from 2028 for JC, MI, poly, PFP and ITE, replacing the JAE you remember.",
+      "check": "MOE posting matters page"
+    }
+  ],
+  "guest": {
+    "head": "Play your own school years",
+    "body": "The game your child plays, but as you at fourteen: your old stream, translated into today's levels. Ten minutes, on this phone, and nothing your child saved here is read or touched.",
+    "q": "Which stream were you in?",
+    "streams": [
+      {
+        "id": "express",
+        "label": "Express",
+        "level": "G3"
+      },
+      {
+        "id": "na",
+        "label": "Normal Academic",
+        "level": "G2"
+      },
+      {
+        "id": "nt",
+        "label": "Normal Technical",
+        "level": "G1"
+      },
+      {
+        "id": "other",
+        "label": "Something else",
+        "level": "G2"
+      }
+    ],
+    "opens": "That combination, in today's system, keeps {n} of the {total} destinations reachable.",
+    "cta": "Play it from Sec 3",
+    "note": "Opens as a guest. The game saves nothing to this phone, and handing it back leaves everything exactly as it was."
+  },
+  "windowsHead": "The windows, roughly when they open",
+  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise."
 }

@@ -7,12 +7,12 @@
 // which is where the learning actually happens. The evidence on career tools is
 // consistent that a screen on its own is the weakest form of the intervention.
 
-import { esc, onAction } from '../components/dom.js?v=2.12.0';
-import { evidenceLink } from './mode-evidence.js?v=2.12.0';
-import { icon } from '../components/icons.js?v=2.12.0';
-import { cue } from '../sound.js?v=2.12.0';
-import { getState, setOffer } from '../state.js?v=2.12.0';
-import { readClassCode } from '../engine/reach.js?v=2.12.0';
+import { esc, onAction } from '../components/dom.js?v=2.13.0';
+import { evidenceLink } from './mode-evidence.js?v=2.13.0';
+import { icon } from '../components/icons.js?v=2.13.0';
+import { cue } from '../sound.js?v=2.13.0';
+import { getState, setOffer } from '../state.js?v=2.13.0';
+import { readClassCode } from '../engine/reach.js?v=2.13.0';
 
 const KIND_NAME = { R: 'Doers', I: 'Thinkers', A: 'Creators', S: 'Helpers', E: 'Persuaders', C: 'Organisers', '-': 'Not sure yet' };
 

@@ -110,23 +110,27 @@
    Derived from the live theme's own paper with color-mix, so the decade
    tint follows light or dark automatically and can never fight a manual
    toggle. The mix partner drifts from warm sand toward cool slate as the
-   decades pass; a few percent is a whisper on purpose. */
+   decades pass. The first mixes shipped at 4 to 7 percent and a persona pass
+   with real eyes measured the honest thing: nobody saw them. Doubled, the
+   drift is still ambient (no text, no control, no semantic hue moves) but a
+   student who plays 16 and then 41 can feel the seasons change, which was
+   the whole point of having eras. */
 @supports (background: color-mix(in srgb, red 50%, blue)) {
   body[data-era="postsec"] {
-    --paper: color-mix(in srgb, var(--paper-base) 96%, #7A8CA3 4%);
-    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 96%, #7A8CA3 4%);
+    --paper: color-mix(in srgb, var(--paper-base) 92%, #7A8CA3 8%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 92%, #7A8CA3 8%);
   }
   body[data-era="twenties"] {
-    --paper: color-mix(in srgb, var(--paper-base) 95%, #6E8797 5%);
-    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 95%, #6E8797 5%);
+    --paper: color-mix(in srgb, var(--paper-base) 90%, #6E8797 10%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 90%, #6E8797 10%);
   }
   body[data-era="thirties"] {
-    --paper: color-mix(in srgb, var(--paper-base) 94%, #66788E 6%);
-    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 94%, #66788E 6%);
+    --paper: color-mix(in srgb, var(--paper-base) 87%, #66788E 13%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 87%, #66788E 13%);
   }
   body[data-era="later"] {
-    --paper: color-mix(in srgb, var(--paper-base) 93%, #5E6B7A 7%);
-    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 93%, #5E6B7A 7%);
+    --paper: color-mix(in srgb, var(--paper-base) 84%, #5E6B7A 16%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 84%, #5E6B7A 16%);
   }
 }
 

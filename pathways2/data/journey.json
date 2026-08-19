@@ -209,7 +209,8 @@
   "side_paying",
   "at_mi",
   "at_pfp",
-  "hn_direct"
+  "hn_direct",
+  "thing_waited"
  ],
  "reflection": {
   "prompt": "Name one thing I would do differently from here.",
@@ -220,6 +221,60 @@
    "Keep one thing for myself"
   ],
   "hint": "Nobody marks this. It reappears when I compare two stories, in my own words."
+ },
+ "companions": {
+  "names": [
+   "Iman",
+   "Wei Jun",
+   "Priya",
+   "Faizal",
+   "Xin Yi",
+   "Marcus",
+   "Nadia",
+   "Kai"
+  ],
+  "roads": {
+   "academic": "the JC road",
+   "applied": "the poly road",
+   "hands": "the ITE road",
+   "arts": "the arts road"
+  },
+  "school": {
+   "s_sec1": [
+    "{name} from primary school is in the next class. Same recess, new timetables.",
+    "{name} sits one row over, drawing rockets on the desk in pencil."
+   ],
+   "s_sec2": [
+    "{name} filled the combination form in one sitting. Mine has two eraser holes in it.",
+    "{name} keeps asking which subjects I am keeping, as if I know."
+   ],
+   "s_sec3": [
+    "New class this year. {name} is across the corridor now, waving through the window.",
+    "{name} joined robotics and will not stop talking about it at recess."
+   ],
+   "s_sec4": [
+    "{name} has a countdown to the SEC on their phone. I refuse to look at it.",
+    "Study group at the library with {name}, Saturdays. Half study, half snacks."
+   ]
+  },
+  "fork": [
+   "{name} is in the hall too, holding their slip like it might go off.",
+   "{name} texts from the back of the hall: whatever this says, prata after."
+  ],
+  "after": {
+   "academic": "{name} sends a photo from JC orientation: new badge, tired grin, homework already.",
+   "applied": "{name} posts from poly orientation: lanyard, campus map, a module with a code in it.",
+   "hands": "{name} sends a photo from ITE: safety boots, first day, grinning at the workshop door.",
+   "arts": "{name} sends a shot of their studio desk: paint, deadlines, completely at home."
+  },
+  "later": [
+   "Ran into {name} at the interchange. Different uniform, same laugh, both of us busier.",
+   "{name} texts out of nowhere: how is it going on my side? Long reply, both ways."
+  ],
+  "ending": {
+   "same": "{name} took {road} too. Different chapters, same corridor, still friends.",
+   "different": "{name} took {road} and it suits them. Two roads, both of them fine."
+  }
  },
  "stages": [
   {
@@ -378,6 +433,11 @@
      "outcome": "Concert, kids day, inter school heats. My name gets read over a PA system."
     },
     {
+     "cost": 1,
+     "label": "Let this year be ordinary",
+     "outcome": "School, home, the same bus. Nothing to report and nothing wrong. Some years are for getting through."
+    },
+    {
      "label": "Coach a classmate who is falling behind",
      "cost": 1,
      "disp": {
@@ -466,6 +526,11 @@
      "sets": "led_cca",
      "outcome": "Logistics IC for the CCA bazaar. Everything that can topple does, and I catch most of it.",
      "missed": "Someone else carried the bazaar clipboard."
+    },
+    {
+     "cost": 1,
+     "label": "Keep my head down this year",
+     "outcome": "Homework done, series finished, two centimetres grown. The year passes and I am still here."
     },
     {
      "label": "Apply for the immersion trip",
@@ -563,6 +628,11 @@
      "missed": "Nobody aimed the revision, so the weak paper stayed weak."
     },
     {
+     "cost": 1,
+     "label": "Just get to November",
+     "outcome": "No project, no committee, only the papers at my own pace. November comes either way."
+    },
+    {
      "label": "Keep one thing going that is not the exam",
      "cost": 1,
      "needsSubject": [
@@ -590,7 +660,11 @@
       "network": 1
      },
      "sets": "helped_someone",
-     "outcome": "I cook Tuesdays and quiz my sister for her PSLE. The house passes its exams together."
+     "outcome": "I cook Tuesdays and quiz my sister for her PSLE. The house passes its exams together.",
+     "outcomeIf": {
+      "home:steady": "I cook Tuesdays and quiz my sister for her PSLE. Home worries less when it can see me holding steady.",
+      "home:unsaid": "I cook Tuesdays and quiz my sister. We still have not talked about next year, but the kitchen is easier."
+     }
     },
     {
      "label": "Submit my Early Admissions application",
@@ -604,6 +678,27 @@
      "sets": "eae_ready"
     }
    ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_eve",
+   "age": 17,
+   "title": "Results eve",
+   "format": "reflect",
+   "keeps": "hope",
+   "situation": "The night before the slip. Phone on charge, uniform ironed for the last time, the group chat pretending to be calm.",
+   "reflection": {
+    "prompt": "Before I see the slip: what do I hope it says?",
+    "options": [
+     "Enough for the course I keep thinking about",
+     "Proof the hard year was worth it",
+     "Nothing that shuts a door",
+     "Honestly, I just want it over"
+    ],
+    "hint": "Written the night before, kept for the end. Tomorrow is a fork, not a verdict."
+   },
    "at": [
     "sec"
    ]
@@ -917,6 +1012,11 @@
      "outcome": "A real client, a real deadline, eighty real dollars. School suddenly has a point."
     },
     {
+     "cost": 1,
+     "label": "Coast on the timetable",
+     "outcome": "Lectures, canteen, home. My GPA is fine and my evenings are mine. Not every semester needs a story."
+    },
+    {
      "label": "Protect my grades and my health",
      "cost": 1,
      "disp": {
@@ -1178,7 +1278,11 @@
      "sets": "nitec_exit",
      "opens": "d_trade",
      "outcome": "I take the Nitec and the job. The door back to Year 3 stays open, and I know where it is.",
-     "missed": "The workshop kept my seat warm anyway."
+     "missed": "The workshop kept my seat warm anyway.",
+     "outcomeIf": {
+      "home:steady": "I take the Nitec and the job. Home calls it sensible. The Year 3 door stays in my own pocket.",
+      "home:theirs": "I take the Nitec and the job, which was never their plan. The first payslip does some of the talking."
+     }
     },
     {
      "label": "Work part time and keep studying",
@@ -1721,7 +1825,11 @@
      "outcome": "A budget I keep, three months put aside, CPF understood. It buys me the freedom to say no later.",
      "missed": "The pay came and went without a plan.",
      "capacity": 1,
-     "grew": "got my money in order"
+     "grew": "got my money in order",
+     "outcomeIf": {
+      "home:split": "A budget I keep, three months put aside. The two of them argue less about money that is visibly handled.",
+      "home:steady": "A budget I keep, three months put aside, CPF understood. Home finally believes this road pays."
+     }
     },
     {
      "label": "Keep one thing that pays on the side",
@@ -1822,7 +1930,11 @@
       "portfolio": 1
      },
      "sets": "built_side",
-     "outcome": "Registered on ACRA in a lunch break. One client, then two. I keep the day job while it breathes."
+     "outcome": "Registered on ACRA in a lunch break. One client, then two. I keep the day job while it breathes.",
+     "outcomeIf": {
+      "home:theirs": "Registered on ACRA in a lunch break. Not the road they picked, and at twenty seven that is my call.",
+      "home:unsaid": "Registered on ACRA in a lunch break. I tell home over dinner, out loud this time. One client, then two."
+     }
     },
     {
      "label": "Choose the people years",

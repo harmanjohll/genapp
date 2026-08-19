@@ -194,6 +194,16 @@ export function createRun(startAge, label, want, plan) {
     ledger: { skills: 0, network: 0, portfolio: 0 },
     doors: [],
     flags: [],
+    // Where each flag came from: the first act that set it, with the age it was
+    // set at. This is what lets a payoff line say which year it goes back to
+    // instead of implying causation and hoping the player kept the receipts.
+    from: {},
+    // What home wants, named once at the start or not at all. One of same,
+    // steady, theirs, unsaid, split, or null when the student skipped it. Read
+    // only by outcome variants; nothing is gated on it and nothing scores it.
+    home: null,
+    // What the student hoped the results slip would say, written on results eve.
+    hope: null,
     disp: { curiosity: 0, persistence: 0, flexibility: 0, optimism: 0, risk: 0 },
     // Capacity is the one thing in this game that compounds. Some choices are
     // not about this year at all: learning to run your own week costs two of
@@ -400,7 +410,7 @@ export function playAsk(run, move, age, moves, stage) {
   if (!Array.isArray(run.hand) || !run.hand.includes(move.id)) return false;
   // Cannot play what is no longer true, even if it is still sitting in the hand.
   if (!heldAsks(run, moves, age, stage).some((m) => m.id === move.id)) return false;
-  grant(run, move);
+  grant(run, move, { what: move.label, age });
   if (!run.movesMade) run.movesMade = [];
   run.movesMade.push({ id: move.id, age });
   run.hand = run.hand.filter((id) => id !== move.id);
@@ -506,8 +516,10 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
   // map can mark a door at the moment it opened instead of only listing it.
   const doorsBefore = run.doors.slice();
   const outcomes = [];
+  const via = [];
+  const receipts = [];
   chosen.forEach((choice) => {
-    grant(run, choice);
+    receipts.push(grant(run, choice, { what: choice.label, age }));
     // Paid for this year, collected from next year onward. Capped at two so a
     // late run cannot turn into an eight point year.
     if (choice.capacity && run.capacity < CAPACITY_CAP) {
@@ -521,7 +533,9 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
     const raised = choice.raise
       ? applyRaise(run, { ...choice.raise, _age: age }, meta || {})
       : null;
-    outcomes.push(resolveOutcome(choice, run, raised));
+    const r = resolveOutcome(choice, run, raised);
+    outcomes.push(r.text);
+    via.push(r.via && run.from && run.from[r.via] ? { flag: r.via, ...run.from[r.via] } : null);
   });
 
   run.steps.push({
@@ -530,6 +544,8 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
     title: stage.chapter || stage.title,
     format: stage.format || 'turn',
     choices: chosen.map((c) => c.label),
+    outcomes,
+    via,
     outcome: outcomes.join(' '),
     missed: missedLine(stage, run, moves, indices, age, pool),
     opened: run.doors.filter((d) => !doorsBefore.includes(d)),
@@ -538,17 +554,63 @@ export function applyChoices(run, j, stage, indices, cards, meta, moves) {
 
   run.asksThisYear = 0;
   const card = pickChance(run, stage, cards, age);
-  if (card) run.pending = { cardId: card.id };
-  else { run.pending = null; run.stepIndex += 1; }
+  if (card) {
+    run.pending = { cardId: card.id };
+    if (card.type === 'interrupt') interruptYear(run, card, chosen, receipts, age);
+  } else { run.pending = null; run.stepIndex += 1; }
   return run;
+}
+
+/**
+ * A mid-year interruption. Life does not ask first: the moment the card
+ * arrives, one of the year's plain plans is put on hold, before the student
+ * answers anything. The card's responses are about how the year is carried,
+ * not whether the thing pauses, because that is how an interruption works.
+ *
+ * THE RULES THAT KEEP IT HONEST. Only a plain plan is ever paused: a choice
+ * that opened a door, set a flag, raised a subject, grew capacity or was a
+ * commitment from the move deck is untouchable, so nothing that compounds can
+ * be lost and doors stay append only. What the paused plan granted this year
+ * is handed back by its own receipt, exactly, never more. Its outcome line
+ * now says it waited, the flag thing_waited is set with the paused plan as
+ * provenance, and a later card pays the wait off by name. So an interruption
+ * changes the texture of a year and never the size of a life, which is the
+ * same covenant National Service signs. If the year holds nothing pausable,
+ * the card plays as an ordinary encounter and nothing here happens.
+ */
+function interruptYear(run, card, chosen, receipts, age) {
+  const step = run.steps[run.steps.length - 1];
+  if (!step || step.waited) return false;
+  const droppable = chosen
+    .map((c, i) => ({ c, i }))
+    .filter(({ c }) => (c.gain || c.disp)
+      && !c.opens && !c.sets && !c.raise && !c.capacity && !c.isMove);
+  if (!droppable.length) return false;
+  const { c, i } = droppable[lcg(run.seed + age * 53) % droppable.length];
+  const r = receipts[i] || { gain: {}, disp: {} };
+  TRACKS.forEach((k) => { if (r.gain[k]) run.ledger[k] = Math.max(0, run.ledger[k] - r.gain[k]); });
+  DISP_KEYS.forEach((k) => { if (r.disp[k]) run.disp[k] = Math.max(0, run.disp[k] - r.disp[k]); });
+  const line = String(card.waited || '{what} waited.').replace('{what}', c.label);
+  if (Array.isArray(step.outcomes)) {
+    step.outcomes[i] = line;
+    step.outcome = step.outcomes.join(' ');
+  }
+  step.waited = { what: c.label, text: line };
+  grant(run, { sets: 'thing_waited' }, { what: c.label, age });
+  return true;
 }
 
 export function applyReflection(run, j, stage, text) {
   const age = ageAt(j, run, run.stepIndex);
-  run.reflection = String(text || '').slice(0, 140);
+  const kept = String(text || '').slice(0, 140);
+  // Where the words land. The default is run.reflection, the run's last word,
+  // written at 38. A stage may name another keep instead: results eve keeps
+  // `hope`, so what a sixteen year old hoped the slip would say survives to the
+  // ending without overwriting what thirty eight wants to say.
+  run[stage.keeps || 'reflection'] = kept;
   run.steps.push({
     stageId: stage.id, age, title: stage.chapter || stage.title, format: 'reflect',
-    choices: [], outcome: run.reflection ? `You wrote: ${run.reflection}` : 'You sat with it a while.',
+    choices: [], outcome: kept ? `I wrote: ${kept}` : 'I sat with it a while.',
     chance: null,
   });
   run.pending = null;
@@ -574,11 +636,11 @@ export function respondToChance(run, card, responseIndex, helped) {
   const doorsBefore = run.doors.slice();
 
   if (met) {
-    grant(run, r);
+    grant(run, r, { what: card.title, age: step ? step.age : null });
   } else {
     const d = card.asks && card.asks.disposition;
     if (d) run.disp[d] = (run.disp[d] || 0) + 1;
-    if (r.sets && !run.flags.includes(r.sets)) run.flags.push(r.sets);
+    if (r.sets) grant(run, { sets: r.sets }, { what: card.title, age: step ? step.age : null });
   }
 
   if (step) {
@@ -600,47 +662,86 @@ export function askMet(run, card) {
   return (run.disp[card.asks.disposition] || 0) >= (card.asks.min || 1);
 }
 
-function grant(run, thing) {
+/**
+ * Apply one thing's effects to the run. Returns a receipt of exactly what
+ * landed, because an interruption may later need to hand this year's gains
+ * back, and the damped arithmetic means only the receipt knows the real sum.
+ *
+ * `prov` is provenance: the act that is doing the granting, recorded against
+ * any flag set here, first setter only. A later payoff line reads it to say
+ * "that goes back to fifteen" and name the actual act, so causation is shown
+ * instead of implied. First setter only, because the payoff must credit the
+ * act that did it, not the latest one to repeat it.
+ */
+function grant(run, thing, prov) {
+  const receipt = { gain: {}, disp: {} };
   const focus = (thing.cost || 1) >= POINTS_PER_TURN ? 1 : 0;
   if (thing.gain) {
     TRACKS.forEach((k) => {
       const raw = thing.gain[k] ? thing.gain[k] + focus : 0;
       if (typeof raw !== 'number' || raw <= 0) return;
       const cur = run.ledger[k];
-      run.ledger[k] = Math.min(TRACK_CAP, cur + Math.max(1, Math.round(raw * (TRACK_CAP - cur) / TRACK_CAP)));
+      const next = Math.min(TRACK_CAP, cur + Math.max(1, Math.round(raw * (TRACK_CAP - cur) / TRACK_CAP)));
+      if (next > cur) receipt.gain[k] = next - cur;
+      run.ledger[k] = next;
     });
   }
   if (thing.disp) {
     DISP_KEYS.forEach((k) => {
-      if (typeof thing.disp[k] === 'number') run.disp[k] += thing.disp[k];
+      if (typeof thing.disp[k] === 'number') {
+        run.disp[k] += thing.disp[k];
+        receipt.disp[k] = thing.disp[k];
+      }
     });
   }
   const door = thing.opens;
   if (door && !run.doors.includes(door)) run.doors.push(door);
+  const put = (flag) => {
+    if (!run.flags.includes(flag)) {
+      run.flags.push(flag);
+      if (prov && prov.what) {
+        if (!run.from) run.from = {};
+        if (!run.from[flag]) run.from[flag] = { what: prov.what, age: prov.age };
+      }
+    }
+  };
   const sets = thing.sets;
   if (sets) {
-    if (typeof sets === 'string') { if (!run.flags.includes(sets)) run.flags.push(sets); }
+    if (typeof sets === 'string') put(sets);
     else {
       if (sets.path) { run.path = sets.path; run.pathLabel = sets.label || sets.path; }
-      if (sets.flag && !run.flags.includes(sets.flag)) run.flags.push(sets.flag);
+      if (sets.flag) put(sets.flag);
     }
   }
+  return receipt;
 }
 
+/**
+ * The outcome text this choice resolves to for this run, and what carried it
+ * there. `via` is the flag whose earlier setting selected the variant, or null
+ * for every other route, so the screen can name the year the payoff goes back
+ * to. `home:` variants read the stance the student named at the start; a run
+ * that skipped the question simply never matches one, which is the whole
+ * design: the question is optional and so is everything it colours.
+ */
 function resolveOutcome(choice, run, raised) {
   if (raised && choice.outcomeRaised) {
-    return String(choice.outcomeRaised)
-      .replace('{subject}', raised.name)
-      .replace('{level}', raised.to);
+    return {
+      text: String(choice.outcomeRaised)
+        .replace('{subject}', raised.name)
+        .replace('{level}', raised.to),
+      via: null,
+    };
   }
   const v = choice.outcomeIf;
   if (v) {
-    if (run.ns === true && v['ns:yes']) return v['ns:yes'];
-    if (run.ns === false && v['ns:no']) return v['ns:no'];
-    if (run.path && v[`path:${run.path}`]) return v[`path:${run.path}`];
-    for (const f of run.flags) if (v[`flag:${f}`]) return v[`flag:${f}`];
+    if (run.ns === true && v['ns:yes']) return { text: v['ns:yes'], via: null };
+    if (run.ns === false && v['ns:no']) return { text: v['ns:no'], via: null };
+    if (run.path && v[`path:${run.path}`]) return { text: v[`path:${run.path}`], via: null };
+    if (run.home && v[`home:${run.home}`]) return { text: v[`home:${run.home}`], via: null };
+    for (const f of run.flags) if (v[`flag:${f}`]) return { text: v[`flag:${f}`], via: f };
   }
-  return choice.outcome || '';
+  return { text: choice.outcome || '', via: null };
 }
 
 // ---------------------------------------------------------------------------
@@ -686,7 +787,14 @@ function pickChance(run, stage, cards, age) {
   // students were dealt different NUMBERS of cards, and since cards open doors,
   // luck decided how big a life got. The rhythm is the same for everyone; which
   // cards arrive inside it is what varies.
-  if (run.stepIndex % 5 === 3) return null;
+  //
+  // Counted over the turns a card could actually land in. The service question
+  // and the reflect nights deal nothing, so letting them consume a beat meant
+  // inserting one of them shifted every quiet year after it, and the NS parity
+  // the sweep holds moved with the furniture. The current turn's step is
+  // already pushed when this runs, hence the minus one.
+  const dealt = run.steps.filter((s) => s.format !== 'ask-ns' && s.format !== 'reflect').length;
+  if ((dealt - 1) % 5 === 3) return null;
   const pool = eligibleCards(cards, run, age, stage);
   if (!pool.length) return null;
   return pool[weightedIndex(pool.map((c) => cardWeight(c, run)), run.seed + run.stepIndex * 7919)];
@@ -774,12 +882,17 @@ export function finish(run, data) {
   run.topDisposition = strongestDisp(run);
   run.topTrack = strongestTrack(run);
   run.ending = resolveEnding(data.journey.endingFrames, run) || null;
+  const index = byId(data.journey);
   const scored = run.steps.map((s, i) => {
     let score = 0;
     if (s.chance && s.chance.met === false) score += 3;
     if (s.chance && String(s.chance.id || '').startsWith('cb_')) score += 4;
     if (s.format === 'fork') score += 2;
-    if (s.format === 'reflect' && run.reflection) score += 3;
+    if (s.format === 'reflect') {
+      const st = index.get(s.stageId);
+      if (run[(st && st.keeps) || 'reflection']) score += 3;
+    }
+    if (s.waited) score += 2;
     if (i === run.steps.length - 1) score += 1;
     return { s, score };
   }).sort((a, b) => b.score - a.score);
@@ -837,6 +950,88 @@ function sameKeys(x, y) {
 }
 
 // ---------------------------------------------------------------------------
+// The companion: one classmate, named by the seed, met again down the years.
+//
+// WHY ONE GHOST AND NOT A CAST. Longitudinal studies of school friendships and
+// every memoir of adolescence agree on the texture: a life is measured against
+// a small number of recurring people, not a parade. One classmate who turns up
+// in Sec 1, again at the fork, once after it on a different road, and once at
+// the end is what makes the years feel continuous instead of episodic. The
+// lines are strictly texture: the companion never grants, never gates, never
+// ranks, and the sweep holds every line to that. Their road is seeded and
+// biased away from the player's own, because a friend on the same road shows
+// nothing the player's story does not already show. Parallax is the point:
+// Gottfredson's circumscription runs on comparison with peers, and the honest
+// counter to it is a peer whose different road is going fine.
+
+export function companionName(j, run) {
+  const names = ((j.companions || {}).names) || [];
+  if (!names.length) return null;
+  return names[lcg(((run && run.seed) || 0) * 31 + 7) % names.length];
+}
+
+/** The road the companion takes, fixed once the player's own is. */
+export function companionRoad(j, run) {
+  const others = PATHS.filter((p) => p !== run.path);
+  const r = lcg(((run && run.seed) || 0) * 17 + 3);
+  if (run.path && r % 4 === 0) return run.path;
+  return others[r % others.length];
+}
+
+/**
+ * The companion's one line for this stage, or null when they do not appear.
+ * Deterministic from the run and its lived steps, so a repaint of the same
+ * turn always shows the same line and never a second sighting.
+ */
+export function companionLine(j, run, stage, age) {
+  const c = j.companions;
+  if (!c || !stage) return null;
+  const name = companionName(j, run);
+  if (!name) return null;
+  const fill = (s) => String(s).replace('{name}', name);
+  if (!stage.chapter && c.school && c.school[stage.id]) {
+    const pool = c.school[stage.id];
+    if (!pool.length) return null;
+    return fill(pool[lcg((run.seed || 0) + (stage.age || age || 0) * 13) % pool.length]);
+  }
+  if ((stage.format || 'turn') === 'fork' && !stage.chapter && Array.isArray(c.fork) && c.fork.length) {
+    return fill(c.fork[lcg((run.seed || 0) * 7 + 11) % c.fork.length]);
+  }
+  if (stage.chapter && (stage.format || 'turn') !== 'ask-ns') {
+    const index = byId(j);
+    const lived = (run.steps || []).filter((s) => {
+      const st = index.get(s.stageId);
+      return st && st.chapter && s.format !== 'ask-ns';
+    }).length;
+    // First chapter after the fork: the friend writes from their own road.
+    // Third: crossed paths again, older. Nothing in between, nothing after;
+    // scarcity is what makes a sighting land.
+    if (lived === 0 && c.after) {
+      const road = companionRoad(j, run);
+      const line = c.after[road];
+      return line ? fill(line) : null;
+    }
+    if (lived === 2 && Array.isArray(c.later) && c.later.length) {
+      return fill(c.later[lcg((run.seed || 0) * 13 + 5) % c.later.length]);
+    }
+  }
+  return null;
+}
+
+/** The companion at the end, one line: same road as mine, or a different one, and fine. */
+export function companionEnd(j, run) {
+  const c = j.companions;
+  if (!c || !c.ending) return null;
+  const name = companionName(j, run);
+  if (!name) return null;
+  const road = companionRoad(j, run);
+  const line = road === run.path ? c.ending.same : c.ending.different;
+  if (!line) return null;
+  const word = (c.roads || {})[road] || road;
+  return String(line).replace('{name}', name).replace('{road}', word);
+}
+
+// ---------------------------------------------------------------------------
 // The sweep. Run with ?dev=1. Everything v3 asserted, plus the v4 contracts:
 // NS parity, door keys with a doorless turn everywhere, no write-only flags,
 // no door granted nowhere or asked for nowhere, and an ending for every run.
@@ -867,8 +1062,22 @@ export function runJourneySweep(data) {
     if (!seenStages.has(s.id)) failures.push({ stage: s.id, why: 'chapter stage in no sequence' });
   });
 
+  // Which conditions resolveOutcome actually tests, as a whitelist.
+  const OUTCOME_IF_KEY = /^(ns:yes|ns:no|path:(academic|applied|hands|arts)|flag:[a-z0-9_]+|home:(same|steady|theirs|unsaid|split))$/;
+
   const paths = [null, ...PATHS];
   (j.stages || []).forEach((stage) => {
+    // A reflect stage that keeps its words anywhere other than the two named
+    // shelves would write to a field nothing reads. And a stage that keeps
+    // `hope` is results eve, whose prompt cannot be the one written for 38, so
+    // it must carry its own.
+    if (stage.keeps) {
+      if ((stage.format || 'turn') !== 'reflect') failures.push({ stage: stage.id, why: 'keeps on a stage that is not a reflect' });
+      if (stage.keeps !== 'hope') failures.push({ stage: stage.id, why: `keeps writes to unknown shelf ${stage.keeps}` });
+      if (!stage.reflection || !stage.reflection.prompt || (stage.reflection.options || []).length < 3) {
+        failures.push({ stage: stage.id, why: 'keeps stage without its own reflection prompt and options' });
+      }
+    }
     paths.forEach((path) => {
       const r = resolveStage(stage, path);
       const fmt = r.format || 'turn';
@@ -895,6 +1104,14 @@ export function runJourneySweep(data) {
         const flag = c.sets && (typeof c.sets === 'string' ? c.sets : c.sets.flag);
         if (flag && !flagIds.has(flag)) failures.push({ stage: stage.id, path, why: `unknown flag ${flag}` });
         if ((c.cost || 1) > POINTS_PER_TURN) failures.push({ stage: stage.id, path, why: `choice over budget: ${c.label}` });
+        // Every outcomeIf key must be a condition the resolver actually tests,
+        // or the variant is a line nobody can ever read. A typo like
+        // "flags:went_deep" or "home:stady" would ship silently otherwise.
+        Object.keys(c.outcomeIf || {}).forEach((k) => {
+          if (!OUTCOME_IF_KEY.test(k)) failures.push({ stage: stage.id, path, why: `outcomeIf key matches nothing: ${k}` });
+          const fm = k.match(/^flag:(.+)$/);
+          if (fm && !flagIds.has(fm[1])) failures.push({ stage: stage.id, path, why: `outcomeIf reads unknown flag ${fm[1]}` });
+        });
       });
       if (fmt === 'fork') {
         if (base.length < 2) failures.push({ stage: stage.id, path, why: 'fork with fewer than 2 choices' });
@@ -929,6 +1146,17 @@ export function runJourneySweep(data) {
     (c.subjects || []).forEach((id) => {
       if (!subjectIds.has(id)) failures.push({ card: c.id, why: `unknown subject tag ${id}` });
     });
+    // An interruption must be able to name the thing that waited, must not
+    // gate its responses on an ask (life does not check the footing first),
+    // and must exclude itself after one firing, because the callback that pays
+    // the wait off names the FIRST thing that waited and only that one.
+    if (c.type === 'interrupt') {
+      if (!c.waited || !String(c.waited).includes('{what}')) failures.push({ card: c.id, why: 'interrupt without a {what} in its waited line' });
+      if (c.asks) failures.push({ card: c.id, why: 'interrupt gates its responses on an ask' });
+      if (c.excludesFlag !== 'thing_waited') failures.push({ card: c.id, why: 'interrupt must carry excludesFlag thing_waited' });
+    } else if (c.waited) {
+      failures.push({ card: c.id, why: 'waited line on a card that is not an interrupt' });
+    }
   });
 
   // 3. No write-only flags: a move or choice that promises "this changes what
@@ -975,6 +1203,38 @@ export function runJourneySweep(data) {
     }
   });
   if (!askedDoors.size) failures.push({ why: 'no choice anywhere asks for a door: doors are stickers again' });
+
+  // 4b. The companion holds their covenant: enough names to feel personal, a
+  // line for every school year and every road, and not one line that ranks,
+  // addresses the reader, or forgets whose name it is carrying.
+  const comp = j.companions || {};
+  if ((comp.names || []).length < 6) failures.push({ why: `companions: ${(comp.names || []).length} names, fewer than 6` });
+  const compLines = [];
+  ['s_sec1', 's_sec2', 's_sec3', 's_sec4'].forEach((sid) => {
+    const pool = (comp.school || {})[sid] || [];
+    if (pool.length < 2) failures.push({ why: `companions: fewer than 2 lines for ${sid}` });
+    compLines.push(...pool);
+  });
+  if (!Array.isArray(comp.fork) || comp.fork.length < 2) failures.push({ why: 'companions: fewer than 2 fork lines' });
+  compLines.push(...(comp.fork || []));
+  PATHS.forEach((p) => {
+    if (!(comp.after || {})[p]) failures.push({ why: `companions: no after line for ${p}` });
+    else compLines.push(comp.after[p]);
+    if (!(comp.roads || {})[p]) failures.push({ why: `companions: no road word for ${p}` });
+  });
+  if (!Array.isArray(comp.later) || comp.later.length < 2) failures.push({ why: 'companions: fewer than 2 later lines' });
+  compLines.push(...(comp.later || []));
+  ['same', 'different'].forEach((k) => {
+    if (!(comp.ending || {})[k]) failures.push({ why: `companions: no ending ${k} line` });
+    else compLines.push(comp.ending[k]);
+  });
+  compLines.forEach((s) => {
+    const t = String(s);
+    if (!t.includes('{name}')) failures.push({ why: `companion line without {name}: ${t.slice(0, 40)}` });
+    if (t.split(/\s+/).filter(Boolean).length > 20) failures.push({ why: `companion line over 20 words: ${t.slice(0, 40)}` });
+    if (/\b(ahead of|behind|better than|smarter|top of|beat me)\b/i.test(t)) failures.push({ why: `companion line ranks people: ${t.slice(0, 40)}` });
+    if (/\b(he|she|his|hers)\b/i.test(t)) failures.push({ why: `companion line assumes a gender: ${t.slice(0, 40)}` });
+  });
 
   // 5. The pool can never starve, on any family, with or without NS.
   const MIN_POOL = 8;

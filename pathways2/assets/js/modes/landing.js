@@ -9,11 +9,11 @@
 // All eight get the identical treatment at the identical size, in data order.
 // No card is bigger, brighter or first for any reason except the alphabet.
 
-import { esc, onAction } from '../components/dom.js?v=2.12.0';
-import { icon } from '../components/icons.js?v=2.12.0';
-import { cue } from '../sound.js?v=2.12.0';
-import { getState, markLanding } from '../state.js?v=2.12.0';
-import { reach } from '../engine/reach.js?v=2.12.0';
+import { esc, onAction } from '../components/dom.js?v=2.13.0';
+import { icon } from '../components/icons.js?v=2.13.0';
+import { cue } from '../sound.js?v=2.13.0';
+import { getState, markLanding } from '../state.js?v=2.13.0';
+import { reach } from '../engine/reach.js?v=2.13.0';
 
 export function renderLanding(host, data, ctx, leave) {
   const L = data.copy.landing;
@@ -21,6 +21,17 @@ export function renderLanding(host, data, ctx, leave) {
   const total = ctx.destinations.length;
   const guessed = st.landingGuess;
   const revealed = guessed != null;
+
+  // A story mid flight turns the Play door into a Continue door. Same slot,
+  // because both lead to the same place: the journey resumes a live run on
+  // its own, and a door that says "live one life forward" while actually
+  // dropping the student into chapter six of an old one is a lie with a nice
+  // font. A student who came back two weeks later now sees, on the first
+  // screen, that their life kept their place.
+  const live = st.liveRun && !st.liveRun.done ? st.liveRun : null;
+  const liveAge = live
+    ? ((live.steps && live.steps.length ? live.steps[live.steps.length - 1].age : live.startAge) || live.startAge)
+    : null;
 
   // The claim is computed, not asserted: reach() over the empty plan, the
   // hardest case. If the engine ever disagreed with the copy, the console
@@ -67,10 +78,10 @@ export function renderLanding(host, data, ctx, leave) {
               <span class="ldoor-sub">${esc(L.enterPlanSub)}</span>
             </button>
             <span class="ldoor-arrow" aria-hidden="true">→</span>
-            <button class="ldoor" type="button" data-action="go" data-mode="journey">
+            <button class="ldoor${live ? ' resume' : ''}" type="button" data-action="go" data-mode="journey">
               <span class="ldoor-ic">${icon('q_how')}</span>
-              <span class="ldoor-name">${esc(L.enterPlay)}</span>
-              <span class="ldoor-sub">${esc(L.enterPlaySub)}</span>
+              <span class="ldoor-name">${esc(live ? L.continueName : L.enterPlay)}</span>
+              <span class="ldoor-sub">${esc(live ? fill(L.continueSub, { age: liveAge }) : L.enterPlaySub)}</span>
             </button>
             <span class="ldoor-arrow" aria-hidden="true">→</span>
             <button class="ldoor" type="button" data-action="go" data-mode="aim">

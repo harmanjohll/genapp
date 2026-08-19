@@ -49,10 +49,23 @@ const initial = () => ({
   schoolKind: null,
 });
 
+// A guest session: ?guest=1. Reads nothing this device holds and writes
+// nothing back. Built for a parent playing their own school years on their
+// child's phone: the child's plan, stories, wants and term list must be
+// exactly as they were when the phone is handed back, and none of them are
+// the parent's to see. Carry-link params still apply, because the guest link
+// itself says what to load.
+const GUEST = (() => {
+  try { return new URLSearchParams(location.search).get('guest') === '1'; } catch { return false; }
+})();
+
+export function isGuest() { return GUEST; }
+
 function load() {
   let base;
   try {
-    base = Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
+    base = GUEST ? initial()
+      : Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
   } catch {
     base = initial();
   }
@@ -115,6 +128,7 @@ function notify(evt) {
 }
 
 function persist() {
+  if (GUEST) return;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* private mode */ }
 }
 
@@ -313,7 +327,14 @@ function validRun(r, cardIds) {
   if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;
   if (r.plan == null || typeof r.plan !== 'object' || Array.isArray(r.plan)) return false;
   if (r.want != null && (typeof r.want !== 'object' || typeof r.want.label !== 'string')) return false;
-  if (r.pending != null && !(typeof r.pending === 'object' && cardIds.has(r.pending.cardId))) return false;
+  if (r.pending != null && typeof r.pending !== 'object') return false;
+  // The pending card is checked against the deck only when the deck is here.
+  // reconcile runs at boot and the chance deck is a deferred file, so for one
+  // release this line ran against an empty set and quietly deleted the story
+  // of any student who closed the tab while a chance card was on screen. The
+  // journey screen already self heals a pending id the deck no longer has, so
+  // when the deck is absent the right answer is to keep the run.
+  if (r.pending != null && cardIds.size && !cardIds.has(r.pending.cardId)) return false;
   return true;
 }
 
