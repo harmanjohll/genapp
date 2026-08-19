@@ -54,5 +54,37 @@
       ]
     }
   ],
-  "status": "confirmed"
+  "status": "confirmed",
+  "windows": [
+    {
+      "label": "Subject combination exercise",
+      "when": "Mid Sec 2, around May to July",
+      "what": "The school runs briefings and the form goes home. Levels can still move after it, every year.",
+      "check": "The school's own circular"
+    },
+    {
+      "label": "Direct admission, DSA",
+      "when": "May to July of Sec 4, for JC",
+      "what": "Talent based entry to a JC before results, on CCA and portfolio evidence. The Sec 1 version is behind you; this one is not.",
+      "check": "MOE DSA JC page"
+    },
+    {
+      "label": "Early Admissions, EAE",
+      "when": "About June of Sec 4, before results",
+      "what": "Poly and ITE admission on interest and evidence, before the exam. The folder it needs is built in Sec 3.",
+      "check": "Polytechnic EAE and ITE EAE pages"
+    },
+    {
+      "label": "Open houses",
+      "when": "November to January, mostly",
+      "what": "JC, MI, poly and ITE campuses open around results season. Going to one changes more minds than any brochure.",
+      "check": "Each campus's page"
+    },
+    {
+      "label": "The main posting round",
+      "when": "Days after results, January",
+      "what": "One PSE portal from 2028 for JC, MI, poly, PFP and ITE, replacing the JAE you remember.",
+      "check": "MOE posting matters page"
+    }
+  ]
 }

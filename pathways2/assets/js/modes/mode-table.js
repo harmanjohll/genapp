@@ -19,7 +19,7 @@ import { cue } from '../sound.js?v=2.12.0';
 import { possibilitiesFor, forkNeed } from '../engine/possible.js?v=2.12.0';
 import {
   createRun, currentStage, ageAt, sequenceFor, visibleChoices, applyChoices,
-  answerNS, respondToChance, finish, pointsFor, strongestTrack, askMet, CAPACITY_CAP,
+  answerNS, respondToChance, applyReflection, finish, pointsFor, strongestTrack, askMet, CAPACITY_CAP,
 } from '../engine/journey4.js?v=2.12.0';
 import { getState } from '../state.js?v=2.12.0';
 
@@ -155,7 +155,9 @@ function start(host, data, n) {
 }
 
 const me = () => T.players[T.turn];
-const rounds = (data) => sequenceFor(data.journey, T.players[0].run).length;
+// Reflect stages are solo beats the table skips, so they are not rounds.
+const rounds = (data) => sequenceFor(data.journey, T.players[0].run)
+  .filter((s) => (s.format || 'turn') !== 'reflect').length;
 
 // --------------------------------------------------------------------------
 // A turn
@@ -167,6 +169,16 @@ function turnScreen(host, data) {
   if (!stage) { T.phase = 'ending'; return repaint(); }
   const age = ageAt(data.journey, p.run, p.run.stepIndex);
 
+  // Results eve is written for one student alone with a phone the night before.
+  // A table of six cannot hold that silence, so every seat sits with it unwritten
+  // and the game moves to results day. The solo game is where the words happen.
+  if ((stage.format || 'turn') === 'reflect') {
+    T.players.forEach((x) => {
+      const s2 = currentStage(data.journey, x.run);
+      if (s2 && (s2.format || 'turn') === 'reflect') applyReflection(x.run, data.journey, s2, '');
+    });
+    return repaint();
+  }
   if ((stage.format || 'turn') === 'ask-ns') return nsScreen(host, data, stage, p);
   if (p.run.pending) return chanceScreen(host, data, p);
 
@@ -616,7 +628,8 @@ function endingScreen(host, data) {
  */
 function printPack(data) {
   const dests = [...data.pathways.destinations].sort((a, b) => a.railName.localeCompare(b.railName));
-  const seq = sequenceFor(data.journey, T.players[0].run).filter((s) => (s.format || 'turn') !== 'ask-ns');
+  const seq = sequenceFor(data.journey, T.players[0].run)
+    .filter((s) => !['ask-ns', 'reflect'].includes(s.format || 'turn'));
   return `
     <div class="printpack" aria-hidden="true">
       <h2>${esc(data.copy.table.packHead)} ${esc(T.seedCode)}</h2>
@@ -653,7 +666,8 @@ function printPack(data) {
 
 function boardStrip(data) {
   const total = rounds(data);
-  const at = T.players[0].run.stepIndex;
+  const r0 = T.players[0].run;
+  const at = r0.stepIndex - r0.steps.filter((s) => s.format === 'reflect').length;
   return `
     <p class="turn-meta caps tstrip">
       <span>${esc(data.copy.table.head)}</span>
@@ -743,6 +757,7 @@ export function tableSweep(data) {
         const fmt = stage.format || 'turn';
         const age = ageAt(data.journey, run, run.stepIndex);
         if (fmt === 'ask-ns') { answerNS(run, k % 2 === 0, stage); return; }
+        if (fmt === 'reflect') { applyReflection(run, data.journey, stage, ''); return; }
         if (run.pending) {
           const card = data.chances.cards.find((c) => c.id === run.pending.cardId);
           if (run.stepIndex === 1 && k === 0) sameFirstCard = card ? card.id : null;

@@ -91,7 +91,9 @@
   "alsoSchools": "the school I am actually in",
   "alsoParent": "a page for parents",
   "alsoTeacher": "one for teachers",
-  "alsoEvidence": "what this is built on"
+  "alsoEvidence": "what this is built on",
+  "continueName": "Continue",
+  "continueSub": "Back into the life you were living, at {age}"
  },
  "pulse": {
   "opened": "{dest} is open now.",
@@ -272,7 +274,25 @@
   "wantKeep": "Start with this",
   "wantOther": "Or start from something else",
   "whyGrown": "One more every year now, because I {why}.",
-  "growTag": "pays off every year after"
+  "growTag": "pays off every year after",
+  "becauseLine": "That goes back to {age}: “{what}”.",
+  "waitedHead": "What this year could not hold",
+  "homeQ": "One more, if I want. What does home want for me?",
+  "homeHint": "Nothing is scored on this. Some outcomes will speak to it, that is all.",
+  "homeSame": "We want the same thing",
+  "homeSteady": "Steady and safe",
+  "homeTheirs": "They have a road picked",
+  "homeUnsaid": "We have not really talked",
+  "homeSplit": "They disagree with each other",
+  "homeSkip": "Rather not say",
+  "endHomeSame": "Home wanted what I wanted. That helped, and I still did the walking.",
+  "endHomeSteady": "Home wanted steady and safe. Some years I gave them that, some years I gave them me.",
+  "endHomeTheirs": "Home had a road picked. This one is mine, and the door home stayed open.",
+  "endHomeUnsaid": "We never really talked about what home wanted. The story happened anyway. Maybe I show them this.",
+  "endHomeSplit": "Home never did agree on one answer. I stopped waiting for it and made mine.",
+  "hopeLine": "On results eve I hoped: {hope}.",
+  "mapKeep": "Keep this map",
+  "friendAlt": "A classmate appears through the years"
  },
  "footerDoors": {
   "head": "Who is reading this",

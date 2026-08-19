@@ -31,7 +31,24 @@ const CAPS = {
   'journey.stages[].situation': 30,
   'journey.stages[].choices[].label': 9,
   'journey.stages[].choices[].outcome': 26,
+  'journey.stages[].choices[].outcomeIf.*': 28,
   'journey.stages[].choices[].missed': 14,
+  'journey.stages[].reflection.prompt': 16,
+  'journey.stages[].reflection.options[]': 8,
+  'journey.stages[].reflection.hint': 22,
+  'journey.reflection.prompt': 16,
+  'journey.reflection.options[]': 8,
+  'journey.reflection.hint': 22,
+  'journey.companions.names[]': 3,
+  'journey.companions.roads.*': 4,
+  'journey.companions.school.s_sec1[]': 20,
+  'journey.companions.school.s_sec2[]': 20,
+  'journey.companions.school.s_sec3[]': 20,
+  'journey.companions.school.s_sec4[]': 20,
+  'journey.companions.fork[]': 20,
+  'journey.companions.after.*': 20,
+  'journey.companions.later[]': 20,
+  'journey.companions.ending.*': 22,
   'journey.stages[].variants.*.chapter': 5,
   'journey.stages[].variants.*.situation': 30,
   'journey.stages[].variants.*.choices[].label': 9,
@@ -45,8 +62,13 @@ const CAPS = {
   'chances.cards[].responses[].outcome': 28,
   'chances.cards[].responses[].stretch': 28,
   'chances.cards[].onwardMoves[]': 16,
+  'chances.cards[].waited': 14,
   'parent.sections[].body': 80,
   'parent.sections[].items[]': 26,
+  'parent.windows[].label': 5,
+  'parent.windows[].when': 8,
+  'parent.windows[].what': 26,
+  'parent.windows[].check': 12,
   'glossary.terms[].plain': 40,
   'lifelong.markers[].body': 32,
   'dispositions.dispositions[].body': 18,
@@ -68,7 +90,7 @@ const CAPS = {
 
 const FIRST_PAINT = { now: 365, journey: 240, aim: 130 };
 
-const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName', 'date', 'version', 'kind', 'sets', 'ic', 'format']);
+const SKIP_KEYS = new Set(['_meta', 'sources', 'url', 'id', 'sourceRef', 'status', 'type', 'icon', 'tone', 'shortName', 'date', 'version', 'kind', 'sets', 'ic', 'format', 'keeps']);
 
 const words = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
 

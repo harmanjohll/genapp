@@ -4981,6 +4981,214 @@
     "jc",
     "mi"
    ]
+  },
+  {
+   "id": "iv_home_term",
+   "type": "interrupt",
+   "minAge": 14,
+   "maxAge": 16,
+   "excludesFlag": "thing_waited",
+   "title": "The term the house needs me",
+   "body": "Ah Ma comes to stay after her fall, and the house reshuffles around her. Something I planned this year has to wait, and nobody asks first.",
+   "waited": "“{what}” waited this year. Not dropped, parked.",
+   "responses": [
+    {
+     "label": "Carry my share without being asked",
+     "outcome": "Porridge duty, school runs for my brother, homework at the hospital canteen. The year shrinks and the family holds.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Tell my form teacher what changed",
+     "outcome": "I say it plainly and the school bends: extensions, a quiet corner, one phone call home. Asking was the hard part.",
+     "disp": {
+      "flexibility": 1
+     },
+     "sets": "asked_help"
+    },
+    {
+     "label": "Keep one small thing mine",
+     "outcome": "Fifteen minutes a day stays mine whatever the week does. Small, and it keeps me recognisable to myself.",
+     "disp": {
+      "curiosity": 1
+     }
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "iv_bad_ankle",
+   "type": "interrupt",
+   "minAge": 13,
+   "maxAge": 15,
+   "excludesFlag": "thing_waited",
+   "title": "The ankle goes",
+   "body": "One bad landing at training and the ankle is in a boot for twelve weeks. The season, the schedule, the plan: all of it reshuffles.",
+   "waited": "“{what}” waited while the ankle mended. It keeps.",
+   "responses": [
+    {
+     "label": "Do the boring rehab properly",
+     "outcome": "Physio twice a week, exercises nobody sees. The ankle comes back honest, and so does the habit of unglamorous work.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Find what I can still do",
+     "outcome": "Scorekeeping, team logistics, the match write ups. Sidelined is a location, not a role.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "flexibility": 1
+     }
+    },
+    {
+     "label": "Let myself be annoyed first",
+     "outcome": "A fortnight of being properly fed up, said out loud at home. Then the boot becomes furniture and the term moves.",
+     "disp": {
+      "optimism": 1
+     }
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "cb_the_wait_ends",
+   "type": "opportunity",
+   "minAge": 15,
+   "maxAge": 21,
+   "requiresFlag": "thing_waited",
+   "title": "The parked thing",
+   "body": "A calmer term, and the thing that waited is still where I parked it. The timetable finally has room to take it back.",
+   "responses": [
+    {
+     "label": "Pick it back up",
+     "outcome": "Rustier than I left it and still mine. The restart is quicker than the start ever was.",
+     "gain": {
+      "skills": 1,
+      "portfolio": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Trade it for what fits now",
+     "outcome": "I am a different shape than the year that parked it. I keep the lesson, release the plan, choose again.",
+     "disp": {
+      "flexibility": 1
+     }
+    }
+   ],
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts"
+   ]
+  },
+  {
+   "id": "nx_youngest_pitch",
+   "type": "encounter",
+   "minAge": 18,
+   "maxAge": 21,
+   "excludesNS": true,
+   "title": "Two years younger than the room",
+   "body": "Everyone in this room except me has ORD stories or a degree already. Being the youngest is a fact; what it costs or pays is not settled.",
+   "responses": [
+    {
+     "label": "Ask the oldest for the map",
+     "outcome": "The forty year old beside me explains the industry in one lunch. Ten years of turns, sketched on a serviette.",
+     "gain": {
+      "network": 2
+     },
+     "disp": {
+      "curiosity": 1
+     },
+     "sets": "asked_senior",
+     "opens": "d_people"
+    },
+    {
+     "label": "Let the work speak",
+     "outcome": "I stop apologising for my age and hand in the work. The room adjusts within a term.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    },
+    {
+     "label": "Keep pace with the green group chat",
+     "outcome": "My NS friends and I trade progress like postcards from two countries. Nobody falls out of anybody's life.",
+     "gain": {
+      "network": 1
+     },
+     "disp": {
+      "optimism": 1
+     }
+    }
+   ],
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
+  },
+  {
+   "id": "nx_first_upgrade",
+   "type": "opportunity",
+   "minAge": 18,
+   "maxAge": 21,
+   "excludesNS": true,
+   "title": "The course after the course",
+   "body": "A part time certificate opens for January intake. My NS friends cannot touch it for two more years; I can start it beside semester two.",
+   "responses": [
+    {
+     "label": "Sign up before I feel ready",
+     "outcome": "Tuesday nights, a certificate by June, and the habit of upgrading while working starts at nineteen.",
+     "gain": {
+      "skills": 2
+     },
+     "disp": {
+      "risk": 1
+     },
+     "opens": "d_sflu"
+    },
+    {
+     "label": "Finish one thing first",
+     "outcome": "The diploma deserves the whole of me this year. The intake repeats every January; I bank the brochure.",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     }
+    }
+   ],
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
   }
  ]
 }
