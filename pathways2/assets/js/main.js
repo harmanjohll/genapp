@@ -304,7 +304,7 @@ function paint() {
   const st = getState();
   document.getElementById('site-foot').style.display = onLanding ? 'none' : '';
   try {
-    if (onLanding) { renderLanding(app, data, ctx, leaveLanding); return; }
+    if (onLanding) { document.body.dataset.aud = 'student'; renderLanding(app, data, ctx, leaveLanding); return; }
     const id = extraMode || st.mode;
     const gone = missingFor(id);
     if (gone.length) { partLoaded(gone); return; }
@@ -316,6 +316,10 @@ function paint() {
 
     if (st.mode !== 'journey' || extraMode) document.body.dataset.era = extraMode ? 'school' : document.body.dataset.era;
     if (st.mode !== 'journey') document.body.dataset.era = 'school';
+    // The pages written for adults read at adult sizes. The student game keeps
+    // its own scale; a parent reading fee tables on a phone at night gets a
+    // notch more type, via the tokens so every size on the page moves together.
+    document.body.dataset.aud = ['parent', 'counsellor', 'teacher', 'evidence'].includes(id) ? 'adult' : 'student';
     switch (id) {
       case 'table':      mod.renderTable(app, data, ctx, paint); break;
       case 'teacher':    mod.renderTeacher(app, data, ctx, paint); break;

@@ -21,6 +21,7 @@ import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
+  companionLine, companionEnd,
 } from '../engine/journey4.js?v=2.12.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
@@ -109,11 +110,14 @@ function setEra(age) {
   if (document.body.dataset.era !== era) document.body.dataset.era = era;
 }
 
-function startRun(data, want, short, seedCode) {
+function startRun(data, want, short, seedCode, home) {
   const st = getState();
   const n = st.runs.length + 1;
   run = createRun(currentYear().age, `Story ${n}`, want, st.plan);
   run.short = !!short;
+  // What home wants, if the student chose to say. Never scored, never gated,
+  // read only by the outcome variants that speak to it.
+  run.home = home || null;
   // A class play code seeds the luck, so a room lives the same life and the
   // debrief compares answers instead of dice. It carries nothing else.
   if (seedCode && /^[a-z0-9]{3,8}$/i.test(seedCode.trim())) {
@@ -307,6 +311,20 @@ function openStartSheet(data, want, trigger) {
     </ol>
     <p class="small"><strong>${esc(jc.runShort)}</strong> ${esc(jc.runShortNote)}</p>
     <p class="small"><strong>${esc(jc.runLong)}</strong> ${esc(jc.runLongNote)}</p>
+    ${/* Optional, one tap, skippable, and the game plays identically without
+          it. What it buys: a handful of outcome lines that speak to the actual
+          kitchen table this story is being played at, which is where the real
+          decision gets made. */ ''}
+    <div class="homeq">
+      <p class="small" style="margin-bottom:var(--s-2)"><strong>${esc(jc.homeQ)}</strong></p>
+      <div class="chip-row homeopts" role="group" aria-label="${esc(jc.homeQ)}">
+        ${[['same', jc.homeSame], ['steady', jc.homeSteady], ['theirs', jc.homeTheirs],
+    ['unsaid', jc.homeUnsaid], ['split', jc.homeSplit], ['', jc.homeSkip]].map(([h, lab]) => `
+          <button class="btn ghost small homeopt" type="button" data-action="home" data-h="${h}"
+                  aria-pressed="false">${esc(lab)}</button>`).join('')}
+      </div>
+      <p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.homeHint)}</p>
+    </div>
     <details class="seedrow">
       <summary class="small">${esc(jc.classSeedLabel)}</summary>
       <input class="seedbox" type="text" maxlength="8" autocapitalize="characters"
@@ -319,9 +337,18 @@ function openStartSheet(data, want, trigger) {
     const el = document.querySelector('dialog.sheet [data-ref="seed"]');
     return el ? el.value : '';
   };
+  let homeSel = null;
   onSheetAction({
-    golong: () => { const s = seedVal(); closeSheet(); startRun(data, want, false, s); rerender(); },
-    goshort: () => { const s = seedVal(); closeSheet(); startRun(data, want, true, s); rerender(); },
+    home: (b) => {
+      homeSel = b.dataset.h || null;
+      document.querySelectorAll('dialog.sheet .homeopt').forEach((el) => {
+        const on = el === b;
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-pressed', String(on));
+      });
+    },
+    golong: () => { const s = seedVal(); closeSheet(); startRun(data, want, false, s, homeSel); rerender(); },
+    goshort: () => { const s = seedVal(); closeSheet(); startRun(data, want, true, s, homeSel); rerender(); },
   });
 }
 
@@ -373,16 +400,26 @@ function turnScreen(host, stage, data, age) {
               aria-pressed="${on}" ${dim ? 'data-dim="true"' : ''}>
         <span class="c-cost" aria-label="${cost} point${cost > 1 ? 's' : ''}">${'\u25cf'.repeat(cost)}</span>
         <span class="c-label">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</span>
-        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${c.capacity && run.capacity < CAPACITY_CAP ? `<span class="grow-tag">${esc(jc.growTag)}</span>` : ''}${gainChips(c)}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
+        ${/* The chip diet. Gain and disposition chips used to sit here too, and
+              five choices times four chips made the decision a spreadsheet. An
+              option now shows only what changes HOW it plays: its cost, that it
+              is a commitment, that a held door opened it, that it compounds,
+              that it is near the named want. What it builds is told AFTER the
+              year is lived, on the lived screen, which is when a life finds
+              out. */ ''}
+        <span class="c-chips">${c.isMove ? `<span class="mv-tag">${esc(jc.commitTag)}</span>` : ''}${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(jc.doorTag)}</span>` : ''}${c.capacity && run.capacity < CAPACITY_CAP ? `<span class="grow-tag">${esc(jc.growTag)}</span>` : ''}${near ? `<span class="near-chip">${esc(jc.nearWant)}</span>` : ''}${on ? `<span class="undo-chip">${esc(jc.removeHint)}</span>` : ''}</span>
       </button>`;
   }).join('');
 
   const wantCheckBlock = stage.wantCheck ? wantCheck(data) : '';
 
+  const friend = companionLine(data.journey, run, stage, age);
+
   host.innerHTML = shell(`
     ${staleBanner(data)}
     ${chapterMeta(data, stage, age)}
     <p class="lede j-sit">${situation(data, stage)}</p>
+    ${friend ? `<p class="j-friend">${esc(friend)}</p>` : ''}
     ${run.stepIndex === 0 ? `<div class="panel tight" style="margin-top:var(--s-3)"><p class="small" style="margin:0">${esc(jc.turnHint)}</p></div>` : ''}
     ${run.stepIndex === 1 ? `<p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.handIntro)}</p>` : ''}
     ${wantCheckBlock}
@@ -618,13 +655,16 @@ function commit(data, age) {
       askRows.push({ label: m.label, outcome: m.outcome, body: m.body, check: m.check, ic: m.ic, isMove: true, gain: m.gain, disp: m.disp || {} });
     }
   });
-  if (picked.length) applyChoices(run, j, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
-  else { run.asksThisYear = 0; run.stepIndex += 1; }
+  let rows = chosen;
+  if (picked.length) {
+    applyChoices(run, j, stage, picked, data.chances.cards, subjectMeta(data), MV(data));
+    rows = livedRows(chosen, age);
+  } else { run.asksThisYear = 0; run.stepIndex += 1; }
 
   pendingLived = {
     chapter: stage.chapter || stage.title,
     age,
-    chosen: [...chosen, ...askRows, ...weekRows],
+    chosen: [...rows, ...askRows, ...weekRows],
     before,
   };
   picked = []; pickedAsks = [];
@@ -633,6 +673,26 @@ function commit(data, age) {
   else cue('chance');
   setLiveRun(run);
   rerender();
+}
+
+/**
+ * The rows the lived screen shows, rebuilt from the step the engine just
+ * pushed. The pool objects hold the AUTHORED outcome; the step holds the
+ * RESOLVED one, with the flag or home stance that carried a variant and the
+ * line for a plan an interruption paused. The screen showing raw pool text
+ * was the bug that hid every payoff variant ever written. Copies, never the
+ * pool objects themselves, because those are the stage's own data.
+ */
+function livedRows(chosen, age) {
+  const step = run.steps[run.steps.length - 1];
+  if (!step || !Array.isArray(step.outcomes)) return chosen.map((c) => ({ ...c }));
+  return chosen.map((c, k) => ({
+    ...c,
+    outcome: step.outcomes[k] != null ? step.outcomes[k] : c.outcome,
+    // Name the year a payoff goes back to, unless it is this same year.
+    via: step.via && step.via[k] && step.via[k].age !== age ? step.via[k] : null,
+    waitedHere: !!(step.waited && step.outcomes[k] === step.waited.text),
+  }));
 }
 
 /** The year's chance resolved (or there was none): build the lived beat. */
@@ -680,12 +740,14 @@ function nsScreen(host, stage, data) {
 
 function forkScreen(host, stage, data, age) {
   const pool = visibleChoices(stage, run, MV(data), age);
+  const friend = companionLine(data.journey, run, stage, age);
   cue('fork');
   host.innerHTML = `
     <div class="wrap">
       <div class="fork fade-up">
         ${chapterMeta(data, stage, age)}
         <p class="lede j-sit" style="max-width:44ch">${situation(data, stage)}</p>
+        ${friend ? `<p class="j-friend">${esc(friend)}</p>` : ''}
         <div class="fork-choices" role="group" aria-label="Your choice">
           ${pool.map((c, i) => {
             // The biggest decision in the game used to be five unlabelled
@@ -696,7 +758,7 @@ function forkScreen(host, stage, data, age) {
             <button class="choice fork-c ${c.needsDoor ? 'unlocked' : ''}" type="button" data-action="fork" data-i="${i}">
               <span class="c-label">${esc(c.label)}</span>
               ${need ? `<span class="fork-need"><em>${esc(data.copy.journey.possAsks)}</em> ${esc(need)}</span>` : ''}
-              <span class="c-chips">${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(data.copy.journey.doorTag)}</span>` : ''}${gainChips(c)}</span>
+              <span class="c-chips">${c.needsDoor ? `<span class="door-tag">${icon(c.needsDoor)}${esc(data.copy.journey.doorTag)}</span>` : ''}</span>
             </button>`;
           }).join('')}
         </div>
@@ -717,7 +779,7 @@ function forkScreen(host, stage, data, age) {
         isMove: false,
       }] : [];
       applyChoices(run, data.journey, stage, [i], data.chances.cards, subjectMeta(data), MV(data));
-      pendingLived = { chapter: stage.chapter || stage.title, age, chosen: [...chosen, ...weekRows], before };
+      pendingLived = { chapter: stage.chapter || stage.title, age, chosen: [...livedRows(chosen, age), ...weekRows], before };
       if (!run.pending) resolveLived(data);
       else cue('chance');
       setLiveRun(run);
@@ -727,7 +789,9 @@ function forkScreen(host, stage, data, age) {
 }
 
 function reflectScreen(host, stage, data) {
-  const r = data.journey.reflection;
+  // A stage may carry its own prompt: results eve asks about tomorrow's slip,
+  // and the shared prompt is written for a quiet year at 38.
+  const r = stage.reflection || data.journey.reflection;
   const jc = data.copy.journey;
   const age = ageAt(data.journey, run, run.stepIndex);
   host.innerHTML = `
@@ -767,13 +831,24 @@ function reflectScreen(host, stage, data) {
 
 function chanceAsk(host, card, data) {
   const jc = data.copy.journey;
-  const kind = card.type === 'setback' ? 'Something goes wrong' : card.type === 'encounter' ? 'Someone turns up' : 'A chance appears';
+  const kind = card.type === 'setback' ? 'Something goes wrong'
+    : card.type === 'encounter' ? 'Someone turns up'
+      : card.type === 'interrupt' ? 'Life interrupts' : 'A chance appears';
   const asks = card.asks ? `
     <p class="askline">${esc(fill(jc.asks, {
       disp: dispLabel(card.asks.disposition),
       have: `${run.disp[card.asks.disposition] || 0} of ${card.asks.min}`,
     }))}</p>` : '';
   const met = askMet(run, card);
+  // A card that only arrives because of an earlier act says which act, so the
+  // payoff reads as causation and not as luck wearing a knowing smile.
+  const step = run.steps[run.steps.length - 1];
+  const src = card.requiresFlag && run.from && run.from[card.requiresFlag];
+  const because = src && (!step || src.age !== step.age)
+    ? `<p class="because">${esc(fill(jc.becauseLine, { age: src.age, what: src.what }))}</p>` : '';
+  // An interruption already paused one of the year's plans before this screen.
+  const waited = card.type === 'interrupt' && step && step.waited
+    ? `<p class="waitedline">${esc(step.waited.text)}</p>` : '';
 
   host.innerHTML = shell(`
     <div class="chance ${card.type === 'setback' ? 'setback' : ''}">
@@ -781,6 +856,8 @@ function chanceAsk(host, card, data) {
       <p class="kind">${icon(`ch_${card.type}`)}${esc(kind)}</p>
       <h1 class="serif" tabindex="-1" style="margin:var(--s-2) 0 var(--s-3)">${esc(card.title)}</h1>
       <p>${decorate(card.body)}</p>
+      ${because}
+      ${waited}
       ${asks}
       <div class="grid" role="group" aria-label="How you respond" style="margin-top:var(--s-4)">
         ${(card.responses || []).map((r, i) => `
@@ -858,10 +935,15 @@ function livedScreen(host, data) {
       <p class="lived-age serif" aria-hidden="true">${age}</p>
       <h1 class="caps" tabindex="-1" style="margin:0">${esc(fill(jc.livedHead, { chapter }))}</h1>
       ${chosen.map((c) => `
-        <div class="lived-row">
+        <div class="lived-row${c.waitedHere ? ' waited' : ''}">
           <p class="lived-choice serif">${c.isMove ? icon(c.ic) : ''}${esc(c.label)}</p>
           ${c.isMove && c.body ? `<p class="small mute">${esc(c.body)}</p>` : ''}
           ${c.outcome ? `<p class="lede">${decorate(c.outcome)}</p>` : ''}
+          ${/* Causation, named: which earlier year this line pays off. */ ''}
+          ${c.via ? `<p class="because">${esc(fill(jc.becauseLine, { age: c.via.age, what: c.via.what }))}</p>` : ''}
+          ${/* What the year built, told at the moment it lands rather than
+                promised on the option button. A paused plan built nothing. */ ''}
+          ${!c.waitedHere && gainChips(c) ? `<p class="chips gainrow">${gainChips(c)}</p>` : ''}
           ${c.isMove && c.check ? `<p class="micro mute">${esc(c.check)}</p>` : ''}
         </div>`).join('')}
       ${chance ? `
@@ -869,6 +951,11 @@ function livedScreen(host, data) {
           <p class="kind">${icon(`ch_${chance.type}`)}${esc(chance.title)}</p>
           <p class="lived-choice serif">${esc(chance.response)}</p>
           <p class="lede">${decorate(chance.text)}</p>
+          ${(() => {
+            const card = ((data.chances && data.chances.cards) || []).find((x) => x.id === chance.id);
+            const src = card && card.requiresFlag && run.from && run.from[card.requiresFlag];
+            return src && src.age !== age ? `<p class="because">${esc(fill(jc.becauseLine, { age: src.age, what: src.what }))}</p>` : '';
+          })()}
           ${stretch ? `<p class="small mute">${esc(efficacyLine(data, chance))}</p>` : ''}
         </div>` : ''}
       ${d.length ? `<p class="delta">${d.filter((x) => !x.door).map((x) => `<span class="dchip pop">${icon(x.ic)}${esc(x.text)}</span>`).join('')}</p>` : ''}
@@ -936,12 +1023,16 @@ function endingScreen(host, data, st) {
         <p class="caps">${esc(jc.endingHead)}</p>
         <h1 class="serif" tabindex="-1" style="font-size:var(--t-hero);line-height:var(--lh-hero)">${esc(wantLine)}</h1>
         ${pathLine ? `<p class="lede">${esc(pathLine)}</p>` : ''}
+        ${/* What sixteen hoped, read back at the end, beside what happened. */ ''}
+        ${run.hope ? `<p class="small mute" style="margin-top:var(--s-2)">${esc(fill(jc.hopeLine, { hope: run.hope }))}</p>` : ''}
+        ${run.home && jc[`endHome${run.home[0].toUpperCase()}${run.home.slice(1)}`]
+    ? `<p class="small mute">${esc(jc[`endHome${run.home[0].toUpperCase()}${run.home.slice(1)}`])}</p>` : ''}
         ${frame.head ? `
           <div class="ending-frame">
             <h2 class="serif">${esc(frame.head)}</h2>
             <p class="lede" style="margin-top:var(--s-2)">${decorate(frame.body || '')}</p>
           </div>` : ''}
-        <figure class="storymap">
+        <figure class="storymap hero">
           <figcaption class="caps">${esc(jc.mapHead)}</figcaption>
           <div class="storymap-frame" data-ref="map"></div>
           <p class="micro mute">${esc(jc.mapNote)}</p>
@@ -950,8 +1041,19 @@ function endingScreen(host, data, st) {
               <input type="checkbox" data-action-change="reflectin">
               <span>${esc(jc.mapReflect)}</span>
             </label>` : ''}
+          ${/* The one thing to leave with, where the thing itself is. The save
+                button lived at the bottom of the page in a row of five, which
+                is how the app's best artefact went home in nobody's camera
+                roll. */ ''}
+          <div class="btn-row" style="margin-top:var(--s-3)">
+            <button class="btn accent" type="button" data-action="savecard">${esc(jc.mapKeep)}</button>
+          </div>
         </figure>
         <div class="panel" style="margin-top:var(--s-5)">${moments || '<p>I lived it steadily, which is a way of living it.</p>'}</div>
+        ${(() => {
+          const buddy = companionEnd(data.journey, run);
+          return buddy ? `<p class="small mute" style="margin-top:var(--s-3)">${esc(buddy)}</p>` : '';
+        })()}
         <div class="section">
           <p class="caps">${esc(jc.becameHead)}</p>
           <p class="idwords serif">${esc(idWords(run, jc))}</p>
@@ -1010,7 +1112,6 @@ function endingScreen(host, data, st) {
             </div>` : ''}
           <div class="btn-row" style="margin-top:var(--s-3)">
             <button class="btn accent" type="button" data-action="again">${esc(jc.playAgain)}</button>
-            <button class="btn" type="button" data-action="savecard">${esc(jc.cardSave)}</button>
             ${st.runs.length >= 2 ? `<button class="btn" type="button" data-action="compare2">${esc(jc.compareCta)}</button>` : ''}
             <button class="btn ghost" type="button" data-action="toact">${esc(jc.toAct)}</button>
             <button class="btn ghost" type="button" data-action="tonow">${esc(jc.seeInNow)}</button>

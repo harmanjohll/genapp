@@ -313,7 +313,14 @@ function validRun(r, cardIds) {
   if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;
   if (r.plan == null || typeof r.plan !== 'object' || Array.isArray(r.plan)) return false;
   if (r.want != null && (typeof r.want !== 'object' || typeof r.want.label !== 'string')) return false;
-  if (r.pending != null && !(typeof r.pending === 'object' && cardIds.has(r.pending.cardId))) return false;
+  if (r.pending != null && typeof r.pending !== 'object') return false;
+  // The pending card is checked against the deck only when the deck is here.
+  // reconcile runs at boot and the chance deck is a deferred file, so for one
+  // release this line ran against an empty set and quietly deleted the story
+  // of any student who closed the tab while a chance card was on screen. The
+  // journey screen already self heals a pending id the deck no longer has, so
+  // when the deck is absent the right answer is to keep the run.
+  if (r.pending != null && cardIds.size && !cardIds.has(r.pending.cardId)) return false;
   return true;
 }
 

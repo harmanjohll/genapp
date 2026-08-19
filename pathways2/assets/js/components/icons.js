@@ -61,6 +61,8 @@ const PATHS = {
   // The way round, still going. A setback in this app is a detour and never a
   // wall, so it gets a line that bends and continues, and never a cross.
   ch_setback: '<path d="M2.5 12.2h3.1a2 2 0 0 0 2-2V6a2 2 0 0 1 2-2h4"/><path d="M11.9 2.4 13.5 4l-1.6 1.6"/>',
+  // Two pause bars: life putting one of the year's plans on hold.
+  ch_interrupt: '<path d="M5.6 3.2v9.6"/><path d="M10.4 3.2v9.6"/>',
 
   /* ---- what you are carrying ----------------------------------------- */
 

@@ -760,9 +760,12 @@ body[data-journey="true"] .audstrip { display: none; }
 /* The footer disclaimer, three titled columns across the width. Each column
    keeps a readable measure; the horizontal is used by columns, not by lines. */
 .foot-grid { display: grid; gap: var(--s-5); grid-template-columns: 1fr; }
-@media (min-width: 700px) { .foot-grid { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-6); } }
+@media (min-width: 700px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: var(--s-6); } }
+@media (min-width: 1000px) { .foot-grid { grid-template-columns: repeat(4, 1fr); } }
 .foot-col .caps { margin-bottom: var(--s-2); }
 .foot-col p:not(.caps) { margin: 0; max-width: 48ch; }
+.foot-links { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-1); }
+.foot-links a { color: inherit; }
 
 /* ---------- the combination: Journey starts from what you take ---------- */
 /* The three level hues stay equal in weight here exactly as they are in NOW.
@@ -1731,3 +1734,60 @@ html.sheet-open body { position: fixed; width: 100%; }
 }
 .carryblock .caps svg { vertical-align: -2px; margin-right: 5px; }
 .carryblock .sharebox { margin-top: var(--s-2); }
+
+/* ---- 2.13.0: the year as a scene, and what it built told afterwards ------ */
+
+/* The situation is the one paragraph that sets a year. It was body type in a
+   sea of body type; it now reads in the display face, a step up, so the eye
+   lands on the scene before the option list. */
+.j-sit { font-family: var(--display); font-size: var(--t-h3); line-height: 1.55; }
+
+/* The companion's one line: quoted-speech furniture, never a control. */
+.j-friend {
+  font-size: var(--t-small); color: var(--ink-mute); max-width: 52ch;
+  margin-top: var(--s-2); padding-left: var(--s-3);
+  border-left: 2px solid var(--rule); font-style: italic;
+}
+
+/* Causation, named: "That goes back to 15". Flag colour, because it points at
+   a commitment kept, and never accent, because it is not a control. */
+.because { font-size: var(--t-micro); color: var(--flag); margin: var(--s-1) 0 0; }
+
+/* The plan an interruption paused, on the card that paused it. Ochre edge:
+   waiting is a within-reach state, not a failure, and never red. */
+.waitedline {
+  font-size: var(--t-small); color: var(--ink-mute);
+  border-left: 3px solid var(--within); padding-left: var(--s-3);
+  margin-top: var(--s-3); max-width: 52ch;
+}
+.lived-row.waited .lede { color: var(--ink-mute); }
+
+/* What the year built, shown on the lived screen rows now that the option
+   buttons stopped promising it. */
+.gainrow { margin: var(--s-1) 0 0; }
+
+/* The optional home question on the start sheet. */
+.homeopts { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.homeq { margin-top: var(--s-4); padding-top: var(--s-3); border-top: 1px solid var(--rule-soft); }
+.homeopt.on { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-dk); }
+
+/* The map is the exit artefact, so it stands like one: framed, on surface,
+   with the keep button inside the frame instead of at the bottom of the page
+   in a row of five. */
+.storymap.hero {
+  border: 1px solid var(--rule); border-radius: var(--r-lg);
+  padding: var(--s-4); background: var(--surface); box-shadow: var(--shadow);
+}
+
+/* The Play door while a story is mid flight. */
+.ldoor.resume { border-color: var(--accent); }
+.ldoor.resume .ldoor-sub { color: var(--accent-dk); }
+
+/* The pages written for adults read at adult sizes. Tokens, so every size on
+   the page moves together and nothing has to be re-specified. */
+body[data-aud="adult"] {
+  --t-body: 1.0625rem;
+  --t-small: 0.94rem;
+  --t-micro: 0.8125rem;
+  --lh-body: 1.65;
+}
