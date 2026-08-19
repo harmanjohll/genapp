@@ -1791,3 +1791,20 @@ body[data-aud="adult"] {
   --t-micro: 0.8125rem;
   --lh-body: 1.65;
 }
+
+/* The guest strip: a promise about the phone, kept visible while it applies. */
+.guestband {
+  background: var(--within-wash); color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--t-small); text-align: center;
+  padding: var(--s-2) var(--gutter);
+}
+
+/* The parent's own playthrough door. */
+.guestpanel { border: 2px solid var(--accent); }
+
+/* The decision windows, as a parent's calendar. */
+.windowlist { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: var(--s-4); }
+.windowlist li { border-left: 3px solid var(--rule); padding-left: var(--s-4); }
+.windowlist p { margin: 0; }
+.window-when { color: var(--ink-mute); margin-bottom: var(--s-1); }

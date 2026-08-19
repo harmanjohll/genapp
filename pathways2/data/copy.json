@@ -65,7 +65,8 @@
   "partHead": "This part did not load.",
   "partBody": "Something did not arrive over the connection. The rest of the site is fine, and nothing I did caused it.",
   "partRetry": "Try again",
-  "partPlan": "Go to Plan"
+  "partPlan": "Go to Plan",
+  "guestBand": "Playing as a guest. Nothing is saved on this phone, and nothing that was here is touched."
  },
  "landing": {
   "kicker": "For Singapore secondary students",

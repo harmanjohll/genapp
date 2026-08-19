@@ -4,18 +4,18 @@
 // Play lives it forward, Act turns the ending into things to do this term.
 // The landing asks one question before any of it, once.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD } from './data-loader.js?v=2.12.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD } from './data-loader.js?v=2.13.0';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
-  markVersionSeen, snapshotPlan, MODES, YEARS, currentYear,
-} from './state.js?v=2.12.0';
-import { initGlossary, openFullList } from './components/glossary.js?v=2.12.0';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.12.0';
-import { onAction, esc } from './components/dom.js?v=2.12.0';
-import { icon } from './components/icons.js?v=2.12.0';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.12.0';
-import { reach } from './engine/reach.js?v=2.12.0';
-import { renderLanding } from './modes/landing.js?v=2.12.0';
+  markVersionSeen, snapshotPlan, MODES, YEARS, currentYear, isGuest,
+} from './state.js?v=2.13.0';
+import { initGlossary, openFullList } from './components/glossary.js?v=2.13.0';
+import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.13.0';
+import { onAction, esc } from './components/dom.js?v=2.13.0';
+import { icon } from './components/icons.js?v=2.13.0';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.13.0';
+import { reach } from './engine/reach.js?v=2.13.0';
+import { renderLanding } from './modes/landing.js?v=2.13.0';
 
 /**
  * ONE MODE AT A TIME, WHICH IS HOW STUDENTS USE IT.
@@ -114,6 +114,15 @@ async function init() {
 
   mountRibbon(document.body, data.lifelong);
   mountAudience();
+
+  // The guest strip. A guest session must say it is one, at the top of every
+  // screen, because its whole promise is about what it is NOT doing to the
+  // phone it is running on.
+  if (isGuest()) {
+    const c = (data.copy && data.copy.chrome) || {};
+    document.getElementById('app').insertAdjacentHTML('beforebegin',
+      `<div class="guestband" role="status">${esc(c.guestBand || 'Playing as a guest. Nothing is saved on this phone.')}</div>`);
+  }
 
   // Photograph today's plan with its open count, so a later visit can say
   // what moved. One line, and it is the whole Year loop's raw material.

@@ -49,10 +49,23 @@ const initial = () => ({
   schoolKind: null,
 });
 
+// A guest session: ?guest=1. Reads nothing this device holds and writes
+// nothing back. Built for a parent playing their own school years on their
+// child's phone: the child's plan, stories, wants and term list must be
+// exactly as they were when the phone is handed back, and none of them are
+// the parent's to see. Carry-link params still apply, because the guest link
+// itself says what to load.
+const GUEST = (() => {
+  try { return new URLSearchParams(location.search).get('guest') === '1'; } catch { return false; }
+})();
+
+export function isGuest() { return GUEST; }
+
 function load() {
   let base;
   try {
-    base = Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
+    base = GUEST ? initial()
+      : Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
   } catch {
     base = initial();
   }
@@ -115,6 +128,7 @@ function notify(evt) {
 }
 
 function persist() {
+  if (GUEST) return;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* private mode */ }
 }
 

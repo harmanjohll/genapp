@@ -13,9 +13,9 @@
 // Tapping it, or reaching it with a keyboard, expands it to the full height
 // with labels and all ten markers. Escape or blur collapses it again.
 
-import { el, esc, onAction } from './dom.js?v=2.12.0';
-import { openSheet } from './sheet.js?v=2.12.0';
-import { currentYear } from '../state.js?v=2.12.0';
+import { el, esc, onAction } from './dom.js?v=2.13.0';
+import { openSheet } from './sheet.js?v=2.13.0';
+import { currentYear } from '../state.js?v=2.13.0';
 
 let root = null;
 let data = null;

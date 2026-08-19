@@ -20,12 +20,12 @@
 // office holding the names of the schemes gets a different conversation than a
 // parent who arrives asking whether there is any help.
 
-import { esc, onAction } from '../components/dom.js?v=2.12.0';
-import { icon } from '../components/icons.js?v=2.12.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.12.0';
-import { openSheet, onSheetAction } from '../components/sheet.js?v=2.12.0';
-import { getState } from '../state.js?v=2.12.0';
-import { reach } from '../engine/reach.js?v=2.12.0';
+import { esc, onAction } from '../components/dom.js?v=2.13.0';
+import { icon } from '../components/icons.js?v=2.13.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.13.0';
+import { openSheet, onSheetAction } from '../components/sheet.js?v=2.13.0';
+import { getState } from '../state.js?v=2.13.0';
+import { reach } from '../engine/reach.js?v=2.13.0';
 
 const PROV = '<span class="cprov">Not yet verified</span>';
 

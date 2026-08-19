@@ -6,8 +6,23 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.12.0",
+  "version": "2.13.0",
   "releases": [
+    {
+      "version": "2.13.0",
+      "date": "2026-08-19",
+      "head": "The night before results, and a friend down the years",
+      "changes": [
+        "The night before results day is a chapter now. I write what I hope the slip says, and the ending reads it back beside what actually happened.",
+        "One classmate walks through my story by name: in class, in the hall on results day, posting from their own road after the fork, and at the end. Their road is usually not mine, and it goes fine, which is the point.",
+        "Life can interrupt a year. A grandmother's fall or a bad ankle can park one of my plans; the game says it waited, never that it died, and a later card hands it back. Some years I can also just get through: an ordinary year is now a choice that grants nothing and shames nobody.",
+        "When a year pays off something I did earlier, the screen says which year it goes back to, quoting the thing I did. And I can name what home wants for my road, once, if I want to; a few outcomes speak to it and nothing scores it.",
+        "Option buttons stopped listing everything they might build. The lived screen tells me at the moment it lands. The paragraph that opens each year reads like a scene now, and the paper visibly cools as the decades pass.",
+        "If I left mid story, the front door says Continue with my age on it, instead of pretending I was new. Closing the tab while a chance card was up used to quietly lose my story; it does not any more.",
+        "My parents get a turn: the parent page can deal them their own Sec 3 in their old stream, translated to today's levels, played as a guest that saves nothing to my phone and touches nothing of mine. Their page also lists when the real windows open, marked as needing a check.",
+        "The map at the end is the thing the screen hands me now, framed, with Keep this map on it. And the work, money, schools and evidence pages sit in the footer of every page instead of only behind the front door."
+      ]
+    },
     {
       "version": "2.12.0",
       "date": "2026-08-09",
