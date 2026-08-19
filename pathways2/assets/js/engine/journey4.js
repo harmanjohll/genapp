@@ -1018,6 +1018,27 @@ export function companionLine(j, run, stage, age) {
   return null;
 }
 
+/**
+ * Where in the year the chance lands, as one line of time and place.
+ *
+ * WHY. The chance screen used to arrive from nowhere: no chapter, no month, no
+ * weather, which is exactly what made it read as a system dialog instead of a
+ * beat in the story. Life's interruptions happen ON a Tuesday, and naming the
+ * Tuesday is most of what stitches the card into the year. Lines are written
+ * per institution, because a term exists in a secondary school, a submission
+ * week exists in a polytechnic, and a bookout Saturday exists in camp.
+ * Seeded per step, so a replayed year keeps its Tuesday.
+ */
+export function midyearLine(j, run, stage) {
+  const m = j.midyear;
+  if (!m || !stage) return null;
+  const here = stage.at || [];
+  const key = here.find((k) => Array.isArray(m[k]) && m[k].length) || 'default';
+  const pool = m[key] || [];
+  if (!pool.length) return null;
+  return pool[lcg(((run && run.seed) || 0) + ((run && run.stepIndex) || 0) * 37) % pool.length];
+}
+
 /** The companion at the end, one line: same road as mine, or a different one, and fine. */
 export function companionEnd(j, run) {
   const c = j.companions;
@@ -1234,6 +1255,21 @@ export function runJourneySweep(data) {
     if (t.split(/\s+/).filter(Boolean).length > 20) failures.push({ why: `companion line over 20 words: ${t.slice(0, 40)}` });
     if (/\b(ahead of|behind|better than|smarter|top of|beat me)\b/i.test(t)) failures.push({ why: `companion line ranks people: ${t.slice(0, 40)}` });
     if (/\b(he|she|his|hers)\b/i.test(t)) failures.push({ why: `companion line assumes a gender: ${t.slice(0, 40)}` });
+  });
+
+  // 4c. Every chance can say where in the year it landed. The default shelf
+  // must hold lines, and any institution shelf that exists must not be empty,
+  // or a card in that institution opens with a blank where its Tuesday goes.
+  const mid = j.midyear || {};
+  if (!Array.isArray(mid.default) || mid.default.length < 2) {
+    failures.push({ why: 'midyear: no default lines, a card can land nowhere' });
+  }
+  Object.entries(mid).forEach(([k, pool]) => {
+    if (!Array.isArray(pool) || !pool.length) failures.push({ why: `midyear: empty shelf ${k}` });
+    (pool || []).forEach((s) => {
+      if (typeof s !== 'string' || !s.trim()) failures.push({ why: `midyear: blank line under ${k}` });
+      if (String(s).includes('{')) failures.push({ why: `midyear: unfilled template under ${k}` });
+    });
   });
 
   // 5. The pool can never starve, on any family, with or without NS.
