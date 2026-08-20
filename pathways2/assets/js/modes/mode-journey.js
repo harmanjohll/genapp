@@ -8,25 +8,25 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../components/dom.js?v=2.13.0';
-import { icon } from '../components/icons.js?v=2.13.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.13.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.13.0';
-import { cue } from '../sound.js?v=2.13.0';
-import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.13.0';
+import { esc, onAction } from '../components/dom.js?v=2.14.0';
+import { icon } from '../components/icons.js?v=2.14.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.14.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../components/sheet.js?v=2.14.0';
+import { cue } from '../sound.js?v=2.14.0';
+import { drawStoryMap, saveStoryCard } from '../components/storymap.js?v=2.14.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=2.13.0';
+} from '../engine/possible.js?v=2.14.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
-  companionLine, companionEnd,
-} from '../engine/journey4.js?v=2.13.0';
+  companionLine, companionEnd, midyearLine,
+} from '../engine/journey4.js?v=2.14.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   setMode, setAim,
-} from '../state.js?v=2.13.0';
+} from '../state.js?v=2.14.0';
 
 let DOORS = {};
 let run = null;
@@ -42,6 +42,9 @@ let rerender = () => {};
 let DATA = null;
 
 const MV = (data) => (data.moves && data.moves.moves) || [];
+const ACTS = (data) => (data.activities && data.activities.activities) || [];
+// The four things a Sec 1 actually gets asked to pick from, offered as one tap.
+const CCA_IDS = ['sport', 'uniformed', 'perform', 'club'];
 
 export function renderJourney(host, data, ctx, repaint) {
   markPlace(host);
@@ -362,8 +365,14 @@ function shell(inner, rail) {
     </div>`;
 }
 
-/** Chapter meta: where you are in the whole life, at a glance. */
-function chapterMeta(data, stage, age) {
+/**
+ * The spine every beat of a chapter shares: chapter count, the little life
+ * line, the road, the want. The turn, the mid-year chance, the lived close
+ * and the service question all carry it, because the moment one of them
+ * dropped it, that screen stopped being part of the game and started being
+ * a dialog box that had wandered in.
+ */
+function metaStrip(data) {
   const jc = data.copy.journey;
   const { n, total } = chapterCount(data.journey, run);
   const label = run.pathLabel ? `<span class="pathchip">${esc(run.pathLabel)}</span>` : '';
@@ -371,9 +380,14 @@ function chapterMeta(data, stage, age) {
   const want = run.want ? `<span class="wantline">${esc(run.want.label)}</span>` : '';
   const strip = `<span class="lifestrip" role="img" aria-label="${esc(fill(jc.chapterOf, { n, total }))}">${Array.from({ length: total }, (_, i) =>
     `<i class="${i < n - 1 ? 'on' : ''}${i === n - 1 ? ' now' : ''}"></i>`).join('')}</span>`;
+  return `<p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total }))} ${strip} ${label} ${seedChip} ${want}</p>`;
+}
+
+/** Chapter meta: the spine plus the year's own headline. */
+function chapterMeta(data, stage, age) {
   const title = stage.chapter || stage.title;
   return `
-    <p class="turn-meta caps">${esc(fill(jc.chapterOf, { n, total }))} ${strip} ${label} ${seedChip} ${want}</p>
+    ${metaStrip(data)}
     <div class="turn-head"><span class="turn-age" aria-hidden="true">${age}</span>
       <h1 class="serif" tabindex="-1">${esc(title)}</h1></div>`;
 }
@@ -422,6 +436,24 @@ function turnScreen(host, stage, data, age) {
     ${friend ? `<p class="j-friend">${esc(friend)}</p>` : ''}
     ${run.stepIndex === 0 ? `<div class="panel tight" style="margin-top:var(--s-3)"><p class="small" style="margin:0">${esc(jc.turnHint)}</p></div>` : ''}
     ${run.stepIndex === 1 ? `<p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.handIntro)}</p>` : ''}
+    ${/* The question every Sec 1 actually gets asked, offered as one tap and
+          never as a form. The week is the substrate the whole points economy
+          reads (a light week hands a point back, a full one takes its share
+          and pays in what it builds), so the game has to let the player SHAPE
+          the week rather than inherit it silently from the Plan screen. */ ''}
+    ${(stage.at || []).includes('sec') && !(run.activities || []).length && !run.weekAsked ? `
+      <div class="panel tight ccapanel" style="margin-top:var(--s-3)">
+        <p class="caps">${esc(jc.ccaHead)}</p>
+        <div class="chip-row homeopts" style="margin-top:var(--s-2)">
+          ${CCA_IDS.map((id) => {
+    const a = ACTS(data).find((x) => x.id === id);
+    return a ? `<button class="btn ghost small homeopt" type="button" data-action="cca" data-id="${id}">${icon(a.ic)}${esc(a.label)}</button>` : '';
+  }).join('')}
+          <button class="btn ghost small" type="button" data-action="weeksheet">${esc(jc.ccaMore)}</button>
+          <button class="gloss" type="button" data-action="ccaskip">${esc(jc.ccaSkip)}</button>
+        </div>
+        <p class="micro mute" style="margin-top:var(--s-2)">${esc(jc.ccaNote)}</p>
+      </div>` : ''}
     ${wantCheckBlock}
     <div class="pointsrow" role="status">
       <span class="caps">${esc(jc.points)}</span>
@@ -470,6 +502,62 @@ function turnScreen(host, stage, data, age) {
     keepwant: () => { const b = host.querySelector('[data-ref="wantblock"]'); if (b) b.innerHTML = `<p class="small mute">${esc(run.want.label)}. Kept.</p>`; },
     changewant: () => wantChangeUI(host, data),
     wantset: (btn) => wantSet(host, data, btn),
+    cca: (btn) => {
+      run.activities = [...(run.activities || []), btn.dataset.id];
+      run.weekAsked = true;
+      setLiveRun(run);
+      rerender();
+    },
+    ccaskip: () => { run.weekAsked = true; setLiveRun(run); rerender(); },
+    weeksheet: (btn) => { run.weekAsked = true; openWeekSheet(data, btn); },
+  });
+}
+
+/**
+ * The week, editable from inside a life. Same catalogue and grouping as the
+ * Plan screen's picker, but it writes to THIS RUN and never to the device, so
+ * a story can reshape its own years (and a guest can play a week) without
+ * touching what the Plan screen holds. The band line under the hours teaches
+ * the exact arithmetic the engine runs: two hours or fewer hands next school
+ * year a point, six or more takes one and pays it back in what it builds.
+ * Never a verdict about fullness; some students carry four evenings for
+ * reasons nobody offered them a choice about, and the app knows that.
+ */
+function openWeekSheet(data, trigger) {
+  const jc = data.copy.journey;
+  const all = ACTS(data);
+  const C = (data.activities && data.activities.copy) || {};
+  const paint = () => {
+    const mine = run.activities || [];
+    const w = mine.reduce((n, id) => { const a = all.find((x) => x.id === id); return n + ((a && a.week) || 0); }, 0);
+    const band = w >= 6 ? jc.weekFull : (w > 0 && w <= 2 ? jc.weekRoom : jc.weekSteady);
+    const groups = [...new Set(all.map((a) => a.group))];
+    return `
+      <h2 id="sheet-title">${esc(jc.weekSheetHead)}</h2>
+      <p class="small mute">${esc(C.hint || '')}</p>
+      ${mine.length ? `<p class="small weekband"><strong>${esc(fill(jc.weekHours, { n: w }))}</strong> ${esc(band)}</p>` : ''}
+      <div class="picker">${groups.map((g) => `
+        <div class="pk-group">
+          <p class="caps">${esc(g)}</p>
+          ${all.filter((a) => a.group === g).map((a) => `
+            <button class="actrow${mine.includes(a.id) ? ' on' : ''}" type="button" data-action="wtog"
+                    data-id="${esc(a.id)}" aria-pressed="${mine.includes(a.id)}">
+              <span class="actrow-name">${icon(a.ic)}${esc(a.label)}</span>
+            </button>`).join('')}
+        </div>`).join('')}</div>`;
+  };
+  const sheet = openSheet(paint(), trigger,
+    `<button class="btn accent" type="button" data-action="wdone">${esc(C.done || 'That is my week')}</button>`);
+  onSheetAction({
+    wtog: (b) => {
+      const id = b.dataset.id;
+      run.activities = (run.activities || []).includes(id)
+        ? run.activities.filter((x) => x !== id)
+        : [...(run.activities || []), id];
+      setLiveRun(run);
+      sheet.innerHTML = paint();
+    },
+    wdone: () => { closeSheet(); rerender(); },
   });
 }
 
@@ -718,7 +806,8 @@ function nsScreen(host, stage, data) {
   host.innerHTML = `
     <div class="wrap">
       <div class="ns-ask fade-up">
-        <p class="caps">${esc(jc.nsKicker)}</p>
+        ${metaStrip(data)}
+        <p class="caps" style="margin-top:var(--s-4)">${esc(jc.nsKicker)}</p>
         <h1 class="serif" tabindex="-1" style="font-size:var(--t-h1);max-width:24ch">${esc(stage.chapter)}</h1>
         <p class="lede" style="max-width:52ch">${esc(stage.situation)}</p>
         <div class="ns-choices" role="group" aria-label="Your answer">
@@ -831,9 +920,20 @@ function reflectScreen(host, stage, data) {
 
 function chanceAsk(host, card, data) {
   const jc = data.copy.journey;
+  const j = data.journey;
+  // The card is the MIDDLE of the chapter, not a visitor. It keeps the spine,
+  // says where in the year it lands, and shows the plans already in motion, so
+  // the interruption interrupts something visible.
+  const stage = currentStage(j, run);
   const kind = card.type === 'setback' ? 'Something goes wrong'
     : card.type === 'encounter' ? 'Someone turns up'
       : card.type === 'interrupt' ? 'Life interrupts' : 'A chance appears';
+  const when = stage ? midyearLine(j, run, stage) : null;
+  const beat = stage ? `
+    <p class="beatline"><span class="caps">${esc(fill(jc.beatMid, { chapter: stage.chapter || stage.title }))}</span>${when ? ` <span class="beat-when serif">${esc(when)}</span>` : ''}</p>` : '';
+  const motion = pendingLived && Array.isArray(pendingLived.chosen)
+    ? pendingLived.chosen.map((c) => c.label).filter((l) => l && l !== jc.weekPaid).slice(0, 3)
+    : [];
   const asks = card.asks ? `
     <p class="askline">${esc(fill(jc.asks, {
       disp: dispLabel(card.asks.disposition),
@@ -851,7 +951,10 @@ function chanceAsk(host, card, data) {
     ? `<p class="waitedline">${esc(step.waited.text)}</p>` : '';
 
   host.innerHTML = shell(`
-    <div class="chance ${card.type === 'setback' ? 'setback' : ''}">
+    ${metaStrip(data)}
+    ${beat}
+    ${motion.length ? `<p class="inmotion"><span class="micro mute">${esc(jc.inMotion)}</span> ${motion.map((l) => `<span class="gchip">${esc(l)}</span>`).join('')}</p>` : ''}
+    <div class="chance kind-${esc(card.type)} dealt">
       <span class="ch-mark" aria-hidden="true">${icon(`ch_${card.type}`)}</span>
       <p class="kind">${icon(`ch_${card.type}`)}${esc(kind)}</p>
       <h1 class="serif" tabindex="-1" style="margin:var(--s-2) 0 var(--s-3)">${esc(card.title)}</h1>
@@ -927,6 +1030,7 @@ function livedScreen(host, data) {
 
   host.innerHTML = shell(`
     <div class="chance-out lived">
+      ${metaStrip(data)}
       ${doorOpened ? `
         <div class="door-open pop">
           <p class="caps">${esc(jc.doorOpened)}</p>
@@ -947,7 +1051,7 @@ function livedScreen(host, data) {
           ${c.isMove && c.check ? `<p class="micro mute">${esc(c.check)}</p>` : ''}
         </div>`).join('')}
       ${chance ? `
-        <div class="lived-chance ${chance.type === 'setback' ? 'setback' : ''}">
+        <div class="lived-chance kind-${esc(chance.type)}">
           <p class="kind">${icon(`ch_${chance.type}`)}${esc(chance.title)}</p>
           <p class="lived-choice serif">${esc(chance.response)}</p>
           <p class="lede">${decorate(chance.text)}</p>
@@ -1292,6 +1396,21 @@ function rail(data, stage, age) {
     <div class="disp-bars">${bars}</div>
     <details style="margin-top:var(--s-2)"><summary class="small mute">${esc(jc.carryHead)}</summary>
       <div class="disp-bars" style="margin-top:var(--s-2)">${dbars}</div></details>
+    ${(() => {
+    // The week, held where identity is held, because a week is one. Editable
+    // only from a school-year turn: the engine reads activities up to 18, and
+    // the chance and lived beats are not the moment to re-plan a timetable.
+    const acts = (run.activities || []).map((id) => ACTS(data).find((a) => a.id === id)).filter(Boolean);
+    const canEdit = stage && age != null && age <= 18;
+    return `
+      <div class="railweek">
+        <p class="caps rail-sub">${esc(jc.weekHead)}</p>
+        ${acts.length
+    ? `<p class="chips actchips">${acts.map((a) => `<span class="chip act">${icon(a.ic)}${esc(a.label)}</span>`).join('')}</p>`
+    : `<p class="micro mute" style="margin:0">${esc(jc.weekNone)}</p>`}
+        ${canEdit ? `<button class="btn ghost small" type="button" data-action="weeksheet" style="margin-top:var(--s-2)">${esc(jc.weekChange)}</button>` : ''}
+      </div>`;
+  })()}
 
     <p class="caps rail-q" style="margin-top:var(--s-4)">${icon('q_where')}${esc(jc.q2)}</p>
     <p class="small">${run.want

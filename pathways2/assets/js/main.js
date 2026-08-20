@@ -4,18 +4,18 @@
 // Play lives it forward, Act turns the ending into things to do this term.
 // The landing asks one question before any of it, once.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD } from './data-loader.js?v=2.13.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD } from './data-loader.js?v=2.14.0';
 import {
   getState, subscribe, setMode, setYear, setLiveRun, setSound, reconcile,
   markVersionSeen, snapshotPlan, MODES, YEARS, currentYear, isGuest,
-} from './state.js?v=2.13.0';
-import { initGlossary, openFullList } from './components/glossary.js?v=2.13.0';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.13.0';
-import { onAction, esc } from './components/dom.js?v=2.13.0';
-import { icon } from './components/icons.js?v=2.13.0';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.13.0';
-import { reach } from './engine/reach.js?v=2.13.0';
-import { renderLanding } from './modes/landing.js?v=2.13.0';
+} from './state.js?v=2.14.0';
+import { initGlossary, openFullList } from './components/glossary.js?v=2.14.0';
+import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js?v=2.14.0';
+import { onAction, esc } from './components/dom.js?v=2.14.0';
+import { icon } from './components/icons.js?v=2.14.0';
+import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js?v=2.14.0';
+import { reach } from './engine/reach.js?v=2.14.0';
+import { renderLanding } from './modes/landing.js?v=2.14.0';
 
 /**
  * ONE MODE AT A TIME, WHICH IS HOW STUDENTS USE IT.

@@ -6,8 +6,21 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.13.0",
+  "version": "2.14.0",
   "releases": [
+    {
+      "version": "2.14.0",
+      "date": "2026-08-19",
+      "head": "The middle of the year is part of the game now",
+      "changes": [
+        "The chance that lands each year stopped arriving from nowhere. It keeps the chapter's own header, says where in the year it lands (term three, a bookout Saturday, crit week), and shows the plans I already set in motion, so an interruption visibly interrupts something.",
+        "Each kind of card wears its own colour and is dealt onto the table: green for a chance, purple for a person, blue for a setback, ochre for an interruption. Never red, because none of them is a failure.",
+        "Every Sec 1 gets asked the real first question: which CCA? One tap, it shapes my week every school year, and it never spends a point.",
+        "My week is mine to shape mid story. Change my week, in the rail, opens the same thirteen thing list Plan uses, priced honestly: two hours or fewer outside lessons hands the next school year an extra point of time, six or more takes one and pays it back in what it builds. Nothing in it calls a full week wrong.",
+        "Time can be earned, not only spent: a Sec 2 choice, building a study system of my own, grows every later year by a point.",
+        "The years look alive. My age rides a station roundel like the map at the end, the chapter dots ride an actual line, the bars beside the story are finally visible, and choices lift a little when I reach for them."
+      ]
+    },
     {
       "version": "2.13.0",
       "date": "2026-08-19",

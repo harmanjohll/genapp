@@ -276,6 +276,53 @@
    "different": "{name} took {road} and it suits them. Two roads, both of them fine."
   }
  },
+ "midyear": {
+  "sec": [
+   "Term 3, the week before the papers.",
+   "A Tuesday after CCA, out of nowhere.",
+   "Just after the June holidays."
+  ],
+  "jc": [
+   "On the concourse, between lectures.",
+   "The week the common tests end."
+  ],
+  "mi": [
+   "Year two of the long climb.",
+   "Between papers, term two."
+  ],
+  "poly": [
+   "Week eight, submissions everywhere.",
+   "In the canteen, between modules."
+  ],
+  "ite": [
+   "A workshop morning, mid module.",
+   "The week of the safety audit."
+  ],
+  "arts": [
+   "Crit week, everything pinned up.",
+   "A studio afternoon, paint still wet."
+  ],
+  "ns": [
+   "A bookout Saturday.",
+   "A quiet weekday night in camp."
+  ],
+  "uni": [
+   "Reading week, the library full.",
+   "Midway through the semester."
+  ],
+  "work": [
+   "An ordinary work week.",
+   "Between deadlines, a normal month."
+  ],
+  "cet": [
+   "Between the day job and the class.",
+   "An ordinary month, then this."
+  ],
+  "default": [
+   "Midway through the year.",
+   "An ordinary week, then this."
+  ]
+ },
  "stages": [
   {
    "id": "s_sec1",
@@ -284,7 +331,7 @@
    "situation": "New school, new blazer, and by June I know which staircase floods. This year I take {subjects}, and everything is still moving.",
    "choices": [
     {
-     "label": "Try a CCA I have never done",
+     "label": "Give my CCA my best evenings",
      "cost": 1,
      "disp": {
       "risk": 1
@@ -294,7 +341,7 @@
      },
      "sets": "took_stage",
      "outcome": "Wednesday trainings eat my evenings and hand me a second set of friends.",
-     "missed": "The trial happened without me. There is next year."
+     "missed": "The CCA stayed a Wednesday obligation, nothing more."
     },
     {
      "label": "Go to remedial for my weakest subject",
@@ -476,6 +523,20 @@
      },
      "sets": "built_side",
      "outcome": "Twelve people use the thing I made. Two send me bugs. I fix them."
+    },
+    {
+     "cost": 2,
+     "label": "Build a study system of my own",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "capacity": 1,
+     "grew": "built a study system that holds",
+     "outcome": "Flashcards that survive a month, a timetable I actually follow. Every school year after this costs less to run.",
+     "missed": "Revision stayed a mood, not a method."
     }
    ],
    "at": [
