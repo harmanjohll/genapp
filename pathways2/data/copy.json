@@ -94,7 +94,16 @@
   "alsoTeacher": "one for teachers",
   "alsoEvidence": "what this is built on",
   "continueName": "Continue",
-  "continueSub": "Back into the life you were living, at {age}"
+  "continueSub": "Back into the life you were living, at {age}",
+  "trustA": "No account, no sign in",
+  "trustB": "Nothing you do here leaves this device",
+  "trustC": "Free, and it fits one lesson",
+  "metaPlan": "{n} subjects already set on this device",
+  "metaPlanNone": "Two minutes to set yours",
+  "metaPlay": "About ten minutes, one lesson",
+  "metaAct": "{n} things already on your list",
+  "metaActNone": "Three concrete things, written down",
+  "contPlaying": "Playing toward: {want}"
  },
  "pulse": {
   "opened": "{dest} is open now.",

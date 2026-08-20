@@ -6,8 +6,20 @@
     "units": "not applicable",
     "notes": "The version now lives in index.html, in a meta tag, because that is the one file a reload always refetches. This file mirrors it so the app can say when a device is running a part cached page, and it carries the notes a student reads. Bump both together: the sweep fails if they disagree. Entries are for the person using it: what is different on their screen, never what changed in the code."
   },
-  "version": "2.14.0",
+  "version": "2.15.0",
   "releases": [
+    {
+      "version": "2.15.0",
+      "date": "2026-08-20",
+      "head": "A front door with the game behind it",
+      "changes": [
+        "The landing question is set like the headline it is, and the network the app draws at the end of a life now draws itself in behind the front door: several roads, stations along them, one bright line with a quiet pulse.",
+        "The guess buttons are station roundels, the same circle my age rides inside the game, because tapping one is the first move of it.",
+        "The three doors are save slots now. Plan says how many subjects this device already holds, Act says how many things are on the list, and a story mid flight shows its age, its road and what it is playing toward. Play carries the bright edge.",
+        "The facts a parent decides on stopped hiding in a footer this page never showed: no account, nothing leaves this device, free, and it fits one lesson.",
+        "Each destination card wears a small station dot that lights when its road turns over, and the six quieter pages are proper labelled links instead of a comma list."
+      ]
+    },
     {
       "version": "2.14.0",
       "date": "2026-08-19",
