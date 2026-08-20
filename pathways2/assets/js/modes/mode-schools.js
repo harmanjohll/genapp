@@ -21,11 +21,11 @@
 // ask for. The badge on each school is the load bearing element: a road the
 // planner does not fit says so, beside what to use instead.
 
-import { esc, onAction } from '../components/dom.js?v=2.14.0';
-import { icon } from '../components/icons.js?v=2.14.0';
-import { decorate, bindGlossary } from '../components/glossary.js?v=2.14.0';
-import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js?v=2.14.0';
-import { getState, setSchoolKind } from '../state.js?v=2.14.0';
+import { esc, onAction } from '../components/dom.js?v=2.15.0';
+import { icon } from '../components/icons.js?v=2.15.0';
+import { decorate, bindGlossary } from '../components/glossary.js?v=2.15.0';
+import { openSheet, onSheetAction, close as closeSheet } from '../components/sheet.js?v=2.15.0';
+import { getState, setSchoolKind } from '../state.js?v=2.15.0';
 
 // Deliberately not a traffic light. "Not this app" is a fact about the app, not a
 // verdict on the student, so it is rendered in the same neutral weight as the

@@ -6,7 +6,7 @@
 // felt on headphones at home. prefers-reduced-motion is honoured as a mute
 // signal, and board mode stays silent regardless of the toggle.
 
-import { getState } from './state.js?v=2.14.0';
+import { getState } from './state.js?v=2.15.0';
 
 let ctx = null;
 

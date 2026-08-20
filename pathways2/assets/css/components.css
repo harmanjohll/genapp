@@ -1076,18 +1076,64 @@ body { transition: background-color 600ms var(--ease); }
 @media (prefers-reduced-motion: reduce) { body { transition: none; } }
 
 /* ---------- the landing ---------- */
-.landing { position: relative; min-height: 78vh; padding: var(--s-8) 0 var(--s-7); overflow: hidden; }
+/* Three schools of front door, one page. From classic Apple: the type IS the
+   hero, one idea per zone, the product shown doing its thing (the network
+   drawing itself in below). From game landings: the guess is a playable
+   mechanic, the doors are save slots that know what is behind them, the
+   current station pulses. From the public-service pattern SkillsFuture uses:
+   the trust facts on the surface and the audience wayfinding findable. All of
+   it under the house covenants: calm, equal treatment, nothing red. */
+.landing {
+  position: relative; min-height: 78vh; padding: var(--s-8) 0 var(--s-7);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-warm) 100%);
+}
 .landing > .wrap { position: relative; }
 .landing-bg {
-  position: absolute; inset: auto 0 0 0; height: min(46vh, 420px);
-  color: var(--ink); opacity: 0.05; pointer-events: none;
+  position: absolute; inset: auto 0 0 0; height: min(42vh, 360px);
+  color: var(--ink); pointer-events: none;
 }
 .landing-bg svg { width: 100%; height: 100%; display: block; }
+/* The network draws itself in, once, on arrival. */
+.landing-bg .ln {
+  stroke: currentColor; opacity: 0.07;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  animation: lineDraw 1300ms var(--ease) forwards;
+}
+.landing-bg .ln:nth-of-type(2) { animation-delay: 180ms; }
+.landing-bg .faintln { opacity: 0.05; }
+.landing-bg .accln { stroke: var(--accent); opacity: 0.2; animation-delay: 360ms; }
+.landing-bg .dashln {
+  stroke-dasharray: 2 14; stroke-dashoffset: 0;
+  opacity: 0; animation: bgFade 900ms ease 700ms forwards;
+}
+.landing-bg .dashln { --bgfade-to: 0.07; }
+.landing-bg .bg-sts circle { opacity: 0; animation: bgFade 500ms ease 1100ms forwards; --bgfade-to: 0.12; }
+.landing-bg .bg-now { fill: var(--accent); opacity: 0; animation: bgFade 500ms ease 1200ms forwards; --bgfade-to: 0.55; }
+.landing-bg .bg-now-ring {
+  stroke: var(--accent); stroke-width: 2; opacity: 0;
+  transform-box: fill-box; transform-origin: center;
+  animation: nowPulse 2600ms ease-out 1500ms infinite;
+}
+@keyframes lineDraw { to { stroke-dashoffset: 0; } }
+@keyframes bgFade { to { opacity: var(--bgfade-to, 0.07); } }
+@keyframes nowPulse {
+  0% { opacity: 0.5; transform: scale(0.6); }
+  70% { opacity: 0; transform: scale(1.5); }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-bg .ln { animation: none; stroke-dashoffset: 0; }
+  .landing-bg .dashln, .landing-bg .bg-sts circle, .landing-bg .bg-now { animation: none; opacity: var(--bgfade-to, 0.07); }
+  .landing-bg .bg-now-ring { animation: none; }
+}
 .landing-kicker { display: inline-flex; align-items: center; gap: var(--s-2); }
 .landing-kicker svg { width: 1.3em; height: 1.3em; color: var(--accent); }
+/* The question is the hero, so it is set like one. */
 .landing-q {
-  font-size: clamp(1.6rem, 4.6vw, 2.6rem); line-height: var(--lh-hero);
-  margin: var(--s-4) 0 var(--s-5); max-width: 30ch;
+  font-size: clamp(1.85rem, 5.4vw, 3.3rem); line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: var(--s-4) 0 var(--s-6); max-width: 26ch;
 }
 
 /* The eight, standing on the page. Identical treatment, data order, and the
@@ -1103,7 +1149,19 @@ body { transition: background-color 600ms var(--ease); }
   display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-2);
   border: 1.5px solid var(--rule); border-radius: var(--r-md);
   background: var(--surface); box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
+@media (hover: hover) { .dest-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); } }
+/* Each destination is a station on the network. The dot is drawn, not marked
+   up, so the accessibility tree stays exactly as it was. */
+.dest-card::before {
+  content: ''; position: absolute; top: 10px; right: 10px;
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 2px solid var(--rule); background: var(--paper-warm);
+  transition: border-color 300ms var(--ease), background 300ms var(--ease);
+  transition-delay: calc(var(--i) * 110ms);
+}
+.dest-card.revealed::before { border-color: var(--open); background: var(--open-wash); }
 .dest-name { font-family: var(--display); font-weight: 600; font-size: 1.02rem; line-height: 1.25; }
 .road-tag {
   display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
@@ -1130,14 +1188,20 @@ body { transition: background-color 600ms var(--ease); }
 
 .guess-block { margin-top: var(--s-2); }
 .guess-row { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
+/* The guess buttons are station roundels: the same circle the game puts an
+   age inside, because tapping one is the first move of the game. */
 .guess-n {
-  min-width: var(--tap); min-height: var(--tap); padding: 0 var(--s-3);
-  border: 1.5px solid var(--rule); border-radius: var(--r-md);
-  background: var(--surface); font: inherit; font-weight: 650; font-size: 1.1rem;
+  width: 52px; height: 52px; padding: 0;
+  display: inline-grid; place-items: center;
+  border: 2px solid var(--rule); border-radius: 50%;
+  background: var(--surface); font: inherit; font-family: var(--display);
+  font-weight: 650; font-size: 1.15rem;
   color: var(--ink); cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
-.guess-n:hover { border-color: var(--accent); }
+.guess-n:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.guess-n:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .guess-n.on { border-color: var(--accent); background: var(--accent-wash); color: var(--accent-dk); }
 .reveal-big {
   font-size: var(--t-h1); line-height: var(--lh-h); max-width: 28ch;
@@ -1151,15 +1215,45 @@ body { transition: background-color 600ms var(--ease); }
   animation-delay: 1300ms;
 }
 @media (min-width: 700px) { .landing-doors { grid-template-columns: 1fr auto 1fr auto 1fr; } }
+/* The doors are save slots. Each one says what is already behind it (a count
+   of subjects, a list of commitments, a life mid flight with its road and its
+   want), so choosing a door feels like picking up a game rather than opening
+   a menu. Play carries the primary edge: it is the door the page exists for. */
 .ldoor {
   display: flex; flex-direction: column; gap: var(--s-1); text-align: left;
-  padding: var(--s-4) var(--s-5); min-height: 116px; cursor: pointer; font: inherit;
+  padding: var(--s-4) var(--s-5); min-height: 132px; cursor: pointer; font: inherit;
   border: 1.5px solid var(--rule); border-radius: var(--r-lg); background: var(--surface);
-  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
 }
-.ldoor:hover { border-color: var(--accent); transform: translateY(-2px); }
-.ldoor-ic { color: var(--accent); }
-.ldoor-ic svg { width: 1.4em; height: 1.4em; margin: 0; }
+.ldoor:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+.ldoor:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ldoor.primary { border-color: var(--accent); border-width: 2px; }
+.ldoor-ic {
+  color: var(--accent);
+  display: inline-grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--accent-wash); margin-bottom: var(--s-1);
+}
+.ldoor-ic svg { width: 1.2em; height: 1.2em; margin: 0; }
+.ldoor-meta { margin-top: auto; padding-top: var(--s-2); font-size: var(--t-micro); color: var(--ink-faint); }
+.ldoor-meta.slotchips { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+.trustrow {
+  display: flex; flex-wrap: wrap; gap: var(--s-2);
+  margin: var(--s-4) 0 0;
+}
+.trustchip {
+  font-size: var(--t-micro); font-weight: 600; color: var(--ink-mute);
+  border: 1px solid var(--rule); border-radius: var(--r-pill);
+  padding: 4px 12px; background: var(--surface);
+}
+.landing-aud .audlink {
+  display: inline-block; margin: 2px 4px 2px 0;
+  padding: 4px 12px; border: 1px solid var(--rule); border-radius: var(--r-pill);
+  color: var(--ink-mute); text-decoration: none; background: var(--surface);
+}
+.landing-aud .audlink:hover { border-color: var(--accent); color: var(--accent-dk); }
 .ldoor-name { font-family: var(--display); font-weight: 600; font-size: var(--t-h2); }
 .ldoor-sub { color: var(--ink-mute); font-size: var(--t-small); }
 .ldoor-arrow { align-self: center; color: var(--ink-faint); font-size: 1.2rem; display: none; }
@@ -1889,3 +1983,6 @@ body[data-aud="adult"] {
 .railweek .caps { margin-bottom: var(--s-2); }
 .weekband { padding: var(--s-2) var(--s-3); background: var(--paper-warm); border-radius: var(--r-md); }
 .ccapanel { border-left: 3px solid var(--accent); }
+
+/* Phones get tighter destination cards before the reveal fills them. */
+@media (max-width: 700px) { .dest-card { min-height: 72px; } }
