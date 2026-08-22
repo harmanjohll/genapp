@@ -1,0 +1,122 @@
+{
+  "_meta": {
+    "source": "MOE Full SBB pages, SEAB SEC overview, MOE SchoolFinder guidance. Written for parents of the first SEC cohorts.",
+    "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+    "accessed": "2026-08-05",
+    "units": "not applicable",
+    "notes": "One calm page. The parent is very often the person actually driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes."
+  },
+  "title": "For parents",
+  "lede": "The system your child is in is not the one you went through. Here is the shape of it, in five minutes.",
+  "sections": [
+    {
+      "head": "What changed since your day",
+      "body": "Express, Normal Academic and Normal Technical are gone. Since 2024 your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels became one exam, the SEC, first sat in 2027. And the JAE you remember is replaced from 2028 by one Post Secondary Admissions Exercise covering JC, MI, poly, PFP and ITE on a single portal."
+    },
+    {
+      "head": "What G1, G2 and G3 actually are",
+      "body": "Levels of a subject, not a rank of your child. G3 covers the most ground fastest, G1 is the most practical. A student can hold G3 English beside G2 Maths. Levels move: schools shift students up and down every year, on classwork, not on one paper."
+    },
+    {
+      "head": "When the decisions happen",
+      "body": "Sec 1 and 2: levels settle and can move. Mid Sec 2: the subject combination exercise, the one that feels enormous and is adjustable. Sec 3: the combination runs. Sec 4: Early Admissions opens before results, on interest and evidence, then the main posting after results. A fifth year exists so one set of results does not settle everything."
+    },
+    {
+      "head": "Five conversations that help",
+      "items": [
+        "Ask what they enjoy before you ask what they scored.",
+        "Go to one open house together, including one route you had not considered.",
+        "Ask the subject teacher what moving up a level would take.",
+        "Ask them to show you this tool and their three actions for the term.",
+        "Ask the ECG counsellor anything. It is their job and it is free."
+      ]
+    },
+    {
+      "head": "Three that quietly hurt",
+      "items": [
+        "Comparing with cousins and colleagues' children. Different child, different road.",
+        "Treating one route as the real one and the rest as fallbacks. The salary data does not support it and neither does the system.",
+        "Deciding for them. A route a child chose survives a hard year better than a route chosen for them."
+      ]
+    },
+    {
+      "head": "Where the official answers live",
+      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is actually on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking, not deciding: the headline 2028 figures match what MOE has announced, and anything not yet read from a primary page is marked provisional on screen.",
+      "links": [
+        {
+          "label": "MOE, post secondary admissions",
+          "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways"
+        },
+        {
+          "label": "MOE SchoolFinder",
+          "url": "https://www.moe.gov.sg/schoolfinder"
+        }
+      ]
+    }
+  ],
+  "status": "confirmed",
+  "windows": [
+    {
+      "label": "Subject combination exercise",
+      "when": "Mid Sec 2, around May to July",
+      "what": "The school runs briefings and the form goes home. Levels can still move after it, every year.",
+      "check": "The school's own circular"
+    },
+    {
+      "label": "Direct admission, DSA",
+      "when": "May to July of Sec 4, for JC",
+      "what": "Talent based entry to a JC before results, on CCA and portfolio evidence. The Sec 1 version is behind you; this one is not.",
+      "check": "MOE DSA JC page"
+    },
+    {
+      "label": "Early Admissions, EAE",
+      "when": "About June of Sec 4, before results",
+      "what": "Poly and ITE admission on interest and evidence, before the exam. The folder it needs is built in Sec 3.",
+      "check": "Polytechnic EAE and ITE EAE pages"
+    },
+    {
+      "label": "Open houses",
+      "when": "November to January, mostly",
+      "what": "JC, MI, poly and ITE campuses open around results season. Going to one changes more minds than any brochure.",
+      "check": "Each campus's page"
+    },
+    {
+      "label": "The main posting round",
+      "when": "Days after results, January",
+      "what": "One PSE portal from 2028 for JC, MI, poly, PFP and ITE, replacing the JAE you remember.",
+      "check": "MOE posting matters page"
+    }
+  ],
+  "guest": {
+    "head": "Play your own school years",
+    "body": "The game your child plays, but as you at fourteen: your old stream, translated into today's levels. Ten minutes, on this phone, and nothing your child saved here is read or touched.",
+    "q": "Which stream were you in?",
+    "streams": [
+      {
+        "id": "express",
+        "label": "Express",
+        "level": "G3"
+      },
+      {
+        "id": "na",
+        "label": "Normal Academic",
+        "level": "G2"
+      },
+      {
+        "id": "nt",
+        "label": "Normal Technical",
+        "level": "G1"
+      },
+      {
+        "id": "other",
+        "label": "Something else",
+        "level": "G2"
+      }
+    ],
+    "opens": "That combination, in today's system, keeps {n} of the {total} destinations reachable.",
+    "cta": "Play it from Sec 3",
+    "note": "Opens as a guest. The game saves nothing to this phone, and handing it back leaves everything exactly as it was."
+  },
+  "windowsHead": "The windows, roughly when they open",
+  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise."
+}

@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "source": "Route structures from MOE, ITE and polytechnic progression information. No named individual appears in this file.",
+    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+    "accessed": "2026-07-31",
+    "units": "years",
+    "notes": "Two kinds of card, rendered differently on purpose. A profile is a real named person with a link. A typical path is a pattern built from how the system works, labelled as a pattern and never as a person. The profiles array is deliberately empty: no real profile could be verified when this was built, and inventing someone is not a substitute. See OPEN_QUESTIONS.md."
+  },
+  "profiles": [],
+  "typicalPaths": [
+    { "id": "tp_ite_up", "kind": "typical", "label": "The long climb",
+      "shape": ["Nitec", "Higher Nitec", "Poly diploma", "Degree"],
+      "body": "Starts at ITE with results that felt like bad news at sixteen. Every step is a real qualification. GPA 2.5 to apply to poly, guaranteed at 3.5.",
+      "takes": "About eight years to a degree, paid work available throughout.",
+      "whatMattered": "Knowing the guarantee existed early enough to aim at it.", "status": "provisional" },
+
+    { "id": "tp_poly_direct", "kind": "typical", "label": "Straight into the field",
+      "shape": ["Poly diploma", "Work", "Degree, or not"],
+      "body": "Picks a field at seventeen and spends three years in it. Leaves with a portfolio and an internship on the record.",
+      "takes": "Three years to a qualification and a first job.",
+      "whatMattered": "Choosing a course they wanted over the one with the highest cut off they could reach.", "status": "provisional" },
+
+    { "id": "tp_fifth_year", "kind": "typical", "label": "The extra year",
+      "shape": ["Sec 5", "Poly or JC", "On from there"],
+      "body": "Comes up short at the end of Sec 4, takes a fifth year at a harder level, and goes on with more open than before.",
+      "takes": "One extra year, invisible within a decade.",
+      "whatMattered": "Treating the year as a run up, not a punishment.", "status": "provisional" },
+
+    { "id": "tp_switch", "kind": "typical", "label": "The switch",
+      "shape": ["One field", "Years of work", "A different field"],
+      "body": "Trains in one thing and moves into something unrelated in their forties. From 40 that is directly funded: a $4,000 credit, an allowance while studying, and up to 90 percent off a diploma.",
+      "takes": "One to three years to retrain, mid career.",
+      "whatMattered": "Having kept learning, so the switch was a step and not a leap.", "status": "provisional" },
+
+    { "id": "tp_portfolio", "kind": "typical", "label": "Admitted on what they made",
+      "shape": ["Made things all through school", "Portfolio", "Arts diploma"],
+      "body": "Results were ordinary. The portfolio was not. Arts admission and Early Admissions both turn on evidence of what you have done.",
+      "takes": "Three years to a diploma.",
+      "whatMattered": "Starting to make things at thirteen, before anyone said it counted.", "status": "provisional" },
+
+    { "id": "tp_jc_uni", "kind": "typical", "label": "The route people picture",
+      "shape": ["Junior College", "A Levels", "University"],
+      "body": "The one most familiar to parents. Good for people who like argument and going deep on a few subjects.",
+      "takes": "Two years, then three or four more.",
+      "whatMattered": "Liking how JC actually works, rather than choosing it because it sounded correct.", "status": "provisional" }
+  ]
+}
