@@ -1,0 +1,50 @@
+{
+ "_meta": {
+  "source": "Krumboltz, J. D. (2009), The Happenstance Learning Theory, Journal of Career Assessment 17(2)",
+  "url": "https://doi.org/10.1177/1069072708328861",
+  "accessed": "2026-07-31",
+  "units": "not applicable",
+  "notes": "Planned happenstance holds that unplanned events shape careers more than plans do, and that certain dispositions decide whether a person can use an unplanned event. Here they are the currency of Journey mode: chance cards check dispositions, never grades. That substitution is the argument, made as a mechanic instead of a paragraph. These are surfaced when they are earned, not lectured up front."
+ },
+ "dispositions": [
+  {
+   "id": "curiosity",
+   "label": "Curiosity",
+   "short": "I go and find out.",
+   "body": "Looking into things nobody set me. Asking in front of people.",
+   "buildsWhen": "I pick the option that teaches me something"
+  },
+  {
+   "id": "persistence",
+   "label": "Persistence",
+   "short": "I stay with the hard thing.",
+   "body": "Not never struggling. What I do the week after it went badly.",
+   "buildsWhen": "I go back to something that went wrong"
+  },
+  {
+   "id": "flexibility",
+   "label": "Flexibility",
+   "short": "I change my mind on new facts.",
+   "body": "Adjusting the plan without treating it as a failure of the plan.",
+   "buildsWhen": "I drop a plan because I learned something"
+  },
+  {
+   "id": "optimism",
+   "label": "Optimism",
+   "short": "I think it might work.",
+   "body": "Seeing a chance as possible rather than as something for other people.",
+   "buildsWhen": "I put myself forward unsure of the outcome"
+  },
+  {
+   "id": "risk",
+   "label": "Risk taking",
+   "short": "I act without being certain.",
+   "body": "Doing it before I feel ready, because the window is now.",
+   "buildsWhen": "I say yes to something uncomfortable"
+  }
+ ],
+ "framing": {
+  "headline": "These are what move a life.",
+  "body": "Grades open particular doors at particular moments. Across forty years, what decides things is whether I noticed the chance."
+ }
+}

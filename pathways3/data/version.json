@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "purpose": "Version stamp and release notes, shown in the what changed sheet.",
+    "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
+  },
+  "version": "3.0.0",
+  "releases": [
+    {
+      "version": "3.0.0",
+      "date": "2026-08-22",
+      "head": "A new map",
+      "changes": [
+        "The map is now the whole tool: it is the home screen, it answers every subject you tap in Plan, it grows as you play, and it is the card you keep at the end.",
+        "The back button works everywhere, and a reload puts you back where you were.",
+        "First visit asks your year and your guess once, then never again.",
+        "The rulebook now arrives in three steps: a plain word, a plain sentence, and the exact rule with its source behind one fold.",
+        "Money, work and your school now appear where they matter, not only as pages.",
+        "One face for the words on every phone, and dark mode is a proper night."
+      ]
+    }
+  ]
+}

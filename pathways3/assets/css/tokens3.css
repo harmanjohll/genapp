@@ -1,0 +1,266 @@
+/* Design tokens, v3. All identity lives here; a school skin is a change to
+   this file, not a rebuild.
+
+   Two voices, one ethic. The four reach states and the accent exist at two
+   volumes: the wash voice (quiet, marks UI state, v2's values kept) and the
+   line voice (full chroma, allowed ONLY on drawn strokes in SVG - the map,
+   the scenes, the lifeline - never on a word about a student). No red
+   anywhere, in either voice: nothing in this app is a failure state.
+
+   Eras. The game walks a life from 13 to 48. body[data-era] moves the paper
+   (kept from v2, mixes raised because the v2 pass measured nobody saw them),
+   and v3 adds what v2's spec promised and never shipped: the surface follows
+   the paper, the grain rises as life acquires texture, and --tempo slows the
+   motion tokens as the decades pass. Semantic hues never move: the three
+   level hues and the four reach states mean the same thing at every age, or
+   they mean nothing.
+
+   Type. One bundled variable serif (Literata, OFL, committed to the repo,
+   same origin, no CDN) so the identity face is the same on the Android
+   phones and Chromebooks the cohort actually holds. v2's Georgia rendered as
+   four different serifs across the fleet, in fake bold. The stack names Noto
+   Serif so a failed font load still lands somewhere designed. */
+
+@layer tokens;
+
+@layer tokens {
+
+@font-face {
+  font-family: 'Literata';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/literata-var-latin.woff2') format('woff2');
+}
+
+:root {
+  /* ink and paper */
+  --ink:        #171A21;
+  --ink-soft:   #3A414C;
+  --ink-mute:   #575F6B;
+  --ink-faint:  #5E6774;
+  --paper:      #F7F5F0;
+  --paper-warm: #F1EDE5;
+  --paper-base:      #F7F5F0;
+  --paper-warm-base: #F1EDE5;
+  --surface:      #FFFFFF;
+  --surface-base: #FFFFFF;
+  --rule:       #DDD8CC;
+  --rule-soft:  #EAE6DC;
+
+  /* Subject levels. Three hues of deliberately equal weight. Never reused. */
+  --g1:       #2E7D74;
+  --g1-wash:  rgba(46, 125, 116, 0.06);
+  --g2:       #4A5FA5;
+  --g2-wash:  rgba(74, 95, 165, 0.06);
+  --g3:       #8A4F7D;
+  --g3-wash:  rgba(138, 79, 125, 0.06);
+
+  /* Reach states, wash voice. No red: nothing here is a failure state. */
+  --open:         #2F7D5B;
+  --open-wash:    rgba(47, 125, 91, 0.10);
+  --open-ink:     #276A4C;
+  --within:       #7A5416;
+  --within-wash:  rgba(168, 116, 31, 0.12);
+  --longer:       #33689E;
+  --longer-wash:  rgba(51, 104, 158, 0.10);
+  --other:        #6E5AA0;
+  --other-wash:   rgba(110, 90, 160, 0.10);
+
+  /* Reach states, line voice. Strokes in drawn SVG only - the map, the
+     scenes, the lifeline. Never text, never a chip about a person. */
+  --line-open:   #1E9463;
+  --line-within: #C98A1F;
+  --line-longer: #3B7FC4;
+  --line-other:  #8A6BC9;
+  --line-accent: #E06A3B;
+  --line-faint:  #C9C2B4;
+
+  /* The compass: the three ECG questions, one hue, told apart by icon. */
+  --compass:      #4F6B3A;
+  --compass-wash: rgba(79, 107, 58, 0.10);
+
+  /* Action. --accent fills, --accent-dk is text on paper, --accent-dkr hovers. */
+  --accent:      #C25E3A;
+  --accent-dk:   #9E4526;
+  --accent-dkr:  #8F4023;
+  --accent-wash: rgba(194, 94, 58, 0.10);
+  --flag:        #6E5325;
+  --flag-wash:   rgba(138, 106, 47, 0.12);
+
+  /* type */
+  --display: 'Literata', Georgia, 'Iowan Old Style', 'Noto Serif', 'Times New Roman', serif;
+  --body:    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-hero:  clamp(2.1rem, 7vw, 3.4rem);
+  --t-h1:    clamp(1.55rem, 4.4vw, 2.2rem);
+  --t-h2:    clamp(1.2rem, 2.8vw, 1.45rem);
+  --t-h3:    1.13rem;
+  --t-body:  1.0625rem;
+  --t-small: 0.9rem;
+  --t-micro: 0.8125rem;
+
+  --lh-hero: 1.06;
+  --lh-h:    1.2;
+  --lh-body: 1.58;
+
+  /* spacing */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 104px;
+
+  /* shape: one system. Cards 14, inputs and chips 10, interactive pills. */
+  --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-pill: 999px;
+
+  /* motion. Five verbs share one easing family; --tempo stretches with age. */
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-door: cubic-bezier(0.16, 1, 0.3, 1);
+  --tempo:     1;
+  --dur:       calc(420ms * var(--tempo));
+  --dur-fast:  calc(180ms * var(--tempo));
+  --dur-draw:  calc(900ms * var(--tempo));
+
+  /* texture: one tiled turbulence plate, opacity rises with the decades */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-o: 0;
+
+  /* layout */
+  --gutter: clamp(16px, 4vw, 40px);
+  --max:    1140px;
+  --max-narrow: 760px;
+
+  --shadow-sm: 0 1px 2px rgba(23, 26, 33, 0.06);
+  --shadow:    0 2px 14px rgba(23, 26, 33, 0.08);
+  --shadow-lg: 0 10px 36px rgba(23, 26, 33, 0.13);
+
+  --tap: 44px;
+}
+
+/* ---- eras: ambient only, semantics never move ----------------------------
+   Paper and surface drift together from warm sand toward cool slate as the
+   decades pass; the grain rises; the tempo slows. Derived from the live
+   theme's own base with color-mix so a manual theme toggle is never fought. */
+@supports (background: color-mix(in srgb, red 50%, blue)) {
+  body[data-era="postsec"] {
+    --paper: color-mix(in srgb, var(--paper-base) 91%, #7A8CA3 9%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 91%, #7A8CA3 9%);
+    --surface: color-mix(in srgb, var(--surface-base) 96%, #7A8CA3 4%);
+    --grain-o: 0.025; --tempo: 1.05;
+  }
+  body[data-era="twenties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 89%, #6E8797 11%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 89%, #6E8797 11%);
+    --surface: color-mix(in srgb, var(--surface-base) 95%, #6E8797 5%);
+    --grain-o: 0.035; --tempo: 1.1;
+  }
+  body[data-era="thirties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 86%, #66788E 14%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 86%, #66788E 14%);
+    --surface: color-mix(in srgb, var(--surface-base) 94%, #66788E 6%);
+    --grain-o: 0.05; --tempo: 1.18;
+  }
+  body[data-era="later"] {
+    --paper: color-mix(in srgb, var(--paper-base) 84%, #5E6B7A 16%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 84%, #5E6B7A 16%);
+    --surface: color-mix(in srgb, var(--surface-base) 93%, #5E6B7A 7%);
+    --grain-o: 0.065; --tempo: 1.25;
+  }
+}
+
+/* ---- dark: night in the same city, not an inversion ----------------------
+   Elevation by surface lightness, shadows nearly gone; the wash alphas rise
+   because tinted translucency dies on black; the drawn lines get a faint
+   glow that only exists after dark (applied in app.css, gated on theme). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:        #E9E5DD;
+    --ink-soft:   #C6C1B7;
+    --ink-mute:   #A6A196;
+    --ink-faint:  #99948C;
+    --paper:      #13161C;
+    --paper-warm: #191D25;
+    --paper-base:      #13161C;
+    --paper-warm-base: #191D25;
+    --surface:      #1E232C;
+    --surface-base: #1E232C;
+    --rule:       #3A4048;
+    --rule-soft:  #2C323A;
+
+    --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.12);
+    --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.12);
+    --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.12);
+
+    --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
+    --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
+    --longer:   #7FAEDC;  --longer-wash: rgba(127, 174, 220, 0.15);
+    --other:    #A995D6;  --other-wash: rgba(169, 149, 214, 0.15);
+
+    --line-open:   #34B87E;
+    --line-within: #E0A93E;
+    --line-longer: #5D9BDD;
+    --line-other:  #A98BE8;
+    --line-accent: #F08050;
+    --line-faint:  #3C434E;
+
+    --compass:  #93B478;  --compass-wash: rgba(147, 180, 120, 0.14);
+
+    --accent:      #E0794F;
+    --accent-dk:   #E98F6A;
+    --accent-dkr:  #F2A585;
+    --accent-wash: rgba(224, 121, 79, 0.14);
+    --flag:        #C7A45E;  --flag-wash: rgba(199, 164, 94, 0.15);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow:    0 2px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+}
+:root[data-theme="dark"] {
+  --ink:        #E9E5DD;
+  --ink-soft:   #C6C1B7;
+  --ink-mute:   #A6A196;
+  --ink-faint:  #99948C;
+  --paper:      #13161C;
+  --paper-warm: #191D25;
+  --paper-base:      #13161C;
+  --paper-warm-base: #191D25;
+  --surface:      #1E232C;
+  --surface-base: #1E232C;
+  --rule:       #3A4048;
+  --rule-soft:  #2C323A;
+  --g1:       #5FB3A8;  --g1-wash:  rgba(95, 179, 168, 0.12);
+  --g2:       #8FA3E0;  --g2-wash:  rgba(143, 163, 224, 0.12);
+  --g3:       #C98BB9;  --g3-wash:  rgba(201, 139, 185, 0.12);
+  --open:     #5CB88E;  --open-wash: rgba(92, 184, 142, 0.15);  --open-ink: #7BCBA4;
+  --within:   #D2A24C;  --within-wash: rgba(210, 162, 76, 0.15);
+  --longer:   #7FAEDC;  --longer-wash: rgba(127, 174, 220, 0.15);
+  --other:    #A995D6;  --other-wash: rgba(169, 149, 214, 0.15);
+  --line-open:   #34B87E;
+  --line-within: #E0A93E;
+  --line-longer: #5D9BDD;
+  --line-other:  #A98BE8;
+  --line-accent: #F08050;
+  --line-faint:  #3C434E;
+  --compass:  #93B478;  --compass-wash: rgba(147, 180, 120, 0.14);
+  --accent:      #E0794F;
+  --accent-dk:   #E98F6A;
+  --accent-dkr:  #F2A585;
+  --accent-wash: rgba(224, 121, 79, 0.14);
+  --flag:        #C7A45E;  --flag-wash: rgba(199, 164, 94, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow:    0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- board mode: theatre, not enlargement --------------------------------
+   The projector is the one screen thirty students see at once. Scaling the
+   root scales every rem in the app; main.js also forces the dark theme so a
+   lit projector in a lit classroom keeps its contrast. */
+:root[data-board] { font-size: 22px; }
+@media (min-width: 1400px) { :root[data-board] { font-size: 26px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-fast: 0ms; --dur-draw: 0ms; }
+}
+
+} /* @layer tokens */

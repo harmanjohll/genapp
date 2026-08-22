@@ -1,0 +1,970 @@
+{
+ "_meta": {
+  "source": "SkillsFuture Singapore Skills Frameworks for the sector and role structures; ITE, polytechnic and autonomous university Graduate Employment Surveys for the pay bands; Ministry of Manpower occupational wage data",
+  "url": "https://www.skillsfuture.gov.sg/skills-framework",
+  "accessed": "2026-08-09",
+  "units": "Singapore dollars, gross monthly, for a first job",
+  "status": "provisional",
+  "notes": "Pay is stated ONCE per level of entry and never per sector. Sector by sector figures would be dozens of numbers this build cannot defend, and comparing sectors on pay is a prestige ranking wearing a dollar sign, which this app does not render. Every band is provisional and needs a human against the named surveys before a class sees it. Sectors are ordered alphabetically by label so the ordering is visibly arbitrary. Every sector carries a real entry at three or more levels, which is checked, because the claim that a level of entry is not a ceiling is the load bearing claim of this file."
+ },
+ "levelPay": [
+  {
+   "id": "nitec",
+   "label": "Fresh Nitec",
+   "band": "About 1,700 to 2,200 a month",
+   "note": "Higher with shift work, allowances, or a licence the job needs.",
+   "status": "provisional",
+   "sourceRef": "ite_ges"
+  },
+  {
+   "id": "hnitec",
+   "label": "Fresh Higher Nitec",
+   "band": "About 2,000 to 2,500 a month",
+   "note": "The third year at ITE is what moves this, and it also opens the poly door.",
+   "status": "provisional",
+   "sourceRef": "ite_ges"
+  },
+  {
+   "id": "diploma",
+   "label": "Fresh polytechnic diploma",
+   "band": "About 2,500 to 2,900 a month",
+   "note": "Men who have served usually start a little above this, being two years older.",
+   "status": "provisional",
+   "sourceRef": "poly_ges"
+  },
+  {
+   "id": "degree",
+   "label": "Fresh degree from a local university",
+   "band": "About 4,000 to 4,500 a month",
+   "note": "The spread inside this is wider than the gap to the row above it.",
+   "status": "provisional",
+   "sourceRef": "uni_ges"
+  }
+ ],
+ "sectors": [
+  {
+   "id": "arts",
+   "label": "Arts, performance and culture",
+   "riasec": [
+    "A",
+    "S"
+   ],
+   "families": [
+    "arts",
+    "academic"
+   ],
+   "isWhat": "Making and staging work that people watch, hear or walk through, and running the places where that happens.",
+   "dayLooks": [
+    "Rehearse the same eight bars",
+    "Hang and light a show",
+    "Run a workshop for schools"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Technical crew",
+     "route": "Nitec in media or events production",
+     "note": "Sound, lighting and stage crew are hired on skill, not on a certificate."
+    },
+    {
+     "level": "poly",
+     "role": "Arts manager or producer",
+     "route": "Diploma in arts management or performance",
+     "note": "The people who make shows happen outnumber the people on stage."
+    },
+    {
+     "level": "arts",
+     "role": "Performer or artist",
+     "route": "NAFA or LASALLE, entry by audition or portfolio",
+     "note": "Entry turns on what I can do in the room, not on an aggregate."
+    },
+    {
+     "level": "uni",
+     "role": "Curator, educator, researcher",
+     "route": "Degree in arts, history or education",
+     "note": "Museums, arts education and policy all hire from here."
+    }
+   ],
+   "licence": "No licence gates this. A body of work that somebody can see does the same job.",
+   "moving": "The audience is not shrinking and the funding moves. Arts education, community arts and the technical trades behind a stage are the steadier ground.",
+   "myth": "That it is a hobby with a job attached. The National Arts Council, the venues and the schools all employ people full time, all year.",
+   "subjects": [
+    "art",
+    "higher_art",
+    "music",
+    "higher_music",
+    "drama",
+    "literature",
+    "ls_art",
+    "ls_music",
+    "ls_history",
+    "history",
+    "ess"
+   ],
+   "thisTerm": [
+    "Get one piece in front of somebody who is not family",
+    "Ask a venue if they take student crew"
+   ]
+  },
+  {
+   "id": "beauty",
+   "label": "Beauty, wellness and sport",
+   "riasec": [
+    "S",
+    "R",
+    "E"
+   ],
+   "families": [
+    "hands",
+    "applied"
+   ],
+   "isWhat": "Working on people's bodies, appearance and fitness, in salons, gyms, spas, clinics and clubs.",
+   "dayLooks": [
+    "Take a client through a programme",
+    "Do the treatment and the aftercare",
+    "Keep the books and the stock"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Therapist, stylist, trainer",
+     "route": "Nitec in beauty and wellness, or a sport certificate",
+     "note": "This sector genuinely starts here and a lot of owners started here too."
+    },
+    {
+     "level": "poly",
+     "role": "Sport or health science",
+     "route": "Diploma in sport, exercise or applied science",
+     "note": "Opens rehabilitation, testing and the clubs that hire on science."
+    },
+    {
+     "level": "uni",
+     "role": "Physiotherapist, dietitian, coach",
+     "route": "Degree in physiotherapy, sport science or nutrition",
+     "note": "Clinical roles need this, and they are licensed on top of it."
+    }
+   ],
+   "licence": "The sport coaching registry and the treatment certifications are what let somebody charge properly.",
+   "moving": "An older population and a country that keeps building sport facilities. Rehabilitation and older adult fitness are growing faster than the aesthetics side.",
+   "myth": "That it has no ladder. Salon and gym owners, franchise operators and clinical specialists all come out of the same first year on the floor.",
+   "subjects": [
+    "biology",
+    "sci_pb",
+    "sci_cb",
+    "nfs",
+    "science_g1",
+    "ls_fce",
+    "ess"
+   ],
+   "thisTerm": [
+    "Shadow one session at a gym, salon or clinic",
+    "Ask what a first year on the floor is really like"
+   ]
+  },
+  {
+   "id": "built",
+   "label": "Building and what gets built",
+   "riasec": [
+    "R",
+    "C",
+    "I"
+   ],
+   "families": [
+    "hands",
+    "applied",
+    "academic"
+   ],
+   "isWhat": "Turning drawings into buildings, roads, tunnels and rail, and keeping them standing afterwards.",
+   "dayLooks": [
+    "Walk a site against the drawings",
+    "Price a variation order",
+    "Coordinate three trades in one week"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Technician or supervisor",
+     "route": "Higher Nitec in architectural or facility technology",
+     "note": "Site experience counts here in a way a certificate does not replace."
+    },
+    {
+     "level": "poly",
+     "role": "Quantity surveyor, BIM coordinator",
+     "route": "Diploma in built environment or civil engineering",
+     "note": "Most of this sector's hiring in volume happens at this level."
+    },
+    {
+     "level": "uni",
+     "role": "Engineer or architect",
+     "route": "Degree in civil engineering or architecture",
+     "note": "Signing off a structure needs a registered professional, and registration comes later."
+    }
+   ],
+   "licence": "The Building and Construction Authority certifications, and Professional Engineer registration for the people who sign.",
+   "moving": "Less swinging a hammer and more coordinating models, prefabrication and data. The work is not going anywhere and the tools change every few years.",
+   "myth": "That it means the site only. Quantity surveying, project management, digital modelling and facilities all sit in offices and pay on responsibility.",
+   "subjects": [
+    "dt",
+    "maths",
+    "amaths",
+    "physics",
+    "sci_pc",
+    "geography",
+    "ls_dt",
+    "hum_ss_geog",
+    "ls_geography"
+   ],
+   "thisTerm": [
+    "Ask a site office what a coordinator actually does all day",
+    "Look up one Higher Nitec built environment course"
+   ]
+  },
+  {
+   "id": "business",
+   "label": "Business, money and accounts",
+   "riasec": [
+    "C",
+    "E"
+   ],
+   "families": [
+    "academic",
+    "applied"
+   ],
+   "isWhat": "Keeping track of what an organisation owns and owes, and deciding where the money goes next.",
+   "dayLooks": [
+    "Close the month",
+    "Explain a variance to somebody senior",
+    "Check a client against the rules"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Accounts or operations assistant",
+     "route": "Nitec or Higher Nitec in business services",
+     "note": "The finance function of every organisation hires at this level."
+    },
+    {
+     "level": "poly",
+     "role": "Accounting or banking executive",
+     "route": "Diploma in accountancy, banking or business",
+     "note": "A route into the same firms, and part time degrees are normal after it."
+    },
+    {
+     "level": "uni",
+     "role": "Auditor, analyst, accountant",
+     "route": "Degree in accountancy, business or economics",
+     "note": "The professional qualification is what matters after, not the degree alone."
+    }
+   ],
+   "licence": "The Singapore Chartered Accountant qualification, or CFA on the investment side. Both are taken while working.",
+   "moving": "Routine bookkeeping is being automated and the judgement work is not. Anti money laundering, sustainability reporting and advisory keep growing.",
+   "myth": "That it is only for the arithmetic quick. It runs on being organised, asking a question when a number looks wrong, and explaining it clearly.",
+   "subjects": [
+    "poa",
+    "economics",
+    "maths",
+    "amaths",
+    "ebs",
+    "el"
+   ],
+   "thisTerm": [
+    "Keep an honest budget for one month and see what it teaches",
+    "Ask somebody in finance what they actually do at month end"
+   ]
+  },
+  {
+   "id": "care",
+   "label": "Care, health and getting better",
+   "riasec": [
+    "S",
+    "I",
+    "R"
+   ],
+   "families": [
+    "applied",
+    "academic",
+    "hands"
+   ],
+   "isWhat": "Looking after people who are ill, injured, ageing or recovering, in hospitals, clinics, homes and their own flats.",
+   "dayLooks": [
+    "Take a round of observations",
+    "Explain a diagnosis to a family",
+    "Run the equipment nobody else can"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Healthcare or therapy assistant",
+     "route": "Higher Nitec in nursing or healthcare",
+     "note": "There is a real ladder from here to enrolled nurse and beyond."
+    },
+    {
+     "level": "poly",
+     "role": "Registered nurse, radiographer",
+     "route": "Diploma in nursing or health sciences",
+     "note": "This is the main door into the hospitals, in volume, every year."
+    },
+    {
+     "level": "uni",
+     "role": "Doctor, pharmacist, therapist",
+     "route": "Degree in medicine, pharmacy or allied health",
+     "note": "Longest run up, and the ladder from a diploma reaches here too."
+    }
+   ],
+   "licence": "Registration with the Singapore Nursing Board, or the relevant professional board. The registration is the job, not the certificate.",
+   "moving": "An ageing population means this sector grows for the next twenty years whatever else happens. Community and home care are growing faster than hospitals.",
+   "myth": "That a diploma nurse is stuck. Nurses go on to degrees, to specialist practice and to advanced practice, most of it paid for while working.",
+   "subjects": [
+    "biology",
+    "chemistry",
+    "sci_pb",
+    "sci_cb",
+    "science_g1",
+    "ls_science",
+    "ess"
+   ],
+   "thisTerm": [
+    "Volunteer one term at a nursing home or a hospital",
+    "Ask a nurse what the first year was actually like"
+   ]
+  },
+  {
+   "id": "children",
+   "label": "Children, teaching and learning",
+   "riasec": [
+    "S",
+    "A",
+    "C"
+   ],
+   "families": [
+    "academic",
+    "applied"
+   ],
+   "isWhat": "Teaching, and looking after children while they learn, from eighteen months old to eighteen years.",
+   "dayLooks": [
+    "Plan a week that actually holds",
+    "Sit with the one who is stuck",
+    "Talk to a parent honestly"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Early years educarer",
+     "route": "Higher Nitec in early childhood education",
+     "note": "A recognised route into a preschool, with a ladder to teacher after."
+    },
+    {
+     "level": "poly",
+     "role": "Preschool teacher",
+     "route": "Diploma in early childhood education",
+     "note": "The main qualification the sector hires on, and it is in demand."
+    },
+    {
+     "level": "uni",
+     "role": "School teacher",
+     "route": "Degree, then the National Institute of Education",
+     "note": "The Ministry sponsors this, and a diploma route into teaching exists too."
+    }
+   ],
+   "licence": "The Early Childhood Development Agency certification for preschool, and registration through the National Institute of Education for schools.",
+   "moving": "More places, longer hours and higher qualifications expected. Special educational needs support and early intervention are the parts short of people.",
+   "myth": "That it is minding children. Early years work is where the largest differences in a life get made, and the sector knows it and pays accordingly now.",
+   "subjects": [
+    "el",
+    "literature",
+    "hum_ss_lit",
+    "art",
+    "music",
+    "nfs",
+    "ls_fce",
+    "hmtl",
+    "ls_history",
+    "ls_literature",
+    "history",
+    "drama",
+    "higher_music",
+    "ess",
+    "science_g1",
+    "ls_music",
+    "ls_science"
+   ],
+   "thisTerm": [
+    "Help at a childcare or a reading programme for one term",
+    "Ask a preschool teacher what surprised them most"
+   ]
+  },
+  {
+   "id": "computing",
+   "label": "Computing, data and keeping it safe",
+   "riasec": [
+    "I",
+    "C"
+   ],
+   "families": [
+    "applied",
+    "academic"
+   ],
+   "isWhat": "Building the software people use, moving and making sense of data, and stopping other people breaking in.",
+   "dayLooks": [
+    "Find why it broke overnight",
+    "Turn messy data into one answer",
+    "Patch what the scan found"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Support or network technician",
+     "route": "Higher Nitec in infocomm technology",
+     "note": "Hands on infrastructure and support work, and a real ladder from it."
+    },
+    {
+     "level": "poly",
+     "role": "Developer or analyst",
+     "route": "Diploma in information technology or data",
+     "note": "Employers here hire on what somebody has built, which a diploma has time for."
+    },
+    {
+     "level": "uni",
+     "role": "Engineer or data scientist",
+     "route": "Degree in computing, data science or engineering",
+     "note": "Deeper theory, and the research and platform roles start here."
+    }
+   ],
+   "licence": "Nothing licenses this. Vendor certifications and a public portfolio of things that work do the same job.",
+   "moving": "The tools change constantly and the demand does not. Anything that only follows instructions is being automated; anything that decides what to build is not.",
+   "myth": "That a degree is the only door. This is the sector most willing to hire on demonstrated skill, and the most awkward about it in the first interview.",
+   "subjects": [
+    "computing",
+    "maths",
+    "amaths",
+    "physics",
+    "sci_pc",
+    "ess",
+    "electronics"
+   ],
+   "thisTerm": [
+    "Build one small thing and put it somewhere public",
+    "Enter one hackathon or coding competition"
+   ]
+  },
+  {
+   "id": "design",
+   "label": "Design, media and how it looks",
+   "riasec": [
+    "A",
+    "E"
+   ],
+   "families": [
+    "arts",
+    "applied"
+   ],
+   "isWhat": "Deciding how a thing looks, reads and feels, then making the files that get it produced.",
+   "dayLooks": [
+    "Take a brief apart before starting",
+    "Show three options, not one",
+    "Fix the version the client broke"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Design or media assistant",
+     "route": "Nitec in visual communication or media",
+     "note": "Production skill first, which is what studios are short of."
+    },
+    {
+     "level": "poly",
+     "role": "Designer, editor, animator",
+     "route": "Diploma in design, media or animation",
+     "note": "The standard door, and the portfolio it produces is what gets hired."
+    },
+    {
+     "level": "arts",
+     "role": "Designer or artist",
+     "route": "NAFA or LASALLE, entry by portfolio",
+     "note": "Studio hours and critique, with entry on the work rather than a score."
+    },
+    {
+     "level": "uni",
+     "role": "Design lead or researcher",
+     "route": "Degree in design or communications",
+     "note": "Strategy, research and the teaching side of design sit here."
+    }
+   ],
+   "licence": "None. Nobody has ever asked a designer for a licence. They ask to see the work.",
+   "moving": "Generative tools took the bottom off the routine production work and raised what a client expects. Deciding what to make is the part that survived.",
+   "myth": "That it is about being good at drawing. It is about understanding a problem and choosing, and the drawing is how the choice gets shown.",
+   "subjects": [
+    "art",
+    "higher_art",
+    "dt",
+    "computing",
+    "el",
+    "ls_art",
+    "ls_dt",
+    "drama",
+    "higher_music",
+    "music",
+    "ls_music"
+   ],
+   "thisTerm": [
+    "Redesign one real thing badly made and show both",
+    "Put four finished pieces where somebody can see them"
+   ]
+  },
+  {
+   "id": "engineering",
+   "label": "Engineering and precision work",
+   "riasec": [
+    "R",
+    "I"
+   ],
+   "families": [
+    "hands",
+    "applied",
+    "academic"
+   ],
+   "isWhat": "Designing, building, testing and repairing machines, aircraft, ships, plants and the parts inside them.",
+   "dayLooks": [
+    "Strip it, measure it, find the fault",
+    "Hold a tolerance nobody can see",
+    "Sign the maintenance record"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Technician or aircraft mechanic",
+     "route": "Nitec or Higher Nitec in engineering or aerospace",
+     "note": "Aerospace, marine and precision all hire heavily and directly at this level."
+    },
+    {
+     "level": "poly",
+     "role": "Engineering executive",
+     "route": "Diploma in mechanical, electrical or aerospace engineering",
+     "note": "Design, testing and supervision, with a real route to a degree after."
+    },
+    {
+     "level": "uni",
+     "role": "Engineer",
+     "route": "Degree in mechanical, electrical or chemical engineering",
+     "note": "The design and research end, and eventual professional registration."
+    }
+   ],
+   "licence": "Aviation authority licences for aircraft work, and the plant and safety certifications the process industries require.",
+   "moving": "Automation, semiconductors and the energy transition are pulling hard. The trades that keep complicated machines running are the hardest to fill.",
+   "myth": "That it means dirty hands and low pay. Licensed aircraft engineers and process technicians are among the better paid people who never sat a degree.",
+   "subjects": [
+    "physics",
+    "maths",
+    "amaths",
+    "dt",
+    "electronics",
+    "sci_pc",
+    "chemistry",
+    "ls_dt"
+   ],
+   "thisTerm": [
+    "Take one broken thing apart and get it working",
+    "Ask an ITE aerospace student what the licence takes"
+   ]
+  },
+  {
+   "id": "food",
+   "label": "Food, from growing it to serving it",
+   "riasec": [
+    "R",
+    "E",
+    "A"
+   ],
+   "families": [
+    "hands",
+    "applied"
+   ],
+   "isWhat": "Growing, making, cooking and serving what people eat, in farms, factories, kitchens and shops.",
+   "dayLooks": [
+    "Prep before anybody arrives",
+    "Hold the same standard four hundred times",
+    "Cost a menu that has to work"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Cook, baker, food technician",
+     "route": "Nitec in culinary arts or food technology",
+     "note": "Kitchens hire on skill and attitude, and this is the fastest way to both."
+    },
+    {
+     "level": "poly",
+     "role": "Food science or operations",
+     "route": "Diploma in food science, nutrition or hospitality",
+     "note": "The factory, safety and product development side, which is bigger than kitchens."
+    },
+    {
+     "level": "uni",
+     "role": "Food scientist or manager",
+     "route": "Degree in food science or business",
+     "note": "Product development, regulation and running the operations at scale."
+    }
+   ],
+   "licence": "The food hygiene certification to work at all, and the food safety qualifications that let somebody run a line.",
+   "moving": "Local production, alternative proteins and automation in the back kitchen. The hours in food service are hard and the sector knows it is a problem.",
+   "myth": "That it is a job for now and not a career. Food manufacturing, safety and product development are quiet, technical and steady, and few students know they exist.",
+   "subjects": [
+    "nfs",
+    "chemistry",
+    "biology",
+    "sci_cb",
+    "ebs",
+    "ls_fce",
+    "science_g1"
+   ],
+   "thisTerm": [
+    "Work one service in a real kitchen and see",
+    "Read the label on something I eat weekly and look up two ingredients"
+   ]
+  },
+  {
+   "id": "hotels",
+   "label": "Hotels, travel and looking after guests",
+   "riasec": [
+    "S",
+    "E",
+    "C"
+   ],
+   "families": [
+    "applied",
+    "hands"
+   ],
+   "isWhat": "Running the places people stay, eat, fly through and visit, and the events that fill them.",
+   "dayLooks": [
+    "Turn a complaint into a returning guest",
+    "Run a floor with people short",
+    "Build an event minute by minute"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Guest services, events crew",
+     "route": "Nitec in hospitality operations",
+     "note": "This sector promotes from the floor faster than most, if somebody is good."
+    },
+    {
+     "level": "poly",
+     "role": "Hotel or events executive",
+     "route": "Diploma in hospitality or tourism management",
+     "note": "The management track, and the internships are real work in real hotels."
+    },
+    {
+     "level": "uni",
+     "role": "Manager or revenue analyst",
+     "route": "Degree in hospitality or business",
+     "note": "Revenue, brand and regional roles, and the analysis behind the pricing."
+    }
+   ],
+   "licence": "None to enter. The languages somebody speaks and the systems they can run are what move them.",
+   "moving": "Travel came back and the staffing did not. That is uncomfortable for the people inside and it means the ladder is unusually short right now.",
+   "myth": "That it is smiling at people. It is running a complicated operation on thin margins with a queue watching, which is a genuinely hard skill.",
+   "subjects": [
+    "el",
+    "mtl",
+    "geography",
+    "ebs",
+    "nfs",
+    "economics",
+    "hmtl",
+    "hum_ss_geog",
+    "ls_geography"
+   ],
+   "thisTerm": [
+    "Work one event as crew and watch how it is run",
+    "Ask a hotel duty manager what goes wrong most"
+   ]
+  },
+  {
+   "id": "law",
+   "label": "Law, safety and public service",
+   "riasec": [
+    "C",
+    "S",
+    "E"
+   ],
+   "families": [
+    "academic",
+    "applied",
+    "hands"
+   ],
+   "isWhat": "Making, applying and enforcing the rules, and running the services a country needs to work.",
+   "dayLooks": [
+    "Read the file until the point appears",
+    "Make a decision somebody will contest",
+    "Hold a scene together"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Officer or specialist",
+     "route": "Nitec, then Police, Civil Defence or Prisons intake",
+     "note": "The uniformed services recruit and train at this level, with a real ladder."
+    },
+    {
+     "level": "poly",
+     "role": "Paralegal, public officer",
+     "route": "Diploma in law and management or public administration",
+     "note": "Legal support, statutory boards and the specialist officer schemes."
+    },
+    {
+     "level": "uni",
+     "role": "Lawyer or public officer",
+     "route": "Degree in law, or any degree for the service",
+     "note": "Practice needs the law degree and a training contract after it."
+    }
+   ],
+   "licence": "Admission to the Singapore Bar for practice, and the service specific training and warrants for the uniformed roles.",
+   "moving": "More technology and data protection work, more compliance across every sector, and a public service that hires on skill from a widening set of places.",
+   "myth": "That the public service only takes degree holders. The uniformed services and the statutory boards run specialist and officer schemes at every level.",
+   "subjects": [
+    "el",
+    "hum_ss_hist",
+    "history",
+    "literature",
+    "economics",
+    "geography",
+    "hum_ss_geog",
+    "ls_history",
+    "ls_literature",
+    "drama"
+   ],
+   "thisTerm": [
+    "Read one real judgment and see how the reasoning runs",
+    "Ask a serving officer about the first two years"
+   ]
+  },
+  {
+   "id": "moving",
+   "label": "Moving things and people",
+   "riasec": [
+    "R",
+    "C",
+    "E"
+   ],
+   "families": [
+    "hands",
+    "applied"
+   ],
+   "isWhat": "Getting cargo, ships, aircraft, trains and buses where they need to be, on time, at the right cost.",
+   "dayLooks": [
+    "Solve a delay before anybody notices",
+    "Load a plan that has to balance",
+    "Keep a fleet running to a schedule"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Operations or rail technician",
+     "route": "Nitec or Higher Nitec in logistics or engineering",
+     "note": "The rail and air operators recruit and train heavily at this level."
+    },
+    {
+     "level": "poly",
+     "role": "Logistics or maritime executive",
+     "route": "Diploma in logistics, aviation or maritime studies",
+     "note": "Planning and coordination, in a sector where Singapore is a world hub."
+    },
+    {
+     "level": "uni",
+     "role": "Supply chain or transport manager",
+     "route": "Degree in supply chain, maritime or engineering",
+     "note": "Network design, chartering and the analytical end of the same work."
+    }
+   ],
+   "licence": "The dangerous goods, port and aviation certifications, and the professional maritime qualifications for the ship side.",
+   "moving": "Automation in the port and the warehouse, and a lot more data. Singapore's position as a hub is the most durable economic fact about the place.",
+   "myth": "That it means driving a lorry. It means deciding what moves and when, on systems that touch a fifth of the world's transhipment.",
+   "subjects": [
+    "maths",
+    "geography",
+    "physics",
+    "ebs",
+    "economics",
+    "computing",
+    "hum_ss_geog",
+    "ls_geography",
+    "electronics"
+   ],
+   "thisTerm": [
+    "Track one parcel and work out every hand it passed through",
+    "Ask somebody at the port or the airport what a shift is like"
+   ]
+  },
+  {
+   "id": "selling",
+   "label": "Selling, shops and what people want",
+   "riasec": [
+    "E",
+    "S",
+    "C"
+   ],
+   "families": [
+    "applied",
+    "hands",
+    "academic"
+   ],
+   "isWhat": "Working out what people will buy, getting it in front of them, and running the places and sites where it happens.",
+   "dayLooks": [
+    "Read yesterday's numbers and change today",
+    "Talk somebody through a real decision",
+    "Fill a shelf that tells a story"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Retail or service crew",
+     "route": "Nitec in retail services or business",
+     "note": "Fastest sector to get real responsibility young, if somebody wants it."
+    },
+    {
+     "level": "poly",
+     "role": "Merchandiser or marketer",
+     "route": "Diploma in retail, marketing or business",
+     "note": "Buying, planning and the digital side, which is where the sector moved."
+    },
+    {
+     "level": "uni",
+     "role": "Brand or category manager",
+     "route": "Degree in business or marketing",
+     "note": "Strategy, pricing and the analysis behind what gets stocked at all."
+    }
+   ],
+   "licence": "None. A record of having sold something difficult is what people actually ask about.",
+   "moving": "The physical shop is now part of a system that includes a phone and a warehouse. The people who understand both halves are short.",
+   "myth": "That a shop job is not a career. Buyers, merchandise planners and country managers overwhelmingly started on a floor and can tell you what week they learned it.",
+   "subjects": [
+    "ebs",
+    "economics",
+    "el",
+    "poa",
+    "art",
+    "mtl",
+    "hmtl"
+   ],
+   "thisTerm": [
+    "Sell something I made or sourced and count what happened",
+    "Ask a store manager how they decide what goes where"
+   ]
+  },
+  {
+   "id": "social",
+   "label": "Social work and people in trouble",
+   "riasec": [
+    "S",
+    "I"
+   ],
+   "families": [
+    "academic",
+    "applied"
+   ],
+   "isWhat": "Working with people whose lives have come apart, and with the families and systems around them.",
+   "dayLooks": [
+    "Sit with somebody at their worst",
+    "Write the case note that decides funding",
+    "Argue for one family in a meeting"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Community or care worker",
+     "route": "Higher Nitec in community care",
+     "note": "Front line work in family services and community organisations."
+    },
+    {
+     "level": "poly",
+     "role": "Social service associate",
+     "route": "Diploma in social sciences or community development",
+     "note": "Casework support and programme work, with a route to the degree after."
+    },
+    {
+     "level": "uni",
+     "role": "Social worker, counsellor, psychologist",
+     "route": "Degree in social work or psychology",
+     "note": "Casework accountability and clinical practice need this and registration."
+    }
+   ],
+   "licence": "Registration with the Singapore Association of Social Workers for accredited practice, and the counselling body for counsellors.",
+   "moving": "Funded properly for the first time in a while, and short of people. Mental health and elder care are the parts growing fastest.",
+   "myth": "That it is charity work with a stipend. It is a registered profession with supervision, caseload standards and a salary the sector has deliberately raised.",
+   "subjects": [
+    "hum_ss_hist",
+    "el",
+    "hum_ss_lit",
+    "literature",
+    "biology",
+    "geography",
+    "ls_history",
+    "ls_literature",
+    "history",
+    "ess"
+   ],
+   "thisTerm": [
+    "Volunteer somewhere uncomfortable for one term",
+    "Ask a social worker what they wish somebody had told them"
+   ]
+  },
+  {
+   "id": "environment",
+   "label": "The environment and keeping things running",
+   "riasec": [
+    "R",
+    "C",
+    "I"
+   ],
+   "families": [
+    "hands",
+    "applied",
+    "academic"
+   ],
+   "isWhat": "Water, waste, energy, cleaning, pest control and the systems inside every building that nobody notices until they stop.",
+   "dayLooks": [
+    "Read the plant and act on it",
+    "Audit a building against its numbers",
+    "Fix what forty people depend on"
+   ],
+   "entries": [
+    {
+     "level": "ite",
+     "role": "Plant or facilities technician",
+     "route": "Higher Nitec in facility or environmental technology",
+     "note": "Essential work with a shortage of people, and shift allowances on top."
+    },
+    {
+     "level": "poly",
+     "role": "Sustainability or facilities executive",
+     "route": "Diploma in environmental or facility management",
+     "note": "The reporting and management side, which every large organisation now needs."
+    },
+    {
+     "level": "uni",
+     "role": "Engineer or specialist",
+     "route": "Degree in environmental engineering or science",
+     "note": "Design of treatment, energy and climate systems, and the policy side."
+    }
+   ],
+   "licence": "The environmental and water treatment operator certifications, and the green building accreditations for the reporting side.",
+   "moving": "Sustainability reporting became compulsory for large firms, which created a profession that barely existed ten years ago. Water and waste never stop.",
+   "myth": "That it is cleaning. It is the reason the water is drinkable and the building is cool, and it is run by people with instruments and certificates.",
+   "subjects": [
+    "chemistry",
+    "biology",
+    "geography",
+    "physics",
+    "sci_cb",
+    "sci_pc",
+    "science_g1",
+    "ls_geography",
+    "ls_science"
+   ],
+   "thisTerm": [
+    "Find out where my estate's water and waste actually go",
+    "Ask a building manager what breaks most often"
+   ]
+  }
+ ]
+}

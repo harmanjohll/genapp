@@ -1,0 +1,2626 @@
+{
+ "_meta": {
+  "source": "Authored for this app. Institutional facts follow data/pathways.json and data/subjects.json; NS staging follows public MINDEF enlistment norms; no private person or business is real.",
+  "url": "",
+  "accessed": "2026-08-05",
+  "units": "chapters and years",
+  "notes": "v2 content rules, linted where possible: every screen owns a concrete noun; public places are real, private ones invented; dialogue is allowed and Singlish is never mocked; one aphorism per string; school years are narrated from inside the age; the memoir voice is earned from 27 up. The NS chapters are asked for once, in fiction, and the answer is logged, never revisited. Every flag set here is read by a card or an outcome. Every door is granted somewhere and asked for somewhere."
+ },
+ "paths": [
+  {
+   "id": "academic",
+   "label": "Junior College",
+   "sequence": [
+    "ch_ns_ask",
+    "ch_mi_year",
+    "ch_jc1",
+    "ch_alevels",
+    "ch_head_start",
+    "ch_own_time",
+    "ch_ns_in",
+    "ch_ns_ord",
+    "ch_uni",
+    "ch_paycheque",
+    "ch_cross",
+    "ch_build",
+    "ch_quiet",
+    "ch_mirror",
+    "ch_late"
+   ]
+  },
+  {
+   "id": "applied",
+   "label": "Polytechnic",
+   "sequence": [
+    "ch_ns_ask",
+    "ch_pfp_year",
+    "ch_sem1",
+    "ch_intern",
+    "ch_gradseason",
+    "ch_head_start",
+    "ch_own_time",
+    "ch_ns_in",
+    "ch_ns_ord",
+    "ch_paycheque",
+    "ch_cross",
+    "ch_build",
+    "ch_quiet",
+    "ch_mirror",
+    "ch_late"
+   ]
+  },
+  {
+   "id": "hands",
+   "label": "ITE",
+   "sequence": [
+    "ch_ns_ask",
+    "ch_workshop",
+    "ch_exit",
+    "ch_hnfinal",
+    "ch_head_start",
+    "ch_own_time",
+    "ch_ns_in",
+    "ch_ns_ord",
+    "ch_paycheque",
+    "ch_cross",
+    "ch_build",
+    "ch_quiet",
+    "ch_mirror",
+    "ch_late"
+   ]
+  },
+  {
+   "id": "arts",
+   "label": "Arts school",
+   "sequence": [
+    "ch_ns_ask",
+    "ch_foundation",
+    "ch_portfolio",
+    "ch_showsell",
+    "ch_head_start",
+    "ch_own_time",
+    "ch_ns_in",
+    "ch_ns_ord",
+    "ch_paycheque",
+    "ch_cross",
+    "ch_build",
+    "ch_quiet",
+    "ch_mirror",
+    "ch_late"
+   ]
+  }
+ ],
+ "wants": [
+  {
+   "id": "make",
+   "label": "Make things people use",
+   "riasec": "A",
+   "kind": "Creators"
+  },
+  {
+   "id": "hands",
+   "label": "Be really good with my hands",
+   "riasec": "R",
+   "kind": "Doers"
+  },
+  {
+   "id": "people",
+   "label": "Be there when people are struggling",
+   "riasec": "S",
+   "kind": "Helpers"
+  },
+  {
+   "id": "own",
+   "label": "Run my own thing",
+   "riasec": "E",
+   "kind": "Persuaders"
+  },
+  {
+   "id": "how",
+   "label": "Work out how things work",
+   "riasec": "I",
+   "kind": "Thinkers"
+  },
+  {
+   "id": "order",
+   "label": "Get every detail exactly right",
+   "riasec": "C",
+   "kind": "Organisers"
+  },
+  {
+   "id": "unsure",
+   "label": "Not sure yet, honestly",
+   "riasec": null,
+   "kind": null
+  }
+ ],
+ "doorsCatalog": {
+  "d_eae": {
+   "label": "Early Admissions"
+  },
+  "d_portfolio": {
+   "label": "A portfolio"
+  },
+  "d_people": {
+   "label": "People who vouch for me"
+  },
+  "d_workstudy": {
+   "label": "Work and study together"
+  },
+  "d_polyroad": {
+   "label": "The poly to degree road"
+  },
+  "d_iteroad": {
+   "label": "The ITE to poly road"
+  },
+  "d_fifth": {
+   "label": "A fifth year"
+  },
+  "d_sflu": {
+   "label": "SkillsFuture, later"
+  },
+  "d_trade": {
+   "label": "A trade in my hands"
+  },
+  "d_alevels": {
+   "label": "The A Level road"
+  },
+  "d_mi": {
+   "label": "The three year A Level",
+   "body": "The same certificate, taken over three years instead of two."
+  },
+  "d_pfp": {
+   "label": "The foundation year",
+   "body": "A year that lands me inside a diploma cluster, already counted as one of theirs."
+  }
+ },
+ "flags": [
+  "ns_yes",
+  "ns_no",
+  "went_deep",
+  "asked_help",
+  "ecg_seen",
+  "asked_up",
+  "told_parents",
+  "asked_form",
+  "asked_senior",
+  "went_open",
+  "led_cca",
+  "asked_family",
+  "seen_work",
+  "eae_ready",
+  "dsa_aware",
+  "attached",
+  "exchanged",
+  "found_mentor",
+  "asked_lecturer",
+  "used_careers",
+  "asked_boss",
+  "asked_peer",
+  "asked_younger",
+  "told_home",
+  "built_side",
+  "helped_someone",
+  "took_stage",
+  "moved_up",
+  "looked_around",
+  "nitec_exit",
+  "stayed_course",
+  "side_paying",
+  "at_mi",
+  "at_pfp",
+  "hn_direct",
+  "thing_waited"
+ ],
+ "reflection": {
+  "prompt": "Name one thing I would do differently from here.",
+  "options": [
+   "Ask for help earlier",
+   "Try the thing sooner",
+   "Worry less about the label",
+   "Keep one thing for myself"
+  ],
+  "hint": "Nobody marks this. It reappears when I compare two stories, in my own words."
+ },
+ "companions": {
+  "names": [
+   "Iman",
+   "Wei Jun",
+   "Priya",
+   "Faizal",
+   "Xin Yi",
+   "Marcus",
+   "Nadia",
+   "Kai"
+  ],
+  "roads": {
+   "academic": "the JC road",
+   "applied": "the poly road",
+   "hands": "the ITE road",
+   "arts": "the arts road"
+  },
+  "school": {
+   "s_sec1": [
+    "{name} from primary school is in the next class. Same recess, new timetables.",
+    "{name} sits one row over, drawing rockets on the desk in pencil."
+   ],
+   "s_sec2": [
+    "{name} filled the combination form in one sitting. Mine has two eraser holes in it.",
+    "{name} keeps asking which subjects I am keeping, as if I know."
+   ],
+   "s_sec3": [
+    "New class this year. {name} is across the corridor now, waving through the window.",
+    "{name} joined robotics and will not stop talking about it at recess."
+   ],
+   "s_sec4": [
+    "{name} has a countdown to the SEC on their phone. I refuse to look at it.",
+    "Study group at the library with {name}, Saturdays. Half study, half snacks."
+   ]
+  },
+  "fork": [
+   "{name} is in the hall too, holding their slip like it might go off.",
+   "{name} texts from the back of the hall: whatever this says, prata after."
+  ],
+  "after": {
+   "academic": "{name} sends a photo from JC orientation: new badge, tired grin, homework already.",
+   "applied": "{name} posts from poly orientation: lanyard, campus map, a module with a code in it.",
+   "hands": "{name} sends a photo from ITE: safety boots, first day, grinning at the workshop door.",
+   "arts": "{name} sends a shot of their studio desk: paint, deadlines, completely at home."
+  },
+  "later": [
+   "Ran into {name} at the interchange. Different uniform, same laugh, both of us busier.",
+   "{name} texts out of nowhere: how is it going on my side? Long reply, both ways."
+  ],
+  "ending": {
+   "same": "{name} took {road} too. Different chapters, same corridor, still friends.",
+   "different": "{name} took {road} and it suits them. Two roads, both of them fine."
+  }
+ },
+ "midyear": {
+  "sec": [
+   "Term 3, the week before the papers.",
+   "A Tuesday after CCA, out of nowhere.",
+   "Just after the June holidays."
+  ],
+  "jc": [
+   "On the concourse, between lectures.",
+   "The week the common tests end."
+  ],
+  "mi": [
+   "Year two of the long climb.",
+   "Between papers, term two."
+  ],
+  "poly": [
+   "Week eight, submissions everywhere.",
+   "In the canteen, between modules."
+  ],
+  "ite": [
+   "A workshop morning, mid module.",
+   "The week of the safety audit."
+  ],
+  "arts": [
+   "Crit week, everything pinned up.",
+   "A studio afternoon, paint still wet."
+  ],
+  "ns": [
+   "A bookout Saturday.",
+   "A quiet weekday night in camp."
+  ],
+  "uni": [
+   "Reading week, the library full.",
+   "Midway through the semester."
+  ],
+  "work": [
+   "An ordinary work week.",
+   "Between deadlines, a normal month."
+  ],
+  "cet": [
+   "Between the day job and the class.",
+   "An ordinary month, then this."
+  ],
+  "default": [
+   "Midway through the year.",
+   "An ordinary week, then this."
+  ]
+ },
+ "stages": [
+  {
+   "id": "s_sec1",
+   "age": 13,
+   "title": "Sec 1",
+   "situation": "New school, new blazer, and by June I know which staircase floods. This year I take {subjects}, and everything is still moving.",
+   "choices": [
+    {
+     "label": "Give my CCA my best evenings",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "took_stage",
+     "outcome": "Wednesday trainings eat my evenings and hand me a second set of friends.",
+     "missed": "The CCA stayed a Wednesday obligation, nothing more."
+    },
+    {
+     "label": "Go to remedial for my weakest subject",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Thursday remedial with Mr Tan, week after week. October's paper comes back two grades kinder.",
+     "missed": "The Thursday remedial ran without me.",
+     "sets": "went_deep"
+    },
+    {
+     "label": "Ask about taking a subject higher",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "raise": {
+      "any": [
+       "el",
+       "maths",
+       "mtl",
+       "ls_science"
+      ]
+     },
+     "outcome": "I ask. The answer is a maybe, then a yes, and the timetable changes.",
+     "outcomeRaised": "{subject} moves to {level} at year end. I asked, so it moved.",
+     "missed": "Nobody knew I wanted to move up, so nothing moved.",
+     "sets": "moved_up"
+    },
+    {
+     "label": "Keep up what I did in primary school",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "outcome": "Wushu, or the keyboard, or the drawing. Old thing, new school, still mine.",
+     "missed": "The old thing goes quiet this year."
+    },
+    {
+     "label": "Build a study routine I can actually keep",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Same desk, same hours, phone in the other room. It is dull in March and it is the reason October is calm.",
+     "capacity": 1,
+     "grew": "learned to run my own week",
+     "missed": "The year ran on whatever each evening felt like."
+    },
+    {
+     "label": "Make something after school and finish it",
+     "cost": 2,
+     "needsSubject": [
+      "computing",
+      "art",
+      "dt"
+     ],
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "built_side",
+     "outcome": "A game in Scratch, a comic, a stool. Small, finished, and mine."
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_sec2",
+   "age": 14,
+   "title": "Sec 2",
+   "situation": "Streaming is gone but the whisper survives at the void deck: which class am I in. This year the subject combination form is real, and {subjects} sit on my table.",
+   "choices": [
+    {
+     "label": "Train for the level I want in Sec 3",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "raise": {
+      "any": [
+       "el",
+       "maths",
+       "mtl",
+       "ls_science",
+       "ls_geography",
+       "ls_history",
+       "ls_literature"
+      ]
+     },
+     "outcome": "I ask what the bar is, then train for it like a race.",
+     "outcomeRaised": "{subject} moves to {level}. The Sec 3 form changes shape because I asked.",
+     "missed": "The review meeting discussed other people.",
+     "sets": "moved_up"
+    },
+    {
+     "label": "Read the whole subject booklet",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around",
+     "outcome": "I read all of it, even Electronics, even Drama. Two subjects I had dismissed stop being jokes.",
+     "missed": "The booklet stayed unread, and the form got filled from hearsay."
+    },
+    {
+     "label": "Take a real part in a performance or contest",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1,
+      "portfolio": 1
+     },
+     "sets": "took_stage",
+     "outcome": "Concert, kids day, inter school heats. My name gets read over a PA system."
+    },
+    {
+     "cost": 1,
+     "label": "Let this year be ordinary",
+     "outcome": "School, home, the same bus. Nothing to report and nothing wrong. Some years are for getting through."
+    },
+    {
+     "label": "Coach a classmate who is falling behind",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "I sit with the classmate everyone gave up on. Their D becomes a C, and they remember.",
+     "missed": "The classmate who was sinking found someone else, eventually."
+    },
+    {
+     "label": "Find a place I can actually study",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "outcome": "Home is loud this year, so it becomes the library near the interchange, four to seven.",
+     "sets": "went_deep"
+    },
+    {
+     "label": "Turn my hobby into something people use",
+     "cost": 2,
+     "needsSubject": [
+      "art",
+      "music",
+      "computing"
+     ],
+     "disp": {
+      "curiosity": 1,
+      "persistence": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "built_side",
+     "outcome": "Twelve people use the thing I made. Two send me bugs. I fix them."
+    },
+    {
+     "cost": 2,
+     "label": "Build a study system of my own",
+     "gain": {
+      "skills": 1
+     },
+     "disp": {
+      "persistence": 1
+     },
+     "capacity": 1,
+     "grew": "built a study system that holds",
+     "outcome": "Flashcards that survive a month, a timetable I actually follow. Every school year after this costs less to run.",
+     "missed": "Revision stayed a mood, not a method."
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_sec3",
+   "age": 15,
+   "title": "Sec 3",
+   "situation": "The combination is set: {subjects} now, all the way to the SEC. New class, some old faces missing, and suddenly teachers say the word portfolio out loud.",
+   "choices": [
+    {
+     "label": "Go deeper into my best subject",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Past papers before anyone assigns them. The subject starts feeling like mine, not the school's.",
+     "missed": "My best subject stayed merely good this year.",
+     "sets": "went_deep"
+    },
+    {
+     "label": "Start my Early Admissions folder",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "eae_ready",
+     "outcome": "Screenshots, certificates, the write up of the thing I built. Boring now, gold at Sec 4.",
+     "missed": "The folder stayed empty. Sec 4 will mean one panicked typing weekend."
+    },
+    {
+     "label": "Run for CCA EXCO this year",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "led_cca",
+     "outcome": "Logistics IC for the CCA bazaar. Everything that can topple does, and I catch most of it.",
+     "missed": "Someone else carried the bazaar clipboard."
+    },
+    {
+     "cost": 1,
+     "label": "Keep my head down this year",
+     "outcome": "Homework done, series finished, two centimetres grown. The year passes and I am still here."
+    },
+    {
+     "label": "Apply for the immersion trip",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1,
+      "skills": 1
+     },
+     "outcome": "Ten days in a partner school in Chiang Mai or Fuzhou. I come back with a class group chat in two languages.",
+     "missed": "The immersion list closed with somebody else on it."
+    },
+    {
+     "label": "Make something people actually use",
+     "cost": 2,
+     "needsSubject": [
+      "computing",
+      "dt",
+      "art",
+      "nfs",
+      "music",
+      "drama"
+     ],
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "sets": "built_side",
+     "outcome": "The bake sale ordering sheet, the class tee design, the two minute film. Used by strangers, kept in my folder."
+    },
+    {
+     "label": "Join something outside school",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "sets": "looked_around",
+     "outcome": "Saturday coding, a science olympiad squad, youth theatre at the CC. Nobody from my class is there, which is the point.",
+     "missed": "The Saturday programme ran without me in it."
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_sec4",
+   "age": 16,
+   "title": "Sec 4",
+   "situation": "SEC year. The class group chat becomes a study group chat, mostly. EAE opens before results, and everyone suddenly wants to know what Mother Tongue B3 converts to.",
+   "choices": [
+    {
+     "label": "Train for my papers like a sport",
+     "cost": 2,
+     "disp": {
+      "persistence": 2
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Ten year series, timed, at the kitchen table. By September the fear is mostly gone.",
+     "sets": "went_deep"
+    },
+    {
+     "label": "Keep my sleep and exercise this year",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "I keep Sunday football and my sleep. My mocks wobble, then hold."
+    },
+    {
+     "label": "Ask a teacher what I should fix first",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "asked_help",
+     "outcome": "Ms D circles two questions in my script. Just these two habits, she says. She is right.",
+     "missed": "Nobody aimed the revision, so the weak paper stayed weak."
+    },
+    {
+     "cost": 1,
+     "label": "Just get to November",
+     "outcome": "No project, no committee, only the papers at my own pace. November comes either way."
+    },
+    {
+     "label": "Keep one thing going that is not the exam",
+     "cost": 1,
+     "needsSubject": [
+      "art",
+      "computing",
+      "dt",
+      "drama",
+      "music"
+     ],
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "outcome": "Fifteen minutes a night on the thing that is mine. The exam year does not eat it."
+    },
+    {
+     "label": "Carry more of the house this year",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "I cook Tuesdays and quiz my sister for her PSLE. The house passes its exams together.",
+     "outcomeIf": {
+      "home:steady": "I cook Tuesdays and quiz my sister for her PSLE. Home worries less when it can see me holding steady.",
+      "home:unsaid": "I cook Tuesdays and quiz my sister. We still have not talked about next year, but the kitchen is easier."
+     }
+    },
+    {
+     "label": "Submit my Early Admissions application",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "opens": "d_eae",
+     "outcome": "I write five hundred words about the thing I made and hit submit before I can chicken out.",
+     "missed": "The EAE window closed. It does not reopen. The main round remains.",
+     "sets": "eae_ready"
+    }
+   ],
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_eve",
+   "age": 17,
+   "title": "Results eve",
+   "format": "reflect",
+   "keeps": "hope",
+   "situation": "The night before the slip. Phone on charge, uniform ironed for the last time, the group chat pretending to be calm.",
+   "reflection": {
+    "prompt": "Before I see the slip: what do I hope it says?",
+    "options": [
+     "Enough for the course I keep thinking about",
+     "Proof the hard year was worth it",
+     "Nothing that shuts a door",
+     "Honestly, I just want it over"
+    ],
+    "hint": "Written the night before, kept for the end. Tomorrow is a fork, not a verdict."
+   },
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "s_results",
+   "age": 17,
+   "title": "Results day",
+   "format": "fork",
+   "situation": "The envelope, in a hall that smells of floor polish. This is the moment that feels like a verdict, and is not one. Where do I point myself?",
+   "choices": [
+    {
+     "label": "Junior College",
+     "cost": 1,
+     "sets": {
+      "path": "academic",
+      "label": "Junior College"
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_alevels",
+     "outcome": "I pick the fast lane with the essays. Two years, one exam, and everything after it."
+    },
+    {
+     "label": "Millennia Institute",
+     "cost": 1,
+     "sets": {
+      "path": "academic",
+      "label": "Millennia Institute",
+      "flag": "at_mi"
+     },
+     "opens": "d_mi"
+    },
+    {
+     "label": "Polytechnic",
+     "cost": 1,
+     "sets": {
+      "path": "applied",
+      "label": "Polytechnic"
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "opens": "d_polyroad",
+     "outcome": "I pick a field with a name and a lanyard. Three years of doing the actual thing."
+    },
+    {
+     "label": "The Poly Foundation Year",
+     "cost": 1,
+     "sets": {
+      "path": "applied",
+      "label": "Poly Foundation Year",
+      "flag": "at_pfp"
+     },
+     "opens": "d_pfp"
+    },
+    {
+     "label": "ITE, Higher Nitec",
+     "cost": 1,
+     "sets": {
+      "path": "hands",
+      "label": "ITE"
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_iteroad",
+     "outcome": "I pick the workshop over the lecture hall. The tools are real from day one."
+    },
+    {
+     "label": "Higher Nitec, straight to year two",
+     "cost": 1,
+     "sets": {
+      "path": "hands",
+      "label": "Higher Nitec, year two",
+      "flag": "hn_direct"
+     },
+     "opens": "d_iteroad"
+    },
+    {
+     "label": "An arts school, on a portfolio",
+     "cost": 1,
+     "sets": {
+      "path": "arts",
+      "label": "Arts school"
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "opens": "d_portfolio",
+     "outcome": "I pick the interview where my folder does the talking. NAFA or LASALLE, work first."
+    },
+    {
+     "label": "A fifth year, to widen it",
+     "cost": 1,
+     "sets": {
+      "path": "applied",
+      "label": "Fifth year, then poly"
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_fifth",
+     "outcome": "One more year at a harder level, aimed at a specific course. Slower, and it works."
+    }
+   ],
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "ch_ns_ask",
+   "chapter": "Before it starts",
+   "years": 0,
+   "format": "ask-ns",
+   "situation": "One question before the next part. Around now, most Singaporean sons spend two years in uniform. Some serve before their course, some after. Is National Service part of my road?",
+   "noChance": true,
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "ch_jc1",
+   "chapter": "JC One",
+   "years": 1,
+   "situation": "Lectures run at double speed and the reading list is not a suggestion. Project Work locks five strangers into one grade. Everyone here was top of some class.",
+   "choices": [
+    {
+     "label": "Work out how I learn at this level",
+     "cost": 2,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Notes I actually reread, a week that repeats, a tutor I stop avoiding. The jump stops feeling like a cliff.",
+     "missed": "Term three arrives before my study system does.",
+     "capacity": 1,
+     "grew": "worked out how I learn",
+     "sets": "went_deep"
+    },
+    {
+     "label": "Do my share of PW properly",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "I chair the meetings nobody wants. The grade lands, and four people owe me.",
+     "missed": "The PW group limps without a chair."
+    },
+    {
+     "label": "Run for council or an EXCO seat",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "sets": "took_stage",
+     "outcome": "Council, or captain, or the fest committee. My Tuesdays vanish and my circle triples."
+    },
+    {
+     "label": "Keep one thing going outside lessons",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "built_side",
+     "outcome": "The film club edit, the fanzine, the app. JC does not get all of me.",
+     "missed": "The side thing hibernates under the reading list."
+    },
+    {
+     "label": "Hold a job at weekends",
+     "cost": 2,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "outcome": "Cafe counter at Junction 8. My own transport money, and a manager who rates me."
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ch_alevels",
+   "chapter": "A Levels year",
+   "years": 1,
+   "situation": "Prelims, then the real thing. The canteen empties after five as the study rooms fill. Someone laminates a countdown. It is a strange, close, purposeful year.",
+   "choices": [
+    {
+     "label": "Give the A Levels the whole year",
+     "cost": 2,
+     "disp": {
+      "persistence": 2
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "I train like it is a season. Whatever the slip says, I finish knowing I emptied the tank.",
+     "outcomeIf": {
+      "flag:went_deep": "The habit I built in secondary school does the work now. Whatever the slip says, I finish knowing I emptied the tank."
+     }
+    },
+    {
+     "label": "Pace the year so I last it",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Badminton Thursdays survive the countdown. I walk into the hall level, not hollow.",
+     "missed": "The year became only the exam."
+    },
+    {
+     "label": "Study with the same group every week",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Four of me, one whiteboard, economics until the library chases me out. The pack holds."
+    },
+    {
+     "label": "Apply to more than one kind of course",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "looked_around",
+     "outcome": "I read the poly EAE page and two overseas prospectuses anyway. Knowing the exits calms the corridor.",
+     "missed": "Plan B stayed unwritten.",
+     "opens": "d_polyroad"
+    }
+   ],
+   "at": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ch_sem1",
+   "chapter": "First semester",
+   "years": 1,
+   "situation": "A campus with escalators, modules with codes, and a GPA that starts counting from week one. Nobody checks my homework. That is the trap and the gift.",
+   "choices": [
+    {
+     "label": "Set up my week in week one",
+     "cost": 2,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Deadlines in a calendar, readings before the lecture, one clear evening. Week ten arrives and nothing is on fire.",
+     "missed": "Semester one graded me while I was settling in.",
+     "capacity": 1,
+     "grew": "set up a week that holds",
+     "outcomeIf": {
+      "flag:went_deep": "I already know how I study, so week one is setup and not discovery. Week ten arrives and nothing is on fire."
+     }
+    },
+    {
+     "label": "Get to know the people on my course",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "outcome": "Supper at the West Coast prata place after critique night. Half my future collaborators are at that table.",
+     "missed": "The supper table formed without me."
+    },
+    {
+     "label": "Take small paid jobs in my field",
+     "cost": 2,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 1,
+      "skills": 1
+     },
+     "sets": "side_paying",
+     "outcome": "A real client, a real deadline, eighty real dollars. School suddenly has a point."
+    },
+    {
+     "cost": 1,
+     "label": "Coast on the timetable",
+     "outcome": "Lectures, canteen, home. My GPA is fine and my evenings are mine. Not every semester needs a story."
+    },
+    {
+     "label": "Protect my grades and my health",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Routine carries me: classes, training, home by eight. Boring, and it banks a 3.8 semester."
+    },
+    {
+     "label": "Take an EXCO seat in a club",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "took_stage",
+     "outcome": "I run orientation for two hundred freshies. Logistics, tears, one lost mascot head. People know me now."
+    }
+   ],
+   "at": [
+    "poly"
+   ]
+  },
+  {
+   "id": "ch_intern",
+   "chapter": "The internship",
+   "years": 1,
+   "situation": "Twenty weeks inside a real company, with a staff pass and a standup at nine fifteen. My supervisor is thirty one and tired. What I do here follows me.",
+   "choices": [
+    {
+     "label": "Treat the attachment as a real job",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "risk": 1
+     },
+     "gain": {
+      "skills": 2,
+      "network": 1
+     },
+     "sets": "attached",
+     "outcome": "I take the ticket nobody wants and close it. On my last day the team lead says call me when I graduate."
+    },
+    {
+     "label": "Collect every skill I can prove later",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I shadow the senior tech at every fault call. Half a diploma's learning happens in that van.",
+     "missed": "The attachment stayed the tasks on the sheet, and nothing past them."
+    },
+    {
+     "label": "Ask the adults there how they got in",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "asked_senior",
+     "outcome": "How did I get here, I ask the quiet engineer. Nobody has asked her in years. She tells me everything.",
+     "missed": "Twenty lunches, headphones in."
+    },
+    {
+     "label": "Keep my coursework going alongside it",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "FYP proposal drafted on the evening MRT out of Tanjong Pagar. Tired, organised, on time."
+    }
+   ],
+   "at": [
+    "poly"
+   ]
+  },
+  {
+   "id": "ch_gradseason",
+   "chapter": "Graduation season",
+   "years": 1,
+   "situation": "Final year project, then the square hat. The group chat splits three ways: job offers, uni applications, and one guy going full time on his sneaker resale thing.",
+   "choices": [
+    {
+     "label": "Make my final year project the one I show",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "opens": "d_portfolio",
+     "outcome": "The project gets shown at the school showcase. A stranger photographs my poster and emails me."
+    },
+    {
+     "label": "Keep the people I want to keep",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Chalet at Pasir Ris, photos at the jetty. These are the numbers I will still have at forty."
+    },
+    {
+     "label": "Chase a place on a degree course",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around",
+     "outcome": "GPA, portfolio, personal statement. I apply to three courses and let the dice sit.",
+     "missed": "The uni application window slid past unopened."
+    },
+    {
+     "label": "Take the job offer seriously",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "The internship company calls back. A number with a comma in it, attached to my name.",
+     "missed": "The callback went to voicemail and then to someone else.",
+     "opens": "d_workstudy"
+    }
+   ],
+   "at": [
+    "poly"
+   ]
+  },
+  {
+   "id": "ch_workshop",
+   "chapter": "Year one, workshop",
+   "years": 1,
+   "situation": "Coveralls, toe capped boots, and a lecturer who spent nineteen years fixing lifts before he taught it. The workshop smells of cut metal. I am sixteen minutes in and useful.",
+   "choices": [
+    {
+     "label": "Get a certificate employers ask for",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "First aid, work at height, the basic WSQ modules. Cards in my wallet that mean sites will take me.",
+     "missed": "The cert runs filled up without my name."
+    },
+    {
+     "label": "Learn from the lecturer who knows the trade",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "sets": "asked_senior",
+     "outcome": "Mr Rashid lets me strip the compressor twice. Ask him anything, he says, except for extensions.",
+     "missed": "Mr Rashid taught someone else his shortcuts."
+    },
+    {
+     "label": "Take weekend work on a real site",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "sets": "side_paying",
+     "outcome": "My uncle's aircon crew in Tampines, Saturdays. Cash, sweat, and the fastest learning I have done."
+    },
+    {
+     "label": "Build a work routine I can keep",
+     "cost": 2,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Tools back where they belong, hours logged, invoices on time. Boring, and it is why people rehire me.",
+     "capacity": 1,
+     "grew": "built a routine that holds",
+     "outcomeIf": {
+      "flag:went_deep": "The routine came with me from school, so it only needs the tools added. Boring, and it is why people rehire me."
+     }
+    },
+    {
+     "label": "Fix things for neighbours and get known",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "The kopitiam auntie's chiller, my neighbour's fan. Word gets around the block that I can fix."
+    }
+   ],
+   "excludesFlag": "hn_direct",
+   "at": [
+    "ite"
+   ]
+  },
+  {
+   "id": "ch_exit",
+   "chapter": "The exit decision",
+   "years": 1,
+   "situation": "End of Year 2. Leave now with a Nitec and start earning, or stay for Year 3 and the Higher Nitec. Uncle says money. Mr Rashid says finish.",
+   "choices": [
+    {
+     "label": "Stay and finish Year 3",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "stayed_course",
+     "outcome": "I stay for the Higher Nitec and the GPA that opens poly. The pay can wait a year.",
+     "missed": "The full time pay packet waits a year."
+    },
+    {
+     "label": "Exit with the Nitec, work",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "nitec_exit",
+     "opens": "d_trade",
+     "outcome": "I take the Nitec and the job. The door back to Year 3 stays open, and I know where it is.",
+     "missed": "The workshop kept my seat warm anyway.",
+     "outcomeIf": {
+      "home:steady": "I take the Nitec and the job. Home calls it sensible. The Year 3 door stays in my own pocket.",
+      "home:theirs": "I take the Nitec and the job, which was never their plan. The first payslip does some of the talking."
+     }
+    },
+    {
+     "label": "Work part time and keep studying",
+     "cost": 2,
+     "disp": {
+      "flexibility": 1,
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1,
+      "portfolio": 1
+     },
+     "outcome": "Stay enrolled, work the school holidays on payroll. Both uncles half satisfied, I fully stretched."
+    },
+    {
+     "label": "Ask what my results would reach",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "ecg_seen",
+     "outcome": "The ECG officer draws the ladder on scrap paper: 2.5 applies, raw 3.5 guarantees. I photograph it.",
+     "missed": "The exit decision got made on feel, with the GPA unread."
+    }
+   ],
+   "at": [
+    "ite"
+   ]
+  },
+  {
+   "id": "ch_hnfinal",
+   "chapter": "Higher Nitec final",
+   "years": 1,
+   "situation": "Final year. Industry attachment mornings, GPA arithmetic at night. The poly application window opens in January and my class talks about it at the bak chor mee stall.",
+   "choices": [
+    {
+     "label": "Line up the job first",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Two interviews before graduation, one offer in hand. Poly can happen later, from a desk that pays.",
+     "missed": "Results day arrived with nothing lined up behind it."
+    },
+    {
+     "label": "Teach the first years what I know",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "I run the Saturday remedial in the workshop. Explaining torque settings turns out to be how I master them."
+    },
+    {
+     "label": "Push the grades as high as they go",
+     "cost": 2,
+     "disp": {
+      "persistence": 2
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_iteroad",
+     "outcome": "Raw 3.5 guarantees a poly place. I do the retest, keep the CCA points, and cross it."
+    },
+    {
+     "label": "Make the attachment count for something",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "sets": "attached",
+     "outcome": "The firm gives me the fault log nobody wants. I clear it, and the supervisor keeps my number.",
+     "missed": "The attachment stayed a timetable, not a foot in the door.",
+     "opens": "d_people"
+    }
+   ],
+   "at": [
+    "ite"
+   ]
+  },
+  {
+   "id": "ch_foundation",
+   "chapter": "Foundation year",
+   "years": 1,
+   "situation": "First crit. My work goes on the wall and strangers discuss it like I am not there. Materials cost more than food this month. Happier and more scared than ever.",
+   "choices": [
+    {
+     "label": "Make more work than the brief asks for",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "outcome": "Thirty drawings where ten were asked. Quantity teaches what taste alone cannot.",
+     "outcomeIf": {
+      "flag:went_deep": "Making more than asked is already how I work, so thirty drawings costs me nothing. Quantity teaches what taste alone cannot."
+     }
+    },
+    {
+     "label": "Learn to take criticism of my work",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "I stop defending and start noting. The work improves the week I stop bleeding on it.",
+     "missed": "Every crit still feels like a verdict on me."
+    },
+    {
+     "label": "Take small paid jobs on the side",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "side_paying",
+     "outcome": "A menu for the zi char at Blk 214, a logo for a cousin's bakery. Paid twice, printed once.",
+     "missed": "The paying gigs went to someone hungrier."
+    },
+    {
+     "label": "Find the material I want to work in",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Riso, clay, After Effects, thread. One of them answers me back. I marry it."
+    },
+    {
+     "label": "Wait tables at weekends",
+     "cost": 2,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "network": 1,
+      "skills": 1
+     },
+     "outcome": "Dim sum service pays for the paint. My feet hate me and my ledger balances."
+    }
+   ],
+   "at": [
+    "arts"
+   ]
+  },
+  {
+   "id": "ch_portfolio",
+   "chapter": "The portfolio year",
+   "years": 1,
+   "situation": "The year the folder becomes a body of work. An open call at the library gallery, a zine fair at Bras Basah, a brand hunting student artists.",
+   "choices": [
+    {
+     "label": "Answer an open call for work",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "opens": "d_portfolio",
+     "outcome": "Two pieces in a real gallery for three weeks. My grandmother comes twice and tells the invigilator.",
+     "missed": "The gallery wall hung other people's work."
+    },
+    {
+     "label": "Sell my work at a fair or market",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1,
+      "portfolio": 1
+     },
+     "sets": "side_paying",
+     "outcome": "I sell forty three copies at five dollars and trade the rest. The table beside mine becomes a collaborator.",
+     "missed": "The fair happened one table short."
+    },
+    {
+     "label": "Practise without chasing attention",
+     "cost": 2,
+     "disp": {
+      "persistence": 2
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "A thousand hours of unglamorous practice. The jump in my work is visible from across the room."
+    },
+    {
+     "label": "Assist somebody already doing the work",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "network": 1,
+      "skills": 1
+     },
+     "sets": "found_mentor",
+     "outcome": "I stretch canvas and hold lights for someone mid career. I learn what the job actually is.",
+     "missed": "The studio assistant post went in a day."
+    }
+   ],
+   "at": [
+    "arts"
+   ]
+  },
+  {
+   "id": "ch_showsell",
+   "chapter": "Show and sell",
+   "years": 1,
+   "situation": "Grad show year. Everything goes on one wall with my name under it. Aunties ask what job this becomes; the honest answer is several, stitched together, at first.",
+   "choices": [
+    {
+     "label": "Make the graduation show count",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "outcome": "I rebuild the piece three times. On opening night a design studio leaves a card on my plinth."
+    },
+    {
+     "label": "Line up two or three sources of income",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Two teaching gigs, one retainer, weekend markets. A spreadsheet that adds up to rent.",
+     "missed": "Month one after graduation starts with zero invoices."
+    },
+    {
+     "label": "Photograph and write up everything I made",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "outcome": "Photographed, captioned, on a site with my name as the URL. Future clients find me because of tonight.",
+     "opens": "d_portfolio"
+    },
+    {
+     "label": "Apply for a degree top up",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around",
+     "outcome": "UAS degree, or overseas with a scholarship folder. I ask the lecturers to grade my odds honestly.",
+     "missed": "The degree deadline passed while the show consumed me.",
+     "opens": "d_polyroad"
+    }
+   ],
+   "at": [
+    "arts"
+   ]
+  },
+  {
+   "id": "ch_ns_in",
+   "chapter": "Enlistment",
+   "years": 1,
+   "requiresNS": true,
+   "pts": 2,
+   "ptsWhy": "ns",
+   "situation": "Tekong. The haircut, the duffel bag, a bunk of strangers: JC boy, poly boy, ITE boy, one guy who paints. Whatever I was outside, the field levels it by Wednesday.",
+   "choices": [
+    {
+     "label": "Master the vocation given",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Signals, or medic, or transport. Not what I asked for, and I get quietly excellent at it.",
+     "missed": "The vocation stayed a chore I did adequately."
+    },
+    {
+     "label": "Be the one who holds the bunk together",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "sets": "helped_someone",
+     "outcome": "I talk the homesick recruit off the ledge at two am. The bunk group chat will outlive the army.",
+     "missed": "The bunk stayed twelve strangers sharing a ceiling.",
+     "opens": "d_people"
+    },
+    {
+     "label": "Use my weekends to keep learning",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Weekends: an online cert, driving lessons, the language app. The two years will not be a blank."
+    },
+    {
+     "label": "Get a licence that counts outside",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Class three, paid for by the army, passed on the second try. It is useful for the next thirty years.",
+     "missed": "The licence stayed a thing to do later."
+    },
+    {
+     "label": "Put myself forward for command school",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "outcome": "I shout commands I once ignored. Leading tired people politely turns out to be a career skill."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
+  },
+  {
+   "id": "ch_ns_ord",
+   "chapter": "ORD",
+   "years": 1,
+   "requiresNS": true,
+   "pts": 2,
+   "ptsWhy": "ns",
+   "situation": "The countdown app hits double digits. Half the bunk applies to uni on cookhouse wifi; the poly grads compare job ads on guard duty. ORD loh, someone yells, hourly.",
+   "choices": [
+    {
+     "label": "Apply for what comes next straight away",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "sets": "looked_around",
+     "outcome": "Applications submitted from the mess table between duties. My start date exists before my ORD date.",
+     "missed": "ORD arrived with no plan behind it, and the gap stretched."
+    },
+    {
+     "label": "Write down every skill I was trained in",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Licences, logistics, the medic cert. I leave with paper civvie employers actually read.",
+     "opens": "d_workstudy"
+    },
+    {
+     "label": "Stay in touch with the people I served with",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "outcome": "Supper at Al Azhar after every book out. Fifteen numbers from four different roads, all mine now.",
+     "missed": "The bunk chat went quiet before the cake did."
+    },
+    {
+     "label": "Save the allowance properly",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Allowance is small so I make it deliberate. I ORD with a four figure buffer and options."
+    },
+    {
+     "label": "Put the payout into a course",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2,
+      "portfolio": 1
+     },
+     "outcome": "The lump sum goes into a certificate instead of a phone. Nobody at the time thinks this is the fun choice.",
+     "missed": "The payout went the way payouts go."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "ns"
+   ]
+  },
+  {
+   "id": "ch_uni",
+   "chapter": "University",
+   "years": 3,
+   "situation": "Matriculation, a hall room that fits a bed and an ego, modules I finally chose myself. Somewhere between orientation and final year project, I pick who I am becoming.",
+   "choices": [
+    {
+     "label": "Go deep in my major",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Honours track, a prof who knows my name, a thesis I almost enjoy. Depth compounds.",
+     "missed": "The major stayed a timetable instead of becoming a craft."
+    },
+    {
+     "label": "Take a semester on exchange abroad",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "network": 1,
+      "skills": 1
+     },
+     "sets": "exchanged",
+     "outcome": "Six months in another country on a student budget. I come back with range and a group chat in two time zones."
+    },
+    {
+     "label": "Build something of my own alongside",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "sets": "built_side",
+     "outcome": "The app, the podcast, the thesis turned tool. Strangers use it, which no grade can buy.",
+     "missed": "The side project stayed a note on my phone."
+    },
+    {
+     "label": "Work the career fairs properly",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "sets": "used_careers",
+     "outcome": "Coffee chats, resume clinics, two internships. Graduation is an on ramp, not a cliff.",
+     "missed": "The careers office knew everyone's name except mine.",
+     "opens": "d_people"
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "uni"
+   ]
+  },
+  {
+   "id": "ch_paycheque",
+   "chapter": "First pay cheque",
+   "years": 3,
+   "wantCheck": true,
+   "situation": "The first full month of pay lands with a payslip I read twice. CPF is real now, and so is the question of whether this job teaches me anything.",
+   "choices": [
+    {
+     "label": "Learn the job until it is easy",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I become the one who actually reads the manual. Within a year the escalations route to me.",
+     "missed": "Competence arrived on schedule instead of early."
+    },
+    {
+     "label": "Build money habits while it is easy",
+     "cost": 2,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "A budget I keep, three months put aside, CPF understood. It buys me the freedom to say no later.",
+     "missed": "The pay came and went without a plan.",
+     "capacity": 1,
+     "grew": "got my money in order",
+     "outcomeIf": {
+      "home:split": "A budget I keep, three months put aside. The two of them argue less about money that is visibly handled.",
+      "home:steady": "A budget I keep, three months put aside, CPF understood. Home finally believes this road pays."
+     }
+    },
+    {
+     "label": "Keep one thing that pays on the side",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 1,
+      "network": 1
+     },
+     "sets": "side_paying",
+     "outcome": "Weekend shoots, tuition classes, small builds. A second income with my own name on it."
+    },
+    {
+     "label": "Keep showing up for the people around me",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "told_home",
+     "outcome": "Dinner at home Sundays, and I say out loud what I am working towards. They stop guessing.",
+     "missed": "Home kept guessing what I was up to."
+    },
+    {
+     "label": "Start a part time qualification",
+     "cost": 2,
+     "needsDoor": "d_workstudy",
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "Work Study route: employed, paid, studying. Tuesday nights hurt and the certificate is real."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_cross",
+   "chapter": "The crossroads",
+   "fixedAge": 27,
+   "years": 3,
+   "format": "fork",
+   "situation": "Another decade on this road would be fine. On my phone: a course brochure, a job ad, a business name I doodled. Pick the next stretch.",
+   "choices": [
+    {
+     "label": "Go deep, become the expert",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I choose mastery where I stand. The next thousand hours make me the person they phone first."
+    },
+    {
+     "label": "Switch fields on purpose",
+     "cost": 1,
+     "disp": {
+      "risk": 1,
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "I trade seniority for range and start again on purpose. The beginner months are humbling and short."
+    },
+    {
+     "label": "Upgrade while working",
+     "cost": 1,
+     "needsDoor": "d_sflu",
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "SkillsFuture route: part time degree, employer nodding, weekends gone. The qualification lands at thirty."
+    },
+    {
+     "label": "Start the thing, small",
+     "cost": 1,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 1
+     },
+     "sets": "built_side",
+     "outcome": "Registered on ACRA in a lunch break. One client, then two. I keep the day job while it breathes.",
+     "outcomeIf": {
+      "home:theirs": "Registered on ACRA in a lunch break. Not the road they picked, and at twenty seven that is my call.",
+      "home:unsaid": "Registered on ACRA in a lunch break. I tell home over dinner, out loud this time. One client, then two."
+     }
+    },
+    {
+     "label": "Choose the people years",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Family, or caring, or the community thing that needs hands. Work holds steady while life takes the lead."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_build",
+   "chapter": "Building",
+   "fixedAge": 31,
+   "years": 4,
+   "situation": "The thirties go brick by brick. The career either compounds now or plateaus quietly, and the difference is mostly what I learn on purpose while nobody is asking me to.",
+   "choices": [
+    {
+     "label": "Take the job that means leading people",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "outcome": "Managing is a different job from doing, and nobody trains me. I learn on live humans, gently."
+    },
+    {
+     "label": "Stay the person who does the work",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I decline the manager track twice. My work gets quoted, forked, photographed. No regrets, most days.",
+     "missed": "The lead role went to someone who wanted it less."
+    },
+    {
+     "label": "Grow the side thing into something bigger",
+     "cost": 2,
+     "needsDoor": "d_portfolio",
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "outcome": "The folder of work becomes the pitch. I quote a real number, they pay it, and the weekend thing hires me."
+    },
+    {
+     "label": "Teach what I know to somebody newer",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "Adjunct evenings at my old school, or workshops at the CC. Explaining the craft renews it.",
+     "missed": "The teaching slot went unstaffed another year."
+    },
+    {
+     "label": "Put the people at home first this year",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "told_home",
+     "outcome": "Parents aging, maybe kids arriving, definitely laundry. I resize ambition to fit love, on purpose."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_quiet",
+   "chapter": "The quiet year",
+   "fixedAge": 38,
+   "years": 1,
+   "format": "reflect",
+   "situation": "Thirty eight. Not a crisis, just a clear evening and an honest mirror. The want me named as a teenager is still mine, or has quietly become something else.",
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_mirror",
+   "chapter": "The form again",
+   "fixedAge": 41,
+   "years": 4,
+   "situation": "A subject combination form is on my table again. Not mine: a thirteen year old I love is watching my face for a verdict. I remember this exact silence.",
+   "choices": [
+    {
+     "label": "Tell them what nobody told me",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "sets": "helped_someone",
+     "outcome": "Nothing on this form can close my life, I say. I watch their shoulders come down an inch.",
+     "missed": "The kid decoded my silence as a verdict anyway."
+    },
+    {
+     "label": "Walk an open house with them",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "Poly, ITE and JC open houses in one season, both of us asking questions. Their shortlist doubles.",
+     "missed": "They shortlisted from hearsay instead of visits."
+    },
+    {
+     "label": "Vouch for somebody starting out",
+     "cost": 1,
+     "needsDoor": "d_people",
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "A reference letter, an intro, a first gig. The people who once vouched for me taught me how it is done."
+    },
+    {
+     "label": "Use my SkillsFuture credit",
+     "cost": 2,
+     "disp": {
+      "curiosity": 1,
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "opens": "d_sflu",
+     "outcome": "The four thousand dollar top up at forty, spent on a course I chose like an adult. Homework at my age, gladly."
+    },
+    {
+     "label": "Rebuild the year around what matters now",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "Fewer hours, closer commute, one deliberate downshift. The trade is explicit and I sign it."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_late",
+   "chapter": "Where I stand",
+   "fixedAge": 48,
+   "years": 1,
+   "situation": "Forty eight. One classmate just retrained as a nurse; the wedding relative who judged ITE now asks my advice. The road behind me looks nothing like the form at fourteen.",
+   "choices": [
+    {
+     "label": "Mentor somebody on purpose",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "sets": "asked_younger",
+     "outcome": "I take two juniors seriously, the way Mr Rashid took me. It is the best interest rate I have found.",
+     "missed": "The juniors figured it out slower, alone."
+    },
+    {
+     "label": "Learn the new tool anyway",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "The software that was supposed to replace me becomes the thing I wield. Younger colleagues notice."
+    },
+    {
+     "label": "Turn the trade into my own shop",
+     "cost": 2,
+     "needsDoor": "d_trade",
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "outcome": "My name above a door, my hours on it. Thirty years of hands finally on my own invoice."
+    },
+    {
+     "label": "Bank the last conversions",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "outcome": "The subsidised diploma at any age is real money on the table. I take the class with the nineteen year olds."
+    },
+    {
+     "label": "Rest, visibly",
+     "cost": 1,
+     "disp": {
+      "flexibility": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "I model something rare at my age: enough. The younger ones need to see it done once."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "ch_mi_year",
+   "chapter": "The long game",
+   "years": 1,
+   "requiresFlag": "at_mi",
+   "situation": "Three years instead of two, and everybody outside assumes that means something went wrong. Inside, the pace is the point: the same syllabus with room to breathe in it.",
+   "choices": [
+    {
+     "label": "Use the extra year properly",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "The subject that beat me in Sec 4 becomes the one I explain to other people.",
+     "missed": "The extra year passed at the same speed as the others."
+    },
+    {
+     "label": "Take the commerce subjects seriously",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_workstudy",
+     "outcome": "Accounts and management stop being filler. A cluster of poly and university courses quietly opens.",
+     "missed": "The commerce papers stayed a timetable, not an interest."
+    },
+    {
+     "label": "Answer the question about my school",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "I get a short honest sentence ready. Saying it out loud a few times makes it true.",
+     "missed": "The question about the school kept getting answered by other people."
+    },
+    {
+     "label": "Find the two who also want it",
+     "cost": 1,
+     "gain": {
+      "network": 2
+     },
+     "sets": "helped_someone",
+     "outcome": "Two of us start meeting in the library on Fridays. It becomes the reason the year works.",
+     "missed": "Three years of Fridays in a library full of people, alone."
+    },
+    {
+     "label": "Go hard at one A Level subject",
+     "cost": 2,
+     "disp": {
+      "persistence": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2,
+      "portfolio": 1
+     },
+     "outcome": "I pick one and drive it. Depth in one paper reads better than flatness across four.",
+     "missed": "Every subject got the same middling hour.",
+     "sets": "went_deep"
+    }
+   ],
+   "at": [
+    "mi"
+   ]
+  },
+  {
+   "id": "ch_pfp_year",
+   "chapter": "Foundation year",
+   "years": 1,
+   "requiresFlag": "at_pfp",
+   "situation": "A year inside the polytechnic before the diploma formally starts. I have a student card, a campus, and a cluster full of people who arrived the same way I did.",
+   "choices": [
+    {
+     "label": "Treat it as year zero of the diploma",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I learn the campus, the lecturers and the library before any of it counts. The head start is real.",
+     "missed": "The foundation year passed as a waiting room instead of a year one."
+    },
+    {
+     "label": "Pick the course inside the cluster carefully",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 1
+     },
+     "opens": "d_polyroad",
+     "outcome": "I sit in on two courses I was not sure about. One of them turns out to be mine.",
+     "missed": "The course inside the cluster got chosen for me by default."
+    },
+    {
+     "label": "Get the maths solid now",
+     "cost": 1,
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "The bridging module is not glamorous. It is the thing that stops year one from being a scramble.",
+     "missed": "The maths gap followed me into the diploma."
+    },
+    {
+     "label": "Know the people who arrived like me",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "sets": "helped_someone",
+     "outcome": "The foundation cohort becomes a group of people who understand the exact route I took.",
+     "missed": "The cohort stayed a room of strangers who took the same route."
+    },
+    {
+     "label": "Enter a cluster competition",
+     "cost": 2,
+     "disp": {
+      "risk": 1
+     },
+     "gain": {
+      "portfolio": 2,
+      "network": 1
+     },
+     "outcome": "I build something with three strangers and lose, publicly, and learn more than the winners did.",
+     "missed": "The competition happened without me in it."
+    }
+   ],
+   "at": [
+    "poly"
+   ]
+  },
+  {
+   "id": "ch_head_start",
+   "chapter": "The head start",
+   "years": 1,
+   "requiresFlag": "ns_no",
+   "situation": "Half the people I sat beside in Sec 4 are somewhere with a shaved head, and I am already here. Two years is a long time to be early with.",
+   "choices": [
+    {
+     "label": "Get ahead in the course",
+     "cost": 1,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I take the heavier semester while it is quiet. Later, when it is loud, I have room.",
+     "missed": "The early quiet got spent the same as any other term."
+    },
+    {
+     "label": "Take the internship nobody wanted",
+     "cost": 1,
+     "gain": {
+      "skills": 1,
+      "network": 1
+     },
+     "opens": "d_people",
+     "outcome": "An unglamorous attachment in a real place. I leave knowing how a workplace actually runs.",
+     "missed": "The attachment went to somebody who asked for it."
+    },
+    {
+     "label": "Start something of my own",
+     "cost": 1,
+     "disp": {
+      "risk": 1,
+      "curiosity": 1
+     },
+     "gain": {
+      "portfolio": 2
+     },
+     "sets": "built_side",
+     "outcome": "Small, unfinished, entirely mine. It teaches me what I like more accurately than any quiz.",
+     "missed": "The idea stayed a note in my phone."
+    },
+    {
+     "label": "Keep the group chat alive",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 2
+     },
+     "outcome": "I am the one who remembers birthdays and books out weekends. Two years later the friendships are still there.",
+     "missed": "Two years of distance did what distance does."
+    },
+    {
+     "label": "Take on something that runs the place",
+     "cost": 2,
+     "disp": {
+      "persistence": 1
+     },
+     "gain": {
+      "network": 2,
+      "skills": 1
+     },
+     "outcome": "A committee, a shop floor, a team. Being responsible for other people's Tuesdays changes me.",
+     "missed": "Nobody's Tuesday depended on me."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
+  },
+  {
+   "id": "ch_own_time",
+   "chapter": "My own two years",
+   "years": 1,
+   "requiresFlag": "ns_no",
+   "situation": "The others come back changed and full of stories about a field. I have two years of my own behind me, and nobody hands me a certificate for them.",
+   "choices": [
+    {
+     "label": "Say what I did with them",
+     "cost": 1,
+     "disp": {
+      "optimism": 1
+     },
+     "gain": {
+      "network": 1
+     },
+     "outcome": "I get clear about what those two years were for. It turns out to be a longer answer than I expected.",
+     "missed": "The two years stayed hard to describe, even to myself."
+    },
+    {
+     "label": "Convert the work into a qualification",
+     "cost": 1,
+     "gain": {
+      "skills": 2
+     },
+     "opens": "d_workstudy",
+     "outcome": "The hours I already put in count towards something official. Paperwork, then a certificate.",
+     "missed": "The experience stayed real but unrecorded."
+    },
+    {
+     "label": "Take the harder module now",
+     "cost": 1,
+     "disp": {
+      "curiosity": 1
+     },
+     "gain": {
+      "skills": 2
+     },
+     "outcome": "I use the standing I built to get into something that would have been closed to me at seventeen.",
+     "missed": "The safe module got taken, and finished, and taught nothing."
+    },
+    {
+     "label": "Be the one who welcomes them back",
+     "cost": 1,
+     "gain": {
+      "network": 2
+     },
+     "sets": "helped_someone",
+     "outcome": "I help three people restart. Reorienting somebody else clarifies where I got to myself.",
+     "missed": "They came back and worked it out alone."
+    },
+    {
+     "label": "Go somewhere for a while",
+     "cost": 2,
+     "disp": {
+      "risk": 1,
+      "flexibility": 1
+     },
+     "gain": {
+      "portfolio": 1,
+      "network": 2
+     },
+     "outcome": "A stint away, paid for carefully. I come home with a different sense of what is normal.",
+     "missed": "The trip stayed a tab I never closed."
+    }
+   ],
+   "adultYears": true,
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni",
+    "work"
+   ]
+  }
+ ],
+ "endingFrames": [
+  {
+   "want": "make",
+   "head": "I wanted to make things people use.",
+   "body": "Count what exists because I do: the shipped work, the fixed machines, the printed pages. Strangers touch things I made without knowing my name, which is what making always promised."
+  },
+  {
+   "want": "make",
+   "track": "network",
+   "head": "I wanted to make things people use.",
+   "body": "The surprise is that my making became a team sport. The things exist because I learned to gather people around a bench and keep them there."
+  },
+  {
+   "want": "hands",
+   "head": "I wanted to be good with my hands.",
+   "body": "I am. The proof is in call backs and referrals, in the neighbour who trusts nobody else with the compressor. Skill this physical cannot be faked and was never obsolete."
+  },
+  {
+   "want": "people",
+   "head": "I wanted to be there when people struggle.",
+   "body": "Count who calls me first when it goes wrong. That list is my actual CV, and it took thirty years of showing up to write."
+  },
+  {
+   "want": "people",
+   "track": "skills",
+   "head": "I wanted to be there when people struggle.",
+   "body": "I learned the hard version: care with competence attached. The kindness got trained, certified and rostered, and it holds up at three in the morning."
+  },
+  {
+   "want": "own",
+   "head": "I wanted to run my own thing.",
+   "body": "Whether the name above the door is mine yet or not, I have run things for years: budgets, crews, risks taken with my own signature. Ownership turned out to be a habit before it was a registration."
+  },
+  {
+   "want": "how",
+   "head": "I wanted to work out how things work.",
+   "body": "I never stopped. The subjects changed names; the itch survived every timetable. People bring me broken systems the way others bring gossip, and I am glad."
+  },
+  {
+   "want": "order",
+   "head": "I wanted every detail exactly right.",
+   "body": "The world paid me for precisely this: the audits passed, the doses checked, the builds that do not wobble. Rigour turned out to be a form of care."
+  },
+  {
+   "want": "unsure",
+   "head": "At the start I said I was not sure.",
+   "body": "That was the honest answer, and it worked. I tried things, kept what fit and folded the rest, which is not indecision. It is how the sure people actually got sure."
+  },
+  {
+   "want": "any",
+   "ns": "yes",
+   "head": "My road, with two years in green.",
+   "body": "The uniform years slowed the paper and fed the person: strangers became brothers, and I learned to be depended on. Every date after shifted two years, and nothing worth having fell off the road."
+  },
+  {
+   "want": "any",
+   "head": "My road, walked my way.",
+   "body": "Same start as thousands, same ending as no one. The doors I hold were opened by asking, making and showing up, none of which was printed on the form at fourteen."
+  }
+ ],
+ "institutions": {
+  "sec": "Secondary school",
+  "jc": "Junior College",
+  "mi": "Millennia Institute",
+  "poly": "Polytechnic",
+  "ite": "ITE",
+  "arts": "Arts institution",
+  "ns": "National Service",
+  "uni": "University",
+  "work": "Work",
+  "cet": "Back to study"
+ }
+}
