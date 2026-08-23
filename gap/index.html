@@ -257,18 +257,18 @@ const GENS=[
 
 /* Round 1 — Snap Judgment (unscored trap). */
 const R1=[
-  {v:'Just tell me the point before you book the meeting. If it’s a real decision, I’m there. If it’s a status update, send the note.',
-   value:'respect', tell:'One of the most common asks in every age group. It’s respect for people’s time — not a young-person thing.'},
-  {v:'I don’t need a pat on the back. I need to know the plan is stable enough to build a life around.',
-   value:'security', tell:'Written by a 26-year-old servicing a housing loan. Security tracks life-stage, not birth year.'},
-  {v:'If the only reason we do it this way is “we’ve always done it this way,” I’ll go find a better way.',
-   value:'purpose', tell:'Said by a 56-year-old engineer. Asking “why” isn’t youth — it’s curiosity.'},
-  {v:'Give me the goal and the one line I can’t cross, then let me run. I’ll shout if I’m stuck.',
-   value:'autonomy', tell:'Just as common among Gen Z new hires who grew up teaching themselves online.'},
-  {v:'Say my name in the room when you use my idea. That’s the whole ask.',
-   value:'belonging', tell:'Written by a 61-year-old, remembering exactly how it felt when it didn’t happen to them.'},
-  {v:'Tell me while the work is still warm — not six months later at appraisal.',
-   value:'growth', tell:'Boomers asked for this just as often. Nobody does their best with stale feedback.'},
+  {v:'Don’t book the meeting until you can name the decision we’ll make in it.',
+   value:'respect', tell:'Every generation’s number-one gripe. Guarding your time isn’t youth — it’s sanity.'},
+  {v:'Skip the pep talk. Just promise the plan won’t change again next month.',
+   value:'security', tell:'That was a 26-year-old with a mortgage. Security is a life-stage, not a generation.'},
+  {v:'“We’ve always done it this way” isn’t a reason. It’s a shrug.',
+   value:'purpose', tell:'Said by a 56-year-old engineer. Questioning “why” is curiosity, not youth.'},
+  {v:'Give me the target and the one rule I can’t break — then leave me to it.',
+   value:'autonomy', tell:'Just as common in a 22-year-old who taught themselves the whole job online.'},
+  {v:'Use my idea? Say my name. That’s the entire ask.',
+   value:'belonging', tell:'Written by a 61-year-old who spent decades watching credit float upward.'},
+  {v:'Tell me now, while it still matters — not at appraisal.',
+   value:'growth', tell:'Boomers wanted this just as badly. Stale feedback helps no one.'},
 ];
 
 /* Round 2 — Read the Value (scored). Pool of 8; a shuffled 6 are played. */
@@ -493,12 +493,13 @@ function ptsFor(right,bold){ return right ? (bold?BOLDWIN:SAFE) : (bold?BOLDMISS
 function commitSolo(bold){
   const st=curStep(), meta=soloMeta(st);
   if(!meta || !S.sel || S.sel.step!==S.step) return;
-  const youKey=S.sel.key;
+  const youAns = meta.scored ? S.sel.key : (Array.isArray(S.sel.keys)?S.sel.keys.slice():[]);
+  if(!meta.scored && youAns.length===0) return;
   if(bold && boldLeft(0)<=0) bold=false;
   const ai = meta.scored ? aiPlay(meta) : {pick: meta.keys[(Math.random()*meta.keys.length)|0], bold:false};
-  S.pick[S.step]={you:youKey, youBold:bold, cpu:ai.pick, cpuBold:ai.bold};
+  S.pick[S.step]={you:youAns, youBold:bold, cpu:ai.pick, cpuBold:ai.bold};
   if(meta.scored){
-    const yr=(youKey===meta.correctKey);
+    const yr=(youAns===meta.correctKey);
     const yo=outcomeFor(yr,bold); if(yo) S.results[S.step+':0']=yo;
     const co=outcomeFor(ai.pick===meta.correctKey, ai.bold); if(co) S.results[S.step+':1']=co;
     if(yr){ S.streak++; if(S.streak>S.bestStreak) S.bestStreak=S.streak;
@@ -698,8 +699,8 @@ function revealRow(){
 }
 function stakeTag(){ return `<div class="stake">⚡ <span>Safe <b>+${SAFE}</b> &nbsp;·&nbsp; Bold <b>+${BOLDWIN}</b> / <b>${BOLDMISS}</b> &nbsp;·&nbsp; 3 Bold reads all game</span></div>`; }
 function soloCommit(scored){
-  const has = S.sel&&S.sel.step===S.step;
-  if(!has) return `<p class="fnote">Tap your pick above — or press 1–${scored?6:4} — to lock it in.</p>`;
+  const has = S.sel&&S.sel.step===S.step && (Array.isArray(S.sel.keys)? S.sel.keys.length>0 : true);
+  if(!has) return `<p class="fnote">Tap ${scored?'your pick':'one or more'} above (or press ${scored?'1–6':'1–4'}) to lock in.</p>`;
   if(!scored) return `<div class="row"><button class="btn btn-primary btn-lg" data-action="commit" data-bold="0">Lock in guess →</button></div>`;
   const nobold = boldLeft(0)<=0;
   return `<div class="row">
@@ -735,32 +736,37 @@ function genRef(active){
       <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></div>`;
   }).join('')}</div>`;
 }
+function r1Selected(k){ return S.sel&&S.sel.step===S.step&&Array.isArray(S.sel.keys)&&S.sel.keys.indexOf(k)>=0; }
 function genPick(){
-  return `<div class="chiprow">${GENS.map((g,i)=>{
-    const on = S.sel&&S.sel.step===S.step&&S.sel.key===g.k;
-    return `<button class="rchip pick ${on?'sel':''}" style="--c:${g.c}" data-action="pick" data-key="${g.k}">
-      <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></button>`;
-  }).join('')}</div>`;
+  const anyOn=['boomer','x','mil','z'].every(k=>r1Selected(k));
+  return `<div class="chiprow">${GENS.map((g,i)=>`<button class="rchip pick ${r1Selected(g.k)?'sel':''}" style="--c:${g.c}" data-action="pick" data-key="${g.k}">
+      <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></button>`).join('')}
+    <button class="rchip pick ${anyOn?'sel':''}" style="--c:#8a7f6c" data-action="pick" data-key="any"><span class="n">🤷</span>Any of them</button>
+  </div>`;
 }
 function R1Prompt(i){
   const it=R1[i], solo=S.mode==='solo';
   return `<div class="card prompt fade">
-    <div class="kicker">Whose line is it? · ${posLabel()}</div>
+    <div class="kicker">Snap judgment · ${posLabel()} · <span style="color:var(--brick)">no points — it’s a trap</span></div>
     <div class="voice"><span class="q">“</span>${esc(it.v)}<span class="q">”</span></div>
-    <div class="instruction">${solo?'Your gut — which generation said it?':'As a team — which generation said it?'}</div>
+    <div class="instruction">Who said it? ${solo?'Pick anyone you’d bet on — one, several, or “any of them.”':'Shout your best guess as a team.'}</div>
     ${solo?genPick():genRef(null)}
-    ${solo?soloCommit(false):`<p class="fnote">Facilitator: let every team commit out loud, then hit Reveal.</p>${revealRow()}`}
+    <p class="fnote">Heads up: there’s no reliable answer here — that’s the whole point. See who really said it.</p>
+    ${solo?soloCommit(false):revealRow()}
   </div>`;
 }
 function soloR1Note(){
   const pk=S.pick[S.step-1]; if(!pk) return '';
   const g=k=>{const x=GENS.find(y=>y.k===k);return x?x.name:'—';};
-  return `<p class="tell" style="color:var(--ink2)">You guessed <b>${g(pk.you)}</b> · the computer guessed <b>${g(pk.cpu)}</b>. Neither scores — because there’s no reliable answer to guess.</p>`;
+  const you=Array.isArray(pk.you)?pk.you:[pk.you];
+  const youTxt = you.length===0?'—' : you.length>=4?'every one of them' : you.map(g).join(', ');
+  const smart = you.length!==1;
+  return `<p class="tell" style="color:var(--ink2)">You’d have bet on <b>${youTxt}</b>; the computer guessed <b>${g(pk.cpu)}</b>. ${smart?'Good instinct — you didn’t force a single answer, because there isn’t one.':'Felt certain? Everyone does — and that certainty is exactly the trap.'} Nobody scores here.</p>`;
 }
 function R1Reveal(i){
   const it=R1[i], val=VALUES[it.value];
   return `<div class="card reveal fade">
-    <div class="kicker" style="text-align:center">Heard across… all of them</div>
+    <div class="kicker" style="text-align:center">Trick question — it could be any of them</div>
     ${genRef(['boomer','x','mil','z'])}
     <div class="revhead" style="margin-top:26px">
       <div class="valbig pop" style="--c:${val.c}">
@@ -1004,7 +1010,16 @@ document.addEventListener('click',e=>{
     case 'toggleShuffle': S.shuffle=!S.shuffle; render(); break;
     case 'startGame': S.mode='group'; resetPlay(); buildSequence(); go('play'); break;
     case 'startSolo': S.mode='solo'; S.teams=[{name:(S.soloName||'').trim()||'You',color:'#e0563f'},{name:'Computer',color:'#2f8f83'}]; resetPlay(); buildSequence(); go('play'); break;
-    case 'pick': S.sel={step:S.step, key:el.dataset.key}; SFX.select(); render(); break;
+    case 'pick': {
+      const stp=curStep();
+      if(stp && stp.t==='r1p'){
+        if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]};
+        const k=el.dataset.key, all=['boomer','x','mil','z'];
+        if(k==='any'){ const on=all.every(x=>S.sel.keys.includes(x)); S.sel.keys= on?[]:all.slice(); }
+        else { const j=S.sel.keys.indexOf(k); if(j>=0) S.sel.keys.splice(j,1); else S.sel.keys.push(k); }
+      } else { S.sel={step:S.step, key:el.dataset.key}; }
+      SFX.select(); render(); break;
+    }
     case 'commit': commitSolo(el.dataset.bold==='1'); break;
     case 'next': next(); break;
     case 'back': back(); break;
@@ -1023,7 +1038,10 @@ document.addEventListener('keydown',e=>{
   const soloPrompt = S.mode==='solo' && st && (st.t==='r1p'||st.t==='r2p'||st.t==='r3p');
   if(soloPrompt){
     const meta=soloMeta(st);
-    if(/^[1-9]$/.test(e.key)){ const idx=+e.key-1; if(idx<meta.keys.length){ S.sel={step:S.step,key:meta.keys[idx]}; SFX.select(); render(); } e.preventDefault(); return; }
+    if(/^[1-9]$/.test(e.key)){ const idx=+e.key-1; if(idx<meta.keys.length){
+        if(st.t==='r1p'){ if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]}; const k=meta.keys[idx], j=S.sel.keys.indexOf(k); if(j>=0)S.sel.keys.splice(j,1); else S.sel.keys.push(k); }
+        else S.sel={step:S.step,key:meta.keys[idx]};
+        SFX.select(); render(); } e.preventDefault(); return; }
     if(e.key==='Enter'){ if(S.sel&&S.sel.step===S.step) commitSolo(false); e.preventDefault(); return; }
     if((e.key==='b'||e.key==='B')){ if(S.sel&&S.sel.step===S.step && meta.scored) commitSolo(true); e.preventDefault(); return; }
     return;
