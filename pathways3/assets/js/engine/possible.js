@@ -129,7 +129,12 @@ export function possibilitySweep(data) {
 
   // Every age a run can be lived at must have something to offer, on every
   // family, or the panel appears and disappears for no reason a student sees.
-  const AGES = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 27, 31, 38, 41, 48];
+  // The ages a run can actually be lived at, after the ladder was re-timed to
+  // conclude at 35. Probing ages nobody lives (the old 38, 41, 48) tested the
+  // panel where it never appears; probing only the lived ages keeps the check
+  // honest. The pinned convergence ages are 27, 30, 32, 34, 35; NS shifts the
+  // pre-fork adult years up by about two.
+  const AGES = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 30, 32, 34, 35];
   ['academic', 'applied', 'hands', 'arts'].forEach((path) => {
     AGES.forEach((age) => {
       const n = possibilitiesFor(data, { path, seed: 1, shownPossible: [] }, age, 3).length;

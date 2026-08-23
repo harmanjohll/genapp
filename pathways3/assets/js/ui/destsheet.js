@@ -23,8 +23,13 @@ const STATE_WORD = {
 };
 
 export function destSheetHtml(row, data) {
-  const money = costFor(row.id, data);
-  const routes = (row.routes || []).slice(0, 3);
+  const open = row.state === 'open';
+  // The fallback routes are the roads to still reach this when a plan does not
+  // put it directly in hand. On a destination that is already open they are
+  // not "ways in", they are consolation roads, and labelling them that way
+  // read as a mismatch. So they only show when the direct road is not open.
+  const routes = open ? [] : (row.routes || []).slice(0, 3);
+  const rules = (row.met || []).concat(row.gap || []);
 
   return `
     <h2 id="sheet-title">${esc(row.name)}</h2>
@@ -36,7 +41,7 @@ export function destSheetHtml(row, data) {
 
     ${row.feels ? `<p>${esc(row.feels)}</p>` : ''}
 
-    ${row.state === 'open' ? `
+    ${open ? `
       <p class="notegood">${esc(row.status.text)}.</p>
     ` : `
       <p class="caps">What moves this</p>
@@ -47,29 +52,25 @@ export function destSheetHtml(row, data) {
     `}
 
     ${routes.length ? `
-      <p class="caps">Ways in</p>
+      <p class="caps">Other roads to it</p>
       <ul class="dest-plain">
-        ${routes.map((r) => `<li><strong>${esc(r.label)}</strong>${r.years ? ` · ${esc(String(r.years))} years` : ''}${r.honest ? ` — ${esc(r.honest)}` : ''}</li>`).join('')}
+        ${routes.map((r) => `<li><strong>${esc(r.label)}</strong>${r.years ? ` · ${esc(String(r.years))} years` : ''}${r.honest ? `. ${esc(r.honest)}` : ''}</li>`).join('')}
       </ul>
-    ` : ''}
-
-    ${money ? `
-      <p class="caps">What it costs</p>
-      <p>${esc(money.fee)}${money.misc ? `. ${esc(money.misc)}` : ''}</p>
-      <p class="small">${esc(money.note || '')} <a href="./?s=money">All the costs, and the help</a>.</p>
     ` : ''}
 
     <details class="dest-fold">
       <summary>The exact rules, with sources</summary>
-      ${(row.met || []).concat(row.gap || []).map((r) => `
+      ${rules.map((r) => `
         <div class="rulerow">
-          <span>${decorate(esc(r.label))}${r.soft ? ' <span class="small">(usually)</span>' : ''}</span>
-          <span class="pill" data-tone="${r.satisfied ? 'open' : 'quiet'}">${r.satisfied ? 'met by this plan' : 'not yet in this plan'}</span>
+          <div class="rulerow-head">
+            <span class="rulerow-label">${decorate(esc(r.label))}${r.soft ? ' <span class="small">(usually)</span>' : ''}</span>
+            <span class="pill" data-tone="${r.satisfied ? 'open' : 'quiet'}">${r.satisfied ? 'met' : 'not yet'}</span>
+          </div>
         </div>`).join('')}
       ${(row.performance || []).map((p) => `
         <div class="rulerow">
-          <span>${decorate(esc(p.label))}</span>
-          <span class="small">${esc(p.note || '')}</span>
+          <div class="rulerow-head"><span class="rulerow-label">${decorate(esc(p.label))}</span></div>
+          ${p.note ? `<p class="rulerow-note">${decorate(esc(p.note))}</p>` : ''}
         </div>`).join('')}
       <p class="small" style="margin-top:12px">
         ${row.dataStatus === 'provisional' ? 'Some of these figures are provisional: read from summaries, not yet re-checked against the primary page. ' : ''}
@@ -77,9 +78,4 @@ export function destSheetHtml(row, data) {
       </p>
     </details>
   `;
-}
-
-function costFor(destId, data) {
-  const costs = (data.money && data.money.costs) || [];
-  return costs.find((c) => (c.covers || []).includes(destId)) || null;
 }

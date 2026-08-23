@@ -493,6 +493,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 6px var(--s-2);
   width: 100%;
   text-align: left;
@@ -503,6 +504,7 @@
   min-height: var(--tap);
   font-weight: 600;
 }
+.future-btn .want { font-size: 1rem; }
 .future-btn:hover { border-color: var(--compass); }
 .future-btn.on { border-color: var(--compass); background: var(--compass-wash); }
 .want-go { margin-left: auto; color: var(--compass); font-size: var(--t-small); font-weight: 700; }

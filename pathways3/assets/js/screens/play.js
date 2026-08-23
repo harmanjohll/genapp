@@ -27,7 +27,7 @@ import {
 } from '../engine/possible.js?v=3.0.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
-  applyChoices, applyReflection, respondToChance, askMet, finish, diffRuns, CAPACITY_CAP, heldAsks,
+  applyChoices, applyReflection, respondToChance, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
   companionLine, companionEnd, midyearLine,
 } from '../engine/journey4.js?v=3.0.0';
@@ -269,11 +269,11 @@ function introScreen(host, data, st) {
     </div>` : '';
 
   host.innerHTML = `
-    <div class="wrap">
+    <div class="wrap-narrow">
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">Play</p>
         <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
-        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what I do each chapter, from now to 48. Life happens in between. No choice ends my story.</p>
+        <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what I do each chapter, from now to 35. Life happens in between. No choice ends my story.</p>
         ${comboBlock}
         <div class="wantbox">
           <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>
@@ -941,7 +941,7 @@ function forkScreen(host, stage, data, age) {
 
 function reflectScreen(host, stage, data) {
   // A stage may carry its own prompt: results eve asks about tomorrow's slip,
-  // and the shared prompt is written for a quiet year at 38.
+  // and the shared prompt is written for the quiet year in the thirties.
   const r = stage.reflection || data.journey.reflection;
   const jc = data.copy.journey;
   const age = ageAt(data.journey, run, run.stepIndex);
@@ -1001,7 +1001,6 @@ function chanceAsk(host, card, data) {
       disp: dispLabel(card.asks.disposition),
       have: `${run.disp[card.asks.disposition] || 0} of ${card.asks.min}`,
     }))}</p>` : '';
-  const met = askMet(run, card);
   // A card that only arrives because of an earlier act says which act, so the
   // payoff reads as causation and not as luck wearing a knowing smile.
   const step = run.steps[run.steps.length - 1];
@@ -1028,7 +1027,6 @@ function chanceAsk(host, card, data) {
         ${(card.responses || []).map((r, i) => `
           <button class="choice resp" type="button" data-action="respond" data-i="${i}">
             <span class="c-label">${esc(r.label)}</span>
-            ${r.needsAsk ? `<span class="c-note">${esc(met ? jc.metChip : jc.stretchChip)}</span>` : ''}
           </button>`).join('')}
       </div>
       ${card.type === 'setback' && card.onwardMoves ? `
@@ -1299,7 +1297,7 @@ function endingScreen(host, data, st) {
                 </li>`).join('')}</ul>
             </div>`;
         })()}
-        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At 38 I wrote: ${esc(run.reflection)}</p>` : ''}
+        ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At ${run.reflectionAge || 32} I wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
           <h2>${esc(jc.playAgain)}</h2>
@@ -1437,7 +1435,7 @@ function showDiff(host, data, pair) {
           ${d.onlyB.length ? `<p class="small mute">${esc(b.label)} also holds: ${d.onlyB.map(doorName).map(esc).join(', ')}</p>` : ''}
         </div>
         ${d.reflections.some(Boolean) ? `
-          <div class="section"><p class="caps">At 38 I wrote</p>
+          <div class="section"><p class="caps">The note I wrote</p>
           <div class="grid two">
             <p class="small">${esc(d.reflections[0] || '\u00b7')}</p>
             <p class="small">${esc(d.reflections[1] || '\u00b7')}</p>
@@ -1709,6 +1707,13 @@ export default {
   era: 'school',
   render(root, api) {
     NAV = api.nav;
-    renderJourney(root, api.data, api.ctx(), api.refresh);
+    // Re-render IN PLACE, not through the router's paint(). paint() clears
+    // app.innerHTML before re-rendering, which collapses the page to zero
+    // height, so markPlace (which runs first inside renderJourney) recorded a
+    // scroll position of 0 and settle dutifully restored the top. Every choice
+    // tap jumped the student back to the top of the year. A local repaint lets
+    // markPlace read the live scroll and focus, and settle keep them.
+    const repaint = () => renderJourney(root, api.data, api.ctx(), repaint);
+    repaint();
   },
 };
