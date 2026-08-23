@@ -604,9 +604,12 @@ export function applyReflection(run, j, stage, text) {
   const age = ageAt(j, run, run.stepIndex);
   const kept = String(text || '').slice(0, 140);
   // Where the words land. The default is run.reflection, the run's last word,
-  // written at 38. A stage may name another keep instead: results eve keeps
-  // `hope`, so what a sixteen year old hoped the slip would say survives to the
-  // ending without overwriting what thirty eight wants to say.
+  // written at the quiet year. A stage may name another keep instead: results
+  // eve keeps `hope`, so what a sixteen year old hoped the slip would say
+  // survives to the ending without overwriting the quiet year's word. The age
+  // is stored so the ending can name it rather than hardcode a number that
+  // moves when the ladder is re-timed.
+  if (!stage.keeps || stage.keeps === 'reflection') run.reflectionAge = age;
   run[stage.keeps || 'reflection'] = kept;
   run.steps.push({
     stageId: stage.id, age, title: stage.chapter || stage.title, format: 'reflect',
@@ -797,7 +800,7 @@ function pickChance(run, stage, cards, age) {
   if ((dealt - 1) % 5 === 3) return null;
   const pool = eligibleCards(cards, run, age, stage);
   if (!pool.length) return null;
-  return pool[weightedIndex(pool.map((c) => cardWeight(c, run)), run.seed + run.stepIndex * 7919)];
+  return pool[weightedIndex(pool.map((c) => cardWeight(c, run, age)), run.seed + run.stepIndex * 7919)];
 }
 
 /**
@@ -818,11 +821,27 @@ function pickChance(run, stage, cards, age) {
  * takes is worth three, both together six, and against ten ordinary cards the
  * favourite lands about a quarter of the time instead of two thirds.
  */
-function cardWeight(card, run) {
+function cardWeight(card, run, age) {
   let w = 1;
   if (card.requiresFlag || card.when) w += 2;
   if (card.subjects && takesSubject(run, card.subjects)) w += 2;
   if (run.want && run.want.riasec && wantAffinity(card, run.want.riasec) >= 2) w += 1;
+  // This is a tool for exploring pathways, not a life sim to be weathered, so
+  // the deck leans toward the cards a student goes after (an open house, a
+  // competition, someone worth talking to) over the ones that land on them (a
+  // setback, an interruption). The lean is strongest in the school years,
+  // where a fourteen year old should mostly meet chances; it eases off in the
+  // adult years, where fees and retrenchment are real and belong in the mix.
+  // Setbacks are never removed: a life has them, and this one survives them
+  // with a named office and an amount. They are just no longer the default.
+  const active = card.type === 'opportunity' || card.type === 'encounter';
+  const reactive = card.type === 'setback' || card.type === 'interrupt';
+  if (age != null && age <= 16) {
+    if (active) w += 3;
+    if (reactive) w = Math.max(1, w - 1);
+  } else if (active) {
+    w += 1;
+  }
   return w;
 }
 

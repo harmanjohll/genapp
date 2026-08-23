@@ -538,8 +538,12 @@ button.rm-row { position: relative; }
   align-items: center;
 }
 .dest-fold { border-top: 1px solid var(--rule-soft); margin-top: var(--s-3); }
-.rulerow { display: flex; justify-content: space-between; gap: var(--s-3); padding: var(--s-2) 0; font-size: var(--t-small); }
+.rulerow { padding: 10px 0; font-size: var(--t-small); }
 .rulerow + .rulerow { border-top: 1px solid var(--rule-soft); }
+.rulerow-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); }
+.rulerow-label { font-weight: 600; line-height: 1.4; }
+.rulerow-head .pill { flex: none; }
+.rulerow-note { color: var(--ink-mute); margin: 3px 0 0; line-height: 1.45; }
 
 /* ---- act -------------------------------------------------------------------------- */
 
