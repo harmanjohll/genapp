@@ -274,21 +274,21 @@ const R1=[
 /* Round 2 — Read the Value (scored). Pool of 8; a shuffled 6 are played. */
 const R2=[
   {v:'I’ll stay till midnight for something that matters. I won’t stay ten minutes to look busy.',
-   value:'purpose', tell:'Meaning, not hours. “Matters” vs “look busy” is the whole tell.'},
+   values:['purpose'], tell:'Meaning, not hours. “Matters” vs “look busy” is the whole tell.'},
   {v:'I took this role for what I’d learn. The day the learning stops, I start looking.',
-   value:'growth', tell:'Not disloyalty — a growth engine. Feed it and they stay.'},
+   values:['growth'], tell:'Not disloyalty — a growth engine. Feed it and they stay.'},
   {v:'I can’t take a smart risk if one bad month means I can’t make rent.',
-   value:'security', tell:'Fix the floor before you ask for the ceiling. Safety first, courage second.'},
+   values:['security'], tell:'Fix the floor before you ask for the ceiling. Safety first, courage second.'},
   {v:'Give me the outcome and the guardrails. I’ll find the path.',
-   value:'autonomy', tell:'Trust with the “how” is the reward. Micromanage it and you lose them.'},
+   values:['autonomy'], tell:'Trust with the “how” is the reward. Micromanage it and you lose them.'},
   {v:'If I only ever hear the final decision, I’ll assume I wasn’t wanted in the room.',
-   value:'belonging', tell:'Not about the decision — about being counted in it.'},
+   values:['belonging'], tell:'Not about the decision — about being counted in it.'},
   {v:'Don’t rearrange my job and tell me by email. Ask me first.',
-   value:'respect', tell:'Consultation is the currency. Being “handled” feels like being erased.'},
+   values:['respect','belonging'], tell:'Two fit: respect (consult me) and belonging (keep me in the room). Being “handled” erases both.'},
   {v:'Give me the “why” once and I’m all in. Skip it and the work still ships — just slower, and joyless.',
-   value:'purpose', tell:'The “why” buys the discretionary effort. Fuel, not a nicety.'},
+   values:['purpose'], tell:'The “why” buys the discretionary effort. Fuel, not a nicety.'},
   {v:'I’d rather be handed something hard and occasionally trip than only ever the safe, small stuff.',
-   value:'growth', tell:'Stretch is the reward. Over-protect a capable person and it reads as being written off.'},
+   values:['growth','autonomy'], tell:'Two fit: growth (stretch me) and autonomy (trust me with it). Over-protecting reads as being written off.'},
 ];
 
 /* Discussion beat — no single right answer. Pool of 3; a shuffled 2 are played. */
@@ -471,19 +471,26 @@ function setOutcome(ti,outcome){
 function toggleBonus(type,ti){ const k=S.step+':'+type+':'+ti; if(S.bonus[k]) delete S.bonus[k]; else { S.bonus[k]=true; SFX.tick(); } render(); }
 
 /* ---- solo mode: you vs the computer ---- */
+function multiStep(st){ return !!st && (st.t==='r1p'||st.t==='r2p'); }
 function soloMeta(st){
   if(!st) return null;
-  if(st.t==='r1p') return {scored:false, correctKey:null, keys:GENS.map(g=>g.k)};
-  if(st.t==='r2p') return {scored:true,  correctKey:R2[st.i].value, keys:VORDER.slice()};
-  if(st.t==='r3p') return {scored:true,  correctKey:String(R3[st.i].options.findIndex(o=>o.ok)), keys:R3[st.i].options.map((o,ix)=>String(ix))};
+  if(st.t==='r1p') return {scored:false, correct:[], keys:GENS.map(g=>g.k)};
+  if(st.t==='r2p') return {scored:true,  correct:R2[st.i].values.slice(), keys:VORDER.slice()};
+  if(st.t==='r3p') return {scored:true,  correct:[String(R3[st.i].options.findIndex(o=>o.ok))], keys:R3[st.i].options.map((o,ix)=>String(ix))};
   return null;
+}
+/* right = at least one pick, and every pick is a defensible value (subset of the acceptable set) */
+function isRight(meta, ans){
+  if(!meta || !meta.scored) return false;
+  if(Array.isArray(ans)) return ans.length>0 && ans.every(k=>meta.correct.indexOf(k)>=0);
+  return meta.correct.indexOf(ans)>=0;
 }
 function aiPlay(meta){
   const d=DIFF[S.difficulty];
   const right = Math.random() < d.p;
   let pick;
-  if(right) pick=meta.correctKey;
-  else { const w=meta.keys.filter(k=>k!==meta.correctKey); pick=w[(Math.random()*w.length)|0]; }
+  if(right) pick=meta.correct[(Math.random()*meta.correct.length)|0];
+  else { const w=meta.keys.filter(k=>meta.correct.indexOf(k)<0); pick=w[(Math.random()*w.length)|0]; }
   let bold=false;
   if(boldLeft(1)>0) bold = Math.random() < (right? d.boldRight : d.boldWrong);
   return {pick,bold};
@@ -493,15 +500,16 @@ function ptsFor(right,bold){ return right ? (bold?BOLDWIN:SAFE) : (bold?BOLDMISS
 function commitSolo(bold){
   const st=curStep(), meta=soloMeta(st);
   if(!meta || !S.sel || S.sel.step!==S.step) return;
-  const youAns = meta.scored ? S.sel.key : (Array.isArray(S.sel.keys)?S.sel.keys.slice():[]);
-  if(!meta.scored && youAns.length===0) return;
+  const multi=multiStep(st);
+  const youAns = multi ? (Array.isArray(S.sel.keys)?S.sel.keys.slice():[]) : S.sel.key;
+  if(multi ? youAns.length===0 : youAns==null) return;
   if(bold && boldLeft(0)<=0) bold=false;
   const ai = meta.scored ? aiPlay(meta) : {pick: meta.keys[(Math.random()*meta.keys.length)|0], bold:false};
   S.pick[S.step]={you:youAns, youBold:bold, cpu:ai.pick, cpuBold:ai.bold};
   if(meta.scored){
-    const yr=(youAns===meta.correctKey);
+    const yr=isRight(meta, youAns);
     const yo=outcomeFor(yr,bold); if(yo) S.results[S.step+':0']=yo;
-    const co=outcomeFor(ai.pick===meta.correctKey, ai.bold); if(co) S.results[S.step+':1']=co;
+    const co=outcomeFor(isRight(meta, ai.pick), ai.bold); if(co) S.results[S.step+':1']=co;
     if(yr){ S.streak++; if(S.streak>S.bestStreak) S.bestStreak=S.streak;
       if(S.streak%3===0){ S.bonus[S.step+':streak:0']=true; }
       if(bold){ SFX.bold(); confetti(70); } else SFX.right();
@@ -510,27 +518,28 @@ function commitSolo(bold){
   } else { SFX.reveal(); }
   S.sel=null; next();
 }
-function comparePanel(pickStep, correctKey, labelFn){
+function comparePanel(pickStep, meta, labelFn){
   const p=S.pick[pickStep]; if(!p) return '';
   return `<div class="compare">${[0,1].map(ti=>{
-    const key=ti===0?p.you:p.cpu, bold=ti===0?p.youBold:p.cpuBold, right=(key===correctKey), pts=ptsFor(right,bold), t=S.teams[ti];
+    const ans=ti===0?p.you:p.cpu, bold=ti===0?p.youBold:p.cpuBold, right=isRight(meta,ans), pts=ptsFor(right,bold), t=S.teams[ti];
+    const lab=Array.isArray(ans)?(ans.length?ans.map(labelFn).join(', '):'—'):labelFn(ans);
     return `<div class="crow ${right?'ok':'no'}">
       <span class="who"><span class="sw" style="background:${t.color}"></span>${esc(teamName(t,ti))}</span>
-      <span class="chose">${esc(labelFn(key))}${bold?' <b class="bolt">⚡ Bold</b>':''}</span>
+      <span class="chose">${esc(lab)}${bold?' <b class="bolt">⚡ Bold</b>':''}</span>
       <span class="verdict">${right?'✓':'✗'} ${pts>0?'+':''}${pts}</span></div>`;
   }).join('')}</div>`;
 }
-function cpuReaction(pickStep, correctKey){
+function cpuReaction(pickStep, meta){
   const p=S.pick[pickStep]; if(!p) return '';
-  const cc=p.cpu===correctKey, cb=p.cpuBold;
+  const cc=isRight(meta,p.cpu), cb=p.cpuBold;
   const line=(cc&&cb)?'The computer went ⚡ bold and nailed it.'
     :cc?'The computer read that one cleanly.'
     :cb?'The computer bet bold and blew it — your opening.'
     :'The computer misread that one too.';
   return `<p class="fnote" style="margin-top:14px">🤖 ${line}</p>`;
 }
-function soloExtras(pickStep, correctKey){
-  let out=cpuReaction(pickStep,correctKey);
+function soloExtras(pickStep, meta){
+  let out=cpuReaction(pickStep,meta);
   if(S.streak>=2) out+=`<div class="streakflag">🔥 ${S.streak} in a row${(S.streak%3===0)?` — +${BONUS} streak bonus!`:''}</div>`;
   return out;
 }
@@ -736,10 +745,10 @@ function genRef(active){
       <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></div>`;
   }).join('')}</div>`;
 }
-function r1Selected(k){ return S.sel&&S.sel.step===S.step&&Array.isArray(S.sel.keys)&&S.sel.keys.indexOf(k)>=0; }
+function selHas(k){ return S.sel&&S.sel.step===S.step&&Array.isArray(S.sel.keys)&&S.sel.keys.indexOf(k)>=0; }
 function genPick(){
-  const anyOn=['boomer','x','mil','z'].every(k=>r1Selected(k));
-  return `<div class="chiprow">${GENS.map((g,i)=>`<button class="rchip pick ${r1Selected(g.k)?'sel':''}" style="--c:${g.c}" data-action="pick" data-key="${g.k}">
+  const anyOn=['boomer','x','mil','z'].every(k=>selHas(k));
+  return `<div class="chiprow">${GENS.map((g,i)=>`<button class="rchip pick ${selHas(g.k)?'sel':''}" style="--c:${g.c}" data-action="pick" data-key="${g.k}">
       <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></button>`).join('')}
     <button class="rchip pick ${anyOn?'sel':''}" style="--c:#8a7f6c" data-action="pick" data-key="any"><span class="n">🤷</span>Any of them</button>
   </div>`;
@@ -749,7 +758,7 @@ function R1Prompt(i){
   return `<div class="card prompt fade">
     <div class="kicker">Snap judgment · ${posLabel()} · <span style="color:var(--brick)">no points — it’s a trap</span></div>
     <div class="voice"><span class="q">“</span>${esc(it.v)}<span class="q">”</span></div>
-    <div class="instruction">Who said it? ${solo?'Pick anyone you’d bet on — one, several, or “any of them.”':'Shout your best guess as a team.'}</div>
+    <div class="instruction">Who said it? ${solo?'<b>You can pick more than one</b> — or tap “any of them.”':'Shout your best guess as a team.'}</div>
     ${solo?genPick():genRef(null)}
     <p class="fnote">Heads up: there’s no reliable answer here — that’s the whole point. See who really said it.</p>
     ${solo?soloCommit(false):revealRow()}
@@ -782,16 +791,17 @@ function R1Reveal(i){
 }
 
 /* ---------- R2 ---------- */
-function valueRef(correct){
+function valueRef(set){
+  set=set||[];
   return `<div class="chiprow">${VORDER.map((k,idx)=>{
-    const v=VALUES[k]; const on = correct===k; const dim = correct&&!on;
+    const v=VALUES[k]; const on = set.indexOf(k)>=0; const dim = set.length&&!on;
     return `<div class="rchip ${on?'on':''} ${dim?'dim':''}" style="--c:${v.c}">
       <span class="n">${idx+1}</span>${v.name}</div>`;
   }).join('')}</div>`;
 }
 function valuePick(){
   return `<div class="chiprow">${VORDER.map((k,idx)=>{
-    const v=VALUES[k]; const on=S.sel&&S.sel.step===S.step&&S.sel.key===k;
+    const v=VALUES[k]; const on=selHas(k);
     return `<button class="rchip pick ${on?'sel':''}" style="--c:${v.c}" data-action="pick" data-key="${k}">
       <span class="n">${idx+1}</span>${v.name}</button>`;
   }).join('')}</div>`;
@@ -827,25 +837,27 @@ function R2Prompt(i){
   return `<div class="card prompt fade">
     <div class="kicker">Read the value · ${posLabel()}</div>
     <div class="voice"><span class="q">“</span>${esc(it.v)}<span class="q">”</span></div>
-    <div class="instruction">Which value is this person really protecting?</div>
-    ${solo?valuePick():valueRef(null)}
+    <div class="instruction">Which value are they protecting? <b>You can pick more than one.</b></div>
+    ${solo?valuePick():valueRef([])}
     ${stakeTag()}
-    ${solo?soloCommit(true):`<p class="fnote">Decide together: name the value — and whether to play it safe or spend a ⚡ Bold read. Then Reveal.</p>${revealRow()}`}
+    ${solo?`<p class="fnote">Tap every value that fits — several can live in one line. Then lock in, safe or ⚡ bold.</p>${soloCommit(true)}`:`<p class="fnote">Name the value(s) — more than one can be right. Then Reveal.</p>${revealRow()}`}
   </div>`;
 }
 function R2Reveal(i){
-  const it=R2[i], val=VALUES[it.value], solo=S.mode==='solo';
+  const it=R2[i], primary=VALUES[it.values[0]], solo=S.mode==='solo';
+  const meta = solo? soloMeta(S.seq[S.step-1]) : null;
   return `<div class="card reveal fade">
     <div class="revhead">
-      <div class="valbig pop" style="--c:${val.c}">
+      <div class="valbig pop" style="--c:${primary.c}">
         <span class="lab">The value underneath</span>
-        <span class="nm">${val.name}</span>
-        <span class="tg">“${val.tag}”</span>
+        <span class="nm">${primary.name}</span>
+        <span class="tg">“${primary.tag}”</span>
       </div>
     </div>
-    ${valueRef(it.value)}
+    ${valueRef(it.values)}
     <p class="tell">${esc(it.tell)}</p>
-    ${solo? comparePanel(S.step-1, it.value, k=>VALUES[k]?VALUES[k].name:'—')+soloExtras(S.step-1, it.value) : outcomeRow('Score the read')}
+    ${it.values.length>1?`<p class="fnote">More than one fits — <b>${it.values.map(k=>VALUES[k].name).join(' &amp; ')}</b> both count, and either scores.</p>`:''}
+    ${solo? comparePanel(S.step-1, meta, k=>VALUES[k]?VALUES[k].name:'—')+soloExtras(S.step-1, meta) : outcomeRow('Score the read')}
     ${navRow(notLast()?'Next voice →':'Continue →')}
   </div>`;
 }
@@ -891,14 +903,14 @@ function R3Prompt(i){
         return `<div class="opt"><span class="n">${idx+1}</span><span>${esc(o.t)}</span></div>`;
       }).join('')}
     </div>
-    <div class="instruction">${solo?'Which one is really going on?':'Which one is really going on? Pick as a team.'}</div>
+    <div class="instruction">${solo?'Which one is really going on? <b>Pick one.</b>':'Which one is really going on? Pick one, as a team.'}</div>
     ${stakeTag()}
     ${solo?soloCommit(true):`<p class="fnote">Play it safe, or spend a ⚡ Bold read. Then Reveal.</p>${revealRow()}`}
   </div>`;
 }
 function R3Reveal(i){
   const it=R3[i], a=VALUES[it.valA], b=VALUES[it.valB], solo=S.mode==='solo';
-  const correctIdx=String(it.options.findIndex(o=>o.ok));
+  const meta = solo? soloMeta(S.seq[S.step-1]) : null;
   return `<div class="card reveal fade">
     <div class="optcol" style="margin-top:4px">
       ${it.options.map((o,idx)=>`<div class="opt ${o.ok?'right':'wrong'}"><span class="n">${o.ok?'✓':idx+1}</span><span>${esc(o.t)}</span></div>`).join('')}
@@ -910,7 +922,7 @@ function R3Reveal(i){
       <div class="vmini" style="--c:${b.c}"><span class="sw"></span>${b.name}</div>
     </div>
     <div class="bridge"><div class="h">🌉 Build the bridge</div><div class="b">${esc(it.bridge)}</div></div>
-    ${solo? comparePanel(S.step-1, correctIdx, k=>'Option '+(+k+1))+soloExtras(S.step-1, correctIdx) : `${outcomeRow('Score the diagnosis')}${bonusRow('bridge','Bonus — best bridge from the room')}`}
+    ${solo? comparePanel(S.step-1, meta, k=>'Option '+(+k+1))+soloExtras(S.step-1, meta) : `${outcomeRow('Score the diagnosis')}${bonusRow('bridge','Bonus — best bridge from the room')}`}
     ${navRow(notLast()?'Next case →':'See the result →')}
   </div>`;
 }
@@ -1012,7 +1024,7 @@ document.addEventListener('click',e=>{
     case 'startSolo': S.mode='solo'; S.teams=[{name:(S.soloName||'').trim()||'You',color:'#e0563f'},{name:'Computer',color:'#2f8f83'}]; resetPlay(); buildSequence(); go('play'); break;
     case 'pick': {
       const stp=curStep();
-      if(stp && stp.t==='r1p'){
+      if(multiStep(stp)){
         if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]};
         const k=el.dataset.key, all=['boomer','x','mil','z'];
         if(k==='any'){ const on=all.every(x=>S.sel.keys.includes(x)); S.sel.keys= on?[]:all.slice(); }
@@ -1039,7 +1051,7 @@ document.addEventListener('keydown',e=>{
   if(soloPrompt){
     const meta=soloMeta(st);
     if(/^[1-9]$/.test(e.key)){ const idx=+e.key-1; if(idx<meta.keys.length){
-        if(st.t==='r1p'){ if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]}; const k=meta.keys[idx], j=S.sel.keys.indexOf(k); if(j>=0)S.sel.keys.splice(j,1); else S.sel.keys.push(k); }
+        if(multiStep(st)){ if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]}; const k=meta.keys[idx], j=S.sel.keys.indexOf(k); if(j>=0)S.sel.keys.splice(j,1); else S.sel.keys.push(k); }
         else S.sel={step:S.step,key:meta.keys[idx]};
         SFX.select(); render(); } e.preventDefault(); return; }
     if(e.key==='Enter'){ if(S.sel&&S.sel.step===S.step) commitSolo(false); e.preventDefault(); return; }
