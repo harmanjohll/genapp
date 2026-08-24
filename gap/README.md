@@ -12,6 +12,9 @@ no accounts. Two ways to play:
 - **Solo vs Computer** — one player taps their own answers on any device and
   plays against a computer opponent. Great for testing, or a quick warm-up.
 
+The current build number shows in the **bottom-right corner** of the game;
+`CHANGELOG.md` lists what changed in each version.
+
 ## The flow (both modes)
 
 1. **Warm-up · Snap Judgment** — a workplace "voice" appears; you guess which

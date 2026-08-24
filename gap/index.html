@@ -205,6 +205,7 @@
   .debrief li{color:var(--ink);line-height:1.5;margin:8px 0 8px 4px;list-style:none;padding-left:22px;position:relative}
   .debrief li::before{content:'→';position:absolute;left:0;color:var(--amber);font-weight:800}
   .sharecard{width:600px;background:linear-gradient(150deg,#fffdf8,#f3ecde);padding:44px;border:1px solid var(--line)}
+  #ver{position:fixed;right:9px;bottom:7px;z-index:50;font-family:'Outfit',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.04em;color:var(--ink3);opacity:.55;pointer-events:none;user-select:none}
 
   @media (max-width:640px){
     .wrap{padding:14px 14px 48px}
@@ -226,6 +227,7 @@
   <div id="prog" class="prog"></div>
   <div id="app"></div>
 </div>
+<div id="ver" title="Version — see gap/CHANGELOG.md"></div>
 
 <div style="position:fixed;left:-9999px;top:0"><div id="sharecard" class="sharecard"></div></div>
 
@@ -234,6 +236,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);
 const app=$('#app'), scorebar=$('#scorebar'), topright=$('#topright');
+const VERSION='0.7.0';  /* bump on every change; mirrored in CHANGELOG.md */
 
 /* ============================== CONTENT ============================== */
 /* All content below is original, written for this game — not quoted from
@@ -289,6 +292,18 @@ const R2=[
    values:['purpose'], tell:'The “why” buys the discretionary effort. Fuel, not a nicety.'},
   {v:'I’d rather be handed something hard and occasionally trip than only ever the safe, small stuff.',
    values:['growth','autonomy'], tell:'Two fit: growth (stretch me) and autonomy (trust me with it). Over-protecting reads as being written off.'},
+  {v:'Don’t book the meeting until you can name the decision we’ll make in it.',
+   values:['respect'], tell:'Every generation’s number-one gripe. Guarding your time isn’t youth — it’s sanity.'},
+  {v:'Skip the pep talk. Just promise the plan won’t change again next month.',
+   values:['security'], tell:'That was a 26-year-old with a mortgage. Security is a life-stage, not a generation.'},
+  {v:'“We’ve always done it this way” isn’t a reason. It’s a shrug.',
+   values:['purpose'], tell:'Said by a 56-year-old engineer. Questioning “why” is curiosity, not youth.'},
+  {v:'Give me the target and the one rule I can’t break — then leave me to it.',
+   values:['autonomy'], tell:'Just as common in a 22-year-old who taught themselves the whole job online.'},
+  {v:'Use my idea? Say my name. That’s the entire ask.',
+   values:['belonging'], tell:'Written by a 61-year-old who spent decades watching credit float upward.'},
+  {v:'Tell me now, while it still matters — not at appraisal.',
+   values:['growth'], tell:'Boomers wanted this just as badly. Stale feedback helps no one.'},
 ];
 
 /* Discussion beat — no single right answer. Pool of 3; a shuffled 2 are played. */
@@ -322,7 +337,7 @@ const R3=[
      {t:'One won’t learn the tools; the other won’t deal with people.',ok:false},
      {t:'One is guarding connection; the other is guarding focus. Two fair needs, colliding.',ok:true},
      {t:'Force everyone onto one channel and move on.',ok:false}],
-   valA:'belonging', valB:'autonomy',
+   kind:'two', valA:'belonging', valB:'autonomy',
    bridge:'Messages by default; one standing 10-minute desk visit a day. Connection and focus each get a slot — nobody loses.'},
   {title:'The “good job” that stung',
    setup:'A manager lobs a quick “nice work!” on the way past. The new hire deflates. Soon they’re labelled “needy” and “can’t take a compliment.”',
@@ -331,7 +346,7 @@ const R3=[
      {t:'They’re asking to get better and haven’t got the words yet — a growth request, not neediness.',ok:true},
      {t:'Thin-skinned — book them a resilience course.',ok:false},
      {t:'They need constant validation — just praise harder.',ok:false}],
-   valA:'growth', valB:'respect',
+   kind:'one', val:'growth', misread:'neediness',
    bridge:'Ask straight: “Cheer or coach right now?” Then one thing to keep, one to change. Praise isn’t development.'},
   {title:'The stay-late standoff',
    setup:'One leaves dead on time daily; the other’s regularly there late. Each has quietly filed the other under “not committed” or “no boundaries.”',
@@ -340,7 +355,7 @@ const R3=[
      {t:'One’s lazy; the other’s a workaholic.',ok:false},
      {t:'Both are proving commitment — they just trust different signals: hours-seen vs work-shipped.',ok:true},
      {t:'Mandate minimum hours in the building.',ok:false}],
-   valA:'purpose', valB:'security',
+   kind:'shared', val:'purpose', signalA:'hours in the chair', signalB:'outcomes shipped',
    bridge:'Say out loud what “committed” means here — then judge the output, not the optics. Same value; agree the signal.'},
   {title:'The camera-off standoff',
    setup:'On video calls, one keeps their camera off. Another reads it as checked-out — “hiding.” It curdles into “kids these days” vs “dinosaurs who don’t get remote.”',
@@ -349,7 +364,7 @@ const R3=[
      {t:'Camera-off means checked-out — force them on.',ok:false},
      {t:'One reads presence as camera-on; the other protects focus and energy. Two signals of “I’m here,” not one.',ok:true},
      {t:'Cameras on for everyone, always.',ok:false}],
-   valA:'belonging', valB:'autonomy',
+   kind:'two', valA:'belonging', valB:'autonomy',
    bridge:'Define “present” together — on for the first few minutes and decisions, off for deep work. Name the signal instead of guessing it.'},
 ];
 
@@ -357,7 +372,7 @@ const TEAM_COLORS=['#e0563f','#2f8f83','#d8902b','#6b6ac9','#4a9a5c','#c0507a'];
 /* game economy */
 const BOLD_MAX=3, SAFE=5, BOLDWIN=15, BOLDMISS=-5, BONUS=5;
 /* how many of each pool to actually play (rest add replay variety) */
-const PLAY={r2:6, r3:3, decode:2};
+const PLAY={r2:9, r3:3, decode:2};
 /* solo computer opponent — accuracy p, and how eagerly it bets */
 const DIFF={
   rookie:{name:'Rookie', p:0.45, boldRight:0.40, boldWrong:0.28, blurb:'careless — misreads often, bets on hunches'},
@@ -438,11 +453,7 @@ function notLast(){ const st=curStep(); return st&&st.total? st.pos<st.total : f
 
 function buildSequence(){
   const q=[];
-  q.push({t:'round',round:1,num:'Warm-up',title:'Snap Judgment',rule:'Guess the generation. No points this round — just notice how confident, and how wrong, it feels.'});
-  const r1=pickN(R1.length), r1t=r1.length;
-  r1.forEach((i,k)=>{ q.push({t:'r1p',i,pos:k+1,total:r1t}); q.push({t:'r1r',i,pos:k+1,total:r1t}); });
-  q.push({t:'pivot'});
-  q.push({t:'round',round:2,num:'Round 1',title:'Read the Value',rule:'A right read is worth +5. Sure enough to bet? Spend one of your three ⚡ Bold reads: +15 if right, −5 if wrong.'});
+  q.push({t:'round',round:1,num:'Round 1',title:'Read the Value',rule:'Every line below could come from any generation — age is the red herring. Read what the person actually wants. Right read = +5; sure enough to bet? Spend a ⚡ Bold read: +15, or −5 if wrong (three all game).'});
   const r2=pickN(R2.length,PLAY.r2), r2t=r2.length;
   r2.forEach((i,k)=>{ q.push({t:'r2p',i,pos:k+1,total:r2t}); q.push({t:'r2r',i,pos:k+1,total:r2t}); });
   if(S.includeDecode){
@@ -908,19 +919,29 @@ function R3Prompt(i){
     ${solo?soloCommit(true):`<p class="fnote">Play it safe, or spend a ⚡ Bold read. Then Reveal.</p>${revealRow()}`}
   </div>`;
 }
+function vChip(k){ const v=VALUES[k]; return `<div class="vmini" style="--c:${v.c}"><span class="sw"></span>${v.name}</div>`; }
+function r3Collision(it){
+  if(it.kind==='one'){
+    return `<div class="clash" style="margin-top:22px">What they’re really protecting:</div>
+      <div class="twovals">${vChip(it.val)}</div>
+      <p class="fnote">Misread as “${esc(it.misread)}.” Right need, wrong label.</p>`;
+  }
+  if(it.kind==='shared'){
+    return `<div class="clash" style="margin-top:22px">Same value — read two ways:</div>
+      <div class="twovals">${vChip(it.val)}</div>
+      <p class="fnote">They agree on the value. The gap is the signal: <b>${esc(it.signalA)}</b> vs <b>${esc(it.signalB)}</b>.</p>`;
+  }
+  return `<div class="clash" style="margin-top:22px">The real collision:</div>
+    <div class="twovals">${vChip(it.valA)}<span style="align-self:center;color:var(--ink3);font-weight:800">vs</span>${vChip(it.valB)}</div>`;
+}
 function R3Reveal(i){
-  const it=R3[i], a=VALUES[it.valA], b=VALUES[it.valB], solo=S.mode==='solo';
+  const it=R3[i], solo=S.mode==='solo';
   const meta = solo? soloMeta(S.seq[S.step-1]) : null;
   return `<div class="card reveal fade">
     <div class="optcol" style="margin-top:4px">
       ${it.options.map((o,idx)=>`<div class="opt ${o.ok?'right':'wrong'}"><span class="n">${o.ok?'✓':idx+1}</span><span>${esc(o.t)}</span></div>`).join('')}
     </div>
-    <div class="clash" style="margin-top:22px">The real collision:</div>
-    <div class="twovals">
-      <div class="vmini" style="--c:${a.c}"><span class="sw"></span>${a.name}</div>
-      <span style="align-self:center;color:var(--ink3);font-weight:800">vs</span>
-      <div class="vmini" style="--c:${b.c}"><span class="sw"></span>${b.name}</div>
-    </div>
+    ${r3Collision(it)}
     <div class="bridge"><div class="h">🌉 Build the bridge</div><div class="b">${esc(it.bridge)}</div></div>
     ${solo? comparePanel(S.step-1, meta, k=>'Option '+(+k+1))+soloExtras(S.step-1, meta) : `${outcomeRow('Score the diagnosis')}${bonusRow('bridge','Bonus — best bridge from the room')}`}
     ${navRow(notLast()?'Next case →':'See the result →')}
@@ -1062,6 +1083,7 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='ArrowLeft'){ e.preventDefault(); back(); }
 });
 
+{ const ve=$('#ver'); if(ve) ve.textContent='v'+VERSION; }
 render();
 })();
 </script>
