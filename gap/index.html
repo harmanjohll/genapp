@@ -236,7 +236,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);
 const app=$('#app'), scorebar=$('#scorebar'), topright=$('#topright');
-const VERSION='0.7.0';  /* bump on every change; mirrored in CHANGELOG.md */
+const VERSION='0.7.1';  /* bump on every change; mirrored in CHANGELOG.md */
 
 /* ============================== CONTENT ============================== */
 /* All content below is original, written for this game — not quoted from
@@ -251,29 +251,6 @@ const VALUES={
   respect:{name:'Respect',  c:'#b5432f', tag:'take me — and my time — seriously'},
 };
 const VORDER=['purpose','growth','security','autonomy','belonging','respect'];
-const GENS=[
-  {k:'boomer',name:'Baby Boomers',range:'1950–64',c:'#b5432f'},
-  {k:'x',     name:'Gen X',       range:'1965–79',c:'#d8902b'},
-  {k:'mil',   name:'Millennials', range:'1980–94',c:'#3d7d8f'},
-  {k:'z',     name:'Gen Z',       range:'1995–2009',c:'#7b5aa6'},
-];
-
-/* Round 1 — Snap Judgment (unscored trap). */
-const R1=[
-  {v:'Don’t book the meeting until you can name the decision we’ll make in it.',
-   value:'respect', tell:'Every generation’s number-one gripe. Guarding your time isn’t youth — it’s sanity.'},
-  {v:'Skip the pep talk. Just promise the plan won’t change again next month.',
-   value:'security', tell:'That was a 26-year-old with a mortgage. Security is a life-stage, not a generation.'},
-  {v:'“We’ve always done it this way” isn’t a reason. It’s a shrug.',
-   value:'purpose', tell:'Said by a 56-year-old engineer. Questioning “why” is curiosity, not youth.'},
-  {v:'Give me the target and the one rule I can’t break — then leave me to it.',
-   value:'autonomy', tell:'Just as common in a 22-year-old who taught themselves the whole job online.'},
-  {v:'Use my idea? Say my name. That’s the entire ask.',
-   value:'belonging', tell:'Written by a 61-year-old who spent decades watching credit float upward.'},
-  {v:'Tell me now, while it still matters — not at appraisal.',
-   value:'growth', tell:'Boomers wanted this just as badly. Stale feedback helps no one.'},
-];
-
 /* Round 2 — Read the Value (scored). Pool of 8; a shuffled 6 are played. */
 const R2=[
   {v:'I’ll stay till midnight for something that matters. I won’t stay ten minutes to look busy.',
@@ -482,10 +459,9 @@ function setOutcome(ti,outcome){
 function toggleBonus(type,ti){ const k=S.step+':'+type+':'+ti; if(S.bonus[k]) delete S.bonus[k]; else { S.bonus[k]=true; SFX.tick(); } render(); }
 
 /* ---- solo mode: you vs the computer ---- */
-function multiStep(st){ return !!st && (st.t==='r1p'||st.t==='r2p'); }
+function multiStep(st){ return !!st && st.t==='r2p'; }
 function soloMeta(st){
   if(!st) return null;
-  if(st.t==='r1p') return {scored:false, correct:[], keys:GENS.map(g=>g.k)};
   if(st.t==='r2p') return {scored:true,  correct:R2[st.i].values.slice(), keys:VORDER.slice()};
   if(st.t==='r3p') return {scored:true,  correct:[String(R3[st.i].options.findIndex(o=>o.ok))], keys:R3[st.i].options.map((o,ix)=>String(ix))};
   return null;
@@ -692,9 +668,6 @@ function SoloSetup(){
 function Play(st){
   switch(st.t){
     case 'round': return RoundCard(st);
-    case 'pivot': return Pivot();
-    case 'r1p':   return R1Prompt(st.i);
-    case 'r1r':   return R1Reveal(st.i);
     case 'r2p':   return R2Prompt(st.i);
     case 'r2r':   return R2Reveal(st.i);
     case 'dp':    return DecodePrompt(st.i);
@@ -739,69 +712,10 @@ function RoundCard(st){
     <div class="row"><button class="btn btn-primary btn-lg" data-action="next">Let’s go →</button></div>
   </div>`;
 }
-function Pivot(){
-  return `<div class="card hero fade">
-    <div class="kicker">Notice what just happened</div>
-    <h1 style="font-size:clamp(2rem,6vw,3.6rem)">Guess after guess.<br>All birthdays.<br>None explained the person.</h1>
-    <p class="tag">Every time, the confident answer was an <b>age</b>. Every time, the thing that actually explained them was a <b>value</b> — and values don’t carry a birth year.<br><br>So from here the game stops rewarding the age guess and starts rewarding the read. You’ve each got <b>three Bold reads</b> — press them when you can truly see the value.</p>
-    <div class="row"><button class="btn btn-primary btn-lg" data-action="next">Start scoring →</button></div>
-  </div>`;
-}
-
-/* ---------- R1 ---------- */
-function genRef(active){
-  return `<div class="chiprow">${GENS.map((g,i)=>{
-    const on = active && active.includes(g.k); const dim = active && !on;
-    return `<div class="rchip ${on?'on':''} ${dim?'dim':''}" style="--c:${g.c}">
-      <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></div>`;
-  }).join('')}</div>`;
-}
+/* ---------- value-chip select ---------- */
 function selHas(k){ return S.sel&&S.sel.step===S.step&&Array.isArray(S.sel.keys)&&S.sel.keys.indexOf(k)>=0; }
-function genPick(){
-  const anyOn=['boomer','x','mil','z'].every(k=>selHas(k));
-  return `<div class="chiprow">${GENS.map((g,i)=>`<button class="rchip pick ${selHas(g.k)?'sel':''}" style="--c:${g.c}" data-action="pick" data-key="${g.k}">
-      <span class="n">${i+1}</span>${g.name}<span class="sub">${g.range}</span></button>`).join('')}
-    <button class="rchip pick ${anyOn?'sel':''}" style="--c:#8a7f6c" data-action="pick" data-key="any"><span class="n">🤷</span>Any of them</button>
-  </div>`;
-}
-function R1Prompt(i){
-  const it=R1[i], solo=S.mode==='solo';
-  return `<div class="card prompt fade">
-    <div class="kicker">Snap judgment · ${posLabel()} · <span style="color:var(--brick)">no points — it’s a trap</span></div>
-    <div class="voice"><span class="q">“</span>${esc(it.v)}<span class="q">”</span></div>
-    <div class="instruction">Who said it? ${solo?'<b>You can pick more than one</b> — or tap “any of them.”':'Shout your best guess as a team.'}</div>
-    ${solo?genPick():genRef(null)}
-    <p class="fnote">Heads up: there’s no reliable answer here — that’s the whole point. See who really said it.</p>
-    ${solo?soloCommit(false):revealRow()}
-  </div>`;
-}
-function soloR1Note(){
-  const pk=S.pick[S.step-1]; if(!pk) return '';
-  const g=k=>{const x=GENS.find(y=>y.k===k);return x?x.name:'—';};
-  const you=Array.isArray(pk.you)?pk.you:[pk.you];
-  const youTxt = you.length===0?'—' : you.length>=4?'every one of them' : you.map(g).join(', ');
-  const smart = you.length!==1;
-  return `<p class="tell" style="color:var(--ink2)">You’d have bet on <b>${youTxt}</b>; the computer guessed <b>${g(pk.cpu)}</b>. ${smart?'Good instinct — you didn’t force a single answer, because there isn’t one.':'Felt certain? Everyone does — and that certainty is exactly the trap.'} Nobody scores here.</p>`;
-}
-function R1Reveal(i){
-  const it=R1[i], val=VALUES[it.value];
-  return `<div class="card reveal fade">
-    <div class="kicker" style="text-align:center">Trick question — it could be any of them</div>
-    ${genRef(['boomer','x','mil','z'])}
-    <div class="revhead" style="margin-top:26px">
-      <div class="valbig pop" style="--c:${val.c}">
-        <span class="lab">What they actually want</span>
-        <span class="nm">${val.name}</span>
-        <span class="tg">“${val.tag}”</span>
-      </div>
-    </div>
-    <p class="tell">${esc(it.tell)}</p>
-    ${S.mode==='solo'?soloR1Note():''}
-    ${navRow(notLast()?'Next voice →':'What this means →')}
-  </div>`;
-}
 
-/* ---------- R2 ---------- */
+/* ---------- Read the Value ---------- */
 function valueRef(set){
   set=set||[];
   return `<div class="chiprow">${VORDER.map((k,idx)=>{
@@ -1047,9 +961,8 @@ document.addEventListener('click',e=>{
       const stp=curStep();
       if(multiStep(stp)){
         if(!S.sel||S.sel.step!==S.step||!Array.isArray(S.sel.keys)) S.sel={step:S.step,keys:[]};
-        const k=el.dataset.key, all=['boomer','x','mil','z'];
-        if(k==='any'){ const on=all.every(x=>S.sel.keys.includes(x)); S.sel.keys= on?[]:all.slice(); }
-        else { const j=S.sel.keys.indexOf(k); if(j>=0) S.sel.keys.splice(j,1); else S.sel.keys.push(k); }
+        const k=el.dataset.key, j=S.sel.keys.indexOf(k);
+        if(j>=0) S.sel.keys.splice(j,1); else S.sel.keys.push(k);
       } else { S.sel={step:S.step, key:el.dataset.key}; }
       SFX.select(); render(); break;
     }
