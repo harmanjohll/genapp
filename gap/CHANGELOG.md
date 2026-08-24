@@ -7,6 +7,12 @@ which build you're looking at (GitHub Pages sometimes serves a cached copy).
 Versioning is informal semver: the middle number bumps for a feature or content
 change, the last for a small fix.
 
+## v0.7.1
+- **Internal cleanup (no gameplay change)** — removed the now-dead code left
+  over from the v0.7.0 redesign (the old generation-guess round's data and
+  functions), so the source matches the shipped game. Verified both modes play
+  identically end-to-end with no errors.
+
 ## v0.7.0
 - **Scoring made coherent — every question now rewards a correct answer.** The
   old Round 1 asked you to guess a *generation* (which has no reliable answer)
