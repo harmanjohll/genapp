@@ -1,0 +1,16 @@
+name = "learning-log-coach"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://harmanjohll.github.io"
+MODEL = "claude-opus-5"
+
+# Rate limit binding: 20 coach calls per minute per class token and IP.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
+
+# Secrets are set with: npx wrangler secret put ANTHROPIC_API_KEY
+#                       npx wrangler secret put CLASS_TOKENS
