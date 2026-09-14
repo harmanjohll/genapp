@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Log · Teacher console</title>
+<link rel="icon" href="assets/crest.png">
+<style>
+:root{
+  --navy:#000C53; --navy-2:#141f66; --yellow:#FFE200; --red:#EC3237;
+  --g1:#F5F5F5; --g2:#E8E9F0; --g4:#C9CBD8; --g5:#9E9E9E; --g8:#424242; --ink:#212121;
+  --bg:#faf8f2; --card:#fff; --card-2:#f7f6f1; --card-3:#efede4; --text:#1a1d33; --text-2:#5a5f7a; --line:#e3e5ef; --line-2:#cfd3e3;
+  --radius:18px; --radius-s:12px; --shadow:0 10px 28px rgba(0,12,83,.10);
+  --sans:Calibri,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif; --serif:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--text);background:var(--bg)}
+h1,h2,h3{font-family:var(--serif);color:var(--navy);margin:0 0 .35em;line-height:1.2}
+h1{font-size:1.9em} h2{font-size:1.3em} h3{font-size:1.05em}
+p{margin:0 0 .8em} a{color:var(--navy)}
+button{font:inherit;cursor:pointer} input,textarea,select{font:inherit;color:var(--text)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+[hidden]{display:none!important}
+.app{max-width:960px;margin:0 auto;padding:0 16px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
+.brand img{width:26px;border-radius:4px}
+.brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em}
+.brand .sub{font-size:.72em;color:var(--text-2);display:block;line-height:1.1}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:2px solid var(--line)}
+.tabs button{border:0;background:transparent;padding:10px 14px;font-weight:700;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px}
+.tabs button.on{color:var(--navy);border-bottom-color:var(--yellow)}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 16px}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+.grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:820px){.grid{grid-template-columns:1.1fr .9fr}.grid .span{grid-column:1/-1}}
+label.f{display:block;margin-bottom:12px}
+label.f>span{display:block;font-weight:700;margin-bottom:5px;color:var(--navy)}
+label.f small{display:block;font-weight:400;color:var(--text-2);margin-top:3px}
+.in{width:100%;border:2px solid var(--line-2);border-radius:var(--radius-s);padding:10px 12px;background:#fff;min-height:44px}
+.in:focus{border-color:var(--navy);outline:0;box-shadow:0 0 0 3px rgba(255,226,0,.45)}
+textarea.in{min-height:90px;line-height:1.5;resize:vertical}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.two{display:grid;gap:0 14px;grid-template-columns:1fr}
+@media (min-width:600px){.two{grid-template-columns:1fr 1fr}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none}
+.btn.sec{background:transparent;color:var(--navy);border-color:var(--line-2)}
+.btn.acc{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+.btn.small{padding:6px 12px;min-height:36px;font-size:.9em}
+.btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
+.tiny{font-size:.82em;color:var(--text-2)} .muted{color:var(--text-2)}
+.notice{border-left:4px solid var(--yellow);background:var(--card-2);padding:10px 12px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:10px 0}
+.notice.warn{border-color:var(--red)}
+.notice.ok{border-color:#2f9e6f}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--card-3);padding:1px 5px;border-radius:4px}
+pre{background:var(--card-3);padding:12px;border-radius:var(--radius-s);overflow:auto;font-size:.85em;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;font-size:.92em}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--serif);color:var(--navy)}
+.tag{display:inline-block;background:var(--card-3);border-radius:999px;padding:2px 10px;font-size:.78em;font-weight:600;color:var(--navy);margin:2px 4px 2px 0}
+.coach{border:2px solid var(--line);border-radius:var(--radius);padding:14px;background:var(--card-2)}
+.coach .part{margin-bottom:8px} .coach .part b{display:block;font-size:.76em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)}
+.coach .part p{margin:0} .coach .ask{border-left:3px solid var(--yellow);padding-left:10px;font-family:var(--serif)}
+.classes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:38px}
+.classes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:#fff}
+summary{cursor:pointer;font-weight:700;color:var(--navy)}
+ol.steps li{margin-bottom:8px}
+.drop{border:2px dashed var(--line-2);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-2);background:#fff}
+.drop.over{border-color:var(--navy);background:var(--card-3)}
+.entry{border-bottom:1px solid var(--line);padding:12px 0}
+.entry:last-child{border-bottom:0}
+.entry b.t{font-family:var(--serif);color:var(--navy)}
+.qa{margin:6px 0} .qa b{display:block;font-size:.9em;color:var(--navy)} .qa p{margin:0;white-space:pre-wrap}
+.qa p.empty{color:var(--g5);font-style:italic}
+.footer{color:var(--text-2);font-size:.8em;text-align:center;padding:26px 0 0}
+.footer b{font-family:var(--serif);color:var(--navy)}
+.band{display:block;width:100%;height:auto;border-radius:10px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);font-weight:600}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:8px 0 14px}
+.kpi div{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px}
+.kpi b{display:block;font-family:var(--serif);font-size:1.4em;color:var(--navy)} .kpi span{font-size:.8em;color:var(--text-2)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">Learning Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
+    <span class="tiny">Everything on this page stays in your browser until you download or copy it.</span>
+  </header>
+  <nav class="tabs" aria-label="Sections">
+    <button data-tab="setup" class="on">Set up a class</button>
+    <button data-tab="dropbox">Drop box and monitoring</button>
+    <button data-tab="review">Review student exports</button>
+    <button data-tab="guide">Guide</button>
+  </nav>
+
+  <!-- ============ SET UP ============ -->
+  <section id="tab-setup">
+    <div class="card">
+      <h1>A class file is a small JSON document.</h1>
+      <p class="muted">It carries your name and email, the subject, your coach voice, your success criteria, and where entries should go. Students load it by typing the class code (if the file is published in <code>logs/classes/</code>) or by opening the share link you give them. Nothing here is sent anywhere by this page.</p>
+      <div class="classes" id="classList"></div>
+      <div class="row"><button class="btn small sec" id="newClass">New class</button><label class="btn small sec" for="loadClass">Open a class file<input type="file" id="loadClass" accept=".json,application/json" hidden></label><button class="btn small danger" id="delClass">Forget this class on this device</button></div>
+    </div>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2>Class</h2>
+          <div class="two">
+            <label class="f"><span>Class code</span><input class="in" id="code" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase"><small>Short, no spaces. Students type this once.</small></label>
+            <label class="f"><span>Level</span><input class="in" id="level" placeholder="e.g. Sec 2 Express"></label>
+            <label class="f"><span>Your name (as students say it)</span><input class="in" id="teacherName" placeholder="e.g. Mr Tan"></label>
+            <label class="f"><span>Your school email</span><input class="in" id="teacherEmail" type="email" placeholder="name@moe.edu.sg"><small>Used to filter your students in the drop box sheet.</small></label>
+            <label class="f"><span>Subject</span><input class="in" id="subject" placeholder="e.g. Mathematics"></label>
+            <label class="f"><span>Other subjects you teach this class</span><input class="in" id="subjects" placeholder="comma separated, optional"></label>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Your voice</h2>
+          <p class="muted">The coach reads every entry. With these fields it reads in your voice, not a generic one. Write what you would actually say in the margin of a script.</p>
+          <label class="f"><span>Tone, in a few words</span><input class="in" id="tone" placeholder="e.g. warm, direct, a little dry; asks before telling"></label>
+          <label class="f"><span>Phrases you actually use</span><textarea class="in" id="phrases" placeholder="One per line, e.g.&#10;Show me, do not tell me.&#10;Where is the working?"></textarea><small>The coach uses at most one per entry, where it fits.</small></label>
+          <label class="f"><span>Things you never say</span><textarea class="in" id="avoid" placeholder="One per line, e.g.&#10;Good job&#10;Keep it up"></textarea></label>
+          <label class="f"><span>A sample of your feedback</span><textarea class="in" id="sample" placeholder="Paste one real comment you wrote on a script (anonymised)."></textarea></label>
+          <label class="f"><span>What good reflection looks like in your subject</span><textarea class="in" id="knowledge" placeholder="Your knowledge base for the coach. E.g. In Chemistry a good reflection names the exact step in the method that went wrong, quotes the observation, and ends with a dated retest."></textarea><small>This is the baseline set of rules the AI coach follows for your class. Keep it under 200 words.</small></label>
+          <label class="f"><span>Success criteria for the current unit</span><textarea class="in" id="criteria" placeholder="One per line. The ACT framework asks students to connect feedback to these."></textarea></label>
+        </div>
+        <div class="card">
+          <h2>Coach service (optional)</h2>
+          <p class="muted">Without this, students get the built in coach (offline, rule based). With it, they also get Claude in your voice. Set up the relay once per school: see <a href="relay/README.md">relay/README.md</a>. Students never hold a key.</p>
+          <div class="two">
+            <label class="f"><span>Relay URL</span><input class="in" id="relayUrl" placeholder="https://learning-log-coach.….workers.dev"></label>
+            <label class="f"><span>Class token</span><input class="in" id="relayToken" placeholder="e.g. 2E3-MATH-bee7"><small>Anyone with the class file can read this, so rotate it each term.</small></label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h2>Preview the coach in your voice</h2>
+          <p class="tiny">The built in coach runs on this sample entry with your class file. This is exactly what a student sees offline; the AI coach adds to it.</p>
+          <label class="f"><span>Sample entry (GROW, editable)</span><textarea class="in" id="sampleEntry" style="min-height:150px"></textarea></label>
+          <div id="preview"></div>
+          <details style="margin-top:12px"><summary>What the AI coach is told (system prompt)</summary><pre id="sysPreview"></pre></details>
+        </div>
+        <div class="card">
+          <h2>Give it to students</h2>
+          <div class="row">
+            <button class="btn" id="dlJson">Download class file</button>
+            <button class="btn sec" id="copyLink">Copy share link</button>
+            <button class="btn sec" id="copyNote">Copy student instructions</button>
+          </div>
+          <p class="tiny" style="margin-top:10px"><b>Two ways to publish.</b> (1) Send the file to whoever maintains the repo to place at <code>logs/classes/CODE.json</code>; students then just type the code. (2) Or paste the share link into SLS, Google Classroom or Teams; the whole class file rides inside the link, nothing to upload.</p>
+          <p class="tiny" id="linkLen"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DROP BOX ============ -->
+  <section id="tab-dropbox" hidden>
+    <div class="card">
+      <h1>Where entries go.</h1>
+      <p class="muted">Students’ logs live on their devices. Monitoring means giving each entry a place to land that you can open. There is no server here, so the landing place is a form you own, with a spreadsheet behind it.</p>
+      <div class="two">
+        <div class="card flat"><h3>Microsoft Form → Excel in OneDrive (recommended)</h3><p class="tiny">Fits MOE staff accounts: your form, your OneDrive, no scripts. The app opens your form with the entry already filled in; the student presses Submit once. Responses land in an Excel workbook in your OneDrive (open it in Excel for the web to refresh). Filter by your email or class code. Limit: 4,000 characters per answer.</p></div>
+        <div class="card flat"><h3>Google Form → Sheet</h3><p class="tiny">Silent submit, no extra tap. Needs the form set to accept responses from outside the organisation (iCON forms default to sign in), which also means the endpoint is public. Fine for a pilot; less good for a whole school.</p></div>
+      </div>
+      <div class="two">
+        <div class="card flat"><h3>No drop box</h3><p class="tiny">The student copies the entry as text and pastes it into SLS, Classroom, Teams or an email. Zero set up, works today.</p></div>
+        <div class="card flat"><h3>Exports (any time)</h3><p class="tiny">Students export their log as a file and hand it in through an assignment. Drop those files on the <b>Review</b> tab here and read them together. No infrastructure at all.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Connect a form to this class</h2>
+      <div class="two">
+        <label class="f"><span>Drop box type</span><select class="in" id="sinkKind"><option value="none">None (copy and paste)</option><option value="msforms">Microsoft Form (pre filled link, one tap to submit)</option><option value="gforms">Google Form (silent submit)</option></select></label>
+        <label class="f"><span>Paste the pre filled link</span><input class="in" id="prefill" placeholder="From the form’s Get pre-filled link"><small>Type the field keys below as the sample answers when you generate the link, and the mapping fills itself.</small></label>
+      </div>
+      <div class="notice"><b>The thirteen fields.</b> Make one question per field, all “long text” except the first: <code>timestamp</code>, <code>studentName</code>, <code>studentEmail</code>, <code>classCode</code>, <code>teacherEmail</code>, <code>framework</code>, <code>subject</code>, <code>topic</code>, <code>entry</code>, <code>competencies</code>, <code>depth</code>, <code>nextStep</code>, <code>entryId</code>. When you generate the pre-filled link, answer each question with its own key (literally type <code>studentName</code> into the student name question) and paste the link above.</div>
+      <div id="mapTable"></div>
+      <div class="row" style="margin-top:8px"><button class="btn sec small" id="testSink">Open a test entry in the form</button><span class="tiny" id="sinkMsg"></span></div>
+    </div>
+    <div class="card">
+      <h2>Set up the Microsoft Form (once, about 15 minutes)</h2>
+      <ol class="steps">
+        <li>Sign in at <code>forms.office.com</code> with your MOE account (or open Forms from OneDrive so the workbook is created next to it). New form, title it <i>Learning Log drop box: [your name]</i>.</li>
+        <li>Add thirteen questions in the order above. Use <b>Text</b> with <b>Long answer</b> on for <code>entry</code>, <code>competencies</code> and <code>nextStep</code>; plain text for the rest. Make none of them required except <code>studentEmail</code> and <code>entry</code>.</li>
+        <li>Settings: <b>Anyone can respond</b>. Sign in is off, so students on iCON can submit without a Microsoft account. Turn off “Record name”.</li>
+        <li>Top right <b>…</b> → <b>Get pre-filled URL</b> → switch on <b>Enable pre-filled answers</b>, type each field key into its own question, then <b>Get pre-filled link</b>. Paste that link above. The mapping table fills itself.</li>
+        <li><b>Responses</b> → <b>Open results in Excel</b>. That workbook lives in your OneDrive and updates when you open it in Excel for the web. Add a filter on <code>teacherEmail</code> or <code>classCode</code>.</li>
+        <li>Download the class file on the first tab (the mapping is inside it) and give students the code or link.</li>
+      </ol>
+      <p class="tiny">Whole school later: one shared form owned by a department account, and a Power Automate flow (Forms trigger → “Add a row into a table”, both standard connectors on an education licence) that routes each response to the right teacher’s workbook by <code>teacherEmail</code>. The HTTP trigger is premium, which is why the page cannot call a flow directly.</p>
+    </div>
+    <div class="card">
+      <h2>Google Form alternative</h2>
+      <ol class="steps">
+        <li>Create the form with the same thirteen questions (Paragraph type). Responses → link to a Sheet.</li>
+        <li>Settings → Responses: turn <b>off</b> “Restrict to users in … and trusted organisations” and “Collect email addresses”. Without this the silent submit is rejected.</li>
+        <li>⋮ → <b>Get pre-filled link</b>: type the field keys as the answers, copy the link, paste it above. The <code>entry.NNN</code> ids are read from it.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ REVIEW ============ -->
+  <section id="tab-review" hidden>
+    <div class="card">
+      <h1>Read what they wrote.</h1>
+      <p class="muted">Drop student export files here (from Settings → Export log in the student app). Files stay in this browser. Filter, read, and export a CSV for Excel.</p>
+      <div class="drop" id="drop">Drop exported <code>.json</code> files here, or <label for="reviewFiles" style="text-decoration:underline;cursor:pointer">choose files</label>.<input type="file" id="reviewFiles" accept=".json,application/json" multiple hidden></div>
+      <div class="row" style="margin-top:10px"><select class="in" id="fStudent" style="width:auto;min-width:200px"><option value="">All students</option></select><select class="in" id="fKind" style="width:auto"><option value="">GROW and ACT</option><option value="grow">GROW only</option><option value="act">ACT only</option></select><select class="in" id="fComp" style="width:auto"><option value="">Any competency</option></select><button class="btn sec small" id="csv">Export CSV</button><button class="btn sec small" id="clearReview">Clear</button></div>
+      <div class="kpi" id="kpi"></div>
+      <div id="reviewList"></div>
+    </div>
+  </section>
+
+  <!-- ============ GUIDE ============ -->
+  <section id="tab-guide" hidden>
+    <div class="card">
+      <h1>What this is, in five lines.</h1>
+      <p>A personal learning log for Beattyians. Two frameworks from our own slides: <b>GROW by reflecting</b> after a lesson (Gift, Rise, Own, Watch) and <b>ACT on Feedback</b> (Acknowledge, Connect, Test). The guiding questions are quoted verbatim and every entry answers them. A competency lens then asks: which of MOE’s 21st Century Competencies did this stretch? A coach reads the entry: the built in one offline, and optionally Claude in your voice.</p>
+      <p>Everything a student writes stays on their device unless they press Send (to your form) or Export (a file). There is no database and no login; a name, a class code and an optional PIN for shared laptops.</p>
+    </div>
+    <div class="card">
+      <h2>The competency lens</h2>
+      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social-Emotional Competencies. The app uses MOE’s names so that what students see here matches the SLS 21CC Navigator, EAGLES and syllabus tables. Students tag at most two per entry and place themselves on three levels: tried it, getting there, can teach it. The coach checks whether the writing actually shows the competency, and nudges from task talk (“I finished the worksheet”) to competency talk (“I noticed I was guessing, so I checked the units”).</p>
+      <div id="compList"></div>
+    </div>
+    <div class="card">
+      <h2>How to run it in a class</h2>
+      <ol class="steps">
+        <li><b>Week 1.</b> Give the code or link. Ten minutes in class: everyone writes one GROW entry on today’s lesson. Read two aloud (with permission). Point at the coach’s “answer this now” question.</li>
+        <li><b>Rhythm.</b> One GROW a week after a chosen lesson; one ACT every time a marked piece returns. Short and frequent survives the exam term; long and monthly does not.</li>
+        <li><b>Your reading.</b> Open the Excel workbook (or the Review tab) before the next lesson. You are looking for two things: the next step they wrote, and whether they named a competency with a moment behind it.</li>
+        <li><b>Close the loop.</b> Mention one student’s next step in class, anonymised. Tick yours. Students tick theirs on the Today screen.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>Privacy and safety notes</h2>
+      <ul>
+        <li>The AI coach never receives the student’s name or email; it receives the entry text, the subject and your class file.</li>
+        <li>Students do not create accounts anywhere. The three main AI providers require account holders to be 18 or older, which is why the relay exists.</li>
+        <li>The PIN is a courtesy lock for shared devices, not security. Reflections can be personal; treat exports as you would a student’s journal.</li>
+        <li>A cleared browser loses the log. Remind students to export at the end of each term; the export imports back into any device.</li>
+      </ul>
+    </div>
+    <img class="band" src="assets/footer-band.jpg" alt="Beatty Secondary School">
+  </section>
+
+  <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</footer>
+</div>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script src="assets/core.js"></script>
+<script>
+'use strict';
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(m){ const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true, 2600); }
+const FIELDS = ['timestamp','studentName','studentEmail','classCode','teacherEmail','framework','subject','topic','entry','competencies','depth','nextStep','entryId'];
+const KEY = 'logs.teacher.v1';
+let store = load(); let cur = null;
+function load(){ try{ return Object.assign({classes:{}, current:null}, JSON.parse(localStorage.getItem(KEY)||'null')||{}); }catch{ return {classes:{}, current:null}; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{} }
+function blank(){ return {code:'', level:'', teacherName:'', teacherEmail:'', subject:'', subjects:[], voice:{tone:'', phrases:[], avoid:[], sample:''}, knowledge:'', criteria:[], relay:{url:'', token:''}, sink:{kind:'none', url:'', fields:{}}}; }
+const SAMPLE = `G1: I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at exactly one point.
+G2: I would draw two lines on a graph and show my friend where they cross.
+R1: I do not yet understand elimination when the coefficients are different.
+R2: study more
+O1: Buying 3 kaya toast and 2 kopi for $8.40 and 2 toast and 1 kopi for $5.10 lets you find the price of each.
+O2:
+W1:
+W2: Inequalities, I think.`;
+
+/* tabs */
+$$('.tabs button').forEach(b => b.onclick = () => { $$('.tabs button').forEach(x=>x.classList.toggle('on', x===b)); ['setup','dropbox','review','guide'].forEach(t => $('#tab-'+t).hidden = t !== b.dataset.tab); });
+
+/* ---------- set up ---------- */
+const F = ['code','level','teacherName','teacherEmail','subject','subjects','tone','phrases','avoid','sample','knowledge','criteria','relayUrl','relayToken','sinkKind','prefill'];
+function fill(){
+  const c = cur;
+  $('#code').value = c.code; $('#level').value = c.level||''; $('#teacherName').value = c.teacherName||''; $('#teacherEmail').value = c.teacherEmail||''; $('#subject').value = c.subject||'';
+  $('#subjects').value = (c.subjects||[]).filter(x=>x!==c.subject).join(', ');
+  $('#tone').value = c.voice.tone||''; $('#phrases').value = (c.voice.phrases||[]).join('\n'); $('#avoid').value = (c.voice.avoid||[]).join('\n'); $('#sample').value = c.voice.sample||'';
+  $('#knowledge').value = c.knowledge||''; $('#criteria').value = (c.criteria||[]).join('\n');
+  $('#relayUrl').value = (c.relay&&c.relay.url)||''; $('#relayToken').value = (c.relay&&c.relay.token)||'';
+  $('#sinkKind').value = (c.sink&&c.sink.kind)||'none'; $('#prefill').value = (c.sink&&c.sink.url)||'';
+  if (!$('#sampleEntry').value) $('#sampleEntry').value = SAMPLE;
+  renderMap(); preview(); renderClassList();
+}
+function collect(){
+  const c = cur; const lines = id => $('#'+id).value.split('\n').map(s=>s.trim()).filter(Boolean);
+  c.code = $('#code').value.trim().toUpperCase().replace(/\s+/g,'-'); c.level = $('#level').value.trim(); c.teacherName = $('#teacherName').value.trim(); c.teacherEmail = $('#teacherEmail').value.trim().toLowerCase(); c.subject = $('#subject').value.trim();
+  c.subjects = Array.from(new Set([c.subject, ...$('#subjects').value.split(',').map(s=>s.trim())].filter(Boolean)));
+  c.voice = {tone:$('#tone').value.trim(), phrases:lines('phrases'), avoid:lines('avoid'), sample:$('#sample').value.trim()};
+  c.knowledge = $('#knowledge').value.trim(); c.criteria = lines('criteria');
+  c.relay = {url:$('#relayUrl').value.trim(), token:$('#relayToken').value.trim()};
+  c.sink = c.sink || {kind:'none', url:'', fields:{}}; c.sink.kind = $('#sinkKind').value; c.sink.url = $('#prefill').value.trim();
+  if (c.code){ store.classes[c.code] = c; store.current = c.code; }
+  save();
+}
+function renderClassList(){
+  const codes = Object.keys(store.classes).sort();
+  $('#classList').innerHTML = codes.length ? codes.map(k => `<button class="${cur && cur.code===k?'on':''}" data-k="${esc(k)}">${esc(k)}</button>`).join('') : '<span class="tiny">No classes on this device yet.</span>';
+  $$('#classList button').forEach(b => b.onclick = () => { collect(); cur = store.classes[b.dataset.k]; store.current = cur.code; save(); fill(); });
+}
+function parseSampleEntry(text){
+  const answers = {}; text.split('\n').forEach(l => { const m = l.match(/^\s*([grow]\d)\s*:\s*(.*)$/i); if (m) answers[m[1].toLowerCase()] = m[2].trim(); });
+  return {id:'preview', kind:'grow', subject: cur.subject || 'Mathematics', topic:'Sample', answers, competencies:[{id:'critical', level:2}]};
+}
+function preview(){
+  const e = parseSampleEntry($('#sampleEntry').value); const c = builtinCoach(e, cur); const d = DEPTHS[c.depth];
+  $('#preview').innerHTML = `<div class="coach"><p class="tiny" style="margin:0 0 6px">Depth: <b>${d.label}</b> · ${esc(d.help)}</p>
+    <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Answer this now</b><p class="ask">${esc(c.question)}</p></div></div>`;
+  $('#sysPreview').textContent = coachSystem(cur);
+}
+function toB64Url(obj){ const s = btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function shareLink(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; const base = location.href.replace(/teacher\.html.*$/, 'index.html'); return `${base}#/config?c=${toB64Url(c)}`; }
+function exportJson(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; return JSON.stringify(c, null, 2); }
+async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copied.'); }catch{ prompt('Copy this:', t); } }
+function download(name, text, type='application/json'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},800); }
+
+F.forEach(id => $('#'+id).addEventListener('input', () => { collect(); preview(); if (id==='prefill'||id==='sinkKind') renderMap(); if (id==='code') renderClassList(); $('#linkLen').textContent=''; }));
+$('#sampleEntry').addEventListener('input', preview);
+$('#newClass').onclick = () => { collect(); cur = blank(); fill(); $('#code').focus(); };
+$('#delClass').onclick = () => { if (!cur.code || !confirm(`Forget ${cur.code} on this device? Downloaded files are unaffected.`)) return; delete store.classes[cur.code]; store.current = null; save(); cur = blank(); fill(); };
+$('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const c = Object.assign(blank(), JSON.parse(await f.text())); c.voice = Object.assign({tone:'',phrases:[],avoid:[],sample:''}, c.voice||{}); c.sink = Object.assign({kind:'none',url:'',fields:{}}, c.sink||{}); c.relay = Object.assign({url:'',token:''}, c.relay||{}); cur = c; if (c.code){ store.classes[c.code]=c; store.current=c.code; save(); } fill(); toast('Loaded ' + (c.code||'class')); }catch{ toast('Not a class file.'); } ev.target.value=''; };
+$('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); download(`${cur.code}.json`, exportJson()); };
+$('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
+$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); const base = location.href.replace(/teacher\.html.*$/, 'index.html'); copy(`Learning Log for ${cur.subject||'our class'} (${cur.code})\n\n1. Open ${base}\n2. Enter your name, your students.edu.sg email, and the class code ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. After a lesson: GROW. When feedback comes back: ACT. Answer the questions honestly; three sentences each is enough.\n4. Press Send to teacher when you are done, and Export your log at the end of term.\n\n${cur.teacherName||''}`); };
+
+/* ---------- drop box mapping ---------- */
+function parsePrefill(url, kind){
+  let u; try{ u = new URL(url); }catch{ return null; }
+  const params = []; u.searchParams.forEach((v,k) => { if (kind==='gforms' ? k.startsWith('entry.') : (k !== 'id' && k !== 'origin' && k !== 'route' && k !== 'lang' && k !== 'embed')) params.push({k, v}); });
+  return params;
+}
+function renderMap(){
+  const kind = cur.sink.kind; const box = $('#mapTable');
+  if (kind === 'none'){ box.innerHTML = '<p class="tiny">No form connected. Students will copy and paste.</p>'; return; }
+  const params = parsePrefill(cur.sink.url, kind);
+  if (!params){ box.innerHTML = '<p class="tiny">Paste the pre filled link to see its fields.</p>'; return; }
+  if (!params.length){ box.innerHTML = '<p class="notice warn">That link has no pre filled parameters. Generate it with “Enable pre-filled answers” on and every question answered.</p>'; return; }
+  const fields = cur.sink.fields || (cur.sink.fields = {});
+  // auto map when the sample answer equals a field key
+  for (const p of params){ const hit = FIELDS.find(f => f.toLowerCase() === p.v.trim().toLowerCase()); if (hit && !Object.values(fields).includes(p.k)) fields[hit] = p.k; }
+  const used = new Set(Object.values(fields));
+  box.innerHTML = `<table><thead><tr><th>Form parameter</th><th>Sample answer in link</th><th>Maps to</th></tr></thead><tbody>${params.map(p => { const cur = Object.entries(fields).find(([f,k]) => k===p.k); return `<tr><td><code>${esc(p.k)}</code></td><td>${esc(p.v)}</td><td><select class="in" data-k="${esc(p.k)}"><option value="">(ignore)</option>${FIELDS.map(f => `<option value="${f}" ${cur && cur[0]===f ? 'selected' : ''}>${f}</option>`).join('')}</select></td></tr>`; }).join('')}</tbody></table>
+    <p class="tiny">${FIELDS.filter(f=>!fields[f]).length ? 'Unmapped fields: ' + FIELDS.filter(f=>!fields[f]).map(f=>`<code>${f}</code>`).join(' ') : 'All thirteen fields mapped.'}${kind==='gforms' ? ' The form URL used for submission is derived from this link.' : ''}</p>`;
+  $$('select[data-k]', box).forEach(sel => sel.onchange = () => { for (const f of Object.keys(fields)) if (fields[f] === sel.dataset.k) delete fields[f]; if (sel.value) fields[sel.value] = sel.dataset.k; save(); renderMap(); });
+}
+$('#testSink').onclick = () => {
+  collect(); const s = cur.sink; if (s.kind === 'none' || !s.url) return toast('Connect a form first.');
+  const payload = {timestamp:new Date().toISOString(), studentName:'Test Student', studentEmail:'test@students.edu.sg', classCode:cur.code||'TEST', teacherEmail:cur.teacherEmail, framework:'GROW', subject:cur.subject||'Mathematics', topic:'Test entry from teacher console', entry:'G · What is one thing I understand from the lesson?\nThis is a test.', competencies:'Critical Thinking (Getting there)', depth:'working', nextStep:'Delete this test row.', entryId:'test-'+Date.now().toString(36)};
+  if (s.kind === 'msforms'){ const u = new URL(s.url); let n=0; for (const [f,k] of Object.entries(s.fields||{})){ if (f in payload){ u.searchParams.set(k, payload[f]); n++; } } if (!n) return toast('Map at least one field first.'); window.open(u.toString(), '_blank'); $('#sinkMsg').textContent = 'Opened in a new tab. Press Submit there, then check your responses.'; }
+  else { const action = s.url.replace(/\/viewform.*$/, '/formResponse').replace(/\?.*$/, ''); const f = document.createElement('form'); f.method='POST'; f.action=action; f.target='_blank'; for (const [k,id] of Object.entries(s.fields||{})){ if (!(k in payload)) continue; const i=document.createElement('input'); i.name=id; i.value=payload[k]; f.appendChild(i); } document.body.appendChild(f); f.submit(); f.remove(); $('#sinkMsg').textContent = 'Submitted in a new tab. If the form was rejected, check the “restrict to organisation” setting.'; }
+};
+
+/* ---------- review ---------- */
+let files = []; // {profile}
+const drop = $('#drop');
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => ingest(e.dataTransfer.files));
+$('#reviewFiles').onchange = e => { ingest(e.target.files); e.target.value=''; };
+async function ingest(list){
+  let n=0; for (const f of Array.from(list)){ try{ const d = JSON.parse(await f.text()); const p = d.profile || d; if (!Array.isArray(p.entries)) continue; if (!files.some(x => x.profile.id === p.id && x.profile.email === p.email)) { files.push({profile:p}); n++; } }catch{} }
+  toast(`${n} ${n===1?'file':'files'} added.`); renderReview();
+}
+function allEntries(){ return files.flatMap(f => f.profile.entries.map(e => ({e, p:f.profile}))); }
+function renderReview(){
+  const fs = $('#fStudent'); const cs = $('#fComp');
+  fs.innerHTML = '<option value="">All students</option>' + files.map((f,i) => `<option value="${i}">${esc(f.profile.name)}${f.profile.classCode ? ' · ' + esc(f.profile.classCode) : ''}</option>`).join('');
+  cs.innerHTML = '<option value="">Any competency</option>' + COMPETENCIES.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  applyFilters();
+}
+function applyFilters(){
+  const si = $('#fStudent').value, k = $('#fKind').value, comp = $('#fComp').value;
+  let rows = allEntries();
+  if (si !== '') rows = rows.filter(r => r.p === files[+si].profile);
+  if (k) rows = rows.filter(r => r.e.kind === k);
+  if (comp) rows = rows.filter(r => (r.e.competencies||[]).some(t => t.id === comp));
+  rows.sort((a,b) => b.e.created - a.e.created);
+  const deep = rows.filter(r => { const c = r.e.coach && (r.e.coach.ai || r.e.coach.builtin); return c && c.depth === 'deep'; }).length;
+  const tagged = rows.filter(r => (r.e.competencies||[]).length).length;
+  $('#kpi').innerHTML = files.length ? `<div><b>${files.length}</b><span>students</span></div><div><b>${rows.length}</b><span>entries</span></div><div><b>${rows.filter(r=>r.e.kind==='grow').length}</b><span>GROW</span></div><div><b>${rows.filter(r=>r.e.kind==='act').length}</b><span>ACT</span></div><div><b>${rows.length ? Math.round(100*tagged/rows.length) : 0}%</b><span>tagged a competency</span></div><div><b>${rows.length ? Math.round(100*deep/rows.length) : 0}%</b><span>ridge view</span></div>` : '';
+  $('#reviewList').innerHTML = rows.length ? rows.map(({e,p}) => {
+    const fw = FRAMEWORKS[e.kind]; const c = e.coach && (e.coach.ai || e.coach.builtin);
+    return `<div class="entry"><b class="t">${esc(p.name)}</b> <span class="tiny">${esc(p.email||'')} · ${esc(p.classCode||'')} · ${new Date(e.created).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})} · ${fw.name} · ${esc(e.subject||'')}${e.topic ? ' · ' + esc(e.topic) : ''}${c ? ' · ' + DEPTHS[c.depth].label : ''}</span>
+      ${e.kind==='act' && e.feedbackText ? `<p class="tiny"><b>Feedback (${esc(e.feedbackFrom||'teacher')}):</b> ${esc(e.feedbackText)}</p>` : ''}
+      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g,'')}</b><p class="${e.answers[q.id]?'':'empty'}">${esc(e.answers[q.id]||'left blank')}</p></div>`).join('')).join('')}
+      <p>${(e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `<span class="tag">${esc(cc.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') || '<span class="tiny">no competency tagged</span>'}</p>
+      ${c ? `<details><summary>Coach (${c.source === 'ai' ? 'AI' : 'built in'})</summary><div class="coach"><div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Question</b><p class="ask">${esc(c.question)}</p></div></div></details>` : ''}
+    </div>`; }).join('') : (files.length ? '<p class="muted">No entries match.</p>' : '');
+}
+['fStudent','fKind','fComp'].forEach(id => $('#'+id).onchange = applyFilters);
+$('#clearReview').onclick = () => { files = []; renderReview(); };
+$('#csv').onclick = () => {
+  const rows = allEntries(); if (!rows.length) return toast('Nothing to export.');
+  const head = ['date','student','email','class','framework','subject','topic', ...FRAMEWORKS.grow.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), ...FRAMEWORKS.act.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), 'competencies','depth','nextStep','coachQuestion'];
+  const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const lines = [head.join(',')];
+  for (const {e,p} of rows){ const c = e.coach && (e.coach.ai || e.coach.builtin); const comps = (e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `${cc.name} (${l?l.label:''})` : ''; }).join('; ');
+    lines.push([new Date(e.created).toISOString(), p.name, p.email, p.classCode, e.kind.toUpperCase(), e.subject, e.topic, ...['g1','g2','r1','r2','o1','o2','w1','w2','a1','a2','c1','c2','t1','t2'].map(k => e.answers[k]||''), comps, c ? c.depth : '', e.kind==='grow' ? e.answers.r2 : e.answers.t1, c ? c.question : ''].map(q).join(',')); }
+  download(`learning-log-review-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + lines.join('\n'), 'text/csv');
+};
+
+/* ---------- guide ---------- */
+$('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d.name)}</h3><p class="tiny">MOE: ${esc(d.moe)}</p><table><tbody>${COMPETENCIES.filter(c=>c.d===d.id).map(c => `<tr><td style="width:32%"><b>${esc(c.name)}</b><br><span class="tiny">${esc(c.plain)}</span></td><td class="tiny">${c.moe ? 'MOE: ' + esc(c.moe) : ''}<br><i>Coach probe: ${esc(c.probe)}</i></td></tr>`).join('')}</tbody></table>`).join('');
+
+/* boot */
+cur = (store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank();
+fill();
+</script>
+</body>
+</html>

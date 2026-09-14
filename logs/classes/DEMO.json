@@ -1,0 +1,22 @@
+{
+  "code": "DEMO",
+  "teacherName": "Mr Tan",
+  "teacherEmail": "tan_ah_kow@moe.edu.sg",
+  "subject": "Mathematics",
+  "subjects": ["Mathematics", "Additional Mathematics"],
+  "level": "Sec 2 Express",
+  "voice": {
+    "tone": "warm, direct, a little dry; asks before telling",
+    "phrases": ["Show me, do not tell me.", "Where is the working?", "Not yet is not never."],
+    "avoid": ["Good job", "Well done!", "Keep it up"],
+    "sample": "You have told me the answer is 7. Show me the line where you decided to subtract instead of add, and tell me what made you choose it."
+  },
+  "criteria": [
+    "Solve simultaneous linear equations by elimination and substitution",
+    "Check a solution by substituting back into both equations",
+    "Explain the method to a partner in your own words"
+  ],
+  "knowledge": "In this class a good reflection names the exact question type that broke, quotes one line of working, and ends with a dated step (a set of questions, a day, a place). Restating the topic title is not a reflection.",
+  "relay": { "url": "", "token": "" },
+  "sink": { "kind": "none", "url": "", "fields": {} }
+}

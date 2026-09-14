@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Learning Log · Beatty Secondary School</title>
+<link rel="icon" href="assets/crest.png">
+<meta name="description" content="A personal learning log for Beattyians: GROW by reflecting, ACT on feedback, and notice the competencies you are building.">
+<style>
+/* ------------------------------------------------------------------
+   Tokens. BTY palette first (navy carries the weight, yellow marks,
+   red only where the ACT slide already uses it), greys for everything
+   else. The student's accent is the one colour they own.
+   ------------------------------------------------------------------ */
+:root{
+  --navy:#000C53; --navy-2:#141f66; --navy-3:#2a3a8a;
+  --yellow:#FFE200; --red:#EC3237;
+  --g0:#ffffff; --g1:#F5F5F5; --g2:#E8E9F0; --g4:#C9CBD8; --g5:#9E9E9E; --g8:#424242; --ink:#212121;
+  --accent:#FFE200; --accent-ink:#000C53;
+
+  /* mood: mountain (default) */
+  --bg:#0b1446; --bg-2:#1e2b62; --bg-3:#33427f;
+  --on-bg:#ffffff; --on-bg-2:rgba(255,255,255,.74); --on-bg-3:rgba(255,255,255,.42);
+  --card:#ffffff; --card-2:#f6f7fb; --card-3:#eceef7;
+  --text:#1a1d33; --text-2:#5a5f7a; --line:#e3e5ef; --line-2:#cfd3e3;
+  --head:#000C53;
+  --shadow:0 12px 32px rgba(0,12,83,.22);
+  --radius:20px; --radius-s:12px;
+  --fs:16px; --lh:1.55;
+  --nav-h:64px;
+  --sans:Calibri,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+}
+[data-mood="paper"]{
+  --bg:#faf8f2; --bg-2:#f3f0e6; --bg-3:#ebe7da;
+  --on-bg:#000C53; --on-bg-2:#3a4070; --on-bg-3:#8a8fae;
+  --card:#ffffff; --card-2:#f7f6f1; --card-3:#efede4;
+  --shadow:0 10px 28px rgba(0,12,83,.10);
+}
+[data-mood="sunrise"]{
+  --bg:#fff7c9; --bg-2:#ffefa3; --bg-3:#ffe680;
+  --on-bg:#000C53; --on-bg-2:#3a4070; --on-bg-3:#8a8a6a;
+  --card:#ffffff; --card-2:#fffbe8; --card-3:#fff4c2;
+  --shadow:0 10px 28px rgba(120,90,0,.14);
+}
+[data-mood="night"]{
+  --bg:#07091a; --bg-2:#0f1330; --bg-3:#1a2048;
+  --on-bg:#ffffff; --on-bg-2:rgba(255,255,255,.72); --on-bg-3:rgba(255,255,255,.4);
+  --card:#151a3a; --card-2:#1c2248; --card-3:#242c5c;
+  --text:#eef0ff; --text-2:#aab0d6; --line:#2a3160; --line-2:#3a4380;
+  --head:#ffffff;
+  --shadow:0 12px 32px rgba(0,0,0,.45);
+}
+[data-accent="yellow"]{--accent:#FFE200;--accent-ink:#000C53}
+[data-accent="coral"]{--accent:#FF7A6B;--accent-ink:#3a0d08}
+[data-accent="mint"]{--accent:#5FD3A8;--accent-ink:#053a27}
+[data-accent="sky"]{--accent:#7CC0FF;--accent-ink:#082a4d}
+[data-accent="lilac"]{--accent:#C4ACFF;--accent-ink:#2b1560}
+[data-size="large"]{--fs:18px}
+[data-size="xl"]{--fs:20px}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);font-size:var(--fs);line-height:var(--lh);color:var(--text);background:var(--bg);min-height:100vh;min-height:100dvh}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--head);margin:0 0 .35em;line-height:1.2;font-weight:700}
+h1{font-size:1.9em} h2{font-size:1.35em} h3{font-size:1.1em}
+p{margin:0 0 .8em}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--text)}
+textarea{resize:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* backdrop: a quiet mountain line, the GROW slide's landscape */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 55%,var(--bg-3) 100%)}
+.sky svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:42vh;min-height:220px;opacity:.55}
+[data-mood="paper"] .sky svg,[data-mood="sunrise"] .sky svg{opacity:.35}
+.sky .m1{fill:var(--bg-3)} .sky .m2{fill:var(--bg-2)} .sky .m3{fill:var(--bg)}
+[data-mood="paper"] .sky .m1{fill:#e2ded0}[data-mood="paper"] .sky .m2{fill:#ece8db}[data-mood="paper"] .sky .m3{fill:#f3f0e6}
+[data-mood="sunrise"] .sky .m1{fill:#f3d96a}[data-mood="sunrise"] .sky .m2{fill:#f9e58c}[data-mood="sunrise"] .sky .m3{fill:#ffefa3}
+.sky .sun{fill:var(--accent);opacity:.9}
+[data-mood="night"] .sky .sun{opacity:.5}
+
+/* frame */
+.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 16px calc(var(--nav-h) + 24px);min-height:100vh}
+@media (min-width:760px){.app{padding-bottom:40px}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;color:var(--on-bg)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em;letter-spacing:.01em}
+.brand .sub{font-size:.72em;color:var(--on-bg-2);display:block;line-height:1.1}
+.brand img{width:26px;height:auto;border-radius:4px}
+.avatar{width:44px;height:44px;border-radius:50%;border:3px solid var(--accent);background:var(--card);color:var(--navy);display:grid;place-items:center;font-size:1.25em;padding:0;box-shadow:var(--shadow)}
+.desknav{display:none;gap:4px}
+.desknav a{color:var(--on-bg-2);text-decoration:none;padding:8px 12px;border-radius:999px;font-weight:600}
+.desknav a.on{color:var(--on-bg);background:rgba(255,255,255,.12)}
+[data-mood="paper"] .desknav a.on,[data-mood="sunrise"] .desknav a.on{background:rgba(0,12,83,.08)}
+@media (min-width:760px){.desknav{display:flex}}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;height:var(--nav-h);display:flex;justify-content:space-around;align-items:stretch;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--text-2);font-size:.74em;font-weight:600;min-width:44px}
+.nav a svg{width:24px;height:24px}
+.nav a.on{color:var(--navy)}
+[data-mood="night"] .nav a.on{color:var(--yellow)}
+.nav a.on svg{stroke:var(--accent)}
+@media (min-width:760px){.nav{display:none}}
+
+/* content */
+main{padding-top:8px}
+.hero{color:var(--on-bg);padding:18px 4px 22px}
+.hero h1{color:var(--on-bg);font-size:2em;margin-bottom:.15em}
+.hero .motto{font-family:var(--serif);font-style:italic;color:var(--on-bg-2);font-size:1.05em;border-left:3px solid var(--accent);padding-left:10px;margin:.4em 0 .2em}
+.hero .meta{color:var(--on-bg-3);font-size:.9em}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:0 0 14px}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+.card h2{margin-top:0}
+.tiny{font-size:.8em;color:var(--text-2)}
+.muted{color:var(--text-2)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.stack>*+*{margin-top:10px}
+
+/* the two verbs */
+.verbs{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+@media (min-width:560px){.verbs{grid-template-columns:1fr 1fr}}
+.verb{display:flex;align-items:center;gap:14px;text-align:left;border:0;border-radius:var(--radius);padding:16px;background:var(--card);box-shadow:var(--shadow);color:var(--text);min-height:96px}
+.verb:hover{transform:translateY(-1px)}
+.verb .glyph{width:64px;height:64px;flex:0 0 64px}
+.verb .glyph svg{width:64px;height:64px;margin:0;display:block}
+.verb b{font-family:var(--serif);font-size:1.25em;color:var(--head);display:block}
+.verb span{color:var(--text-2);font-size:.9em}
+.verb .go{margin-left:auto;color:var(--navy);opacity:.6}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:11px 20px;font-weight:700;min-height:44px;text-decoration:none;transition:transform .08s}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:transparent;color:var(--head);border-color:var(--line-2)}
+[data-mood="night"] .btn.sec{color:#fff}
+.btn.acc{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--head);padding-left:10px;padding-right:10px}
+[data-mood="night"] .btn.ghost{color:#fff}
+.btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
+.btn.small{padding:6px 14px;min-height:36px;font-size:.9em}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn svg{width:18px;height:18px}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--head);display:grid;place-items:center;padding:0}
+[data-mood="night"] .iconbtn{color:#fff}
+.iconbtn svg{width:22px;height:22px}
+
+/* forms */
+label.f{display:block;margin-bottom:12px}
+label.f>span{display:block;font-weight:700;margin-bottom:6px;color:var(--head)}
+label.f small{display:block;font-weight:400;color:var(--text-2);margin-top:2px}
+.in{width:100%;border:2px solid var(--line-2);border-radius:var(--radius-s);padding:11px 13px;background:var(--card);min-height:44px}
+.in:focus{border-color:var(--navy);outline:0;box-shadow:0 0 0 3px rgba(255,226,0,.45)}
+.in::placeholder{text-transform:none;color:var(--g5)}
+[data-mood="night"] .in:focus{border-color:var(--yellow)}
+textarea.in{min-height:96px;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:7px 13px;min-height:40px;color:var(--text);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.chip.on{border-color:var(--navy);background:var(--navy);color:#fff}
+[data-mood="night"] .chip.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow)}
+.chip small{font-weight:400;opacity:.8}
+.seg{display:inline-flex;border:2px solid var(--line-2);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 14px;min-height:40px;color:var(--text);font-weight:600}
+.seg button.on{background:var(--navy);color:#fff}
+[data-mood="night"] .seg button.on{background:var(--yellow);color:var(--navy)}
+.notice{border-left:4px solid var(--accent);background:var(--card-2);padding:10px 12px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:10px 0}
+.notice.warn{border-color:var(--red)}
+.notice.ok{border-color:#2f9e6f}
+
+/* profile cards */
+.profiles{display:grid;gap:10px;grid-template-columns:1fr}
+@media (min-width:520px){.profiles{grid-template-columns:1fr 1fr}}
+.pcard{display:flex;align-items:center;gap:12px;border:2px solid var(--line);border-radius:var(--radius);padding:12px;background:var(--card);text-align:left;color:var(--text);min-height:64px}
+.pcard .avatar{width:40px;height:40px;flex:0 0 40px;box-shadow:none;font-size:1.1em}
+.pcard b{display:block;font-family:var(--serif);color:var(--head)}
+.pcard small{color:var(--text-2)}
+
+/* composer */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
+.sheet .inner{max-width:720px;margin:0 auto;padding:12px 16px 120px}
+.sheet .bar{display:flex;align-items:center;gap:10px;color:var(--on-bg);padding:6px 0 10px;position:sticky;top:0;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);z-index:2}
+.sheet .bar b{font-family:var(--serif);font-size:1.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet .bar .iconbtn{color:var(--on-bg)}
+.steps{display:flex;gap:6px;margin:4px 0 14px}
+.steps i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.25)}
+[data-mood="paper"] .steps i,[data-mood="sunrise"] .steps i{background:rgba(0,12,83,.15)}
+.steps i.done{background:var(--accent)}
+.steps i.now{background:var(--on-bg)}
+.stephead{display:flex;align-items:center;gap:14px;color:var(--on-bg);margin-bottom:12px}
+.stephead .kicker{font-size:.8em;text-transform:uppercase;letter-spacing:.08em;color:var(--on-bg-2)}
+.stephead h2{color:var(--on-bg);margin:0;font-size:1.5em}
+.stephead h2 em{font-style:italic;color:var(--accent)}
+.medal{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:1.6em;flex:0 0 56px;box-shadow:var(--shadow);border:3px solid rgba(255,255,255,.6)}
+.medal.navy{background:var(--navy);color:var(--yellow)}
+.medal.yellow{background:var(--yellow);color:var(--navy)}
+.medal.red{background:var(--red);color:#fff}
+.q{display:block;margin-bottom:16px}
+.q>span{display:block;font-family:var(--serif);font-size:1.12em;color:var(--head);margin-bottom:8px}
+.q .hint{display:block;font-size:.85em;color:var(--text-2);margin-top:6px}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.dock .inner{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.dock .inner .btn{flex:1}
+.dock .inner .btn.ghost{flex:0 0 auto}
+.ring{width:150px;height:150px;margin:0 auto 10px;display:block}
+
+/* competency lens */
+.domain{margin-bottom:14px}
+.domain h3{margin-bottom:4px}
+.domain .d{font-size:.85em;color:var(--text-2);margin-bottom:8px}
+.comp{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:var(--radius-s);padding:10px 12px;margin-bottom:8px;color:var(--text)}
+.comp .pick{display:block;width:100%;text-align:left;border:0;background:transparent;padding:0;color:inherit;min-height:44px}
+.comp.on{border-color:var(--navy);background:var(--card-3)}
+[data-mood="night"] .comp.on{border-color:var(--yellow)}
+.comp .pick b{display:block;color:var(--head)}
+.comp .pick span{font-size:.9em;color:var(--text-2)}
+.levels{display:flex;gap:6px;margin-top:8px}
+.levels button{flex:1;border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:6px;font-size:.85em;font-weight:600;min-height:38px;color:var(--text)}
+.levels button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+[data-mood="night"] .levels button.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow)}
+
+/* read back and coach */
+.readback .qa{margin-bottom:12px}
+.readback .qa b{display:block;font-family:var(--serif);color:var(--head);font-size:.98em}
+.readback .qa p{margin:2px 0 0;white-space:pre-wrap}
+.readback .qa p.empty{color:var(--g5);font-style:italic}
+.coach{border:2px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--card-2)}
+.coach .who{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.coach .who .avatar{width:36px;height:36px;font-size:1em;box-shadow:none;border-width:2px}
+.coach .who b{font-family:var(--serif);color:var(--head)}
+.coach .who small{color:var(--text-2);display:block}
+.coach .part{margin-bottom:10px}
+.coach .part b{display:block;font-size:.78em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin-bottom:2px}
+.coach .part p{margin:0}
+.coach .ask{border-left:3px solid var(--accent);padding-left:10px;font-family:var(--serif);font-size:1.05em}
+.depth{display:flex;align-items:center;gap:8px;margin:6px 0 12px;font-size:.9em}
+.depth i{width:12px;height:12px;border-radius:50%;background:var(--line-2);display:inline-block}
+.depth i.on{background:var(--accent)}
+.depth b{color:var(--head)}
+
+/* lists */
+.entry{display:flex;gap:12px;align-items:flex-start;border:0;border-bottom:1px solid var(--line);padding:12px 0;width:100%;text-align:left;background:transparent;color:var(--text)}
+.entry:last-child{border-bottom:0}
+.entry .medal{width:40px;height:40px;flex:0 0 40px;font-size:1.05em;box-shadow:none;border-width:2px}
+.entry b{display:block;font-family:var(--serif);color:var(--head)}
+.entry small{color:var(--text-2);display:block}
+.entry .snip{color:var(--text);font-size:.92em;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
+.dot.ok{background:#2f9e6f}
+.tag{display:inline-block;background:var(--card-3);border-radius:999px;padding:2px 10px;font-size:.78em;font-weight:600;color:var(--head);margin:2px 4px 2px 0}
+
+/* journey */
+.bars .b{margin-bottom:10px}
+.bars .b span{display:flex;justify-content:space-between;font-size:.9em}
+.bars .b i{display:block;height:10px;border-radius:5px;background:var(--card-3);overflow:hidden}
+.bars .b i b{display:block;height:100%;background:var(--navy);border-radius:5px}
+[data-mood="night"] .bars .b i b{background:var(--yellow)}
+.spark{width:100%;height:70px}
+.next{display:flex;gap:12px;align-items:flex-start}
+.next input{width:24px;height:24px;margin-top:2px;accent-color:var(--navy)}
+.next p{margin:0;font-family:var(--serif);font-size:1.05em}
+
+/* settings */
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid transparent;padding:0;background:var(--c)}
+.sw.on{border-color:var(--head);box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--head)}
+.moods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mood{border:2px solid var(--line-2);border-radius:var(--radius-s);padding:8px 4px;background:transparent;color:var(--text);font-size:.85em;font-weight:600;min-height:64px}
+.mood i{display:block;height:26px;border-radius:8px;margin-bottom:6px}
+.mood.on{border-color:var(--head)}
+.emojis{display:flex;flex-wrap:wrap;gap:6px}
+.emojis button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);font-size:1.3em;padding:0}
+.emojis button.on{border-color:var(--navy);background:var(--card-3)}
+details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:var(--card)}
+summary{cursor:pointer;font-weight:700;color:var(--head)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--card-3);padding:1px 5px;border-radius:4px}
+pre{background:var(--card-3);padding:10px;border-radius:var(--radius-s);overflow:auto;font-size:.85em}
+
+/* toast + dialog */
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 16px);transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
+@media (min-width:760px){.toast{bottom:24px}}
+dialog{border:0;border-radius:var(--radius);padding:0;max-width:min(92vw,520px);width:100%;background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(0,12,83,.5)}
+dialog .body{padding:20px}
+.footer{color:var(--on-bg-3);font-size:.78em;text-align:center;padding:26px 0 10px}
+.footer b{font-family:var(--serif);color:var(--on-bg-2)}
+.band{display:block;width:100%;height:auto;border-radius:10px;margin-top:8px;opacity:.95}
+.welcome{max-width:560px;margin:0 auto}
+.welcome .hero{text-align:left;padding-top:28px}
+.welcome .hero h1{font-size:2.2em}
+.fade{animation:fade .25s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.spin{width:18px;height:18px;border:3px solid rgba(0,0,0,.15);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body data-mood="mountain" data-accent="yellow" data-size="normal">
+<div class="sky" aria-hidden="true">
+  <svg viewBox="0 0 1200 400" preserveAspectRatio="none">
+    <circle class="sun" cx="930" cy="120" r="34"/>
+    <path class="m1" d="M0 300 L120 210 L210 260 L330 150 L430 230 L520 190 L640 280 L760 170 L860 240 L980 160 L1100 250 L1200 200 L1200 400 L0 400 Z"/>
+    <path class="m2" d="M0 340 L90 290 L180 320 L300 250 L420 310 L540 270 L660 330 L780 260 L900 320 L1020 270 L1120 330 L1200 300 L1200 400 L0 400 Z"/>
+    <path class="m3" d="M0 380 L150 350 L300 372 L460 340 L620 375 L780 345 L940 372 L1100 350 L1200 370 L1200 400 L0 400 Z"/>
+  </svg>
+</div>
+<div class="app" id="app"></div>
+<div id="sheet"></div>
+<div id="toast" hidden class="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg"><div class="body" id="dlgBody"></div></dialog>
+
+<script src="assets/core.js"></script>
+<script>
+/* ==================================================================
+   Learning Log. Two files (this page and assets/core.js), no
+   dependencies, nothing leaves the device unless the student presses a
+   button that says so.
+   ================================================================== */
+'use strict';
+
+/* ---------- storage ---------- */
+const DB_KEY = 'logs.v1';
+const GUEST = new URLSearchParams(location.search).get('guest') === '1';
+let db = loadDb();
+let me = null;               // current profile object
+let unlocked = false;        // PIN passed this session
+let draft = null;            // composer state
+let toastTimer = null;
+
+function freshDb(){ return {profiles:{}, current:null, classes:{}}; }
+function loadDb(){
+  if (GUEST) return freshDb();
+  try{ const d = JSON.parse(localStorage.getItem(DB_KEY) || 'null'); return Object.assign(freshDb(), d || {}); }
+  catch{ return freshDb(); }
+}
+function saveDb(){
+  if (GUEST) return;
+  try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+  catch(e){ toast('Could not save on this device. Export your log to keep it.'); }
+}
+function newProfile(name, email, classCode){
+  return {
+    id: uid(), name: name.trim(), email: (email||'').trim().toLowerCase(), classCode:(classCode||'').trim().toUpperCase(),
+    pin:null, created: Date.now(),
+    prefs:{mood:'mountain', accent:'yellow', size:'normal', avatar:EMOJIS[Math.floor(Math.random()*EMOJIS.length)], motto:MOTTOS[0]},
+    coach:{mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'},
+    entries:[], drafts:{}, done:{}
+  };
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+async function hashPin(email, pin){
+  const s = email + ':' + pin;
+  try{
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch{ let h=0; for (const ch of s) h = (h*31 + ch.charCodeAt(0))|0; return 'x'+h; }
+}
+
+/* ---------- helpers ---------- */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(t){ return new Date(t).toLocaleDateString('en-SG', {day:'numeric', month:'short', year:'numeric'}); }
+function fmtDay(t){ return new Date(t).toLocaleDateString('en-SG', {weekday:'short', day:'numeric', month:'short'}); }
+function firstName(n){ return (n||'').trim().split(/\s+/)[0] || 'there'; }
+function greeting(){ const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
+function toast(msg, ms=2600){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.hidden=true, ms); }
+function icon(n){
+  const P = {
+    home:'<path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>',
+    journey:'<path d="M3 20l5-13 4 8 3-5 6 10z"/><circle cx="18" cy="5" r="2"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    back:'<path d="M15 18l-6-6 6-6"/>', close:'<path d="M18 6L6 18M6 6l12 12"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+    send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>', copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    down:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>', up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+    trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>', check:'<path d="M20 6L9 17l-5-5"/>', spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+    edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>', plus:'<path d="M12 5v14M5 12h14"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||''}</svg>`;
+}
+function ringSvg(kind, active){
+  if (kind === 'grow'){
+    // W top left, G top right, R bottom right, O bottom left: the slide's clock.
+    const pos = {w:[30,30], g:[110,30], r:[110,110], o:[30,110]};
+    let s = `<svg class="ring" viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="52" fill="#fff" stroke="#e3e5ef" stroke-width="2"/>
+      <text x="70" y="66" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="22" fill="#EC3237">GROW</text>
+      <text x="70" y="84" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="10" fill="#5a5f7a">Believe you can</text>`;
+    for (const k of ['g','r','o','w']){
+      const [x,y] = pos[k]; const on = k === active;
+      s += `<circle cx="${x}" cy="${y}" r="${on?19:16}" fill="${on?'#FFE200':'#000C53'}" stroke="#fff" stroke-width="3"/>
+            <text x="${x}" y="${y+6}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="18" fill="${on?'#000C53':'#FFE200'}">${k.toUpperCase()}</text>`;
+    }
+    return s + '</svg>';
+  }
+  // ACT: three arcs, navy, yellow, red, as on the slide.
+  const arcs = [{k:'a', c:'#000C53', from:150, to:270},{k:'c', c:'#FFE200', from:270, to:390},{k:'t', c:'#EC3237', from:30, to:150}];
+  let s = `<svg class="ring" viewBox="0 0 140 140" aria-hidden="true">`;
+  for (const a of arcs){
+    const on = a.k === active;
+    s += `<path d="${arcPath(70,70,on?50:46,a.from,a.to)}" fill="none" stroke="${a.c}" stroke-width="${on?22:16}" stroke-linecap="butt" opacity="${active && !on ? .45 : 1}"/>`;
+    const mid = (a.from + a.to)/2 * Math.PI/180; const x = 70 + 48*Math.cos(mid), y = 70 + 48*Math.sin(mid);
+    s += `<text x="${x}" y="${y+6}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="18" fill="${a.k==='c'?'#000C53':'#fff'}">${a.k.toUpperCase()}</text>`;
+  }
+  s += `<text x="70" y="76" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="20" fill="var(--head)">ACT</text>`;
+  return s + '</svg>';
+}
+function arcPath(cx,cy,r,a1,a2){
+  const p = a => [cx + r*Math.cos(a*Math.PI/180), cy + r*Math.sin(a*Math.PI/180)];
+  const [x1,y1] = p(a1), [x2,y2] = p(a2);
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${a2-a1>180?1:0} 1 ${x2} ${y2}`;
+}
+function applyPrefs(){
+  const p = me ? me.prefs : {mood:'mountain', accent:'yellow', size:'normal'};
+  document.body.dataset.mood = p.mood; document.body.dataset.accent = p.accent; document.body.dataset.size = p.size;
+}
+function currentClass(){ return me && me.classCode ? db.classes[me.classCode] : null; }
+
+async function localCoach(entry, cls){
+  // Chrome's built in Prompt API (stable for web pages since Chrome 148, desktop and Chromebook Plus only).
+  if (typeof LanguageModel === 'undefined') throw new Error('This browser has no built in AI. It needs Chrome 148 or newer on a laptop or Chromebook Plus. Use the school coach link instead.');
+  const avail = await LanguageModel.availability();
+  if (avail === 'unavailable') throw new Error('Built in AI is not available on this device.');
+  const session = await LanguageModel.create({ initialPrompts:[{role:'system', content: coachSystem(cls) + '\n\nReply with JSON only: {"gift":"","stretch":"","question":"","competency":"","depth":"surface|working|deep"}.'}] });
+  const prompt = entryForCoach(entry); let text;
+  try{ text = await session.prompt(prompt, {responseConstraint: COACH_SCHEMA}); }catch{ text = await session.prompt(prompt); }
+  try{ session.destroy && session.destroy(); }catch{}
+  let parsed; try{ parsed = JSON.parse(text); }catch{ const a=text.indexOf('{'), b=text.lastIndexOf('}'); parsed = JSON.parse(text.slice(a,b+1)); }
+  if (!['surface','working','deep'].includes(parsed.depth)) parsed.depth = 'working';
+  return Object.assign({source:'ai', model:'chrome-built-in', at:Date.now()}, parsed);
+}
+async function aiCoach(entry, cls){
+  const c = me.coach;
+  if (c.mode === 'local') return localCoach(entry, cls);
+  const body = {
+    model: c.model || 'claude-opus-5', max_tokens: 1024,
+    system: coachSystem(cls),
+    messages:[{role:'user', content: entryForCoach(entry)}],
+    output_config:{ effort:'low', format:{type:'json_schema', schema:COACH_SCHEMA} },
+    fallbacks:'default'
+  };
+  let res;
+  if (c.mode === 'relay'){
+    const url = c.relayUrl || (cls && cls.relay && cls.relay.url) || ''; const token = c.token || (cls && cls.relay && cls.relay.token) || '';
+    if (!url) throw new Error('No coach link set. Ask your teacher for the class coach link, or add it in Settings.');
+    res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json', 'x-class-token': token, 'x-class-code': me.classCode || ''}, body: JSON.stringify(body)});
+  } else if (c.mode === 'key'){
+    if (!c.key) throw new Error('No API key saved. Add one in Settings, or switch to the built in coach.');
+    res = await fetch('https://api.anthropic.com/v1/messages', {method:'POST', headers:{
+      'Content-Type':'application/json', 'x-api-key': c.key, 'anthropic-version':'2023-06-01',
+      'anthropic-beta':'server-side-fallback-2026-07-01', 'anthropic-dangerous-direct-browser-access':'true'}, body: JSON.stringify(body)});
+  } else throw new Error('The AI coach is off. The built in coach is already reading your entry.');
+  if (!res.ok){
+    let t=''; try{ t = await res.text(); }catch{}
+    if (res.status === 401 || res.status === 403) throw new Error('The coach service did not accept the key or class token. Check Settings.');
+    if (res.status === 429) throw new Error('The coach is busy. Try again in a minute.');
+    throw new Error(`The coach could not answer (status ${res.status}). ${t.slice(0,140)}`);
+  }
+  const data = await res.json();
+  if (data.stop_reason === 'refusal') throw new Error('The coach declined to answer this one. The built in feedback still stands.');
+  const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+  let parsed; try{ parsed = JSON.parse(text); }catch{ const a=text.indexOf('{'), b=text.lastIndexOf('}'); parsed = JSON.parse(text.slice(a,b+1)); }
+  return Object.assign({source:'ai', model:data.model || body.model, at:Date.now()}, parsed);
+}
+
+/* ---------- class config: from classes/<CODE>.json or a share link ---------- */
+async function loadClass(code){
+  code = (code||'').trim().toUpperCase(); if (!code) return null;
+  if (db.classes[code] && db.classes[code]._fetched && Date.now() - db.classes[code]._fetched < 6*3600e3) return db.classes[code];
+  try{
+    const r = await fetch(`classes/${encodeURIComponent(code)}.json`, {cache:'no-cache'});
+    if (!r.ok) return db.classes[code] || null;
+    const cfg = await r.json(); cfg.code = code; cfg._fetched = Date.now(); db.classes[code] = cfg; adoptRelay(cfg); saveDb(); return cfg;
+  }catch{ return db.classes[code] || null; }
+}
+function adoptRelay(cfg){ if (me && cfg && cfg.relay && cfg.relay.url && !me.coach.touched && me.coach.mode === 'builtin') me.coach.mode = 'relay'; }
+function decodeConfig(b64){
+  try{ const json = decodeURIComponent(escape(atob(b64.replace(/-/g,'+').replace(/_/g,'/')))); const cfg = JSON.parse(json); if (!cfg.code) throw 0; cfg.code = String(cfg.code).toUpperCase(); return cfg; }catch{ return null; }
+}
+
+/* ---------- push to teacher ---------- */
+function entryText(entry, forTeacher){
+  const fw = FRAMEWORKS[entry.kind]; const L = [];
+  L.push(`${fw.tagline} · ${entry.subject || ''}${entry.topic ? ' · ' + entry.topic : ''} · ${fmtDate(entry.created)}`);
+  if (forTeacher && me) L.push(`${me.name}${me.email ? ' <' + me.email + '>' : ''}${me.classCode ? ' · ' + me.classCode : ''}`);
+  if (entry.kind === 'act' && entry.feedbackText) L.push(`Feedback (${entry.feedbackFrom || 'teacher'}): ${entry.feedbackText}`);
+  for (const s of fw.steps) for (const q of s.qs) L.push(`${s.letter} · ${q.q.replace(/<[^>]+>/g,'')}\n${entry.answers[q.id] || '(blank)'}`);
+  const tags = (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean);
+  L.push('Competencies: ' + (tags.length ? tags.join('; ') : 'none tagged'));
+  const coach = entry.coach && (entry.coach.ai || entry.coach.builtin);
+  if (coach) L.push(`Depth: ${DEPTHS[coach.depth].label}`);
+  return L.join('\n\n');
+}
+function nextStepOf(entry){ return entry.kind === 'grow' ? entry.answers.r2 : entry.answers.t1; }
+function pushPayload(entry){
+  const coach = entry.coach && (entry.coach.ai || entry.coach.builtin);
+  const cls = currentClass();
+  return {
+    timestamp: new Date().toISOString(), studentName: me.name, studentEmail: me.email, classCode: me.classCode,
+    teacherEmail: cls ? cls.teacherEmail || '' : '', framework: entry.kind.toUpperCase(), subject: entry.subject || '', topic: entry.topic || '',
+    entry: entryText(entry, false).slice(0, 3900),
+    competencies: (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean).join('; '),
+    depth: coach ? coach.depth : '', nextStep: (nextStepOf(entry)||'').slice(0,500), entryId: entry.id
+  };
+}
+function markPushed(entry, kind){ entry.pushed = {at:Date.now(), kind}; saveDb(); }
+function pushEntry(entry){
+  const cls = currentClass(); const sink = cls && cls.sink;
+  if (!sink || !sink.kind || sink.kind === 'none' || !sink.url){
+    dialog(`<h2>Send to your teacher</h2><p>Your class has no drop box set up yet, so copy the entry and paste it where your teacher asked (SLS, Google Classroom, Teams, or email).</p>
+      <div class="row"><button class="btn" id="dCopy">${icon('copy')} Copy entry</button><button class="btn sec" id="dClose">Close</button></div>`);
+    $('#dCopy').onclick = async () => { await copyText(entryText(entry, true)); markPushed(entry, 'copy'); closeDialog(); route(); };
+    $('#dClose').onclick = closeDialog; return;
+  }
+  const payload = pushPayload(entry); const map = sink.fields || {};
+  if (sink.kind === 'gforms'){
+    const action = sink.url.replace(/\/viewform.*$/, '/formResponse').replace(/\?.*$/, '');
+    const f = document.createElement('form'); f.method = 'POST'; f.action = action; f.target = 'pushframe'; f.style.display = 'none';
+    let n = 0;
+    for (const [k, id] of Object.entries(map)){ if (!(k in payload)) continue; const i = document.createElement('input'); i.name = id; i.value = payload[k]; f.appendChild(i); n++; }
+    if (!n){ toast('The class drop box is missing its field map. Tell your teacher.'); return; }
+    let fr = $('iframe[name=pushframe]'); if (!fr){ fr = document.createElement('iframe'); fr.name = 'pushframe'; fr.style.display = 'none'; document.body.appendChild(fr); }
+    document.body.appendChild(f); f.submit(); setTimeout(()=>f.remove(), 3000);
+    markPushed(entry, 'gforms'); toast('Sent to your teacher’s sheet.'); route(); return;
+  }
+  if (sink.kind === 'msforms'){
+    const u = new URL(sink.url); let n = 0;
+    for (const [k, id] of Object.entries(map)){ if (!(k in payload)) continue; u.searchParams.set(id, String(payload[k])); n++; }
+    if (!n){ toast('The class drop box is missing its field map. Tell your teacher.'); return; }
+    const w = window.open(u.toString(), '_blank', 'noopener');
+    dialog(`<h2>One more tap</h2><p>Your entry is filled into your teacher’s form in a new tab. Check it, then press <b>Submit</b> there.</p>
+      <p class="tiny">${w ? '' : 'If the tab did not open, allow pop ups for this site and try again.'}</p>
+      <div class="row"><button class="btn" id="dDone">${icon('check')} I pressed Submit</button><button class="btn sec" id="dClose">Not yet</button></div>`);
+    $('#dDone').onclick = () => { markPushed(entry, 'msforms'); closeDialog(); route(); };
+    $('#dClose').onclick = closeDialog; return;
+  }
+  toast('Unknown drop box type: ' + sink.kind);
+}
+async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast('Copied.'); }catch{ dialog(`<h2>Copy this</h2><textarea class="in" style="min-height:220px">${esc(t)}</textarea><div class="row" style="margin-top:10px"><button class="btn sec" id="dClose">Close</button></div>`); $('#dClose').onclick = closeDialog; } }
+function dialog(html){ $('#dlgBody').innerHTML = html; const d = $('#dlg'); if (!d.open) d.showModal(); }
+function closeDialog(){ const d = $('#dlg'); if (d.open) d.close(); }
+function download(name, text, type='application/json'){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+
+/* ---------- routing ---------- */
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', boot);
+
+async function boot(){
+  const params = new URLSearchParams(location.search);
+  if (db.current && db.profiles[db.current]) { me = db.profiles[db.current]; }
+  applyPrefs();
+  // class share link: index.html#/config?c=...
+  if (location.hash.startsWith('#/config')){ await importConfigFromHash(); }
+  if (params.get('class') && !me) { db._preClass = params.get('class').toUpperCase(); }
+  if (me && me.classCode) loadClass(me.classCode).then(()=>{ if (location.hash === '' || location.hash === '#/') route(); });
+  route();
+}
+async function importConfigFromHash(){
+  const q = new URLSearchParams(location.hash.split('?')[1] || ''); const cfg = decodeConfig(q.get('c') || '');
+  if (!cfg){ toast('That class link did not work.'); location.hash = '#/'; return; }
+  cfg._fetched = Date.now(); db.classes[cfg.code] = cfg;
+  if (me){ me.classCode = cfg.code; adoptRelay(cfg); }
+  else db._preClass = cfg.code;
+  saveDb(); toast(`Class ${cfg.code} added${cfg.teacherName ? ' (' + cfg.teacherName + ')' : ''}.`);
+  location.hash = me ? '#/settings' : '#/welcome';
+}
+function route(){
+  const h = location.hash || '#/';
+  if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome') { location.hash = '#/welcome'; return; } return renderWelcome(); }
+  if (h.startsWith('#/grow')) return openComposer('grow', h.split('/')[2]);
+  if (h.startsWith('#/act')) return openComposer('act', h.split('/')[2]);
+  closeComposer();
+  if (h.startsWith('#/entry/')) return renderEntry(h.split('/')[2]);
+  if (h.startsWith('#/journey')) return renderJourney();
+  if (h.startsWith('#/settings')) return renderSettings();
+  if (h.startsWith('#/welcome')) return renderWelcome();
+  return renderHome();
+}
+function frame(inner, active){
+  const nav = [['#/', 'home', 'Today'], ['#/journey', 'journey', 'Journey'], ['#/settings', 'settings', 'Settings']];
+  const links = nav.map(([h,i,l]) => `<a href="${h}" class="${active===i?'on':''}">${icon(i)}<span>${l}</span></a>`).join('');
+  const desk = nav.map(([h,i,l]) => `<a href="${h}" class="${active===i?'on':''}">${l}</a>`).join('');
+  $('#app').innerHTML = `
+    <header class="top">
+      <a class="brand" href="#/"><img src="assets/crest.png" alt=""><span><span class="word">Learning Log</span><span class="sub">Beatty Secondary School</span></span></a>
+      <nav class="desknav" aria-label="Sections">${desk}</nav>
+      <button class="avatar" aria-label="Settings" onclick="location.hash='#/settings'">${esc(me.prefs.avatar)}</button>
+    </header>
+    <main class="fade">${inner}</main>
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>
+    <nav class="nav" aria-label="Sections">${links}</nav>`;
+  window.scrollTo(0,0);
+}
+
+/* ---------- welcome ---------- */
+function renderWelcome(){
+  const profiles = Object.values(db.profiles).sort((a,b)=>b.created-a.created);
+  const pre = db._preClass || '';
+  $('#app').innerHTML = `
+  <div class="welcome">
+    <header class="top"><a class="brand" href="#/welcome"><img src="assets/crest.png" alt=""><span><span class="word">Learning Log</span><span class="sub">Beatty Secondary School</span></span></a></header>
+    <section class="hero fade">
+      <h1>GROW by reflecting.<br>ACT on feedback.</h1>
+      <p class="motto">Believe you can.</p>
+      <p class="meta">A log of your learning that stays yours. Two frameworks, the guiding questions from class, and a coach that helps you see what you are getting better at.</p>
+    </section>
+    ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
+      <button class="pcard" data-id="${p.id}"><span class="avatar">${esc(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${esc(p.classCode || 'no class yet')} · ${p.entries.length} ${p.entries.length===1?'entry':'entries'}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
+      <div id="pinBox" hidden style="margin-top:12px"></div>
+      </section>` : ''}
+    <section class="card fade">
+      <h2>${profiles.length ? 'Someone new?' : 'Start your log'}</h2>
+      <form id="newForm" autocomplete="on">
+        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teacher calls you"></label>
+        <label class="f"><span>School email</span><input class="in" name="email" type="email" maxlength="120" placeholder="name@students.edu.sg"><small>Your teacher uses this to find your entries. It is never sent to the AI coach.</small></label>
+        <label class="f"><span>Class code <small style="display:inline">(optional)</small></span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase"><small>Your teacher gives you this. It brings in their voice and their drop box.</small></label>
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices"><small>Stops classmates opening your log on a shared laptop. It is not a password for anything else.</small></label>
+        <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
+      </form>
+      <p class="tiny" style="margin-top:12px">Nothing here goes to a server. Your log is saved in this browser only, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
+    </section>
+    <img class="band" src="assets/footer-band.jpg" alt="Beatty Secondary School, Non Vi Sed Arte">
+    <p class="footer" style="padding-top:8px">Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</p>
+  </div>`;
+  $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
+  $('#newForm').onsubmit = async (e) => {
+    e.preventDefault(); const f = new FormData(e.target);
+    const name = String(f.get('name')||'').trim(); if (!name) return;
+    const p = newProfile(name, f.get('email'), f.get('classCode'));
+    const pin = String(f.get('pin')||'').trim(); if (/^\d{4}$/.test(pin)) p.pin = await hashPin(p.email || p.id, pin);
+    db.profiles[p.id] = p; db.current = p.id; delete db._preClass; me = p; unlocked = true; saveDb(); applyPrefs();
+    if (p.classCode) loadClass(p.classCode);
+    location.hash = '#/'; route();
+  };
+}
+async function pickProfile(id){
+  const p = db.profiles[id]; if (!p) return;
+  if (!p.pin){ db.current = id; me = p; unlocked = true; saveDb(); applyPrefs(); if (p.classCode) loadClass(p.classCode); location.hash = '#/'; route(); return; }
+  const box = $('#pinBox'); box.hidden = false;
+  box.innerHTML = `<form id="pinForm" class="row"><label class="f grow" style="margin:0"><span>PIN for ${esc(p.name)}</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autofocus></label><button class="btn" type="submit" style="margin-top:22px">Open</button></form><p class="tiny" id="pinMsg"></p>`;
+  $('#pinForm').onsubmit = async (e) => {
+    e.preventDefault(); const pin = new FormData(e.target).get('pin');
+    if (await hashPin(p.email || p.id, pin) === p.pin){ db.current = id; me = p; unlocked = true; saveDb(); applyPrefs(); if (p.classCode) loadClass(p.classCode); location.hash = '#/'; route(); }
+    else $('#pinMsg').textContent = 'That PIN did not match. Forgotten it? Your teacher cannot reset it, but a new profile can import an exported log.';
+  };
+  $('#pinForm input').focus();
+}
+
+/* ---------- home ---------- */
+function weekKey(t){ const d = new Date(t); const day = (d.getDay()+6)%7; d.setDate(d.getDate()-day); d.setHours(0,0,0,0); return d.getTime(); }
+function streak(entries){
+  const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now());
+  if (!weeks.has(w)) w -= 7*864e5;
+  while (weeks.has(w)){ n++; w -= 7*864e5; }
+  return n;
+}
+function renderHome(){
+  const E = me.entries.slice().sort((a,b)=>b.created-a.created);
+  const cls = currentClass(); const last = E[0]; const s = streak(E);
+  const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
+  const drafts = Object.keys(me.drafts||{});
+  frame(`
+    <section class="hero">
+      <h1>${greeting()}, ${esc(firstName(me.name))}.</h1>
+      <p class="motto">${esc(me.prefs.motto || 'Believe you can.')}</p>
+      <p class="meta">${E.length ? `${E.length} ${E.length===1?'entry':'entries'} · ${s ? s + ' week' + (s>1?'s':'') + ' in a row' : 'no entry this week yet'}` : 'Your first entry is the hardest. It gets easier from the second.'}${cls ? ` · ${esc(cls.subject || cls.code)} with ${esc(cls.teacherName || 'your teacher')}` : ''}</p>
+    </section>
+    <div class="verbs">
+      <button class="verb" onclick="location.hash='#/grow'"><span class="glyph">${ringSvg('grow')}</span><span><b>GROW</b><span>Reflect on a lesson${drafts.includes('grow') ? ' · draft saved' : ''}</span></span><span class="go">${icon('arrow')}</span></button>
+      <button class="verb" onclick="location.hash='#/act'"><span class="glyph">${ringSvg('act')}</span><span><b>ACT</b><span>Act on feedback${drafts.includes('act') ? ' · draft saved' : ''}</span></span><span class="go">${icon('arrow')}</span></button>
+    </div>
+    ${nextEntry ? `<section class="card"><h2>Your next step</h2><div class="next"><input type="checkbox" id="doneNext" aria-label="Done"><p>${esc(nextStepOf(nextEntry))}</p></div><p class="tiny" style="margin:8px 0 0">From your ${nextEntry.kind.toUpperCase()} entry on ${fmtDay(nextEntry.created)}. Tick it when it is done, honestly.</p></section>` : ''}
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">Recent</h2>${E.length > 5 ? `<a href="#/journey" class="tiny">See all</a>` : ''}</div>
+      ${E.length ? E.slice(0,5).map(entryRow).join('') : `<p class="muted" style="margin-top:8px">Nothing yet. After your next lesson, open GROW and answer the first question in three sentences. That is the whole trick.</p>`}
+    </section>
+    ${competencyStrip(E)}
+  `, 'home');
+  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Ticked. That is how habits are built.'); setTimeout(route, 400); };
+}
+function entryRow(e){
+  const fw = FRAMEWORKS[e.kind]; const coach = e.coach && (e.coach.ai || e.coach.builtin);
+  const first = fw.steps[0].qs[0].id;
+  return `<button class="entry" onclick="location.hash='#/entry/${e.id}'"><span class="medal ${e.kind==='grow'?'navy':'red'}">${e.kind==='grow'?'G':'A'}</span><span class="grow"><b>${esc(e.subject || fw.name)}${e.topic ? ' · ' + esc(e.topic) : ''}</b><small>${fmtDay(e.created)} · ${fw.name}${coach ? ' · ' + DEPTHS[coach.depth].label : ''}${e.pushed ? '<span class="dot ok" title="sent to teacher"></span>' : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span></span></button>`;
+}
+function competencyStrip(E){
+  const counts = {}; for (const e of E) for (const t of (e.competencies||[])) counts[t.id] = (counts[t.id]||0) + 1;
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  if (!top.length) return `<section class="card flat"><h2>Competencies</h2><p class="muted">As you tag entries, the competencies you keep using will show up here. The point is not to collect them all; it is to notice which ones you actually lean on.</p></section>`;
+  return `<section class="card flat"><h2>Competencies you keep using</h2><div>${top.map(([id,n]) => { const c = COMPETENCIES.find(x=>x.id===id); return `<span class="tag">${esc(c.name)} × ${n}</span>`; }).join('')}</div><p class="tiny" style="margin:8px 0 0"><a href="#/journey">See your journey</a></p></section>`;
+}
+
+/* ---------- composer ---------- */
+function openComposer(kind, editId){
+  const fw = FRAMEWORKS[kind];
+  if (!draft || draft.kind !== kind || (editId && draft.editId !== editId)){
+    let base = me.drafts[kind];
+    if (editId){ const e = me.entries.find(x=>x.id===editId); if (e) base = JSON.parse(JSON.stringify(e)); }
+    draft = Object.assign({kind, step:0, subject:'', topic:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], coach:null}, base || {});
+    draft.editId = editId || null; draft.step = draft.step || 0;
+    if (!draft.subject){ const cls = currentClass(); if (cls && cls.subject) draft.subject = cls.subject; }
+  }
+  renderComposer();
+}
+function closeComposer(){ $('#sheet').innerHTML = ''; }
+function saveDraft(){ if (!draft) return; const d = Object.assign({}, draft); delete d.editId; if (!draft.editId) me.drafts[draft.kind] = d; saveDb(); }
+function totalSteps(){ return FRAMEWORKS[draft.kind].steps.length + 3; } // context, letters, lens, read back
+function renderComposer(){
+  const fw = FRAMEWORKS[draft.kind]; const n = totalSteps(); const i = draft.step;
+  const stepsHtml = Array.from({length:n}, (_,k) => `<i class="${k<i?'done':k===i?'now':''}"></i>`).join('');
+  let body = '', head = '';
+  if (i === 0) { head = stepHead(null, 'Before you start', `${fw.tagline}`); body = contextStep(fw); }
+  else if (i <= fw.steps.length){ const s = fw.steps[i-1]; head = stepHead(s, `${fw.name} · step ${i} of ${fw.steps.length}`, s.title); body = letterStep(s); }
+  else if (i === fw.steps.length + 1){ head = stepHead(null, 'The competency lens', 'What did this <em>stretch</em>?'); body = lensStep(); }
+  else { head = stepHead(null, 'Read it back', 'Your reflection, and a <em>coach</em>'); body = readbackStep(); }
+  const last = i === n - 1;
+  $('#sheet').innerHTML = `<div class="sheet" role="dialog" aria-label="${fw.name} entry"><div class="inner">
+    <div class="bar"><button class="iconbtn" id="cClose" aria-label="Close">${icon('close')}</button><b class="grow">${fw.tagline}${draft.subject ? ' · ' + esc(draft.subject) : ''}</b><span class="tiny" style="color:inherit;opacity:.7">saved</span></div>
+    <div class="steps" aria-hidden="true">${stepsHtml}</div>
+    ${head}
+    <div class="card fade">${body}</div>
+  </div>
+  <div class="dock"><div class="inner">
+    <button class="btn ghost" id="cBack" ${i===0?'disabled':''}>${icon('back')} Back</button>
+    ${last ? `<button class="btn acc" id="cSave">${icon('check')} ${draft.editId ? 'Save changes' : 'Log it'}</button>` : `<button class="btn" id="cNext">Next ${icon('arrow')}</button>`}
+  </div></div></div>`;
+  $('#cClose').onclick = () => { saveDraft(); draft = null; location.hash = '#/'; };
+  $('#cBack').onclick = () => { collect(); draft.step = Math.max(0, i-1); saveDraft(); renderComposer(); };
+  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); draft.step = i+1; saveDraft(); renderComposer(); };
+  const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
+  $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
+  $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', debounceSave));
+  wireStep();
+  $('.sheet').scrollTo(0,0);
+  const first = $('.sheet textarea, .sheet input'); if (first && i > 0 && i <= fw.steps.length && window.innerWidth > 760) first.focus();
+}
+let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(()=>{ collect(); saveDraft(); }, 400); }
+function autosize(t){ t.style.height = 'auto'; t.style.height = Math.max(96, t.scrollHeight + 4) + 'px'; }
+function stepHead(s, kicker, title){
+  const medal = s ? `<span class="medal ${s.colour}">${s.letter}</span>` : `<span class="medal navy">${icon('spark')}</span>`;
+  return `<div class="stephead">${medal}<div><div class="kicker">${kicker}</div><h2>${title}</h2></div></div>`;
+}
+function collect(){
+  const sh = $('#sheet'); if (!sh) return;
+  $$('[data-a]', sh).forEach(el => { draft.answers[el.dataset.a] = el.value; });
+  const sub = $('[name=subject]', sh); if (sub) draft.subject = sub.value.trim();
+  const top = $('[name=topic]', sh); if (top) draft.topic = top.value.trim();
+  const ft = $('[name=feedbackText]', sh); if (ft) draft.feedbackText = ft.value.trim();
+}
+function contextStep(fw){
+  const cls = currentClass(); const subjects = (cls && cls.subjects) || (cls && cls.subject ? [cls.subject] : []) ;
+  const common = ['English','Mathematics','Science','Chemistry','Physics','Biology','Geography','History','Literature','Mother Tongue','Design & Technology','Art','Music','CCE','NEXUS'];
+  const list = Array.from(new Set([...subjects, ...common]));
+  return `
+    <p class="muted">${fw.id==='grow' ? 'Use this straight after a lesson, while it is still warm. Eight questions, two per letter. Short and honest beats long and vague.' : 'Use this when you get feedback back: a marked piece, a comment in class, a peer’s note. Six questions, two per letter.'}</p>
+    <label class="f"><span>Subject</span><input class="in" name="subject" list="subjects" value="${esc(draft.subject)}" placeholder="Which subject?"><datalist id="subjects">${list.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></label>
+    <label class="f"><span>${fw.id==='grow' ? 'Topic or lesson' : 'What the feedback was on'}</span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${fw.id==='grow' ? 'e.g. Simultaneous equations, lesson 2' : 'e.g. Chemistry practical write up'}"></label>
+    ${fw.id==='act' ? `
+    <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Who gave the feedback?</span>
+      <div class="seg" id="fbFrom">${['teacher','peer','myself'].map(x=>`<button type="button" data-v="${x}" class="${draft.feedbackFrom===x?'on':''}">${x[0].toUpperCase()+x.slice(1)}</button>`).join('')}</div></div>
+    <label class="f"><span>The feedback, in their words <small style="display:inline">(optional)</small></span><textarea class="in" name="feedbackText" placeholder="Copy or type what they said. Keeping the exact words makes the C step much easier.">${esc(draft.feedbackText)}</textarea></label>` : ''}
+    ${fw.id==='grow' ? `<div class="notice"><b>The circle.</b> Gift, Rise, Own, Watch. You do not have to fill every box, but the coach can only work with what you write.</div>` : `<div class="notice"><b>Feedback is information,</b> not a verdict. Acknowledge it, Connect it, Test something.</div>`}`;
+}
+function letterStep(s){
+  return `${ringSvg(draft.kind, s.k)}` + s.qs.map(q => `
+    <label class="q"><span>${q.q}</span>
+      <textarea class="in" data-a="${q.id}" placeholder="${q.next ? 'Instead of “study more”, write what, when and for how long.' : 'Three honest sentences are enough.'}">${esc(draft.answers[q.id]||'')}</textarea>
+      ${q.next ? `<span class="hint">A small step has a doing verb, a day and a place. Example: “Redo Q4 to Q6 on Tuesday after CCA, 20 minutes, then check with Wei Ling.”</span>` : ''}
+    </label>`).join('');
+}
+function lensStep(){
+  const all = Object.values(draft.answers).join('\n'); const seen = detectCompetencies(all).slice(0,3).map(x=>x.c.id);
+  const chosen = new Map((draft.competencies||[]).map(t=>[t.id, t.level]));
+  return `
+    <p class="muted">Most people write about the task. This step is about you: which competency did you actually use? Pick up to two, then say how far along you are. ${seen.length ? 'The ones marked <b>maybe</b> match words in your answers.' : ''}</p>
+    ${DOMAINS.map(d => `<div class="domain"><h3>${esc(d.name)}</h3><div class="d">${esc(d.blurb)}</div>
+      ${COMPETENCIES.filter(c=>c.d===d.id).map(c => { const on = chosen.has(c.id); const lv = chosen.get(c.id);
+        return `<div class="comp ${on?'on':''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.name)} ${seen.includes(c.id) && !on ? '<span class="tag">maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>${on && c.moe ? `<span class="tiny" style="display:block;margin-top:4px">MOE: ${esc(c.moe)}</span>` : ''}
+          ${on ? `<div class="levels" role="group" aria-label="How far along">${LEVELS.map(l=>`<button type="button" data-l="${l.n}" class="${lv===l.n?'on':''}" title="${esc(l.help)}">${l.label}</button>`).join('')}</div>` : ''}</div>`; }).join('')}
+    </div>`).join('')}`;
+}
+function readbackStep(){
+  const fw = FRAMEWORKS[draft.kind]; const entry = draftEntry();
+  const cls = currentClass();
+  if (!draft.coach || draft.coach.source !== 'builtin' || draft._coachDirty !== false){ draft.coachBuiltin = builtinCoach(entry, cls); }
+  const b = draft.coachBuiltin; const ai = draft.coachAi;
+  const mode = me.coach.mode;
+  return `
+    <div class="readback">
+      <p class="tiny">${esc(draft.subject || fw.name)}${draft.topic ? ' · ' + esc(draft.topic) : ''} · ${fmtDate(Date.now())}</p>
+      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'left blank')}</p></div>`).join('')).join('')}
+      <p>${(draft.competencies||[]).length ? draft.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No competency tagged.</span>'}</p>
+    </div>
+    <h3 style="margin-top:14px">Coach</h3>
+    ${coachCard(ai || b, cls)}
+    ${mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="askAi">${icon('spark')} ${ai ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="aiMsg">${ai ? '' : 'Sends this entry (no name, no email) to the coach service.'}</span></div>` : `<p class="tiny" style="margin-top:8px">This is the built in coach: it works offline and reads for specifics, reasons and a dated next step. An AI coach in your teacher’s voice can be switched on in Settings.</p>`}`;
+}
+function coachCard(c, cls){
+  const d = DEPTHS[c.depth] || DEPTHS.surface; const lvl = c.depth==='deep'?3:c.depth==='working'?2:1;
+  const who = c.source === 'ai' ? `${cls && cls.teacherName ? esc(cls.teacherName) + '’s coach' : 'AI coach'}` : 'Built in coach';
+  return `<div class="coach"><div class="who"><span class="avatar">${c.source==='ai' ? '🎓' : '🐝'}</span><div><b>${who}</b><small>${c.source==='ai' ? 'Claude, in your teacher’s voice' : 'Reads for specifics, reasons and a dated next step'}</small></div></div>
+    <div class="depth"><i class="${lvl>=1?'on':''}"></i><i class="${lvl>=2?'on':''}"></i><i class="${lvl>=3?'on':''}"></i><b>${d.label}</b><span class="tiny">${esc(d.help)}</span></div>
+    <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div>
+    <div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div>
+    <div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div>
+    <div class="part"><b>Answer this now</b><p class="ask">${esc(c.question)}</p></div>
+  </div>`;
+}
+function draftEntry(){
+  return {id: draft.editId || draft._id || (draft._id = uid()), kind:draft.kind, created: draft.created || Date.now(), subject:draft.subject, topic:draft.topic, feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText, answers:draft.answers, competencies:draft.competencies||[]};
+}
+function wireStep(){
+  const sh = $('#sheet');
+  const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x=>x.classList.toggle('on', x===b)); saveDraft(); });
+  $$('.comp', sh).forEach(card => {
+    card.addEventListener('click', (ev) => {
+      const lb = ev.target.closest('[data-l]'); const pick = ev.target.closest('.pick');
+      const id = card.dataset.c; const list = draft.competencies || (draft.competencies = []);
+      if (lb){ const t = list.find(x=>x.id===id); if (t) t.level = +lb.dataset.l; saveDraft(); renderComposer(); return; }
+      if (!pick) return;
+      const i = list.findIndex(x=>x.id===id);
+      if (i >= 0) list.splice(i,1);
+      else { if (list.length >= 2){ toast('Two is the limit. Depth beats breadth.'); return; } list.push({id, level:2}); }
+      saveDraft(); renderComposer();
+    });
+  });
+  const ask = $('#askAi', sh); if (ask) ask.onclick = async () => {
+    ask.disabled = true; $('#aiMsg').innerHTML = '<span class="spin"></span> Reading your entry…';
+    try{ draft.coachAi = await aiCoach(draftEntry(), currentClass()); renderComposer(); }
+    catch(e){ ask.disabled = false; $('#aiMsg').textContent = e.message; }
+  };
+}
+function saveEntry(){
+  collect(); const e = draftEntry(); e.updated = Date.now();
+  e.coach = {builtin: builtinCoach(e, currentClass()), ai: draft.coachAi || null};
+  if (draft.editId){ const i = me.entries.findIndex(x=>x.id===draft.editId); const old = me.entries[i]; e.created = old.created; e.pushed = old.pushed; e.coach.ai = draft.coachAi || (old.coach && old.coach.ai) || null; me.entries[i] = e; }
+  else { me.entries.push(e); delete me.drafts[draft.kind]; }
+  saveDb(); const id = e.id; draft = null; closeComposer();
+  location.hash = '#/entry/' + id + '?new=1';
+}
+
+/* ---------- entry ---------- */
+function renderEntry(idq){
+  const [id, q] = idq.split('?'); const e = me.entries.find(x=>x.id===id);
+  if (!e){ location.hash = '#/'; return; }
+  const fw = FRAMEWORKS[e.kind]; const cls = currentClass(); const isNew = (q||'').includes('new=1');
+  const coach = e.coach && (e.coach.ai || e.coach.builtin);
+  frame(`
+    ${isNew ? `<section class="hero"><h1>Logged.</h1><p class="motto">${esc(nextStepOf(e) || me.prefs.motto || 'Believe you can.')}</p><p class="meta">${nextStepOf(e) ? 'That is your next step. It will wait for you on the Today screen.' : 'Next time, give yourself a small step with a day on it.'}</p></section>` : ''}
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
+        <div class="grow"><span class="tiny">${fw.tagline} · ${fmtDay(e.created)}</span><h2 style="margin:2px 0 0">${esc(e.subject || fw.name)}${e.topic ? ' · ' + esc(e.topic) : ''}</h2></div>
+        <span class="medal ${e.kind==='grow'?'navy':'red'}" style="width:44px;height:44px;flex-basis:44px;font-size:1.2em">${e.kind==='grow'?'G':'A'}</span>
+      </div>
+      ${e.kind==='act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom||'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
+      <div class="readback" style="margin-top:12px">${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p></div>`).join('')).join('')}</div>
+      <p style="margin-top:8px">${(e.competencies||[]).length ? e.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No competency tagged.</span>'}</p>
+      <div class="row" style="margin-top:6px">
+        <button class="btn small" id="eSend">${icon('send')} ${e.pushed ? 'Send again' : 'Send to teacher'}</button>
+        <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
+        <button class="btn small sec" onclick="location.hash='#/${e.kind}/${e.id}'">${icon('edit')} Edit</button>
+        <button class="btn small ghost" id="eDel" style="color:var(--red)">${icon('trash')} Delete</button>
+      </div>
+      ${e.pushed ? `<p class="tiny" style="margin:8px 0 0">Sent ${fmtDay(e.pushed.at)}${e.pushed.kind==='copy' ? ' (copied)' : ''}.</p>` : ''}
+    </section>
+    <section class="card"><h2>Coach</h2>${coach ? coachCard(coach, cls) : ''}
+      ${e.coach && e.coach.ai && e.coach.builtin ? `<details style="margin-top:10px"><summary>Built in coach’s read</summary>${coachCard(e.coach.builtin, cls)}</details>` : ''}
+      ${me.coach.mode !== 'builtin' && !(e.coach && e.coach.ai) ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="eAsk">${icon('spark')} Ask the AI coach</button><span class="tiny" id="eAskMsg"></span></div>` : ''}
+    </section>
+  `, 'home');
+  $('#eSend').onclick = () => pushEntry(e);
+  $('#eCopy').onclick = () => copyText(entryText(e, true));
+  $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It goes for good on this device. If you sent it to your teacher, their copy stays.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x=>x.id!==e.id); saveDb(); closeDialog(); location.hash = '#/'; }; $('#dNo').onclick = closeDialog; };
+  const ask = $('#eAsk'); if (ask) ask.onclick = async () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; try{ e.coach = e.coach || {}; e.coach.ai = await aiCoach(e, cls); saveDb(); renderEntry(id); }catch(err){ ask.disabled = false; $('#eAskMsg').textContent = err.message; } };
+}
+
+/* ---------- journey ---------- */
+function renderJourney(){
+  const E = me.entries.slice().sort((a,b)=>b.created-a.created);
+  const q = new URLSearchParams((location.hash.split('?')[1])||''); const f = q.get('f') || 'all';
+  const shown = E.filter(e => f==='all' || e.kind===f);
+  const byDomain = DOMAINS.map(d => { const ids = COMPETENCIES.filter(c=>c.d===d.id).map(c=>c.id); let n=0, lv=0, k=0; for (const e of E) for (const t of (e.competencies||[])) if (ids.includes(t.id)){ n++; lv += t.level||0; k++; } return {d, n, avg: k ? lv/k : 0}; });
+  const maxN = Math.max(1, ...byDomain.map(x=>x.n));
+  const depths = E.slice().reverse().map(e => { const c = e.coach && (e.coach.ai || e.coach.builtin); return c ? (c.depth==='deep'?3:c.depth==='working'?2:1) : 1; });
+  const groups = {}; for (const e of shown){ const k = new Date(e.created).toLocaleDateString('en-SG',{month:'long', year:'numeric'}); (groups[k] = groups[k] || []).push(e); }
+  const s = streak(E);
+  frame(`
+    <section class="hero"><h1>Your journey</h1><p class="meta">${E.length} ${E.length===1?'entry':'entries'} · ${E.filter(e=>e.kind==='grow').length} GROW · ${E.filter(e=>e.kind==='act').length} ACT · ${s ? s + ' week' + (s>1?'s':'') + ' in a row' : 'start a streak this week'}</p></section>
+    ${E.length >= 2 ? `<section class="card"><h2>Depth over time</h2>${sparkline(depths)}<p class="tiny">Each dot is an entry: base camp, on the climb, ridge view. The line going up matters more than any single dot.</p></section>` : ''}
+    <section class="card"><h2>Competencies</h2>
+      <div class="bars">${byDomain.map(x => `<div class="b"><span><span>${esc(x.d.name)}</span><span class="tiny">${x.n ? `${x.n} ${x.n===1?'tag':'tags'} · avg ${x.avg.toFixed(1)}/3` : 'none yet'}</span></span><i><b style="width:${Math.round(100*x.n/maxN)}%"></b></i></div>`).join('')}</div>
+      ${topCompetencies(E)}
+      <p class="tiny">${E.length ? 'An empty domain is not a failure; it is a place you have not looked yet. Try tagging one next time.' : 'Tag a competency on your next entry and this fills in.'}</p>
+    </section>
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">Entries</h2><div class="seg">${[['all','All'],['grow','GROW'],['act','ACT']].map(([k,l])=>`<button onclick="location.hash='#/journey?f=${k}'" class="${f===k?'on':''}">${l}</button>`).join('')}</div></div>
+      ${Object.keys(groups).length ? Object.entries(groups).map(([m, list]) => `<h3 style="margin:14px 0 2px">${m}</h3>${list.map(entryRow).join('')}`).join('') : '<p class="muted" style="margin-top:8px">Nothing here yet.</p>'}
+    </section>
+  `, 'journey');
+}
+function topCompetencies(E){
+  const counts = {}; const lastLevel = {};
+  for (const e of E.slice().sort((a,b)=>a.created-b.created)) for (const t of (e.competencies||[])){ counts[t.id] = (counts[t.id]||0)+1; lastLevel[t.id] = t.level; }
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if (!top.length) return '';
+  return `<div style="margin:8px 0">${top.map(([id,n]) => { const c = COMPETENCIES.find(x=>x.id===id); const l = LEVELS.find(x=>x.n===lastLevel[id]); return `<span class="tag">${esc(c.name)} × ${n}${l ? ' · ' + l.label : ''}</span>`; }).join('')}</div>`;
+}
+function sparkline(vals){
+  const w = 320, h = 70, p = 10; const n = vals.length; const x = i => p + (w-2*p) * (n>1 ? i/(n-1) : .5); const y = v => h - p - (h-2*p) * (v-1)/2;
+  const pts = vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-label="Depth over time">${[1,2,3].map(v=>`<line x1="${p}" x2="${w-p}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/>`).join('')}<polyline points="${pts}" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linejoin="round"/>${vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="var(--accent)" stroke="var(--navy)" stroke-width="1.5"/>`).join('')}</svg>`;
+}
+
+/* ---------- settings ---------- */
+function renderSettings(){
+  const cls = currentClass(); const p = me.prefs; const c = me.coach;
+  frame(`
+    <section class="hero"><h1>Make it yours</h1><p class="meta">The log should look like the person writing it.</p></section>
+    <section class="card"><h2>You</h2>
+      <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
+      <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120"></label>
+      <label class="f"><span>Your line</span><input class="in" id="sMotto" value="${esc(p.motto||'')}" maxlength="80" placeholder="A sentence you want to see every day"><small>Try: ${MOTTOS.map(m=>`<a href="#" data-motto="${esc(m)}">${esc(m)}</a>`).join(' · ')}</small></label>
+      <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Your mark</span><div class="emojis">${EMOJIS.map(e=>`<button type="button" data-e="${e}" class="${p.avatar===e?'on':''}">${e}</button>`).join('')}</div></div>
+    </section>
+    <section class="card"><h2>Look</h2>
+      <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Mood</span><div class="moods">${MOODS.map(m=>`<button type="button" class="mood ${p.mood===m.id?'on':''}" data-mood="${m.id}"><i style="background:${m.c}"></i>${m.label}</button>`).join('')}</div></div>
+      <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Your colour</span><div class="swatches">${ACCENTS.map(a=>`<button type="button" class="sw ${p.accent===a.id?'on':''}" data-accent="${a.id}" style="--c:${a.c}" aria-label="${a.id}"></button>`).join('')}</div><small class="tiny">Navy and yellow are the school’s. This one is yours.</small></div>
+      <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Text size</span><div class="seg">${[['normal','A'],['large','A+'],['xl','A++']].map(([k,l])=>`<button type="button" data-size="${k}" class="${p.size===k?'on':''}">${l}</button>`).join('')}</div></div>
+    </section>
+    <section class="card"><h2>Class</h2>
+      <div class="row"><label class="f grow" style="margin:0"><span>Class code</span><input class="in" id="sClass" value="${esc(me.classCode)}" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Load</button></div>
+      <p class="tiny" id="clsMsg" style="margin-top:8px">${cls ? `<b>${esc(cls.subject||cls.code)}</b> · ${esc(cls.teacherName||'teacher')}${cls.teacherEmail ? ' · ' + esc(cls.teacherEmail) : ''} · drop box: ${cls.sink && cls.sink.kind && cls.sink.kind!=='none' ? esc(cls.sink.kind === 'msforms' ? 'Microsoft Form' : cls.sink.kind === 'gforms' ? 'Google Form' : cls.sink.kind) : 'none (copy and paste)'}${cls.voice && cls.voice.tone ? ' · coach voice: ' + esc(cls.voice.tone) : ''}` : 'No class loaded. Your teacher can give you a code or a link.'}</p>
+    </section>
+    <section class="card"><h2>Coach</h2>
+      <p class="muted">The built in coach always reads your entry. An AI coach can add feedback in your teacher’s voice; it only runs when you press the button, and it never receives your name or email.</p>
+      <div class="stack" id="coachMode">
+        ${[['builtin','Built in only','Works offline. Nothing leaves the device.'],['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.'],['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a parent or teacher who sets up the device. The key stays in this browser.']].map(([k,l,h])=>`<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode===k?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
+      </div>
+      <div id="coachRelay" ${c.mode==='relay'?'':'hidden'} style="margin-top:10px">
+        <label class="f"><span>Coach link</span><input class="in" id="sRelay" value="${esc(c.relayUrl||'')}" placeholder="${esc((cls && cls.relay && cls.relay.url) || 'https://…workers.dev/coach')}"><small>${cls && cls.relay && cls.relay.url ? 'Leave blank to use the one your class provides.' : ''}</small></label>
+        <label class="f"><span>Class token</span><input class="in" id="sToken" value="${esc(c.token||'')}" placeholder="${cls && cls.relay && cls.relay.token ? 'Provided by your class' : 'From your teacher'}"></label>
+      </div>
+      <div id="coachKey" ${c.mode==='key'?'':'hidden'} style="margin-top:10px">
+        <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key||'')}" placeholder="sk-ant-…" autocomplete="off"><small>Stored only in this browser. Anyone who can open this profile can use it, so set a PIN.</small></label>
+        <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5 (default)'],['claude-sonnet-5','Claude Sonnet 5 (cheaper)'],['claude-haiku-4-5','Claude Haiku 4.5 (cheapest)']].map(([v,l])=>`<option value="${v}" ${c.model===v?'selected':''}>${l}</option>`).join('')}</select></label>
+      </div>
+      <div class="row" style="margin-top:8px"><button class="btn sec small" id="sTest" ${c.mode==='builtin'?'hidden':''}>Test the coach</button><span class="tiny" id="sTestMsg"></span></div>
+    </section>
+    <section class="card"><h2>Your data</h2>
+      <p class="muted">Everything is in this browser. A cleared cache, a new laptop, or a school reimage loses it, so export now and then. The file is yours: it opens in any text editor and imports back here.</p>
+      <div class="row">
+        <button class="btn sec" id="sExport">${icon('down')} Export log</button>
+        <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
+        <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
+      </div>
+      <details style="margin-top:14px"><summary>Change or remove PIN</summary>
+        <form id="pinChange" class="row" style="margin-top:8px"><input class="in grow" name="pin" inputmode="numeric" maxlength="4" placeholder="New 4 digit PIN, or blank to remove"><button class="btn small" type="submit">Set</button></form></details>
+      <div class="row" style="margin-top:14px">
+        <button class="btn ghost" id="sOut">${icon('user')} Switch person</button>
+        <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
+      </div>
+    </section>
+    <section class="card flat"><h2>About</h2><p class="tiny">Learning Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competency lens follows MOE’s 21st Century Competencies (2023 refresh). Built as a single page with no accounts and no database on purpose: your reflections are yours. Teachers: see <a href="teacher.html">the teacher page</a>.</p></section>
+  `, 'settings');
+  const sv = () => { saveDb(); applyPrefs(); };
+  $('#sName').oninput = e => { me.name = e.target.value; sv(); };
+  $('#sEmail').oninput = e => { me.email = e.target.value.trim().toLowerCase(); sv(); };
+  $('#sMotto').oninput = e => { me.prefs.motto = e.target.value; sv(); };
+  $$('[data-motto]').forEach(a => a.onclick = ev => { ev.preventDefault(); me.prefs.motto = a.dataset.motto; $('#sMotto').value = a.dataset.motto; sv(); });
+  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; sv(); $$('.emojis button').forEach(x=>x.classList.toggle('on', x===b)); $('.top .avatar').textContent = b.dataset.e; });
+  $$('.mood').forEach(b => b.onclick = () => { me.prefs.mood = b.dataset.mood; sv(); $$('.mood').forEach(x=>x.classList.toggle('on', x===b)); });
+  $$('.sw').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('.sw').forEach(x=>x.classList.toggle('on', x===b)); });
+  $$('[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('[data-size]').forEach(x=>x.classList.toggle('on', x===b)); });
+  $('#sLoad').onclick = async () => { const code = $('#sClass').value.trim().toUpperCase(); me.classCode = code; saveDb(); $('#clsMsg').innerHTML = '<span class="spin"></span> Looking for the class…'; const cfg = await loadClass(code); if (cfg) renderSettings(); else $('#clsMsg').textContent = code ? `No class file found for ${code}. Ask your teacher for a share link, or check the code.` : 'Class code cleared.'; };
+  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value!=='relay'; $('#coachKey').hidden = r.value!=='key'; $('#sTest').hidden = r.value==='builtin'; });
+  $('#sRelay').oninput = e => { me.coach.relayUrl = e.target.value.trim(); saveDb(); };
+  $('#sToken').oninput = e => { me.coach.token = e.target.value.trim(); saveDb(); };
+  $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
+  $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
+  $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, cls); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
+  $('#sExport').onclick = () => download(`learning-log-${(me.name||'me').replace(/\W+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({app:'logs', version:1, exported:new Date().toISOString(), profile: me}, null, 2));
+  $('#sImport').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const d = JSON.parse(await f.text()); const p = d.profile || d; if (!Array.isArray(p.entries)) throw 0; let added = 0; for (const e of p.entries){ if (!me.entries.some(x=>x.id===e.id)){ me.entries.push(e); added++; } } if (!me.email && p.email) me.email = p.email; if (!me.classCode && p.classCode) me.classCode = p.classCode; saveDb(); toast(`Imported ${added} new ${added===1?'entry':'entries'}.`); }catch{ toast('That file is not a learning log export.'); } ev.target.value = ''; };
+  $('#sCopyAll').onclick = () => copyText(me.entries.slice().sort((a,b)=>a.created-b.created).map(e => entryText(e, true)).join('\n\n' + '─'.repeat(24) + '\n\n'));
+  $('#pinChange').onsubmit = async e => { e.preventDefault(); const pin = new FormData(e.target).get('pin').trim(); if (!pin){ me.pin = null; saveDb(); toast('PIN removed.'); return; } if (!/^\d{4}$/.test(pin)){ toast('Four digits.'); return; } me.pin = await hashPin(me.email || me.id, pin); saveDb(); toast('PIN set.'); e.target.reset(); };
+  $('#sOut').onclick = () => { db.current = null; saveDb(); me = null; unlocked = false; applyPrefs(); location.hash = '#/welcome'; };
+  $('#sDelete').onclick = () => { dialog(`<h2>Delete ${esc(me.name)}’s log from this device?</h2><p>${me.entries.length} entries. Export first if you want to keep them. This cannot be undone.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { delete db.profiles[me.id]; db.current = null; me = null; unlocked = false; saveDb(); closeDialog(); applyPrefs(); location.hash = '#/welcome'; }; $('#dNo').onclick = closeDialog; };
+}
+</script>
+</body>
+</html>
