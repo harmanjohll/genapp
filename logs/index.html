@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" id="themeColor" content="#0b1446">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Learning Log">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="color-scheme" content="light dark">
 <title>Learning Log · Beatty Secondary School</title>
 <link rel="icon" href="assets/crest.png">
 <meta name="description" content="A personal learning log for Beattyians: GROW by reflecting, ACT on feedback, and notice the competencies you are building.">
 <style>
+@font-face{font-family:'Literata';src:url(assets/fonts/literata-var-latin.woff2) format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
 /* ------------------------------------------------------------------
    Tokens. BTY palette first (navy carries the weight, yellow marks,
    red only where the ACT slide already uses it), greys for everything
@@ -30,21 +37,21 @@
   --fs:16px; --lh:1.55;
   --nav-h:64px;
   --sans:Calibri,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif;
-  --serif:Georgia,"Times New Roman",serif;
+  --serif:Georgia,Literata,"Times New Roman","Noto Serif",serif;
 }
-[data-mood="paper"]{
+body[data-mood="paper"]{
   --bg:#faf8f2; --bg-2:#f3f0e6; --bg-3:#ebe7da;
   --on-bg:#000C53; --on-bg-2:#3a4070; --on-bg-3:#8a8fae;
   --card:#ffffff; --card-2:#f7f6f1; --card-3:#efede4;
   --shadow:0 10px 28px rgba(0,12,83,.10);
 }
-[data-mood="sunrise"]{
+body[data-mood="sunrise"]{
   --bg:#fff7c9; --bg-2:#ffefa3; --bg-3:#ffe680;
   --on-bg:#000C53; --on-bg-2:#3a4070; --on-bg-3:#8a8a6a;
   --card:#ffffff; --card-2:#fffbe8; --card-3:#fff4c2;
   --shadow:0 10px 28px rgba(120,90,0,.14);
 }
-[data-mood="night"]{
+body[data-mood="night"]{
   --bg:#07091a; --bg-2:#0f1330; --bg-3:#1a2048;
   --on-bg:#ffffff; --on-bg-2:rgba(255,255,255,.72); --on-bg-3:rgba(255,255,255,.4);
   --card:#151a3a; --card-2:#1c2248; --card-3:#242c5c;
@@ -52,17 +59,19 @@
   --head:#ffffff;
   --shadow:0 12px 32px rgba(0,0,0,.45);
 }
-[data-accent="yellow"]{--accent:#FFE200;--accent-ink:#000C53}
-[data-accent="coral"]{--accent:#FF7A6B;--accent-ink:#3a0d08}
-[data-accent="mint"]{--accent:#5FD3A8;--accent-ink:#053a27}
-[data-accent="sky"]{--accent:#7CC0FF;--accent-ink:#082a4d}
-[data-accent="lilac"]{--accent:#C4ACFF;--accent-ink:#2b1560}
-[data-size="large"]{--fs:18px}
-[data-size="xl"]{--fs:20px}
+body[data-accent="yellow"]{--accent:#FFE200;--accent-ink:#000C53}
+body[data-accent="coral"]{--accent:#FF7A6B;--accent-ink:#3a0d08}
+body[data-accent="mint"]{--accent:#5FD3A8;--accent-ink:#053a27}
+body[data-accent="sky"]{--accent:#7CC0FF;--accent-ink:#082a4d}
+body[data-accent="lilac"]{--accent:#C4ACFF;--accent-ink:#2b1560}
+body[data-size="large"]{--fs:18px}
+body[data-size="xl"]{--fs:20px}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;font-family:var(--sans);font-size:var(--fs);line-height:var(--lh);color:var(--text);background:var(--bg);min-height:100vh;min-height:100dvh}
+body{margin:0;font-family:var(--sans);font-size:var(--fs);line-height:var(--lh);color:var(--text);background:var(--bg);min-height:100vh;min-height:100dvh;overflow-wrap:break-word;color-scheme:light}
+bodybody[data-mood="night"]{color-scheme:dark}
+button,a,.chip,.comp{-webkit-tap-highlight-color:transparent}
 h1,h2,h3,h4{font-family:var(--serif);color:var(--head);margin:0 0 .35em;line-height:1.2;font-weight:700}
 h1{font-size:1.9em} h2{font-size:1.35em} h3{font-size:1.1em}
 p{margin:0 0 .8em}
@@ -86,7 +95,7 @@ textarea{resize:none}
 [data-mood="night"] .sky .sun{opacity:.5}
 
 /* frame */
-.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 16px calc(var(--nav-h) + 24px);min-height:100vh}
+.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px) max(16px,env(safe-area-inset-right));min-height:100vh}
 @media (min-width:760px){.app{padding-bottom:40px}}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;color:var(--on-bg)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
@@ -100,7 +109,8 @@ textarea{resize:none}
 [data-mood="paper"] .desknav a.on,[data-mood="sunrise"] .desknav a.on{background:rgba(0,12,83,.08)}
 @media (min-width:760px){.desknav{display:flex}}
 
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;height:var(--nav-h);display:flex;justify-content:space-around;align-items:stretch;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;min-height:var(--nav-h);display:flex;justify-content:space-around;align-items:stretch;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.nav a{min-height:var(--nav-h)}
 .nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--text-2);font-size:.74em;font-weight:600;min-width:44px}
 .nav a svg{width:24px;height:24px}
 .nav a.on{color:var(--navy)}
@@ -117,7 +127,7 @@ main{padding-top:8px}
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:0 0 14px}
 .card.flat{box-shadow:none;border:1px solid var(--line)}
 .card h2{margin-top:0}
-.tiny{font-size:.8em;color:var(--text-2)}
+.tiny{font-size:.8em;color:var(--text-2);overflow-wrap:anywhere}
 .muted{color:var(--text-2)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .grow{flex:1}
@@ -143,11 +153,11 @@ main{padding-top:8px}
 .btn.ghost{background:transparent;border-color:transparent;color:var(--head);padding-left:10px;padding-right:10px}
 [data-mood="night"] .btn.ghost{color:#fff}
 .btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
-.btn.small{padding:6px 14px;min-height:36px;font-size:.9em}
+.btn.small{padding:6px 14px;min-height:40px;font-size:.9em}
 .btn.wide{width:100%}
 .btn[disabled]{opacity:.5;cursor:default}
 .btn svg{width:18px;height:18px}
-.iconbtn{width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--head);display:grid;place-items:center;padding:0}
+.iconbtn{width:48px;height:48px;border-radius:50%;border:0;background:transparent;color:var(--head);display:grid;place-items:center;padding:0}
 [data-mood="night"] .iconbtn{color:#fff}
 .iconbtn svg{width:22px;height:22px}
 
@@ -161,12 +171,12 @@ label.f small{display:block;font-weight:400;color:var(--text-2);margin-top:2px}
 [data-mood="night"] .in:focus{border-color:var(--yellow)}
 textarea.in{min-height:96px;line-height:1.5}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:7px 13px;min-height:40px;color:var(--text);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.chip{border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:7px 13px;min-height:44px;color:var(--text);font-weight:600;display:inline-flex;align-items:center;gap:6px}
 .chip.on{border-color:var(--navy);background:var(--navy);color:#fff}
 [data-mood="night"] .chip.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow)}
 .chip small{font-weight:400;opacity:.8}
 .seg{display:inline-flex;border:2px solid var(--line-2);border-radius:999px;overflow:hidden}
-.seg button{border:0;background:transparent;padding:8px 14px;min-height:40px;color:var(--text);font-weight:600}
+.seg button{border:0;background:transparent;padding:8px 14px;min-height:44px;color:var(--text);font-weight:600}
 .seg button.on{background:var(--navy);color:#fff}
 [data-mood="night"] .seg button.on{background:var(--yellow);color:var(--navy)}
 .notice{border-left:4px solid var(--accent);background:var(--card-2);padding:10px 12px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:10px 0}
@@ -182,8 +192,8 @@ textarea.in{min-height:96px;line-height:1.5}
 .pcard small{color:var(--text-2)}
 
 /* composer */
-.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch}
-.sheet .inner{max-width:720px;margin:0 auto;padding:12px 16px 120px}
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.sheet .inner{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-left)) calc(120px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-right))}
 .sheet .bar{display:flex;align-items:center;gap:10px;color:var(--on-bg);padding:6px 0 10px;position:sticky;top:0;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);z-index:2}
 .sheet .bar b{font-family:var(--serif);font-size:1.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sheet .bar .iconbtn{color:var(--on-bg)}
@@ -208,6 +218,7 @@ textarea.in{min-height:96px;line-height:1.5}
 .dock .inner .btn{flex:1}
 .dock .inner .btn.ghost{flex:0 0 auto}
 .ring{width:150px;height:150px;margin:0 auto 10px;display:block}
+@media (max-height:700px){.ring{width:104px;height:104px;margin-bottom:6px}.stephead{margin-bottom:8px}.stephead h2{font-size:1.25em}.stephead .kicker{font-size:.72em}.medal{width:44px;height:44px;flex-basis:44px;font-size:1.25em}.steps{margin:2px 0 10px}.sheet .bar{padding-bottom:6px}}
 
 /* competency lens */
 .domain{margin-bottom:14px}
@@ -220,7 +231,7 @@ textarea.in{min-height:96px;line-height:1.5}
 .comp .pick b{display:block;color:var(--head)}
 .comp .pick span{font-size:.9em;color:var(--text-2)}
 .levels{display:flex;gap:6px;margin-top:8px}
-.levels button{flex:1;border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:6px;font-size:.85em;font-weight:600;min-height:38px;color:var(--text)}
+.levels button{flex:1;border:2px solid var(--line-2);background:var(--card);border-radius:999px;padding:6px 4px;font-size:.85em;font-weight:600;min-height:44px;color:var(--text)}
 .levels button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 [data-mood="night"] .levels button.on{background:var(--yellow);color:var(--navy);border-color:var(--yellow)}
 
@@ -247,9 +258,10 @@ textarea.in{min-height:96px;line-height:1.5}
 .entry{display:flex;gap:12px;align-items:flex-start;border:0;border-bottom:1px solid var(--line);padding:12px 0;width:100%;text-align:left;background:transparent;color:var(--text)}
 .entry:last-child{border-bottom:0}
 .entry .medal{width:40px;height:40px;flex:0 0 40px;font-size:1.05em;box-shadow:none;border-width:2px}
-.entry b{display:block;font-family:var(--serif);color:var(--head)}
-.entry small{color:var(--text-2);display:block}
-.entry .snip{color:var(--text);font-size:.92em;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.entry .grow{min-width:0}
+.entry b{display:block;font-family:var(--serif);color:var(--head);overflow-wrap:anywhere}
+.entry small{color:var(--text-2);display:block;overflow-wrap:anywhere}
+.entry .snip{color:var(--text);font-size:.92em;margin-top:3px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
 .dot.ok{background:#2f9e6f}
 .tag{display:inline-block;background:var(--card-3);border-radius:999px;padding:2px 10px;font-size:.78em;font-weight:600;color:var(--head);margin:2px 4px 2px 0}
@@ -270,6 +282,7 @@ textarea.in{min-height:96px;line-height:1.5}
 .sw{width:44px;height:44px;border-radius:50%;border:3px solid transparent;padding:0;background:var(--c)}
 .sw.on{border-color:var(--head);box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--head)}
 .moods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:400px){.moods{grid-template-columns:repeat(2,1fr)}}
 .mood{border:2px solid var(--line-2);border-radius:var(--radius-s);padding:8px 4px;background:transparent;color:var(--text);font-size:.85em;font-weight:600;min-height:64px}
 .mood i{display:block;height:26px;border-radius:8px;margin-bottom:6px}
 .mood.on{border-color:var(--head)}
@@ -282,7 +295,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;back
 pre{background:var(--card-3);padding:10px;border-radius:var(--radius-s);overflow:auto;font-size:.85em}
 
 /* toast + dialog */
-.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 16px);transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
 @media (min-width:760px){.toast{bottom:24px}}
 dialog{border:0;border-radius:var(--radius);padding:0;max-width:min(92vw,520px);width:100%;background:var(--card);color:var(--text);box-shadow:var(--shadow)}
 dialog::backdrop{background:rgba(0,12,83,.5)}
@@ -416,6 +429,8 @@ function arcPath(cx,cy,r,a1,a2){
 function applyPrefs(){
   const p = me ? me.prefs : {mood:'mountain', accent:'yellow', size:'normal'};
   document.body.dataset.mood = p.mood; document.body.dataset.accent = p.accent; document.body.dataset.size = p.size;
+  const tc = {mountain:'#0b1446', paper:'#faf8f2', sunrise:'#fff7c9', night:'#07091a'}[p.mood] || '#0b1446';
+  const m = document.getElementById('themeColor'); if (m) m.content = tc;
 }
 function currentClass(){ return me && me.classCode ? db.classes[me.classCode] : null; }
 
@@ -530,9 +545,9 @@ function pushEntry(entry){
     const u = new URL(sink.url); let n = 0;
     for (const [k, id] of Object.entries(map)){ if (!(k in payload)) continue; u.searchParams.set(id, String(payload[k])); n++; }
     if (!n){ toast('The class drop box is missing its field map. Tell your teacher.'); return; }
-    const w = window.open(u.toString(), '_blank', 'noopener');
+    window.open(u.toString(), '_blank', 'noopener');
     dialog(`<h2>One more tap</h2><p>Your entry is filled into your teacher’s form in a new tab. Check it, then press <b>Submit</b> there.</p>
-      <p class="tiny">${w ? '' : 'If the tab did not open, allow pop ups for this site and try again.'}</p>
+      <p class="tiny">Nothing opened? Allow pop ups for this site, or <a href="${esc(u.toString())}" target="_blank" rel="noopener">open the form here</a>.</p>
       <div class="row"><button class="btn" id="dDone">${icon('check')} I pressed Submit</button><button class="btn sec" id="dClose">Not yet</button></div>`);
     $('#dDone').onclick = () => { markPushed(entry, 'msforms'); closeDialog(); route(); };
     $('#dClose').onclick = closeDialog; return;
@@ -616,10 +631,10 @@ function renderWelcome(){
     <section class="card fade">
       <h2>${profiles.length ? 'Someone new?' : 'Start your log'}</h2>
       <form id="newForm" autocomplete="on">
-        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teacher calls you"></label>
-        <label class="f"><span>School email</span><input class="in" name="email" type="email" maxlength="120" placeholder="name@students.edu.sg"><small>Your teacher uses this to find your entries. It is never sent to the AI coach.</small></label>
-        <label class="f"><span>Class code <small style="display:inline">(optional)</small></span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase"><small>Your teacher gives you this. It brings in their voice and their drop box.</small></label>
-        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices"><small>Stops classmates opening your log on a shared laptop. It is not a password for anything else.</small></label>
+        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teacher calls you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
+        <label class="f"><span>School email</span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Your teacher uses this to find your entries. It is never sent to the AI coach.</small></label>
+        <label class="f"><span>Class code <small style="display:inline">(optional)</small></span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next"><small>Your teacher gives you this. It brings in their voice and their drop box.</small></label>
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop. It is not a password for anything else.</small></label>
         <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
       </form>
       <p class="tiny" style="margin-top:12px">Nothing here goes to a server. Your log is saved in this browser only, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
@@ -642,7 +657,7 @@ async function pickProfile(id){
   const p = db.profiles[id]; if (!p) return;
   if (!p.pin){ db.current = id; me = p; unlocked = true; saveDb(); applyPrefs(); if (p.classCode) loadClass(p.classCode); location.hash = '#/'; route(); return; }
   const box = $('#pinBox'); box.hidden = false;
-  box.innerHTML = `<form id="pinForm" class="row"><label class="f grow" style="margin:0"><span>PIN for ${esc(p.name)}</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autofocus></label><button class="btn" type="submit" style="margin-top:22px">Open</button></form><p class="tiny" id="pinMsg"></p>`;
+  box.innerHTML = `<form id="pinForm" class="row"><label class="f grow" style="margin:0"><span>PIN for ${esc(p.name)}</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autofocus autocomplete="off" enterkeyhint="done"></label><button class="btn" type="submit" style="margin-top:22px">Open</button></form><p class="tiny" id="pinMsg"></p>`;
   $('#pinForm').onsubmit = async (e) => {
     e.preventDefault(); const pin = new FormData(e.target).get('pin');
     if (await hashPin(p.email || p.id, pin) === p.pin){ db.current = id; me = p; unlocked = true; saveDb(); applyPrefs(); if (p.classCode) loadClass(p.classCode); location.hash = '#/'; route(); }
@@ -733,6 +748,7 @@ function renderComposer(){
   $('#cBack').onclick = () => { collect(); draft.step = Math.max(0, i-1); saveDraft(); renderComposer(); };
   const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); draft.step = i+1; saveDraft(); renderComposer(); };
   const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
+  $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
   $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', debounceSave));
   wireStep();
@@ -758,7 +774,7 @@ function contextStep(fw){
   const list = Array.from(new Set([...subjects, ...common]));
   return `
     <p class="muted">${fw.id==='grow' ? 'Use this straight after a lesson, while it is still warm. Eight questions, two per letter. Short and honest beats long and vague.' : 'Use this when you get feedback back: a marked piece, a comment in class, a peer’s note. Six questions, two per letter.'}</p>
-    <label class="f"><span>Subject</span><input class="in" name="subject" list="subjects" value="${esc(draft.subject)}" placeholder="Which subject?"><datalist id="subjects">${list.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></label>
+    <label class="f"><span>Subject</span><input class="in" name="subject" list="subjects" value="${esc(draft.subject)}" placeholder="Which subject?" autocapitalize="words" autocomplete="off" enterkeyhint="next"><datalist id="subjects">${list.map(s=>`<option value="${esc(s)}">`).join('')}</datalist></label>
     <label class="f"><span>${fw.id==='grow' ? 'Topic or lesson' : 'What the feedback was on'}</span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${fw.id==='grow' ? 'e.g. Simultaneous equations, lesson 2' : 'e.g. Chemistry practical write up'}"></label>
     ${fw.id==='act' ? `
     <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Who gave the feedback?</span>
@@ -933,7 +949,7 @@ function renderSettings(){
       <div class="f"><span style="display:block;font-weight:700;margin-bottom:6px;color:var(--head)">Text size</span><div class="seg">${[['normal','A'],['large','A+'],['xl','A++']].map(([k,l])=>`<button type="button" data-size="${k}" class="${p.size===k?'on':''}">${l}</button>`).join('')}</div></div>
     </section>
     <section class="card"><h2>Class</h2>
-      <div class="row"><label class="f grow" style="margin:0"><span>Class code</span><input class="in" id="sClass" value="${esc(me.classCode)}" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Load</button></div>
+      <div class="row"><label class="f grow" style="margin:0"><span>Class code</span><input class="in" id="sClass" value="${esc(me.classCode)}" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Load</button></div>
       <p class="tiny" id="clsMsg" style="margin-top:8px">${cls ? `<b>${esc(cls.subject||cls.code)}</b> · ${esc(cls.teacherName||'teacher')}${cls.teacherEmail ? ' · ' + esc(cls.teacherEmail) : ''} · drop box: ${cls.sink && cls.sink.kind && cls.sink.kind!=='none' ? esc(cls.sink.kind === 'msforms' ? 'Microsoft Form' : cls.sink.kind === 'gforms' ? 'Google Form' : cls.sink.kind) : 'none (copy and paste)'}${cls.voice && cls.voice.tone ? ' · coach voice: ' + esc(cls.voice.tone) : ''}` : 'No class loaded. Your teacher can give you a code or a link.'}</p>
     </section>
     <section class="card"><h2>Coach</h2>
