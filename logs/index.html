@@ -433,6 +433,18 @@ function applyPrefs(){
   const m = document.getElementById('themeColor'); if (m) m.content = tc;
 }
 function currentClass(){ return me && me.classCode ? db.classes[me.classCode] : null; }
+/* The adult key option is only offered when the page is opened with ?adult=1
+   (or a profile already uses it). Students never see a place to paste a key. */
+function ADULT(){ try{ return new URLSearchParams(location.search).get('adult') === '1'; }catch{ return false; } }
+function COACH_MODES(cls){
+  const m = [
+    ['builtin','Built in only','Works offline. Nothing leaves the device.'],
+    ['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],
+    ['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.']
+  ];
+  if (ADULT() || (me && me.coach.mode === 'key')) m.push(['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a teacher or parent who sets up the device. The key stays in this browser.']);
+  return m;
+}
 
 async function localCoach(entry, cls){
   // Chrome's built in Prompt API (stable for web pages since Chrome 148, desktop and Chromebook Plus only).
@@ -953,15 +965,15 @@ function renderSettings(){
       <p class="tiny" id="clsMsg" style="margin-top:8px">${cls ? `<b>${esc(cls.subject||cls.code)}</b> · ${esc(cls.teacherName||'teacher')}${cls.teacherEmail ? ' · ' + esc(cls.teacherEmail) : ''} · drop box: ${cls.sink && cls.sink.kind && cls.sink.kind!=='none' ? esc(cls.sink.kind === 'msforms' ? 'Microsoft Form' : cls.sink.kind === 'gforms' ? 'Google Form' : cls.sink.kind) : 'none (copy and paste)'}${cls.voice && cls.voice.tone ? ' · coach voice: ' + esc(cls.voice.tone) : ''}` : 'No class loaded. Your teacher can give you a code or a link.'}</p>
     </section>
     <section class="card"><h2>Coach</h2>
-      <p class="muted">The built in coach always reads your entry. An AI coach can add feedback in your teacher’s voice; it only runs when you press the button, and it never receives your name or email.</p>
+      <p class="muted">The built in coach always reads your entry. An AI coach can add feedback in your teacher’s voice; it only runs when you press the button, and it never receives your name or email. Nobody needs an account or a key: your class provides the coach link.</p>
       <div class="stack" id="coachMode">
-        ${[['builtin','Built in only','Works offline. Nothing leaves the device.'],['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.'],['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a parent or teacher who sets up the device. The key stays in this browser.']].map(([k,l,h])=>`<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode===k?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
+        ${COACH_MODES(cls).map(([k,l,h])=>`<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode===k?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
       </div>
       <div id="coachRelay" ${c.mode==='relay'?'':'hidden'} style="margin-top:10px">
         <label class="f"><span>Coach link</span><input class="in" id="sRelay" value="${esc(c.relayUrl||'')}" placeholder="${esc((cls && cls.relay && cls.relay.url) || 'https://…workers.dev/coach')}"><small>${cls && cls.relay && cls.relay.url ? 'Leave blank to use the one your class provides.' : ''}</small></label>
         <label class="f"><span>Class token</span><input class="in" id="sToken" value="${esc(c.token||'')}" placeholder="${cls && cls.relay && cls.relay.token ? 'Provided by your class' : 'From your teacher'}"></label>
       </div>
-      <div id="coachKey" ${c.mode==='key'?'':'hidden'} style="margin-top:10px">
+      <div id="coachKey" ${c.mode==='key'?'':'hidden'} style="margin-top:10px" ${ADULT() || c.mode==='key' ? '' : 'hidden'}>
         <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key||'')}" placeholder="sk-ant-…" autocomplete="off"><small>Stored only in this browser. Anyone who can open this profile can use it, so set a PIN.</small></label>
         <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5 (default)'],['claude-sonnet-5','Claude Sonnet 5 (cheaper)'],['claude-haiku-4-5','Claude Haiku 4.5 (cheapest)']].map(([v,l])=>`<option value="${v}" ${c.model===v?'selected':''}>${l}</option>`).join('')}</select></label>
       </div>
@@ -993,11 +1005,11 @@ function renderSettings(){
   $$('.sw').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('.sw').forEach(x=>x.classList.toggle('on', x===b)); });
   $$('[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('[data-size]').forEach(x=>x.classList.toggle('on', x===b)); });
   $('#sLoad').onclick = async () => { const code = $('#sClass').value.trim().toUpperCase(); me.classCode = code; saveDb(); $('#clsMsg').innerHTML = '<span class="spin"></span> Looking for the class…'; const cfg = await loadClass(code); if (cfg) renderSettings(); else $('#clsMsg').textContent = code ? `No class file found for ${code}. Ask your teacher for a share link, or check the code.` : 'Class code cleared.'; };
-  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value!=='relay'; $('#coachKey').hidden = r.value!=='key'; $('#sTest').hidden = r.value==='builtin'; });
+  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value!=='relay'; const kb = $('#coachKey'); if (kb) kb.hidden = r.value!=='key'; $('#sTest').hidden = r.value==='builtin'; });
   $('#sRelay').oninput = e => { me.coach.relayUrl = e.target.value.trim(); saveDb(); };
   $('#sToken').oninput = e => { me.coach.token = e.target.value.trim(); saveDb(); };
-  $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
-  $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
+  const sk = $('#sKey'); if (sk) sk.oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
+  const sm = $('#sModel'); if (sm) sm.onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, cls); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
   $('#sExport').onclick = () => download(`learning-log-${(me.name||'me').replace(/\W+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({app:'logs', version:1, exported:new Date().toISOString(), profile: me}, null, 2));
   $('#sImport').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const d = JSON.parse(await f.text()); const p = d.profile || d; if (!Array.isArray(p.entries)) throw 0; let added = 0; for (const e of p.entries){ if (!me.entries.some(x=>x.id===e.id)){ me.entries.push(e); added++; } } if (!me.email && p.email) me.email = p.email; if (!me.classCode && p.classCode) me.classCode = p.classCode; saveDb(); toast(`Imported ${added} new ${added===1?'entry':'entries'}.`); }catch{ toast('That file is not a learning log export.'); } ev.target.value = ''; };
