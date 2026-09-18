@@ -329,7 +329,8 @@ function toB64Url(obj){ const s = btoa(unescape(encodeURIComponent(JSON.stringif
 function shareLink(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; const base = location.href.replace(/teacher\.html.*$/, 'index.html'); return `${base}#/config?c=${toB64Url(c)}`; }
 function exportJson(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; return JSON.stringify(c, null, 2); }
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copied.'); }catch{ prompt('Copy this:', t); } }
-function download(name, text, type='application/json'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},800); }
+let DOWNLOADS = null; (async () => { try{ if (window.claude && typeof window.claude.use === 'function') DOWNLOADS = await window.claude.use('downloads'); }catch{ DOWNLOADS = null; } })();
+function download(name, text, type='application/json'){ if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(()=>toast('Saved.')).catch(()=>{}); return; } const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},800); }
 
 F.forEach(id => $('#'+id).addEventListener('input', () => { collect(); preview(); if (id==='prefill'||id==='sinkKind') renderMap(); if (id==='code') renderClassList(); $('#linkLen').textContent=''; }));
 $('#sampleEntry').addEventListener('input', preview);

@@ -20,6 +20,17 @@ or a relay is behind it.
 2. A Cloudflare account on a school or department address (free):
    https://dash.cloudflare.com/sign-up
 
+## Path 0: one click (about five minutes)
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/harmanjohll/genapp/tree/main/logs/relay)
+
+Sign in to Cloudflare, and the deploy page reads this folder, asks for the
+four values (the key, the class tokens, the site origin, the model) with the
+descriptions from `package.json`, and deploys. Note the Worker URL it shows
+at the end. The link points at the `main` branch, so it works once the
+branch is merged; before that, replace `main` in the link with the branch
+name.
+
 ## Path A: the dashboard, no command line (about fifteen minutes)
 
 1. In the Cloudflare dashboard: Workers & Pages, Create, Create Worker. Name it
