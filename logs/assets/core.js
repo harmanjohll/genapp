@@ -101,11 +101,11 @@ const COMPETENCIES = [
    probe:'What did you contribute, and what did you take from someone else?'},
   {id:'information', d:'cci', name:'Information Skills', plain:'I find, check and combine information, and I use it honestly and say where it came from.',
    moe:'the ability to source for, select, evaluate and synthesise digital and non-digital information with discernment. It also entails ethical and responsible practices when using, sharing and creating information.',
-   kw:['source','search','searched','website','video','article','reliable','check','verify','fact','ai ','chatgpt','google','cite','reference','compared sources'],
+   kw:['source','search','searched','website','article','reliable','verify','fact check','ai ','chatgpt','google','cite','reference','compared sources','which website','trust the'],
    probe:'How did you know the source could be trusted?'},
   {id:'civic', d:'cgc', name:'Civic Literacy', plain:'I understand how Singapore works and I play my part in my community.',
    moe:'the ability to understand the nation\'s values, governance, context and realities, form one\'s civic identity, and constructively engage with and contribute to one\'s community and nation.',
-   kw:['singapore','national','community','volunteer','neighbour','neighbor','cca','service','hdb','mrt','hawker','government','policy','our country','town','estate'],
+   kw:['singapore','national','community','volunteer','neighbour','neighbor','government','policy','our country','citizen','vote','town council','estate','pledge','national day'],
    probe:'Where does this show up in Singapore life, and what part did you play?'},
   {id:'global', d:'cgc', name:'Global Literacy', plain:'I connect this to what is happening in the wider world, and I deal fairly with people from anywhere.',
    moe:'the ability to understand and think with discernment about world issues and interact responsibly and constructively with people from and beyond Singapore on such issues.',
@@ -140,6 +140,18 @@ const DEPTHS = {
   surface:{label:'Base camp', help:'The words are here, but the details are still at the bottom of the hill.'},
   working:{label:'On the climb', help:'Specific in places. One more concrete detail and a dated next step would take you higher.'},
   deep:{label:'Ridge view', help:'Specific, honest and with a real next step. This is what reflection looks like.'}
+};
+/* The competency read: how strongly the writing shows a competency, and
+   whether the entry is about the task or about how the student worked. */
+const STRENGTHS = {
+  glimpse:{label:'Glimpse', help:'A word points here, but there is no moment yet.'},
+  clear:{label:'Clear', help:'A specific moment in your own words shows it.'},
+  strong:{label:'Strong', help:'A specific moment, and you say how or why.'}
+};
+const STANCES = {
+  task:{label:'Task talk', help:'This describes what the task was. The competencies live in how you worked it.'},
+  mixed:{label:'Getting there', help:'Some of the how is here. One more moment would tip it.'},
+  competency:{label:'Competency talk', help:'You are writing about how you thought and worked, not only what you did.'}
 };
 const MOODS = [
   {id:'mountain', label:'Mountain', c:'linear-gradient(180deg,#0b1446,#33427f)'},
@@ -252,6 +264,7 @@ function builtinCoach(entry, cls){
 }
 
 /* ---------- AI coach (Claude), only when the student presses the button ---------- */
+const COMPETENCY_IDS = COMPETENCIES.map(c => c.id);
 const COACH_SCHEMA = {
   type:'object', additionalProperties:false,
   properties:{
@@ -259,9 +272,25 @@ const COACH_SCHEMA = {
     stretch:{type:'string', description:'One thing to deepen, naming the guiding question it belongs to. Under 70 words.'},
     question:{type:'string', description:'One question for the student to answer now. Under 30 words.'},
     competency:{type:'string', description:'Nudge from task talk to competency talk: name the E21CC competency the entry shows or could show, and ask for the moment. Under 60 words.'},
-    depth:{type:'string', enum:['surface','working','deep']}
+    depth:{type:'string', enum:['surface','working','deep']},
+    e21cc:{type:'object', additionalProperties:false, description:'The competency read against MOE’s 21st Century Competencies.',
+      properties:{
+        stance:{type:'string', enum:['task','mixed','competency'], description:'task = describes what was done, marks or finishing, with no how or why; mixed = some how or why; competency = about how the student thought, worked or related, with reasons.'},
+        stance_note:{type:'string', description:'One sentence to the student about the stance. Under 30 words.'},
+        evidence:{type:'array', description:'Competencies the entry actually shows, strongest first, at most four. Include one only when a specific phrase in the student’s own words shows it.',
+          items:{type:'object', additionalProperties:false, properties:{
+            id:{type:'string', enum:COMPETENCY_IDS},
+            strength:{type:'string', enum:['glimpse','clear','strong']},
+            quote:{type:'string', description:'The student’s exact words, copied verbatim from the entry, under 25 words.'},
+            why:{type:'string', description:'Why these words show this competency, using MOE’s definition, addressed to the student. Under 30 words.'}
+          }, required:['id','strength','quote','why']}},
+        suggested:{type:'array', description:'Up to two ids from the evidence list that the student should tag.', items:{type:'string', enum:COMPETENCY_IDS}},
+        tagged_not_shown:{type:'array', description:'Ids the student tagged that the writing does not evidence.', items:{type:'string', enum:COMPETENCY_IDS}},
+        probe:{type:'string', description:'One question that would make one competency visible in writing. Under 30 words.'},
+        probe_for:{type:'string', enum:COMPETENCY_IDS}
+      }, required:['stance','stance_note','evidence','suggested','tagged_not_shown','probe','probe_for']}
   },
-  required:['gift','stretch','question','competency','depth']
+  required:['gift','stretch','question','competency','depth','e21cc']
 };
 function coachSystem(cls){
   const v = (cls && cls.voice) || {};
@@ -269,7 +298,8 @@ function coachSystem(cls){
     'You are a reflective learning coach for a Singapore secondary school student (age 13 to 17) at Beatty Secondary School. The student has written a learning log entry using one of two school frameworks.',
     'GROW by reflecting (after a lesson): G Gift yourself success (What is one thing I understand from the lesson? How would I teach/explain this to a friend?), R Rise above with small steps (What is one thing I do not yet understand? What will I do to improve?), O Own your knowledge (What is one real-life example? How have I taught/shared this with a friend or family?), W Watch for what comes next (What do I already know about the next topic? What is coming up at the next lesson?).',
     'ACT on Feedback: A Acknowledge (How do I feel about the feedback? How might the feedback help me learn better?), C Connect (How does this connect with the success criteria and/or my goals? How does this connect with previous feedback?), T Test (What habit do I need to adjust and what is one thing I will do differently? How will I know I am improving?).',
-    'Competency lens (MOE 21st Century Competencies, 2023 refresh). Emerging 21CC: Critical, Adaptive and Inventive Thinking (Critical Thinking; Adaptive Thinking; Inventive Thinking); Communication, Collaboration and Information Skills (Communication; Collaboration; Information Skills); Civic, Global and Cross-Cultural Literacy (Civic Literacy; Global Literacy; Cross-Cultural Literacy). Social-Emotional Competencies: Self-Awareness; Self-Management; Social Awareness; Relationship Management; Responsible Decision-Making. Use these exact names.',
+    'Competency lens (MOE 21st Century Competencies, 2023 refresh). Use these exact names and read the entry against MOE’s definitions.\n' + DOMAINS.map(d => d.name + ': ' + COMPETENCIES.filter(c => c.d === d.id).map(c => `${c.name} [id ${c.id}]: ${c.moe || c.plain}`).join(' | ')).join('\n'),
+    'Competency read rules. Evidence must be a verbatim phrase from the student’s answers; never paraphrase, never invent. glimpse = a word or phrase hints at the competency with no specific moment; clear = a specific moment in the student’s words shows it, with a detail; strong = the moment plus how or why, or the competency drives the next step. At most four competencies, strongest first, and none where no phrase supports it. Stance: task = the entry describes what the task or lesson was, marks, or finishing, without how or why; mixed = some how or why; competency = the entry is about how the student thought, worked or related, with reasons. tagged_not_shown lists tags the student chose that the writing does not evidence. suggested lists up to two ids from the evidence the student should tag. The probe asks for the missing moment for one competency.',
     'Your job: help the student reflect more deeply and shift from describing the task to noticing how they learned and which competency they used. Never write the reflection for them. Quote their own words. No praise inflation: one honest gift, one stretch, one question. Plain English, short sentences, no jargon, no emoji. Do not mention marks or grades unless the student did. Do not use hyphens or dashes as punctuation; use commas, semicolons or colons.',
     'Depth: surface = general words, no specifics, no dated next step; working = specific in places; deep = specific, honest, with a next step that has an action, a time and a place.'
   ];
@@ -292,4 +322,61 @@ function entryForCoach(entry){
   const tags = (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l ? l.label : ''})` : null; }).filter(Boolean);
   lines.push('Competencies the student tagged: ' + (tags.length ? tags.join('; ') : 'none'));
   return lines.join('\n\n');
+}
+
+/* ---------- the competency read (E21CC) ---------- */
+const PROCESS = ['because','realised','realized','noticed','tried','changed','explained','asked','checked','compared','decided','planned','worked out','figured','instead','next time','i think','i wonder','i felt','so that','which means','i chose','i tested'];
+function sentencesOf(text){ return (text||'').split(/(?<=[.!?])\s+|\n+/).map(x => x.trim()).filter(Boolean); }
+function entryAnswersText(entry){ const fw = FRAMEWORKS[entry.kind]; return fw.steps.flatMap(st => st.qs).map(q => entry.answers[q.id] || '').filter(t => t.trim()).join('\n'); }
+function builtinE21cc(entry){
+  const all = entryAnswersText(entry); const sents = sentencesOf(all); const low = all.toLowerCase();
+  const evidence = [];
+  for (const c of COMPETENCIES){
+    let best = null, hits = 0;
+    for (const sen of sents){ const sl = ' ' + sen.toLowerCase() + ' '; const n = c.kw.filter(k => sl.includes(k)).length; if (n){ hits++; if (!best || n > best.n) best = {s:sen, n}; } }
+    if (!best) continue;
+    const bl = best.s.toLowerCase(); const w = tokens(best.s).length;
+    const specific = /\d/.test(best.s) || w >= 12 || /\b[A-Z][a-z]{2,}\b/.test(best.s.slice(1));
+    const reasoned = REASONS.some(r => bl.includes(r)) || PROCESS.some(x => bl.includes(x));
+    // a bare reason word is a glimpse; a specific moment is clear; both together are strong
+    const strength = specific && reasoned ? 'strong' : specific ? 'clear' : 'glimpse';
+    const why = (strength === 'strong' ? 'A specific moment, and you say how or why: that is ' : strength === 'clear' ? 'A specific moment in your words shows ' : 'A word points at ') + c.name.toLowerCase() + ', as MOE describes it.';
+    evidence.push({id:c.id, strength, quote: fragment(best.s, 140), why, _score: hits*2 + (strength==='strong'?3:strength==='clear'?2:1)});
+  }
+  evidence.sort((x,y) => y._score - x._score);
+  const top = evidence.slice(0,4).map(({_score, ...x}) => x);
+  const taskHits = TASKWORDS.filter(k => low.includes(k)).length;
+  const processHits = PROCESS.filter(k => low.includes(k)).length + REASONS.filter(k => low.includes(k)).length;
+  const stance = !all.trim() ? 'task' : processHits >= 2 ? 'competency' : (taskHits >= 2 && processHits === 0) ? 'task' : 'mixed';
+  const tagged = (entry.competencies||[]).map(t => t.id);
+  const suggested = top.filter(x => !tagged.includes(x.id) && x.strength !== 'glimpse').slice(0,2).map(x => x.id);
+  const tagged_not_shown = tagged.filter(id => !evidence.some(x => x.id === id));
+  const probe_for = tagged_not_shown[0] || (top[0] && top[0].id) || 'critical';
+  const pc = COMPETENCIES.find(c => c.id === probe_for);
+  return {source:'builtin', at:Date.now(), stance, stance_note: STANCES[stance].help, evidence: top, suggested, tagged_not_shown, probe: pc ? pc.probe : '', probe_for};
+}
+/* The model's read, checked: ids must exist, quotes must actually appear in the
+   student's words (a quote that does not is hidden, the reasoning kept). */
+function normaliseE21cc(entry, raw, source){
+  if (!raw || typeof raw !== 'object') return builtinE21cc(entry);
+  const norm = t => String(t||'').toLowerCase().replace(/[“”"]/g,'').replace(/\s+/g,' ').trim();
+  const all = norm(entryAnswersText(entry));
+  const ok = id => COMPETENCIES.some(c => c.id === id);
+  const evidence = (Array.isArray(raw.evidence) ? raw.evidence : []).filter(x => x && ok(x.id) && ['glimpse','clear','strong'].includes(x.strength)).slice(0,4).map(x => {
+    const q = String(x.quote||'').trim().replace(/[.!?]+$/,''); const found = q.length > 2 && all.includes(norm(q));
+    // a claim the model cannot anchor in the student's words counts only as a glimpse
+    return {id:x.id, strength: found ? x.strength : 'glimpse', quote: found ? q : '', why: String(x.why||'').slice(0,240), unverified: !found};
+  });
+  const stance = ['task','mixed','competency'].includes(raw.stance) ? raw.stance : 'mixed';
+  const tagged = (entry.competencies||[]).map(t => t.id);
+  return {source, at:Date.now(), stance, stance_note: String(raw.stance_note || STANCES[stance].help).slice(0,240), evidence,
+    suggested: (Array.isArray(raw.suggested) ? raw.suggested : []).filter(id => ok(id) && !tagged.includes(id)).slice(0,2),
+    tagged_not_shown: (Array.isArray(raw.tagged_not_shown) ? raw.tagged_not_shown : []).filter(id => ok(id) && tagged.includes(id)),
+    probe: String(raw.probe||'').slice(0,240), probe_for: ok(raw.probe_for) ? raw.probe_for : (evidence[0] ? evidence[0].id : 'critical')};
+}
+function e21ccSummary(x){
+  if (!x) return '';
+  const nameOf = id => (COMPETENCIES.find(c => c.id === id) || {name:id}).name;
+  const ev = (x.evidence||[]).map(e => `${nameOf(e.id)} (${e.strength})`).join(', ');
+  return `Stance: ${STANCES[x.stance] ? STANCES[x.stance].label : x.stance}. Coach saw: ${ev || 'nothing specific yet'}${x.tagged_not_shown && x.tagged_not_shown.length ? '. Tagged but not shown: ' + x.tagged_not_shown.map(nameOf).join(', ') : ''}.`;
 }

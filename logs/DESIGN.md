@@ -55,6 +55,8 @@ The learning UX discipline asks five questions; here are the answers that shaped
 
 **Cost, so you can decide the model.** A coach call is roughly 1,800 input tokens and 300 output tokens. At Anthropic's list prices: Opus 5 about 1.7 cents a call, Sonnet 5 about 0.7 cents, Haiku 4.5 about 0.3 cents. A cohort of 280 students writing two entries a week for a 10 week term, asking the AI coach every time, is 5,600 calls: about S$130 on Opus, S$55 on Sonnet, S$25 on Haiku. The default in the code is Opus 5 at low effort, which is fast and the best writer of feedback; the relay pins whatever the school chooses.
 
+**The smart action (added 18 September).** Logging an entry is now the trigger, not a button. On Log it, the built in engine reads the entry for competencies at once, and if the class provides a coach the same entry (no name, no email) goes out in one call that returns both the coach feedback and a competency read: the stance of the writing (task talk, getting there, competency talk), up to four competencies actually evidenced with the student's exact words quoted and a strength (glimpse, clear, strong), the tags the student chose that the writing does not show, up to two suggested tags with a one tap "Tag it", and one probe. The model's read is checked before it is shown: ids must be real, and every quote must appear verbatim in the student's answers or it is hidden with its reasoning kept, so the model cannot put words in a student's mouth. The Journey shows what the coach saw beside what the student claimed; the teacher's sheet and CSV carry the read. A student can switch the automatic read off in Settings; a bad token or a failed call shows the built in read with a retry.
+
 ## Decision 3: the teacher's voice as a class file
 
 A class file is a JSON document, built in `teacher.html`, of about 2 KB:
@@ -110,6 +112,8 @@ Also theirs: a name, a line under it (five suggestions, or their own), and an em
 - Under PDPA, the school remains responsible for what the relay forwards to Anthropic; check the API data retention terms before switching the relay on for a cohort, and keep request logs, not text.
 
 ## What was verified, and what was not
+
+The competency read was verified against a mock relay that answers in Anthropic's response shape: the request carried the marker, one message, the JSON schema and the fallback flag the Worker enforces; a verified quote was shown and an invented one hidden; a bad class token produced the retry notice; auto off made no call; the teacher console's preview, review and CSV carried the read.
 
 Verified in a headless Chromium at 390 and 1280 pixels: profile creation with the DEMO class, a full GROW entry and a full ACT entry through every step, the lens, the read back with the built in coach, save, the Logged screen, Journey, Settings (moods, accents), export, the send dialog without a drop box, persistence across reload, the teacher console's class set up, coach preview, automatic field mapping from a pre filled Microsoft Forms link with all thirteen keys, the Review tab reading an export, and the share link round trip into the student app. Screenshots are in the pull request.
 
