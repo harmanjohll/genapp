@@ -34,6 +34,7 @@ python3 -m http.server 8000
 | `index.html?class=2E3-MATH` | Pre fills the class code on the welcome screen |
 | `index.html?guest=1` | Reads and writes nothing on the device |
 | `index.html?adult=1` | Shows the adult held API key option in Settings (hidden from students by default) |
+| `index.html?embed=1` | Forces the embedded layout (used automatically when the page is framed by a viewer or an LMS) |
 | `index.html#/config?c=...` | A share link carrying a whole class file (generated in `teacher.html`) |
 | `index.html#/grow`, `#/act`, `#/journey`, `#/settings` | The screens, addressable |
 

@@ -314,6 +314,22 @@ summary{cursor:pointer;font-weight:700;color:var(--head)}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--card-3);padding:1px 5px;border-radius:4px}
 pre{background:var(--card-3);padding:10px;border-radius:var(--radius-s);overflow:auto;font-size:.85em}
 
+/* embedded: framed by a viewer (the claude.ai preview, SLS, an LMS). Fixed bars are
+   unreliable inside frames on iOS, where a frame grows to its content, so in a frame
+   nothing is fixed: the tabs sit at the top and Back and Next follow the questions. */
+body.embedded .nav{position:static;padding-bottom:0;border-top:0;border-radius:var(--radius-s);margin:8px 0 12px;box-shadow:var(--shadow);min-height:56px}
+body.embedded .nav a{min-height:56px}
+body.embedded .desknav{display:none}
+body.embedded .app{padding-bottom:28px;min-height:0}
+body.embedded.composing #app{display:none}
+body.embedded .sheet{position:static;overflow:visible;min-height:0;overscroll-behavior:auto}
+body.embedded .sheet .bar{position:static;background:transparent}
+body.embedded .sheet .inner{padding-bottom:12px}
+body.embedded .dock{position:static;border-top:0;background:transparent;padding:0}
+body.embedded .dock .inner{padding:0 max(16px,env(safe-area-inset-left)) 28px}
+body.embedded .toast{position:fixed;top:12px;bottom:auto}
+.inline-dlg{border:2px solid var(--accent)}
+
 /* toast + dialog */
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
 @media (min-width:760px){.toast{bottom:24px}}
@@ -358,6 +374,18 @@ dialog .body{padding:20px}
 /* ---------- storage ---------- */
 const DB_KEY = 'logs.v1';
 const GUEST = new URLSearchParams(location.search).get('guest') === '1';
+const EMBED = (() => { try{ return window.self !== window.top || new URLSearchParams(location.search).get('embed') === '1'; }catch{ return true; } })();
+if (EMBED) document.body.classList.add('embedded');
+/* Inside the claude.ai preview the viewer can ask Claude on the viewer's own account
+   and hand the viewer a file. Both resolve later, or null; the page never waits. */
+let SAMPLE = null, DOWNLOADS = null;
+async function initRuntime(){
+  if (!(window.claude && typeof window.claude.use === 'function')) return;
+  try{ SAMPLE = await window.claude.use('sample'); }catch{ SAMPLE = null; }
+  try{ DOWNLOADS = await window.claude.use('downloads'); }catch{ DOWNLOADS = null; }
+  if (SAMPLE && me && !me.coach.touched && me.coach.mode === 'builtin'){ me.coach.mode = 'preview'; saveDb(); }
+  if (SAMPLE && (location.hash||'').startsWith('#/settings')) route();
+}
 let db = loadDb();
 let me = null;               // current profile object
 let unlocked = false;        // PIN passed this session
@@ -462,6 +490,7 @@ function COACH_MODES(cls){
     ['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],
     ['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.']
   ];
+  if (SAMPLE || (me && me.coach.mode === 'preview')) m.splice(1, 0, ['preview','Claude in this preview','Uses the Claude account that opened this preview. For trying the coach before a class link exists; students never see this.']);
   if (ADULT() || (me && me.coach.mode === 'key')) m.push(['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a teacher or parent who sets up the device. The key stays in this browser.']);
   return m;
 }
@@ -480,8 +509,23 @@ async function localCoach(entry, cls){
   parsed.e21cc = normaliseE21cc(entry, parsed.e21cc, 'ai');
   return Object.assign({source:'ai', model:'chrome-built-in', at:Date.now()}, parsed);
 }
+async function previewCoach(entry, cls){
+  if (!SAMPLE) throw new Error('Claude is not available in this view. Open the preview in claude.ai, or use the school coach link.');
+  const prompt = coachSystem(cls) + '\n\nReply with only one JSON object and no other text, with exactly these keys: gift, stretch, question, competency, depth (one of "surface", "working", "deep"), e21cc: {stance (one of "task", "mixed", "competency"), stance_note, evidence: [{id, strength (one of "glimpse", "clear", "strong"), quote, why}], suggested: [ids], tagged_not_shown: [ids], probe, probe_for}. Valid ids: ' + COMPETENCY_IDS.join(', ') + '.\n\nThe entry:\n\n' + entryForCoach(entry);
+  let data;
+  try{ data = await SAMPLE.json(prompt, {modelTier:'default', cache:false}); }
+  catch(e){
+    const m = {not_granted:'You did not allow this preview to use Claude.', rate_limited:'Claude is busy for this account. Try again in a minute.', refused:'Claude declined to read this one.', invalid_json:'Claude answered in a shape the page could not read. Try again.', sampling_disabled:'Claude is not available for this account.', session_expired:'Sign in to claude.ai again.'};
+    throw new Error(m[e && e.code] || (e && e.message) || 'The preview coach could not answer.');
+  }
+  if (!data || typeof data !== 'object') throw new Error('Claude answered in a shape the page could not read.');
+  if (!['surface','working','deep'].includes(data.depth)) data.depth = 'working';
+  data.e21cc = normaliseE21cc(entry, data.e21cc, 'ai');
+  return Object.assign({source:'ai', model:'claude (preview)', at:Date.now()}, data);
+}
 async function aiCoach(entry, cls){
   const c = me.coach;
+  if (c.mode === 'preview') return previewCoach(entry, cls);
   if (c.mode === 'local') return localCoach(entry, cls);
   const body = {
     model: c.model || 'claude-opus-5', max_tokens: 1400,
@@ -603,9 +647,18 @@ function pushEntry(entry){
   toast('Unknown drop box type: ' + sink.kind);
 }
 async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast('Copied.'); }catch{ dialog(`<h2>Copy this</h2><textarea class="in" style="min-height:220px">${esc(t)}</textarea><div class="row" style="margin-top:10px"><button class="btn sec" id="dClose">Close</button></div>`); $('#dClose').onclick = closeDialog; } }
-function dialog(html){ $('#dlgBody').innerHTML = html; const d = $('#dlg'); if (!d.open) d.showModal(); }
-function closeDialog(){ const d = $('#dlg'); if (d.open) d.close(); }
+function dialog(html){
+  if (EMBED){
+    // a modal centred on a frame the viewer cannot scroll would land off screen; show it in the flow instead
+    let p = $('#inlineDlg'); if (!p){ p = document.createElement('div'); p.id = 'inlineDlg'; p.className = 'card inline-dlg'; }
+    p.innerHTML = html; const host = $('#sheet .inner') || $('#app main') || document.body; host.prepend(p);
+    try{ p.scrollIntoView({block:'start', behavior:'smooth'}); }catch{} return;
+  }
+  $('#dlgBody').innerHTML = html; const d = $('#dlg'); if (!d.open) d.showModal();
+}
+function closeDialog(){ const p = $('#inlineDlg'); if (p) p.remove(); const d = $('#dlg'); if (d.open) d.close(); }
 function download(name, text, type='application/json'){
+  if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(()=>toast('Saved.')).catch(()=>{}); return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 
@@ -614,6 +667,7 @@ window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', boot);
 
 async function boot(){
+  initRuntime();
   const params = new URLSearchParams(location.search);
   if (db.current && db.profiles[db.current]) { me = db.profiles[db.current]; }
   applyPrefs();
@@ -648,17 +702,20 @@ function frame(inner, active){
   const nav = [['#/', 'home', 'Today'], ['#/journey', 'journey', 'Journey'], ['#/settings', 'settings', 'Settings']];
   const links = nav.map(([h,i,l]) => `<a href="${h}" class="${active===i?'on':''}">${icon(i)}<span>${l}</span></a>`).join('');
   const desk = nav.map(([h,i,l]) => `<a href="${h}" class="${active===i?'on':''}">${l}</a>`).join('');
+  const navHtml = `<nav class="nav" aria-label="Sections">${links}</nav>`;
   $('#app').innerHTML = `
     <header class="top">
       <a class="brand" href="#/"><img src="assets/crest.png" alt=""><span><span class="word">Learning Log</span><span class="sub">Beatty Secondary School</span></span></a>
       <nav class="desknav" aria-label="Sections">${desk}</nav>
       <button class="avatar" aria-label="Settings" onclick="location.hash='#/settings'">${esc(me.prefs.avatar)}</button>
     </header>
+    ${EMBED ? navHtml : ''}
     <main class="fade">${inner}</main>
     <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>
-    <nav class="nav" aria-label="Sections">${links}</nav>`;
-  window.scrollTo(0,0);
+    ${EMBED ? '' : navHtml}`;
+  scrollTop();
 }
+function scrollTop(){ window.scrollTo(0,0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
 
 /* ---------- welcome ---------- */
 function renderWelcome(){
@@ -770,7 +827,7 @@ function openComposer(kind, editId){
   }
   renderComposer();
 }
-function closeComposer(){ $('#sheet').innerHTML = ''; }
+function closeComposer(){ $('#sheet').innerHTML = ''; document.body.classList.remove('composing'); }
 function saveDraft(){ if (!draft) return; const d = Object.assign({}, draft); delete d.editId; if (!draft.editId) me.drafts[draft.kind] = d; saveDb(); }
 function totalSteps(){ return FRAMEWORKS[draft.kind].steps.length + 3; } // context, letters, lens, read back
 function renderComposer(){
@@ -800,7 +857,8 @@ function renderComposer(){
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
   $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', debounceSave));
   wireStep();
-  $('.sheet').scrollTo(0,0);
+  document.body.classList.add('composing');
+  $('.sheet').scrollTo(0,0); if (EMBED){ try{ $('.sheet').scrollIntoView({block:'start'}); }catch{} }
   const first = $('.sheet textarea, .sheet input'); if (first && i > 0 && i <= fw.steps.length && window.innerWidth > 760) first.focus();
 }
 let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(()=>{ collect(); saveDraft(); }, 400); }

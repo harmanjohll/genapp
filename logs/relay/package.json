@@ -1,0 +1,16 @@
+{
+  "name": "learning-log-coach",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Holds the school's Anthropic key for the Learning Log coach so students never do.",
+  "scripts": { "deploy": "wrangler deploy" },
+  "devDependencies": { "wrangler": "^4.0.0" },
+  "cloudflare": {
+    "bindings": {
+      "ANTHROPIC_API_KEY": { "description": "From console.anthropic.com, an adult's account with the school card." },
+      "CLASS_TOKENS": { "description": "Comma separated, one token per class or teacher, e.g. 2E3-MATH-bee7,3N1-SCI-hive2. Rotate each term." },
+      "ALLOWED_ORIGINS": { "description": "The site that serves logs/, no trailing slash, e.g. https://harmanjohll.github.io" },
+      "MODEL": { "description": "claude-opus-5 (default), claude-sonnet-5, or claude-haiku-4-5" }
+    }
+  }
+}
