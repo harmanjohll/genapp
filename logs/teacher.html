@@ -321,6 +321,8 @@ function preview(){
   const e = parseSampleEntry($('#sampleEntry').value); const c = builtinCoach(e, cur); const d = DEPTHS[c.depth];
   $('#preview').innerHTML = `<div class="coach"><p class="tiny" style="margin:0 0 6px">Depth: <b>${d.label}</b> · ${esc(d.help)}</p>
     <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Answer this now</b><p class="ask">${esc(c.question)}</p></div></div>`;
+  const x = builtinE21cc(e); const nameOf = id => (COMPETENCIES.find(c=>c.id===id)||{name:id}).name;
+  $('#preview').innerHTML += `<div class="coach" style="margin-top:10px"><p class="tiny" style="margin:0 0 6px"><b>Competency read</b> (built in; the class coach does this with the full definitions) · ${STANCES[x.stance].label}</p>${x.evidence.length ? x.evidence.map(ev => `<div class="part"><b>${esc(nameOf(ev.id))} · ${ev.strength}</b><p>“${esc(ev.quote)}”</p></div>`).join('') : '<p class="tiny">Nothing visible yet.</p>'}${x.tagged_not_shown.length ? `<p class="tiny">Tagged but not shown: ${x.tagged_not_shown.map(nameOf).map(esc).join(', ')}</p>` : ''}<div class="part"><b>Probe</b><p class="ask">${esc(x.probe)}</p></div></div>`;
   $('#sysPreview').textContent = coachSystem(cur);
 }
 function toB64Url(obj){ const s = btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
@@ -399,6 +401,7 @@ function applyFilters(){
       ${e.kind==='act' && e.feedbackText ? `<p class="tiny"><b>Feedback (${esc(e.feedbackFrom||'teacher')}):</b> ${esc(e.feedbackText)}</p>` : ''}
       ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g,'')}</b><p class="${e.answers[q.id]?'':'empty'}">${esc(e.answers[q.id]||'left blank')}</p></div>`).join('')).join('')}
       <p>${(e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `<span class="tag">${esc(cc.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') || '<span class="tiny">no competency tagged</span>'}</p>
+      ${e.e21cc ? `<p class="tiny"><b>${e.e21cc.source==='ai' ? 'Coach' : 'Built in'} read:</b> ${esc(e21ccSummary(e.e21cc))}${(e.e21cc.evidence||[]).filter(v=>v.quote).map(v => ` <q>${esc(v.quote)}</q>`).join('')}</p>` : ''}
       ${c ? `<details><summary>Coach (${c.source === 'ai' ? 'AI' : 'built in'})</summary><div class="coach"><div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Question</b><p class="ask">${esc(c.question)}</p></div></div></details>` : ''}
     </div>`; }).join('') : (files.length ? '<p class="muted">No entries match.</p>' : '');
 }
@@ -406,11 +409,11 @@ function applyFilters(){
 $('#clearReview').onclick = () => { files = []; renderReview(); };
 $('#csv').onclick = () => {
   const rows = allEntries(); if (!rows.length) return toast('Nothing to export.');
-  const head = ['date','student','email','class','framework','subject','topic', ...FRAMEWORKS.grow.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), ...FRAMEWORKS.act.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), 'competencies','depth','nextStep','coachQuestion'];
+  const head = ['date','student','email','class','framework','subject','topic', ...FRAMEWORKS.grow.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), ...FRAMEWORKS.act.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), 'competencies','depth','nextStep','coachQuestion','stance','coachSaw','readBy'];
   const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
   const lines = [head.join(',')];
   for (const {e,p} of rows){ const c = e.coach && (e.coach.ai || e.coach.builtin); const comps = (e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `${cc.name} (${l?l.label:''})` : ''; }).join('; ');
-    lines.push([new Date(e.created).toISOString(), p.name, p.email, p.classCode, e.kind.toUpperCase(), e.subject, e.topic, ...['g1','g2','r1','r2','o1','o2','w1','w2','a1','a2','c1','c2','t1','t2'].map(k => e.answers[k]||''), comps, c ? c.depth : '', e.kind==='grow' ? e.answers.r2 : e.answers.t1, c ? c.question : ''].map(q).join(',')); }
+    lines.push([new Date(e.created).toISOString(), p.name, p.email, p.classCode, e.kind.toUpperCase(), e.subject, e.topic, ...['g1','g2','r1','r2','o1','o2','w1','w2','a1','a2','c1','c2','t1','t2'].map(k => e.answers[k]||''), comps, c ? c.depth : '', e.kind==='grow' ? e.answers.r2 : e.answers.t1, c ? c.question : '', e.e21cc ? e.e21cc.stance : '', e.e21cc ? (e.e21cc.evidence||[]).map(v => `${(COMPETENCIES.find(x=>x.id===v.id)||{name:v.id}).name} (${v.strength})`).join('; ') : '', e.e21cc ? e.e21cc.source : ''].map(q).join(',')); }
   download(`learning-log-review-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + lines.join('\n'), 'text/csv');
 };
 

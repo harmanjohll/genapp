@@ -252,7 +252,27 @@ textarea.in{min-height:96px;line-height:1.5}
 .depth{display:flex;align-items:center;gap:8px;margin:6px 0 12px;font-size:.9em}
 .depth i{width:12px;height:12px;border-radius:50%;background:var(--line-2);display:inline-block}
 .depth i.on{background:var(--accent)}
-.depth b{color:var(--head)}
+.depth b{color:var(--head);white-space:nowrap}
+
+/* competency read */
+.stance{display:flex;align-items:center;gap:12px;margin:8px 0 12px}
+.stance .track{display:flex;gap:4px;flex:0 0 auto}
+.stance .track i{width:22px;height:10px;border-radius:5px;background:var(--line-2)}
+.stance .track i.on{background:var(--accent)}
+.stance b{color:var(--head)}
+.evid{list-style:none;margin:0;padding:0}
+.evid li{border-top:1px solid var(--line);padding:10px 0}
+.evid li:first-child{border-top:0;padding-top:0}
+.evid b{color:var(--head);font-family:var(--serif)}
+.evid q{display:block;font-family:var(--serif);font-style:italic;margin:4px 0;color:var(--text);quotes:"“" "”"}
+.evid small{display:block;color:var(--text-2)}
+.evid .btn{margin-top:6px}
+.str{font-size:.74em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 9px;border-radius:999px;background:var(--card-3);color:var(--head);white-space:nowrap}
+.str.clear{background:var(--navy);color:#fff}
+.str.strong{background:var(--accent);color:var(--accent-ink)}
+body[data-mood="night"] .str.clear{background:var(--yellow);color:var(--navy)}
+.ask{border-left:3px solid var(--accent);padding-left:10px;font-family:var(--serif);font-size:1.05em;margin:4px 0 0}
+.kick{display:block;font-size:.78em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin-bottom:2px}
 
 /* lists */
 .entry{display:flex;gap:12px;align-items:flex-start;border:0;border-bottom:1px solid var(--line);padding:12px 0;width:100%;text-align:left;background:transparent;color:var(--text)}
@@ -433,25 +453,38 @@ function applyPrefs(){
   const m = document.getElementById('themeColor'); if (m) m.content = tc;
 }
 function currentClass(){ return me && me.classCode ? db.classes[me.classCode] : null; }
+/* The adult key option is only offered when the page is opened with ?adult=1
+   (or a profile already uses it). Students never see a place to paste a key. */
+function ADULT(){ try{ return new URLSearchParams(location.search).get('adult') === '1'; }catch{ return false; } }
+function COACH_MODES(cls){
+  const m = [
+    ['builtin','Built in only','Works offline. Nothing leaves the device.'],
+    ['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],
+    ['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.']
+  ];
+  if (ADULT() || (me && me.coach.mode === 'key')) m.push(['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a teacher or parent who sets up the device. The key stays in this browser.']);
+  return m;
+}
 
 async function localCoach(entry, cls){
   // Chrome's built in Prompt API (stable for web pages since Chrome 148, desktop and Chromebook Plus only).
   if (typeof LanguageModel === 'undefined') throw new Error('This browser has no built in AI. It needs Chrome 148 or newer on a laptop or Chromebook Plus. Use the school coach link instead.');
   const avail = await LanguageModel.availability();
   if (avail === 'unavailable') throw new Error('Built in AI is not available on this device.');
-  const session = await LanguageModel.create({ initialPrompts:[{role:'system', content: coachSystem(cls) + '\n\nReply with JSON only: {"gift":"","stretch":"","question":"","competency":"","depth":"surface|working|deep"}.'}] });
+  const session = await LanguageModel.create({ initialPrompts:[{role:'system', content: coachSystem(cls) + '\n\nReply with JSON only, matching this shape: {"gift":"","stretch":"","question":"","competency":"","depth":"surface|working|deep","e21cc":{"stance":"task|mixed|competency","stance_note":"","evidence":[{"id":"","strength":"glimpse|clear|strong","quote":"","why":""}],"suggested":[],"tagged_not_shown":[],"probe":"","probe_for":""}}.'}] });
   const prompt = entryForCoach(entry); let text;
   try{ text = await session.prompt(prompt, {responseConstraint: COACH_SCHEMA}); }catch{ text = await session.prompt(prompt); }
   try{ session.destroy && session.destroy(); }catch{}
   let parsed; try{ parsed = JSON.parse(text); }catch{ const a=text.indexOf('{'), b=text.lastIndexOf('}'); parsed = JSON.parse(text.slice(a,b+1)); }
   if (!['surface','working','deep'].includes(parsed.depth)) parsed.depth = 'working';
+  parsed.e21cc = normaliseE21cc(entry, parsed.e21cc, 'ai');
   return Object.assign({source:'ai', model:'chrome-built-in', at:Date.now()}, parsed);
 }
 async function aiCoach(entry, cls){
   const c = me.coach;
   if (c.mode === 'local') return localCoach(entry, cls);
   const body = {
-    model: c.model || 'claude-opus-5', max_tokens: 1024,
+    model: c.model || 'claude-opus-5', max_tokens: 1400,
     system: coachSystem(cls),
     messages:[{role:'user', content: entryForCoach(entry)}],
     output_config:{ effort:'low', format:{type:'json_schema', schema:COACH_SCHEMA} },
@@ -478,7 +511,21 @@ async function aiCoach(entry, cls){
   if (data.stop_reason === 'refusal') throw new Error('The coach declined to answer this one. The built in feedback still stands.');
   const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
   let parsed; try{ parsed = JSON.parse(text); }catch{ const a=text.indexOf('{'), b=text.lastIndexOf('}'); parsed = JSON.parse(text.slice(a,b+1)); }
+  parsed.e21cc = normaliseE21cc(entry, parsed.e21cc, 'ai');
   return Object.assign({source:'ai', model:data.model || body.model, at:Date.now()}, parsed);
+}
+
+/* The smart action: every logged entry is read for competencies. The built in
+   read is instant; when a class coach is configured the entry is sent (no name,
+   no email) and the read is replaced by the model's, checked against the words. */
+const aiPending = new Set(); const aiErrors = new Map();
+function aiReady(){ return !!(me && me.coach && me.coach.mode !== 'builtin'); }
+function autoEval(){ return aiReady() && me.coach.auto !== false; }
+async function runAiFor(e){
+  if (aiPending.has(e.id)) return; aiPending.add(e.id); aiErrors.delete(e.id);
+  try{ const r = await aiCoach(e, currentClass()); e.coach = e.coach || {}; e.coach.ai = r; if (r.e21cc) e.e21cc = r.e21cc; saveDb(); }
+  catch(err){ aiErrors.set(e.id, err.message); }
+  finally{ aiPending.delete(e.id); if ((location.hash||'').startsWith('#/entry/' + e.id)) renderEntry(location.hash.slice(8)); }
 }
 
 /* ---------- class config: from classes/<CODE>.json or a share link ---------- */
@@ -507,6 +554,7 @@ function entryText(entry, forTeacher){
   L.push('Competencies: ' + (tags.length ? tags.join('; ') : 'none tagged'));
   const coach = entry.coach && (entry.coach.ai || entry.coach.builtin);
   if (coach) L.push(`Depth: ${DEPTHS[coach.depth].label}`);
+  if (entry.e21cc) L.push(e21ccSummary(entry.e21cc));
   return L.join('\n\n');
 }
 function nextStepOf(entry){ return entry.kind === 'grow' ? entry.answers.r2 : entry.answers.t1; }
@@ -517,7 +565,7 @@ function pushPayload(entry){
     timestamp: new Date().toISOString(), studentName: me.name, studentEmail: me.email, classCode: me.classCode,
     teacherEmail: cls ? cls.teacherEmail || '' : '', framework: entry.kind.toUpperCase(), subject: entry.subject || '', topic: entry.topic || '',
     entry: entryText(entry, false).slice(0, 3900),
-    competencies: (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean).join('; '),
+    competencies: ('Tagged: ' + ((entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean).join('; ') || 'none') + (entry.e21cc ? '. ' + e21ccSummary(entry.e21cc) : '')).slice(0, 3900),
     depth: coach ? coach.depth : '', nextStep: (nextStepOf(entry)||'').slice(0,500), entryId: entry.id
   };
 }
@@ -813,6 +861,7 @@ function readbackStep(){
       <p>${(draft.competencies||[]).length ? draft.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No competency tagged.</span>'}</p>
     </div>
     <h3 style="margin-top:14px">Coach</h3>
+    ${autoEval() ? `<p class="tiny">When you log this, it goes to your class coach (no name, no email) to be read for competencies. You can switch that off in Settings.</p>` : ''}
     ${coachCard(ai || b, cls)}
     ${mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="askAi">${icon('spark')} ${ai ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="aiMsg">${ai ? '' : 'Sends this entry (no name, no email) to the coach service.'}</span></div>` : `<p class="tiny" style="margin-top:8px">This is the built in coach: it works offline and reads for specifics, reasons and a dated next step. An AI coach in your teacher’s voice can be switched on in Settings.</p>`}`;
 }
@@ -854,7 +903,8 @@ function wireStep(){
 function saveEntry(){
   collect(); const e = draftEntry(); e.updated = Date.now();
   e.coach = {builtin: builtinCoach(e, currentClass()), ai: draft.coachAi || null};
-  if (draft.editId){ const i = me.entries.findIndex(x=>x.id===draft.editId); const old = me.entries[i]; e.created = old.created; e.pushed = old.pushed; e.coach.ai = draft.coachAi || (old.coach && old.coach.ai) || null; me.entries[i] = e; }
+  e.e21cc = (draft.coachAi && draft.coachAi.e21cc) || builtinE21cc(e);
+  if (draft.editId){ const i = me.entries.findIndex(x=>x.id===draft.editId); const old = me.entries[i]; e.created = old.created; e.pushed = old.pushed; me.entries[i] = e; }
   else { me.entries.push(e); delete me.drafts[draft.kind]; }
   saveDb(); const id = e.id; draft = null; closeComposer();
   location.hash = '#/entry/' + id + '?new=1';
@@ -884,6 +934,7 @@ function renderEntry(idq){
       </div>
       ${e.pushed ? `<p class="tiny" style="margin:8px 0 0">Sent ${fmtDay(e.pushed.at)}${e.pushed.kind==='copy' ? ' (copied)' : ''}.</p>` : ''}
     </section>
+    ${e21ccCard(e, {pending: aiPending.has(e.id), error: aiErrors.get(e.id)})}
     <section class="card"><h2>Coach</h2>${coach ? coachCard(coach, cls) : ''}
       ${e.coach && e.coach.ai && e.coach.builtin ? `<details style="margin-top:10px"><summary>Built in coach’s read</summary>${coachCard(e.coach.builtin, cls)}</details>` : ''}
       ${me.coach.mode !== 'builtin' && !(e.coach && e.coach.ai) ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="eAsk">${icon('spark')} Ask the AI coach</button><span class="tiny" id="eAskMsg"></span></div>` : ''}
@@ -892,7 +943,28 @@ function renderEntry(idq){
   $('#eSend').onclick = () => pushEntry(e);
   $('#eCopy').onclick = () => copyText(entryText(e, true));
   $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It goes for good on this device. If you sent it to your teacher, their copy stays.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x=>x.id!==e.id); saveDb(); closeDialog(); location.hash = '#/'; }; $('#dNo').onclick = closeDialog; };
-  const ask = $('#eAsk'); if (ask) ask.onclick = async () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; try{ e.coach = e.coach || {}; e.coach.ai = await aiCoach(e, cls); saveDb(); renderEntry(id); }catch(err){ ask.disabled = false; $('#eAskMsg').textContent = err.message; } };
+  const ask = $('#eAsk'); if (ask) ask.onclick = () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; runAiFor(e); };
+  const retry = $('#e21Retry'); if (retry) retry.onclick = () => { aiErrors.delete(e.id); runAiFor(e); renderEntry(idq); };
+  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('Two is the limit. Untag one on Edit first.'); return; } if (!list.some(t=>t.id===b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested||[]).filter(x=>x!==b.dataset.tag); } saveDb(); toast('Tagged.'); renderEntry(idq); });
+  // the smart action: a fresh entry is read by the class coach as soon as it is logged
+  if (isNew && autoEval() && !(e.coach && e.coach.ai) && !aiPending.has(e.id) && !aiErrors.has(e.id)) { runAiFor(e); renderEntry(idq); }
+}
+function e21ccCard(e, opts={}){
+  const x = e.e21cc; if (!x) return '';
+  const nameOf = id => COMPETENCIES.find(c => c.id === id);
+  const st = STANCES[x.stance] || STANCES.mixed; const pos = x.stance === 'task' ? 0 : x.stance === 'mixed' ? 1 : 2;
+  const tagged = new Set((e.competencies||[]).map(t => t.id));
+  const who = x.source === 'ai' ? (currentClass() && currentClass().teacherName ? esc(currentClass().teacherName) + '’s coach' : 'Class coach') : 'Built in read';
+  return `<section class="card" id="e21cc">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Competency read</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
+    ${opts.error ? `<div class="notice warn">The class coach could not read this one: ${esc(opts.error)} The built in read stands. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>` : ''}
+    <div class="stance"><div class="track"><i class="${pos>=0?'on':''}"></i><i class="${pos>=1?'on':''}"></i><i class="${pos>=2?'on':''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
+    ${x.evidence.length ? `<ul class="evid">${x.evidence.map(ev => { const c = nameOf(ev.id); if (!c) return ''; const sg = STRENGTHS[ev.strength]; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.name)}</b><span class="str ${ev.strength}">${sg.label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${tagged.has(ev.id) ? '<span class="tiny">Tagged.</span>' : ev.strength !== 'glimpse' ? `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Tag it</button>` : ''}</li>`; }).join('')}</ul>`
+      : `<p class="muted">No competency is visible in the words yet. That is normal on a first entry; the coach can only see what is written.</p>`}
+    ${x.tagged_not_shown.length ? `<div class="notice">You tagged ${x.tagged_not_shown.map(id => '<b>' + esc(nameOf(id).name) + '</b>').join(' and ')}, but the writing does not show the moment. Edit the entry and add one line about when it happened, or untag it.</div>` : ''}
+    ${x.probe ? `<div style="margin-top:10px"><span class="kick">Go deeper${nameOf(x.probe_for) ? ' on ' + esc(nameOf(x.probe_for).name) : ''}</span><p class="ask">${esc(x.probe)}</p></div>` : ''}
+    <p class="tiny" style="margin:10px 0 0">Read against MOE’s 21st Century Competencies. Glimpse: a word points here. Clear: a moment in your words. Strong: the moment and the why.${x.source !== 'ai' && aiReady() && !opts.pending && !opts.error && !(e.coach && e.coach.ai) ? ' The class coach has not read this one yet.' : ''}</p>
+  </section>`;
 }
 
 /* ---------- journey ---------- */
@@ -900,8 +972,8 @@ function renderJourney(){
   const E = me.entries.slice().sort((a,b)=>b.created-a.created);
   const q = new URLSearchParams((location.hash.split('?')[1])||''); const f = q.get('f') || 'all';
   const shown = E.filter(e => f==='all' || e.kind===f);
-  const byDomain = DOMAINS.map(d => { const ids = COMPETENCIES.filter(c=>c.d===d.id).map(c=>c.id); let n=0, lv=0, k=0; for (const e of E) for (const t of (e.competencies||[])) if (ids.includes(t.id)){ n++; lv += t.level||0; k++; } return {d, n, avg: k ? lv/k : 0}; });
-  const maxN = Math.max(1, ...byDomain.map(x=>x.n));
+  const byDomain = DOMAINS.map(d => { const ids = COMPETENCIES.filter(c=>c.d===d.id).map(c=>c.id); let n=0, lv=0, k=0, seen=0; for (const e of E){ for (const t of (e.competencies||[])) if (ids.includes(t.id)){ n++; lv += t.level||0; k++; } if (e.e21cc && (e.e21cc.evidence||[]).some(v => ids.includes(v.id) && v.strength !== 'glimpse')) seen++; } return {d, n, seen, avg: k ? lv/k : 0}; });
+  const maxN = Math.max(1, ...byDomain.map(x=>Math.max(x.n, x.seen)));
   const depths = E.slice().reverse().map(e => { const c = e.coach && (e.coach.ai || e.coach.builtin); return c ? (c.depth==='deep'?3:c.depth==='working'?2:1) : 1; });
   const groups = {}; for (const e of shown){ const k = new Date(e.created).toLocaleDateString('en-SG',{month:'long', year:'numeric'}); (groups[k] = groups[k] || []).push(e); }
   const s = streak(E);
@@ -909,7 +981,8 @@ function renderJourney(){
     <section class="hero"><h1>Your journey</h1><p class="meta">${E.length} ${E.length===1?'entry':'entries'} · ${E.filter(e=>e.kind==='grow').length} GROW · ${E.filter(e=>e.kind==='act').length} ACT · ${s ? s + ' week' + (s>1?'s':'') + ' in a row' : 'start a streak this week'}</p></section>
     ${E.length >= 2 ? `<section class="card"><h2>Depth over time</h2>${sparkline(depths)}<p class="tiny">Each dot is an entry: base camp, on the climb, ridge view. The line going up matters more than any single dot.</p></section>` : ''}
     <section class="card"><h2>Competencies</h2>
-      <div class="bars">${byDomain.map(x => `<div class="b"><span><span>${esc(x.d.name)}</span><span class="tiny">${x.n ? `${x.n} ${x.n===1?'tag':'tags'} · avg ${x.avg.toFixed(1)}/3` : 'none yet'}</span></span><i><b style="width:${Math.round(100*x.n/maxN)}%"></b></i></div>`).join('')}</div>
+      <div class="bars">${byDomain.map(x => `<div class="b"><span><span>${esc(x.d.name)}</span><span class="tiny">${x.n ? `${x.n} ${x.n===1?'tag':'tags'} · avg ${x.avg.toFixed(1)}/3` : 'no tags'} · seen in ${x.seen}</span></span><i><b style="width:${Math.round(100*Math.max(x.n, x.seen)/maxN)}%"></b></i></div>`).join('')}</div>
+      <p class="tiny">Tags are what you claimed. “Seen” is where the coach found a clear moment in your words. When the two drift apart, that is worth a conversation.</p>
       ${topCompetencies(E)}
       <p class="tiny">${E.length ? 'An empty domain is not a failure; it is a place you have not looked yet. Try tagging one next time.' : 'Tag a competency on your next entry and this fills in.'}</p>
     </section>
@@ -953,18 +1026,19 @@ function renderSettings(){
       <p class="tiny" id="clsMsg" style="margin-top:8px">${cls ? `<b>${esc(cls.subject||cls.code)}</b> · ${esc(cls.teacherName||'teacher')}${cls.teacherEmail ? ' · ' + esc(cls.teacherEmail) : ''} · drop box: ${cls.sink && cls.sink.kind && cls.sink.kind!=='none' ? esc(cls.sink.kind === 'msforms' ? 'Microsoft Form' : cls.sink.kind === 'gforms' ? 'Google Form' : cls.sink.kind) : 'none (copy and paste)'}${cls.voice && cls.voice.tone ? ' · coach voice: ' + esc(cls.voice.tone) : ''}` : 'No class loaded. Your teacher can give you a code or a link.'}</p>
     </section>
     <section class="card"><h2>Coach</h2>
-      <p class="muted">The built in coach always reads your entry. An AI coach can add feedback in your teacher’s voice; it only runs when you press the button, and it never receives your name or email.</p>
+      <p class="muted">The built in coach always reads your entry. An AI coach can add feedback in your teacher’s voice; it only runs when you press the button, and it never receives your name or email. Nobody needs an account or a key: your class provides the coach link.</p>
       <div class="stack" id="coachMode">
-        ${[['builtin','Built in only','Works offline. Nothing leaves the device.'],['relay','School coach link','Your teacher gives you a link and a class token. The school holds the key.' + (cls && cls.relay && cls.relay.url ? ' Your class already provides one.' : '')],['local','On this device (Chrome built in AI)','Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.'],['key','A key held by an adult','AI providers require account holders to be 18 or older, so this is for a parent or teacher who sets up the device. The key stays in this browser.']].map(([k,l,h])=>`<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode===k?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
+        ${COACH_MODES(cls).map(([k,l,h])=>`<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode===k?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
       </div>
       <div id="coachRelay" ${c.mode==='relay'?'':'hidden'} style="margin-top:10px">
         <label class="f"><span>Coach link</span><input class="in" id="sRelay" value="${esc(c.relayUrl||'')}" placeholder="${esc((cls && cls.relay && cls.relay.url) || 'https://…workers.dev/coach')}"><small>${cls && cls.relay && cls.relay.url ? 'Leave blank to use the one your class provides.' : ''}</small></label>
         <label class="f"><span>Class token</span><input class="in" id="sToken" value="${esc(c.token||'')}" placeholder="${cls && cls.relay && cls.relay.token ? 'Provided by your class' : 'From your teacher'}"></label>
       </div>
-      <div id="coachKey" ${c.mode==='key'?'':'hidden'} style="margin-top:10px">
+      <div id="coachKey" ${c.mode==='key'?'':'hidden'} style="margin-top:10px" ${ADULT() || c.mode==='key' ? '' : 'hidden'}>
         <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key||'')}" placeholder="sk-ant-…" autocomplete="off"><small>Stored only in this browser. Anyone who can open this profile can use it, so set a PIN.</small></label>
         <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5 (default)'],['claude-sonnet-5','Claude Sonnet 5 (cheaper)'],['claude-haiku-4-5','Claude Haiku 4.5 (cheapest)']].map(([v,l])=>`<option value="${v}" ${c.model===v?'selected':''}>${l}</option>`).join('')}</select></label>
       </div>
+      <label class="row" id="autoRow" style="margin-top:10px;cursor:pointer" ${c.mode==='builtin'?'hidden':''}><input type="checkbox" id="sAuto" ${c.auto!==false?'checked':''} style="width:22px;height:22px;accent-color:var(--navy)"><span>Read every entry for competencies when I log it<small style="display:block;color:var(--text-2)">Off means the coach only reads when you press the button.</small></span></label>
       <div class="row" style="margin-top:8px"><button class="btn sec small" id="sTest" ${c.mode==='builtin'?'hidden':''}>Test the coach</button><span class="tiny" id="sTestMsg"></span></div>
     </section>
     <section class="card"><h2>Your data</h2>
@@ -993,11 +1067,12 @@ function renderSettings(){
   $$('.sw').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('.sw').forEach(x=>x.classList.toggle('on', x===b)); });
   $$('[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('[data-size]').forEach(x=>x.classList.toggle('on', x===b)); });
   $('#sLoad').onclick = async () => { const code = $('#sClass').value.trim().toUpperCase(); me.classCode = code; saveDb(); $('#clsMsg').innerHTML = '<span class="spin"></span> Looking for the class…'; const cfg = await loadClass(code); if (cfg) renderSettings(); else $('#clsMsg').textContent = code ? `No class file found for ${code}. Ask your teacher for a share link, or check the code.` : 'Class code cleared.'; };
-  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value!=='relay'; $('#coachKey').hidden = r.value!=='key'; $('#sTest').hidden = r.value==='builtin'; });
+  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value!=='relay'; const kb = $('#coachKey'); if (kb) kb.hidden = r.value!=='key'; $('#sTest').hidden = r.value==='builtin'; $('#autoRow').hidden = r.value==='builtin'; });
+  $('#sAuto').onchange = e => { me.coach.auto = e.target.checked; saveDb(); };
   $('#sRelay').oninput = e => { me.coach.relayUrl = e.target.value.trim(); saveDb(); };
   $('#sToken').oninput = e => { me.coach.token = e.target.value.trim(); saveDb(); };
-  $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
-  $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
+  const sk = $('#sKey'); if (sk) sk.oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
+  const sm = $('#sModel'); if (sm) sm.onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, cls); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
   $('#sExport').onclick = () => download(`learning-log-${(me.name||'me').replace(/\W+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify({app:'logs', version:1, exported:new Date().toISOString(), profile: me}, null, 2));
   $('#sImport').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const d = JSON.parse(await f.text()); const p = d.profile || d; if (!Array.isArray(p.entries)) throw 0; let added = 0; for (const e of p.entries){ if (!me.entries.some(x=>x.id===e.id)){ me.entries.push(e); added++; } } if (!me.email && p.email) me.email = p.email; if (!me.classCode && p.classCode) me.classCode = p.classCode; saveDb(); toast(`Imported ${added} new ${added===1?'entry':'entries'}.`); }catch{ toast('That file is not a learning log export.'); } ev.target.value = ''; };

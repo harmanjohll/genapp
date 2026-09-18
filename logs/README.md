@@ -1,6 +1,6 @@
 # Learning Log
 
-A personal learning log for Beattyians. Two frameworks from the school's own slides, **GROW by reflecting** (Gift, Rise, Own, Watch) after a lesson and **ACT on Feedback** (Acknowledge, Connect, Test) when feedback comes back, with every guiding question quoted verbatim. A competency lens asks which of MOE's 21st Century Competencies the entry stretched. A coach reads every entry: a built in one that works offline, and optionally Claude in the teacher's voice.
+A personal learning log for Beattyians. Two frameworks from the school's own slides, **GROW by reflecting** (Gift, Rise, Own, Watch) after a lesson and **ACT on Feedback** (Acknowledge, Connect, Test) when feedback comes back, with every guiding question quoted verbatim. A competency lens asks which of MOE's 21st Century Competencies the entry stretched. A coach reads every entry the moment it is logged: a built in one that works offline, and, when the class provides a coach link, Claude in the teacher's voice, returning feedback and a competency read against MOE's wording (which competencies the writing shows, quoted, with a strength) in one call.
 
 No accounts, no database. The log lives in the student's browser and exports as a file. Entries reach the teacher through a form the teacher owns (Microsoft Form to Excel in OneDrive, or Google Form to Sheet), or as export files.
 
@@ -33,6 +33,7 @@ python3 -m http.server 8000
 | --- | --- |
 | `index.html?class=2E3-MATH` | Pre fills the class code on the welcome screen |
 | `index.html?guest=1` | Reads and writes nothing on the device |
+| `index.html?adult=1` | Shows the adult held API key option in Settings (hidden from students by default) |
 | `index.html#/config?c=...` | A share link carrying a whole class file (generated in `teacher.html`) |
 | `index.html#/grow`, `#/act`, `#/journey`, `#/settings` | The screens, addressable |
 
