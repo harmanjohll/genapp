@@ -2,33 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000C53">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <title>Learning Log · Teacher console</title>
 <link rel="icon" href="assets/crest.png">
 <style>
+@font-face{font-family:'Literata';src:url(assets/fonts/literata-var-latin.woff2) format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
 :root{
   --navy:#000C53; --navy-2:#141f66; --yellow:#FFE200; --red:#EC3237;
   --g1:#F5F5F5; --g2:#E8E9F0; --g4:#C9CBD8; --g5:#9E9E9E; --g8:#424242; --ink:#212121;
   --bg:#faf8f2; --card:#fff; --card-2:#f7f6f1; --card-3:#efede4; --text:#1a1d33; --text-2:#5a5f7a; --line:#e3e5ef; --line-2:#cfd3e3;
   --radius:18px; --radius-s:12px; --shadow:0 10px 28px rgba(0,12,83,.10);
-  --sans:Calibri,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif; --serif:Georgia,"Times New Roman",serif;
+  --sans:Calibri,"Segoe UI",Roboto,"Helvetica Neue",system-ui,sans-serif; --serif:Georgia,Literata,"Times New Roman","Noto Serif",serif;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--text);background:var(--bg)}
+body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--text);background:var(--bg);overflow-wrap:break-word;color-scheme:light}
+button,a{-webkit-tap-highlight-color:transparent}
 h1,h2,h3{font-family:var(--serif);color:var(--navy);margin:0 0 .35em;line-height:1.2}
 h1{font-size:1.9em} h2{font-size:1.3em} h3{font-size:1.05em}
 p{margin:0 0 .8em} a{color:var(--navy)}
 button{font:inherit;cursor:pointer} input,textarea,select{font:inherit;color:var(--text)}
 :focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 [hidden]{display:none!important}
-.app{max-width:960px;margin:0 auto;padding:0 16px 60px}
+.app{max-width:960px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) calc(60px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-right))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
 .brand img{width:26px;border-radius:4px}
 .brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em}
 .brand .sub{font-size:.72em;color:var(--text-2);display:block;line-height:1.1}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:2px solid var(--line)}
-.tabs button{border:0;background:transparent;padding:10px 14px;font-weight:700;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px}
+.tabs button{border:0;background:transparent;padding:10px 12px;font-weight:700;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px;-webkit-tap-highlight-color:transparent}
 .tabs button.on{color:var(--navy);border-bottom-color:var(--yellow)}
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 16px}
 .card.flat{box-shadow:none;border:1px solid var(--line)}
@@ -46,7 +50,7 @@ textarea.in{min-height:90px;line-height:1.5;resize:vertical}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none}
 .btn.sec{background:transparent;color:var(--navy);border-color:var(--line-2)}
 .btn.acc{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
-.btn.small{padding:6px 12px;min-height:36px;font-size:.9em}
+.btn.small{padding:6px 12px;min-height:40px;font-size:.9em}
 .btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
 .tiny{font-size:.82em;color:var(--text-2)} .muted{color:var(--text-2)}
 .notice{border-left:4px solid var(--yellow);background:var(--card-2);padding:10px 12px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:10px 0}
@@ -54,6 +58,8 @@ textarea.in{min-height:90px;line-height:1.5;resize:vertical}
 .notice.ok{border-color:#2f9e6f}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--card-3);padding:1px 5px;border-radius:4px}
 pre{background:var(--card-3);padding:12px;border-radius:var(--radius-s);overflow:auto;font-size:.85em;white-space:pre-wrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll table{min-width:480px}
 table{width:100%;border-collapse:collapse;font-size:.92em}
 th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-family:var(--serif);color:var(--navy)}
@@ -62,7 +68,7 @@ th{font-family:var(--serif);color:var(--navy)}
 .coach .part{margin-bottom:8px} .coach .part b{display:block;font-size:.76em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)}
 .coach .part p{margin:0} .coach .ask{border-left:3px solid var(--yellow);padding-left:10px;font-family:var(--serif)}
 .classes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:38px}
+.classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:44px}
 .classes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:#fff}
 summary{cursor:pointer;font-weight:700;color:var(--navy)}
@@ -109,10 +115,10 @@ ol.steps li{margin-bottom:8px}
         <div class="card">
           <h2>Class</h2>
           <div class="two">
-            <label class="f"><span>Class code</span><input class="in" id="code" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase"><small>Short, no spaces. Students type this once.</small></label>
+            <label class="f"><span>Class code</span><input class="in" id="code" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>Short, no spaces. Students type this once.</small></label>
             <label class="f"><span>Level</span><input class="in" id="level" placeholder="e.g. Sec 2 Express"></label>
             <label class="f"><span>Your name (as students say it)</span><input class="in" id="teacherName" placeholder="e.g. Mr Tan"></label>
-            <label class="f"><span>Your school email</span><input class="in" id="teacherEmail" type="email" placeholder="name@moe.edu.sg"><small>Used to filter your students in the drop box sheet.</small></label>
+            <label class="f"><span>Your school email</span><input class="in" id="teacherEmail" type="email" inputmode="email" placeholder="name@moe.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Used to filter your students in the drop box sheet.</small></label>
             <label class="f"><span>Subject</span><input class="in" id="subject" placeholder="e.g. Mathematics"></label>
             <label class="f"><span>Other subjects you teach this class</span><input class="in" id="subjects" placeholder="comma separated, optional"></label>
           </div>
@@ -175,11 +181,11 @@ ol.steps li{margin-bottom:8px}
     <div class="card">
       <h2>Connect a form to this class</h2>
       <div class="two">
-        <label class="f"><span>Drop box type</span><select class="in" id="sinkKind"><option value="none">None (copy and paste)</option><option value="msforms">Microsoft Form (pre filled link, one tap to submit)</option><option value="gforms">Google Form (silent submit)</option></select></label>
-        <label class="f"><span>Paste the pre filled link</span><input class="in" id="prefill" placeholder="From the form’s Get pre-filled link"><small>Type the field keys below as the sample answers when you generate the link, and the mapping fills itself.</small></label>
+        <label class="f"><span>Drop box type</span><select class="in" id="sinkKind"><option value="none">None (copy and paste)</option><option value="msforms">Microsoft Form (one tap to submit)</option><option value="gforms">Google Form (silent submit)</option></select></label>
+        <label class="f"><span>Paste the pre filled link</span><input class="in" id="prefill" placeholder="From the form’s Get pre-filled link" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Type the field keys below as the sample answers when you generate the link, and the mapping fills itself.</small></label>
       </div>
       <div class="notice"><b>The thirteen fields.</b> Make one question per field, all “long text” except the first: <code>timestamp</code>, <code>studentName</code>, <code>studentEmail</code>, <code>classCode</code>, <code>teacherEmail</code>, <code>framework</code>, <code>subject</code>, <code>topic</code>, <code>entry</code>, <code>competencies</code>, <code>depth</code>, <code>nextStep</code>, <code>entryId</code>. When you generate the pre-filled link, answer each question with its own key (literally type <code>studentName</code> into the student name question) and paste the link above.</div>
-      <div id="mapTable"></div>
+      <div class="scroll" id="mapTable"></div>
       <div class="row" style="margin-top:8px"><button class="btn sec small" id="testSink">Open a test entry in the form</button><span class="tiny" id="sinkMsg"></span></div>
     </div>
     <div class="card">
@@ -226,7 +232,7 @@ ol.steps li{margin-bottom:8px}
     <div class="card">
       <h2>The competency lens</h2>
       <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social-Emotional Competencies. The app uses MOE’s names so that what students see here matches the SLS 21CC Navigator, EAGLES and syllabus tables. Students tag at most two per entry and place themselves on three levels: tried it, getting there, can teach it. The coach checks whether the writing actually shows the competency, and nudges from task talk (“I finished the worksheet”) to competency talk (“I noticed I was guessing, so I checked the units”).</p>
-      <div id="compList"></div>
+      <div class="scroll" id="compList"></div>
     </div>
     <div class="card">
       <h2>How to run it in a class</h2>
