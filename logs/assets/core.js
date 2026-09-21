@@ -282,7 +282,7 @@ const COACH_SCHEMA = {
             id:{type:'string', enum:COMPETENCY_IDS},
             strength:{type:'string', enum:['glimpse','clear','strong']},
             quote:{type:'string', description:'The student’s exact words, copied verbatim from the entry, under 25 words.'},
-            why:{type:'string', description:'Why these words show this competency, using MOE’s definition, addressed to the student. Under 30 words.'}
+            why:{type:'string', description:'Why these words show this competency, using its definition, addressed to the student. Under 30 words.'}
           }, required:['id','strength','quote','why']}},
         suggested:{type:'array', description:'Up to two ids from the evidence list that the student should tag.', items:{type:'string', enum:COMPETENCY_IDS}},
         tagged_not_shown:{type:'array', description:'Ids the student tagged that the writing does not evidence.', items:{type:'string', enum:COMPETENCY_IDS}},
@@ -319,8 +319,8 @@ function entryForCoach(entry){
   const lines = [`Framework: ${fw.name}. Subject: ${entry.subject || 'unspecified'}. Topic: ${entry.topic || 'unspecified'}.`];
   if (entry.kind === 'act' && entry.feedbackText) lines.push(`The feedback received (from ${entry.feedbackFrom || 'teacher'}): ${entry.feedbackText}`);
   for (const s of fw.steps) for (const q of s.qs) lines.push(`${s.letter}: ${q.q.replace(/<[^>]+>/g,'')}\n${entry.answers[q.id] || '(blank)'}`);
-  const tags = (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l ? l.label : ''})` : null; }).filter(Boolean);
-  lines.push('Competencies the student tagged: ' + (tags.length ? tags.join('; ') : 'none'));
+  const tags = (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} [id ${c.id}] (${l ? l.label : ''})${t.where ? ', the student points to: "' + t.where + '"' : ''}` : null; }).filter(Boolean);
+  lines.push('Competencies the student claims (check each against the words; a claim the student can point to is still only evidenced if the words show it): ' + (tags.length ? tags.join('; ') : 'none'));
   return lines.join('\n\n');
 }
 
@@ -340,7 +340,7 @@ function builtinE21cc(entry){
     const reasoned = REASONS.some(r => bl.includes(r)) || PROCESS.some(x => bl.includes(x));
     // a bare reason word is a glimpse; a specific moment is clear; both together are strong
     const strength = specific && reasoned ? 'strong' : specific ? 'clear' : 'glimpse';
-    const why = (strength === 'strong' ? 'A specific moment, and you say how or why: that is ' : strength === 'clear' ? 'A specific moment in your words shows ' : 'A word points at ') + c.name.toLowerCase() + ', as MOE describes it.';
+    const why = (strength === 'strong' ? 'A specific moment, and you say how or why: that is ' : strength === 'clear' ? 'A specific moment in your words shows ' : 'A word points at ') + c.name.toLowerCase() + '.';
     evidence.push({id:c.id, strength, quote: fragment(best.s, 140), why, _score: hits*2 + (strength==='strong'?3:strength==='clear'?2:1)});
   }
   evidence.sort((x,y) => y._score - x._score);
@@ -378,5 +378,5 @@ function e21ccSummary(x){
   if (!x) return '';
   const nameOf = id => (COMPETENCIES.find(c => c.id === id) || {name:id}).name;
   const ev = (x.evidence||[]).map(e => `${nameOf(e.id)} (${e.strength})`).join(', ');
-  return `Stance: ${STANCES[x.stance] ? STANCES[x.stance].label : x.stance}. Coach saw: ${ev || 'nothing specific yet'}${x.tagged_not_shown && x.tagged_not_shown.length ? '. Tagged but not shown: ' + x.tagged_not_shown.map(nameOf).join(', ') : ''}.`;
+  return `Stance: ${STANCES[x.stance] ? STANCES[x.stance].label : x.stance}. Coach saw: ${ev || 'nothing specific yet'}${x.tagged_not_shown && x.tagged_not_shown.length ? '. Claimed but not shown: ' + x.tagged_not_shown.map(nameOf).join(', ') : ''}.`;
 }

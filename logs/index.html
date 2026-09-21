@@ -95,8 +95,9 @@ textarea{resize:none}
 [data-mood="night"] .sky .sun{opacity:.5}
 
 /* frame */
-.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px) max(16px,env(safe-area-inset-right));min-height:100vh}
-@media (min-width:760px){.app{padding-bottom:40px}}
+.app{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) 28px max(16px,env(safe-area-inset-right))}
+body.composing #app{display:none}
+
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;color:var(--on-bg)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
 .brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em;letter-spacing:.01em}
@@ -109,8 +110,8 @@ textarea{resize:none}
 [data-mood="paper"] .desknav a.on,[data-mood="sunrise"] .desknav a.on{background:rgba(0,12,83,.08)}
 @media (min-width:760px){.desknav{display:flex}}
 
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;min-height:var(--nav-h);display:flex;justify-content:space-around;align-items:stretch;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
-.nav a{min-height:var(--nav-h)}
+.nav{position:static;z-index:1;min-height:56px;display:flex;justify-content:space-around;align-items:stretch;background:var(--card);border-radius:var(--radius-s);box-shadow:var(--shadow);margin:8px 0 12px}
+.nav a{min-height:56px}
 .nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--text-2);font-size:.74em;font-weight:600;min-width:44px}
 .nav a svg{width:24px;height:24px}
 .nav a.on{color:var(--navy)}
@@ -192,9 +193,9 @@ textarea.in{min-height:96px;line-height:1.5}
 .pcard small{color:var(--text-2)}
 
 /* composer */
-.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.sheet .inner{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-left)) calc(120px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-right))}
-.sheet .bar{display:flex;align-items:center;gap:10px;color:var(--on-bg);padding:6px 0 10px;position:sticky;top:0;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);z-index:2}
+.sheet{position:relative;z-index:1;background:transparent}
+.sheet .inner{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-left)) 28px max(16px,env(safe-area-inset-right))}
+.sheet .bar{display:flex;align-items:center;gap:10px;color:var(--on-bg);padding:6px 0 10px;position:sticky;top:0;background:var(--bg);z-index:2}
 .sheet .bar b{font-family:var(--serif);font-size:1.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sheet .bar .iconbtn{color:var(--on-bg)}
 .steps{display:flex;gap:6px;margin:4px 0 14px}
@@ -213,10 +214,10 @@ textarea.in{min-height:96px;line-height:1.5}
 .q{display:block;margin-bottom:16px}
 .q>span{display:block;font-family:var(--serif);font-size:1.12em;color:var(--head);margin-bottom:8px}
 .q .hint{display:block;font-size:.85em;color:var(--text-2);margin-top:6px}
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.dock .inner{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
-.dock .inner .btn{flex:1}
-.dock .inner .btn.ghost{flex:0 0 auto}
+.dock{padding:4px 0 0}
+.dock .inner{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:0 max(16px,env(safe-area-inset-left)) 8px max(16px,env(safe-area-inset-right))}
+.dock .btn{min-height:44px;padding:8px 20px}
+.dock .btn.ghost{color:var(--on-bg)}
 .ring{width:150px;height:150px;margin:0 auto 10px;display:block}
 @media (max-height:700px){.ring{width:104px;height:104px;margin-bottom:6px}.stephead{margin-bottom:8px}.stephead h2{font-size:1.25em}.stephead .kicker{font-size:.72em}.medal{width:44px;height:44px;flex-basis:44px;font-size:1.25em}.steps{margin:2px 0 10px}.sheet .bar{padding-bottom:6px}}
 
@@ -270,6 +271,7 @@ textarea.in{min-height:96px;line-height:1.5}
 .str{font-size:.74em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 9px;border-radius:999px;background:var(--card-3);color:var(--head);white-space:nowrap}
 .str.clear{background:var(--navy);color:#fff}
 .str.strong{background:var(--accent);color:var(--accent-ink)}
+.str.none{background:transparent;border:1px solid var(--line-2);color:var(--text-2)}
 body[data-mood="night"] .str.clear{background:var(--yellow);color:var(--navy)}
 .ask{border-left:3px solid var(--accent);padding-left:10px;font-family:var(--serif);font-size:1.05em;margin:4px 0 0}
 .kick{display:block;font-size:.78em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin-bottom:2px}
@@ -314,28 +316,12 @@ summary{cursor:pointer;font-weight:700;color:var(--head)}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--card-3);padding:1px 5px;border-radius:4px}
 pre{background:var(--card-3);padding:10px;border-radius:var(--radius-s);overflow:auto;font-size:.85em}
 
-/* embedded: framed by a viewer (the claude.ai preview, SLS, an LMS). Fixed bars are
-   unreliable inside frames on iOS, where a frame grows to its content, so in a frame
-   nothing is fixed: the tabs sit at the top and Back and Next follow the questions. */
-body.embedded .nav{position:static;padding-bottom:0;border-top:0;border-radius:var(--radius-s);margin:8px 0 12px;box-shadow:var(--shadow);min-height:56px}
-body.embedded .nav a{min-height:56px}
-body.embedded .desknav{display:none}
-body.embedded .app{padding-bottom:28px;min-height:0}
-body.embedded.composing #app{display:none}
-body.embedded .sheet{position:relative;z-index:1;overflow:visible;min-height:0;overscroll-behavior:auto}
-body.embedded .sheet .bar{position:static;background:transparent}
-body.embedded .sheet .inner{padding-bottom:12px}
-body.embedded .dock{position:static;border-top:0;background:transparent;padding:0}
-body.embedded .dock .inner{padding:0 max(16px,env(safe-area-inset-left)) 28px}
-body.embedded .toast{position:fixed;top:12px;bottom:auto}
-body.embedded{min-height:0}
-body.embedded .sky svg{height:240px;min-height:0}
-body.embedded .dock .btn.ghost{color:var(--on-bg)}
+/* framed by a viewer (the claude.ai preview, an LMS): same layout, only dialogs differ */
 .inline-dlg{border:2px solid var(--accent)}
 
 /* toast + dialog */
-.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
-@media (min-width:760px){.toast{bottom:24px}}
+.toast{position:fixed;left:50%;top:12px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;z-index:50;box-shadow:var(--shadow);max-width:90vw;font-weight:600}
+
 dialog{border:0;border-radius:var(--radius);padding:0;max-width:min(92vw,520px);width:100%;background:var(--card);color:var(--text);box-shadow:var(--shadow)}
 dialog::backdrop{background:rgba(0,12,83,.5)}
 dialog .body{padding:20px}
@@ -598,7 +584,7 @@ function entryText(entry, forTeacher){
   if (entry.kind === 'act' && entry.feedbackText) L.push(`Feedback (${entry.feedbackFrom || 'teacher'}): ${entry.feedbackText}`);
   for (const s of fw.steps) for (const q of s.qs) L.push(`${s.letter} · ${q.q.replace(/<[^>]+>/g,'')}\n${entry.answers[q.id] || '(blank)'}`);
   const tags = (entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean);
-  L.push('Competencies: ' + (tags.length ? tags.join('; ') : 'none tagged'));
+  L.push('Claimed: ' + (tags.length ? tags.join('; ') : 'none'));
   const coach = entry.coach && (entry.coach.ai || entry.coach.builtin);
   if (coach) L.push(`Depth: ${DEPTHS[coach.depth].label}`);
   if (entry.e21cc) L.push(e21ccSummary(entry.e21cc));
@@ -612,7 +598,7 @@ function pushPayload(entry){
     timestamp: new Date().toISOString(), studentName: me.name, studentEmail: me.email, classCode: me.classCode,
     teacherEmail: cls ? cls.teacherEmail || '' : '', framework: entry.kind.toUpperCase(), subject: entry.subject || '', topic: entry.topic || '',
     entry: entryText(entry, false).slice(0, 3900),
-    competencies: ('Tagged: ' + ((entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean).join('; ') || 'none') + (entry.e21cc ? '. ' + e21ccSummary(entry.e21cc) : '')).slice(0, 3900),
+    competencies: ('Claimed: ' + ((entry.competencies||[]).map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `${c.name} (${l?l.label:''})` : ''; }).filter(Boolean).join('; ') || 'none') + (entry.e21cc ? '. ' + e21ccSummary(entry.e21cc) : '')).slice(0, 3900),
     depth: coach ? coach.depth : '', nextStep: (nextStepOf(entry)||'').slice(0,500), entryId: entry.id
   };
 }
@@ -712,10 +698,9 @@ function frame(inner, active){
       <nav class="desknav" aria-label="Sections">${desk}</nav>
       <button class="avatar" aria-label="Settings" onclick="location.hash='#/settings'">${esc(me.prefs.avatar)}</button>
     </header>
-    ${EMBED ? navHtml : ''}
+    ${navHtml}
     <main class="fade">${inner}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>
-    ${EMBED ? '' : navHtml}`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>`;
   scrollTop();
 }
 function scrollTop(){ window.scrollTo(0,0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
@@ -839,11 +824,11 @@ function renderComposer(){
   let body = '', head = '';
   if (i === 0) { head = stepHead(null, 'Before you start', `${fw.tagline}`); body = contextStep(fw); }
   else if (i <= fw.steps.length){ const s = fw.steps[i-1]; head = stepHead(s, `${fw.name} · step ${i} of ${fw.steps.length}`, s.title); body = letterStep(s); }
-  else if (i === fw.steps.length + 1){ head = stepHead(null, 'The competency lens', 'What did this <em>stretch</em>?'); body = lensStep(); }
+  else if (i === fw.steps.length + 1){ head = stepHead(null, 'Your claim', 'Which <em>competency</em> did you use?'); body = lensStep(); }
   else { head = stepHead(null, 'Read it back', 'Your reflection, and a <em>coach</em>'); body = readbackStep(); }
   const last = i === n - 1;
   $('#sheet').innerHTML = `<div class="sheet" role="dialog" aria-label="${fw.name} entry"><div class="inner">
-    <div class="bar"><button class="iconbtn" id="cClose" aria-label="Close">${icon('close')}</button><b class="grow">${fw.tagline}${draft.subject ? ' · ' + esc(draft.subject) : ''}</b><span class="tiny" style="color:inherit;opacity:.7">saved</span></div>
+    <div class="bar"><button class="iconbtn" id="cClose" aria-label="Close">${icon('close')}</button><b class="grow">${fw.name}${draft.subject ? ' · ' + esc(draft.subject) : ''}</b><span class="tiny" style="color:inherit;opacity:.7">saved</span></div>
     <div class="steps" aria-hidden="true">${stepsHtml}</div>
     ${head}
     <div class="card fade">${body}</div>
@@ -859,9 +844,10 @@ function renderComposer(){
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
   $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', debounceSave));
+  $$('[data-where]', $('#sheet')).forEach(inp => inp.addEventListener('input', () => { const t = (draft.competencies||[]).find(x => x.id === inp.dataset.where); if (t) t.where = inp.value.trim(); }));
   wireStep();
   document.body.classList.add('composing');
-  $('.sheet').scrollTo(0,0); if (EMBED){ try{ $('.sheet').scrollIntoView({block:'start'}); }catch{} }
+  scrollTop();
   const first = $('.sheet textarea, .sheet input'); if (first && i > 0 && i <= fw.steps.length && window.innerWidth > 760) first.focus();
 }
 let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(()=>{ collect(); saveDraft(); }, 400); }
@@ -900,13 +886,14 @@ function letterStep(s){
 }
 function lensStep(){
   const all = Object.values(draft.answers).join('\n'); const seen = detectCompetencies(all).slice(0,3).map(x=>x.c.id);
-  const chosen = new Map((draft.competencies||[]).map(t=>[t.id, t.level]));
+  const chosen = new Map((draft.competencies||[]).map(t=>[t.id, t]));
   return `
-    <p class="muted">Most people write about the task. This step is about you: which competency did you actually use? Pick up to two, then say how far along you are. ${seen.length ? 'The ones marked <b>maybe</b> match words in your answers.' : ''}</p>
+    <p class="muted">Make a claim: up to two competencies you believe this entry shows. Then point to where it shows. The coach will look for it in your words, and say honestly whether it is there.</p>
     ${DOMAINS.map(d => `<div class="domain"><h3>${esc(d.name)}</h3><div class="d">${esc(d.blurb)}</div>
-      ${COMPETENCIES.filter(c=>c.d===d.id).map(c => { const on = chosen.has(c.id); const lv = chosen.get(c.id);
-        return `<div class="comp ${on?'on':''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.name)} ${seen.includes(c.id) && !on ? '<span class="tag">maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>${on && c.moe ? `<span class="tiny" style="display:block;margin-top:4px">MOE: ${esc(c.moe)}</span>` : ''}
-          ${on ? `<div class="levels" role="group" aria-label="How far along">${LEVELS.map(l=>`<button type="button" data-l="${l.n}" class="${lv===l.n?'on':''}" title="${esc(l.help)}">${l.label}</button>`).join('')}</div>` : ''}</div>`; }).join('')}
+      ${COMPETENCIES.filter(c=>c.d===d.id).map(c => { const t = chosen.get(c.id); const on = !!t;
+        return `<div class="comp ${on?'on':''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.name)} ${seen.includes(c.id) && !on ? '<span class="tag">maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>
+          ${on ? `<div class="levels" role="group" aria-label="How far along">${LEVELS.map(l=>`<button type="button" data-l="${l.n}" class="${t.level===l.n?'on':''}" title="${esc(l.help)}">${l.label}</button>`).join('')}</div>
+          <label class="f" style="margin:10px 0 0"><span style="font-size:.9em">Where does it show? <small style="display:inline">(a few of your own words, optional)</small></span><input class="in" data-where="${c.id}" value="${esc(t.where||'')}" placeholder="e.g. when I checked both equations before deciding" maxlength="160"></label>` : ''}</div>`; }).join('')}
     </div>`).join('')}`;
 }
 function readbackStep(){
@@ -919,7 +906,7 @@ function readbackStep(){
     <div class="readback">
       <p class="tiny">${esc(draft.subject || fw.name)}${draft.topic ? ' · ' + esc(draft.topic) : ''} · ${fmtDate(Date.now())}</p>
       ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'left blank')}</p></div>`).join('')).join('')}
-      <p>${(draft.competencies||[]).length ? draft.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No competency tagged.</span>'}</p>
+      <p>${(draft.competencies||[]).length ? '<span class="tiny">Your claim: </span>' + draft.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No claim made.</span>'}</p>
     </div>
     <h3 style="margin-top:14px">Coach</h3>
     ${autoEval() ? `<p class="tiny">When you log this, it goes to your class coach (no name, no email) to be read for competencies. You can switch that off in Settings.</p>` : ''}
@@ -948,10 +935,11 @@ function wireStep(){
       const lb = ev.target.closest('[data-l]'); const pick = ev.target.closest('.pick');
       const id = card.dataset.c; const list = draft.competencies || (draft.competencies = []);
       if (lb){ const t = list.find(x=>x.id===id); if (t) t.level = +lb.dataset.l; saveDraft(); renderComposer(); return; }
+      if (ev.target.closest('[data-where]') || ev.target.closest('label')) return;
       if (!pick) return;
       const i = list.findIndex(x=>x.id===id);
       if (i >= 0) list.splice(i,1);
-      else { if (list.length >= 2){ toast('Two is the limit. Depth beats breadth.'); return; } list.push({id, level:2}); }
+      else { if (list.length >= 2){ toast('Two is the limit. Depth beats breadth.'); return; } list.push({id, level:2, where:''}); }
       saveDraft(); renderComposer();
     });
   });
@@ -986,7 +974,7 @@ function renderEntry(idq){
       </div>
       ${e.kind==='act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom||'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
       <div class="readback" style="margin-top:12px">${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p></div>`).join('')).join('')}</div>
-      <p style="margin-top:8px">${(e.competencies||[]).length ? e.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No competency tagged.</span>'}</p>
+      <p style="margin-top:8px">${(e.competencies||[]).length ? '<span class="tiny">Claimed: </span>' + e.competencies.map(t => { const c = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return c ? `<span class="tag">${esc(c.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No claim made.</span>'}</p>
       <div class="row" style="margin-top:6px">
         <button class="btn small" id="eSend">${icon('send')} ${e.pushed ? 'Send again' : 'Send to teacher'}</button>
         <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
@@ -1014,17 +1002,23 @@ function e21ccCard(e, opts={}){
   const x = e.e21cc; if (!x) return '';
   const nameOf = id => COMPETENCIES.find(c => c.id === id);
   const st = STANCES[x.stance] || STANCES.mixed; const pos = x.stance === 'task' ? 0 : x.stance === 'mixed' ? 1 : 2;
-  const tagged = new Set((e.competencies||[]).map(t => t.id));
+  const claims = e.competencies || []; const claimed = new Set(claims.map(t => t.id));
+  const seen = id => (x.evidence||[]).find(v => v.id === id && v.strength !== 'glimpse');
   const who = x.source === 'ai' ? (currentClass() && currentClass().teacherName ? esc(currentClass().teacherName) + '’s coach' : 'Class coach') : 'Built in read';
+  const evidenceItem = (ev, c) => { const sg = STRENGTHS[ev.strength]; return `<span class="str ${ev.strength}">${sg.label}</span>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>`; };
+  const claimRows = claims.map(t => { const c = nameOf(t.id); if (!c) return ''; const l = LEVELS.find(z => z.n === t.level); const ev = seen(t.id);
+    return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.name)}</b><span class="str ${ev ? ev.strength : 'none'}">${ev ? 'Seen · ' + STRENGTHS[ev.strength].label : 'Not seen yet'}</span></div>
+      <small>Your claim: ${l ? l.label.toLowerCase() : 'claimed'}${t.where ? `, and you pointed to “${esc(t.where)}”` : ''}.</small>
+      ${ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : `<small>The words do not show the moment yet. ${esc(c.probe)}</small>`}</li>`; }).join('');
+  const others = (x.evidence||[]).filter(v => !claimed.has(v.id) && v.strength !== 'glimpse');
   return `<section class="card" id="e21cc">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">Competency read</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
     ${opts.error ? `<div class="notice warn">The class coach could not read this one: ${esc(opts.error)} The built in read stands. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>` : ''}
-    <div class="stance"><div class="track"><i class="${pos>=0?'on':''}"></i><i class="${pos>=1?'on':''}"></i><i class="${pos>=2?'on':''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
-    ${x.evidence.length ? `<ul class="evid">${x.evidence.map(ev => { const c = nameOf(ev.id); if (!c) return ''; const sg = STRENGTHS[ev.strength]; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.name)}</b><span class="str ${ev.strength}">${sg.label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${tagged.has(ev.id) ? '<span class="tiny">Tagged.</span>' : ev.strength !== 'glimpse' ? `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Tag it</button>` : ''}</li>`; }).join('')}</ul>`
-      : `<p class="muted">No competency is visible in the words yet. That is normal on a first entry; the coach can only see what is written.</p>`}
-    ${x.tagged_not_shown.length ? `<div class="notice">You tagged ${x.tagged_not_shown.map(id => '<b>' + esc(nameOf(id).name) + '</b>').join(' and ')}, but the writing does not show the moment. Edit the entry and add one line about when it happened, or untag it.</div>` : ''}
-    ${x.probe ? `<div style="margin-top:10px"><span class="kick">Go deeper${nameOf(x.probe_for) ? ' on ' + esc(nameOf(x.probe_for).name) : ''}</span><p class="ask">${esc(x.probe)}</p></div>` : ''}
-    <p class="tiny" style="margin:10px 0 0">Read against MOE’s 21st Century Competencies. Glimpse: a word points here. Clear: a moment in your words. Strong: the moment and the why.${x.source !== 'ai' && aiReady() && !opts.pending && !opts.error && !(e.coach && e.coach.ai) ? ' The class coach has not read this one yet.' : ''}</p>
+    ${claims.length ? `<span class="kick">Your claim, held against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You made no claim this time. Next time, name one competency and point to where it shows; the coach will check.</p>`}
+    ${others.length ? `<span class="kick" style="margin-top:12px">Also seen, not claimed</span><ul class="evid">${others.map(ev => { const c = nameOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.name)}</b>${evidenceItem(ev, c).split('<q>')[0]}</div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small><button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Claim it</button></li>`; }).join('')}</ul>` : ''}
+    <div class="stance" style="margin-top:12px"><div class="track"><i class="${pos>=0?'on':''}"></i><i class="${pos>=1?'on':''}"></i><i class="${pos>=2?'on':''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
+    ${x.probe ? `<div style="margin-top:8px"><span class="kick">Go deeper${nameOf(x.probe_for) ? ' on ' + esc(nameOf(x.probe_for).name) : ''}</span><p class="ask">${esc(x.probe)}</p></div>` : ''}
+    <p class="tiny" style="margin:10px 0 0">Glimpse: a word points here. Clear: a moment in your words. Strong: the moment and the why.${x.source !== 'ai' && aiReady() && !opts.pending && !opts.error && !(e.coach && e.coach.ai) ? ' The class coach has not read this one yet.' : ''}</p>
   </section>`;
 }
 
@@ -1035,6 +1029,7 @@ function renderJourney(){
   const shown = E.filter(e => f==='all' || e.kind===f);
   const byDomain = DOMAINS.map(d => { const ids = COMPETENCIES.filter(c=>c.d===d.id).map(c=>c.id); let n=0, lv=0, k=0, seen=0; for (const e of E){ for (const t of (e.competencies||[])) if (ids.includes(t.id)){ n++; lv += t.level||0; k++; } if (e.e21cc && (e.e21cc.evidence||[]).some(v => ids.includes(v.id) && v.strength !== 'glimpse')) seen++; } return {d, n, seen, avg: k ? lv/k : 0}; });
   const maxN = Math.max(1, ...byDomain.map(x=>Math.max(x.n, x.seen)));
+  let claimsMade = 0, claimsBacked = 0; for (const e of E) for (const t of (e.competencies||[])){ claimsMade++; if (e.e21cc && (e.e21cc.evidence||[]).some(v => v.id === t.id && v.strength !== 'glimpse')) claimsBacked++; }
   const depths = E.slice().reverse().map(e => { const c = e.coach && (e.coach.ai || e.coach.builtin); return c ? (c.depth==='deep'?3:c.depth==='working'?2:1) : 1; });
   const groups = {}; for (const e of shown){ const k = new Date(e.created).toLocaleDateString('en-SG',{month:'long', year:'numeric'}); (groups[k] = groups[k] || []).push(e); }
   const s = streak(E);
@@ -1042,8 +1037,9 @@ function renderJourney(){
     <section class="hero"><h1>Your journey</h1><p class="meta">${E.length} ${E.length===1?'entry':'entries'} · ${E.filter(e=>e.kind==='grow').length} GROW · ${E.filter(e=>e.kind==='act').length} ACT · ${s ? s + ' week' + (s>1?'s':'') + ' in a row' : 'start a streak this week'}</p></section>
     ${E.length >= 2 ? `<section class="card"><h2>Depth over time</h2>${sparkline(depths)}<p class="tiny">Each dot is an entry: base camp, on the climb, ridge view. The line going up matters more than any single dot.</p></section>` : ''}
     <section class="card"><h2>Competencies</h2>
-      <div class="bars">${byDomain.map(x => `<div class="b"><span><span>${esc(x.d.name)}</span><span class="tiny">${x.n ? `${x.n} ${x.n===1?'tag':'tags'} · avg ${x.avg.toFixed(1)}/3` : 'no tags'} · seen in ${x.seen}</span></span><i><b style="width:${Math.round(100*Math.max(x.n, x.seen)/maxN)}%"></b></i></div>`).join('')}</div>
-      <p class="tiny">Tags are what you claimed. “Seen” is where the coach found a clear moment in your words. When the two drift apart, that is worth a conversation.</p>
+      ${claimsMade ? `<p style="font-family:var(--serif);font-size:1.1em;color:var(--head);margin:0 0 10px">Claims backed by your own words: ${claimsBacked} of ${claimsMade}.</p>` : ''}
+      <div class="bars">${byDomain.map(x => `<div class="b"><span><span>${esc(x.d.name)}</span><span class="tiny">${x.n ? `${x.n} ${x.n===1?'claim':'claims'}` : 'no claims'} · seen in ${x.seen}</span></span><i><b style="width:${Math.round(100*Math.max(x.n, x.seen)/maxN)}%"></b></i></div>`).join('')}</div>
+      <p class="tiny">Claims are what you said you used. “Seen” is where the coach found a clear moment in your words. The gap between the two is the interesting part.</p>
       ${topCompetencies(E)}
       <p class="tiny">${E.length ? 'An empty domain is not a failure; it is a place you have not looked yet. Try tagging one next time.' : 'Tag a competency on your next entry and this fills in.'}</p>
     </section>

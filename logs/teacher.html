@@ -231,7 +231,7 @@ ol.steps li{margin-bottom:8px}
     </div>
     <div class="card">
       <h2>The competency lens</h2>
-      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social-Emotional Competencies. The app uses MOE’s names so that what students see here matches the SLS 21CC Navigator, EAGLES and syllabus tables. Students tag at most two per entry and place themselves on three levels: tried it, getting there, can teach it. The coach checks whether the writing actually shows the competency, and nudges from task talk (“I finished the worksheet”) to competency talk (“I noticed I was guessing, so I checked the units”).</p>
+      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social-Emotional Competencies. The app uses MOE’s names so that what students see here matches the SLS 21CC Navigator, EAGLES and syllabus tables. Students claim at most two per entry, place themselves on three levels (tried it, getting there, can teach it) and can point to where it shows. The coach then holds the claim against the words, and nudges from task talk (“I finished the worksheet”) to competency talk (“I noticed I was guessing, so I checked the units”).</p>
       <div class="scroll" id="compList"></div>
     </div>
     <div class="card">
@@ -419,7 +419,7 @@ $('#csv').onclick = () => {
 };
 
 /* ---------- guide ---------- */
-$('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d.name)}</h3><p class="tiny">MOE: ${esc(d.moe)}</p><table><tbody>${COMPETENCIES.filter(c=>c.d===d.id).map(c => `<tr><td style="width:32%"><b>${esc(c.name)}</b><br><span class="tiny">${esc(c.plain)}</span></td><td class="tiny">${c.moe ? 'MOE: ' + esc(c.moe) : ''}<br><i>Coach probe: ${esc(c.probe)}</i></td></tr>`).join('')}</tbody></table>`).join('');
+$('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d.name)}</h3><p class="tiny">${esc(d.blurb)}</p><table><tbody>${COMPETENCIES.filter(c=>c.d===d.id).map(c => `<tr><td style="width:32%"><b>${esc(c.name)}</b></td><td class="tiny">${esc(c.plain)}<br><i>Coach probe: ${esc(c.probe)}</i></td></tr>`).join('')}</tbody></table>`).join('');
 
 /* boot */
 cur = (store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank();
