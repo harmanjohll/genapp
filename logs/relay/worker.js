@@ -1,5 +1,5 @@
 /**
- * Learning Log coach relay: a Cloudflare Worker that holds the school's
+ * Competency Development Log coach relay: a Cloudflare Worker that holds the school's
  * Anthropic API key so students never do. Deploy once per school (or per
  * department); rotate CLASS_TOKENS every term.
  *
@@ -9,9 +9,16 @@
  * Variables (wrangler.toml [vars]):
  *   ALLOWED_ORIGINS     comma separated page origins, e.g. https://harmanjohll.github.io
  *   MODEL               default model when the page does not name an allowed one
- * Optional binding: LIMITER (rate limit binding, see wrangler.toml)
+ * Optional bindings (see wrangler.toml):
+ *   LIMITER             per student throttle, keyed on class token plus the
+ *                       x-student tag (a one way hash the app sends; never an
+ *                       email). Without a tag it falls back to the IP address.
+ *   LIMITER_IP          a looser backstop per IP address, so a script cannot
+ *                       dodge the per student throttle by inventing tags.
+ * A whole class on school wifi shares one IP address, which is why the main
+ * throttle is per student, not per IP.
  *
- * The Worker forwards only requests that look like the Learning Log coach
+ * The Worker forwards only requests that look like the coach
  * request (the app's system prompt marker, one user message, capped
  * max_tokens, an allowed model) and returns Anthropic's JSON unchanged, so
  * the page code is identical whether a key or a relay is used.
@@ -25,7 +32,7 @@ export default {
     const allowed = (env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
     const cors = {
       'Access-Control-Allow-Origin': allowed.length === 0 || allowed.includes(origin) ? (origin || '*') : 'null',
-      'Access-Control-Allow-Headers': 'content-type, x-class-token, x-class-code',
+      'Access-Control-Allow-Headers': 'content-type, x-class-token, x-class-code, x-student',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Vary': 'Origin'
     };
@@ -38,15 +45,22 @@ export default {
     const tokens = (env.CLASS_TOKENS || '').split(',').map(s => s.trim()).filter(Boolean);
     if (!token || !tokens.includes(token)) return json({ error: 'class token not recognised' }, 403);
 
+    const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+    const student = req.headers.get('x-student') || '';
+    if (student && !/^[a-f0-9]{32}$/.test(student)) return json({ error: 'bad student tag' }, 400);
+    if (env.LIMITER_IP) {
+      const { success } = await env.LIMITER_IP.limit({ key: 'ip:' + ip });
+      if (!success) return json({ error: 'too many requests from this network, wait a minute' }, 429);
+    }
     if (env.LIMITER) {
-      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
-      const { success } = await env.LIMITER.limit({ key: token + ':' + ip });
+      const { success } = await env.LIMITER.limit({ key: token + ':' + (student || 'ip:' + ip) });
       if (!success) return json({ error: 'too many requests, wait a minute' }, 429);
     }
 
     let body;
     try { body = await req.json(); } catch { return json({ error: 'bad json' }, 400); }
     if (typeof body.system !== 'string' || !body.system.startsWith(MARKER)) return json({ error: 'not a coach request' }, 400);
+    if (body.system.length > 24000) return json({ error: 'system prompt too long' }, 400);
     if (!Array.isArray(body.messages) || body.messages.length !== 1 || body.messages[0].role !== 'user') return json({ error: 'one user message only' }, 400);
     if (typeof body.messages[0].content !== 'string' || body.messages[0].content.length > 12000) return json({ error: 'entry too long' }, 400);
     body.model = ALLOWED_MODELS.includes(body.model) ? body.model : (env.MODEL || 'claude-opus-5');
