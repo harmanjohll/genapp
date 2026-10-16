@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000C53">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<title>Learning Log · Teacher console</title>
+<title>Competency Development Log · Teacher console</title>
 <link rel="icon" href="assets/crest.png">
 <style>
 @font-face{font-family:'Literata';src:url(assets/fonts/literata-var-latin.woff2) format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
@@ -87,26 +87,111 @@ ol.steps li{margin-bottom:8px}
 .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:8px 0 14px}
 .kpi div{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px}
 .kpi b{display:block;font-family:var(--serif);font-size:1.4em;color:var(--navy)} .kpi span{font-size:.8em;color:var(--text-2)}
+
+/* ---------- Competency Development Log console ---------- */
+.brand .word{line-height:1.15}
+.tabs{position:sticky;top:0;background:var(--bg);z-index:5}
+.badge{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--red);color:#fff;font-size:.78em;font-weight:700;text-align:center;margin-left:4px}
+.items{list-style:none;margin:0;padding:0}
+.item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:12px 4px;color:var(--text)}
+.item:first-child{border-top:0}
+.item:hover{background:var(--card-2)}
+.item.open{background:var(--card-3)}
+.item .k{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;color:#fff;background:var(--navy)}
+.item .k.act{background:var(--red)} .item .k.across{background:var(--yellow);color:var(--navy)} .item .k.basket{background:var(--card-3);color:var(--navy);border:2px solid var(--navy)}
+.item b{display:block;font-family:var(--serif);color:var(--navy)}
+.item small{display:block;color:var(--text-2)}
+.item .new{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:0 8px;font-size:.75em;font-weight:700;margin-left:6px;vertical-align:1px}
+.reader{border:2px solid var(--navy);border-radius:var(--radius);padding:16px;margin:8px 0 16px;background:#fff}
+.reader h2{margin-bottom:2px}
+.qa-row{margin:0 0 12px}
+.qa-row .qa{margin:0}
+.notebtn{border:0;background:transparent;color:var(--navy);font-weight:700;font-size:.85em;text-decoration:underline;padding:4px 0;min-height:36px}
+.mnote{border-left:3px solid var(--red);background:var(--card-2);padding:8px 12px;margin:6px 0;border-radius:0 var(--radius-s) var(--radius-s) 0}
+.mnote.pending{border-left-style:dashed}
+.mnote .by{display:block;font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2)}
+.mnote p{margin:2px 0 0;font-family:var(--serif);font-style:italic;color:#B3141A;white-space:pre-wrap}
+.mnote .x{border:0;background:transparent;color:var(--text-2);font-size:.8em;text-decoration:underline;padding:2px 0}
+.noteedit textarea{min-height:70px}
+@media (min-width:900px){.qa-row{display:grid;grid-template-columns:minmax(0,1fr) 260px;column-gap:20px;align-items:start}.qa-row .side{grid-column:2}.qa-row .mnote{margin-top:0}}
+.read{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px;margin:10px 0}
+.read q{display:block;font-family:var(--serif);font-style:italic;margin:2px 0;quotes:"“" "”"}
+.str{font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--card-3);color:var(--navy);white-space:nowrap}
+.str.clear{background:var(--navy);color:#fff} .str.strong{background:var(--yellow);color:var(--navy)}
+.st{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.st .mark{width:14px;height:14px;flex:0 0 14px;border-radius:50%;border:2px solid var(--g4);margin-top:5px}
+.st.linked .mark{border-color:var(--navy);background:linear-gradient(90deg,var(--navy) 50%,transparent 50%)}
+.st.lit .mark{border-color:var(--navy);background:var(--yellow)}
+.gridtable td,.gridtable th{text-align:center;white-space:nowrap}
+.gridtable td:first-child,.gridtable th:first-child{text-align:left;position:sticky;left:0;background:#fff;white-space:normal;min-width:120px}
+.cell0{color:var(--g5)}
+.lit{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 2px var(--navy);margin-left:4px;vertical-align:0}
+.students{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.scard{border:2px solid var(--line);border-radius:var(--radius-s);background:#fff;padding:10px 12px;text-align:left;min-height:64px}
+.scard.on{border-color:var(--navy);background:var(--card-3)}
+.scard b{display:block;font-family:var(--serif);color:var(--navy)}
+.scard small{color:var(--text-2)}
+.dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
+.dlg .box{background:#fff;border-radius:var(--radius);padding:20px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
-    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">Learning Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
+    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">Competency Development Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
     <span class="tiny">Everything on this page stays in your browser until you download or copy it.</span>
   </header>
   <nav class="tabs" aria-label="Sections">
-    <button data-tab="setup" class="on">Set up a class</button>
-    <button data-tab="dropbox">Drop box and monitoring</button>
-    <button data-tab="review">Review student exports</button>
+    <button data-tab="inbox" class="on">Inbox<span class="badge" id="newBadge" hidden></span></button>
+    <button data-tab="grid">Class grid</button>
+    <button data-tab="students">Students</button>
+    <button data-tab="setup">Set up</button>
     <button data-tab="guide">Guide</button>
   </nav>
 
-  <!-- ============ SET UP ============ -->
-  <section id="tab-setup">
+  <!-- ============ INBOX ============ -->
+  <section id="tab-inbox" data-tab="inbox">
     <div class="card">
-      <h1>A class file is a small JSON document.</h1>
-      <p class="muted">It carries your name and email, the subject, your coach voice, your success criteria, and where entries should go. Students load it by typing the class code (if the file is published in <code>logs/classes/</code>) or by opening the share link you give them. Nothing here is sent anywhere by this page.</p>
+      <h1>What students shared with you.</h1>
+      <p class="muted">Paste rows from your form’s Excel sheet, drop exported files, or open a link a student sent you in Teams. Each student chose to share these sections with you. Read, then write a note in the margin; notes go back by a link you send in Teams.</p>
+      <label class="f"><span>Paste from Excel</span><textarea class="in" id="paste" placeholder="Select the rows in the workbook (Ctrl A is fine), copy, and paste here."></textarea></label>
+      <div class="row"><button class="btn" id="pasteGo">Add to Inbox</button><label class="btn sec" for="inFiles">Add files<input type="file" id="inFiles" accept=".json,.csv,application/json,text/csv" multiple hidden></label><span class="tiny" id="pasteMsg"></span></div>
+      <div class="drop" id="drop" style="margin-top:12px">Or drop exported <code>.json</code> logs and <code>.csv</code> sheets here.</div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">Inbox</h2>
+        <div class="row"><select class="in" id="fGroup" style="width:auto"></select><select class="in" id="fShow" style="width:auto"><option value="new">New first</option><option value="all">Newest first</option></select></div></div>
+      <details style="margin-top:10px"><summary>Sign your notes as</summary>
+        <div class="two" style="margin-top:8px"><label class="f"><span>Name</span><input class="in" id="meName" placeholder="e.g. Ms Lim"></label><label class="f"><span>Role</span><input class="in" id="meRole" placeholder="e.g. Subject teacher"></label></div></details>
+      <ul class="items" id="inboxList"></ul>
+    </div>
+  </section>
+
+  <!-- ============ CLASS GRID ============ -->
+  <section id="tab-grid" data-tab="grid" hidden>
+    <div class="card">
+      <h1>The class at a glance.</h1>
+      <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. A basket shows lit statements out of all, when the student shared that basket; otherwise the number of their shared entries filed there.</p>
+      <div class="row" style="margin-bottom:10px"><select class="in" id="gGroup" style="width:auto"></select><button class="btn sec small" id="gCsv">Download CSV</button></div>
+      <div class="scroll" id="gridTable"></div>
+    </div>
+  </section>
+
+  <!-- ============ STUDENTS ============ -->
+  <section id="tab-students" data-tab="students" hidden>
+    <div class="card">
+      <h1>One student at a time.</h1>
+      <p class="muted">Everything a student has shared with you, newest first. Useful before a mentoring conversation or a parent meeting.</p>
+      <div class="students" id="studentCards"></div>
+    </div>
+    <div class="card" id="studentView" hidden></div>
+  </section>
+
+  <!-- ============ SET UP ============ -->
+  <section id="tab-setup" data-tab="setup" hidden>
+    <div class="card">
+      <h1>A group file is a small JSON document.</h1>
+      <p class="muted">One per class or CCA you teach. It carries your name and email, the subject or activity, your coach voice, your success criteria, and where students’ shared entries should go. Students load it by typing the code (if the file is published in <code>logs/classes/</code>) or by opening the share link you give them. A student can belong to several groups. Nothing here is sent anywhere by this page.</p>
       <div class="classes" id="classList"></div>
       <div class="row"><button class="btn small sec" id="newClass">New class</button><label class="btn small sec" for="loadClass">Open a class file<input type="file" id="loadClass" accept=".json,application/json" hidden></label><button class="btn small danger" id="delClass">Forget this class on this device</button></div>
     </div>
@@ -116,11 +201,20 @@ ol.steps li{margin-bottom:8px}
           <h2>Class</h2>
           <div class="two">
             <label class="f"><span>Class code</span><input class="in" id="code" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>Short, no spaces. Students type this once.</small></label>
+            <label class="f"><span>Kind of group</span><select class="in" id="type"><option value="subject">Subject class</option><option value="form">Form class</option><option value="cca">CCA</option><option value="other">Other</option></select><small>Students see you as their subject teacher, form teacher or CCA teacher.</small></label>
             <label class="f"><span>Level</span><input class="in" id="level" placeholder="e.g. Sec 2 Express"></label>
             <label class="f"><span>Your name (as students say it)</span><input class="in" id="teacherName" placeholder="e.g. Mr Tan"></label>
             <label class="f"><span>Your school email</span><input class="in" id="teacherEmail" type="email" inputmode="email" placeholder="name@moe.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Used to filter your students in the drop box sheet.</small></label>
-            <label class="f"><span>Subject</span><input class="in" id="subject" placeholder="e.g. Mathematics"></label>
-            <label class="f"><span>Other subjects you teach this class</span><input class="in" id="subjects" placeholder="comma separated, optional"></label>
+            <label class="f"><span>Subject or activity</span><input class="in" id="subject" placeholder="e.g. Mathematics, or Football"></label>
+            <label class="f"><span>Other subjects you teach this group</span><input class="in" id="subjects" placeholder="comma separated, optional"></label>
+          </div>
+        </div>
+        <div class="card" id="formOnly">
+          <h2>I can statements (form class only)</h2>
+          <p class="muted">The form class decides which statement set a student sees, and at which level band. Leave blank for the school’s default set.</p>
+          <div class="two">
+            <label class="f"><span>Statement set</span><input class="in" id="statements" placeholder="default" autocapitalize="none" autocorrect="off" spellcheck="false"><small>The name of a file in <code>logs/statements/</code>, without <code>.json</code>.</small></label>
+            <label class="f"><span>Level band</span><input class="in" id="band" placeholder="e.g. lower" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Only for a banded set: the band id, such as <code>lower</code> or <code>upper</code>.</small></label>
           </div>
         </div>
         <div class="card">
@@ -138,7 +232,8 @@ ol.steps li{margin-bottom:8px}
           <p class="muted">Without this, students get the built in coach (offline, rule based). With it, they also get Claude in your voice. Set up the relay once per school: see <a href="relay/README.md">relay/README.md</a>. Students never hold a key.</p>
           <div class="two">
             <label class="f"><span>Relay URL</span><input class="in" id="relayUrl" placeholder="https://learning-log-coach.….workers.dev"></label>
-            <label class="f"><span>Class token</span><input class="in" id="relayToken" placeholder="e.g. 2E3-MATH-bee7"><small>Anyone with the class file can read this, so rotate it each term.</small></label>
+            <label class="f"><span>Class token</span><input class="in" id="relayToken" placeholder="e.g. 2E3-MATH-bee7"><small>Anyone with the group file can read this, so rotate it each term.</small></label>
+            <label class="f"><span>Coach reads per student per day</span><input class="in" id="relayDaily" type="number" min="1" max="50" inputmode="numeric" placeholder="8"><small>Each read costs the school about 1.7 cents on Opus 5. A second read of the same words never happens.</small></label>
           </div>
         </div>
       </div>
@@ -153,7 +248,7 @@ ol.steps li{margin-bottom:8px}
         <div class="card">
           <h2>Give it to students</h2>
           <div class="row">
-            <button class="btn" id="dlJson">Download class file</button>
+            <button class="btn" id="dlJson">Download group file</button>
             <button class="btn sec" id="copyLink">Copy share link</button>
             <button class="btn sec" id="copyNote">Copy student instructions</button>
           </div>
@@ -165,10 +260,10 @@ ol.steps li{margin-bottom:8px}
   </section>
 
   <!-- ============ DROP BOX ============ -->
-  <section id="tab-dropbox" hidden>
+  <section id="tab-dropbox" data-tab="setup" hidden>
     <div class="card">
-      <h1>Where entries go.</h1>
-      <p class="muted">Students’ logs live on their devices. Monitoring means giving each entry a place to land that you can open. There is no server here, so the landing place is a form you own, with a spreadsheet behind it.</p>
+      <h1>Where shared entries land.</h1>
+      <p class="muted">Students’ logs live on their devices, and nothing reaches you until a student shares a section with you and presses Send. The landing place is a form you own, with a spreadsheet behind it; paste its rows into the Inbox to read them here. Without a form, students send you a link in Teams that opens straight in your Inbox.</p>
       <div class="two">
         <div class="card flat"><h3>Microsoft Form → Excel in OneDrive (recommended)</h3><p class="tiny">Fits MOE staff accounts: your form, your OneDrive, no scripts. The app opens your form with the entry already filled in; the student presses Submit once. Responses land in an Excel workbook in your OneDrive (open it in Excel for the web to refresh). Filter by your email or class code. Limit: 4,000 characters per answer.</p></div>
         <div class="card flat"><h3>Google Form → Sheet</h3><p class="tiny">Silent submit, no extra tap. Needs the form set to accept responses from outside the organisation (iCON forms default to sign in), which also means the endpoint is public. Fine for a pilot; less good for a whole school.</p></div>
@@ -184,7 +279,7 @@ ol.steps li{margin-bottom:8px}
         <label class="f"><span>Drop box type</span><select class="in" id="sinkKind"><option value="none">None (copy and paste)</option><option value="msforms">Microsoft Form (one tap to submit)</option><option value="gforms">Google Form (silent submit)</option></select></label>
         <label class="f"><span>Paste the pre filled link</span><input class="in" id="prefill" placeholder="From the form’s Get pre-filled link" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Type the field keys below as the sample answers when you generate the link, and the mapping fills itself.</small></label>
       </div>
-      <div class="notice"><b>The thirteen fields.</b> Make one question per field, all “long text” except the first: <code>timestamp</code>, <code>studentName</code>, <code>studentEmail</code>, <code>classCode</code>, <code>teacherEmail</code>, <code>framework</code>, <code>subject</code>, <code>topic</code>, <code>entry</code>, <code>competencies</code>, <code>depth</code>, <code>nextStep</code>, <code>entryId</code>. When you generate the pre-filled link, answer each question with its own key (literally type <code>studentName</code> into the student name question) and paste the link above.</div>
+      <div class="notice"><b>The eighteen fields.</b> Make one question per field, titled with its key: <code>timestamp</code>, <code>studentName</code>, <code>studentEmail</code>, <code>classCode</code>, <code>teacherEmail</code>, <code>framework</code>, <code>subject</code>, <code>topic</code>, <code>entry</code>, <code>competencies</code>, <code>depth</code>, <code>nextStep</code>, <code>entryId</code>, <code>context</code>, <code>section</code>, then last and in this order <code>payload1</code>, <code>payload2</code>, <code>payload3</code>. The three payload answers carry the whole entry, compressed, so the Inbox can rebuild it with the coach’s read. When you generate the pre filled link, answer each question with its own key (literally type <code>studentName</code> into the student name question) and paste the link above. A form made for the Learning Log with thirteen fields still works; add the five new ones to get the full entry in your Inbox.</div>
       <div class="scroll" id="mapTable"></div>
       <div class="row" style="margin-top:8px"><button class="btn sec small" id="testSink">Open a test entry in the form</button><span class="tiny" id="sinkMsg"></span></div>
     </div>
@@ -192,64 +287,57 @@ ol.steps li{margin-bottom:8px}
       <h2>Set up the Microsoft Form (once, about 15 minutes)</h2>
       <ol class="steps">
         <li>Sign in at <code>forms.office.com</code> with your MOE account (or open Forms from OneDrive so the workbook is created next to it). New form, title it <i>Learning Log drop box: [your name]</i>.</li>
-        <li>Add thirteen questions in the order above. Use <b>Text</b> with <b>Long answer</b> on for <code>entry</code>, <code>competencies</code> and <code>nextStep</code>; plain text for the rest. Make none of them required except <code>studentEmail</code> and <code>entry</code>.</li>
+        <li>Add eighteen questions in the order above. Use <b>Text</b> with <b>Long answer</b> on for <code>entry</code>, <code>competencies</code>, <code>nextStep</code> and the three <code>payload</code> questions; plain text for the rest. Make none of them required except <code>studentEmail</code>.</li>
         <li>Settings: <b>Anyone can respond</b>. Sign in is off, so students on iCON can submit without a Microsoft account. Turn off “Record name”.</li>
         <li>Top right <b>…</b> → <b>Get pre-filled URL</b> → switch on <b>Enable pre-filled answers</b>, type each field key into its own question, then <b>Get pre-filled link</b>. Paste that link above. The mapping table fills itself.</li>
         <li><b>Responses</b> → <b>Open results in Excel</b>. That workbook lives in your OneDrive and updates when you open it in Excel for the web. Add a filter on <code>teacherEmail</code> or <code>classCode</code>.</li>
-        <li>Download the class file on the first tab (the mapping is inside it) and give students the code or link.</li>
+        <li>Download the group file above (the mapping is inside it) and give students the code or link.</li>
+        <li>To read: open the workbook, select the rows you want (or press Ctrl A), copy, and paste into the Inbox here. Rows you have already read are skipped.</li>
       </ol>
       <p class="tiny">Whole school later: one shared form owned by a department account, and a Power Automate flow (Forms trigger → “Add a row into a table”, both standard connectors on an education licence) that routes each response to the right teacher’s workbook by <code>teacherEmail</code>. The HTTP trigger is premium, which is why the page cannot call a flow directly.</p>
     </div>
     <div class="card">
       <h2>Google Form alternative</h2>
       <ol class="steps">
-        <li>Create the form with the same thirteen questions (Paragraph type). Responses → link to a Sheet.</li>
+        <li>Create the form with the same eighteen questions (Paragraph type). Responses, then link to a Sheet.</li>
         <li>Settings → Responses: turn <b>off</b> “Restrict to users in … and trusted organisations” and “Collect email addresses”. Without this the silent submit is rejected.</li>
         <li>⋮ → <b>Get pre-filled link</b>: type the field keys as the answers, copy the link, paste it above. The <code>entry.NNN</code> ids are read from it.</li>
       </ol>
     </div>
   </section>
 
-  <!-- ============ REVIEW ============ -->
-  <section id="tab-review" hidden>
-    <div class="card">
-      <h1>Read what they wrote.</h1>
-      <p class="muted">Drop student export files here (from Settings → Export log in the student app). Files stay in this browser. Filter, read, and export a CSV for Excel.</p>
-      <div class="drop" id="drop">Drop exported <code>.json</code> files here, or <label for="reviewFiles" style="text-decoration:underline;cursor:pointer">choose files</label>.<input type="file" id="reviewFiles" accept=".json,application/json" multiple hidden></div>
-      <div class="row" style="margin-top:10px"><select class="in" id="fStudent" style="width:auto;min-width:200px"><option value="">All students</option></select><select class="in" id="fKind" style="width:auto"><option value="">GROW and ACT</option><option value="grow">GROW only</option><option value="act">ACT only</option></select><select class="in" id="fComp" style="width:auto"><option value="">Any competency</option></select><button class="btn sec small" id="csv">Export CSV</button><button class="btn sec small" id="clearReview">Clear</button></div>
-      <div class="kpi" id="kpi"></div>
-      <div id="reviewList"></div>
-    </div>
-  </section>
-
   <!-- ============ GUIDE ============ -->
-  <section id="tab-guide" hidden>
+  <section id="tab-guide" data-tab="guide" hidden>
     <div class="card">
-      <h1>What this is, in five lines.</h1>
-      <p>A personal learning log for Beattyians. Two frameworks from our own slides: <b>GROW by reflecting</b> after a lesson (Gift, Rise, Own, Watch) and <b>ACT on Feedback</b> (Acknowledge, Connect, Test). The guiding questions are quoted verbatim and every entry answers them. A competency lens then asks: which of MOE’s 21st Century Competencies did this stretch? A coach reads the entry: the built in one offline, and optionally Claude in your voice.</p>
-      <p>Everything a student writes stays on their device unless they press Send (to your form) or Export (a file). There is no database and no login; a name, a class code and an optional PIN for shared laptops.</p>
+      <h1>What this is, in six lines.</h1>
+      <p>A Competency Development Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach holds the claim against the student’s own words.</p>
+      <p>Entries file themselves into four baskets, MOE’s three 21st Century Competencies domains and the Social and Emotional Competencies. Each basket holds I can statements that light only when a linked entry’s words back them. Once a term, students look across a basket.</p>
+      <p>The log lives on the student’s device. You see a section only when the student opens it to you and presses Send. You reply in the margin.</p>
+    </div>
+    <div class="card">
+      <h2>How to run it with a class</h2>
+      <ol class="steps">
+        <li><b>Set up once.</b> Make a group file (Set up). Connect a Microsoft Form if you want entries in Excel; without one, students send you a link in Teams.</li>
+        <li><b>Week 1.</b> Give the code or link. Ten minutes in class: everyone writes one GROW on today’s lesson, then opens Sharing and turns on the sections you ask for (for a subject class, usually GROW and ACT).</li>
+        <li><b>Rhythm.</b> One GROW a week after a chosen lesson or session; one ACT whenever a marked piece returns. Short and frequent survives the exam term.</li>
+        <li><b>Read.</b> Paste the new rows into the Inbox before the next lesson. Look for two things: the next step, and whether the claimed competency has a moment behind it.</li>
+        <li><b>Reply.</b> One note in the margin beats a paragraph at the end. Then Send notes: the link opens in the student’s log, beside the paragraph you wrote on.</li>
+        <li><b>End of term.</b> Ask for a look across one basket. Form teachers: the Class grid shows which baskets are still empty.</li>
+      </ol>
     </div>
     <div class="card">
       <h2>The competency lens</h2>
-      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social-Emotional Competencies. The app uses MOE’s names so that what students see here matches the SLS 21CC Navigator, EAGLES and syllabus tables. Students claim at most two per entry, place themselves on three levels (tried it, getting there, can teach it) and can point to where it shows. The coach then holds the claim against the words, and nudges from task talk (“I finished the worksheet”) to competency talk (“I noticed I was guessing, so I checked the units”).</p>
+      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social and Emotional Competencies. Students claim at most two per entry, place themselves on three levels (tried it, getting there, can teach it) and point to where it shows.</p>
       <div class="scroll" id="compList"></div>
-    </div>
-    <div class="card">
-      <h2>How to run it in a class</h2>
-      <ol class="steps">
-        <li><b>Week 1.</b> Give the code or link. Ten minutes in class: everyone writes one GROW entry on today’s lesson. Read two aloud (with permission). Point at the coach’s “answer this now” question.</li>
-        <li><b>Rhythm.</b> One GROW a week after a chosen lesson; one ACT every time a marked piece returns. Short and frequent survives the exam term; long and monthly does not.</li>
-        <li><b>Your reading.</b> Open the Excel workbook (or the Review tab) before the next lesson. You are looking for two things: the next step they wrote, and whether they named a competency with a moment behind it.</li>
-        <li><b>Close the loop.</b> Mention one student’s next step in class, anonymised. Tick yours. Students tick theirs on the Today screen.</li>
-      </ol>
     </div>
     <div class="card">
       <h2>Privacy and safety notes</h2>
       <ul>
-        <li>The AI coach never receives the student’s name or email; it receives the entry text, the subject and your class file.</li>
-        <li>Students do not create accounts anywhere. The three main AI providers require account holders to be 18 or older, which is why the relay exists.</li>
-        <li>The PIN is a courtesy lock for shared devices, not security. Reflections can be personal; treat exports as you would a student’s journal.</li>
-        <li>A cleared browser loses the log. Remind students to export at the end of each term; the export imports back into any device.</li>
+        <li>The AI coach never receives the student’s name or email; it receives the entry text, the context and the group file’s voice.</li>
+        <li>Students do not create accounts anywhere. The three main AI providers require account holders to be 18 or older, which is why the school relay holds the key.</li>
+        <li>Share links and note links carry the text itself. Send them only to the person they are for, in Teams or school email. Note links only open in the log of the student whose email they were made for.</li>
+        <li>The PIN is a courtesy lock for shared devices, not security. Reflections can be personal; treat pasted rows and exports as you would a student’s journal, and clear old items from this browser.</li>
+        <li>A cleared browser loses a student’s log. Remind students to export at the end of each term; the export imports back into any device.</li>
       </ul>
     </div>
     <img class="band" src="assets/footer-band.jpg" alt="Beatty Secondary School">
@@ -258,21 +346,294 @@ ol.steps li{margin-bottom:8px}
   <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</footer>
 </div>
 <div id="toast" class="toast" hidden role="status"></div>
+<div id="dlg" class="dlg" hidden><div class="box" id="dlgBox" role="dialog" aria-modal="true"></div></div>
 
 <script src="assets/core.js"></script>
+<script src="assets/store.js"></script>
 <script>
 'use strict';
-const $ = (s, el=document) => el.querySelector(s);
-const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
-function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toast(m){ const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true, 2600); }
-const FIELDS = ['timestamp','studentName','studentEmail','classCode','teacherEmail','framework','subject','topic','entry','competencies','depth','nextStep','entryId'];
-const KEY = 'logs.teacher.v1';
-let store = load(); let cur = null;
-function load(){ try{ return Object.assign({classes:{}, current:null}, JSON.parse(localStorage.getItem(KEY)||'null')||{}); }catch{ return {classes:{}, current:null}; } }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{} }
-function blank(){ return {code:'', level:'', teacherName:'', teacherEmail:'', subject:'', subjects:[], voice:{tone:'', phrases:[], avoid:[], sample:''}, knowledge:'', criteria:[], relay:{url:'', token:''}, sink:{kind:'none', url:'', fields:{}}}; }
-const SAMPLE = `G1: I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at exactly one point.
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c])); }
+function toast(m, ms = 2800){ const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, ms); }
+function plural(n, one, many){ return `${n} ${n === 1 ? one : (many || one + 's')}`; }
+function fmtDay(t){ return new Date(t).toLocaleDateString('en-SG', {weekday:'short', day:'numeric', month:'short'}); }
+function fmtDate(t){ return new Date(t).toLocaleDateString('en-SG', {day:'numeric', month:'short', year:'numeric'}); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function dialog(html){ $('#dlgBox').innerHTML = html; $('#dlg').hidden = false; }
+function closeDialog(){ $('#dlg').hidden = true; }
+$('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeDialog(); });
+const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teacher', other:'Teacher'};
+
+/* ---------- store: this browser only ---------- */
+const KEY = 'logs.teacher.v2', OLD_KEY = 'logs.teacher.v1';
+function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}}; }
+function load(){
+  try{
+    const v2 = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v2) return Object.assign(blankStore(), v2);
+    const v1 = JSON.parse(localStorage.getItem(OLD_KEY) || 'null'); const s = blankStore(); if (v1){ s.classes = v1.classes || {}; s.current = v1.current || null; } return s;
+  }catch{ return blankStore(); }
+}
+let store = load(); let cur = null; let openKey = null; let studentSel = null;
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{ toast('This browser is full. Download a CSV, then clear old items.'); } }
+function blank(){ return {code:'', type:'subject', level:'', teacherName:'', teacherEmail:'', subject:'', subjects:[], statements:'', band:'', voice:{tone:'', phrases:[], avoid:[], sample:''}, knowledge:'', criteria:[], relay:{url:'', token:'', daily:''}, sink:{kind:'none', url:'', fields:{}}}; }
+
+/* ---------- tabs ---------- */
+function showTab(t){ $$('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.tab === t)); $$('section[data-tab]').forEach(s => s.hidden = s.dataset.tab !== t); if (t === 'grid') renderGrid(); if (t === 'students') renderStudents(); if (t === 'inbox') renderInbox(); }
+$$('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+/* ---------- bringing items in ---------- */
+function studentKey(from){ return String(from.email || from.tag || from.name || 'unknown').trim().toLowerCase(); }
+function addItems(from, items, via){
+  let added = 0, updated = 0; const sk = studentKey(from || {});
+  const s = store.students[sk] = Object.assign(store.students[sk] || {}, {name:from.name || (store.students[sk] || {}).name || 'A student', email:from.email || '', tag:from.tag || '', groups:Array.from(new Set([...((store.students[sk] || {}).groups || []), ...(from.groups || [])]))});
+  for (const it of (items || [])){
+    if (it.t === 'e' && it.e && it.e.id){
+      const key = sk + '|' + it.e.id; const have = store.items[key]; const v = it.e.updated || it.e.created;
+      if (have && have.kind === 'e' && (have.data.updated || have.data.created) >= v) continue;
+      store.items[key] = {key, sk, kind:'e', data:migrateEntry(it.e), received:Date.now(), opened:false, via}; have ? updated++ : added++;
+    } else if (it.t === 'b' && it.b && it.b.basket){
+      const key = sk + '|basket:' + it.b.basket; const have = store.items[key];
+      if (have && JSON.stringify(have.data.statements) === JSON.stringify(it.b.statements) && have.data.evidence === it.b.evidence) continue;
+      store.items[key] = {key, sk, kind:'b', data:it.b, received:Date.now(), opened:false, via}; have ? updated++ : added++;
+    }
+  }
+  return {added, updated, name:s.name};
+}
+/* A row from a form made for the Learning Log (no payload): keep the readable text. */
+function addTextRow(o){
+  const from = {name:o.studentName || 'A student', email:(o.studentEmail || '').toLowerCase(), groups:o.classCode ? [o.classCode] : []}; const sk = studentKey(from);
+  store.students[sk] = Object.assign(store.students[sk] || {}, {name:from.name, email:from.email, groups:Array.from(new Set([...((store.students[sk] || {}).groups || []), ...from.groups]))});
+  const key = sk + '|t:' + (o.entryId || o.timestamp || uid()); if (store.items[key]) return 0;
+  store.items[key] = {key, sk, kind:'t', data:o, received:Date.now(), opened:false, via:'form'}; return 1;
+}
+function parseDelimited(text, sep){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){ if (c === '"'){ if (text[i + 1] === '"'){ cell += '"'; i++; } else q = false; } else cell += c; continue; }
+    if (c === '"' && cell === '') { q = true; continue; }
+    if (c === sep){ row.push(cell); cell = ''; continue; }
+    if (c === '\n' || c === '\r'){ if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; continue; }
+    cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+function cdlFromCells(cells){
+  const m = /CDL[01]\.[a-z]\.[A-Za-z0-9_-]+/.exec(cells.join('\t')); if (!m) return '';
+  return joinCDL([m[0], ...cells.map(c => c.trim()).filter(c => /^~\d\.[A-Za-z0-9_-]+$/.test(c))]);
+}
+async function ingestText(text, sep){
+  sep = sep || (text.includes('\t') ? '\t' : ',');
+  const rows = parseDelimited(text, sep); let header = null; const res = {added:0, updated:0, bad:0, names:new Set()};
+  for (const r of rows){
+    const cells = r.map(c => c.trim());
+    if (!header && cells.some(c => c === 'studentName' || c === 'entry' || c === 'payload1')){ header = cells; continue; }
+    const joined = cdlFromCells(cells);
+    if (joined){
+      try{ const got = await unpackCDL(joined); if (got && got.kind === 'i'){ const r2 = addItems(got.data.from || {}, got.data.items, 'form'); res.added += r2.added; res.updated += r2.updated; res.names.add(r2.name); } else res.bad++; }
+      catch{ res.bad++; }
+      continue;
+    }
+    if (header){ const o = {}; header.forEach((h, i) => o[h] = cells[i] || ''); if (o.entry){ res.added += addTextRow(o); res.names.add(o.studentName || 'A student'); } }
+  }
+  save(); return res;
+}
+async function ingestFiles(list){
+  let added = 0, updated = 0;
+  for (const f of Array.from(list)){
+    const text = await f.text();
+    if (/\.csv$/i.test(f.name)){ const r = await ingestText(text.replace(/^﻿/, ''), ','); added += r.added; updated += r.updated; continue; }
+    try{
+      const d = JSON.parse(text); const p = d.profile || d; if (!Array.isArray(p.entries)) continue;
+      const prof = migrateProfile(JSON.parse(JSON.stringify(p)));
+      const r = addItems({name:prof.name, email:prof.email, tag:prof.email ? await emailTag(prof.email) : '', groups:prof.groups.map(g => g.code)}, prof.entries.map(e => ({t:'e', e:compactEntry(e)})), 'export');
+      added += r.added; updated += r.updated;
+    }catch{}
+  }
+  save(); toast(`${plural(added, 'new item')}${updated ? `, ${updated} updated` : ''}.`); renderInbox();
+}
+$('#pasteGo').onclick = async () => {
+  const t = $('#paste').value; if (!t.trim()) return toast('Paste some rows first.');
+  $('#pasteMsg').textContent = 'Reading…';
+  const r = await ingestText(t);
+  $('#pasteMsg').textContent = `${plural(r.added, 'new item')}${r.updated ? `, ${r.updated} updated` : ''}${r.names.size ? ` from ${plural(r.names.size, 'student')}` : ''}${r.bad ? `. ${plural(r.bad, 'row')} could not be read: was it cut short? Check the payload questions are long answer.` : '.'}`;
+  if (r.added || r.updated) $('#paste').value = '';
+  renderInbox();
+};
+$('#inFiles').onchange = e => { ingestFiles(e.target.files); e.target.value = ''; };
+const drop = $('#drop');
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => ingestFiles(e.dataTransfer.files));
+/* A student's Teams link: teacher.html#/in?p=CDL1.i.… */
+async function ingestHash(){
+  const h = location.hash || ''; if (!h.startsWith('#/in')) return;
+  const p = new URLSearchParams(h.split('?')[1] || '').get('p') || '';
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch{}
+  try{
+    const got = await unpackCDL(p); if (!got || got.kind !== 'i') throw new Error('not items');
+    const r = addItems(got.data.from || {}, got.data.items, 'link'); save();
+    toast(r.added || r.updated ? `${plural(r.added + r.updated, 'item')} from ${r.name} added to your Inbox.` : `You already have these from ${r.name}.`, 3600);
+    const first = Object.values(store.items).filter(i => i.sk === studentKey(got.data.from || {})).sort((a, b) => b.received - a.received)[0]; if (first){ openKey = first.key; first.opened = true; save(); }
+  }catch(err){ toast(err.message.includes('compressed') ? err.message : 'That link did not open. Ask the student to send it again.', 4200); }
+  showTab('inbox');
+  const r = $('#inboxList .reader'); if (r) try{ r.parentElement.scrollIntoView({block:'start'}); }catch{}
+}
+
+/* ---------- reading ---------- */
+function itemDate(it){ return it.kind === 'e' ? it.data.created : it.kind === 'b' ? (it.data.at || it.received) : Date.parse(it.data.timestamp) || it.received; }
+function itemTitle(it){
+  if (it.kind === 'b') return `${(basketOf(it.data.basket) || {}).short || it.data.basket}: statements and evidence`;
+  if (it.kind === 't') return `${it.data.framework || 'Entry'} · ${it.data.subject || ''}${it.data.topic ? ' · ' + it.data.topic : ''}`;
+  const e = it.data; if (e.kind === 'across') return `Look across: ${(basketOf(e.basket) || {}).short || ''}`;
+  return `${(e.context && e.context.name) || e.subject || FRAMEWORKS[e.kind].name}${e.topic ? ' · ' + e.topic : ''}`;
+}
+function itemKind(it){ return it.kind === 'b' ? 'basket' : it.kind === 't' ? ((it.data.framework || '').toLowerCase() === 'act' ? 'act' : 'grow') : it.data.kind; }
+function kindLetter(it){ return {grow:'G', act:'A', across:'L', basket:'B'}[itemKind(it)] || '?'; }
+function notesFor(key){ return store.notes[key] || (store.notes[key] = []); }
+function pendingNotes(sk){ return Object.values(store.items).filter(i => i.sk === sk).flatMap(i => (store.notes[i.key] || []).filter(n => !n.sentAt).map(n => ({it:i, n}))); }
+function readText(x){
+  if (!x) return '';
+  const ev = (x.evidence || []).filter(v => v.quote || v.strength !== 'glimpse');
+  return `<div class="read"><span class="tiny"><b>${x.source === 'ai' ? 'Coach’s read' : 'Built in read'}</b> · ${esc((STANCES[x.stance] || {}).label || '')}</span>
+    ${ev.length ? ev.map(v => `<div style="margin-top:6px"><b>${esc((compOf(v.id) || {label:v.id}).label)}</b> <span class="str ${v.strength}">${esc(v.strength)}</span>${v.unverified ? ' <span class="tiny">(quote not found in the words)</span>' : ''}${v.quote ? `<q>${esc(v.quote)}</q>` : ''}</div>`).join('') : '<p class="tiny" style="margin:4px 0 0">Nothing specific seen yet.</p>'}</div>`;
+}
+function readerHtml(it){
+  const st = store.students[it.sk] || {};
+  const head = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="tiny">${esc(st.name || '')}${st.email ? ' · ' + esc(st.email) : ''}</span><h2>${esc(itemTitle(it))}</h2></div><button class="btn small sec" data-close>Close</button></div>`;
+  if (it.kind === 'b'){
+    const b = it.data;
+    return `<div class="reader">${head}<p class="tiny">${esc(basketOf(b.basket).label)} · ${plural(b.evidence || 0, 'entry', 'entries')} filed · ${(b.statements || []).filter(s => s.state === 'lit').length} of ${(b.statements || []).length} statements lit</p>
+      ${(b.statements || []).map(s => `<div class="st ${s.state}"><span class="mark" aria-hidden="true"></span><div><b style="font-family:var(--serif);color:var(--navy)">${esc(s.text)}</b>${(s.quotes || []).map(q => `<q style="display:block;font-family:var(--serif);font-style:italic">“${esc(q.quote)}”</q>`).join('')}<span class="tiny">${s.state === 'lit' ? 'Unlocked: backed by the student’s words' : s.state === 'linked' ? 'Linked, not backed yet' : 'No evidence yet'}</span></div></div>`).join('')}</div>`;
+  }
+  if (it.kind === 't') return `<div class="reader">${head}<p class="tiny">From a form without the payload questions: the text only, no notes possible.</p><pre>${esc(it.data.entry || '')}</pre>${it.data.competencies ? `<p class="tiny">${esc(it.data.competencies)}</p>` : ''}</div>`;
+  const e = it.data; const fw = FRAMEWORKS[e.kind]; const notes = notesFor(it.key);
+  const noteBlock = anchor => notes.filter(n => n.anchor === anchor).map(n => `<div class="mnote ${n.sentAt ? '' : 'pending'}"><span class="by">${n.sentAt ? 'Sent ' + fmtDay(n.sentAt) : 'Not sent yet'}</span><p>${esc(n.text)}</p>${n.sentAt ? '' : `<button class="x" data-delnote="${esc(it.key)}|${n.id}">Remove</button>`}</div>`).join('');
+  const qs = fw.steps.flatMap(s => s.qs.map(q => ({s, q})));
+  const claims = (e.competencies || []).map(t => { const c = compOf(t.id); const l = LEVELS.find(z => z.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>${t.where ? ` <span class="tiny">“${esc(t.where)}”</span>` : ''}` : ''; }).join(' ');
+  const links = (e.links || []).map(l => `<span class="tag">${esc(l.sid)}</span> <span class="tiny">“${esc(l.quote)}”</span>`).join(' ');
+  return `<div class="reader">${head}
+    <p class="tiny">${esc(fw.tagline)} · ${e.context && e.context.type && e.context.type !== 'subject' && e.context.type !== 'across' ? esc(contextTypeOf(e.context.type).label) + ' · ' : ''}${fmtDate(e.created)}${e.updated && e.updated !== e.created ? ' · edited ' + fmtDay(e.updated) : ''}${e.depth && DEPTHS[e.depth] ? ' · ' + DEPTHS[e.depth].label : ''}</p>
+    ${noteBlock('entry')}<button class="notebtn" data-note="${esc(it.key)}|entry">Note on the whole entry</button>
+    ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
+    ${e.kind === 'across' && (e.lookedAt || []).length ? `<details><summary>Evidence the student looked across (${e.lookedAt.length})</summary>${e.lookedAt.map(x => `<q style="display:block;font-family:var(--serif);font-style:italic">“${esc(x.quote)}”</q>`).join('')}</details>` : ''}
+    ${qs.map(({s, q}) => `<div class="qa-row"><div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g, '')}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p>${e.answers[q.id] ? `<button class="notebtn" data-note="${esc(it.key)}|${q.id}">Note here</button>` : ''}</div><div class="side">${noteBlock(q.id)}</div></div>`).join('')}
+    ${claims ? `<p><span class="tiny">Claimed:</span> ${claims}</p>` : e.kind !== 'across' ? '<p class="tiny">No claim made.</p>' : ''}
+    ${links ? `<p><span class="tiny">Linked to statements:</span> ${links}</p>` : ''}
+    ${readText(e.e21cc)}
+    ${e.question ? `<p class="tiny">Coach’s question to the student: <i>${esc(e.question)}</i></p>` : ''}
+    ${pendingNotes(it.sk).length ? `<div class="row" style="margin-top:10px"><button class="btn" data-sendnotes="${esc(it.sk)}">Send ${plural(pendingNotes(it.sk).length, 'note')} to ${esc((st.name || 'the student').split(' ')[0])}</button></div>` : ''}
+  </div>`;
+}
+/* item keys contain "|" themselves, so split a "key|tail" pair at the last one */
+function splitLast(s){ const i = s.lastIndexOf('|'); return [s.slice(0, i), s.slice(i + 1)]; }
+function wireReader(root, rerender){
+  $$('[data-close]', root).forEach(b => b.onclick = () => { openKey = null; rerender(); });
+  $$('[data-note]', root).forEach(b => b.onclick = () => {
+    const [key, anchor] = splitLast(b.dataset.note);
+    const box = document.createElement('div'); box.className = 'noteedit';
+    box.innerHTML = `<textarea class="in" maxlength="600" placeholder="One note, in the margin. What would you say if you were sitting beside them?"></textarea><div class="row" style="margin-top:6px"><button class="btn small">Save note</button><button class="btn small sec">Cancel</button><span class="tiny">600 characters at most.</span></div>`;
+    b.replaceWith(box); const ta = $('textarea', box); ta.focus();
+    const [ok, cancel] = $$('button', box);
+    ok.onclick = () => { const text = ta.value.trim(); if (!text) return; notesFor(key).push({id:uid(), anchor, text, at:Date.now(), sentAt:null}); save(); rerender(); };
+    cancel.onclick = rerender;
+  });
+  $$('[data-delnote]', root).forEach(b => b.onclick = () => { const [key, id] = splitLast(b.dataset.delnote); store.notes[key] = notesFor(key).filter(n => n.id !== id); save(); rerender(); });
+  $$('[data-sendnotes]', root).forEach(b => b.onclick = () => sendNotes(b.dataset.sendnotes, rerender));
+}
+/* Notes go back by a per student link; never a class wide bundle. */
+async function sendNotes(sk, rerender){
+  const st = store.students[sk] || {}; const list = pendingNotes(sk); if (!list.length) return;
+  const to = st.tag || (st.email ? await emailTag(st.email) : '');
+  if (!to){ dialog(`<h2>No email for this student</h2><p>Notes find a student by their school email, and this item came without one. Ask them to add their email in Settings and send again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
+  const by = {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''};
+  const link = appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:list.map(({it, n}) => ({id:n.id, eid:it.data.id, anchor:n.anchor, text:n.text, at:n.at}))});
+  const msg = `${by.name} left ${plural(list.length, 'note')} on your Competency Development Log. Open: ${link}`;
+  dialog(`<h2>Send ${plural(list.length, 'note')} to ${esc(st.name || 'the student')}</h2><p>The link opens in ${esc((st.name || 'their').split(' ')[0])}’s log, beside the paragraphs you wrote on. It only opens for the student with the email ${esc(st.email || 'on the entry')}.</p>
+    <div class="row">${st.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(st.email, msg))}" target="_blank" rel="noopener">Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">Copy link</button></div>
+    <p class="tiny" style="margin-top:8px">${link.length > 7000 ? `Long link (${link.length} characters): if Teams cuts it, send fewer notes at a time.` : 'Teams not working? Copy the link into a chat or an email to the student.'}</p>
+    <div class="row" style="margin-top:12px"><button class="btn acc" id="dDone">I sent it</button><button class="btn sec" id="dClose">Not yet</button></div>`);
+  $('#dCopy').onclick = async () => { try{ await navigator.clipboard.writeText(link); toast('Copied.'); }catch{ prompt('Copy this link:', link); } };
+  $('#dDone').onclick = () => { const now = Date.now(); for (const {n} of list) n.sentAt = now; save(); closeDialog(); toast('Marked as sent.'); rerender(); };
+  $('#dClose').onclick = closeDialog;
+}
+
+/* ---------- inbox ---------- */
+function groupOptions(sel, allLabel){
+  const codes = Array.from(new Set(Object.values(store.students).flatMap(s => s.groups || []))).sort();
+  const v = sel.value; sel.innerHTML = `<option value="">${allLabel}</option>` + codes.map(c => `<option value="${esc(c)}" ${c === v ? 'selected' : ''}>${esc(c)}${store.classes[c] ? ' (yours)' : ''}</option>`).join('');
+}
+function inGroup(sk, code){ return !code || ((store.students[sk] || {}).groups || []).includes(code); }
+function renderInbox(){
+  groupOptions($('#fGroup'), 'All groups');
+  $('#meName').value = store.me.name || ''; $('#meRole').value = store.me.role || '';
+  const g = $('#fGroup').value; const mode = $('#fShow').value;
+  const items = Object.values(store.items).filter(i => inGroup(i.sk, g)).sort((a, b) => mode === 'new' ? (a.opened - b.opened) || (b.received - a.received) || (itemDate(b) - itemDate(a)) : itemDate(b) - itemDate(a));
+  const fresh = Object.values(store.items).filter(i => !i.opened).length;
+  $('#newBadge').hidden = !fresh; $('#newBadge').textContent = fresh;
+  $('#inboxList').innerHTML = items.length ? items.map(it => { const st = store.students[it.sk] || {}; const k = itemKind(it); const nn = (store.notes[it.key] || []).length;
+    return `<li><button class="item ${openKey === it.key ? 'open' : ''}" data-key="${esc(it.key)}"><span class="k ${k}">${kindLetter(it)}</span><span><b>${esc(st.name || 'A student')} · ${esc(itemTitle(it))}${it.opened ? '' : '<span class="new">New</span>'}</b><small>${fmtDay(itemDate(it))} · ${k === 'basket' ? 'Basket' : FRAMEWORKS[k] ? FRAMEWORKS[k].name : k.toUpperCase()}${(st.groups || []).length ? ' · ' + esc(st.groups.join(', ')) : ''}${nn ? ' · ' + plural(nn, 'note') : ''} · via ${esc(it.via || 'form')}</small></span></button>${openKey === it.key ? readerHtml(it) : ''}</li>`; }).join('')
+    : `<li class="muted" style="padding:10px 0">Nothing yet. When students share with you, paste the new rows from your form’s sheet above, or open the links they send.</li>`;
+  $$('#inboxList .item').forEach(b => b.onclick = () => { const it = store.items[b.dataset.key]; openKey = openKey === it.key ? null : it.key; if (openKey){ it.opened = true; save(); } renderInbox(); });
+  wireReader($('#inboxList'), renderInbox);
+}
+$('#fGroup').onchange = renderInbox; $('#fShow').onchange = renderInbox;
+$('#meName').oninput = e => { store.me.name = e.target.value.trim(); save(); };
+$('#meRole').oninput = e => { store.me.role = e.target.value.trim(); save(); };
+
+/* ---------- class grid ---------- */
+function studentRows(code){
+  const tk = termKey(Date.now()); const rows = [];
+  for (const [sk, st] of Object.entries(store.students)){
+    if (!inGroup(sk, code)) continue;
+    const its = Object.values(store.items).filter(i => i.sk === sk); const es = its.filter(i => i.kind === 'e').map(i => i.data);
+    const row = {sk, name:st.name, email:st.email, grow:es.filter(e => e.kind === 'grow' && termKey(e.created) === tk).length, act:es.filter(e => e.kind === 'act' && termKey(e.created) === tk).length,
+      last:es.length ? Math.max(...es.map(e => e.created)) : (its.length ? Math.max(...its.map(itemDate)) : 0),
+      notes:its.reduce((a, i) => a + (store.notes[i.key] || []).filter(n => n.sentAt).length, 0), baskets:{}};
+    for (const b of BASKET_IDS){
+      const snap = its.find(i => i.kind === 'b' && i.data.basket === b);
+      row.baskets[b] = snap ? {lit:(snap.data.statements || []).filter(s => s.state === 'lit').length, total:(snap.data.statements || []).length, snap:true} : {n:es.filter(e => basketsOf(e).includes(b)).length};
+    }
+    rows.push(row);
+  }
+  return rows.sort((a, b) => a.name.localeCompare(b.name));
+}
+function renderGrid(){
+  groupOptions($('#gGroup'), 'All groups'); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
+  const cell = c => c.snap ? `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}` : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
+  $('#gridTable').innerHTML = rows.length ? `<table class="gridtable"><thead><tr><th>Student</th><th>GROW<br><span class="tiny">T${tp.term}</span></th><th>ACT<br><span class="tiny">T${tp.term}</span></th>${DOMAINS.map(d => `<th>${esc(d.short)}</th>`).join('')}<th>Last entry</th><th>Notes sent</th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td><button class="notebtn" data-student="${esc(r.sk)}">${esc(r.name)}</button></td><td>${r.grow || '<span class="cell0">·</span>'}</td><td>${r.act || '<span class="cell0">·</span>'}</td>${BASKET_IDS.map(b => `<td>${cell(r.baskets[b])}</td>`).join('')}<td>${r.last ? fmtDay(r.last) : ''}</td><td>${r.notes || ''}</td></tr>`).join('')}</tbody></table>
+    <p class="tiny">A dot means nothing shared there yet. In basket columns, “2/5” is lit statements out of all; a plain number counts shared entries filed in that basket.</p>` : '<p class="muted">No students yet. Bring entries in through the Inbox.</p>';
+  $$('[data-student]').forEach(b => b.onclick = () => { studentSel = b.dataset.student; showTab('students'); });
+}
+$('#gGroup').onchange = renderGrid;
+$('#gCsv').onclick = () => {
+  const rows = studentRows($('#gGroup').value); if (!rows.length) return toast('Nothing to export.');
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const head = ['student','email','grow_this_term','act_this_term', ...DOMAINS.map(d => d.short), 'last_entry','notes_sent'];
+  const lines = [head.map(q).join(',')].concat(rows.map(r => [r.name, r.email, r.grow, r.act, ...BASKET_IDS.map(b => { const c = r.baskets[b]; return c.snap ? `${c.lit} of ${c.total} lit` : `${c.n} entries`; }), r.last ? new Date(r.last).toISOString().slice(0, 10) : '', r.notes].map(q).join(',')));
+  download(`class-grid-${new Date().toISOString().slice(0, 10)}.csv`, '﻿' + lines.join('\n'), 'text/csv');
+};
+
+/* ---------- students ---------- */
+function renderStudents(){
+  const sts = Object.entries(store.students).sort((a, b) => a[1].name.localeCompare(b[1].name));
+  $('#studentCards').innerHTML = sts.length ? sts.map(([sk, s]) => { const n = Object.values(store.items).filter(i => i.sk === sk).length; return `<button class="scard ${studentSel === sk ? 'on' : ''}" data-sk="${esc(sk)}"><b>${esc(s.name)}</b><small>${esc(s.email || '')}<br>${plural(n, 'item')}${(s.groups || []).length ? ' · ' + esc(s.groups.join(', ')) : ''}</small></button>`; }).join('') : '<p class="muted">No students yet.</p>';
+  $$('.scard').forEach(b => b.onclick = () => { studentSel = b.dataset.sk; openKey = null; renderStudents(); });
+  const v = $('#studentView');
+  if (!studentSel || !store.students[studentSel]){ v.hidden = true; return; }
+  const s = store.students[studentSel]; const its = Object.values(store.items).filter(i => i.sk === studentSel).sort((a, b) => itemDate(b) - itemDate(a));
+  v.hidden = false;
+  v.innerHTML = `<div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(s.name)}</h2><span class="tiny">${esc(s.email || '')}</span></div>
+    <ul class="items">${its.map(it => `<li><button class="item ${openKey === it.key ? 'open' : ''}" data-key="${esc(it.key)}"><span class="k ${itemKind(it)}">${kindLetter(it)}</span><span><b>${esc(itemTitle(it))}</b><small>${fmtDay(itemDate(it))}${(store.notes[it.key] || []).length ? ' · ' + plural(store.notes[it.key].length, 'note') : ''}</small></span></button>${openKey === it.key ? readerHtml(it) : ''}</li>`).join('')}</ul>`;
+  $$('#studentView .item').forEach(b => b.onclick = () => { const it = store.items[b.dataset.key]; openKey = openKey === it.key ? null : it.key; if (openKey){ it.opened = true; save(); } renderStudents(); });
+  wireReader(v, renderStudents);
+}
+
+/* ---------- set up a group ---------- */
+const SAMPLE_ENTRY = `G1: I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at exactly one point.
 G2: I would draw two lines on a graph and show my friend where they cross.
 R1: I do not yet understand elimination when the coefficients are different.
 R2: study more
@@ -280,150 +641,108 @@ O1: Buying 3 kaya toast and 2 kopi for $8.40 and 2 toast and 1 kopi for $5.10 le
 O2:
 W1:
 W2: Inequalities, I think.`;
-
-/* tabs */
-$$('.tabs button').forEach(b => b.onclick = () => { $$('.tabs button').forEach(x=>x.classList.toggle('on', x===b)); ['setup','dropbox','review','guide'].forEach(t => $('#tab-'+t).hidden = t !== b.dataset.tab); });
-
-/* ---------- set up ---------- */
-const F = ['code','level','teacherName','teacherEmail','subject','subjects','tone','phrases','avoid','sample','knowledge','criteria','relayUrl','relayToken','sinkKind','prefill'];
+const F = ['code','type','level','teacherName','teacherEmail','subject','subjects','statements','band','tone','phrases','avoid','sample','knowledge','criteria','relayUrl','relayToken','relayDaily','sinkKind','prefill'];
 function fill(){
   const c = cur;
-  $('#code').value = c.code; $('#level').value = c.level||''; $('#teacherName').value = c.teacherName||''; $('#teacherEmail').value = c.teacherEmail||''; $('#subject').value = c.subject||'';
-  $('#subjects').value = (c.subjects||[]).filter(x=>x!==c.subject).join(', ');
-  $('#tone').value = c.voice.tone||''; $('#phrases').value = (c.voice.phrases||[]).join('\n'); $('#avoid').value = (c.voice.avoid||[]).join('\n'); $('#sample').value = c.voice.sample||'';
-  $('#knowledge').value = c.knowledge||''; $('#criteria').value = (c.criteria||[]).join('\n');
-  $('#relayUrl').value = (c.relay&&c.relay.url)||''; $('#relayToken').value = (c.relay&&c.relay.token)||'';
-  $('#sinkKind').value = (c.sink&&c.sink.kind)||'none'; $('#prefill').value = (c.sink&&c.sink.url)||'';
-  if (!$('#sampleEntry').value) $('#sampleEntry').value = SAMPLE;
+  $('#code').value = c.code; $('#type').value = c.type || 'subject'; $('#level').value = c.level || ''; $('#teacherName').value = c.teacherName || ''; $('#teacherEmail').value = c.teacherEmail || ''; $('#subject').value = c.subject || '';
+  $('#subjects').value = (c.subjects || []).filter(x => x !== c.subject).join(', ');
+  $('#statements').value = c.statements || ''; $('#band').value = c.band || '';
+  $('#tone').value = c.voice.tone || ''; $('#phrases').value = (c.voice.phrases || []).join('\n'); $('#avoid').value = (c.voice.avoid || []).join('\n'); $('#sample').value = c.voice.sample || '';
+  $('#knowledge').value = c.knowledge || ''; $('#criteria').value = (c.criteria || []).join('\n');
+  $('#relayUrl').value = (c.relay && c.relay.url) || ''; $('#relayToken').value = (c.relay && c.relay.token) || ''; $('#relayDaily').value = (c.relay && c.relay.daily) || '';
+  $('#sinkKind').value = (c.sink && c.sink.kind) || 'none'; $('#prefill').value = (c.sink && c.sink.url) || '';
+  if (!$('#sampleEntry').value) $('#sampleEntry').value = SAMPLE_ENTRY;
+  $('#formOnly').hidden = (c.type || 'subject') !== 'form';
   renderMap(); preview(); renderClassList();
 }
 function collect(){
-  const c = cur; const lines = id => $('#'+id).value.split('\n').map(s=>s.trim()).filter(Boolean);
-  c.code = $('#code').value.trim().toUpperCase().replace(/\s+/g,'-'); c.level = $('#level').value.trim(); c.teacherName = $('#teacherName').value.trim(); c.teacherEmail = $('#teacherEmail').value.trim().toLowerCase(); c.subject = $('#subject').value.trim();
-  c.subjects = Array.from(new Set([c.subject, ...$('#subjects').value.split(',').map(s=>s.trim())].filter(Boolean)));
+  const c = cur; const lines = id => $('#' + id).value.split('\n').map(s => s.trim()).filter(Boolean);
+  c.code = $('#code').value.trim().toUpperCase().replace(/\s+/g, '-'); c.type = $('#type').value; c.level = $('#level').value.trim(); c.teacherName = $('#teacherName').value.trim(); c.teacherEmail = $('#teacherEmail').value.trim().toLowerCase(); c.subject = $('#subject').value.trim();
+  c.subjects = Array.from(new Set([c.subject, ...$('#subjects').value.split(',').map(s => s.trim())].filter(Boolean)));
+  if (c.type === 'form'){ c.statements = $('#statements').value.trim(); c.band = $('#band').value.trim(); } else { delete c.statements; delete c.band; }
   c.voice = {tone:$('#tone').value.trim(), phrases:lines('phrases'), avoid:lines('avoid'), sample:$('#sample').value.trim()};
   c.knowledge = $('#knowledge').value.trim(); c.criteria = lines('criteria');
-  c.relay = {url:$('#relayUrl').value.trim(), token:$('#relayToken').value.trim()};
+  const daily = parseInt($('#relayDaily').value, 10);
+  c.relay = {url:$('#relayUrl').value.trim(), token:$('#relayToken').value.trim()}; if (daily > 0) c.relay.daily = daily;
   c.sink = c.sink || {kind:'none', url:'', fields:{}}; c.sink.kind = $('#sinkKind').value; c.sink.url = $('#prefill').value.trim();
+  $('#formOnly').hidden = c.type !== 'form';
   if (c.code){ store.classes[c.code] = c; store.current = c.code; }
   save();
 }
 function renderClassList(){
   const codes = Object.keys(store.classes).sort();
-  $('#classList').innerHTML = codes.length ? codes.map(k => `<button class="${cur && cur.code===k?'on':''}" data-k="${esc(k)}">${esc(k)}</button>`).join('') : '<span class="tiny">No classes on this device yet.</span>';
-  $$('#classList button').forEach(b => b.onclick = () => { collect(); cur = store.classes[b.dataset.k]; store.current = cur.code; save(); fill(); });
+  $('#classList').innerHTML = codes.length ? codes.map(k => `<button class="${cur && cur.code === k ? 'on' : ''}" data-k="${esc(k)}">${esc(k)}</button>`).join('') : '<span class="tiny">No groups on this device yet.</span>';
+  $$('#classList button').forEach(b => b.onclick = () => { collect(); cur = normaliseClass(store.classes[b.dataset.k]); store.current = cur.code; save(); fill(); });
 }
+function normaliseClass(c){ c = Object.assign(blank(), c); c.voice = Object.assign({tone:'', phrases:[], avoid:[], sample:''}, c.voice || {}); c.sink = Object.assign({kind:'none', url:'', fields:{}}, c.sink || {}); c.relay = Object.assign({url:'', token:''}, c.relay || {}); return c; }
 function parseSampleEntry(text){
   const answers = {}; text.split('\n').forEach(l => { const m = l.match(/^\s*([grow]\d)\s*:\s*(.*)$/i); if (m) answers[m[1].toLowerCase()] = m[2].trim(); });
-  return {id:'preview', kind:'grow', subject: cur.subject || 'Mathematics', topic:'Sample', answers, competencies:[{id:'critical', level:2}]};
+  return {id:'preview', kind:'grow', context:{type:cur.type === 'cca' ? 'cca' : 'subject', name:cur.subject || 'Mathematics'}, subject:cur.subject || 'Mathematics', topic:'Sample', answers, competencies:[{id:'critical', level:2}]};
 }
 function preview(){
+  const stmts = normaliseStatementSet(DEFAULT_STATEMENTS).list;
   const e = parseSampleEntry($('#sampleEntry').value); const c = builtinCoach(e, cur); const d = DEPTHS[c.depth];
   $('#preview').innerHTML = `<div class="coach"><p class="tiny" style="margin:0 0 6px">Depth: <b>${d.label}</b> · ${esc(d.help)}</p>
     <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Answer this now</b><p class="ask">${esc(c.question)}</p></div></div>`;
-  const x = builtinE21cc(e); const nameOf = id => (COMPETENCIES.find(c=>c.id===id)||{name:id}).name;
-  $('#preview').innerHTML += `<div class="coach" style="margin-top:10px"><p class="tiny" style="margin:0 0 6px"><b>Competency read</b> (built in; the class coach does this with the full definitions) · ${STANCES[x.stance].label}</p>${x.evidence.length ? x.evidence.map(ev => `<div class="part"><b>${esc(nameOf(ev.id))} · ${ev.strength}</b><p>“${esc(ev.quote)}”</p></div>`).join('') : '<p class="tiny">Nothing visible yet.</p>'}${x.tagged_not_shown.length ? `<p class="tiny">Tagged but not shown: ${x.tagged_not_shown.map(nameOf).map(esc).join(', ')}</p>` : ''}<div class="part"><b>Probe</b><p class="ask">${esc(x.probe)}</p></div></div>`;
-  $('#sysPreview').textContent = coachSystem(cur);
+  const x = builtinE21cc(e, stmts); const nameOf = id => (compOf(id) || {label:id}).label;
+  $('#preview').innerHTML += `<div class="coach" style="margin-top:10px"><p class="tiny" style="margin:0 0 6px"><b>Competency read</b> (built in; the class coach does this with the full definitions) · ${STANCES[x.stance].label}</p>${x.evidence.length ? x.evidence.map(ev => `<div class="part"><b>${esc(nameOf(ev.id))} · ${ev.strength}</b><p>“${esc(ev.quote)}”</p></div>`).join('') : '<p class="tiny">Nothing visible yet.</p>'}${x.tagged_not_shown.length ? `<p class="tiny">Claimed but not shown: ${x.tagged_not_shown.map(nameOf).map(esc).join(', ')}</p>` : ''}${(x.statements || []).length ? `<p class="tiny">May back: ${x.statements.map(s => esc((stmts.find(t => t.id === s.sid) || {}).text || s.sid)).join('; ')}</p>` : ''}<div class="part"><b>Probe</b><p class="ask">${esc(x.probe)}</p></div></div>`;
+  $('#sysPreview').textContent = coachSystem(cur, stmts);
 }
-function toB64Url(obj){ const s = btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); return s.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
-function shareLink(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; const base = location.href.replace(/teacher\.html.*$/, 'index.html'); return `${base}#/config?c=${toB64Url(c)}`; }
-function exportJson(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; return JSON.stringify(c, null, 2); }
+function toB64Url(obj){ const s = btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function cleanClass(){ const c = JSON.parse(JSON.stringify(cur)); delete c._fetched; if (!c.statements) delete c.statements; if (!c.band) delete c.band; return c; }
+function shareLink(){ return `${appUrl()}#/config?c=${toB64Url(cleanClass())}`; }
 async function copy(t){ try{ await navigator.clipboard.writeText(t); toast('Copied.'); }catch{ prompt('Copy this:', t); } }
 let DOWNLOADS = null; (async () => { try{ if (window.claude && typeof window.claude.use === 'function') DOWNLOADS = await window.claude.use('downloads'); }catch{ DOWNLOADS = null; } })();
-function download(name, text, type='application/json'){ if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(()=>toast('Saved.')).catch(()=>{}); return; } const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},800); }
+function download(name, text, type = 'application/json'){ if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(() => toast('Saved.')).catch(() => {}); return; } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800); }
 
-F.forEach(id => $('#'+id).addEventListener('input', () => { collect(); preview(); if (id==='prefill'||id==='sinkKind') renderMap(); if (id==='code') renderClassList(); $('#linkLen').textContent=''; }));
+F.forEach(id => $('#' + id).addEventListener('input', () => { collect(); preview(); if (id === 'prefill' || id === 'sinkKind') renderMap(); if (id === 'code') renderClassList(); $('#linkLen').textContent = ''; }));
 $('#sampleEntry').addEventListener('input', preview);
 $('#newClass').onclick = () => { collect(); cur = blank(); fill(); $('#code').focus(); };
 $('#delClass').onclick = () => { if (!cur.code || !confirm(`Forget ${cur.code} on this device? Downloaded files are unaffected.`)) return; delete store.classes[cur.code]; store.current = null; save(); cur = blank(); fill(); };
-$('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const c = Object.assign(blank(), JSON.parse(await f.text())); c.voice = Object.assign({tone:'',phrases:[],avoid:[],sample:''}, c.voice||{}); c.sink = Object.assign({kind:'none',url:'',fields:{}}, c.sink||{}); c.relay = Object.assign({url:'',token:''}, c.relay||{}); cur = c; if (c.code){ store.classes[c.code]=c; store.current=c.code; save(); } fill(); toast('Loaded ' + (c.code||'class')); }catch{ toast('Not a class file.'); } ev.target.value=''; };
-$('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); download(`${cur.code}.json`, exportJson()); };
-$('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
-$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the class a code first.'); const base = location.href.replace(/teacher\.html.*$/, 'index.html'); copy(`Learning Log for ${cur.subject||'our class'} (${cur.code})\n\n1. Open ${base}\n2. Enter your name, your students.edu.sg email, and the class code ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. After a lesson: GROW. When feedback comes back: ACT. Answer the questions honestly; three sentences each is enough.\n4. Press Send to teacher when you are done, and Export your log at the end of term.\n\n${cur.teacherName||''}`); };
+$('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const c = normaliseClass(JSON.parse(await f.text())); cur = c; if (c.code){ store.classes[c.code] = c; store.current = c.code; save(); } fill(); toast('Loaded ' + (c.code || 'group')); }catch{ toast('Not a group file.'); } ev.target.value = ''; };
+$('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); download(`${cur.code}.json`, JSON.stringify(cleanClass(), null, 2)); };
+$('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
+$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`Competency Development Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Claim a competency and point to where it shows.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
 
 /* ---------- drop box mapping ---------- */
+const FIELDS = FORM_FIELDS;
 function parsePrefill(url, kind){
   let u; try{ u = new URL(url); }catch{ return null; }
-  const params = []; u.searchParams.forEach((v,k) => { if (kind==='gforms' ? k.startsWith('entry.') : (k !== 'id' && k !== 'origin' && k !== 'route' && k !== 'lang' && k !== 'embed')) params.push({k, v}); });
+  const params = []; u.searchParams.forEach((v, k) => { if (kind === 'gforms' ? k.startsWith('entry.') : (k !== 'id' && k !== 'origin' && k !== 'route' && k !== 'lang' && k !== 'embed')) params.push({k, v}); });
   return params;
 }
 function renderMap(){
   const kind = cur.sink.kind; const box = $('#mapTable');
-  if (kind === 'none'){ box.innerHTML = '<p class="tiny">No form connected. Students will copy and paste.</p>'; return; }
+  if (kind === 'none'){ box.innerHTML = '<p class="tiny">No form connected. Students will send you a link in Teams instead.</p>'; return; }
   const params = parsePrefill(cur.sink.url, kind);
   if (!params){ box.innerHTML = '<p class="tiny">Paste the pre filled link to see its fields.</p>'; return; }
-  if (!params.length){ box.innerHTML = '<p class="notice warn">That link has no pre filled parameters. Generate it with “Enable pre-filled answers” on and every question answered.</p>'; return; }
+  if (!params.length){ box.innerHTML = '<p class="notice warn">That link has no pre filled answers. Generate it with pre filled answers switched on and every question answered.</p>'; return; }
   const fields = cur.sink.fields || (cur.sink.fields = {});
-  // auto map when the sample answer equals a field key
   for (const p of params){ const hit = FIELDS.find(f => f.toLowerCase() === p.v.trim().toLowerCase()); if (hit && !Object.values(fields).includes(p.k)) fields[hit] = p.k; }
-  const used = new Set(Object.values(fields));
-  box.innerHTML = `<table><thead><tr><th>Form parameter</th><th>Sample answer in link</th><th>Maps to</th></tr></thead><tbody>${params.map(p => { const cur = Object.entries(fields).find(([f,k]) => k===p.k); return `<tr><td><code>${esc(p.k)}</code></td><td>${esc(p.v)}</td><td><select class="in" data-k="${esc(p.k)}"><option value="">(ignore)</option>${FIELDS.map(f => `<option value="${f}" ${cur && cur[0]===f ? 'selected' : ''}>${f}</option>`).join('')}</select></td></tr>`; }).join('')}</tbody></table>
-    <p class="tiny">${FIELDS.filter(f=>!fields[f]).length ? 'Unmapped fields: ' + FIELDS.filter(f=>!fields[f]).map(f=>`<code>${f}</code>`).join(' ') : 'All thirteen fields mapped.'}${kind==='gforms' ? ' The form URL used for submission is derived from this link.' : ''}</p>`;
+  box.innerHTML = `<table><thead><tr><th>Form parameter</th><th>Sample answer in link</th><th>Maps to</th></tr></thead><tbody>${params.map(p => { const m = Object.entries(fields).find(([, k]) => k === p.k); return `<tr><td><code>${esc(p.k)}</code></td><td>${esc(p.v)}</td><td><select class="in" data-k="${esc(p.k)}"><option value="">(ignore)</option>${FIELDS.map(f => `<option value="${f}" ${m && m[0] === f ? 'selected' : ''}>${f}</option>`).join('')}</select></td></tr>`; }).join('')}</tbody></table>
+    <p class="tiny">${FIELDS.filter(f => !fields[f]).length ? 'Unmapped fields: ' + FIELDS.filter(f => !fields[f]).map(f => `<code>${f}</code>`).join(' ') : 'All eighteen fields mapped.'}${['payload1','payload2','payload3'].some(f => !fields[f]) ? ' Without the three payload fields, the Inbox can show only the text.' : ''}</p>`;
   $$('select[data-k]', box).forEach(sel => sel.onchange = () => { for (const f of Object.keys(fields)) if (fields[f] === sel.dataset.k) delete fields[f]; if (sel.value) fields[sel.value] = sel.dataset.k; save(); renderMap(); });
 }
-$('#testSink').onclick = () => {
+$('#testSink').onclick = async () => {
   collect(); const s = cur.sink; if (s.kind === 'none' || !s.url) return toast('Connect a form first.');
-  const payload = {timestamp:new Date().toISOString(), studentName:'Test Student', studentEmail:'test@students.edu.sg', classCode:cur.code||'TEST', teacherEmail:cur.teacherEmail, framework:'GROW', subject:cur.subject||'Mathematics', topic:'Test entry from teacher console', entry:'G · What is one thing I understand from the lesson?\nThis is a test.', competencies:'Critical Thinking (Getting there)', depth:'working', nextStep:'Delete this test row.', entryId:'test-'+Date.now().toString(36)};
-  if (s.kind === 'msforms'){ const u = new URL(s.url); let n=0; for (const [f,k] of Object.entries(s.fields||{})){ if (f in payload){ u.searchParams.set(k, payload[f]); n++; } } if (!n) return toast('Map at least one field first.'); window.open(u.toString(), '_blank'); $('#sinkMsg').textContent = 'Opened in a new tab. Press Submit there, then check your responses.'; }
-  else { const action = s.url.replace(/\/viewform.*$/, '/formResponse').replace(/\?.*$/, ''); const f = document.createElement('form'); f.method='POST'; f.action=action; f.target='_blank'; for (const [k,id] of Object.entries(s.fields||{})){ if (!(k in payload)) continue; const i=document.createElement('input'); i.name=id; i.value=payload[k]; f.appendChild(i); } document.body.appendChild(f); f.submit(); f.remove(); $('#sinkMsg').textContent = 'Submitted in a new tab. If the form was rejected, check the “restrict to organisation” setting.'; }
-};
-
-/* ---------- review ---------- */
-let files = []; // {profile}
-const drop = $('#drop');
-['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', e => ingest(e.dataTransfer.files));
-$('#reviewFiles').onchange = e => { ingest(e.target.files); e.target.value=''; };
-async function ingest(list){
-  let n=0; for (const f of Array.from(list)){ try{ const d = JSON.parse(await f.text()); const p = d.profile || d; if (!Array.isArray(p.entries)) continue; if (!files.some(x => x.profile.id === p.id && x.profile.email === p.email)) { files.push({profile:p}); n++; } }catch{} }
-  toast(`${n} ${n===1?'file':'files'} added.`); renderReview();
-}
-function allEntries(){ return files.flatMap(f => f.profile.entries.map(e => ({e, p:f.profile}))); }
-function renderReview(){
-  const fs = $('#fStudent'); const cs = $('#fComp');
-  fs.innerHTML = '<option value="">All students</option>' + files.map((f,i) => `<option value="${i}">${esc(f.profile.name)}${f.profile.classCode ? ' · ' + esc(f.profile.classCode) : ''}</option>`).join('');
-  cs.innerHTML = '<option value="">Any competency</option>' + COMPETENCIES.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
-  applyFilters();
-}
-function applyFilters(){
-  const si = $('#fStudent').value, k = $('#fKind').value, comp = $('#fComp').value;
-  let rows = allEntries();
-  if (si !== '') rows = rows.filter(r => r.p === files[+si].profile);
-  if (k) rows = rows.filter(r => r.e.kind === k);
-  if (comp) rows = rows.filter(r => (r.e.competencies||[]).some(t => t.id === comp));
-  rows.sort((a,b) => b.e.created - a.e.created);
-  const deep = rows.filter(r => { const c = r.e.coach && (r.e.coach.ai || r.e.coach.builtin); return c && c.depth === 'deep'; }).length;
-  const tagged = rows.filter(r => (r.e.competencies||[]).length).length;
-  $('#kpi').innerHTML = files.length ? `<div><b>${files.length}</b><span>students</span></div><div><b>${rows.length}</b><span>entries</span></div><div><b>${rows.filter(r=>r.e.kind==='grow').length}</b><span>GROW</span></div><div><b>${rows.filter(r=>r.e.kind==='act').length}</b><span>ACT</span></div><div><b>${rows.length ? Math.round(100*tagged/rows.length) : 0}%</b><span>tagged a competency</span></div><div><b>${rows.length ? Math.round(100*deep/rows.length) : 0}%</b><span>ridge view</span></div>` : '';
-  $('#reviewList').innerHTML = rows.length ? rows.map(({e,p}) => {
-    const fw = FRAMEWORKS[e.kind]; const c = e.coach && (e.coach.ai || e.coach.builtin);
-    return `<div class="entry"><b class="t">${esc(p.name)}</b> <span class="tiny">${esc(p.email||'')} · ${esc(p.classCode||'')} · ${new Date(e.created).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})} · ${fw.name} · ${esc(e.subject||'')}${e.topic ? ' · ' + esc(e.topic) : ''}${c ? ' · ' + DEPTHS[c.depth].label : ''}</span>
-      ${e.kind==='act' && e.feedbackText ? `<p class="tiny"><b>Feedback (${esc(e.feedbackFrom||'teacher')}):</b> ${esc(e.feedbackText)}</p>` : ''}
-      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g,'')}</b><p class="${e.answers[q.id]?'':'empty'}">${esc(e.answers[q.id]||'left blank')}</p></div>`).join('')).join('')}
-      <p>${(e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `<span class="tag">${esc(cc.name)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') || '<span class="tiny">no competency tagged</span>'}</p>
-      ${e.e21cc ? `<p class="tiny"><b>${e.e21cc.source==='ai' ? 'Coach' : 'Built in'} read:</b> ${esc(e21ccSummary(e.e21cc))}${(e.e21cc.evidence||[]).filter(v=>v.quote).map(v => ` <q>${esc(v.quote)}</q>`).join('')}</p>` : ''}
-      ${c ? `<details><summary>Coach (${c.source === 'ai' ? 'AI' : 'built in'})</summary><div class="coach"><div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div><div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div><div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div><div class="part"><b>Question</b><p class="ask">${esc(c.question)}</p></div></div></details>` : ''}
-    </div>`; }).join('') : (files.length ? '<p class="muted">No entries match.</p>' : '');
-}
-['fStudent','fKind','fComp'].forEach(id => $('#'+id).onchange = applyFilters);
-$('#clearReview').onclick = () => { files = []; renderReview(); };
-$('#csv').onclick = () => {
-  const rows = allEntries(); if (!rows.length) return toast('Nothing to export.');
-  const head = ['date','student','email','class','framework','subject','topic', ...FRAMEWORKS.grow.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), ...FRAMEWORKS.act.steps.flatMap(s=>s.qs.map(q=>q.id.toUpperCase())), 'competencies','depth','nextStep','coachQuestion','stance','coachSaw','readBy'];
-  const q = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
-  const lines = [head.join(',')];
-  for (const {e,p} of rows){ const c = e.coach && (e.coach.ai || e.coach.builtin); const comps = (e.competencies||[]).map(t => { const cc = COMPETENCIES.find(x=>x.id===t.id); const l = LEVELS.find(x=>x.n===t.level); return cc ? `${cc.name} (${l?l.label:''})` : ''; }).join('; ');
-    lines.push([new Date(e.created).toISOString(), p.name, p.email, p.classCode, e.kind.toUpperCase(), e.subject, e.topic, ...['g1','g2','r1','r2','o1','o2','w1','w2','a1','a2','c1','c2','t1','t2'].map(k => e.answers[k]||''), comps, c ? c.depth : '', e.kind==='grow' ? e.answers.r2 : e.answers.t1, c ? c.question : '', e.e21cc ? e.e21cc.stance : '', e.e21cc ? (e.e21cc.evidence||[]).map(v => `${(COMPETENCIES.find(x=>x.id===v.id)||{name:v.id}).name} (${v.strength})`).join('; ') : '', e.e21cc ? e.e21cc.source : ''].map(q).join(',')); }
-  download(`learning-log-review-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + lines.join('\n'), 'text/csv');
+  const e = {id:'test-' + Date.now().toString(36), kind:'grow', created:Date.now(), updated:Date.now(), context:{type:'subject', name:cur.subject || 'Mathematics'}, topic:'Test entry from the teacher console', answers:{g1:'This is a test entry. Paste its row into the Inbox to see the whole loop.', r2:'Delete this row on Tuesday.'}, competencies:[{id:'critical', level:2, where:''}], links:[], depth:'working', question:'Did the test arrive?'};
+  const from = {name:'Test Student', email:'test@students.edu.sg', tag:await emailTag('test@students.edu.sg'), groups:[cur.code || 'TEST']};
+  const subs = await buildSubmissions(s, () => ({timestamp:new Date().toISOString(), studentName:from.name, studentEmail:from.email, classCode:cur.code || 'TEST', teacherEmail:cur.teacherEmail, framework:'GROW', subject:e.context.name, topic:e.topic, entry:'G · What is one thing I understand from the lesson?\n' + e.answers.g1, competencies:'Claimed: Critical Thinking (Getting there)', depth:'working', nextStep:e.answers.r2, entryId:e.id, context:'Subject', section:'grow'}), from, [{t:'e', e}]);
+  const sub = subs[0];
+  if (s.kind === 'msforms'){ if (!mappedCount(s, sub.fields)) return toast('Map at least one field first.'); window.open(sub.url, '_blank'); $('#sinkMsg').textContent = `Opened in a new tab (link ${sub.url.length} characters). Press Submit there, then paste the new row into the Inbox.`; }
+  else { FormsTransport.postGoogle(s, sub.fields); $('#sinkMsg').textContent = 'Submitted silently. If no row appears in the Sheet, check the “restrict to organisation” setting.'; }
 };
 
 /* ---------- guide ---------- */
-$('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d.name)}</h3><p class="tiny">${esc(d.blurb)}</p><table><tbody>${COMPETENCIES.filter(c=>c.d===d.id).map(c => `<tr><td style="width:32%"><b>${esc(c.name)}</b></td><td class="tiny">${esc(c.plain)}<br><i>Coach probe: ${esc(c.probe)}</i></td></tr>`).join('')}</tbody></table>`).join('');
+$('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d.label)}</h3><p class="tiny">${esc(d.blurb)}</p><table><tbody>${COMPETENCIES.filter(c => c.d === d.id).map(c => `<tr><td style="width:32%"><b>${esc(c.label)}</b></td><td class="tiny">${esc(c.plain)}<br><i>Coach probe: ${esc(c.probe)}</i></td></tr>`).join('')}</tbody></table>`).join('');
 
-/* boot */
-cur = (store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank();
+/* ---------- boot ---------- */
+cur = normaliseClass((store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank());
 fill();
+if (!store.me.name && cur.teacherName){ store.me.name = cur.teacherName; store.me.role = ROLE_OF[cur.type] || ''; save(); }
+renderInbox();
+ingestHash();
+window.addEventListener('hashchange', ingestHash);
 </script>
 </body>
 </html>

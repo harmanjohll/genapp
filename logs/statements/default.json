@@ -1,0 +1,123 @@
+{
+  "about": "Sample I can statements. Replace the text with the school's own; keep each id stable once students link to it. competencies lists the competency ids whose evidence can back a statement: critical, adaptive, inventive, communication, collaboration, information, civic, global, crosscultural, selfaware, selfmanage, socialaware, relationship, decisions. For statements by level, see example-banded.json.",
+  "id": "default",
+  "version": 1,
+  "placeholder": true,
+  "title": "Sample statements",
+  "baskets": {
+    "cait": {
+      "statements": [
+        {
+          "id": "cait.01",
+          "text": "I can weigh evidence before I decide, and say why I chose.",
+          "competencies": [
+            "critical"
+          ]
+        },
+        {
+          "id": "cait.02",
+          "text": "I can use what I know in a new situation, and change my approach when it is not working.",
+          "competencies": [
+            "adaptive"
+          ]
+        },
+        {
+          "id": "cait.03",
+          "text": "I can ask my own questions and test ideas that are not in the notes.",
+          "competencies": [
+            "inventive"
+          ]
+        }
+      ]
+    },
+    "cci": {
+      "statements": [
+        {
+          "id": "cci.01",
+          "text": "I can explain an idea clearly for my listener, and check that they followed.",
+          "competencies": [
+            "communication"
+          ]
+        },
+        {
+          "id": "cci.02",
+          "text": "I can share the work and the decisions in a group, and make room for others.",
+          "competencies": [
+            "collaboration"
+          ]
+        },
+        {
+          "id": "cci.03",
+          "text": "I can find, check and combine information, and say where it came from.",
+          "competencies": [
+            "information"
+          ]
+        }
+      ]
+    },
+    "cgc": {
+      "statements": [
+        {
+          "id": "cgc.01",
+          "text": "I can connect what I learn to life in Singapore, and play my part in my community.",
+          "competencies": [
+            "civic"
+          ]
+        },
+        {
+          "id": "cgc.02",
+          "text": "I can link what I learn to issues in the wider world.",
+          "competencies": [
+            "global"
+          ]
+        },
+        {
+          "id": "cgc.03",
+          "text": "I can notice how people from other backgrounds might see things, and respond with respect.",
+          "competencies": [
+            "crosscultural"
+          ]
+        }
+      ]
+    },
+    "sec": {
+      "statements": [
+        {
+          "id": "sec.01",
+          "text": "I can name what I feel, and what I am good and not yet good at.",
+          "competencies": [
+            "selfaware"
+          ]
+        },
+        {
+          "id": "sec.02",
+          "text": "I can manage my time, effort and feelings to reach a goal.",
+          "competencies": [
+            "selfmanage"
+          ]
+        },
+        {
+          "id": "sec.03",
+          "text": "I can notice how others feel and see things.",
+          "competencies": [
+            "socialaware"
+          ]
+        },
+        {
+          "id": "sec.04",
+          "text": "I can build and repair relationships, and ask for help.",
+          "competencies": [
+            "relationship"
+          ]
+        },
+        {
+          "id": "sec.05",
+          "text": "I can make choices that are good for me and fair to others.",
+          "competencies": [
+            "decisions"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,63 @@
-# Learning Log: design, decisions, and the questions that are yours
+# Competency Development Log: design, decisions, and the questions that are yours
 
-Phase 1, September 2026. This document is the reasoning behind `logs/`. Read it before changing the app, and read the last section before the next conversation about it: those are the decisions I could not make for you.
+October 2026. The Learning Log became the Competency Development Log: same frameworks, same coach, a new spine. The first part of this document covers that change. The rest is the Learning Log's design from September; it still holds for the frameworks, the coach, the relay and the mobile layout.
+
+## Competency Development Log (October 2026)
+
+### What changed, and why
+
+The Learning Log treated the entry as its unit. In a log meant to run from Secondary 1 to graduation, the unit is the competency, and entries are its evidence. So:
+
+- **Home is a Basecamp map.** Four trails, one per basket. Each dot is a day with evidence, placed by school term (holidays squeezed out), higher for stronger evidence in the student's own words. Unlocked statements sit as yellow marks in a lane above the trail. The medium carries the message: growth over time, owned by the climber, not a score.
+- **Four baskets.** The three E21CC domains and the Social and Emotional Competencies. Full names on basket pages, short labels on the map. Baskets are computed from claims and verified evidence, never stored, so every Learning Log entry filed itself on migration.
+- **Write once.** GROW and ACT cover any context: subject, CCA, camp or trip, competition, service, other. There are no separate basket journals to fill; basket pages hold a different genre: the I can statements with their evidence, and a termly Look across (three questions mirroring GROW's shape, written while reading that term's evidence).
+- **Groups.** A student belongs to several: form class, subject classes, CCA. Each group file brings an adult, their coach voice and their drop box.
+- **Sharing by section, nothing by default.** Each adult sees only the sections the student opens to them (GROW, ACT, each basket), and only when the student sends.
+- **Margin notes.** Teachers reply beside the paragraph, in a second ink (Georgia italic, a darker red), on wide screens; under it behind a red rule on phones. The student's words stay primary on the page.
+
+### The evidence gate
+
+A statement lights only when the student has linked an entry **and** that entry's own words back it: the coach saw one of the statement's competencies at clear or strong with a quote that really is in the entry, or the class coach matched the statement to such a quote. Linking alone leaves it half filled ("linked, not backed yet"), with the competency's probe. A coach suggestion alone never lights anything; the student confirms. This is stricter than the plan's first wording, which would have let any verbatim sentence light a statement: picking a sentence from your own entry is always verbatim, so that rule would have been no gate at all.
+
+### Phase 1 transport (no server)
+
+- **Student to adult.** Through the adult's Microsoft Form: the entry is compressed and split across three long answers (payload1 to payload3), and the pre filled link is kept under 8,000 characters by packing items into as few submissions as fit. The student presses Submit once per part. Without a form, the student sends a link in a Teams chat that opens in the teacher's Inbox.
+- **Adult to student.** Notes for one student travel in one link, addressed by a one way tag of the student's email; the log refuses a link made for someone else and ignores a replay. There is never a class wide bundle of notes.
+- **Teacher reading.** Paste rows from the form's Excel sheet into the Inbox, open students' links, or drop exports. Old thirteen field forms still work, as text only.
+
+### Credit guards
+
+One AI read per version of an entry's words (the hash of exactly what the coach receives). This also fixed a Learning Log bug: editing an entry without changing it threw away the read and bought a new one. A daily allowance per student (eight unless the group file says otherwise), shown in Settings and beside the Ask button. The relay throttles per student using a one way tag instead of per IP address, because a class on school wifi shares one address; a looser per IP limit stops tag spoofing. The relay README now starts with the Console spend cap.
+
+### Storage seam
+
+`assets/store.js` holds the browser store, form submissions and links. Phase 2 replaces it with a OneDrive store and Graph sharing without changing the screens. `PHASE2-REQUEST.md` is the one page for MOE IT. The Learning Log's `logs.v1` is read once and kept untouched as a rollback copy; Settings offers to remove it after an export.
+
+### Verified, October 2026
+
+In headless Chromium, against a mock relay that checks the class token and the student tag and counts calls:
+
+- **Migration.** A seeded Learning Log (two profiles, one with a PIN, a draft, evidence, a sent entry) became v2 with the old key untouched and a second load changing nothing. A CCA entry was recognised from its subject name; the draft reopened with its subject.
+- **Coach and credits.** A logged entry was read once, with the student tag. An invented quote was demoted, and an invented statement match dropped. An unchanged edit made no call and kept the read; a changed edit made one. The daily allowance stopped the fourth read.
+- **Statements.** A coach matched statement, linked, lit on the basket page and on the map.
+- **Sharing.** A Microsoft Form link (under 2,000 characters for one entry) decoded back to the same entry, and the item was marked sent. A Teams link to a teacher without a form opened in the console Inbox.
+- **Notes round trip.** The teacher wrote two notes and sent them through a Teams link. They landed beside the paragraph at 1,280 wide and under it at 390. A wrong student was refused, and a replay added nothing.
+- **Console.** An Excel paste with a payload split across two answers and a legacy text row produced three items from two students; pasting again added none. The class grid, students timeline and form class set up all rendered.
+- **Layout.** No sideways scroll at 320, 360, 390 and 412 wide or on the console at 360 and 1,280, and no console errors. Night mood was checked for the second ink.
+
+Not verified, because they need real accounts: a live Microsoft Form submission and its true URL limit; a Teams deep link between a staff and a student account; a live Anthropic call through the relay.
+
+### The questions that are yours (October)
+
+1. **The I can statements.** Sample statements stand in, one per competency, under a visible banner. Your set can be flat or banded by level; give each statement the competencies whose evidence backs it, and keep ids stable once students link.
+2. **The GROW wording.** The questions say "lesson" and were kept verbatim for CCA and camp entries; the composer tells students to read "lesson" as whatever they just learnt from. If the school wants a CCA wording, it is one line per question in `core.js`.
+3. **Who sees what by default.** Nothing, today. A form teacher seeing everything by default is one setting, but students tend to write for the audience they know is reading.
+4. **Phase 2.** The four gates in `PHASE2-REQUEST.md` decide whether the log can live in OneDrive. Until then, the export reminder is the only protection against a cleared browser.
+5. **Term dates.** `TERMS` in `core.js` holds 2026 and 2027 from MOE's calendar. It needs one line a year.
+
+---
+
+# The Learning Log (September 2026)
 
 ## What Phase 1 delivers
 

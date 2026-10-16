@@ -1,0 +1,98 @@
+{
+  "about": "Example of a banded set. Each basket lists statements per band; a student sees the statements for their band (set by the form teacher's group file). Statements under statements (outside bands) are shown to every band.",
+  "id": "example-banded",
+  "version": 1,
+  "placeholder": true,
+  "title": "Sample statements by level",
+  "bands": [
+    {
+      "id": "lower",
+      "label": "Lower Secondary"
+    },
+    {
+      "id": "upper",
+      "label": "Upper Secondary"
+    }
+  ],
+  "baskets": {
+    "cait": {
+      "bands": {
+        "lower": [
+          {
+            "id": "cait.lower.01",
+            "text": "I can give a reason for my answer.",
+            "competencies": [
+              "critical"
+            ]
+          },
+          {
+            "id": "cait.lower.02",
+            "text": "I can try another way when my first way does not work.",
+            "competencies": [
+              "adaptive"
+            ]
+          }
+        ],
+        "upper": [
+          {
+            "id": "cait.upper.01",
+            "text": "I can weigh evidence on more than one side before I decide.",
+            "competencies": [
+              "critical"
+            ]
+          },
+          {
+            "id": "cait.upper.02",
+            "text": "I can carry a method into an unfamiliar problem and adjust it.",
+            "competencies": [
+              "adaptive"
+            ]
+          }
+        ]
+      },
+      "statements": [
+        {
+          "id": "cait.all.01",
+          "text": "I can ask my own questions and test my ideas.",
+          "competencies": [
+            "inventive"
+          ]
+        }
+      ]
+    },
+    "cci": {
+      "statements": [
+        {
+          "id": "cci.all.01",
+          "text": "I can explain an idea clearly and check that my listener followed.",
+          "competencies": [
+            "communication"
+          ]
+        }
+      ]
+    },
+    "cgc": {
+      "statements": [
+        {
+          "id": "cgc.all.01",
+          "text": "I can connect what I learn to life in Singapore.",
+          "competencies": [
+            "civic"
+          ]
+        }
+      ]
+    },
+    "sec": {
+      "statements": [
+        {
+          "id": "sec.all.01",
+          "text": "I can name what I feel and what I can do about it.",
+          "competencies": [
+            "selfaware",
+            "selfmanage"
+          ]
+        }
+      ]
+    }
+  }
+}
