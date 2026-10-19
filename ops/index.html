@@ -38,10 +38,19 @@
   .btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.85rem;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap;min-height:40px}
   .btn.on{background:var(--navy);border-color:var(--navy);color:#fff}
 
+  /* role */
+  .role{margin-bottom:12px}
+  .rq{font-size:.8rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:0 2px 6px}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#e6e8ef;border-radius:14px;padding:4px}
+  .seg button{appearance:none;border:0;background:none;font:inherit;font-size:.86rem;font-weight:700;color:var(--ink2);border-radius:10px;padding:9px 4px;line-height:1.2;cursor:pointer;min-height:44px}
+  .seg button.on{background:var(--navy);color:#fff;box-shadow:0 2px 6px rgba(0,12,83,.25)}
+  .role.ask .seg{outline:2px solid var(--navy);outline-offset:2px}
+
   /* status */
   .status{background:var(--card);border:2px solid var(--tcbd);border-radius:18px;overflow:hidden;margin-bottom:16px}
   .sbar{background:var(--tcbg);padding:14px 16px 12px}
-  .sline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .sline{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 10px;margin-bottom:6px}
+  .sline .sel{min-width:0;flex:0 1 auto}
   .kick{white-space:nowrap;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
   .sel{appearance:none;font:inherit;font-size:.85rem;font-weight:700;color:var(--ink);background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23141a2e' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid var(--line);border-radius:10px;padding:8px 34px 8px 12px;cursor:pointer;min-height:40px;max-width:100%}
   .bname{font-size:1.6rem;font-weight:800;line-height:1.15;color:var(--tc);letter-spacing:-.01em}
@@ -93,6 +102,9 @@
   .body .hl{color:#3b4bb8;font-weight:700}
   .body .trig{font-weight:800;color:#c5302a;font-size:.9rem;line-height:1.4;margin-bottom:8px}
   .body .range{display:inline-block;font-size:.8rem;font-weight:700;background:var(--bg);border-radius:6px;padding:3px 8px;margin-bottom:8px}
+  .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--ink3);background:var(--bg);border-radius:6px;padding:2px 8px;margin-bottom:8px}
+  .acts{padding-left:20px}
+  .acts li{margin:6px 0;font-weight:600}
   .src{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#3b4bb8;margin-bottom:6px}
 
   /* activity check */
@@ -133,6 +145,16 @@
     <button class="btn" id="alertBtn" type="button">Turn on alerts</button>
   </div>
 
+  <!-- 0. WHO AM I -->
+  <section class="role" id="roleBox">
+    <div class="rq" id="roleQ">I am a …</div>
+    <div class="seg" id="roleSeg" role="group" aria-label="I am a">
+      <button type="button" data-r="T">Teacher</button>
+      <button type="button" data-r="O">Operations Manager</button>
+      <button type="button" data-r="L">School Leader</button>
+    </div>
+  </section>
+
   <!-- 1. WHERE ARE WE -->
   <section class="status" id="status" aria-live="polite">
     <div class="changed" id="changed" role="status"></div>
@@ -164,10 +186,10 @@
   <div class="acc" id="steps"></div>
 
   <!-- 3. TOOLS AND REFERENCE -->
-  <div class="sh"><div><h2>Plan and check</h2><div class="sub">Activities, exams, drills, sources</div></div></div>
+  <div class="sh"><div><h2>Plan and check</h2><div class="sub" id="refSub">Activities, exams, drills, sources</div></div></div>
   <div class="acc" id="ref">
 
-    <details name="ref" id="activity">
+    <details name="ref" id="activity" data-who="TL">
       <summary><span class="no ic">✓</span><span><span class="st">Plan an activity</span><span class="pv">Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</span></span><span class="chev"></span></summary>
       <div class="body">
         <p class="lead">Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</p>
@@ -192,7 +214,7 @@
       </div>
     </details>
 
-    <details name="ref">
+    <details name="ref" data-who="TOL">
       <summary><span class="no ic">✎</span><span><span class="st">National Examinations</span><span class="pv">O and A Level papers, MCs, rescheduling</span></span><span class="chev"></span></summary>
       <div class="body">
         <div class="src">MOE press conference, 16 Oct 2026</div>
@@ -207,31 +229,6 @@
       </div>
     </details>
 
-    <details name="ref">
-      <summary><span class="no ic">◎</span><span><span class="st">How MOE decides</span><span class="pv">Continuity plans and precautionary measures</span></span><span class="chev"></span></summary>
-      <div class="body">
-        <div class="src">MOE press conference, 16 Oct 2026</div>
-        <p class="moeq">MOE and Special Education (SPED) schools continuity plans</p>
-        <ul>
-          <li>Available forecasts and advisories, as well as actual ground sitation will be taken into consideration to make an informed decision.</li>
-          <li>School leaders will take into account the 1-hour PM 2.5 readings and exercise judgement in managing school-based learning and activities.</li>
-          <li>Measures will be adjusted where needed to safeguard the health and well-being of our students and staff.</li>
-          <li class="hl">If there is a need to move nationally, MOE will make the announcement through our schools and official channels.</li>
-        </ul>
-        <p class="moeq">Our schools have already been taking precautionary measures</p>
-        <ul>
-          <li>Adjusting activities</li>
-          <li>Deploying air purifiers</li>
-          <li>Paying extra attention to students who report to be unwell and/or have pre-existing health conditions</li>
-          <li>Taking practical steps to reduce exposure to haze where necessary</li>
-        </ul>
-        <p class="moeq">Junior Colleges, Millenia Institute and Post-Secondary Education Institutions</p>
-        <ul>
-          <li>Junior Colleges (including the JC sections of Integrated Programme schools), Millennia Institute, ITE, polytechnics, Autonomous Universities and University of the Arts Singapore, because students are older, will generally continue in-person lessons.</li>
-          <li>We will also take reference from forecasts as well as actual circumstances on the ground in deciding whether to continue in-person activities or what measures should be adopted.</li>
-        </ul>
-      </div>
-    </details>
 
     <details name="ref">
       <summary><span class="no ic">▶</span><span><span class="st">Run a drill</span><span class="pv">Enter any reading to see its measures</span></span><span class="chev"></span></summary>
@@ -302,6 +299,73 @@
   const WITHOUT = '<div class="grp">Students <span class="u">without</span> pre-existing conditions <i>and are feeling well</i></div>';
   const PLAN = '<p><a href="#activity" data-open="activity">Plan an activity with the Additional Guidelines ↓</a></p>';
 
+  // Which roles see each step: T Teacher, O Operations Manager, L School Leader.
+  const WHO = {
+    'Know the trigger': 'TOL',
+    'Watch for unwell students': 'TOL',
+    'Students with lung or heart conditions, or unwell': 'TL',
+    'All other students': 'TL',
+    'Lessons and activities': 'TL',
+    'Classrooms and air purifiers': 'TOL',
+    'Recess': 'TOL',
+    'Dismissal': 'TL',
+    'Staff': 'TOL',
+    'If tomorrow’s PSI forecast is 301 or above': 'TOL',
+    [MOE]: 'L'
+  };
+  const ROLES = { T: 'Teacher', O: 'Operations Manager', L: 'School Leader' };
+
+  // School follow up actions by band and role. School procedure, not MOE text: edit freely.
+  const ACTIONS = [
+    {
+      T: ['Turn on alerts in this app so you know when the band changes.'],
+      O: ['Turn on alerts in this app so you know when the band changes.', 'Keep air purifiers serviced and the holding room ready before haze season.'],
+      L: ['Turn on alerts in this app so you know when the band changes.', 'Name who monitors NEA readings each school day.']
+    },
+    {
+      T: ['Before any physical or outdoor activity, ask students if anyone feels unwell.',
+          'Send unwell students to the holding room and inform the general office.',
+          'Keep doors and windows closed with purifiers on. Reopen briefly at lesson change.',
+          'PE and CCA teachers: use Plan an activity before any outdoor session.'],
+      O: ['Set up the holding room now: air conditioned, purifier on.',
+          'Check purifiers in classrooms, labs, the hall and the ISH are working and switched on.',
+          'Brief estate and cleaning staff to minimise prolonged or strenuous outdoor work.',
+          'Alert the School Leader if NEA readings rise into the next band.'],
+      L: ['Tell staff the band and its measures, and who is monitoring NEA readings today.',
+          'Review outdoor activities in the next 24 hours: proceed, modify or reschedule.',
+          'Have Year Heads flag students with lung or heart conditions to their form teachers.',
+          'Prepare a parent message in case the band rises.']
+    },
+    {
+      T: ['Keep all lessons indoors. No outdoor activities and no strenuous indoor exercise.',
+          'Students eat at the indoor recess venue; teachers on duty supervise there.',
+          'Before dismissal, check every student for coughing, wheezing or shortness of breath.',
+          'If a parent fetches a student early, release through the general office.'],
+      O: ['Set up the indoor recess venue and inform canteen vendors.',
+          'Keep the holding room ready and purifiers running in every room in use.',
+          'Issue N95 masks to staff whose outdoor work cannot be avoided.',
+          'Keep elderly, pregnant and vulnerable staff off outdoor work.'],
+      L: ['Announce to staff: indoor measures in force, no early dismissal.',
+          'Message parents with MOE’s lines: parents may fetch their children early if concerned.',
+          'Replace outdoor CCAs and camps with indoor ones, or postpone them. Minimise after school activities.',
+          'Set up the early fetch process at the general office.']
+    },
+    {
+      T: ['Scale down lessons. Keep students in air conditioned rooms, or closed rooms with purifiers.',
+          'Cancel any after school activity you run.',
+          'Check every student is well before dismissal, especially those with lung or heart conditions.',
+          'Be ready to switch to Home Based Learning if MOE closes schools.'],
+      O: ['Confirm every room in use is air conditioned, or closed with a purifier running.',
+          'Stop all outdoor work that can wait. N95 for any that cannot; vulnerable staff do none.',
+          'Coordinate dismissal timing with the school bus operator.',
+          'If schools close, keep the school open for students whose parents cannot arrange care.'],
+      L: ['Watch tomorrow’s 24 hour PSI forecast. If 301 or above, prepare for MOE’s decision on closure.',
+          'Ready the Home Based Learning plan (SOP 5.1) and brief staff.',
+          'Message parents: no early dismissal; parents of students with lung or heart conditions are encouraged to fetch them at dismissal time.',
+          'For O Level candidates, watch for SEAB announcements on rescheduling.']
+    }
+  ];
+
   const BANDS = [
     {
       name: 'Normal', range: '24-hr PSI 100 and below, and 1-hr PM2.5 55 and below',
@@ -350,7 +414,7 @@
       gist: 'Scale down lessons where possible till air quality improves and drops below hazardous. Avoid after-school activities.',
       steps: [
         WATCH,
-        { t: 'Lessons and activities', h: `<p class="alarm">FOR TRANSIENT SPIKES DURING THE SCHOOL DAY</p><p><b class="u">Curriculum &amp; student activities:</b></p>
+        { t: 'Lessons and activities', who: 'TOL', h: `<p class="alarm">FOR TRANSIENT SPIKES DURING THE SCHOOL DAY</p><p><b class="u">Curriculum &amp; student activities:</b></p>
             <ul><li><b>Scale down lessons</b> where possible till air quality improves and drops below hazardous.</li>
             <li><b>All students</b> should be in either air-conditioned rooms or rooms with doors and windows closed with air purifiers deployed.</li>
             <li><b>Avoid after-school activities.</b></li></ul>` },
@@ -395,6 +459,7 @@
   };
 
   let region = store.get('region', 'central');
+  let role = store.get('role', '');
   let live = null;      // { psi:{...}, pm:{...}, ts }
   let manual = null;    // { psi, pm }
   let liveTier = null;
@@ -502,13 +567,17 @@
     shownTier = tier;
     const b = BANDS[tier];
     const now = tier === liveTier;
-    $('doTitle').textContent = now ? 'What to do now' : 'If the band is ' + b.name;
+    $('doTitle').textContent = (now ? 'What to do now' : 'If the band is ' + b.name) + (role ? ', ' + ROLES[role] : '');
     $('doSub').textContent = b.range + '. Tap a step to open it.';
     let n = 0;
-    $('steps').innerHTML = b.steps.map((s, i) => {
+    const steps = b.steps.filter(s => !role || (s.who || WHO[s.t] || 'TOL').includes(role));
+    const mine = role && ACTIONS[tier][role];
+    if (mine && mine.length) steps.unshift({ t: 'Your actions', ic: '★', open: true,
+      h: '<div class="tag">School follow up. Not MOE guideline text.</div><ol class="acts">' + mine.map(a => `<li>${a}</li>`).join('') + '</ol>' });
+    $('steps').innerHTML = steps.map((s, i) => {
       const ic = s.ic ? s.ic : String(++n);
-      const preview = s.h.replace(/<p class="(trig|src|grp|alarm)[^"]*">.*?<\/p>|<div class="(src|grp)">.*?<\/div>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-      return `<details name="steps">
+      const preview = s.h.replace(/<p class="(trig|src|grp|alarm)[^"]*">.*?<\/p>|<div class="(src|grp|tag)">.*?<\/div>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      return `<details name="steps"${s.open ? ' open' : ''}>
         <summary><span class="no${s.ic ? ' ic' : ''}">${ic}</span><span><span class="st">${s.t}</span><span class="pv">${preview}</span></span><span class="chev"></span></summary>
         <div class="body">${s.h}</div></details>`;
     }).join('');
@@ -519,6 +588,17 @@
     setColours(tier, $('steps'));
     renderBandSelect();
   }
+
+  function paintRole() {
+    $('roleSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.r === role));
+    $('roleBox').classList.toggle('ask', !role);
+    $('roleQ').textContent = role ? 'I am a …' : 'I am a … (choose to see only your steps)';
+    document.querySelectorAll('#ref details[data-who]').forEach(d => d.hidden = !!role && !d.dataset.who.includes(role));
+  }
+  $('roleSeg').querySelectorAll('button').forEach(b => b.onclick = () => {
+    role = b.dataset.r; store.set('role', role); paintRole();
+    renderSteps(shownTier ?? 0);
+  });
 
   $('region').onchange = e => { region = e.target.value; store.set('region', region); render(); };
   $('bandSel').onchange = e => {
@@ -603,6 +683,7 @@
   setInterval(load, POLL_MS);
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   paintAlertBtn();
+  paintRole();
   render();
   load();
 })();
