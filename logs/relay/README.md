@@ -3,11 +3,24 @@
 A 90 line Cloudflare Worker that holds one Anthropic API key for the school, so
 that no student ever creates an account or holds a key (the three major AI
 providers all require account holders to be 18 or older, and Google's Gemini
-API terms also forbid apps used by under 18s). The Learning Log page sends the
+API terms also forbid apps used by under 18s). The E21CC Learning Log page sends the
 same request it would send to Anthropic; the Worker checks a class token,
 applies a rate limit, pins the model and token cap, and forwards. It returns
 Anthropic's answer unchanged, so the page does not know or care whether a key
 or a relay is behind it.
+
+## Step one, before anything else: cap the spend
+
+Set a monthly spend limit in the Anthropic Console the moment the account
+exists, before any class token is issued:
+https://console.anthropic.com/settings/limits. Turn on the email alert at the
+same time. Whatever happens downstream (a leaked token, a script, a class that
+loves the button), the bill cannot pass this number. Thirty dollars a month is
+a sensible start for a pilot.
+
+The app adds two more guards on its side: a second AI read of an entry is
+only possible after the words change, and each student has a daily allowance
+of coach reads (eight by default, set per group in the teacher console).
 
 ## What you need before you start
 
@@ -45,8 +58,13 @@ name.
      trailing slash, for example `https://harmanjohll.github.io`.
    - `MODEL` (type Text): `claude-opus-5`, or `claude-sonnet-5` or
      `claude-haiku-4-5` if you want it cheaper.
-4. Optional but recommended: Settings, Bindings, Add, Rate limiting. Variable
-   name `LIMITER`, 20 requests per 60 seconds. The Worker uses it if present.
+4. Recommended: Settings, Bindings, Add, Rate limiting, twice.
+   - Variable name `LIMITER`, 6 requests per 60 seconds. This one is per
+     student: the app sends a one way tag, so a whole class on the school
+     network does not share one allowance.
+   - Variable name `LIMITER_IP`, 120 requests per 60 seconds. A backstop per
+     network address.
+   The Worker uses each if present.
 5. Note the Worker URL, for example
    `https://learning-log-coach.<account>.workers.dev`.
 

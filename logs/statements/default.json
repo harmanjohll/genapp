@@ -1,0 +1,249 @@
+{
+  "about": "Starter I can statements: for each competency, one to begin with (level 1) and one to stretch towards (level 2). Replace the text with the school's own; keep each id stable once students link to it. competencies lists the competency ids whose evidence can back a statement: critical, adaptive, inventive, communication, collaboration, information, civic, global, crosscultural, selfaware, selfmanage, socialaware, relationship, decisions. For statements by level band, see example-banded.json.",
+  "id": "default",
+  "version": 2,
+  "placeholder": true,
+  "title": "Starter statements",
+  "baskets": {
+    "cait": {
+      "statements": [
+        {
+          "id": "critical.1",
+          "level": 1,
+          "text": "I can give a reason for my answer, not only the answer.",
+          "competencies": [
+            "critical"
+          ]
+        },
+        {
+          "id": "critical.2",
+          "level": 2,
+          "text": "I can weigh evidence on more than one side before I decide, and explain my choice.",
+          "competencies": [
+            "critical"
+          ]
+        },
+        {
+          "id": "adaptive.1",
+          "level": 1,
+          "text": "I can try another way when my first way does not work.",
+          "competencies": [
+            "adaptive"
+          ]
+        },
+        {
+          "id": "adaptive.2",
+          "level": 2,
+          "text": "I can carry what I learnt in one place into a new situation, and adjust it to fit.",
+          "competencies": [
+            "adaptive"
+          ]
+        },
+        {
+          "id": "inventive.1",
+          "level": 1,
+          "text": "I can ask my own questions about what I am learning.",
+          "competencies": [
+            "inventive"
+          ]
+        },
+        {
+          "id": "inventive.2",
+          "level": 2,
+          "text": "I can come up with an idea of my own, test it, and improve it.",
+          "competencies": [
+            "inventive"
+          ]
+        }
+      ]
+    },
+    "cci": {
+      "statements": [
+        {
+          "id": "communication.1",
+          "level": 1,
+          "text": "I can explain an idea clearly in my own words.",
+          "competencies": [
+            "communication"
+          ]
+        },
+        {
+          "id": "communication.2",
+          "level": 2,
+          "text": "I can change how I explain something to suit my listener, and check that they understood.",
+          "competencies": [
+            "communication"
+          ]
+        },
+        {
+          "id": "collaboration.1",
+          "level": 1,
+          "text": "I can do my share of the work in a group.",
+          "competencies": [
+            "collaboration"
+          ]
+        },
+        {
+          "id": "collaboration.2",
+          "level": 2,
+          "text": "I can help my group decide together, and make room for every voice.",
+          "competencies": [
+            "collaboration"
+          ]
+        },
+        {
+          "id": "information.1",
+          "level": 1,
+          "text": "I can find information and say where it came from.",
+          "competencies": [
+            "information"
+          ]
+        },
+        {
+          "id": "information.2",
+          "level": 2,
+          "text": "I can check whether a source is reliable before I use it, and use it honestly.",
+          "competencies": [
+            "information"
+          ]
+        }
+      ]
+    },
+    "cgc": {
+      "statements": [
+        {
+          "id": "civic.1",
+          "level": 1,
+          "text": "I can connect what I learn to life in Singapore.",
+          "competencies": [
+            "civic"
+          ]
+        },
+        {
+          "id": "civic.2",
+          "level": 2,
+          "text": "I can play my part to make my school or community better.",
+          "competencies": [
+            "civic"
+          ]
+        },
+        {
+          "id": "global.1",
+          "level": 1,
+          "text": "I can link what I learn to something happening in the wider world.",
+          "competencies": [
+            "global"
+          ]
+        },
+        {
+          "id": "global.2",
+          "level": 2,
+          "text": "I can explain how an issue beyond Singapore affects people here, and what we could do.",
+          "competencies": [
+            "global"
+          ]
+        },
+        {
+          "id": "crosscultural.1",
+          "level": 1,
+          "text": "I can notice that people from other backgrounds may see things differently.",
+          "competencies": [
+            "crosscultural"
+          ]
+        },
+        {
+          "id": "crosscultural.2",
+          "level": 2,
+          "text": "I can work respectfully with people whose culture or beliefs differ from mine.",
+          "competencies": [
+            "crosscultural"
+          ]
+        }
+      ]
+    },
+    "sec": {
+      "statements": [
+        {
+          "id": "selfaware.1",
+          "level": 1,
+          "text": "I can name what I feel and why.",
+          "competencies": [
+            "selfaware"
+          ]
+        },
+        {
+          "id": "selfaware.2",
+          "level": 2,
+          "text": "I can say what I am good at and what I am not yet good at, with an example of each.",
+          "competencies": [
+            "selfaware"
+          ]
+        },
+        {
+          "id": "selfmanage.1",
+          "level": 1,
+          "text": "I can plan my time to finish what I start.",
+          "competencies": [
+            "selfmanage"
+          ]
+        },
+        {
+          "id": "selfmanage.2",
+          "level": 2,
+          "text": "I can keep going and manage my feelings when things get hard.",
+          "competencies": [
+            "selfmanage"
+          ]
+        },
+        {
+          "id": "socialaware.1",
+          "level": 1,
+          "text": "I can notice how others are feeling.",
+          "competencies": [
+            "socialaware"
+          ]
+        },
+        {
+          "id": "socialaware.2",
+          "level": 2,
+          "text": "I can see a situation from someone else’s point of view, even when I disagree.",
+          "competencies": [
+            "socialaware"
+          ]
+        },
+        {
+          "id": "relationship.1",
+          "level": 1,
+          "text": "I can ask for help when I need it.",
+          "competencies": [
+            "relationship"
+          ]
+        },
+        {
+          "id": "relationship.2",
+          "level": 2,
+          "text": "I can work through a disagreement and keep the relationship.",
+          "competencies": [
+            "relationship"
+          ]
+        },
+        {
+          "id": "decisions.1",
+          "level": 1,
+          "text": "I can think about who is affected before I make a choice.",
+          "competencies": [
+            "decisions"
+          ]
+        },
+        {
+          "id": "decisions.2",
+          "level": 2,
+          "text": "I can make a fair choice and take responsibility for what follows.",
+          "competencies": [
+            "decisions"
+          ]
+        }
+      ]
+    }
+  }
+}
