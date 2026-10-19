@@ -388,7 +388,7 @@ async function runAiFor(e){
   aiPending.add(e.id); aiErrors.delete(e.id);
   try{ const r = await aiCoach(e); e.coach = e.coach || {}; e.coach.ai = r; if (r.e21cc) e.e21cc = r.e21cc; saveDb(); }
   catch(err){ aiErrors.set(e.id, {msg:err.message, allowance:err instanceof AllowanceError}); }
-  finally{ aiPending.delete(e.id); const h = location.hash || ''; if (h.startsWith('#/entry/' + e.id)) renderEntry(h.slice(8)); }
+  finally{ aiPending.delete(e.id); const h = location.hash || ''; if (h.startsWith('#/entry/' + e.id) || (h.startsWith('#/journal/') && hashParts().q.get('e') === e.id)) route(); }
 }
 
 /* ---------- entry text ---------- */
@@ -567,6 +567,10 @@ window.addEventListener('DOMContentLoaded', boot);
 async function boot(){
   initRuntime();
   const sk = $('.skip'); if (sk) sk.onclick = ev => { ev.preventDefault(); const m = $('#main'); if (m){ m.focus(); m.scrollIntoView(); } };
+  if (DESK.addEventListener) DESK.addEventListener('change', () => { if (!me) return; if (draft && document.body.classList.contains('composing')) renderComposer(); else { lastFrameKey = ''; route(); } });
+  const typing = el => el && el.matches && el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select');
+  document.addEventListener('focusin', ev => { if (typing(ev.target)) document.body.classList.add('typing'); });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!typing(document.activeElement)) document.body.classList.remove('typing'); }, 60));
   if (db.current && db.profiles[db.current]) me = db.profiles[db.current];
   applyPrefs();
   const link = stashLink();
@@ -608,11 +612,17 @@ function route(){
   if (h.startsWith('#/welcome')) return renderWelcome();
   return renderHome();
 }
-/* The notebook: a cover with Home, the log's title and the student's icon; ribbon tabs; the page. */
+/* The notebook: a cover with Home, the log's title and the student's icon; ribbon tabs; the page.
+   On a laptop the page can open flat into two leaves (an index or context on the left, what you
+   opened on the right). Below that width the leaves stack. On a phone the tabs hang from the bottom. */
 const TABS = [['e21cc', '#/', 'E21CC', 'wheel'], ['grow', '#/journal/grow', 'GROW', 'grow'], ['act', '#/journal/act', 'ACT', 'act'], ['settings', '#/settings', 'Settings', 'sliders']];
+const DESK = window.matchMedia ? window.matchMedia('(min-width:1024px)') : {matches:true};
+function isDesk(){ return !!DESK.matches; }
+let lastFrameKey = '';
 function frame(inner, active, opts = {}){
   document.body.classList.toggle('wide', !!opts.wide);
-  const t = logTitle();
+  const t = logTitle(); const spread = inner && typeof inner === 'object';
+  const body = spread ? `<div class="leaf l">${inner.left}</div><div class="leaf r">${inner.right}</div>` : inner;
   $('#app').innerHTML = `
     <header class="cover">
       <a class="homebtn" href="#/">${icon('home')}<span>Home</span></a>
@@ -620,10 +630,13 @@ function frame(inner, active, opts = {}){
       <a class="avatar" href="#/settings" aria-label="Settings for ${esc(me.name)}">${avatarSvg(me.prefs.avatar)}</a>
     </header>
     <nav class="tabs" aria-label="Sections of the log">${TABS.map(([id, href, label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href}"${active === id ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}</nav>
-    <main class="page fade${opts.ribbon ? ' ribbon' : ''}" id="main" tabindex="-1">${inner}</main>
+    <main class="page fade${spread ? ' spread' : ''}${opts.ribbon ? ' ribbon' : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
     <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
-  scrollTop();
+  // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
+  const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
+function redirect(h){ history.replaceState(null, '', h); route(); }
+function leaves(html, split){ const [left, right] = html.split('<!--leaf-->'); return {left, right:right || '', split}; }
 function scrollTop(){ window.scrollTo(0, 0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
 
 /* ---------- welcome, then a first page that makes it yours ---------- */
@@ -640,6 +653,7 @@ function renderWelcome(){
       <p class="meta">One log for everything you learn at Beatty: lessons, CCA, camps and competitions. Each entry gets feedback on the 21st Century Competencies your writing shows.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-e21cc">E21CC</span><span class="t-grow">GROW</span><span class="t-act">ACT</span></div>
     </section>
+    <div class="wcol">
     ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
       <button class="pcard" data-id="${p.id}"><span class="avatar">${avatarSvg(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
       <div id="pinBox" hidden style="margin-top:12px"></div>
@@ -655,6 +669,7 @@ function renderWelcome(){
       </form>
       <p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
     </section>
+    </div>
   </div>`;
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
   $('#newForm').onsubmit = async (e) => {
@@ -688,12 +703,12 @@ async function pickProfile(id){
 }
 /* First page after the name: subjects, CCA, a cover and an icon. All of it can wait. */
 function renderSetup(){
-  frame(`
+  frame(leaves(`
     <section class="hero"><h1>Make it yours</h1><p class="meta">Your subjects and CCA become bookmarks in your journals. You can change all of this later in Settings.</p></section>
-    ${experiencesEditor()}
+    ${experiencesEditor()}<!--leaf-->
     <section class="card"><h2>Your cover</h2>${coverPicker()}<span class="flabel" style="margin-top:14px">Your icon</span>${iconPicker()}</section>
     <div class="row" style="justify-content:space-between;margin-top:6px"><a class="btn ghost" href="#/">Skip for now</a><a class="btn acc" href="#/">${icon('check')} Open my log</a></div>
-  `, 'settings');
+  `, 'minmax(0,1fr) minmax(0,1fr)'), 'settings', {wide:true});
   wireExperiences(renderSetup); wireCover(); wireIconPicker();
 }
 
@@ -761,16 +776,17 @@ function renderHome(){
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
   const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === termKey(Date.now())).map(e => e.basket));
   const fed = k => E.filter(e => e.kind === k && COMPETENCIES.some(c => compLevelOf(e, c.id))).length;
-  frame(`<div class="homegrid">
+  frame(leaves(`
     <section class="titlepage">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
       <h1>Your competencies</h1>
       <p class="lede">Every GROW and ACT entry you write adds to this wheel.</p>
       <div class="wheelwrap">${wheelSvg(st)}</div>
+    </section>
+    <div class="wheelhelp">
       ${domainLegend()}
       <p class="tiny" style="text-align:center;margin:6px 0 0">The more clearly your words show a competency, the darker its part of the wheel. <svg class="istar" viewBox="0 0 24 24" aria-hidden="true">${STAR}</svg> marks an I can statement you have unlocked. Tap any part to see more.</p>
-    </section>
-    <div class="homeside">
+    </div><!--leaf-->
     <div class="acts">
       <a class="actcard" href="#/write/grow"><span class="badge b-grow">GROW</span><b>New GROW entry</b><span class="sub">After a lesson, a training or a camp day${drafts.includes('grow') ? '. You have one unfinished.' : ''}</span></a>
       <a class="actcard" href="#/write/act"><span class="badge b-act">ACT</span><b>New ACT entry</b><span class="sub">After you get feedback on your work${drafts.includes('act') ? '. You have one unfinished.' : ''}</span></a>
@@ -784,7 +800,7 @@ function renderHome(){
     ${latest ? `<a class="card latest" href="#/entry/${latest.id}"><span class="kick">Latest feedback · ${esc(entryTitle(latest))}</span>${latestLine(latest)}</a>` : ''}
     ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Choose one area. Read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
     ${nextEntry ? `<section class="card"><h2>Your next step</h2><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p></section>` : ''}
-    </div></div>`, 'e21cc', {ribbon:true, wide:true});
+  `, 'minmax(0,1fr) minmax(0,1fr)'), 'e21cc', {ribbon:true, wide:true, cls:'homespread'});
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 function latestLine(e){
@@ -816,7 +832,7 @@ function renderCompetency(id){
   const stmts = myStatements().filter(s => s.competencies.includes(id)).map(s => statementStatus(me.entries, s));
   const shows = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, id)).sort((a, b) => compLevelOf(b, id) - compLevelOf(a, id) || b.created - a.created);
   const tk = termKey(Date.now()); const across = me.entries.find(e => e.kind === 'across' && e.basket === c.d && e.term === tk);
-  frame(`
+  frame(leaves(`
     <section class="hero comp-hero" style="--d:${DOMAIN_COLOUR[c.d]}">
       <p class="kicker"><a href="#/">E21CC</a> · ${esc(d.label)}</p>
       <h1>${esc(c.label)}</h1>
@@ -827,13 +843,13 @@ function renderCompetency(id){
     <section class="card"><h2>I can</h2>
       <p class="tiny" style="margin:0 0 10px">To unlock a statement, link an entry whose words show it.</p>
       ${stmts.length ? `<ul class="stmts">${stmts.map(x => stmtRow(x, id)).join('')}</ul>` : '<p class="muted">No statements for this competency yet.</p>'}
-    </section>
+    </section><!--leaf-->
     <section class="card"><h2>Where it shows in your log</h2>${shows.length ? `<p class="tiny" style="margin:0 0 8px">${fromLine(st)[0].toUpperCase() + fromLine(st).slice(1)}. GROW and ACT entries both count.</p>` : ''}
       ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
     </section>
     <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
       <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
-  `, 'e21cc');
+  `, 'minmax(0,1fr) minmax(0,1fr)'), 'e21cc', {wide:true});
   wireStmtButtons(id);
 }
 function addLink(e, sid, quote){
@@ -930,28 +946,33 @@ function renderComposer(){
   const saved = !draft.editId && !ask && me.drafts[draft.key];
   $('#sheet').innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="inner">
     <div class="bar"><button class="homebtn" id="cHome" type="button">${icon('home')}<span>Home</span></button><b>${esc(title)}</b><button class="roundbtn" id="cClose" type="button" aria-label="Close">${icon('close')}</button></div>
-    ${ask ? '<div style="height:8px"></div>' : `<div class="prog"><span>Step ${i + 1} of ${n}</span><div class="track" aria-hidden="true"><i style="width:${Math.round((i + 1) / n * 100)}%"></i></div>${saved ? `<span class="saved">${icon('check')} Draft saved</span>` : ''}</div>`}
-    <div class="card fade" id="main" tabindex="-1">${body}</div>
-  </div>
-  ${ask ? '' : `<div class="dock"><div class="inner">
-    ${i > 0 ? `<button class="btn ghost" id="cBack" type="button">${icon('back')} Back</button>` : ''}
-    ${last ? `<button class="btn acc go" id="cSave" type="button">${icon('check')} ${draft.editId ? 'Save changes' : 'Log it'}</button>` : `<button class="btn go" id="cNext" type="button">Next ${icon('arrow')}</button>`}
-  </div></div>`}</div>`;
+    <div class="cbody${ask ? ' solo' : ''}">
+      <div class="cmain">
+        ${ask ? '<div style="height:8px"></div>' : `<div class="prog"><span>Step ${i + 1} of ${n}</span><div class="track" aria-hidden="true"><i style="width:${Math.round((i + 1) / n * 100)}%"></i></div>${saved ? `<span class="saved">${icon('check')} Draft saved</span>` : ''}</div>`}
+        <div class="card fade" id="main" tabindex="-1">${body}</div>
+        ${ask ? '' : `<div class="dock"><div class="dinner">
+          ${i > 0 ? `<button class="btn ghost" id="cBack" type="button">${icon('back')} Back</button>` : ''}
+          ${last ? `<button class="btn acc go" id="cSave" type="button">${icon('check')} ${draft.editId ? 'Save changes' : 'Log it'}</button>` : `<button class="btn go" id="cNext" type="button">Next ${icon('arrow')}</button>`}
+        </div></div>`}
+      </div>
+      ${ask ? '' : guideHtml(fw, steps, i)}
+    </div>
+  </div></div>`;
   const leave = to => { if (!draft._ask){ collect(); saveDraft(); } const kept = !draft._ask && !draft.editId && draftHasWork(draft); draft = null; location.hash = to; if (kept) toast('Draft saved. It will be waiting when you start a new entry.'); };
   $('#cHome').onclick = () => leave('#/');
   $('#cClose').onclick = () => leave(draftReturn());
   const rc = $('#rContinue'); if (rc) rc.onclick = () => { draft._ask = false; renderComposer(); };
   const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre}); if (pre) applyPrefill(pre); renderComposer(); };
   const bk = $('#cBack'); if (bk) bk.onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
-  const nx = $('#cNext'); if (nx) nx.onclick = () => {
-    collect();
-    if (kind === 'context'){
-      if (!draft.context.name){ toast('First choose a subject or an experience.'); const f = $('.xchips .chip') || $('.tile') || $('[name=ctxName]'); if (f) f.focus(); return; }
-      const undo = rememberExperience(draft.context);
-      if (undo){ const nm = draft.context.name; toast(`${nm} is now in your ${draft.context.type === 'subject' ? 'subjects' : draft.context.type === 'cca' ? 'CCA list' : 'experiences'}.`, 5000, {label:'Undo', fn:undo, done:`${nm} removed from your list.`}); }
-    }
-    draft.step = i + 1; saveDraft(); renderComposer();
+  // leaving step 1 needs a subject or experience; a new one joins the student's list
+  const leaveContext = () => {
+    if (!draft.context.name){ toast('First choose a subject or an experience.'); const f = $('.xchips .chip') || $('.tile') || $('[name=ctxName]'); if (f) f.focus(); return false; }
+    const undo = rememberExperience(draft.context);
+    if (undo){ const nm = draft.context.name; toast(`${nm} is now in your ${draft.context.type === 'subject' ? 'subjects' : draft.context.type === 'cca' ? 'CCA list' : 'experiences'}.`, 5000, {label:'Undo', fn:undo, done:`${nm} removed from your list.`}); }
+    return true;
   };
+  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); if (kind === 'context' && !leaveContext()) return; draft.step = i + 1; saveDraft(); renderComposer(); };
+  $$('[data-jump]', $('#sheet')).forEach(b => b.onclick = () => { collect(); const k = +b.dataset.jump; if (k === i) return; if (kind === 'context' && !leaveContext()) return; draft.step = k; saveDraft(); renderComposer(); });
   const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
@@ -961,6 +982,33 @@ function renderComposer(){
   document.body.classList.add('composing'); document.body.classList.remove('wide');
   scrollTop();
   const first = $('.sheet textarea'); if (first && kind.startsWith('letter') && window.innerWidth > 760) first.focus();
+}
+/* On a laptop the editor has a guide beside it: the ring, every step, what the entry is about, and a tip. */
+function stepLabel(fw, st){
+  if (st === 'context') return 'What it is about'; if (st === 'evidence') return 'Your evidence'; if (st === 'lens') return 'Your claim'; if (st === 'readback') return 'Read it back';
+  const s = fw.steps[+st.slice(6)]; return `${s.letter} · ${s.title.replace(/<[^>]+>/g, '')}`;
+}
+function stepFilled(fw, st){
+  if (st === 'context') return !!draft.context.name; if (st === 'lens') return (draft.competencies || []).length > 0;
+  if (st.startsWith('letter')) return fw.steps[+st.slice(6)].qs.every(q => String(draft.answers[q.id] || '').trim());
+  return false;
+}
+function guideTip(fw, st){
+  if (st === 'context') return ['Pick the lesson or activity this entry is about. If it is not listed, choose a type and type its name.'];
+  if (st === 'evidence') return ['Read what you wrote this term. Look for things that happened more than once.'];
+  if (st === 'lens') return ['Only claim a competency if you can point to a moment in your answers.'];
+  if (st === 'readback') return ['Read your answers once more. Change anything vague before you log it.'];
+  return fw.steps[+st.slice(6)].qs.map(q => PROBES[q.id]).filter(Boolean);
+}
+function guideHtml(fw, steps, i){
+  const cur = steps[i]; const letter = cur.startsWith('letter') ? fw.steps[+cur.slice(6)].k : null;
+  const locked = draft.kind !== 'across' && !draft.context.name; const g = myGroups().find(x => x.code === draft.groupCode);
+  return `<aside class="guide" aria-label="Your progress">
+    ${ringSvg(draft.kind, letter)}
+    <ol class="gsteps">${steps.map((st, k) => { const done = stepFilled(fw, st); const on = k === i; return `<li><button type="button" data-jump="${k}" class="${on ? 'on' : ''}${done ? ' done' : ''}"${locked && k > 0 ? ' disabled' : ''}${on ? ' aria-current="step"' : ''}><span class="gmark" aria-hidden="true">${done && !on ? icon('check') : k + 1}</span><span>${esc(stepLabel(fw, st))}</span>${done ? '<span class="sr"> (done)</span>' : ''}</button></li>`; }).join('')}</ol>
+    ${draft.kind !== 'across' ? `<div class="gabout"><span class="kick">About this entry</span><p>${draft.context.name ? esc([draft.context.name, draft.topic].filter(Boolean).join(' · ')) : 'Not chosen yet'}</p>${g ? `<p class="tiny">Teacher’s group: ${esc(g.cfg ? groupName(g.cfg) : g.code)}</p>` : ''}</div>` : ''}
+    <div class="gtip"><span class="kick">If you are stuck</span>${guideTip(fw, cur).map(t => `<p>${esc(t)}</p>`).join('')}</div>
+  </aside>`;
 }
 function draftReturn(){ return !draft ? '#/' : draft.kind === 'across' ? '#/' : '#/journal/' + draft.kind; }
 /* If a teacher's group teaches the chosen subject or CCA, link it; never pick a subject from the group. */
@@ -1169,20 +1217,17 @@ function answersWithNotes(e){
       ${latest ? `<div class="notes">${older.length ? `<details class="older"><summary>${plural(older.length, 'earlier note')}</summary>${older.map(noteHtml).join('')}</details>` : ''}${noteHtml(latest)}</div>` : ''}</div>`;
   }).join('')).join('');
 }
-function renderEntry(idq){
-  const [id, q] = idq.split('?'); const e = me.entries.find(x => x.id === id);
-  if (!e){ location.hash = '#/'; return; }
-  const fw = FRAMEWORKS[e.kind]; const cls = groupFor(e); const isNew = (q || '').includes('new=1'); const edited = (q || '').includes('edited=1');
-  const coach = coachOf(e); const fresh = aiFresh(e); const left = readsLeft();
+function entryParts(e, f = {}){
+  const fw = FRAMEWORKS[e.kind]; const cls = groupFor(e);
+  const coach = coachOf(e); const fresh = aiFresh(e); const left = readsLeft(); const H = f.h || 'h1';
   const topNotes = (e.notes || []).filter(n => !fw.steps.some(s => s.qs.some(x => x.id === n.anchor))).sort((a, b) => a.at - b.at);
   const sentTo = Object.entries(e.sent || {}).map(([aid, t]) => { const a = adultById(aid); return a ? `${esc(a.name)} (${fmtDay(t)}${t < version(e) ? ', before your last edit' : ''})` : ''; }).filter(Boolean);
   const files = basketsOf(e);
-  frame(`
-    <p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'E21CC' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>
-    ${isNew || edited ? `<div class="banner" role="status"><span class="medal yellow" aria-hidden="true">${icon('check')}</span><div><b>${isNew ? 'Logged.' : 'Saved.'}</b><p>${nextStepOf(e) ? `Your next step, also on your Home page: ${esc(nextStepOf(e))}` : 'Next time, add a small step with a day on it.'}</p></div></div>` : ''}
-    <section class="card entrycard">
+  return {
+    banner: f.isNew || f.edited ? `<div class="banner" role="status"><span class="medal yellow" aria-hidden="true">${icon('check')}</span><div><b>${f.isNew ? 'Logged.' : 'Saved.'}</b><p>${nextStepOf(e) ? `Your next step, also on your Home page: ${esc(nextStepOf(e))}` : 'Next time, add a small step with a day on it.'}</p></div></div>` : '',
+    words: `<section class="card entrycard">
       <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
-        <div class="grow"><span class="tiny">${esc(contextLine(e))} · ${fmtDay(e.created)}</span><h1 style="margin:2px 0 0;font-size:1.45em">${esc(entryTitle(e))}</h1>
+        <div class="grow"><span class="tiny">${esc(contextLine(e))} · ${fmtDay(e.created)}</span><${H} class="etitle">${esc(entryTitle(e))}</${H}>
           ${files.length ? `<p class="tiny" style="margin:4px 0 0">Shows ${COMPETENCIES.filter(c => compLevelOf(e, c.id) >= 2).map(c => `<a href="#/c/${c.id}">${esc(c.label)}</a>`).join(', ') || files.map(b => esc(basketOf(b).short)).join(', ')}</p>` : ''}</div>
         <span class="badge b-${e.kind}">${fw.name}</span>
       </div>
@@ -1194,28 +1239,41 @@ function renderEntry(idq){
       <div class="row" style="margin-top:6px">
         <button class="btn small" id="eShare">${icon('share')} Share</button>
         <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
-        <button class="btn small sec" onclick="location.hash='#/${e.kind === 'across' ? 'across/' + e.basket : 'write/' + e.kind}/${e.id}'">${icon('edit')} Edit</button>
+        <a class="btn small sec" href="#/${e.kind === 'across' ? 'across/' + e.basket : 'write/' + e.kind}/${e.id}">${icon('edit')} Edit</a>
         <button class="btn small ghost danger" id="eDel">${icon('trash')} Delete</button>
       </div>
       ${sentTo.length ? `<p class="tiny" style="margin:8px 0 0">Sent to ${sentTo.join(', ')}.</p>` : ''}
-    </section>
-    ${e21ccCard(e, {pending:aiPending.has(e.id), error:aiErrors.get(e.id)})}
+    </section>`,
+    feedback: `${e21ccCard(e, {pending:aiPending.has(e.id), error:aiErrors.get(e.id)})}
     <section class="card"><h2>Coach’s notes</h2>${coach ? coachCard(coach, cls) : ''}
       ${e.coach && e.coach.ai && e.coach.builtin ? `<details style="margin-top:10px"><summary>Built in coach’s read</summary>${coachCard(e.coach.builtin, cls)}</details>` : ''}
       ${me.coach.mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="eAsk" ${fresh || aiPending.has(e.id) || left <= 0 ? 'disabled' : ''}>${icon('spark')} ${e.coach && e.coach.ai ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="eAskMsg">${fresh ? 'The coach has read these words. Change them to ask again.' : left <= 0 ? `Today’s ${dailyLimit()} coach reads are used up.` : left !== Infinity ? `${left} of ${dailyLimit()} coach reads left today.` : ''}</span></div>` : ''}
-    </section>
-  `, e.kind === 'across' ? 'e21cc' : e.kind, {wide:true});
+    </section>`
+  };
+}
+function wireEntry(e, f, rerender){
   // reading a note is seeing it
   let seen = false; for (const n of (e.notes || [])) if (!n.seen){ n.seen = true; seen = true; } if (seen) saveDb();
   $('#eShare').onclick = () => shareEntry(e);
   $('#eCopy').onclick = () => copyText(entryText(e, true));
-  $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It will be deleted from this device. If you sent it to a teacher, they keep their copy.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x => x.id !== e.id); saveDb(); closeDialog(); location.hash = '#/'; }; $('#dNo').onclick = closeDialog; };
+  $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It will be deleted from this device. If you sent it to a teacher, they keep their copy.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x => x.id !== e.id); saveDb(); closeDialog(); location.hash = f.after || '#/'; }; $('#dNo').onclick = closeDialog; };
   const ask = $('#eAsk'); if (ask) ask.onclick = () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; runAiFor(e); };
-  const retry = $('#e21Retry'); if (retry) retry.onclick = () => { aiErrors.delete(e.id); runAiFor(e); renderEntry(idq); };
-  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('You can claim up to two. Edit the entry to remove one first.'); return; } if (!list.some(t => t.id === b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested || []).filter(x => x !== b.dataset.tag); } saveDb(); toast('Claimed.'); renderEntry(idq); });
+  const retry = $('#e21Retry'); if (retry) retry.onclick = () => { aiErrors.delete(e.id); runAiFor(e); rerender(); };
+  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('You can claim up to two. Edit the entry to remove one first.'); return; } if (!list.some(t => t.id === b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested || []).filter(x => x !== b.dataset.tag); } saveDb(); toast('Claimed.'); rerender(); });
   $$('[data-maylink]').forEach(b => b.onclick = () => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === b.dataset.maylink); addLink(e, b.dataset.maylink, m ? m.quote : ''); });
   // the smart action: a fresh or changed entry is read once by the coach
-  if ((isNew || edited) && autoEval() && !fresh && !aiPending.has(e.id) && !aiErrors.has(e.id)){ runAiFor(e); renderEntry(idq); }
+  if ((f.isNew || f.edited) && autoEval() && !aiFresh(e) && !aiPending.has(e.id) && !aiErrors.has(e.id)){ runAiFor(e); rerender(); }
+}
+function renderEntry(idq){
+  const [id, q] = idq.split('?'); const e = me.entries.find(x => x.id === id);
+  if (!e){ location.hash = '#/'; return; }
+  // on a laptop, GROW and ACT entries open in their journal's reader, beside the index
+  if (isDesk() && e.kind !== 'across'){ redirect(`#/journal/${e.kind}?e=${encodeURIComponent(id)}${q ? '&' + q : ''}`); return; }
+  const f = {isNew:(q || '').includes('new=1'), edited:(q || '').includes('edited=1'), after:e.kind === 'across' ? '#/' : '#/journal/' + e.kind};
+  const P = entryParts(e, f);
+  const crumb = `<p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'E21CC' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>`;
+  frame(isDesk() ? {left:crumb + P.banner + P.words, right:P.feedback, split:'minmax(0,1fr) minmax(0,1fr)'} : crumb + P.banner + P.words + P.feedback, e.kind === 'across' ? 'e21cc' : e.kind, {wide:true, key:'entry:' + id});
+  wireEntry(e, f, () => renderEntry(idq));
 }
 function e21ccCard(e, opts = {}){
   const x = e.e21cc; if (!x) return '';
@@ -1299,7 +1357,7 @@ function renderJournal(kind){
   const groups = journalGroups(kind, pivot); const gkey = q.get('g') || ''; const sel = groups.find(g => g.key === gkey) || null;
   const total = me.entries.filter(e => e.kind === kind).length;
   const base = `#/journal/${kind}`;
-  const href = (o) => { const p = new URLSearchParams({p:o.p || pivot, v:o.v || view}); if (o.g) p.set('g', o.g); return `${base}?${p}`; };
+  const href = (o) => { const p = new URLSearchParams({p:o.p || pivot, v:o.v || view}); if (o.g) p.set('g', o.g); if (o.e) p.set('e', o.e); return `${base}?${p}`; };
   const newHref = g => `#/write/${kind}` + (g && pivot === 'experience' && g.key !== 'x:unsorted' ? `?x=${encodeURIComponent((g.type || 'subject') + ':' + g.label)}` : '');
   const groupPanel = g => `<section class="gpanel" style="--g:${g.colour}">
       <div class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="kick">${pivot === 'experience' ? esc(typeLabel(g.type)) : pivot === 'competency' && g.comp ? esc(basketOf(compOf(g.comp).d).short) : esc(PIVOTS.find(p => p[0] === pivot)[1])}</span><h2 style="margin:0">${esc(g.label)}</h2></div>
@@ -1314,6 +1372,7 @@ function renderJournal(kind){
     body = sel ? groupPanel(sel) : groups.filter(g => g.entries.length).map(g => `<section class="gblock" style="--g:${g.colour}"><h2><a href="${href({g:g.key})}">${esc(g.label)}</a>${pivot === 'experience' && g.type === 'cca' ? '<span class="gtag">CCA</span>' : ''}<span class="tiny">${plural(g.entries.length, 'entry', 'entries')}</span></h2>${g.entries.map(entryRow).join('')}</section>`).join('');
   }
   const empty = !total;
+  if (isDesk()) return journalSpread(kind, {fw, q, pivot, view, groups, sel, gkey, total, href, newHref});
   const viewSw = `<div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks" aria-label="Bookmarks"${view === 'bookmarks' ? ' aria-current="true"' : ''}>${icon('list')}</a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks" aria-label="Shelf of notebooks"${view === 'shelf' ? ' aria-current="true"' : ''}>${icon('shelf')}</a></div>`;
   const marks = view === 'bookmarks' ? `<div class="bookmarks" role="list"><a role="listitem" class="bm${sel ? '' : ' on'}" href="${href({})}">All <b>${total}</b></a>${groups.map(g => `<a role="listitem" class="bm${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}">${esc(g.label)} <b>${g.entries.length}</b></a>`).join('')}</div>` : '<span class="grow"></span>';
   frame(`
@@ -1329,6 +1388,46 @@ function renderJournal(kind){
   `, kind);
 }
 
+function readerRow(e, href, on){
+  const d = new Date(e.created); const comps = COMPETENCIES.filter(x => compLevelOf(e, x.id) >= 2).slice(0, 2);
+  const unread = (e.notes || []).filter(n => !n.seen).length;
+  return `<a class="rrow${on ? ' on' : ''}" href="${href}"${on ? ' aria-current="true"' : ''}><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}${unread ? `<span class="newnote">${plural(unread, 'new note')}</span>` : ''}</span></a>`;
+}
+function journalSpread(kind, o){
+  const {fw, q, pivot, view, groups, sel, gkey, total, href, newHref} = o;
+  const list = sel ? sel.entries : me.entries.filter(e => e.kind === kind).sort((a, b) => b.created - a.created);
+  const eid = q.get('e'); const cur = me.entries.find(x => x.id === eid && x.kind === kind) || list[0] || null;
+  const f = {isNew:q.get('new') === '1', edited:q.get('edited') === '1', after:`#/journal/${kind}`, h:'h2'};
+  const viewSw = `<div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks" aria-label="Bookmarks"${view === 'bookmarks' ? ' aria-current="true"' : ''}>${icon('list')}</a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks" aria-label="Shelf of notebooks"${view === 'shelf' ? ' aria-current="true"' : ''}>${icon('shelf')}</a></div>`;
+  const index = view === 'shelf'
+    ? `<div class="shelf compact">${groups.map(g => `<a class="nb${g.entries.length ? '' : ' empty'}${sel === g ? ' on' : ''}" href="${href({g:g.key})}" style="--g:${g.colour}"${sel === g ? ' aria-current="true"' : ''}><span class="nb-title">${esc(g.label)}</span><span class="nb-meta">${plural(g.entries.length, 'entry', 'entries')}</span></a>`).join('')}</div>${sel ? `<p style="margin:0 0 6px"><a class="backlink" href="${href({})}">${icon('back')} All notebooks</a></p>` : ''}`
+    : `<nav class="jindex" aria-label="Bookmarks"><a class="ji${sel ? '' : ' on'}" href="${href({})}"${sel ? '' : ' aria-current="true"'}><span class="grow">All</span><b>${total}</b></a>${groups.map(g => `<a class="ji${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}"${sel === g ? ' aria-current="true"' : ''}><i class="tdot" aria-hidden="true"></i><span class="grow">${esc(g.label)}${pivot === 'experience' && g.type === 'cca' ? ' <span class="gtag">CCA</span>' : ''}</span><b>${g.entries.length}</b></a>`).join('')}</nav>`;
+  const rows = list.length ? `<div class="rrows">${list.map(e => readerRow(e, href({g:gkey, e:e.id}), cur && e.id === cur.id)).join('')}</div>`
+    : `<p class="muted">No ${fw.name} entries ${sel ? 'here' : ''} yet.</p>`;
+  const left = `<div class="lstick">
+    <section class="jhead"><div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'Gift · Rise · Own · Watch' : 'Acknowledge · Connect · Test'}</p></div>
+      <a class="btn acc" href="${sel ? newHref(sel) : '#/write/' + kind}">${icon('plus')} New entry</a></section>
+    <div class="sortby"><span id="sortLbl">Sort by</span><div class="seg" role="group" aria-labelledby="sortLbl">${PIVOTS.map(([k, l]) => `<a class="${pivot === k ? 'on' : ''}" href="${href({p:k})}" ${pivot === k ? 'aria-current="true"' : ''}>${l}</a>`).join('')}</div>${viewSw}</div>
+    ${!total && pivot === 'experience' && !myExperiences().length ? `<div class="notice">Add your subjects and CCA in <a href="#/settings">Settings</a>, and they will appear here as bookmarks.</div>` : ''}
+    ${index}
+    <span class="mini">${sel ? esc(sel.label) : 'All entries'}${list.length ? ' · ' + plural(list.length, 'entry', 'entries') : ''}</span>
+    ${rows}
+  </div>`;
+  let right;
+  if (cur){ const P = entryParts(cur, f); right = P.banner + P.words + P.feedback; }
+  else if (sel) right = `<section class="card reader-empty"><h2>${esc(sel.label)}</h2><p class="muted">No ${fw.name} entries here yet.${pivot === 'experience' ? ` Write one after your next ${sel.type === 'cca' ? 'session' : sel.type === 'subject' ? 'lesson' : 'activity'}.` : ''}</p>${pivot === 'experience' ? `<a class="btn acc" href="${newHref(sel)}">${icon('plus')} New ${fw.name} entry for ${esc(sel.label)}</a>` : ''}</section>`;
+  else right = `<section class="card reader-empty"><h2>Your ${fw.name} journal is empty</h2>
+    <p class="muted">${kind === 'grow' ? 'Write a GROW entry after a lesson, a CCA session or a camp day. Two or three sentences for each question is enough.' : 'Write an ACT entry when you get feedback on your work: a marked piece, a comment from your coach, or a note from a friend.'}</p>
+    <ol class="fwsteps">${fw.steps.map(st => `<li><span class="medal ${st.colour}" aria-hidden="true">${st.letter}</span><div><b>${st.title}</b><span>${st.qs.map(x => x.q).join(' ')}</span></div></li>`).join('')}</ol>
+    <a class="btn acc" href="#/write/${kind}">${icon('plus')} Write your first ${fw.name} entry</a></section>`;
+  frame({left, right, split:'minmax(0,2fr) minmax(0,3fr)'}, kind, {wide:true, key:'journal:' + kind});
+  if (cur){
+    wireEntry(cur, f, () => renderJournal(kind));
+    const r = $('.leaf.r'); if (r && r.getBoundingClientRect().top < 0) r.scrollIntoView({block:'start'});
+    const on = $('.rrow.on'); if (on && on.scrollIntoViewIfNeeded) on.scrollIntoViewIfNeeded(false);
+  }
+}
+
 /* ---------- sharing: who sees what. Nothing is shared by default. ---------- */
 function renderSharing(){
   const list = adults();
@@ -1342,10 +1441,10 @@ function renderSharing(){
       <div class="row" style="margin-top:12px;justify-content:space-between"><span class="tiny">${secs.length ? (unsent.length ? `${plural(unsent.length, 'item')} not sent yet` : 'Up to date') : 'Nothing shared'}</span>${unsent.length ? `<button class="btn small" data-send="${esc(a.id)}">${icon('send')} Send ${unsent.length} new</button>` : ''}</div>
     </section>`;
   };
-  frame(`
+  frame(leaves(`
     <section class="hero"><h1>Sharing</h1><p class="meta">Your log is yours. Each adult sees only the sections you open to them, and only when you send.</p></section>
     <div class="notice">GROW and ACT share whole entries. A domain shares its I can statements, the quotes that back them, and your look across. Teachers reply with notes in the margin.</div>
-    ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}
+    ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}<!--leaf-->
     <section class="card"><h2>Invite a mentor or another adult</h2>
       <form id="addAdult" class="two">
         <label class="f"><span>Name</span><input class="in" name="name" maxlength="60" required placeholder="e.g. Ms Lim"></label>
@@ -1355,7 +1454,7 @@ function renderSharing(){
       </form>
       <p class="tiny">Adults without a drop box get a link you send them in Teams. It opens in their teacher console.</p>
     </section>
-  `, 'settings');
+  `, 'minmax(0,3fr) minmax(0,2fr)'), 'settings', {wide:true});
   $$('.adult').forEach(card => {
     const a = adultById(card.dataset.a);
     $$('[data-sec]', card).forEach(b => b.onclick = () => { const arr = me.shares.sections[b.dataset.sec]; const i = arr.indexOf(a.id); if (i >= 0) arr.splice(i, 1); else arr.push(a.id); saveDb(); renderSharing(); });
@@ -1399,13 +1498,16 @@ function wireCover(){
 }
 
 /* ---------- settings ---------- */
+const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
+  const secOn = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')) ? hashParts().q.get('s') : 'me';
   const modeCard = ([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span><b>${l}</b><small>${h}</small></span></label>`;
-  frame(`
+  frame(leaves(`
     <section class="hero"><h1>Settings</h1><p class="meta">Make the log yours, choose your coach, and list what you learn from.</p>
-      <nav class="jumps">${[['me','Me'],['look','Look'],['coach','Coach'],['expCard','Experiences'],['groups','Groups'],['data','Data']].map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav></section>
+      <nav class="jumps" aria-label="Jump to">${SETTINGS_SECS.slice(0, 6).map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav>
+      <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id ? 'on' : ''}"${secOn === id ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
     <section class="card" id="me"><h2>Me</h2>
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
       <label class="f"><span>Title of your log</span><input class="in" id="sTitle" value="${esc(p.title || '')}" maxlength="50" placeholder="E21CC Learning Log"><small>Shown on the cover. Leave blank for “E21CC Learning Log”.</small></label>
@@ -1464,8 +1566,9 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
-    <section class="card flat"><h2>About</h2><p class="tiny">E21CC Learning Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
-  `, 'settings');
+    <section class="card flat" id="about"><h2>About</h2><p class="tiny">E21CC Learning Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
+  `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
+  if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
   const sv = () => { saveDb(); applyPrefs(); };
   $$('[data-jump]').forEach(a => a.onclick = ev => { ev.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); });
   $('#sName').oninput = e => { me.name = e.target.value; sv(); };

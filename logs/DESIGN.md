@@ -2,6 +2,26 @@
 
 October 2026. The Learning Log became the Competency Development Log: same frameworks, same coach, a new spine. The first part of this document covers that change. The rest is the Learning Log's design from September; it still holds for the frameworks, the coach, the relay and the mobile layout.
 
+## Layouts that fit the device (19 October 2026)
+
+Harman found the laptop view squashed: most screens sat in a 780px column. He also asked for care on phones. He chose an open spread for laptops, tabs at the bottom on phones, and a writing page with a guide for the editor.
+- **Phone, under 600px.**
+  - Ribbon tabs hang from the bottom edge, within thumb reach. They hide while a field has focus, so the keyboard never covers a field.
+  - The sheet starts right under the header.
+  - On the E21CC page, New GROW and New ACT come straight after the wheel, inside the first screen.
+- **Tablet, 600 to 1023px.** Top ribbon tabs and one page up to 900px. Writing boxes are taller.
+- **Laptop, 1024px and up.** The notebook opens flat into two leaves, with a fold, up to 1440px (1600px on very wide screens):
+  - E21CC: the wheel on the left; the actions and Where you stand on the right.
+  - Journals: bookmarks turned on their side and the entry list on the left (sticky); the chosen entry on the right. The URL carries the entry, so Back works and links still open the right entry. An entry link opens in its journal's reader.
+  - Editor: the writing page on the left. On the right, a guide: the GROW or ACT ring, every step (jump once a subject is chosen), what the entry is about, and a tip for the step.
+  - Competency, Settings (a section index with one section at a time), Sharing, Setup and Welcome are spreads too.
+- **Breakpoint changes.** Resizing or rotating across 1024px re-renders the view. Reading text is capped near 74 characters per line.
+
+**Verified.**
+- A new suite passes all 20 checks. It covers phone and laptop behaviour, plus no sideways scroll on ten devices from 320x568 to 1920x1080, including a phone held sideways.
+- The audit reports 0 findings at 320, 390, 768, 1280 and 1920, on lined and on dark paper.
+- All earlier suites pass.
+
 ## Flow, voice and interface pass (19 October 2026)
 
 Harman tested the rebuild and raised five points. What changed:
