@@ -1,5 +1,5 @@
 // Haze Ops service worker: offline shell, and lets alerts show on mobile.
-const CACHE = 'haze-ops-v1';
+const CACHE = 'haze-ops-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/icon-192.png', './assets/icon-512.png'];
 
 self.addEventListener('install', e => {
