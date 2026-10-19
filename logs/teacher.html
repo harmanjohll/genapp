@@ -27,10 +27,12 @@ button{font:inherit;cursor:pointer} input,textarea,select{font:inherit;color:var
 [hidden]{display:none!important}
 .app{max-width:960px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) calc(60px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-right))}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);min-height:44px}
 .brand img{width:26px;border-radius:4px}
 .brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em}
-.brand .sub{font-size:.72em;color:var(--text-2);display:block;line-height:1.1}
+.brand .sub{font-size:.8em;color:var(--text-2);display:block;line-height:1.1}
+.homebtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px 0 12px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--navy);font-weight:700;margin-left:auto}
+.homebtn svg{width:19px;height:19px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:2px solid var(--line)}
 .tabs button{border:0;background:transparent;padding:10px 12px;font-weight:700;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px;-webkit-tap-highlight-color:transparent}
 .tabs button.on{color:var(--navy);border-bottom-color:var(--yellow)}
@@ -50,7 +52,7 @@ textarea.in{min-height:90px;line-height:1.5;resize:vertical}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none}
 .btn.sec{background:transparent;color:var(--navy);border-color:var(--line-2)}
 .btn.acc{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
-.btn.small{padding:6px 12px;min-height:40px;font-size:.9em}
+.btn.small{padding:6px 12px;min-height:44px;font-size:.9em}
 .btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
 .tiny{font-size:.82em;color:var(--text-2)} .muted{color:var(--text-2)}
 .notice{border-left:4px solid var(--yellow);background:var(--card-2);padding:10px 12px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:10px 0}
@@ -71,7 +73,7 @@ th{font-family:var(--serif);color:var(--navy)}
 .classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:44px}
 .classes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:#fff}
-summary{cursor:pointer;font-weight:700;color:var(--navy)}
+summary{cursor:pointer;font-weight:700;color:var(--navy);padding:10px 0;min-height:44px}
 ol.steps li{margin-bottom:8px}
 .drop{border:2px dashed var(--line-2);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-2);background:#fff}
 .drop.over{border-color:var(--navy);background:var(--card-3)}
@@ -106,17 +108,17 @@ ol.steps li{margin-bottom:8px}
 .reader h2{margin-bottom:2px}
 .qa-row{margin:0 0 12px}
 .qa-row .qa{margin:0}
-.notebtn{border:0;background:transparent;color:var(--navy);font-weight:700;font-size:.85em;text-decoration:underline;padding:4px 0;min-height:36px}
+.notebtn{border:0;background:transparent;color:var(--navy);font-weight:700;font-size:.85em;text-decoration:underline;padding:4px 0;min-height:44px}
 .mnote{border-left:3px solid var(--red);background:var(--card-2);padding:8px 12px;margin:6px 0;border-radius:0 var(--radius-s) var(--radius-s) 0}
 .mnote.pending{border-left-style:dashed}
-.mnote .by{display:block;font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2)}
+.mnote .by{display:block;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2)}
 .mnote p{margin:2px 0 0;font-family:var(--serif);font-style:italic;color:#B3141A;white-space:pre-wrap}
 .mnote .x{border:0;background:transparent;color:var(--text-2);font-size:.8em;text-decoration:underline;padding:2px 0}
 .noteedit textarea{min-height:70px}
 @media (min-width:900px){.qa-row{display:grid;grid-template-columns:minmax(0,1fr) 260px;column-gap:20px;align-items:start}.qa-row .side{grid-column:2}.qa-row .mnote{margin-top:0}}
 .read{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px;margin:10px 0}
 .read q{display:block;font-family:var(--serif);font-style:italic;margin:2px 0;quotes:"“" "”"}
-.str{font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--card-3);color:var(--navy);white-space:nowrap}
+.str{font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--card-3);color:var(--navy);white-space:nowrap}
 .str.clear{background:var(--navy);color:#fff} .str.strong{background:var(--yellow);color:var(--navy)}
 .st{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
 .st .mark{width:14px;height:14px;flex:0 0 14px;border-radius:50%;border:2px solid var(--g4);margin-top:5px}
@@ -139,7 +141,8 @@ ol.steps li{margin-bottom:8px}
 <div class="app">
   <header class="top">
     <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">E21CC Learning Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
-    <span class="tiny">Everything on this page stays in your browser until you download or copy it.</span>
+    <button type="button" class="homebtn" id="tHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Home</span></button>
+    <span class="tiny" style="flex-basis:100%">Everything on this page stays in your browser until you download or copy it.</span>
   </header>
   <nav class="tabs" aria-label="Sections">
     <button data-tab="inbox" class="on">Inbox<span class="badge" id="newBadge" hidden></span></button>
@@ -160,7 +163,7 @@ ol.steps li{margin-bottom:8px}
     </div>
     <div class="card">
       <div class="row" style="justify-content:space-between"><h2 style="margin:0">Inbox</h2>
-        <div class="row"><select class="in" id="fGroup" style="width:auto"></select><select class="in" id="fShow" style="width:auto"><option value="new">New first</option><option value="all">Newest first</option></select></div></div>
+        <div class="row"><select class="in" id="fGroup" style="width:auto" aria-label="Group"></select><select class="in" id="fShow" style="width:auto" aria-label="Order"><option value="new">New first</option><option value="all">Newest first</option></select></div></div>
       <details style="margin-top:10px"><summary>Sign your notes as</summary>
         <div class="two" style="margin-top:8px"><label class="f"><span>Name</span><input class="in" id="meName" placeholder="e.g. Ms Lim"></label><label class="f"><span>Role</span><input class="in" id="meRole" placeholder="e.g. Subject teacher"></label></div></details>
       <ul class="items" id="inboxList"></ul>
@@ -309,9 +312,9 @@ ol.steps li{margin-bottom:8px}
   <!-- ============ GUIDE ============ -->
   <section id="tab-guide" data-tab="guide" hidden>
     <div class="card">
-      <h1>What this is, in six lines.</h1>
-      <p>An E21CC Learning Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach holds the claim against the student’s own words.</p>
-      <p>The E21CC page draws MOE’s framework as a wheel: core values at the centre, the five Social and Emotional Competencies around them, the nine emerging competencies outside. Each segment deepens with the strongest evidence in the student’s own words. Each competency holds I can statements (a starting one and a stretching one) that unlock only when a linked entry’s words back them. Journals are organised by the student’s own subjects, CCA and experiences, and pivot by date, competency or term. Once a term, students look across one domain.</p>
+      <h1>What this is</h1>
+      <p>An E21CC Learning Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach checks the claim against the student’s own words.</p>
+      <p>The E21CC page draws MOE’s framework as a wheel: core values at the centre, the five Social and Emotional Competencies around them, the nine emerging competencies outside. Each segment gets darker as the student’s own words show that competency more clearly. GROW and ACT entries both count. Each competency holds I can statements (a starting one and a stretching one) that unlock only when a linked entry’s words back them. Journals are organised by the student’s own subjects, CCA and experiences, and pivot by date, competency or term. Once a term, students look across one domain.</p>
       <p>The log lives on the student’s device. You see a section only when the student opens it to you and presses Send. You reply in the margin.</p>
     </div>
     <div class="card">
@@ -319,9 +322,9 @@ ol.steps li{margin-bottom:8px}
       <ol class="steps">
         <li><b>Set up once.</b> Make a group file (Set up). Connect a Microsoft Form if you want entries in Excel; without one, students send you a link in Teams.</li>
         <li><b>Week 1.</b> Give the code or link. Ten minutes in class: everyone writes one GROW on today’s lesson, then opens Sharing and turns on the sections you ask for (for a subject class, usually GROW and ACT).</li>
-        <li><b>Rhythm.</b> One GROW a week after a chosen lesson or session; one ACT whenever a marked piece returns. Short and frequent survives the exam term.</li>
+        <li><b>Rhythm.</b> One GROW a week after a chosen lesson or session; one ACT whenever a marked piece returns. Short, regular entries are easier to keep up during exam weeks.</li>
         <li><b>Read.</b> Paste the new rows into the Inbox before the next lesson. Look for two things: the next step, and whether the claimed competency has a moment behind it.</li>
-        <li><b>Reply.</b> One note in the margin beats a paragraph at the end. Then Send notes: the link opens in the student’s log, beside the paragraph you wrote on.</li>
+        <li><b>Reply.</b> Write a short note in the margin, next to the line it is about, rather than a long comment at the end. Then press Send notes: the link opens in the student’s log, beside the paragraph you wrote on.</li>
         <li><b>End of term.</b> Ask for a look across one domain. Form teachers: the Class grid shows which domains are still empty.</li>
       </ol>
     </div>
@@ -379,8 +382,10 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{ 
 function blank(){ return {code:'', type:'subject', level:'', teacherName:'', teacherEmail:'', subject:'', subjects:[], statements:'', band:'', voice:{tone:'', phrases:[], avoid:[], sample:''}, knowledge:'', criteria:[], relay:{url:'', token:'', daily:''}, sink:{kind:'none', url:'', fields:{}}}; }
 
 /* ---------- tabs ---------- */
+function goHome(){ showTab('inbox'); window.scrollTo(0, 0); }
 function showTab(t){ $$('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.tab === t)); $$('section[data-tab]').forEach(s => s.hidden = s.dataset.tab !== t); if (t === 'grid') renderGrid(); if (t === 'students') renderStudents(); if (t === 'inbox') renderInbox(); }
 $$('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$('#tHome').onclick = goHome;
 
 /* ---------- bringing items in ---------- */
 function studentKey(from){ return String(from.email || from.tag || from.name || 'unknown').trim().toLowerCase(); }
