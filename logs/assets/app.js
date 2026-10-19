@@ -1,5 +1,5 @@
 /* ==================================================================
-   Competency Development Log: the student app.
+   E21CC Learning Log: the student app.
    Needs core.js and store.js. Nothing leaves the device unless the
    student presses a button that says so.
    ================================================================== */
@@ -71,7 +71,10 @@ function icon(n){
     share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
     link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
     note:'<path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/>', lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
-    eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', flag:'<path d="M5 21V4h11l-1.5 4L16 12H5"/>'
+    eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', flag:'<path d="M5 21V4h11l-1.5 4L16 12H5"/>',
+    wheel:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>',
+    list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>', shelf:'<rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><path d="M17.5 5l3 .8-3.8 14.4-3-.8"/>',
+    book:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/>', star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
 }
@@ -113,12 +116,19 @@ function arcPath(cx, cy, r, a1, a2){
   return `M ${x1} ${y1} A ${r} ${r} 0 ${a2 - a1 > 180 ? 1 : 0} 1 ${x2} ${y2}`;
 }
 function medal(kind, extra = ''){ const m = {grow:['navy','G'], act:['red','A'], across:['yellow','L']}[kind] || ['navy','?']; return `<span class="medal ${m[0]}" ${extra}>${m[1]}</span>`; }
+/* The notebook's look: a cover colour, a paper, the student's accent. */
+const COVERS = [
+  {id:'navy', label:'Navy', c:'#0d1b5e'}, {id:'forest', label:'Forest', c:'#1d4a37'}, {id:'plum', label:'Plum', c:'#4a2a5c'},
+  {id:'crimson', label:'Crimson', c:'#861c27'}, {id:'teal', label:'Teal', c:'#0e5461'}, {id:'ochre', label:'Ochre', c:'#77560f'}
+];
+const PAPERS = [{id:'lined', label:'Lined'}, {id:'dotted', label:'Dotted'}, {id:'plain', label:'Plain'}, {id:'dark', label:'Dark'}];
+const ICONS = ['🌱','🦉','🐝','⛰️','🌊','🔥','🌙','⭐','🐢','🦁','🎯','🧭','📚','🎨','🎵','⚽','🧪','🔭','🌈','🍀','🦊','🐬','🦋','🌻','🚀','🎸','🏀','🏸','🎭','🧩','✏️','🛶','🧗','🌿','🐉','🦖','🍉','☕','🎧','💡'];
 function applyPrefs(){
-  const p = me ? me.prefs : {mood:'mountain', accent:'yellow', size:'normal'};
-  document.body.dataset.mood = p.mood; document.body.dataset.accent = p.accent; document.body.dataset.size = p.size;
-  const tc = {mountain:'#0b1446', paper:'#faf8f2', sunrise:'#fff7c9', night:'#07091a'}[p.mood] || '#0b1446';
-  const m = document.getElementById('themeColor'); if (m) m.content = tc;
+  const p = me ? me.prefs : {cover:'navy', paper:'lined', accent:'yellow', size:'normal'};
+  document.body.dataset.cover = p.cover || 'navy'; document.body.dataset.paper = p.paper || 'lined'; document.body.dataset.accent = p.accent || 'yellow'; document.body.dataset.size = p.size || 'normal';
+  const m = document.getElementById('themeColor'); if (m) m.content = (COVERS.find(c => c.id === p.cover) || COVERS[0]).c;
 }
+function logTitle(){ return (me && me.prefs.title && me.prefs.title.trim()) || APP_NAME; }
 
 /* ---------- groups: a form class, subject classes, a CCA, each with its own adult and drop box ---------- */
 const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teacher', other:'Teacher'};
@@ -178,20 +188,25 @@ function statementById(id){ return STMT_SET.list.find(s => s.id === id) || null;
 /* ---------- the coach ---------- */
 /* The adult key option shows only with ?adult=1 (or when a profile already uses it). */
 function ADULT(){ return QS.get('adult') === '1'; }
+/* The coach options. Gemini comes first while the log is being tested; the
+   others stay for later (the school relay) or for special cases. */
 function COACH_MODES(){
   const relay = relayFor(null);
-  const m = [
-    ['builtin', 'Built in only', 'Works offline. Nothing leaves the device.'],
-    ['relay', 'School coach link', 'Your teacher gives you a link and a class token. The school holds the key.' + (relay ? ' Your group already provides one.' : '')],
-    ['local', 'On this device (Chrome built in AI)', 'Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus, after a one time model download.']
+  const main = [
+    ['builtin', 'Built in coach', 'Works offline. Reads for specifics, reasons and a dated next step. Nothing leaves the device.'],
+    ['gemini', 'Gemini (for testing)', 'Your own Gemini API key gives E21CC feedback on every entry. For testing by adults: Gemini’s terms do not allow users under 18.']
   ];
-  if (SAMPLE || (me && me.coach.mode === 'preview')) m.splice(1, 0, ['preview', 'Claude in this preview', 'Uses the Claude account that opened this preview. For trying the coach before a class link exists; students never see this.']);
-  if (ADULT() || (me && me.coach.mode === 'key')) m.push(['key', 'A key held by an adult', 'AI providers require account holders to be 18 or older, so this is for a teacher or parent who sets up the device. The key stays in this browser.']);
-  return m;
+  const more = [
+    ['relay', 'School coach link (later)', 'The school holds one key in a relay; students hold none.' + (relay ? ' Your group already provides one.' : '')],
+    ['local', 'On this device (Chrome built in AI)', 'Free and private, but only on Chrome 148 or newer on a laptop or Chromebook Plus.']
+  ];
+  if (SAMPLE || (me && me.coach.mode === 'preview')) main.push(['preview', 'Claude in this preview', 'Uses the Claude account that opened this preview.']);
+  if (ADULT() || (me && me.coach.mode === 'key')) more.push(['key', 'An Anthropic key held by an adult', 'The key stays in this browser.']);
+  return {main, more};
 }
-/* Credit guard: a daily allowance of coach reads that cost the school money. */
-const METERED = ['relay', 'key'];
-function dailyLimit(){ const v = myGroups().map(g => g.cfg && g.cfg.relay && Number(g.cfg.relay.daily)).filter(n => n > 0); return v.length ? Math.max(...v) : 8; }
+/* Credit guard: a daily allowance of coach reads that cost someone money. */
+const METERED = ['relay', 'key', 'gemini'];
+function dailyLimit(){ if (me && me.coach.mode === 'gemini') return 40; const v = myGroups().map(g => g.cfg && g.cfg.relay && Number(g.cfg.relay.daily)).filter(n => n > 0); return v.length ? Math.max(...v) : 8; }
 function readsUsed(){ const a = me.coach.allowance || (me.coach.allowance = {day:'', used:0}); if (a.day !== today()){ a.day = today(); a.used = 0; } return a.used; }
 function readsLeft(){ return METERED.includes(me.coach.mode) ? Math.max(0, dailyLimit() - readsUsed()) : Infinity; }
 function countRead(){ if (METERED.includes(me.coach.mode)){ readsUsed(); me.coach.allowance.used++; saveDb(); } }
@@ -210,7 +225,7 @@ async function localCoach(entry, cls, stmts){
   // Chrome's built in Prompt API (desktop and Chromebook Plus only).
   if (typeof LanguageModel === 'undefined') throw new Error('This browser has no built in AI. It needs Chrome 148 or newer on a laptop or Chromebook Plus. Use the school coach link instead.');
   if (await LanguageModel.availability() === 'unavailable') throw new Error('Built in AI is not available on this device.');
-  const session = await LanguageModel.create({initialPrompts:[{role:'system', content:coachSystem(cls, stmts) + '\n\n' + shapeHint(stmts)}]});
+  const session = await LanguageModel.create({initialPrompts:[{role:'system', content:coachSystem(cls, stmts, me.prefs.tone) + '\n\n' + shapeHint(stmts)}]});
   const prompt = entryForCoach(entry); let text;
   try{ text = await session.prompt(prompt, {responseConstraint:coachSchema(stmts)}); }catch{ text = await session.prompt(prompt); }
   try{ session.destroy && session.destroy(); }catch{}
@@ -219,7 +234,7 @@ async function localCoach(entry, cls, stmts){
 async function previewCoach(entry, cls, stmts){
   if (!SAMPLE) throw new Error('Claude is not available in this view. Open the preview in claude.ai, or use the school coach link.');
   let data;
-  try{ data = await SAMPLE.json(coachSystem(cls, stmts) + '\n\n' + shapeHint(stmts) + '\n\nThe entry:\n\n' + entryForCoach(entry), {modelTier:'default', cache:false}); }
+  try{ data = await SAMPLE.json(coachSystem(cls, stmts, me.prefs.tone) + '\n\n' + shapeHint(stmts) + '\n\nThe entry:\n\n' + entryForCoach(entry), {modelTier:'default', cache:false}); }
   catch(e){
     const m = {not_granted:'You did not allow this preview to use Claude.', rate_limited:'Claude is busy for this account. Try again in a minute.', refused:'Claude declined to read this one.', invalid_json:'Claude answered in a shape the page could not read. Try again.', sampling_disabled:'Claude is not available for this account.', session_expired:'Sign in to claude.ai again.'};
     throw new Error(m[e && e.code] || (e && e.message) || 'The preview coach could not answer.');
@@ -227,14 +242,60 @@ async function previewCoach(entry, cls, stmts){
   if (!data || typeof data !== 'object') throw new Error('Claude answered in a shape the page could not read.');
   return finish(entry, data, 'claude (preview)', stmts);
 }
+/* ---------- Gemini, for testing: the user's own key, called from this browser ---------- */
+const GEMINI = 'https://generativelanguage.googleapis.com/v1beta';
+const GEMINI_DEFAULT = 'gemini-flash-latest';
+/* Gemini's JSON schema support is a subset: drop what it may not accept. */
+function geminiSchema(s){ return JSON.parse(JSON.stringify(s, (k, v) => k === 'additionalProperties' ? undefined : v)); }
+function geminiError(status, text){
+  const t = String(text || ''); let msg = ''; try{ msg = (JSON.parse(t).error || {}).message || ''; }catch{}
+  if (status === 400 && /api key/i.test(msg + t)) return 'Gemini did not accept the key. Check it in Settings, Coach.';
+  if (status === 403) return 'Gemini refused the key here. If the key is restricted, allow this site and the Generative Language API.';
+  if (status === 404) return 'That Gemini model is not available to this key. Pick another in Settings, Coach.';
+  if (status === 429) return 'The Gemini key has hit its limit for now. Try again later.';
+  return `Gemini could not answer (status ${status}). ${msg.slice(0, 160)}`;
+}
+async function geminiModels(key){
+  const res = await fetch(`${GEMINI}/models?pageSize=200`, {headers:{'x-goog-api-key':key}});
+  if (!res.ok) throw new Error(geminiError(res.status, await res.text()));
+  const data = await res.json();
+  const ids = (data.models || []).filter(m => (m.supportedGenerationMethods || []).includes('generateContent')).map(m => String(m.name || '').replace(/^models\//, ''))
+    .filter(id => /^gemini/.test(id) && !/embedding|image|tts|audio|live|vision|robotics|computer/.test(id));
+  const num = id => { const m = /gemini-(\d+(?:\.\d+)?)/.exec(id); return m ? parseFloat(m[1]) : 0; };
+  ids.sort((a, b) => num(b) - num(a) || a.localeCompare(b));
+  const pick = ids.includes(GEMINI_DEFAULT) ? GEMINI_DEFAULT : (ids.find(id => /flash/.test(id) && !/lite|preview|exp/.test(id)) || ids.find(id => /flash/.test(id)) || ids[0] || GEMINI_DEFAULT);
+  return {ids, pick};
+}
+async function geminiCoach(entry, cls, stmts, opts = {}){
+  const c = me.coach; if (!c.geminiKey) throw new Error('No Gemini key saved yet. Add one in Settings, Coach.');
+  const model = c.geminiModel || GEMINI_DEFAULT; const sys = coachSystem(cls, stmts, me.prefs.tone);
+  const body = {systemInstruction:{parts:[{text:sys}]}, contents:[{role:'user', parts:[{text:entryForCoach(entry)}]}],
+    generationConfig:{responseMimeType:'application/json', responseJsonSchema:geminiSchema(coachSchema(stmts)), temperature:0.4}};
+  const call = () => fetch(`${GEMINI}/models/${encodeURIComponent(model)}:generateContent`, {method:'POST', headers:{'Content-Type':'application/json', 'x-goog-api-key':c.geminiKey}, body:JSON.stringify(body)});
+  let res = await call();
+  if (res.status === 400){
+    const t = await res.text();
+    if (/api key/i.test(t)) throw new Error(geminiError(400, t));
+    // an older model or API version that does not take the schema: ask for JSON by instruction instead
+    delete body.generationConfig.responseJsonSchema; body.systemInstruction.parts[0].text = sys + '\n\n' + shapeHint(stmts);
+    res = await call();
+  }
+  if (!res.ok) throw new Error(geminiError(res.status, await res.text()));
+  const data = await res.json(); const cand = (data.candidates || [])[0];
+  if (!cand) throw new Error(data.promptFeedback && data.promptFeedback.blockReason ? 'Gemini declined to read this one. The built in feedback stands.' : 'Gemini gave no answer. Try again.');
+  const text = ((cand.content && cand.content.parts) || []).map(p => p.text || '').join('');
+  if (!opts.test) countRead();
+  return finish(entry, parseModelJson(text), 'gemini:' + model, stmts);
+}
 async function aiCoach(entry, opts = {}){
   const c = me.coach; const cls = groupFor(entry); const stmts = opts.noStatements ? [] : myStatements();
   if (c.mode === 'preview') return previewCoach(entry, cls, stmts);
   if (c.mode === 'local') return localCoach(entry, cls, stmts);
   if (METERED.includes(c.mode) && !opts.test && readsLeft() <= 0) throw new AllowanceError(`You have used today’s ${dailyLimit()} coach reads. The built in read stands; the coach is back tomorrow.`);
+  if (c.mode === 'gemini') return geminiCoach(entry, cls, stmts, opts);
   const body = {
     model:c.model || 'claude-opus-5', max_tokens:1500,
-    system:coachSystem(cls, stmts),
+    system:coachSystem(cls, stmts, me.prefs.tone),
     messages:[{role:'user', content:entryForCoach(entry)}],
     output_config:{effort:'low', format:{type:'json_schema', schema:coachSchema(stmts)}},
     fallbacks:'default'
@@ -378,7 +439,7 @@ async function deliver(a, chosen){
   }
   // no drop box: a link that opens in the adult's teacher console
   const link = consoleUrl() + '#/in?p=' + await packCDL('i', {v:1, from, items:payloadItems});
-  const msg = `${me.name}: ${plural(chosen.length, 'item')} from my Competency Development Log. Open in your teacher console: ${link}`;
+  const msg = `${me.name}: ${plural(chosen.length, 'item')} from my E21CC Learning Log. Open in your teacher console: ${link}`;
   dialog(`<h2>Send a link to ${esc(a.name)}</h2><p>${esc(a.name)} has no drop box, so send a link. It opens in their teacher console and adds ${plural(chosen.length, 'item')}. Anyone with the link can read it, so send it only to them.</p>
     <div class="row">${a.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(a.email, msg))}" target="_blank" rel="noopener">${icon('send')} Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">${icon('copy')} Copy link</button></div>
     <p class="tiny" style="margin-top:8px">${link.length > 7000 ? `This link is long (${link.length} characters). If Teams cuts it, send fewer items at a time.` : 'Teams not working? Copy the link and paste it into a chat or email to them.'}</p>
@@ -460,7 +521,7 @@ async function boot(){
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
-  if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/basket')) route(); }
+  if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c/')) route(); }
   processStashedLink(link || null);
 }
 async function importConfigFromHash(){
@@ -472,71 +533,75 @@ async function importConfigFromHash(){
   saveDb(); toast(`Group ${cfg.code} added${cfg.teacherName ? ' (' + cfg.teacherName + ')' : ''}.`);
   location.hash = me ? '#/settings' : '#/welcome';
 }
+function hashParts(){ const h = location.hash || '#/'; const [path, q] = h.split('?'); return {parts:path.split('/'), q:new URLSearchParams(q || '')}; }
 function route(){
   const h = location.hash || '#/';
   if (h.startsWith('#/note')){ const l = stashLink(); processStashedLink(l); return; }
   if (h.startsWith('#/config')){ importConfigFromHash(); return; }
   if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome'){ location.hash = '#/welcome'; return; } return renderWelcome(); }
-  if (h.startsWith('#/grow')) return openComposer('grow', h.split('/')[2]);
-  if (h.startsWith('#/act')) return openComposer('act', h.split('/')[2]);
-  if (h.startsWith('#/across/')){ const [, , b, id] = h.split('/'); return openComposer('across', id, b); }
+  const {parts} = hashParts();
+  if (h.startsWith('#/write/')){ const kind = parts[2]; if (kind === 'grow' || kind === 'act') return openComposer(kind, parts[3]); }
+  if (h.startsWith('#/across/')) return openComposer('across', parts[3], parts[2]);
+  // addresses from earlier versions
+  if (/^#\/(grow|act)(\/|$|\?)/.test(h)){ location.hash = '#/write/' + parts[1] + (parts[2] ? '/' + parts[2] : ''); return; }
+  if (h.startsWith('#/log') || h.startsWith('#/journey')){ location.hash = '#/journal/grow'; return; }
+  if (h.startsWith('#/basket/')){ location.hash = '#/'; return; }
   closeComposer();
   if (h.startsWith('#/entry/')) return renderEntry(h.slice(8));
-  if (h.startsWith('#/basket/')) return renderBasket(h.split('/')[2].split('?')[0]);
-  if (h.startsWith('#/log') || h.startsWith('#/journey')) return renderLog();
+  if (h.startsWith('#/c/')) return renderCompetency(parts[2]);
+  if (h.startsWith('#/journal/')) return renderJournal(parts[2] === 'act' ? 'act' : 'grow');
+  if (h.startsWith('#/setup')) return renderSetup();
   if (h.startsWith('#/sharing')) return renderSharing();
   if (h.startsWith('#/settings')) return renderSettings();
   if (h.startsWith('#/welcome')) return renderWelcome();
-  return renderMap();
+  return renderHome();
 }
+/* The notebook: a cover with the student's title, bookmark tabs, and the page. */
+const TABS = [['e21cc', '#/', 'E21CC'], ['grow', '#/journal/grow', 'GROW'], ['act', '#/journal/act', 'ACT'], ['settings', '#/settings', 'Settings']];
 function frame(inner, active, opts = {}){
-  const nav = [['#/', 'map', 'Map'], ['#/log', 'log', 'Log'], ['#/settings', 'settings', 'Settings']];
-  const links = nav.map(([h, i, l]) => `<a href="${h}" class="${active === i ? 'on' : ''}" ${active === i ? 'aria-current="page"' : ''}>${icon(i)}<span>${l}</span></a>`).join('');
-  const desk = nav.map(([h, i, l]) => `<a href="${h}" class="${active === i ? 'on' : ''}">${l}</a>`).join('');
   document.body.classList.toggle('wide', !!opts.wide);
+  const t = logTitle();
   $('#app').innerHTML = `
-    <header class="top">
-      <a class="brand" href="#/"><img src="assets/crest.png" alt=""><span><span class="word">Competency Development Log</span><span class="sub">Beatty Secondary School</span></span></a>
-      <nav class="desknav" aria-label="Sections">${desk}</nav>
-      <button class="avatar" aria-label="Settings" onclick="location.hash='#/settings'">${esc(me.prefs.avatar)}</button>
+    <header class="cover">
+      <a class="brand" href="#/"><img src="assets/crest.png" alt=""><span><span class="word">${esc(t)}</span><span class="sub">${esc(me.name)}${t !== APP_NAME ? ' · ' + APP_NAME : ' · Beatty Secondary School'}</span></span></a>
+      <a class="avatar" href="#/settings" aria-label="Settings for ${esc(me.name)}">${esc(me.prefs.avatar)}</a>
     </header>
-    <nav class="nav" aria-label="Sections">${links}</nav>
-    <main class="fade">${inner}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>`;
+    <nav class="tabs" aria-label="Sections of the log">${TABS.map(([id, href, label]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href}"${active === id ? ' aria-current="page"' : ''}>${id === 'settings' ? icon('settings') + '<span class="sr">Settings</span>' : id === 'e21cc' ? icon('wheel') + '<span>E21CC</span>' : '<span>' + label + '</span>'}</a>`).join('')}</nav>
+    <main class="page fade">${inner}</main>
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>`;
   scrollTop();
 }
 function scrollTop(){ window.scrollTo(0, 0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
 
-/* ---------- welcome ---------- */
+/* ---------- welcome, then a first page that makes it yours ---------- */
 function renderWelcome(){
   document.body.classList.remove('wide');
   const profiles = Object.values(db.profiles).sort((a, b) => b.created - a.created);
   const pre = db._preClass || '';
   $('#app').innerHTML = `
   <div class="welcome">
-    <header class="top"><a class="brand" href="#/welcome"><img src="assets/crest.png" alt=""><span><span class="word">Competency Development Log</span><span class="sub">Beatty Secondary School</span></span></a></header>
-    <section class="hero fade">
-      <h1>GROW by reflecting.<br>ACT on feedback.</h1>
-      <p class="motto">Believe you can.</p>
-      <p class="meta">One log, from your first year at Beatty to your last. Write after lessons, CCA, camps and competitions. Watch your competencies grow, backed by your own words.</p>
+    <section class="cover-big fade">
+      <img src="assets/crest.png" alt="" class="crest">
+      <h1>E21CC<br>Learning Log</h1>
+      <p class="motto">GROW by reflecting. ACT on feedback.</p>
+      <p class="meta">One log for everything you learn at Beatty: lessons, CCA, camps, competitions. Each entry is read for the 21st Century Competencies it shows, in your own words.</p>
+      <div class="cover-tabs" aria-hidden="true"><span class="t-e21cc">E21CC</span><span class="t-grow">GROW</span><span class="t-act">ACT</span></div>
     </section>
     ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
-      <button class="pcard" data-id="${p.id}"><span class="avatar">${esc(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${esc((p.groups[0] || {}).code || 'no group yet')} · ${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
+      <button class="pcard" data-id="${p.id}"><span class="avatar">${esc(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
       <div id="pinBox" hidden style="margin-top:12px"></div>
       </section>` : ''}
     <section class="card fade">
       <h2>${profiles.length ? 'Someone new?' : 'Start your log'}</h2>
       <form id="newForm" autocomplete="on">
-        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teacher calls you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
-        <label class="f"><span>School email</span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Your teachers use this to find your entries, and their notes find you by it. It is never sent to the AI coach.</small></label>
-        <label class="f"><span>Group code <small style="display:inline">(optional)</small></span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" placeholder="e.g. 2E3-MATH" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="next"><small>A teacher gives you this for a class or a CCA. It brings in their voice and their drop box. You can add more groups later.</small></label>
-        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop. It is not a password for anything else.</small></label>
+        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teachers call you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
+        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only needed if you share with a teacher. It is never sent to the AI coach.</small></label>
+        ${pre ? `<label class="f"><span>Group code</span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>From your teacher.</small></label>` : ''}
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop.</small></label>
         <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
       </form>
-      <p class="tiny" style="margin-top:12px">Nothing here goes to a server. Your log is saved in this browser only, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
+      <p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
     </section>
-    <img class="band" src="assets/footer-band.jpg" alt="Beatty Secondary School, Non Vi Sed Arte">
-    <p class="footer" style="padding-top:8px">Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</p>
   </div>`;
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
   $('#newForm').onsubmit = async (e) => {
@@ -547,8 +612,8 @@ function renderWelcome(){
     db.profiles[p.id] = p; db.current = p.id; delete db._preClass; me = p; unlocked = true;
     for (const g of me.groups) if (db.groups[g.code]) adoptGroup(db.groups[g.code]);
     saveDb(); applyPrefs();
-    Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { if ((location.hash || '#/') === '#/') route(); });
-    location.hash = '#/'; route(); processStashedLink();
+    Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements);
+    location.hash = '#/setup'; processStashedLink();
   };
 }
 async function openProfile(id){
@@ -564,155 +629,181 @@ async function pickProfile(id){
   $('#pinForm').onsubmit = async (e) => {
     e.preventDefault(); const pin = new FormData(e.target).get('pin');
     if (await pinMatches(p, pin)) openProfile(id);
-    else $('#pinMsg').textContent = 'That PIN did not match. Forgotten it? Your teacher cannot reset it, but a new profile can import an exported log.';
+    else $('#pinMsg').textContent = 'That PIN did not match. Forgotten it? A new profile can import an exported log.';
   };
   $('#pinForm input').focus();
 }
+/* First page after the name: subjects, CCA, a cover and an icon. All of it can wait. */
+function renderSetup(){
+  frame(`
+    <section class="hero"><h1>Make it yours</h1><p class="meta">Your subjects and CCA become bookmarks in your journals. You can change all of this later in Settings.</p></section>
+    ${experiencesEditor()}
+    <section class="card"><h2>Your cover</h2>${coverPicker()}<span class="flabel" style="margin-top:14px">Your icon</span><div class="emojis">${ICONS.slice(0, 20).map(e => `<button type="button" data-e="${e}" class="${me.prefs.avatar === e ? 'on' : ''}">${e}</button>`).join('')}</div></section>
+    <div class="row" style="justify-content:space-between;margin-top:6px"><a class="btn ghost" href="#/">Skip for now</a><a class="btn acc" href="#/">${icon('check')} Open my log</a></div>
+  `, 'settings');
+  wireExperiences(renderSetup); wireCover();
+  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; saveDb(); $$('.emojis button').forEach(x => x.classList.toggle('on', x === b)); $('.cover .avatar').textContent = b.dataset.e; });
+}
 
-/* ---------- the Basecamp map ---------- */
+/* ---------- the E21CC tab: the competency wheel ---------- */
+const DOMAIN_COLOUR = {cait:'#1f3fa8', cci:'#0f7a6b', cgc:'#b23a48', sec:'#c98a00'};
+const WHEEL_LABEL = {critical:['Critical'], adaptive:['Adaptive'], inventive:['Inventive'], communication:['Communication'], collaboration:['Collaboration'], information:['Information'],
+  civic:['Civic'], global:['Global'], crosscultural:['Cross', 'cultural'], selfaware:['Self', 'awareness'], selfmanage:['Self', 'management'], socialaware:['Social', 'awareness'], relationship:['Relationships'], decisions:['Decisions']};
+const LEVEL_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
 function weekKey(t){ const d = new Date(t); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
 function streak(entries){ const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now()); if (!weeks.has(w)) w -= 7 * 864e5; while (weeks.has(w)){ n++; w -= 7 * 864e5; } return n; }
-/* One point per day an entry filed to the basket was written; height is the strongest evidence that day. */
-function trailPoints(b, year){
-  const pts = me.entries.filter(e => e.kind !== 'across' && new Date(e.created).getFullYear() === year && basketsOf(e).includes(b)).map(e => ({t:e.created, y:Math.max(1, strengthIn(e, b))})).sort((x, y) => x.t - y.t);
-  const out = []; for (const p of pts){ const d = new Date(p.t).toDateString(); const last = out[out.length - 1]; if (last && last.d === d){ last.y = Math.max(last.y, p.y); last.n++; } else out.push({d, t:p.t, y:p.y, n:1}); }
-  return out;
+/* How each competency stands: the strongest evidence (3 strong, 2 clear, 1 glimpse or claim), entries, statements lit. */
+function compLevelOf(e, id){
+  let lv = 0;
+  // a quote the coach could not find in the student's words counts for nothing
+  for (const v of ((e.e21cc && e.e21cc.evidence) || [])) if (v.id === id && !v.unverified) lv = Math.max(lv, v.strength === 'strong' ? 3 : v.strength === 'clear' ? 2 : 1);
+  if (!lv && (e.competencies || []).some(t => t.id === id)) lv = 1;
+  return lv;
 }
-/* The SVG stretches to the card's width; strokes and dots keep their size (non scaling strokes). */
-function trailSvg(points, lits, year){
-  // a lane at the top for unlocked statements, then the trail: base camp at the bottom, ridge at the top
-  const W = 340, H = 76, L = 10, R = 10; const X = f => L + f * (W - L - R); const Y = v => 62 - (v - 1) * 17;
-  const now = Date.now(); const cur = new Date(now).getFullYear() === year;
-  let s = `<svg class="trail-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true" focusable="false">`;
-  for (let k = 0; k < 4; k++) s += `<rect x="${X(k / 4) + 1}" y="20" width="${X((k + 1) / 4) - X(k / 4) - 2}" height="${H - 24}" rx="5" class="tb tb${k % 2}"/>`;
-  s += `<line x1="${X(0)}" x2="${X(1)}" y1="${Y(1)}" y2="${Y(1)}" class="base"/>`;
-  if (cur){ const f = termPos(now).frac; s += `<line x1="${X(f)}" x2="${X(f)}" y1="20" y2="${H - 4}" class="now"/>`; }
-  if (points.length){
-    // the trail joins the dots in the order they were walked
-    if (points.length > 1) s += `<polyline points="${points.map(p => `${X(termPos(p.t).frac).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ')}" class="line"/>`;
-    for (const p of points){ const x = X(termPos(p.t).frac).toFixed(1), y = Y(p.y).toFixed(1); s += `<line x1="${x}" x2="${x}" y1="${y}" y2="${y}" class="dot s${p.y}${p.n > 1 ? ' many' : ''}"/>`; }
-  }
-  for (const t of lits){ const x = X(termPos(t).frac).toFixed(1); s += `<line x1="${x}" x2="${x}" y1="9" y2="9" class="lit-ring"/><line x1="${x}" x2="${x}" y1="9" y2="9" class="lit"/>`; }
+function compStats(){
+  const st = {}; for (const c of COMPETENCIES) st[c.id] = {level:0, n:0, lit:0, total:0, last:0};
+  for (const e of me.entries){ if (e.kind === 'across') continue; for (const c of COMPETENCIES){ const lv = compLevelOf(e, c.id); if (lv){ const s = st[c.id]; s.level = Math.max(s.level, lv); s.n++; s.last = Math.max(s.last, e.created); } } }
+  for (const s of myStatements()) for (const cid of s.competencies){ if (!st[cid]) continue; st[cid].total++; if (statementStatus(me.entries, s).lit) st[cid].lit++; }
+  return st;
+}
+function sector(cx, cy, r0, r1, a0, a1){
+  const P = (r, a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
+  const [x0, y0] = P(r1, a0), [x1, y1] = P(r1, a1), [x2, y2] = P(r0, a1), [x3, y3] = P(r0, a0); const big = a1 - a0 > 180 ? 1 : 0;
+  return `M${x0.toFixed(2)} ${y0.toFixed(2)}A${r1} ${r1} 0 ${big} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}A${r0} ${r0} 0 ${big} 0 ${x3.toFixed(2)} ${y3.toFixed(2)}Z`;
+}
+/* MOE's framework drawn as rings: values at the centre, the five social and
+   emotional competencies around them, the nine emerging competencies outside.
+   Each segment deepens with the strongest evidence in the student's words. */
+function wheelSvg(st){
+  const cx = 160, cy = 160; let s = `<svg class="wheel" viewBox="0 0 320 320" role="group" aria-label="Your 21st Century Competencies">`;
+  const seg = (c, r0, r1, a0, a1, fs) => {
+    const x = st[c.id]; const col = DOMAIN_COLOUR[c.d]; const op = [0, .3, .62, .95][x.level];
+    const mid = (a0 + a1) / 2, rm = (r0 + r1) / 2; const tx = cx + rm * Math.cos(mid * Math.PI / 180), ty = cy + rm * Math.sin(mid * Math.PI / 180);
+    const rot = mid > 0 && mid < 180 ? mid - 90 : mid + 90; const lines = WHEEL_LABEL[c.id] || [c.label];
+    const label = `${c.label}: ${LEVEL_WORD[x.level]}, ${plural(x.n, 'entry', 'entries')}${x.total ? `, ${x.lit} of ${x.total} statements unlocked` : ''}. Open.`;
+    let g = `<a href="#/c/${c.id}" class="seg lv${x.level}" aria-label="${esc(label)}"><title>${esc(label)}</title>`;
+    g += `<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segbg"/>${x.level ? `<path d="${sector(cx, cy, r0, r1, a0, a1)}" fill="${col}" fill-opacity="${op}"/>` : ''}<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segline" stroke="${col}"/>`;
+    g += `<text transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)}) rotate(${rot.toFixed(1)})" text-anchor="middle" font-size="${fs}" class="${x.level >= 2 ? 'on' : ''}">${lines.map((l, i) => `<tspan x="0" dy="${i === 0 ? (lines.length > 1 ? -fs * .2 : fs * .35) : fs * 1.1}">${esc(l)}</tspan>`).join('')}</text>`;
+    if (x.lit){ const ra = r1 - 7, sx = cx + ra * Math.cos(a1 * Math.PI / 180 - .16), sy = cy + ra * Math.sin(a1 * Math.PI / 180 - .16); g += `<text x="${sx.toFixed(1)}" y="${(sy + 4).toFixed(1)}" text-anchor="middle" class="star" font-size="11">★</text>`; }
+    return g + '</a>';
+  };
+  // the nine emerging competencies, three domains of 120 degrees, Thinking at the top
+  const outer = ['cait', 'cci', 'cgc'].flatMap(d => COMPETENCIES.filter(c => c.d === d));
+  outer.forEach((c, i) => { const a0 = -150 + i * 40; s += seg(c, 104, 156, a0 + .6, a0 + 40 - .6, 9.5); });
+  COMPETENCIES.filter(c => c.d === 'sec').forEach((c, i) => { const a0 = -126 + i * 72; s += seg(c, 50, 100, a0 + .8, a0 + 72 - .8, 8.6); });
+  s += `<circle cx="${cx}" cy="${cy}" r="46" class="core"/><text x="${cx}" y="${cy - 3}" text-anchor="middle" font-size="11" class="corelabel">Core</text><text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="11" class="corelabel">values</text>`;
   return s + '</svg>';
 }
-function yearsWithEntries(){ const ys = new Set(me.entries.map(e => new Date(e.created).getFullYear())); ys.add(new Date().getFullYear()); return [...ys].sort(); }
-function renderMap(){
-  const q = new URLSearchParams((location.hash.split('?')[1]) || ''); const years = yearsWithEntries();
-  const year = years.includes(+q.get('y')) ? +q.get('y') : new Date().getFullYear();
-  const E = me.entries.slice().sort((a, b) => b.created - a.created);
-  const last = E[0]; const s = streak(E); const tp = termPos(Date.now());
-  const stmts = myStatements();
-  const trails = DOMAINS.map(d => {
-    const pts = trailPoints(d.id, year); const sts = stmts.filter(x => x.basket === d.id).map(x => statementStatus(me.entries, x));
-    const lit = sts.filter(x => x.lit); const lits = lit.map(x => x.litAt).filter(t => t && new Date(t).getFullYear() === year);
-    const ev = pts.reduce((a, p) => a + p.n, 0);
-    return `<a class="trail" href="#/basket/${d.id}" aria-label="${esc(d.short)}: ${plural(ev, 'entry', 'entries')} with evidence in ${year}, ${lit.length} of ${sts.length} statements lit. Open the basket.">
-      <span class="tl"><b>${esc(d.short)}</b><span class="go" aria-hidden="true">${icon('arrow')}</span><small>${ev ? plural(ev, 'entry', 'entries') : 'No evidence yet'} · ${lit.length} of ${sts.length} statements lit</small></span>
-      ${trailSvg(pts, lits, year)}</a>`;
-  }).join('');
+function domainLegend(){ return `<div class="dlegend">${DOMAINS.map(d => `<span><i style="background:${DOMAIN_COLOUR[d.id]}"></i>${esc(d.short)}</span>`).join('')}</div>`; }
+function renderHome(){
+  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E);
+  const ranked = COMPETENCIES.map(c => Object.assign({c}, st[c.id])).sort((a, b) => b.level - a.level || b.n - a.n);
+  const strong = ranked.filter(x => x.level).slice(0, 3); const quiet = ranked.filter(x => !x.level).slice(0, 4);
+  const latest = E.find(e => e.kind !== 'across' && e.e21cc);
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
   const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
   const drafts = Object.keys(me.drafts || {});
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
   const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === termKey(Date.now())).map(e => e.basket));
   frame(`
-    <section class="hero">
-      <h1>${esc(firstName(me.name))}’s Log</h1>
-      <p class="motto">${esc(me.prefs.motto || 'Believe you can.')}</p>
-      <p class="meta">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'} · ${E.length ? `${plural(E.length, 'entry', 'entries')} · ${s ? s + ' week' + (s > 1 ? 's' : '') + ' in a row' : 'no entry this week yet'}` : 'Your first entry is the hardest. It gets easier from the second.'}</p>
-      ${years.length > 1 ? `<div class="seg years" role="group" aria-label="Year">${years.map(y => `<button onclick="location.hash='#/?y=${y}'" class="${y === year ? 'on' : ''}">${y}</button>`).join('')}</div>` : ''}
-    </section>
-    <section class="card mapcard" aria-labelledby="mapH">
-      <div class="maphead"><h2 id="mapH">Your four baskets</h2><span class="tiny">▲ Ridge</span></div>
-      <div class="trails">${trails}</div>
-      <div class="terms" aria-hidden="true"><span>T1</span><span>T2</span><span>T3</span><span>T4</span></div>
-      <p class="tiny legend">Each dot is a day with evidence; higher means stronger evidence in your own words. <span class="litkey" aria-hidden="true"></span> marks a statement you unlocked. Tap a basket to open it.</p>
+    <section class="titlepage">
+      <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
+      <h1>Your competencies</h1>
+      <div class="wheelwrap">${wheelSvg(st)}</div>
+      ${domainLegend()}
+      <p class="tiny" style="text-align:center;margin:6px 0 0">A segment deepens with the strongest evidence in your own words. ★ marks an I can statement you unlocked. Tap any segment.</p>
     </section>
     <div class="verbs">
-      <button class="verb" onclick="location.hash='#/grow'"><span class="glyph">${ringSvg('grow')}</span><span><b>GROW</b><span>Reflect on a lesson, a session, a day${drafts.includes('grow') ? ' · draft saved' : ''}</span></span><span class="go">${icon('arrow')}</span></button>
-      <button class="verb" onclick="location.hash='#/act'"><span class="glyph">${ringSvg('act')}</span><span><b>ACT</b><span>Act on feedback${drafts.includes('act') ? ' · draft saved' : ''}</span></span><span class="go">${icon('arrow')}</span></button>
+      <a class="verb" href="#/write/grow"><span class="glyph">${ringSvg('grow')}</span><span><b>New GROW entry</b><span>Reflect on a lesson, a session, a day${drafts.includes('grow') ? ' · draft saved' : ''}</span></span><span class="go">${icon('plus')}</span></a>
+      <a class="verb" href="#/write/act"><span class="glyph">${ringSvg('act')}</span><span><b>New ACT entry</b><span>Act on feedback${drafts.includes('act') ? ' · draft saved' : ''}</span></span><span class="go">${icon('plus')}</span></a>
     </div>
-    ${last ? `<p class="lastline"><a href="#/entry/${last.id}">Last: ${esc(entryTitle(last))}, ${fmtDay(last.created)}</a> · <a href="#/log">All entries</a></p>` : ''}
-    ${unread.length ? `<a class="card notecard" href="#/entry/${unread[0].e.id}">${icon('note')}<span><b>${plural(unread.length, 'new note')} from ${esc(unread[0].n.by)}${new Set(unread.map(u => u.n.by)).size > 1 ? ' and others' : ''}</b><small>On ${esc(entryTitle(unread[0].e))}</small></span></a>` : ''}
-    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Look across one basket before it does: read your evidence, then answer three questions. It is the best ten minutes of the term.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
+    ${unread.length ? `<a class="card notecard" href="#/entry/${unread[0].e.id}">${icon('note')}<span><b>${plural(unread.length, 'new note')} from ${esc(unread[0].n.by)}</b><small>On ${esc(entryTitle(unread[0].e))}</small></span></a>` : ''}
+    ${E.length ? `<section class="card"><h2>Where you stand</h2>
+      ${strong.length ? `<span class="kick">Showing most</span><div class="chips">${strong.map(x => `<a class="chip dchip" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}<small>${plural(x.n, 'entry', 'entries')}</small></a>`).join('')}</div>` : ''}
+      ${quiet.length ? `<span class="kick" style="margin-top:10px">Not shown yet</span><div class="chips">${quiet.map(x => `<a class="chip dchip quiet" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}</a>`).join('')}</div><p class="tiny" style="margin:8px 0 0">Not a gap to fill for its own sake: a place you have not looked yet. Tap one to see what it looks like in words.</p>` : ''}
+    </section>` : `<section class="card"><h2>How the wheel fills</h2><p class="muted">After a lesson, a training or a camp day, write a GROW entry. Claim a competency and point to where it shows. When your words back it, that segment of the wheel deepens.</p></section>`}
+    ${latest ? `<a class="card latest" href="#/entry/${latest.id}"><span class="kick">Latest feedback · ${esc(entryTitle(latest))}</span>${latestLine(latest)}</a>` : ''}
+    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Look across one domain: read this term’s evidence, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
     ${nextEntry ? `<section class="card"><h2>Your next step</h2><div class="next"><input type="checkbox" id="doneNext" aria-label="Done"><p>${esc(nextStepOf(nextEntry))}</p></div><p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when it is done, honestly.</p></section>` : ''}
-    ${!E.length ? `<section class="card flat"><h2>How the map fills</h2><p class="muted">After a lesson, a training or a camp day, open GROW and answer honestly. Claim a competency and point to where it shows. When your words back the claim, a dot appears on that basket’s trail.</p></section>` : ''}
-  `, 'map');
+  `, 'e21cc');
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Ticked. That is how habits are built.'); setTimeout(route, 400); };
 }
+function latestLine(e){
+  const x = e.e21cc; const ev = (x.evidence || []).filter(v => !v.unverified && v.strength !== 'glimpse')[0];
+  const c = coachOf(e);
+  return `${ev ? `<p style="margin:4px 0 0"><b>${esc(compOf(ev.id).label)}</b> <span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></p>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}` : `<p class="muted" style="margin:4px 0 0">${esc(x.stance_note || '')}</p>`}${c && c.question ? `<p class="ask">${esc(c.question)}</p>` : ''}`;
+}
 
-/* ---------- a basket: statements with their evidence, then the look across ---------- */
-function renderBasket(id){
-  const d = basketOf(id); if (!d){ location.hash = '#/'; return; }
-  const q = new URLSearchParams((location.hash.split('?')[1]) || '');
-  const bands = STMT_SET.bands; const band = bands ? (q.get('band') || me.band || bands[0].id) : null;
-  const stmts = statementsFor(STMT_SET, band).filter(s => s.basket === id);
-  const sts = stmts.map(s => statementStatus(me.entries, s));
-  const byDate = (a, b) => b.created - a.created;
-  const filed = me.entries.filter(e => e.kind !== 'across' && basketsOf(e).includes(id)).sort(byDate);
-  const linked = new Set(sts.flatMap(s => s.links.map(k => k.e.id)));
-  const loose = filed.filter(e => !linked.has(e.id));
-  const acrosses = me.entries.filter(e => e.kind === 'across' && e.basket === id).sort(byDate);
-  const tk = termKey(Date.now()); const mine = acrosses.find(e => e.term === tk);
-  const lit = sts.filter(s => s.lit).length;
-  const row = st => {
-    const s = st.stmt;
-    const ev = st.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}">${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
-    const sug = st.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === s.id); return `<div class="sugg"><span class="kick">Coach suggests</span><a href="#/entry/${e.id}">${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
-    const probe = (s.competencies.map(compOf).find(Boolean) || {}).probe || '';
-    return `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><div class="grow">
-      <p class="st-text">${esc(s.text)}<span class="sr"> (${st.state === 'lit' ? 'unlocked' : st.state === 'linked' ? 'linked, not backed yet' : 'no evidence yet'})</span></p>
-      ${ev}${st.state === 'linked' ? `<small class="muted">Linked, but the words do not show it yet. ${esc(probe)}</small>` : ''}${sug}
-      <button class="btn small ${st.links.length ? 'ghost' : 'sec'}" data-linkone="${esc(s.id)}">${icon('link')} ${st.links.length ? 'Link another' : 'Link one'}</button></div></li>`;
-  };
-  frame(`
-    <section class="hero"><p class="kicker"><a href="#/">Map</a> · Basket</p><h1>${esc(d.label)}</h1><p class="meta">${esc(d.blurb)}</p><p class="meta"><b>${lit} of ${stmts.length}</b> statements lit · ${plural(filed.length, 'entry', 'entries')} filed here</p></section>
-    ${STMT_SET.placeholder ? `<div class="notice">These are sample statements. The school’s own I can statements will replace them; your links carry over where the ids stay the same.</div>` : ''}
-    <section class="card">
-      <div class="row" style="justify-content:space-between"><h2 style="margin:0">I can</h2>${bands ? `<div class="seg" role="group" aria-label="Level">${bands.map(b => `<button onclick="location.hash='#/basket/${id}?band=${b.id}'" class="${b.id === band ? 'on' : ''}">${esc(b.label)}</button>`).join('')}</div>` : ''}</div>
-      <p class="tiny" style="margin:6px 0 10px">A statement lights when you link an entry and your words in it back the statement. Linking alone is not enough.</p>
-      ${stmts.length ? `<ul class="stmts">${sts.map(row).join('')}</ul>` : '<p class="muted">No statements for this basket yet.</p>'}
-    </section>
-    <section class="card"><h2>Filed here, not linked</h2>
-      ${loose.length ? `<p class="tiny">Entries whose claim or evidence sits in this basket. Link one to a statement it backs.</p>${loose.map(entryRow).join('')}` : `<p class="muted">${filed.length ? 'Every entry here is linked to a statement.' : 'Nothing filed here yet. Claim a competency from this basket on your next GROW or ACT and point to where it shows.'}</p>`}
-    </section>
-    <section class="card"><h2>Look across</h2>
-      <p class="tiny">Once a term: read your evidence for this basket, then answer three questions.</p>
-      ${mine ? entryRow(mine) : `<a class="btn" href="#/across/${id}">${icon('eye')} Look across ${termLabel(tk)}</a>`}
-      ${acrosses.filter(e => e !== mine).length ? `<h3 style="margin-top:14px">Earlier terms</h3>${acrosses.filter(e => e !== mine).map(entryRow).join('')}` : ''}
-    </section>
-  `, 'map');
-  $$('[data-linkone]').forEach(b => b.onclick = () => linkDialog(b.dataset.linkone, id));
+/* ---------- a competency: what it means, its statements, the entries that show it ---------- */
+function stmtRow(st, compId){
+  const s = st.stmt;
+  const ev = st.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}">${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
+  const sug = st.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === s.id); return `<div class="sugg"><span class="kick">Coach suggests</span><a href="#/entry/${e.id}">${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
+  const probe = (compOf(compId) || {}).probe || '';
+  return `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><div class="grow">
+    <p class="st-text">${s.level ? `<span class="lvl">${s.level === 1 ? 'Starting' : 'Stretching'}</span> ` : ''}${esc(s.text)}<span class="sr"> (${st.state === 'lit' ? 'unlocked' : st.state === 'linked' ? 'linked, not backed yet' : 'no evidence yet'})</span></p>
+    ${ev}${st.state === 'linked' ? `<small class="muted">Linked, but the words do not show it yet. ${esc(probe)}</small>` : ''}${sug}
+    <button class="btn small ${st.links.length ? 'ghost' : 'sec'}" data-linkone="${esc(s.id)}">${icon('link')} ${st.links.length ? 'Link another' : 'Link an entry'}</button></div></li>`;
+}
+function wireStmtButtons(compId){
+  $$('[data-linkone]').forEach(b => b.onclick = () => linkDialog(b.dataset.linkone, compId));
   $$('[data-linkit]').forEach(b => b.onclick = () => { const [eid, sid] = b.dataset.linkit.split('|'); const e = me.entries.find(x => x.id === eid); const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === sid); addLink(e, sid, m ? m.quote : ''); });
   $$('[data-unlink]').forEach(b => b.onclick = () => { const [eid, sid] = b.dataset.unlink.split('|'); const e = me.entries.find(x => x.id === eid); if (e){ e.links = e.links.filter(l => l.sid !== sid); saveDb(); toast('Unlinked.'); route(); } });
+}
+function bestQuote(e, id){ return ((e.e21cc && e.e21cc.evidence) || []).filter(v => v.id === id && v.quote && !v.unverified).sort((a, b) => ({strong:3, clear:2, glimpse:1}[b.strength] - {strong:3, clear:2, glimpse:1}[a.strength]))[0] || null; }
+function renderCompetency(id){
+  const c = compOf(id); if (!c){ location.hash = '#/'; return; }
+  const d = basketOf(c.d); const st = compStats()[id];
+  const stmts = myStatements().filter(s => s.competencies.includes(id)).map(s => statementStatus(me.entries, s));
+  const shows = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, id)).sort((a, b) => compLevelOf(b, id) - compLevelOf(a, id) || b.created - a.created);
+  const tk = termKey(Date.now()); const across = me.entries.find(e => e.kind === 'across' && e.basket === c.d && e.term === tk);
+  frame(`
+    <section class="hero comp-hero" style="--d:${DOMAIN_COLOUR[c.d]}">
+      <p class="kicker"><a href="#/">E21CC</a> · ${esc(d.label)}</p>
+      <h1>${esc(c.label)}</h1>
+      <p class="plain">${esc(c.plain)}</p>
+      <p class="meta"><span class="lvlbar">${[1, 2, 3].map(n => `<i class="${st.level >= n ? 'on' : ''}"></i>`).join('')}</span> ${LEVEL_WORD[st.level][0].toUpperCase() + LEVEL_WORD[st.level].slice(1)} · ${plural(st.n, 'entry', 'entries')}${st.total ? ` · ${st.lit} of ${st.total} statements unlocked` : ''}</p>
+    </section>
+    ${STMT_SET.placeholder ? `<div class="notice">Starter statements. The school’s own I can statements will replace them.</div>` : ''}
+    <section class="card"><h2>I can</h2>
+      <p class="tiny" style="margin:0 0 10px">A statement unlocks when you link an entry and your words in it show the statement. Linking alone is not enough.</p>
+      ${stmts.length ? `<ul class="stmts">${stmts.map(x => stmtRow(x, id)).join('')}</ul>` : '<p class="muted">No statements for this competency yet.</p>'}
+    </section>
+    <section class="card"><h2>Where it shows in your log</h2>
+      ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)} · ${FRAMEWORKS[e.kind].name}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
+    </section>
+    <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
+      <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
+  `, 'e21cc');
+  wireStmtButtons(id);
 }
 function addLink(e, sid, quote){
   if (!e) return; const s = statementById(sid);
   e.links = (e.links || []).filter(l => l.sid !== sid); e.links.push({sid, quote:String(quote || '').slice(0, 400), at:Date.now()}); saveDb();
   closeDialog();
-  toast(s && linkBacked(e, s) ? 'Linked, and your words back it. The statement is lit.' : 'Linked. The coach has not seen it in your words yet.', 3400);
+  toast(s && linkBacked(e, s) ? 'Linked, and your words back it. The statement is unlocked.' : 'Linked. The coach has not seen it in your words yet.', 3400);
   route();
 }
-/* Link one: pick an entry, then the sentence of yours that shows the statement. */
-function linkDialog(sid, basket){
+/* Link an entry: pick an entry, then the sentence of yours that shows the statement. */
+function linkDialog(sid, compId){
   const s = statementById(sid); if (!s) return;
-  const filed = me.entries.filter(e => e.kind !== 'across' && basketsOf(e).includes(basket)).sort((a, b) => b.created - a.created);
-  const others = me.entries.filter(e => e.kind !== 'across' && !filed.includes(e)).sort((a, b) => b.created - a.created).slice(0, 20);
+  const showing = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, compId)).sort((a, b) => b.created - a.created);
+  const others = me.entries.filter(e => e.kind !== 'across' && !showing.includes(e)).sort((a, b) => b.created - a.created).slice(0, 20);
   const btn = e => `<button class="entry" data-e="${e.id}">${medal(e.kind)}<span class="grow"><b>${esc(entryTitle(e))}</b><small>${fmtDay(e.created)}${(e.links || []).some(l => l.sid === sid) ? ' · already linked' : ''}</small></span></button>`;
   dialog(`<h2>Link an entry</h2><p class="st-quote">${esc(s.text)}</p>
-    ${filed.length ? `<span class="kick">Filed in this basket</span>${filed.map(btn).join('')}` : ''}
+    ${showing.length ? `<span class="kick">Entries that show ${esc(compOf(compId).label.toLowerCase())}</span>${showing.map(btn).join('')}` : ''}
     ${others.length ? `<span class="kick" style="margin-top:10px">Other entries</span>${others.map(btn).join('')}` : ''}
-    ${!filed.length && !others.length ? '<p class="muted">Write a GROW or ACT entry first.</p>' : ''}
+    ${!showing.length && !others.length ? '<p class="muted">Write a GROW or ACT entry first.</p>' : ''}
     <div class="row" style="margin-top:12px"><button class="btn sec" id="dClose">Cancel</button></div>`);
   $('#dClose').onclick = closeDialog;
   $$('#dlgBody [data-e], #inlineDlg [data-e]').forEach(b => b.onclick = () => {
     const e = me.entries.find(x => x.id === b.dataset.e); const sents = sentencesOf(entryAnswersText(e));
     const sug = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === sid);
     const pre = sug ? sents.findIndex(t => normText(t).includes(normText(sug.quote)) || normText(sug.quote).includes(normText(t))) : -1;
-    dialog(`<h2>Which words show it?</h2><p class="st-quote">${esc(s.text)}</p><p class="tiny">Pick the sentence from “${esc(entryTitle(e))}” that shows this. The quote is what your teacher sees.</p>
+    dialog(`<h2>Which words show it?</h2><p class="st-quote">${esc(s.text)}</p><p class="tiny">Pick the sentence from “${esc(entryTitle(e))}” that shows this.</p>
       <div class="stack" id="sentList">${sents.map((t, i) => `<label class="pick-row"><input type="radio" name="sent" value="${i}" ${i === (pre >= 0 ? pre : 0) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('') || '<p class="muted">This entry has no words yet.</p>'}</div>
       <div class="row" style="margin-top:12px"><button class="btn" id="dLink" ${sents.length ? '' : 'disabled'}>${icon('link')} Link</button><button class="btn sec" id="dBack">Back</button></div>`);
-    $('#dBack').onclick = () => linkDialog(sid, basket);
+    $('#dBack').onclick = () => linkDialog(sid, compId);
     $('#dLink').onclick = () => { const r = $$('#sentList input').find(x => x.checked); addLink(e, sid, r ? sents[+r.value] : ''); };
   });
 }
@@ -732,11 +823,12 @@ function openComposer(kind, editId, basket){
         // reads made before v2 carry no hash: they were made on these words
         if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements()); }
     }
-    const pg = primaryGroup();
     draft = Object.assign({kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], basket:basket || null, term:termKey(Date.now())}, base || {});
     draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0;
     if (!draft.context) draft.context = {type:inferContextType(draft.subject), name:draft.subject || ''};
-    if (kind !== 'across' && !draft.context.name && !editId && pg){ draft.context = {type:pg.type === 'cca' ? 'cca' : 'subject', name:pg.subject || ''}; draft.groupCode = draft.groupCode || pg.code; }
+    // nothing is assumed: the subject or experience comes from the student, or from the bookmark they started at
+    const pre = hashParts().q.get('x');
+    if (kind !== 'across' && pre && !editId){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
     if (kind === 'across') draft.lookedAt = acrossEvidence(basket, draft.term).map(x => ({eid:x.e.id, quote:x.q.quote})).slice(0, 8);
   }
   renderComposer();
@@ -767,7 +859,7 @@ function renderComposer(){
   </div></div></div>`;
   $('#cClose').onclick = () => { collect(); saveDraft(); draft = null; location.hash = draftReturn(); };
   $('#cBack').onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
-  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); draft.step = i + 1; saveDraft(); renderComposer(); };
+  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); if (kind === 'context' && !draft.context.name){ toast('Choose the subject or experience first.'); const f = $('.xchips .chip') || $('[name=ctxName]'); if (f) f.focus(); return; } draft.step = i + 1; saveDraft(); renderComposer(); };
   const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
@@ -778,7 +870,9 @@ function renderComposer(){
   scrollTop();
   const first = $('.sheet textarea'); if (first && kind.startsWith('letter') && window.innerWidth > 760) first.focus();
 }
-function draftReturn(){ return draft && draft.kind === 'across' ? '#/basket/' + draft.basket : '#/'; }
+function draftReturn(){ return !draft ? '#/' : draft.kind === 'across' ? '#/' : '#/journal/' + draft.kind; }
+/* If a teacher's group teaches the chosen subject or CCA, offer it; never pick a subject from the group. */
+function matchGroup(){ if (!draft || draft.groupCode) return; const n = (draft.context.name || '').toLowerCase(); const g = myGroups().find(x => x.cfg && [x.cfg.subject, ...(x.cfg.subjects || [])].some(s => String(s || '').toLowerCase() === n)); if (g) draft.groupCode = g.code; }
 let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(() => { if (!draft) return; collect(); saveDraft(); }, 400); }
 function autosize(t){ t.style.height = 'auto'; t.style.height = Math.max(96, t.scrollHeight + 4) + 'px'; }
 function stepHead(s, kicker, title){
@@ -788,20 +882,34 @@ function stepHead(s, kicker, title){
 function collect(){
   const sh = $('#sheet'); if (!sh || !draft) return;
   $$('[data-a]', sh).forEach(el => { draft.answers[el.dataset.a] = el.value; });
-  const nm = $('[name=ctxName]', sh); if (nm) draft.context.name = nm.value.trim();
+  const nm = $('[name=ctxName]', sh); if (nm){ draft.context.name = nm.value.trim(); const keep = $('#keepExp', sh); draft._keepExp = !keep || keep.checked; matchGroup(); }
   const top = $('[name=topic]', sh); if (top) draft.topic = top.value.trim();
   const g = $('[name=groupCode]', sh); if (g) draft.groupCode = g.value;
   const ft = $('[name=feedbackText]', sh); if (ft) draft.feedbackText = ft.value.trim();
 }
 function contextStep(fw){
   const ct = contextTypeOf(draft.context.type); const gs = myGroups();
-  const fromGroups = gs.map(g => g.cfg).filter(Boolean).filter(c => (c.type === 'cca') === (ct.id === 'cca')).flatMap(c => c.subjects && c.subjects.length ? c.subjects : [c.subject]).filter(Boolean);
-  const list = Array.from(new Set([...fromGroups, ...(ct.id === 'subject' ? SUBJECTS : [])]));
+  const exps = myExperiences(); const cur = (draft.context.name || '').toLowerCase();
+  const usedNames = []; for (const e of me.entries.slice().sort((a, b) => b.created - a.created)){ const n = e.context && e.context.name; if (n && e.kind !== 'across' && !exps.some(x => x.name.toLowerCase() === n.toLowerCase()) && !usedNames.some(u => u.name.toLowerCase() === n.toLowerCase())) usedNames.push({type:e.context.type, name:n}); }
+  const all = [...exps, ...usedNames.slice(0, 6)];
+  const inList = all.some(x => x.name.toLowerCase() === cur);
+  const other = draft._other || (cur && !inList);
+  const chip = x => `<button type="button" class="chip ${x.name.toLowerCase() === cur && !other ? 'on' : ''}" data-exp="${esc(x.type)}|${esc(x.name)}" style="--g:${TYPE_COLOUR[x.type] || TYPE_COLOUR.other}"><i class="tdot"></i>${esc(x.name)}</button>`;
+  const sec = (label, list) => list.length ? `<span class="kick">${label}</span><div class="chips xchips">${list.map(chip).join('')}</div>` : '';
+  const list = Array.from(new Set(ct.id === 'subject' ? SUBJECTS : []));
   return `
-    <p class="muted">${fw.id === 'grow' ? 'Use this straight after a lesson, a training, a camp day or a competition, while it is still warm. Eight questions, two per letter. Short and honest beats long and vague.' : 'Use this when you get feedback back: a marked piece, a coach’s comment, a peer’s note. Six questions, two per letter.'}</p>
-    <div class="f"><span class="flabel">Where did the learning happen?</span><div class="chips" id="ctxType" role="radiogroup">${CONTEXT_TYPES.map(c => `<button type="button" class="chip ${c.id === ct.id ? 'on' : ''}" data-ctype="${c.id}" role="radio" aria-checked="${c.id === ct.id}">${esc(c.label)}</button>`).join('')}</div></div>
-    <label class="f"><span>${ct.id === 'subject' ? 'Subject' : ct.label}</span><input class="in" name="ctxName" list="ctxList" value="${esc(draft.context.name)}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" enterkeyhint="next"><datalist id="ctxList">${list.map(s => `<option value="${esc(s)}">`).join('')}</datalist></label>
-    <label class="f"><span>${fw.id === 'grow' ? ct.topic : 'What the feedback was on'}</span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}"></label>
+    <p class="muted">${fw.id === 'grow' ? 'Use this straight after a lesson, a training, a camp day or a competition, while it is still warm. Two honest sentences per question is plenty.' : 'Use this when feedback comes back: a marked piece, a coach’s comment, a peer’s note.'}</p>
+    <div class="f"><span class="flabel">What is this ${fw.id === 'grow' ? 'reflection' : 'feedback'} about?</span>
+      ${sec('My CCA', all.filter(x => x.type === 'cca'))}${sec('My subjects', all.filter(x => x.type === 'subject'))}${sec('Other experiences', all.filter(x => x.type !== 'cca' && x.type !== 'subject'))}
+      <div class="chips" style="margin-top:8px"><button type="button" class="chip ${other ? 'on' : ''}" data-other="1">${icon('plus')} Something else</button></div>
+      ${!exps.length ? `<p class="tiny" style="margin:8px 0 0">Add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a> and they appear here.</p>` : ''}
+    </div>
+    ${other ? `<div class="subpanel">
+      <div class="chips" id="ctxType" role="radiogroup">${CONTEXT_TYPES.map(c => `<button type="button" class="chip ${c.id === ct.id ? 'on' : ''}" data-ctype="${c.id}" role="radio" aria-checked="${c.id === ct.id}">${esc(c.label)}</button>`).join('')}</div>
+      <label class="f" style="margin-top:10px"><span>${ct.id === 'subject' ? 'Subject' : ct.label}</span><input class="in" name="ctxName" list="ctxList" value="${esc(draft.context.name)}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" enterkeyhint="next"><datalist id="ctxList">${list.map(s => `<option value="${esc(s)}">`).join('')}</datalist></label>
+      <label class="row" style="cursor:pointer"><input type="checkbox" id="keepExp" checked style="width:20px;height:20px;accent-color:var(--cover)"><span class="tiny">Add it to my experiences</span></label>
+    </div>` : ''}
+    <label class="f" style="margin-top:12px"><span>${fw.id === 'grow' ? ct.topic : 'What the feedback was on'}</span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}"></label>
     ${gs.length ? `<label class="f"><span>Group</span><select class="in" name="groupCode"><option value="">None</option>${gs.map(g => `<option value="${esc(g.code)}" ${draft.groupCode === g.code ? 'selected' : ''}>${esc(g.cfg ? groupName(g.cfg) : g.code)}</option>`).join('')}</select><small>Sets whose voice the coach uses, and which teacher can see it if you share.</small></label>` : ''}
     ${fw.id === 'act' ? `
     <div class="f"><span class="flabel">Who gave the feedback?</span>
@@ -815,7 +923,7 @@ function evidenceStep(){
   const b = basketOf(draft.basket); const ev = acrossEvidence(draft.basket, draft.term);
   const sts = myStatements().filter(s => s.basket === draft.basket).map(s => statementStatus(me.entries, s));
   return `<p class="muted">${esc(b.label)}. Read what you wrote this term before you answer. Look for a pattern, not a highlight.</p>
-    ${ev.length ? `<ul class="evid">${ev.map(x => `<li><b>${esc(entryTitle(x.e))}</b> <span class="tiny">${fmtDay(x.e.created)}</span><q>${esc(x.q.quote)}</q><span class="str ${x.q.strength}">${STRENGTHS[x.q.strength].label}</span> <small>${esc(compOf(x.q.id).label)}</small></li>`).join('')}</ul>` : `<div class="notice">No evidence filed in this basket this term yet. You can still look across: what did you notice about yourself here, even without an entry?</div>`}
+    ${ev.length ? `<ul class="evid">${ev.map(x => `<li><b>${esc(entryTitle(x.e))}</b> <span class="tiny">${fmtDay(x.e.created)}</span><q>${esc(x.q.quote)}</q><span class="str ${x.q.strength}">${STRENGTHS[x.q.strength].label}</span> <small>${esc(compOf(x.q.id).label)}</small></li>`).join('')}</ul>` : `<div class="notice">No evidence for this domain this term yet. You can still look across: what did you notice about yourself here, even without an entry?</div>`}
     ${sts.length ? `<h3 style="margin-top:14px">Your statements</h3><ul class="stmts mini">${sts.map(st => `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><span>${esc(st.stmt.text)}</span></li>`).join('')}</ul>` : ''}`;
 }
 function letterStep(s){
@@ -829,7 +937,7 @@ function lensStep(){
   const all = Object.values(draft.answers).join('\n'); const seen = detectCompetencies(all).slice(0, 3).map(x => x.c.id);
   const chosen = new Map((draft.competencies || []).map(t => [t.id, t]));
   return `
-    <p class="muted">Make a claim: up to two competencies you believe this entry shows. Then point to where it shows. The coach will look for it in your words, and say honestly whether it is there. A claim your words back files the entry into that basket.</p>
+    <p class="muted">Make a claim: up to two competencies you believe this entry shows. Then point to where it shows. The coach will look for it in your words, and say honestly whether it is there. A claim your words back deepens that segment of your E21CC wheel.</p>
     ${DOMAINS.map(d => `<div class="domain"><h3>${esc(d.label)}</h3><div class="d">${esc(d.blurb)}</div>
       ${COMPETENCIES.filter(c => c.d === d.id).map(c => { const t = chosen.get(c.id); const on = !!t;
         return `<div class="comp ${on ? 'on' : ''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.label)} ${seen.includes(c.id) && !on ? '<span class="tag">maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>
@@ -855,13 +963,21 @@ function readbackStep(){
     <h3 style="margin-top:14px">Coach</h3>
     ${autoEval() && !fresh ? `<p class="tiny">When you log this, it goes to the coach (no name, no email) to be read for competencies${stmts.length ? ' and statements' : ''}. You can switch that off in Settings.</p>` : ''}
     ${stale ? `<div class="notice">Your words changed since the coach read this, so its read is set aside. Ask again, or log it and the coach reads the new version.</div>` : ''}
-    ${coachCard(fresh || b, cls)}
+    ${coachCard(fresh || b, cls, fresh ? fresh.e21cc : builtinE21cc(entry, stmts))}
     ${mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="askAi" ${fresh || left <= 0 ? 'disabled' : ''}>${icon('spark')} ${draft.coachAi ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="aiMsg">${fresh ? 'Change your words to ask again.' : left <= 0 ? `Today’s ${dailyLimit()} coach reads are used up.` : left !== Infinity ? `${left} of ${dailyLimit()} coach reads left today.` : 'Sends this entry (no name, no email) to the coach service.'}</span></div>` : `<p class="tiny" style="margin-top:8px">This is the built in coach: it works offline and reads for specifics, reasons and a dated next step. An AI coach in your teacher’s voice can be switched on in Settings.</p>`}`;
 }
-function coachCard(c, cls){
+function coachWho(src, model, cls){
+  if (src !== 'ai') return {name:'Built in coach', sub:'Reads for specifics, reasons and a dated next step', glyph:'🐝'};
+  const tone = (TONES[me.prefs.tone] || TONES.warm).label.toLowerCase();
+  if (String(model || '').startsWith('gemini')) return {name:'Gemini coach', sub:`${String(model).replace(/^gemini:/, '')} · ${tone} tone`, glyph:'✨'};
+  return {name:cls && cls.teacherName ? cls.teacherName + '’s coach' : 'AI coach', sub:`Claude · ${tone} tone`, glyph:'🎓'};
+}
+function coachCard(c, cls, x){
   const d = DEPTHS[c.depth] || DEPTHS.surface; const lvl = c.depth === 'deep' ? 3 : c.depth === 'working' ? 2 : 1;
-  const who = c.source === 'ai' ? `${cls && cls.teacherName ? esc(cls.teacherName) + '’s coach' : 'AI coach'}` : 'Built in coach';
-  return `<div class="coach"><div class="who"><span class="avatar">${c.source === 'ai' ? '🎓' : '🐝'}</span><div><b>${who}</b><small>${c.source === 'ai' ? 'Claude, in your teacher’s voice' : 'Reads for specifics, reasons and a dated next step'}</small></div></div>
+  const w = coachWho(c.source, c.model, cls);
+  const seen = x ? (x.evidence || []).filter(v => v.strength !== 'glimpse' && !v.unverified).slice(0, 3) : [];
+  return `<div class="coach"><div class="who"><span class="avatar">${w.glyph}</span><div><b>${esc(w.name)}</b><small>${esc(w.sub)}</small></div></div>
+    ${x ? `<div class="part"><b>E21CC</b>${seen.length ? `<div class="chips">${seen.map(v => `<span class="chip dchip" style="--d:${DOMAIN_COLOUR[compOf(v.id).d]}">${esc(compOf(v.id).label)}<small>${STRENGTHS[v.strength].label}</small></span>`).join('')}</div>` : `<p>${esc(x.stance_note || 'No competency shows clearly yet.')}</p>`}</div>` : ''}
     <div class="depth"><i class="${lvl >= 1 ? 'on' : ''}"></i><i class="${lvl >= 2 ? 'on' : ''}"></i><i class="${lvl >= 3 ? 'on' : ''}"></i><b>${d.label}</b><span class="tiny">${esc(d.help)}</span></div>
     <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div>
     <div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div>
@@ -872,6 +988,9 @@ function coachCard(c, cls){
 function wireStep(){
   const sh = $('#sheet');
   $$('[data-ctype]', sh).forEach(b => b.onclick = () => { collect(); draft.context.type = b.dataset.ctype; saveDraft(); renderComposer(); });
+  $$('[data-exp]', sh).forEach(b => b.onclick = () => { collect(); const s = b.dataset.exp; const i = s.indexOf('|'); draft.context = {type:s.slice(0, i), name:s.slice(i + 1)}; draft._other = false; matchGroup(); saveDraft(); renderComposer(); });
+  $$('[data-other]', sh).forEach(b => b.onclick = () => { collect(); draft._other = true; if (myExperiences().some(x => x.name.toLowerCase() === (draft.context.name || '').toLowerCase())) draft.context = {type:'other', name:''}; saveDraft(); renderComposer(); const n = $('[name=ctxName]'); if (n) n.focus(); });
+  const ts = $('#toSettings', sh); if (ts) ts.onclick = () => { collect(); saveDraft(); draft = null; };
   const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x => x.classList.toggle('on', x === b)); saveDraft(); });
   $$('.comp', sh).forEach(card => {
     card.addEventListener('click', (ev) => {
@@ -909,6 +1028,12 @@ function saveEntry(){
       me.entries[i] = migrateEntry(e);
     }
   } else { me.entries.push(migrateEntry(Object.assign(e, {links:[], notes:[], sent:{}}))); delete me.drafts[draft.key]; }
+  // a new experience typed in "Something else" joins the student's list, if they kept the box ticked
+  if (draft._other && draft._keepExp !== false && e.context && e.context.name && e.kind !== 'across' && !myExperiences().some(x => x.name.toLowerCase() === e.context.name.toLowerCase())){
+    if (e.context.type === 'subject') me.experiences.subjects.push(e.context.name);
+    else if (e.context.type === 'cca') me.experiences.cca = [me.experiences.cca, e.context.name].filter(Boolean).join(', ');
+    else me.experiences.others.push({type:e.context.type, name:e.context.name});
+  }
   saveDb(); const id = e.id; const isEdit = !!draft.editId; draft = null; closeComposer();
   location.hash = '#/entry/' + id + (!isEdit ? '?new=1' : changed ? '?edited=1' : '');
 }
@@ -933,11 +1058,12 @@ function renderEntry(idq){
   const sentTo = Object.entries(e.sent || {}).map(([aid, t]) => { const a = adultById(aid); return a ? `${esc(a.name)} (${fmtDay(t)}${t < version(e) ? ', before your last edit' : ''})` : ''; }).filter(Boolean);
   const files = basketsOf(e);
   frame(`
-    ${isNew || edited ? `<section class="hero"><h1>${isNew ? 'Logged.' : 'Saved.'}</h1><p class="motto">${esc(nextStepOf(e) || me.prefs.motto || 'Believe you can.')}</p><p class="meta">${nextStepOf(e) ? 'That is your next step. It waits for you on the Map.' : 'Next time, give yourself a small step with a day on it.'}</p></section>` : ''}
+    <p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'E21CC' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>
+    ${isNew || edited ? `<section class="hero"><h1>${isNew ? 'Logged.' : 'Saved.'}</h1><p class="motto">${esc(nextStepOf(e) || me.prefs.motto || 'Believe you can.')}</p><p class="meta">${nextStepOf(e) ? 'That is your next step. It waits for you on the E21CC page.' : 'Next time, give yourself a small step with a day on it.'}</p></section>` : ''}
     <section class="card entrycard">
       <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
         <div class="grow"><span class="tiny">${esc(contextLine(e))} · ${fmtDay(e.created)}</span><h2 style="margin:2px 0 0">${esc(entryTitle(e))}</h2>
-          ${files.length ? `<p class="tiny" style="margin:4px 0 0">Filed in ${files.map(b => `<a href="#/basket/${b}">${esc(basketOf(b).short)}</a>`).join(', ')}</p>` : ''}</div>
+          ${files.length ? `<p class="tiny" style="margin:4px 0 0">Shows ${COMPETENCIES.filter(c => compLevelOf(e, c.id) >= 2).map(c => `<a href="#/c/${c.id}">${esc(c.label)}</a>`).join(', ') || files.map(b => esc(basketOf(b).short)).join(', ')}</p>` : ''}</div>
         ${medal(e.kind, 'style="width:44px;height:44px;flex-basis:44px;font-size:1.2em"')}
       </div>
       ${topNotes.map(noteHtml).join('')}
@@ -948,17 +1074,17 @@ function renderEntry(idq){
       <div class="row" style="margin-top:6px">
         <button class="btn small" id="eShare">${icon('share')} Share</button>
         <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
-        <button class="btn small sec" onclick="location.hash='#/${e.kind === 'across' ? 'across/' + e.basket : e.kind}/${e.id}'">${icon('edit')} Edit</button>
+        <button class="btn small sec" onclick="location.hash='#/${e.kind === 'across' ? 'across/' + e.basket : 'write/' + e.kind}/${e.id}'">${icon('edit')} Edit</button>
         <button class="btn small ghost" id="eDel" style="color:var(--red)">${icon('trash')} Delete</button>
       </div>
       ${sentTo.length ? `<p class="tiny" style="margin:8px 0 0">Sent to ${sentTo.join(', ')}.</p>` : ''}
     </section>
     ${e21ccCard(e, {pending:aiPending.has(e.id), error:aiErrors.get(e.id)})}
-    <section class="card"><h2>Coach</h2>${coach ? coachCard(coach, cls) : ''}
+    <section class="card"><h2>Coach’s notes</h2>${coach ? coachCard(coach, cls) : ''}
       ${e.coach && e.coach.ai && e.coach.builtin ? `<details style="margin-top:10px"><summary>Built in coach’s read</summary>${coachCard(e.coach.builtin, cls)}</details>` : ''}
       ${me.coach.mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="eAsk" ${fresh || aiPending.has(e.id) || left <= 0 ? 'disabled' : ''}>${icon('spark')} ${e.coach && e.coach.ai ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="eAskMsg">${fresh ? 'The coach has read these words. Change them to ask again.' : left <= 0 ? `Today’s ${dailyLimit()} coach reads are used up.` : left !== Infinity ? `${left} of ${dailyLimit()} coach reads left today.` : ''}</span></div>` : ''}
     </section>
-  `, 'map', {wide:true});
+  `, e.kind === 'across' ? 'e21cc' : e.kind, {wide:true});
   // reading a note is seeing it
   let seen = false; for (const n of (e.notes || [])) if (!n.seen){ n.seen = true; seen = true; } if (seen) saveDb();
   $('#eShare').onclick = () => shareEntry(e);
@@ -977,7 +1103,7 @@ function e21ccCard(e, opts = {}){
   const claims = e.competencies || []; const claimed = new Set(claims.map(t => t.id));
   const seenEv = id => (x.evidence || []).find(v => v.id === id && v.strength !== 'glimpse');
   const cls = groupFor(e);
-  const who = x.source === 'ai' ? (cls && cls.teacherName ? esc(cls.teacherName) + '’s coach' : 'Class coach') : 'Built in read';
+  const who = esc(x.source === 'ai' ? coachWho('ai', (e.coach && e.coach.ai && e.coach.ai.model) || '', cls).name : 'Built in read');
   const claimRows = claims.map(t => { const c = compOf(t.id); if (!c) return ''; const l = LEVELS.find(z => z.n === t.level); const ev = seenEv(t.id);
     return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev ? ev.strength : 'none'}">${ev ? 'Seen · ' + STRENGTHS[ev.strength].label : 'Not seen yet'}</span></div>
       <small>Your claim: ${l ? l.label.toLowerCase() : 'claimed'}${t.where ? `, and you pointed to “${esc(t.where)}”` : ''}.</small>
@@ -987,7 +1113,7 @@ function e21ccCard(e, opts = {}){
   const may = (x.statements || []).filter(s => statementById(s.sid) && !linked.has(s.sid)).slice(0, 2);
   const err = opts.error;
   return `<section class="card" id="e21cc">
-    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Competency read</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">E21CC feedback</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
     ${err ? (err.allowance ? `<div class="notice">${esc(err.msg)}</div>` : `<div class="notice warn">The coach could not read this one: ${esc(err.msg)} The built in read stands. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>`) : ''}
     ${e.kind === 'across' ? '' : claims.length ? `<span class="kick">Your claim, held against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You made no claim this time. Next time, name one competency and point to where it shows; the coach will check.</p>`}
     ${others.length ? `<span class="kick" style="margin-top:12px">Also seen${e.kind === 'across' ? '' : ', not claimed'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' ? '' : `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Claim it</button>`}</li>`; }).join('')}</ul>` : ''}
@@ -1009,37 +1135,79 @@ function shareEntry(e){
   $('#dGo').onclick = () => { const r = $$('#shareList input').find(x => x.checked); const a = list[+r.value]; deliver(a, [{t:'e', id:e.id, title:entryTitle(e), e}]); };
 }
 
-/* ---------- the log: every entry, filterable ---------- */
+/* ---------- the GROW and ACT journals: bookmarks or a shelf, pivoted four ways ---------- */
+const PIVOTS = [['experience', 'Experience'], ['date', 'Date'], ['competency', 'Competency'], ['term', 'Term']];
+const TYPE_COLOUR = {cca:'#0f7a6b', subject:'#1f3fa8', camp:'#2f6b3a', competition:'#b23a48', service:'#a8740b', other:'#6a3f86', across:'#c98a00'};
 function entryRow(e){
   const fw = FRAMEWORKS[e.kind]; const c = coachOf(e); const first = fw.steps[0].qs[0].id;
-  const unread = (e.notes || []).filter(n => !n.seen).length;
-  const anySent = Object.keys(e.sent || {}).length;
-  return `<button class="entry" onclick="location.hash='#/entry/${e.id}'">${medal(e.kind)}<span class="grow"><b>${esc(entryTitle(e))}</b><small>${fmtDay(e.created)} · ${esc(contextLine(e))}${c && DEPTHS[c.depth] ? ' · ' + DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span></span></button>`;
+  const unread = (e.notes || []).filter(n => !n.seen).length; const anySent = Object.keys(e.sent || {}).length;
+  const comps = COMPETENCIES.filter(x => compLevelOf(e, x.id) >= 2).slice(0, 3);
+  return `<a class="entry" href="#/entry/${e.id}">${medal(e.kind)}<span class="grow"><b>${esc(entryTitle(e))}</b><small>${fmtDay(e.created)} · ${esc(contextLine(e))}${c && DEPTHS[c.depth] ? ' · ' + DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}</span></a>`;
 }
-function sparkline(vals){
-  const w = 320, h = 70, p = 10; const n = vals.length; const x = i => p + (w - 2 * p) * (n > 1 ? i / (n - 1) : .5); const y = v => h - p - (h - 2 * p) * (v - 1) / 2;
-  const pts = vals.map((v, i) => `${x(i)},${y(v)}`).join(' ');
-  return `<svg class="spark" viewBox="0 0 ${w} ${h}" role="img" aria-label="Depth over time">${[1,2,3].map(v => `<line x1="${p}" x2="${w - p}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/>`).join('')}<polyline points="${pts}" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linejoin="round"/>${vals.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="var(--accent)" stroke="var(--navy)" stroke-width="1.5"/>`).join('')}</svg>`;
+/* The student's own experiences, in their order: CCA first, then subjects, then the rest. */
+function myExperiences(){
+  const x = me.experiences || {subjects:[], cca:'', others:[]}; const out = []; const seen = new Set();
+  const push = (type, name) => { name = String(name || '').trim(); const k = name.toLowerCase(); if (!name || seen.has(k)) return; seen.add(k); out.push({type, name}); };
+  for (const n of String(x.cca || '').split(/\s*,\s*/)) push('cca', n);
+  for (const s of (x.subjects || [])) push('subject', s);
+  for (const o of (x.others || [])) push(o.type || 'other', o.name);
+  return out;
 }
-function renderLog(){
-  const E = me.entries.slice().sort((a, b) => b.created - a.created);
-  const q = new URLSearchParams((location.hash.split('?')[1]) || ''); const f = q.get('f') || 'all'; const ct = q.get('c') || '';
-  const shown = E.filter(e => (f === 'all' || e.kind === f) && (!ct || (e.context && e.context.type === ct)));
-  let claimsMade = 0, claimsBacked = 0; for (const e of E) for (const t of (e.competencies || [])){ claimsMade++; if (e.e21cc && (e.e21cc.evidence || []).some(v => v.id === t.id && v.strength !== 'glimpse' && !v.unverified)) claimsBacked++; }
-  const depths = E.filter(e => e.kind !== 'across').slice().reverse().map(e => { const c = coachOf(e); return c ? (c.depth === 'deep' ? 3 : c.depth === 'working' ? 2 : 1) : 1; });
-  const groups = {}; for (const e of shown){ const k = new Date(e.created).toLocaleDateString('en-SG', {month:'long', year:'numeric'}); (groups[k] = groups[k] || []).push(e); }
-  const types = [...new Set(E.map(e => e.context && e.context.type).filter(Boolean))];
-  const s = streak(E);
+function typeLabel(t){ return t === 'cca' ? 'CCA' : t === 'across' ? 'Look across' : contextTypeOf(t).label; }
+function journalGroups(kind, pivot){
+  const E = me.entries.filter(e => e.kind === kind).sort((a, b) => b.created - a.created);
+  const groups = new Map();
+  const add = (key, label, meta, e) => { if (!groups.has(key)) groups.set(key, Object.assign({key, label, entries:[]}, meta)); if (e) groups.get(key).entries.push(e); };
+  if (pivot === 'experience'){
+    for (const x of myExperiences()) add('x:' + x.name.toLowerCase(), x.name, {type:x.type, colour:TYPE_COLOUR[x.type] || TYPE_COLOUR.other}, null);
+    for (const e of E){ const n = ((e.context && e.context.name) || e.subject || '').trim() || 'Unsorted'; const t = (e.context && e.context.type) || 'subject'; add('x:' + n.toLowerCase(), n, {type:t, colour:TYPE_COLOUR[t] || TYPE_COLOUR.other}, e); }
+  } else if (pivot === 'date'){
+    for (const e of E){ const d = new Date(e.created); add(`d:${d.getFullYear()}-${d.getMonth()}`, d.toLocaleDateString('en-SG', {month:'long', year:'numeric'}), {colour:'var(--cover)'}, e); }
+  } else if (pivot === 'term'){
+    for (const e of E){ const k = termKey(e.created); add('t:' + k, termLabel(k), {colour:'var(--cover)'}, e); }
+  } else {
+    for (const c of COMPETENCIES){ for (const e of E) if (compLevelOf(e, c.id)) add('c:' + c.id, c.label, {colour:DOMAIN_COLOUR[c.d], comp:c.id}, e); }
+    const none = E.filter(e => !COMPETENCIES.some(c => compLevelOf(e, c.id))); for (const e of none) add('c:none', 'No competency yet', {colour:'var(--g5)'}, e);
+  }
+  return [...groups.values()];
+}
+function renderJournal(kind){
+  const fw = FRAMEWORKS[kind]; const {q} = hashParts();
+  const pref = me.prefs.journal; const pivot = PIVOTS.some(p => p[0] === q.get('p')) ? q.get('p') : pref.pivot; const view = q.get('v') === 'shelf' || q.get('v') === 'bookmarks' ? q.get('v') : pref.view;
+  if (pivot !== pref.pivot || view !== pref.view){ pref.pivot = pivot; pref.view = view; saveDb(); }
+  const groups = journalGroups(kind, pivot); const gkey = q.get('g') || ''; const sel = groups.find(g => g.key === gkey) || null;
+  const total = me.entries.filter(e => e.kind === kind).length;
+  const base = `#/journal/${kind}`;
+  const href = (o) => { const p = new URLSearchParams({p:o.p || pivot, v:o.v || view}); if (o.g) p.set('g', o.g); return `${base}?${p}`; };
+  const newHref = g => `#/write/${kind}` + (g && pivot === 'experience' && g.key !== 'x:unsorted' ? `?x=${encodeURIComponent((g.type || 'subject') + ':' + g.label)}` : '');
+  const groupPanel = g => `<section class="gpanel" style="--g:${g.colour}">
+      <div class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="kick">${pivot === 'experience' ? esc(typeLabel(g.type)) : pivot === 'competency' && g.comp ? esc(basketOf(compOf(g.comp).d).short) : esc(PIVOTS.find(p => p[0] === pivot)[1])}</span><h2 style="margin:0">${esc(g.label)}</h2></div>
+        ${pivot === 'experience' ? `<a class="btn small" href="${newHref(g)}">${icon('plus')} New ${fw.name}</a>` : g.comp ? `<a class="btn small sec" href="#/c/${g.comp}">Open ${esc(g.label)}</a>` : ''}</div>
+      ${g.entries.length ? g.entries.map(entryRow).join('') : `<p class="muted" style="margin-top:10px">No ${fw.name} entries here yet.${pivot === 'experience' ? ` After your next ${g.type === 'cca' ? 'session' : g.type === 'subject' ? 'lesson' : 'one'}, start one from here.` : ''}</p>`}
+    </section>`;
+  let body = '';
+  if (view === 'shelf'){
+    body = sel ? `<p style="margin:0 0 8px"><a class="backlink" href="${href({})}">${icon('back')} All notebooks</a></p>${groupPanel(sel)}`
+      : groups.length ? `<div class="shelf">${groups.map(g => `<a class="nb${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}"><span class="nb-title">${esc(g.label)}</span><span class="nb-meta">${pivot === 'experience' ? esc(typeLabel(g.type)) + '<br>' : ''}${plural(g.entries.length, 'entry', 'entries')}${g.entries[0] ? '<br>' + fmtDay(g.entries[0].created) : ''}</span></a>`).join('')}</div>` : '';
+  } else {
+    const marks = `<div class="bookmarks" role="list"><a role="listitem" class="bm${sel ? '' : ' on'}" href="${href({})}">All <b>${total}</b></a>${groups.map(g => `<a role="listitem" class="bm${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}">${esc(g.label)} <b>${g.entries.length}</b></a>`).join('')}</div>`;
+    body = marks + (sel ? groupPanel(sel) : groups.filter(g => g.entries.length).map(g => `<section class="gblock" style="--g:${g.colour}"><h3><a href="${href({g:g.key})}">${esc(g.label)}</a> <span class="tiny">${plural(g.entries.length, 'entry', 'entries')}</span></h3>${g.entries.map(entryRow).join('')}</section>`).join(''));
+  }
+  const empty = !total;
   frame(`
-    <section class="hero"><h1>Your log</h1><p class="meta">${plural(E.length, 'entry', 'entries')} · ${E.filter(e => e.kind === 'grow').length} GROW · ${E.filter(e => e.kind === 'act').length} ACT · ${E.filter(e => e.kind === 'across').length} look across · ${s ? s + ' week' + (s > 1 ? 's' : '') + ' in a row' : 'start a streak this week'}</p></section>
-    ${claimsMade ? `<section class="card"><p class="bigline">Claims backed by your own words: ${claimsBacked} of ${claimsMade}.</p><p class="tiny" style="margin:0">Claims are what you said you used. Backed means the coach found a clear moment in your words. The gap between the two is the interesting part.</p></section>` : ''}
-    ${depths.length >= 2 ? `<section class="card"><h2>Depth over time</h2>${sparkline(depths)}<p class="tiny">Each dot is an entry: base camp, on the climb, ridge view. The line going up matters more than any single dot.</p></section>` : ''}
-    <section class="card">
-      <div class="row" style="justify-content:space-between"><h2 style="margin:0">Entries</h2><div class="seg">${[['all','All'],['grow','GROW'],['act','ACT'],['across','Across']].map(([k, l]) => `<button onclick="location.hash='#/log?f=${k}${ct ? '&c=' + ct : ''}'" class="${f === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
-      ${types.length > 1 ? `<div class="chips" style="margin-top:10px"><a class="chip ${!ct ? 'on' : ''}" href="#/log?f=${f}">Everywhere</a>${types.map(t => `<a class="chip ${ct === t ? 'on' : ''}" href="#/log?f=${f}&c=${t}">${esc(contextTypeOf(t).label)}</a>`).join('')}</div>` : ''}
-      ${Object.keys(groups).length ? Object.entries(groups).map(([m, list]) => `<h3 style="margin:14px 0 2px">${m}</h3>${list.map(entryRow).join('')}`).join('') : '<p class="muted" style="margin-top:8px">Nothing here yet.</p>'}
+    <section class="jhead">
+      <span class="glyph">${ringSvg(kind)}</span>
+      <div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'GROW by reflecting, after a lesson, a training, a camp day.' : 'ACT on Feedback, whenever feedback comes back.'}</p></div>
+      <a class="btn acc" href="#/write/${kind}">${icon('plus')} New entry</a>
     </section>
-  `, 'log');
+    <div class="jbar">
+      <div class="seg" role="group" aria-label="Organise by">${PIVOTS.map(([k, l]) => `<a class="${pivot === k ? 'on' : ''}" href="${href({p:k})}" ${pivot === k ? 'aria-current="true"' : ''}>${l}</a>`).join('')}</div>
+      <div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks">${icon('list')}<span class="sr">Bookmarks</span></a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks">${icon('shelf')}<span class="sr">Shelf</span></a></div>
+    </div>
+    ${empty && pivot === 'experience' && !myExperiences().length ? `<div class="notice">Add your subjects and CCA in <a href="#/settings">Settings</a> and they appear here as bookmarks.</div>` : ''}
+    ${body}
+    ${empty ? `<section class="card flat"><p class="muted" style="margin:0">Your ${fw.name} journal is empty. ${kind === 'grow' ? 'After your next lesson or session, write one: two honest sentences per question is plenty.' : 'Next time a marked piece or a comment comes back, write one.'}</p></section>` : ''}
+  `, kind);
 }
 
 /* ---------- sharing: who sees what. Nothing is shared by default. ---------- */
@@ -1057,7 +1225,7 @@ function renderSharing(){
   };
   frame(`
     <section class="hero"><h1>Sharing</h1><p class="meta">Your log is yours. Each adult sees only the sections you open to them, and only when you send.</p></section>
-    <div class="notice">GROW and ACT share whole entries. A basket shares its statements, the quotes that back them, and your look across. Teachers reply with notes in the margin.</div>
+    <div class="notice">GROW and ACT share whole entries. A domain shares its I can statements, the quotes that back them, and your look across. Teachers reply with notes in the margin.</div>
     ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}
     <section class="card"><h2>Invite a mentor or another adult</h2>
       <form id="addAdult" class="two">
@@ -1079,55 +1247,97 @@ function renderSharing(){
   $('#addAdult').onsubmit = ev => { ev.preventDefault(); const f = new FormData(ev.target); const name = String(f.get('name') || '').trim(); if (!name) return; const id = 'm:' + uid(); me.shares.adults[id] = {id, name, email:String(f.get('email') || '').trim().toLowerCase(), role:String(f.get('role') || 'Mentor')}; saveDb(); toast(`${name} added. Choose what they can see.`); renderSharing(); };
 }
 
+/* ---------- pieces shared by setup and settings ---------- */
+function experiencesEditor(){
+  const x = me.experiences; const custom = x.subjects.filter(s => !SUBJECTS.includes(s));
+  return `<section class="card" id="expCard"><h2>My experiences</h2>
+    <p class="tiny" style="margin-top:0">These become bookmarks in your GROW and ACT journals, and the first choices when you write. Pick only what you take.</p>
+    <span class="flabel">My subjects</span>
+    <div class="chips" id="subjChips">${[...SUBJECTS, ...custom].map(s => `<button type="button" class="chip ${x.subjects.includes(s) ? 'on' : ''}" data-subj="${esc(s)}" aria-pressed="${x.subjects.includes(s)}">${x.subjects.includes(s) ? icon('check') : ''}${esc(s)}</button>`).join('')}</div>
+    <form class="row" id="addSubj" style="margin-top:8px"><input class="in grow" name="s" maxlength="40" placeholder="Another subject, e.g. Additional Mathematics"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    <label class="f" style="margin-top:14px"><span>My CCA</span><input class="in" id="ccaIn" value="${esc(x.cca)}" maxlength="80" placeholder="e.g. Football, or Choir, Robotics" autocapitalize="words"><small>It becomes your first experience bookmark. Separate two with a comma.</small></label>
+    <span class="flabel">Other experiences</span>
+    ${x.others.length ? `<ul class="groups">${x.others.map((o, i) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
+    <form class="row" id="addOther"><select class="in" name="t" style="width:auto">${CONTEXT_TYPES.filter(c => c.id !== 'subject' && c.id !== 'cca').map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+  </section>`;
+}
+function wireExperiences(rerender){
+  const x = me.experiences;
+  $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); b.classList.toggle('on', i < 0); b.setAttribute('aria-pressed', i < 0); b.innerHTML = (i < 0 ? icon('check') : '') + esc(s); });
+  $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = String(new FormData(ev.target).get('s') || '').trim(); if (!v) return; if (!x.subjects.some(s => s.toLowerCase() === v.toLowerCase())) x.subjects.push(v); saveDb(); rerender(); };
+  $('#ccaIn').oninput = e => { x.cca = e.target.value; saveDb(); };
+  $$('[data-dropx]').forEach(b => b.onclick = () => { x.others.splice(+b.dataset.dropx, 1); saveDb(); rerender(); });
+  $('#addOther').onsubmit = ev => { ev.preventDefault(); const f = new FormData(ev.target); const n = String(f.get('n') || '').trim(); if (!n) return; x.others.push({type:String(f.get('t') || 'other'), name:n}); saveDb(); rerender(); };
+}
+function coverPicker(){
+  const p = me.prefs;
+  return `<span class="flabel">Cover colour</span><div class="swatches">${COVERS.map(c => `<button type="button" class="sw cv ${p.cover === c.id ? 'on' : ''}" data-cover="${c.id}" style="--c:${c.c}" aria-label="${c.label}" title="${c.label}"></button>`).join('')}</div>
+    <span class="flabel" style="margin-top:14px">Paper</span><div class="papers">${PAPERS.map(x => `<button type="button" class="paper-opt pp-${x.id} ${p.paper === x.id ? 'on' : ''}" data-paper="${x.id}"><i></i>${x.label}</button>`).join('')}</div>`;
+}
+function wireCover(){
+  $$('[data-cover]').forEach(b => b.onclick = () => { me.prefs.cover = b.dataset.cover; saveDb(); applyPrefs(); $$('[data-cover]').forEach(x => x.classList.toggle('on', x === b)); });
+  $$('[data-paper]').forEach(b => b.onclick = () => { me.prefs.paper = b.dataset.paper; saveDb(); applyPrefs(); $$('[data-paper]').forEach(x => x.classList.toggle('on', x === b)); });
+}
+
 /* ---------- settings ---------- */
 function renderSettings(){
-  const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null);
+  const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
+  const modeCard = ([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span><b>${l}</b><small>${h}</small></span></label>`;
   frame(`
-    <section class="hero"><h1>Make it yours</h1><p class="meta">The log should look like the person writing it.</p></section>
-    <section class="card"><h2>You</h2>
+    <section class="hero"><h1>Settings</h1><p class="meta">Make the log yours, choose your coach, and list what you learn from.</p>
+      <nav class="jumps">${[['me','Me'],['look','Look'],['coach','Coach'],['expCard','Experiences'],['groups','Groups'],['data','Data']].map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav></section>
+    <section class="card" id="me"><h2>Me</h2>
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
-      <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120"><small>Teachers’ notes find you by this email.</small></label>
-      <label class="f"><span>Your line</span><input class="in" id="sMotto" value="${esc(p.motto || '')}" maxlength="80" placeholder="A sentence you want to see every day"><small>Try: ${MOTTOS.map(m => `<a href="#" data-motto="${esc(m)}">${esc(m)}</a>`).join(' · ')}</small></label>
-      <div class="f"><span class="flabel">Your mark</span><div class="emojis">${EMOJIS.map(e => `<button type="button" data-e="${e}" class="${p.avatar === e ? 'on' : ''}">${e}</button>`).join('')}</div></div>
+      <label class="f"><span>Title of your log</span><input class="in" id="sTitle" value="${esc(p.title || '')}" maxlength="50" placeholder="E21CC Learning Log"><small>Shown on the cover. Leave blank for “E21CC Learning Log”.</small></label>
+      <label class="f"><span>Your line</span><input class="in" id="sMotto" value="${esc(p.motto || '')}" maxlength="80" placeholder="A sentence you want to see every day"></label>
+      <div class="f"><span class="flabel">Your icon</span><div class="emojis">${ICONS.map(e => `<button type="button" data-e="${e}" class="${p.avatar === e ? 'on' : ''}">${e}</button>`).join('')}</div></div>
+      <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120" placeholder="name@students.edu.sg"><small>Only for sharing with teachers; their notes find you by it.</small></label>
     </section>
-    <section class="card"><h2>Look</h2>
-      <div class="f"><span class="flabel">Mood</span><div class="moods">${MOODS.map(m => `<button type="button" class="mood ${p.mood === m.id ? 'on' : ''}" data-mood="${m.id}"><i style="background:${m.c}"></i>${m.label}</button>`).join('')}</div></div>
-      <div class="f"><span class="flabel">Your colour</span><div class="swatches">${ACCENTS.map(a => `<button type="button" class="sw ${p.accent === a.id ? 'on' : ''}" data-accent="${a.id}" style="--c:${a.c}" aria-label="${a.id}"></button>`).join('')}</div><small class="tiny">Navy and yellow are the school’s. This one is yours.</small></div>
-      <div class="f"><span class="flabel">Text size</span><div class="seg">${[['normal','A'],['large','A+'],['xl','A++']].map(([k, l]) => `<button type="button" data-size="${k}" class="${p.size === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    <section class="card" id="look"><h2>Look</h2>
+      ${coverPicker()}
+      <span class="flabel" style="margin-top:14px">Highlight colour</span><div class="swatches">${ACCENTS.map(a => `<button type="button" class="sw ${p.accent === a.id ? 'on' : ''}" data-accent="${a.id}" style="--c:${a.c}" aria-label="${a.id}"></button>`).join('')}</div>
+      <span class="flabel" style="margin-top:14px">Text size</span><div class="seg">${[['normal','A'],['large','A+'],['xl','A++']].map(([k, l]) => `<button type="button" data-size="${k}" class="${p.size === k ? 'on' : ''}">${l}</button>`).join('')}</div>
     </section>
-    <section class="card"><h2>Groups</h2>
-      <p class="muted">Each group is a class or a CCA, with its teacher, their voice for the coach and their drop box.</p>
-      ${gs.length ? `<ul class="groups">${gs.map(g => `<li><div class="grow"><b>${esc(g.cfg ? (g.cfg.subject || g.code) : g.code)}</b> <span class="tag">${esc(ROLE_OF[groupType(g)] ? groupType(g) === 'cca' ? 'CCA' : groupType(g) === 'form' ? 'Form class' : groupType(g) === 'subject' ? 'Subject' : 'Group' : 'Group')}</span><small>${esc(g.code)}${g.cfg ? ' · ' + esc(g.cfg.teacherName || 'teacher') + ' · ' + sinkLabel(g.cfg) : ' · not loaded yet'}</small></div><button class="btn small ghost" data-drop="${esc(g.code)}" aria-label="Remove ${esc(g.code)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny">No groups yet. A teacher can give you a code or a link.</p>'}
+    <section class="card" id="coach"><h2>Coach</h2>
+      <span class="flabel">Tone</span>
+      <div class="tones">${Object.entries(TONES).map(([k, t]) => `<button type="button" class="tone ${p.tone === k ? 'on' : ''}" data-tone="${k}"><b>${t.label}</b><small>${t.help}</small></button>`).join('')}</div>
+      <span class="flabel" style="margin-top:14px">Who reads your entries</span>
+      <div class="stack" id="coachMode">${modes.main.map(modeCard).join('')}</div>
+      <div id="geminiBox" ${c.mode === 'gemini' ? '' : 'hidden'} class="subpanel">
+        <label class="f"><span>Gemini API key</span><input class="in" id="sGKey" type="password" value="${esc(c.geminiKey || '')}" placeholder="Paste the key from Google AI Studio" autocomplete="off" autocapitalize="none" spellcheck="false"><small>Stored only in this browser. Make one at aistudio.google.com, and restrict it to the Generative Language API and this site. For testing by adults: Gemini’s terms do not allow users under 18.</small></label>
+        <div class="row"><label class="f grow" style="margin:0"><span>Model</span><select class="in" id="sGModel"><option value="${esc(c.geminiModel || GEMINI_DEFAULT)}">${esc(c.geminiModel || GEMINI_DEFAULT)}</option></select></label><button class="btn sec small" id="sGLoad" style="margin-top:24px">Load models</button></div>
+        <p class="tiny" id="sGMsg"></p>
+      </div>
+      <details style="margin-top:10px" ${['relay','local','key'].includes(c.mode) ? 'open' : ''}><summary>Other options</summary><div class="stack" id="coachMore" style="margin-top:8px">${modes.more.map(modeCard).join('')}</div>
+        <div id="coachRelay" ${c.mode === 'relay' ? '' : 'hidden'} class="subpanel">
+          <label class="f"><span>Coach link</span><input class="in" id="sRelay" value="${esc(c.relayUrl || '')}" placeholder="${esc((relay && relay.url) || 'https://…workers.dev')}"></label>
+          <label class="f"><span>Class token</span><input class="in" id="sToken" value="${esc(c.token || '')}" placeholder="${relay && relay.token ? 'Provided by your group' : 'From your teacher'}"></label>
+        </div>
+        <div id="coachKey" ${c.mode === 'key' ? '' : 'hidden'} class="subpanel">
+          <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key || '')}" placeholder="sk-ant-…" autocomplete="off"></label>
+          <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5'],['claude-sonnet-5','Claude Sonnet 5'],['claude-haiku-4-5','Claude Haiku 4.5']].map(([v, l]) => `<option value="${v}" ${c.model === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        </div></details>
+      <label class="row" id="autoRow" style="margin-top:12px;cursor:pointer" ${c.mode === 'builtin' ? 'hidden' : ''}><input type="checkbox" id="sAuto" ${c.auto !== false ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span>Give feedback on every entry when I log it<small style="display:block;color:var(--text-2)">Each version of your words is read once. Off means only when you press the button.</small></span></label>
+      <p class="tiny" id="allowRow" ${METERED.includes(c.mode) ? '' : 'hidden'} style="margin-top:8px">Coach reads today: ${readsUsed()} of ${dailyLimit()}.</p>
+      <div class="row" style="margin-top:8px"><button class="btn sec small" id="sTest" ${c.mode === 'builtin' ? 'hidden' : ''}>Test the coach</button><span class="tiny" id="sTestMsg"></span></div>
+    </section>
+    ${experiencesEditor()}
+    <section class="card" id="groups"><h2>Groups and sharing</h2>
+      <p class="tiny" style="margin-top:0">A group is a class or CCA a teacher set up. It brings their coach voice and lets you share entries with them.</p>
+      ${gs.length ? `<ul class="groups">${gs.map(g => `<li><div class="grow"><b>${esc(g.cfg ? (g.cfg.subject || g.code) : g.code)}</b> <span class="tag">${groupType(g) === 'cca' ? 'CCA' : groupType(g) === 'form' ? 'Form class' : groupType(g) === 'subject' ? 'Subject' : 'Group'}</span><small>${esc(g.code)}${g.cfg ? ' · ' + esc(g.cfg.teacherName || 'teacher') + ' · ' + sinkLabel(g.cfg) : ' · not loaded yet'}</small></div><button class="btn small ghost" data-drop="${esc(g.code)}" aria-label="Remove ${esc(g.code)}">${icon('trash')}</button></li>`).join('')}</ul>` : ''}
       <div class="row"><label class="f grow" style="margin:0"><span>Add a group code</span><input class="in" id="sClass" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Add</button></div>
       <p class="tiny" id="clsMsg" style="margin-top:8px"></p>
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
-    <section class="card"><h2>Coach</h2>
-      <p class="muted">The built in coach always reads your entry. An AI coach adds feedback in your teacher’s voice and checks your claims and statements against your words. It never receives your name or email. Nobody needs an account or a key: your group provides the coach link.</p>
-      <div class="stack" id="coachMode">
-        ${COACH_MODES().map(([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--navy)"><span><b>${l}</b><small>${h}</small></span></label>`).join('')}
-      </div>
-      <div id="coachRelay" ${c.mode === 'relay' ? '' : 'hidden'} style="margin-top:10px">
-        <label class="f"><span>Coach link</span><input class="in" id="sRelay" value="${esc(c.relayUrl || '')}" placeholder="${esc((relay && relay.url) || 'https://…workers.dev')}"><small>${relay ? 'Leave blank to use the one your group provides.' : ''}</small></label>
-        <label class="f"><span>Class token</span><input class="in" id="sToken" value="${esc(c.token || '')}" placeholder="${relay && relay.token ? 'Provided by your group' : 'From your teacher'}"></label>
-      </div>
-      <div id="coachKey" ${c.mode === 'key' ? '' : 'hidden'} style="margin-top:10px">
-        <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key || '')}" placeholder="sk-ant-…" autocomplete="off"><small>Stored only in this browser. Anyone who can open this profile can use it, so set a PIN.</small></label>
-        <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5 (default)'],['claude-sonnet-5','Claude Sonnet 5 (cheaper)'],['claude-haiku-4-5','Claude Haiku 4.5 (cheapest)']].map(([v, l]) => `<option value="${v}" ${c.model === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
-      </div>
-      <label class="row" id="autoRow" style="margin-top:10px;cursor:pointer" ${c.mode === 'builtin' ? 'hidden' : ''}><input type="checkbox" id="sAuto" ${c.auto !== false ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--navy)"><span>Read every entry when I log it<small style="display:block;color:var(--text-2)">Off means the coach only reads when you press the button. Each version of your words is read once.</small></span></label>
-      <p class="tiny" id="allowRow" ${METERED.includes(c.mode) ? '' : 'hidden'} style="margin-top:8px">Coach reads today: ${readsUsed()} of ${dailyLimit()}. The school pays for each read, so the allowance resets each day.</p>
-      <div class="row" style="margin-top:8px"><button class="btn sec small" id="sTest" ${c.mode === 'builtin' ? 'hidden' : ''}>Test the coach</button><span class="tiny" id="sTestMsg"></span></div>
-    </section>
-    <section class="card"><h2>Your data</h2>
-      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so export now and then. The file is yours: it opens in any text editor and imports back here, on any device.</p>
+    <section class="card" id="data"><h2>Your data</h2>
+      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so export now and then. The file imports back here, on any device.</p>
       <div class="row">
         <button class="btn sec" id="sExport">${icon('down')} Export log</button>
         <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
         <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
       </div>
-      ${STORE.hasV1() && db.migratedFrom ? `<details style="margin-top:14px"><summary>The old Learning Log copy</summary><p class="tiny" style="margin-top:6px">Your Learning Log entries moved into this log on ${fmtDate(db.migratedAt || Date.now())}. A copy of the old log is still kept in this browser as a safety net. Once you have exported this log, you can remove it.</p><button class="btn small danger" id="sDropV1">Remove the old copy</button></details>` : ''}
+      ${STORE.hasV1() && db.migratedFrom ? `<details style="margin-top:14px"><summary>The old Learning Log copy</summary><p class="tiny" style="margin-top:6px">Your old entries moved into this log on ${fmtDate(db.migratedAt || Date.now())}. A copy of the old log is still kept in this browser as a safety net. Once you have exported, you can remove it.</p><button class="btn small danger" id="sDropV1">Remove the old copy</button></details>` : ''}
       <details style="margin-top:14px"><summary>Change or remove PIN</summary>
         <form id="pinChange" class="row" style="margin-top:8px"><input class="in grow" name="pin" inputmode="numeric" maxlength="4" placeholder="New 4 digit PIN, or blank to remove"><button class="btn small" type="submit">Set</button></form></details>
       <div class="row" style="margin-top:14px">
@@ -1135,17 +1345,20 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
-    <section class="card flat"><h2>About</h2><p class="tiny">Competency Development Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competency lens follows MOE’s 21st Century Competencies (2023 refresh). Built with no accounts and no database on purpose: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
+    <section class="card flat"><h2>About</h2><p class="tiny">E21CC Learning Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
   `, 'settings');
   const sv = () => { saveDb(); applyPrefs(); };
+  $$('[data-jump]').forEach(a => a.onclick = ev => { ev.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); });
   $('#sName').oninput = e => { me.name = e.target.value; sv(); };
+  $('#sTitle').oninput = e => { me.prefs.title = e.target.value; sv(); const w = $('.cover .word'); if (w) w.textContent = logTitle(); };
   $('#sEmail').oninput = e => { me.email = e.target.value.trim().toLowerCase(); sv(); };
   $('#sMotto').oninput = e => { me.prefs.motto = e.target.value; sv(); };
-  $$('[data-motto]').forEach(a => a.onclick = ev => { ev.preventDefault(); me.prefs.motto = a.dataset.motto; $('#sMotto').value = a.dataset.motto; sv(); });
-  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; sv(); $$('.emojis button').forEach(x => x.classList.toggle('on', x === b)); $('.top .avatar').textContent = b.dataset.e; });
-  $$('.mood').forEach(b => b.onclick = () => { me.prefs.mood = b.dataset.mood; sv(); $$('.mood').forEach(x => x.classList.toggle('on', x === b)); });
-  $$('.sw').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('.sw').forEach(x => x.classList.toggle('on', x === b)); });
+  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; sv(); $$('.emojis button').forEach(x => x.classList.toggle('on', x === b)); $('.cover .avatar').textContent = b.dataset.e; });
+  wireCover();
+  $$('button[data-accent]').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('button[data-accent]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('button[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('button[data-size]').forEach(x => x.classList.toggle('on', x === b)); });
+  $$('[data-tone]').forEach(b => b.onclick = () => { me.prefs.tone = b.dataset.tone; saveDb(); $$('[data-tone]').forEach(x => x.classList.toggle('on', x === b)); });
+  wireExperiences(renderSettings);
   $$('[data-drop]').forEach(b => b.onclick = () => { me.groups = me.groups.filter(g => g.code !== b.dataset.drop); saveDb(); toast('Group removed. Its entries stay in your log.'); loadStatements().then(renderSettings); });
   $('#sLoad').onclick = async () => {
     const code = $('#sClass').value.trim().toUpperCase(); if (!code) return;
@@ -1154,21 +1367,39 @@ function renderSettings(){
     if (cfg){ addGroupToMe(code); adoptGroup(cfg); saveDb(); await loadStatements(); toast(`Added ${code}.`); renderSettings(); }
     else $('#clsMsg').textContent = `No group file found for ${code}. Ask your teacher for a share link, or check the code.`;
   };
-  $$('#coachMode input').forEach(r => r.onchange = () => { me.coach.mode = r.value; me.coach.touched = true; saveDb(); $('#coachRelay').hidden = r.value !== 'relay'; $('#coachKey').hidden = r.value !== 'key'; $('#sTest').hidden = r.value === 'builtin'; $('#autoRow').hidden = r.value === 'builtin'; $('#allowRow').hidden = !METERED.includes(r.value); });
+  $$('#coachMode input, #coachMore input').forEach(r => r.onchange = () => {
+    me.coach.mode = r.value; me.coach.touched = true; saveDb();
+    $$('#coachMode input, #coachMore input').forEach(x => x.checked = x.value === r.value);
+    $('#geminiBox').hidden = r.value !== 'gemini'; $('#coachRelay').hidden = r.value !== 'relay'; $('#coachKey').hidden = r.value !== 'key';
+    $('#sTest').hidden = r.value === 'builtin'; $('#autoRow').hidden = r.value === 'builtin'; $('#allowRow').hidden = !METERED.includes(r.value);
+  });
+  $('#sGKey').oninput = e => { me.coach.geminiKey = e.target.value.trim(); saveDb(); };
+  $('#sGModel').onchange = e => { me.coach.geminiModel = e.target.value; saveDb(); };
+  $('#sGLoad').onclick = async () => {
+    const m = $('#sGMsg'); if (!me.coach.geminiKey){ m.textContent = 'Paste a key first.'; return; }
+    m.innerHTML = '<span class="spin"></span> Asking Gemini which models this key can use…';
+    try{
+      const {ids, pick} = await geminiModels(me.coach.geminiKey); const curM = me.coach.geminiModel || pick;
+      $('#sGModel').innerHTML = (ids.length ? ids : [pick]).map(id => `<option value="${esc(id)}" ${id === curM ? 'selected' : ''}>${esc(id)}${id === pick ? ' (suggested)' : ''}</option>`).join('');
+      if (!me.coach.geminiModel){ me.coach.geminiModel = pick; saveDb(); }
+      m.textContent = `${plural(ids.length, 'model')} available. A Flash model is quick and cheap enough for feedback.`;
+    }catch(err){ m.textContent = err.message; }
+  };
   $('#sAuto').onchange = e => { me.coach.auto = e.target.checked; saveDb(); };
   $('#sRelay').oninput = e => { me.coach.relayUrl = e.target.value.trim(); saveDb(); };
   $('#sToken').oninput = e => { me.coach.token = e.target.value.trim(); saveDb(); };
   $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
   $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
-  $('#sExport').onclick = () => download(`competency-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me));
+  $('#sExport').onclick = () => download(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me));
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
     try{
-      const p = STORE.parseImport(await f.text()); let added = 0, updated = 0;
-      for (const e of p.entries){ const i = me.entries.findIndex(x => x.id === e.id); if (i < 0){ me.entries.push(e); added++; } else if (version(e) > version(me.entries[i])){ const keepNotes = me.entries[i].notes || []; e.notes = [...keepNotes, ...(e.notes || []).filter(n => !keepNotes.some(k => k.id === n.id))]; me.entries[i] = e; updated++; } else { const cur = me.entries[i]; for (const n of (e.notes || [])) if (!cur.notes.some(k => k.id === n.id)) cur.notes.push(n); } }
-      if (!me.email && p.email) me.email = p.email;
-      for (const g of p.groups) addGroupToMe(g.code);
+      const pr = STORE.parseImport(await f.text()); let added = 0, updated = 0;
+      for (const e of pr.entries){ const i = me.entries.findIndex(x => x.id === e.id); if (i < 0){ me.entries.push(e); added++; } else if (version(e) > version(me.entries[i])){ const keepNotes = me.entries[i].notes || []; e.notes = [...keepNotes, ...(e.notes || []).filter(n => !keepNotes.some(k => k.id === n.id))]; me.entries[i] = e; updated++; } else { const cur = me.entries[i]; for (const n of (e.notes || [])) if (!cur.notes.some(k => k.id === n.id)) cur.notes.push(n); } }
+      if (!me.email && pr.email) me.email = pr.email;
+      for (const g of pr.groups) addGroupToMe(g.code);
+      const xs = pr.experiences || {}; for (const s of (xs.subjects || [])) if (!me.experiences.subjects.includes(s)) me.experiences.subjects.push(s); if (!me.experiences.cca && xs.cca) me.experiences.cca = xs.cca;
       const landed = applyPendingNotes(); saveDb();
       toast(`Imported ${plural(added, 'new entry', 'new entries')}${updated ? `, updated ${updated}` : ''}${landed ? `, and ${plural(landed, 'waiting note')} landed` : ''}.`, 3400);
       Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements);

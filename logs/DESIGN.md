@@ -1,6 +1,25 @@
-# Competency Development Log: design, decisions, and the questions that are yours
+# E21CC Learning Log: design, decisions, and the questions that are yours
 
 October 2026. The Learning Log became the Competency Development Log: same frameworks, same coach, a new spine. The first part of this document covers that change. The rest is the Learning Log's design from September; it still holds for the frameworks, the coach, the relay and the mobile layout.
+
+## E21CC Learning Log (19 October 2026)
+
+Harman restated the intent, and the front end was rebuilt around it:
+- **One log, two journals.** It is an E21CC Learning Log with a GROW journal and an ACT journal, shown as a notebook with bookmark tabs: E21CC, GROW, ACT, Settings.
+- **The E21CC tab is a competency wheel.** It is drawn like MOE's framework diagram: core values at the centre, the five SEC around them, the nine emerging competencies outside in three domain arcs. A segment deepens with the strongest verified evidence; ★ marks an unlocked statement; each segment opens a competency page with its statements and entries. This replaces the Basecamp map and the basket pages.
+- **Nothing is preset.** The student lists their subjects, CCA and other experiences (first time setup, then Settings). The composer offers those as chips, CCA first, with nothing selected, and Next waits for a choice. Group files no longer prefill a subject; a group is offered only when it teaches the chosen subject.
+- **Journals pivot.** By experience (default, with empty bookmarks for the student's own experiences), date, competency or term. Two views: bookmarks or a shelf of notebooks. Both choices are remembered.
+- **Gemini for testing.** The user pastes a Gemini key (stored in the browser). The model list comes from the API, with a Flash model suggested. Each call sends the system prompt with the chosen tone and an instruction to anchor every part in the competencies, plus the response schema (without `additionalProperties`). On a 400 it falls back to asking for JSON by instruction. Quotes are verified as before; an unverified quote counts for nothing anywhere, including the wheel. Gemini's terms bar users under 18: this is for adult testing.
+- **Personalisation.** Log title, name, icon, cover colour (six), paper (lined, dotted, plain, dark), highlight colour, text size, and coach tone (warm, direct, playful).
+- **Starter statements.** 28 in all: for each competency, one starting (level 1) and one stretching (level 2).
+
+**Verified** in headless Chromium, with Gemini intercepted in the page:
+- **Setup.** Setup saved subjects, CCA and a camp. The bookmarks come in the order CCA, subjects, camp. The composer preselects nothing and blocks Next. A bookmark start preselects its experience.
+- **The Gemini call.** It carried the key header, the schema, the tone and the anchor line. Its read was stored, with the invented quote demoted. An unchanged edit made no second call. A model that rejects the schema triggers the fallback.
+- **Journals and wheel.** All four pivots and the shelf work, and the choice is remembered. The wheel deepens for strong evidence, and the competency page lists its statements.
+- **Regressions.** The cover persists, there is no sideways scroll from 320 to 1280, and the sharing, credits, notes and console suites still pass.
+
+**Not verified:** a live Gemini call, because this environment cannot reach Google.
 
 ## Competency Development Log (October 2026)
 

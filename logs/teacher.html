@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000C53">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<title>Competency Development Log · Teacher console</title>
+<title>E21CC Learning Log · Teacher console</title>
 <link rel="icon" href="assets/crest.png">
 <style>
 @font-face{font-family:'Literata';src:url(assets/fonts/literata-var-latin.woff2) format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
@@ -88,7 +88,7 @@ ol.steps li{margin-bottom:8px}
 .kpi div{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px}
 .kpi b{display:block;font-family:var(--serif);font-size:1.4em;color:var(--navy)} .kpi span{font-size:.8em;color:var(--text-2)}
 
-/* ---------- Competency Development Log console ---------- */
+/* ---------- E21CC Learning Log console ---------- */
 .brand .word{line-height:1.15}
 .tabs{position:sticky;top:0;background:var(--bg);z-index:5}
 .badge{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--red);color:#fff;font-size:.78em;font-weight:700;text-align:center;margin-left:4px}
@@ -138,7 +138,7 @@ ol.steps li{margin-bottom:8px}
 <body>
 <div class="app">
   <header class="top">
-    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">Competency Development Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
+    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">E21CC Learning Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
     <span class="tiny">Everything on this page stays in your browser until you download or copy it.</span>
   </header>
   <nav class="tabs" aria-label="Sections">
@@ -171,7 +171,7 @@ ol.steps li{margin-bottom:8px}
   <section id="tab-grid" data-tab="grid" hidden>
     <div class="card">
       <h1>The class at a glance.</h1>
-      <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. A basket shows lit statements out of all, when the student shared that basket; otherwise the number of their shared entries filed there.</p>
+      <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. A domain column shows unlocked statements out of all, when the student shared that domain; otherwise the number of their shared entries that show it.</p>
       <div class="row" style="margin-bottom:10px"><select class="in" id="gGroup" style="width:auto"></select><button class="btn sec small" id="gCsv">Download CSV</button></div>
       <div class="scroll" id="gridTable"></div>
     </div>
@@ -310,8 +310,8 @@ ol.steps li{margin-bottom:8px}
   <section id="tab-guide" data-tab="guide" hidden>
     <div class="card">
       <h1>What this is, in six lines.</h1>
-      <p>A Competency Development Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach holds the claim against the student’s own words.</p>
-      <p>Entries file themselves into four baskets, MOE’s three 21st Century Competencies domains and the Social and Emotional Competencies. Each basket holds I can statements that light only when a linked entry’s words back them. Once a term, students look across a basket.</p>
+      <p>An E21CC Learning Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach holds the claim against the student’s own words.</p>
+      <p>The E21CC page draws MOE’s framework as a wheel: core values at the centre, the five Social and Emotional Competencies around them, the nine emerging competencies outside. Each segment deepens with the strongest evidence in the student’s own words. Each competency holds I can statements (a starting one and a stretching one) that unlock only when a linked entry’s words back them. Journals are organised by the student’s own subjects, CCA and experiences, and pivot by date, competency or term. Once a term, students look across one domain.</p>
       <p>The log lives on the student’s device. You see a section only when the student opens it to you and presses Send. You reply in the margin.</p>
     </div>
     <div class="card">
@@ -322,7 +322,7 @@ ol.steps li{margin-bottom:8px}
         <li><b>Rhythm.</b> One GROW a week after a chosen lesson or session; one ACT whenever a marked piece returns. Short and frequent survives the exam term.</li>
         <li><b>Read.</b> Paste the new rows into the Inbox before the next lesson. Look for two things: the next step, and whether the claimed competency has a moment behind it.</li>
         <li><b>Reply.</b> One note in the margin beats a paragraph at the end. Then Send notes: the link opens in the student’s log, beside the paragraph you wrote on.</li>
-        <li><b>End of term.</b> Ask for a look across one basket. Form teachers: the Class grid shows which baskets are still empty.</li>
+        <li><b>End of term.</b> Ask for a look across one domain. Form teachers: the Class grid shows which domains are still empty.</li>
       </ol>
     </div>
     <div class="card">
@@ -485,7 +485,7 @@ async function ingestHash(){
 /* ---------- reading ---------- */
 function itemDate(it){ return it.kind === 'e' ? it.data.created : it.kind === 'b' ? (it.data.at || it.received) : Date.parse(it.data.timestamp) || it.received; }
 function itemTitle(it){
-  if (it.kind === 'b') return `${(basketOf(it.data.basket) || {}).short || it.data.basket}: statements and evidence`;
+  if (it.kind === 'b') return `${(basketOf(it.data.basket) || {}).short || it.data.basket}: I can statements and evidence`;
   if (it.kind === 't') return `${it.data.framework || 'Entry'} · ${it.data.subject || ''}${it.data.topic ? ' · ' + it.data.topic : ''}`;
   const e = it.data; if (e.kind === 'across') return `Look across: ${(basketOf(e.basket) || {}).short || ''}`;
   return `${(e.context && e.context.name) || e.subject || FRAMEWORKS[e.kind].name}${e.topic ? ' · ' + e.topic : ''}`;
@@ -550,7 +550,7 @@ async function sendNotes(sk, rerender){
   if (!to){ dialog(`<h2>No email for this student</h2><p>Notes find a student by their school email, and this item came without one. Ask them to add their email in Settings and send again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
   const by = {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''};
   const link = appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:list.map(({it, n}) => ({id:n.id, eid:it.data.id, anchor:n.anchor, text:n.text, at:n.at}))});
-  const msg = `${by.name} left ${plural(list.length, 'note')} on your Competency Development Log. Open: ${link}`;
+  const msg = `${by.name} left ${plural(list.length, 'note')} on your E21CC Learning Log. Open: ${link}`;
   dialog(`<h2>Send ${plural(list.length, 'note')} to ${esc(st.name || 'the student')}</h2><p>The link opens in ${esc((st.name || 'their').split(' ')[0])}’s log, beside the paragraphs you wrote on. It only opens for the student with the email ${esc(st.email || 'on the entry')}.</p>
     <div class="row">${st.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(st.email, msg))}" target="_blank" rel="noopener">Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">Copy link</button></div>
     <p class="tiny" style="margin-top:8px">${link.length > 7000 ? `Long link (${link.length} characters): if Teams cuts it, send fewer notes at a time.` : 'Teams not working? Copy the link into a chat or an email to the student.'}</p>
@@ -605,7 +605,7 @@ function renderGrid(){
   const cell = c => c.snap ? `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}` : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
   $('#gridTable').innerHTML = rows.length ? `<table class="gridtable"><thead><tr><th>Student</th><th>GROW<br><span class="tiny">T${tp.term}</span></th><th>ACT<br><span class="tiny">T${tp.term}</span></th>${DOMAINS.map(d => `<th>${esc(d.short)}</th>`).join('')}<th>Last entry</th><th>Notes sent</th></tr></thead><tbody>
     ${rows.map(r => `<tr><td><button class="notebtn" data-student="${esc(r.sk)}">${esc(r.name)}</button></td><td>${r.grow || '<span class="cell0">·</span>'}</td><td>${r.act || '<span class="cell0">·</span>'}</td>${BASKET_IDS.map(b => `<td>${cell(r.baskets[b])}</td>`).join('')}<td>${r.last ? fmtDay(r.last) : ''}</td><td>${r.notes || ''}</td></tr>`).join('')}</tbody></table>
-    <p class="tiny">A dot means nothing shared there yet. In basket columns, “2/5” is lit statements out of all; a plain number counts shared entries filed in that basket.</p>` : '<p class="muted">No students yet. Bring entries in through the Inbox.</p>';
+    <p class="tiny">A dot means nothing shared there yet. In domain columns, “2/5” is unlocked statements out of all; a plain number counts shared entries that show that domain.</p>` : '<p class="muted">No students yet. Bring entries in through the Inbox.</p>';
   $$('[data-student]').forEach(b => b.onclick = () => { studentSel = b.dataset.student; showTab('students'); });
 }
 $('#gGroup').onchange = renderGrid;
@@ -702,7 +702,7 @@ $('#delClass').onclick = () => { if (!cur.code || !confirm(`Forget ${cur.code} o
 $('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const c = normaliseClass(JSON.parse(await f.text())); cur = c; if (c.code){ store.classes[c.code] = c; store.current = c.code; save(); } fill(); toast('Loaded ' + (c.code || 'group')); }catch{ toast('Not a group file.'); } ev.target.value = ''; };
 $('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); download(`${cur.code}.json`, JSON.stringify(cleanClass(), null, 2)); };
 $('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
-$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`Competency Development Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Claim a competency and point to where it shows.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
+$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`E21CC Learning Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Claim a competency and point to where it shows.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
 
 /* ---------- drop box mapping ---------- */
 const FIELDS = FORM_FIELDS;

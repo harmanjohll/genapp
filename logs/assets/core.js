@@ -327,10 +327,16 @@ function coachSchema(stmts){
   }
   return s;
 }
-function coachSystem(cls, stmts){
+/* The student chooses how the coach sounds. Honesty does not change with the tone. */
+const TONES = {
+  warm:{label:'Warm', help:'Encouraging, like a coach who believes in you.', line:'Tone: warm and encouraging, like a coach who believes in the student. Still honest: never praise what is not there.'},
+  direct:{label:'Direct', help:'Brief and plain. Names the gap.', line:'Tone: direct and brief. Name the gap plainly, with no softening and no filler.'},
+  playful:{label:'Playful', help:'Light, with energy. Never sarcastic.', line:'Tone: light and playful, with energy. At most one touch of humour; never sarcastic, never at the student’s expense.'}
+};
+function coachSystem(cls, stmts, tone){
   const v = (cls && cls.voice) || {};
   const lines = [
-    'You are a reflective learning coach for a Singapore secondary school student (age 13 to 17) at Beatty Secondary School. The student keeps a Competency Development Log. Entries use one of two school frameworks after any learning moment: a lesson, a CCA session, a camp, a competition or service. A third kind, Look across, is the student’s termly synthesis of one competency basket; read it for honest patterns across entries and a concrete plan.',
+    'You are a reflective learning coach for a Singapore secondary school student (age 13 to 17) at Beatty Secondary School. The student keeps an E21CC Learning Log, anchored in MOE’s 21st Century Competencies. Entries use one of two school frameworks after any learning moment: a lesson, a CCA session, a camp, a competition or service. A third kind, Look across, is the student’s termly synthesis of one competency basket; read it for honest patterns across entries and a concrete plan.',
     'GROW by reflecting (after a lesson): G Gift yourself success (What is one thing I understand from the lesson? How would I teach/explain this to a friend?), R Rise above with small steps (What is one thing I do not yet understand? What will I do to improve?), O Own your knowledge (What is one real-life example? How have I taught/shared this with a friend or family?), W Watch for what comes next (What do I already know about the next topic? What is coming up at the next lesson?).',
     'ACT on Feedback: A Acknowledge (How do I feel about the feedback? How might the feedback help me learn better?), C Connect (How does this connect with the success criteria and/or my goals? How does this connect with previous feedback?), T Test (What habit do I need to adjust and what is one thing I will do differently? How will I know I am improving?).',
     'Competency lens (MOE 21st Century Competencies, 2023 refresh). Use these exact names and read the entry against MOE’s definitions.\n' + DOMAINS.map(d => d.name + ': ' + COMPETENCIES.filter(c => c.d === d.id).map(c => `${c.name} [id ${c.id}]: ${c.moe || c.plain}`).join(' | ')).join('\n'),
@@ -338,6 +344,8 @@ function coachSystem(cls, stmts){
     'Your job: help the student reflect more deeply and shift from describing the task to noticing how they learned and which competency they used. Never write the reflection for them. Quote their own words. No praise inflation: one honest gift, one stretch, one question. Plain English, short sentences, no jargon, no emoji. Do not mention marks or grades unless the student did. Do not use hyphens or dashes as punctuation; use commas, semicolons or colons.',
     'Depth: surface = general words, no specifics, no dated next step; working = specific in places; deep = specific, honest, with a next step that has an action, a time and a place.'
   ];
+  if (TONES[tone]) lines.push(TONES[tone].line);
+  lines.push('Anchor every part of your feedback in the competencies: say which competency the words show and how, and frame the stretch as what would make a competency more visible.');
   if (stmts && stmts.length) lines.push('I can statements this student is working towards (set by the school). In e21cc.statements list at most three that this entry backs, each with the student’s verbatim words. Never invent; an empty list is a fine answer.\n' + stmts.map(s => `[${s.id}] ${s.text}`).join('\n'));
   if (cls){
     lines.push(`Group context: ${cls.type && cls.type !== 'subject' ? (cls.type === 'cca' ? 'CCA ' : cls.type === 'form' ? 'form class, ' : '') : 'subject '}${cls.subject || 'unspecified'}${cls.level ? ', ' + cls.level : ''}. Teacher: ${cls.teacherName || 'the teacher'}.`);
@@ -426,7 +434,7 @@ function e21ccSummary(x){
 /* ==================================================================
    Competency Development Log (v2): shared helpers
    ================================================================== */
-const APP_NAME = 'Competency Development Log';
+const APP_NAME = 'E21CC Learning Log';
 const BASKET_IDS = DOMAINS.map(d => d.id);
 function basketOf(id){ return DOMAINS.find(d => d.id === id) || null; }
 function compOf(id){ return COMPETENCIES.find(c => c.id === id) || null; }
@@ -523,25 +531,41 @@ function splitCDL(payload, n){ const out = [payload.slice(0, n)]; let i = n, k =
    A statement set is JSON: {id, title, placeholder?, bands?:[{id,label}],
    baskets:{cait:{statements:[{id,text,competencies:[ids]}]} or {bands:{<band>:[...]}}}}.
    "competencies" ties a statement to the competencies whose evidence can back it. */
-const DEFAULT_STATEMENTS = {id:'default', version:1, placeholder:true, title:'Sample statements', baskets:{
+/* Starter statements: for each competency, one to begin with (level 1) and one
+   to stretch towards (level 2). The school's own set replaces these. */
+const DEFAULT_STATEMENTS = {id:'default', version:2, placeholder:true, title:'Starter statements', baskets:{
   cait:{statements:[
-    {id:'cait.01', text:'I can weigh evidence before I decide, and say why I chose.', competencies:['critical']},
-    {id:'cait.02', text:'I can use what I know in a new situation, and change my approach when it is not working.', competencies:['adaptive']},
-    {id:'cait.03', text:'I can ask my own questions and test ideas that are not in the notes.', competencies:['inventive']}]},
+    {id:'critical.1', level:1, text:"I can give a reason for my answer, not only the answer.", competencies:['critical']},
+    {id:'critical.2', level:2, text:"I can weigh evidence on more than one side before I decide, and explain my choice.", competencies:['critical']},
+    {id:'adaptive.1', level:1, text:"I can try another way when my first way does not work.", competencies:['adaptive']},
+    {id:'adaptive.2', level:2, text:"I can carry what I learnt in one place into a new situation, and adjust it to fit.", competencies:['adaptive']},
+    {id:'inventive.1', level:1, text:"I can ask my own questions about what I am learning.", competencies:['inventive']},
+    {id:'inventive.2', level:2, text:"I can come up with an idea of my own, test it, and improve it.", competencies:['inventive']}]},
   cci:{statements:[
-    {id:'cci.01', text:'I can explain an idea clearly for my listener, and check that they followed.', competencies:['communication']},
-    {id:'cci.02', text:'I can share the work and the decisions in a group, and make room for others.', competencies:['collaboration']},
-    {id:'cci.03', text:'I can find, check and combine information, and say where it came from.', competencies:['information']}]},
+    {id:'communication.1', level:1, text:"I can explain an idea clearly in my own words.", competencies:['communication']},
+    {id:'communication.2', level:2, text:"I can change how I explain something to suit my listener, and check that they understood.", competencies:['communication']},
+    {id:'collaboration.1', level:1, text:"I can do my share of the work in a group.", competencies:['collaboration']},
+    {id:'collaboration.2', level:2, text:"I can help my group decide together, and make room for every voice.", competencies:['collaboration']},
+    {id:'information.1', level:1, text:"I can find information and say where it came from.", competencies:['information']},
+    {id:'information.2', level:2, text:"I can check whether a source is reliable before I use it, and use it honestly.", competencies:['information']}]},
   cgc:{statements:[
-    {id:'cgc.01', text:'I can connect what I learn to life in Singapore, and play my part in my community.', competencies:['civic']},
-    {id:'cgc.02', text:'I can link what I learn to issues in the wider world.', competencies:['global']},
-    {id:'cgc.03', text:'I can notice how people from other backgrounds might see things, and respond with respect.', competencies:['crosscultural']}]},
+    {id:'civic.1', level:1, text:"I can connect what I learn to life in Singapore.", competencies:['civic']},
+    {id:'civic.2', level:2, text:"I can play my part to make my school or community better.", competencies:['civic']},
+    {id:'global.1', level:1, text:"I can link what I learn to something happening in the wider world.", competencies:['global']},
+    {id:'global.2', level:2, text:"I can explain how an issue beyond Singapore affects people here, and what we could do.", competencies:['global']},
+    {id:'crosscultural.1', level:1, text:"I can notice that people from other backgrounds may see things differently.", competencies:['crosscultural']},
+    {id:'crosscultural.2', level:2, text:"I can work respectfully with people whose culture or beliefs differ from mine.", competencies:['crosscultural']}]},
   sec:{statements:[
-    {id:'sec.01', text:'I can name what I feel, and what I am good and not yet good at.', competencies:['selfaware']},
-    {id:'sec.02', text:'I can manage my time, effort and feelings to reach a goal.', competencies:['selfmanage']},
-    {id:'sec.03', text:'I can notice how others feel and see things.', competencies:['socialaware']},
-    {id:'sec.04', text:'I can build and repair relationships, and ask for help.', competencies:['relationship']},
-    {id:'sec.05', text:'I can make choices that are good for me and fair to others.', competencies:['decisions']}]}
+    {id:'selfaware.1', level:1, text:"I can name what I feel and why.", competencies:['selfaware']},
+    {id:'selfaware.2', level:2, text:"I can say what I am good at and what I am not yet good at, with an example of each.", competencies:['selfaware']},
+    {id:'selfmanage.1', level:1, text:"I can plan my time to finish what I start.", competencies:['selfmanage']},
+    {id:'selfmanage.2', level:2, text:"I can keep going and manage my feelings when things get hard.", competencies:['selfmanage']},
+    {id:'socialaware.1', level:1, text:"I can notice how others are feeling.", competencies:['socialaware']},
+    {id:'socialaware.2', level:2, text:"I can see a situation from someone else’s point of view, even when I disagree.", competencies:['socialaware']},
+    {id:'relationship.1', level:1, text:"I can ask for help when I need it.", competencies:['relationship']},
+    {id:'relationship.2', level:2, text:"I can work through a disagreement and keep the relationship.", competencies:['relationship']},
+    {id:'decisions.1', level:1, text:"I can think about who is affected before I make a choice.", competencies:['decisions']},
+    {id:'decisions.2', level:2, text:"I can make a fair choice and take responsibility for what follows.", competencies:['decisions']}]}
 }};
 function normaliseStatementSet(raw){
   if (!raw || typeof raw !== 'object' || !raw.baskets || typeof raw.baskets !== 'object') return null;
@@ -551,7 +575,7 @@ function normaliseStatementSet(raw){
     if (!s || !s.text) return;
     const id = String(s.id || `${basket}.${band ? band + '.' : ''}${String(i + 1).padStart(2, '0')}`); if (seen.has(id)) return; seen.add(id);
     const comps = (Array.isArray(s.competencies) ? s.competencies : []).filter(c => compOf(c) && compOf(c).d === basket);
-    list.push({id, basket, band, text:String(s.text).trim(), competencies:comps});
+    list.push({id, basket, band, level:Number(s.level) || null, text:String(s.text).trim(), competencies:comps});
   };
   for (const d of DOMAINS){
     const b = raw.baskets[d.id]; if (!b) continue;
@@ -628,6 +652,14 @@ function migrateProfile(p){
   p.coach = Object.assign({mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'}, p.coach || {});
   p.coach.allowance = p.coach.allowance || {day:'', used:0};
   p.prefs = Object.assign({mood:'mountain', accent:'yellow', size:'normal', avatar:'🌱', motto:'Believe you can.'}, p.prefs || {});
+  // the notebook: cover colour, paper, the coach's tone, the log's title, how journals open
+  if (!p.prefs.cover) p.prefs.cover = 'navy';
+  if (!p.prefs.paper) p.prefs.paper = p.prefs.mood === 'night' ? 'dark' : 'lined';
+  if (!p.prefs.tone) p.prefs.tone = 'warm';
+  if (p.prefs.title === undefined) p.prefs.title = '';
+  p.prefs.journal = Object.assign({pivot:'experience', view:'bookmarks'}, p.prefs.journal || {});
+  // the student's own subjects, CCA and other experiences: nothing is assumed
+  p.experiences = Object.assign({subjects:[], cca:'', others:[]}, p.experiences || {});
   p.entries = Array.isArray(p.entries) ? p.entries : []; p.drafts = p.drafts || {}; p.done = p.done || {};
   const primary = p.groups[0] ? p.groups[0].code : '';
   for (const e of p.entries) migrateEntry(e, primary);

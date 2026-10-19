@@ -1,5 +1,5 @@
 /* ==================================================================
-   Storage and transport seam for the Competency Development Log.
+   Storage and transport seam for the E21CC Learning Log.
 
    Phase 1 (now): LocalStore keeps the log in this browser; FormsTransport
    sends chosen items to an adult's Microsoft or Google Form; share and note

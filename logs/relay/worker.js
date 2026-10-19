@@ -1,5 +1,5 @@
 /**
- * Competency Development Log coach relay: a Cloudflare Worker that holds the school's
+ * E21CC Learning Log coach relay: a Cloudflare Worker that holds the school's
  * Anthropic API key so students never do. Deploy once per school (or per
  * department); rotate CLASS_TOKENS every term.
  *

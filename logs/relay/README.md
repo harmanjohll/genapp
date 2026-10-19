@@ -3,7 +3,7 @@
 A 90 line Cloudflare Worker that holds one Anthropic API key for the school, so
 that no student ever creates an account or holds a key (the three major AI
 providers all require account holders to be 18 or older, and Google's Gemini
-API terms also forbid apps used by under 18s). The Competency Development Log page sends the
+API terms also forbid apps used by under 18s). The E21CC Learning Log page sends the
 same request it would send to Anthropic; the Worker checks a class token,
 applies a rate limit, pins the model and token cap, and forwards. It returns
 Anthropic's answer unchanged, so the page does not know or care whether a key
