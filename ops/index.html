@@ -13,131 +13,112 @@
 <style>
   :root{
     --navy:#000C53; --ink:#141a2e; --ink2:#4a5068; --ink3:#868ba0; --line:#e3e5ec; --bg:#f4f5f8; --card:#fff;
-    --t0:#2e9d5b; --t0bg:#e6f5ec;
-    --t1:#c99300; --t1bg:#fff6d6; --t1bd:#f6c544;
-    --t2:#d8661a; --t2bg:#fde9da; --t2bd:#f08a3c;
+    --t0:#2e9d5b; --t0bg:#e6f5ec; --t0bd:#2e9d5b;
+    --t1:#9a7000; --t1bg:#fff6d6; --t1bd:#f6c544;
+    --t2:#c4560f; --t2bg:#fde9da; --t2bd:#f08a3c;
     --t3:#c5302a; --t3bg:#fde3e1; --t3bd:#e2483d;
-    --tc:var(--t0); --tcbg:var(--t0bg);
+    --tc:var(--t0); --tcbg:var(--t0bg); --tcbd:var(--t0bd);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:env(safe-area-inset-bottom)}
+  body{font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:env(safe-area-inset-bottom)}
   a{color:var(--navy)}
-  .wrap{max-width:760px;margin:0 auto;padding:16px 16px 48px}
+  .wrap{max-width:680px;margin:0 auto;padding:14px 16px 48px}
+  ul{padding-left:20px} li{margin:4px 0} ul ul{list-style:circle}
+  p+p,p+ul,ul+p{margin-top:8px}
+  .u{text-decoration:underline}
+  sup{font-size:.7em}
+
+  /* header */
   .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
   .brand{display:flex;align-items:center;gap:10px}
   .brand img{width:34px;height:34px;border-radius:9px}
-  .brand b{font-size:1.15rem;letter-spacing:-.01em;display:block;line-height:1.1}
+  .brand b{font-size:1.1rem;display:block;line-height:1.1}
   .brand small{color:var(--ink3);font-size:.78rem}
-  .btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.85rem;border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap}
-  .btn:active{transform:translateY(1px)}
+  .btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600;font-size:.85rem;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap;min-height:40px}
   .btn.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
-  h2{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;font-weight:700}
-  h3{font-size:.95rem;margin:14px 0 6px}
-  ul{padding-left:20px} li{margin:3px 0}
-  ul ul{list-style:circle}
 
   /* status */
-  .status{border:2px solid var(--tc);background:linear-gradient(180deg,var(--tcbg),var(--card) 70%)}
-  .regions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-  .regions button{appearance:none;border:1px solid var(--line);background:var(--card);font:inherit;font-size:.82rem;font-weight:600;border-radius:999px;padding:5px 11px;cursor:pointer;color:var(--ink2)}
-  .regions button.on{background:var(--ink);border-color:var(--ink);color:#fff}
-  .regions button span{font-variant-numeric:tabular-nums;opacity:.65;margin-left:4px}
-  .nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .num{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-  .num .lbl{font-size:.78rem;color:var(--ink2);font-weight:600}
-  .num .val{font-size:2.6rem;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-  .num .band{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-  .num.drive{outline:2px solid var(--tc)}
-  .num.drive::after{content:"sets the band";display:block;font-size:.7rem;color:var(--ink3);margin-top:2px}
-  .tier{margin-top:14px}
-  .tier .name{font-size:1.35rem;font-weight:800;color:var(--tc);letter-spacing:-.01em}
-  .tier .gist{margin-top:4px;font-weight:600}
-  .meta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:12px;font-size:.8rem;color:var(--ink3)}
-  .meta .btn{font-size:.78rem;padding:5px 11px}
-  .err{display:none;margin-top:10px;font-size:.85rem;background:#fff4f2;border:1px solid #f3c4bd;color:#8a2b20;border-radius:10px;padding:8px 10px}
-  .err.show{display:block}
-  .changed{display:none;margin-bottom:12px;background:var(--navy);color:#fff;border-radius:12px;padding:10px 14px;font-weight:600;font-size:.9rem}
-  .changed.show{display:flex;justify-content:space-between;gap:10px;align-items:center}
-  .changed button{appearance:none;background:none;border:0;color:#fff;font:inherit;font-size:1.1rem;cursor:pointer;opacity:.8}
-  .manual{display:none;margin-top:10px;font-size:.82rem;font-weight:700;color:var(--navy);background:#e8ebff;border-radius:8px;padding:6px 10px}
-  .manual.show{display:block}
+  .status{background:var(--card);border:2px solid var(--tcbd);border-radius:18px;overflow:hidden;margin-bottom:16px}
+  .sbar{background:var(--tcbg);padding:14px 16px 12px}
+  .sline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .kick{white-space:nowrap;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+  .sel{appearance:none;font:inherit;font-size:.85rem;font-weight:700;color:var(--ink);background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23141a2e' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid var(--line);border-radius:10px;padding:8px 34px 8px 12px;cursor:pointer;min-height:40px;max-width:100%}
+  .bname{font-size:1.6rem;font-weight:800;line-height:1.15;color:var(--tc);letter-spacing:-.01em}
+  .gist{margin-top:6px;font-weight:600;font-size:.98rem}
+  .nums{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+  .num{padding:10px 16px}
+  .num+.num{border-left:1px solid var(--line)}
+  .num .lbl{font-size:.76rem;color:var(--ink2);font-weight:700}
+  .num .val{font-size:2rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+  .num .band{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+  .num.drive .band::after{content:" · sets the band";color:var(--tc);text-transform:none;letter-spacing:0}
+  .smeta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--line);font-size:.8rem;color:var(--ink3)}
+  .smeta .btn{font-size:.78rem;padding:5px 12px;min-height:32px}
+  .err,.manual,.changed{display:none;font-size:.88rem;font-weight:600;padding:10px 16px}
+  .err.show,.manual.show,.changed.show{display:block}
+  .err{background:#fff4f2;color:#8a2b20;border-top:1px solid #f3c4bd}
+  .manual{background:#e8ebff;color:var(--navy);border-top:1px solid #c9d1ff}
+  .changed{background:var(--navy);color:#fff}
 
-  /* trigger */
-  .trigger{background:#fff6d6;border:2px solid #c5302a;border-radius:16px;padding:14px 16px;margin-bottom:12px}
-  .trigger .head{font-weight:800;color:#c5302a;font-size:.88rem;text-transform:uppercase;letter-spacing:.02em;line-height:1.35}
-  .trigger p{margin-top:10px;font-weight:600}
-  .trigger.quiet{border-color:var(--line);background:var(--card)}
-  .trigger.quiet .head{color:var(--ink2)}
+  /* section heading */
+  .sh{margin:22px 2px 10px}
+  .pick{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.82rem;font-weight:700;color:var(--ink2)}
+  .pick .sel{flex:1}
+  .sh h2{font-size:1.15rem;line-height:1.2}
+  .sh .sub{font-size:.82rem;color:var(--ink3);font-weight:600}
 
-  /* tabs + panels */
-  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
-  .tabs button{appearance:none;font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 4px;font-size:.74rem;font-weight:700;line-height:1.25;color:var(--ink2);position:relative}
-  .tabs button small{display:block;font-weight:600;color:var(--ink3);font-size:.68rem}
-  .tabs button[data-t="0"].sel{background:var(--t0bg);border-color:var(--t0);color:var(--t0)}
-  .tabs button[data-t="1"].sel{background:var(--t1bg);border-color:var(--t1bd);color:var(--t1)}
-  .tabs button[data-t="2"].sel{background:var(--t2bg);border-color:var(--t2bd);color:var(--t2)}
-  .tabs button[data-t="3"].sel{background:var(--t3bg);border-color:var(--t3bd);color:var(--t3)}
-  .tabs button.now::before{content:"NOW";position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:.6rem;letter-spacing:.06em;border-radius:6px;padding:1px 6px}
-  .panel{display:none}
-  .panel.sel{display:block}
-  .ptitle{text-align:center;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:700;line-height:1.35}
-  .ptitle .or{font-weight:800;text-decoration:underline;margin:0 8px}
-  .ptitle .pm{color:#6a3ea1}
-  .p1 .ptitle{background:var(--t1bg);border:1px solid var(--t1bd)}
-  .p2 .ptitle{background:var(--t2bg);border:1px solid var(--t2bd)}
-  .p3 .ptitle{background:var(--t3bg);border:1px solid var(--t3bd)}
-  .grp{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:8px 0 12px}
-  .grp div{padding:7px 10px;border-top:1px solid var(--line)}
-  .grp div:first-child{border-top:0}
-  .grp .with{background:#fff6d6;font-weight:700}
-  .grp .without{background:#e6f5ec;font-weight:700}
-  .box{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:12px 0}
-  .box.staff{border:2px solid var(--ink)}
-  .lead{font-weight:700}
-  .alarm{color:#c5302a;font-weight:800;text-align:center}
-  .u{text-decoration:underline}
-  .moe{background:#eef1ff;border:1px solid #c9d1ff;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:.92rem}
-  .moe .src{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3b4bb8;margin-bottom:4px}
-  .moe .q{font-weight:700;margin-top:6px}
-  .hl{color:#3b4bb8;font-weight:700}
+  /* accordion */
+  .acc{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .acc details{border-top:1px solid var(--line)}
+  .acc details:first-child{border-top:0}
+  .acc summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:30px 1fr 18px;gap:12px;align-items:center;padding:14px 16px;min-height:56px}
+  .acc summary::-webkit-details-marker{display:none}
+  .acc summary:focus-visible{outline:3px solid var(--navy);outline-offset:-3px}
+  .acc .no{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:.85rem;background:var(--tcbg);color:var(--tc);border:1.5px solid var(--tcbd)}
+  .acc .no.ic{font-size:1rem}
+  .acc .st{font-weight:700;line-height:1.3}
+  .acc .pv{font-size:.84rem;color:var(--ink3);font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+  .acc details[open] .pv{display:none}
+  .acc .chev{width:10px;height:10px;border-right:2px solid var(--ink3);border-bottom:2px solid var(--ink3);transform:rotate(45deg);margin-top:-4px;transition:transform .15s}
+  .acc details[open] .chev{transform:rotate(-135deg);margin-top:4px}
+  .acc details[open] summary{background:#fafbfc}
+  .body{padding:4px 16px 16px 58px;font-size:.95rem}
+  .body .lead{font-weight:700}
+  .body .grp{font-weight:700;background:var(--bg);border-radius:8px;padding:6px 10px;margin:4px 0 8px;font-size:.88rem}
+  .body .fn{font-size:.8rem;color:var(--ink2);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
+  .body .alarm{color:#c5302a;font-weight:800;font-size:.85rem;letter-spacing:.02em}
+  .body .moeq{font-weight:700;margin-top:10px}
+  .body .moeq:first-child{margin-top:0}
+  .body .hl{color:#3b4bb8;font-weight:700}
+  .body .trig{font-weight:800;color:#c5302a;font-size:.9rem;line-height:1.4;margin-bottom:8px}
+  .body .range{display:inline-block;font-size:.8rem;font-weight:700;background:var(--bg);border-radius:6px;padding:3px 8px;margin-bottom:8px}
+  .src{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#3b4bb8;margin-bottom:6px}
 
   /* activity check */
-  .qs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-  .aq{border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;justify-content:space-between}
-  .aq .ql{font-size:.8rem;font-weight:700;margin-bottom:6px}
-  .yn{display:flex;gap:4px}
-  .yn button{flex:1;appearance:none;font:inherit;font-size:.82rem;font-weight:700;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 0;cursor:pointer;color:var(--ink2)}
-  .yn button.on{background:var(--ink);border-color:var(--ink);color:#fff}
-  .rows{display:flex;flex-direction:column;gap:6px}
-  .row{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.9rem;transition:opacity .2s}
-  .row .tags{font-size:.72rem;font-weight:700;color:var(--ink3);letter-spacing:.03em}
-  .row .ex{font-weight:700;margin:2px 0}
-  .rows.filtered .row{opacity:.35}
-  .rows.filtered .row.match{opacity:1;border:2px solid var(--navy);background:#f3f5ff}
-  .nomatch{display:none;font-size:.88rem;font-weight:600;color:var(--ink2);margin-bottom:8px}
-  .nomatch.show{display:block}
+  .qs{display:grid;gap:8px;margin:4px 0 12px}
+  .q{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .q .ql{font-size:.9rem;font-weight:700}
+  .yn{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+  .yn button{appearance:none;font:inherit;font-size:.85rem;font-weight:700;border:0;background:var(--card);padding:8px 16px;cursor:pointer;color:var(--ink2);min-height:38px}
+  .yn button+button{border-left:1px solid var(--line)}
+  .yn button.on{background:var(--ink);color:#fff}
+  .result{border:2px solid var(--navy);background:#f3f5ff;border-radius:12px;padding:10px 12px}
+  .result .ex{font-weight:700;margin-bottom:4px}
+  .result.empty{border:1px dashed var(--line);background:var(--card);color:var(--ink3);font-weight:600}
+  .notes{font-size:.85rem;margin-top:12px}
+  .notes ol{padding-left:20px} .notes ol ol{list-style:lower-alpha}
 
-  details{border-top:1px solid var(--line);padding:10px 0}
-  details:first-of-type{border-top:0;padding-top:0}
-  summary{cursor:pointer;font-weight:700}
-  details > *:not(summary){margin-top:8px}
-  .notes{font-size:.86rem}
-  .notes ol{padding-left:20px}
-  .notes ol ol{list-style:lower-alpha}
-  .fn{font-size:.82rem;color:var(--ink2);margin-top:8px}
-  .links{display:grid;gap:8px}
-  .links a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);font-weight:700}
-  .links a span{font-weight:500;color:var(--ink3);font-size:.8rem}
-  .links a::after{content:"↗";color:var(--ink3)}
-  .drill{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+  .drill{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-top:8px}
   .drill label{font-size:.78rem;font-weight:700;color:var(--ink2);display:flex;flex-direction:column;gap:4px}
-  .drill input{font:inherit;width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
-  .foot{text-align:center;font-size:.75rem;color:var(--ink3);margin-top:18px}
+  .drill input{font:inherit;width:110px;padding:7px 9px;border:1px solid var(--line);border-radius:8px}
+  .links{display:grid;gap:8px}
+  .links a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);font-weight:700;font-size:.92rem}
+  .links a span{font-weight:500;color:var(--ink3);font-size:.78rem}
+  .foot{text-align:center;font-size:.75rem;color:var(--ink3);margin-top:20px}
   @media (max-width:420px){
-    .num .val{font-size:2.1rem}
-    .tabs button{font-size:.68rem}
+    .body{padding-left:16px}
+    .bname{font-size:1.4rem}
   }
 </style>
 </head>
@@ -152,288 +133,145 @@
     <button class="btn" id="alertBtn" type="button">Turn on alerts</button>
   </div>
 
-  <div class="changed" id="changed" role="status"><span id="changedTxt"></span><button type="button" aria-label="Dismiss" id="changedX">×</button></div>
-
-  <!-- LIVE STATUS -->
-  <section class="card status" id="status" aria-live="polite">
-    <div class="regions" id="regions"></div>
+  <!-- 1. WHERE ARE WE -->
+  <section class="status" id="status" aria-live="polite">
+    <div class="changed" id="changed" role="status"></div>
+    <div class="sbar">
+      <div class="sline">
+        <span class="kick">Air quality now</span>
+        <select class="sel" id="region" aria-label="Region"></select>
+      </div>
+      <div class="bname" id="bandName">Loading NEA readings</div>
+      <div class="gist" id="gist"></div>
+    </div>
     <div class="nums">
       <div class="num" id="psiBox"><div class="lbl">24-hr PSI</div><div class="val" id="psiVal">…</div><div class="band" id="psiBand">&nbsp;</div></div>
       <div class="num" id="pmBox"><div class="lbl">1-hr PM2.5</div><div class="val" id="pmVal">…</div><div class="band" id="pmBand">&nbsp;</div></div>
     </div>
-    <div class="tier">
-      <div class="name" id="tierName">Loading NEA readings</div>
-      <div class="gist" id="tierGist"></div>
-    </div>
-    <div class="manual" id="manualFlag">Drill reading. Not live NEA data. <a href="#" id="manualClear">Return to live</a></div>
+    <div class="manual" id="manualFlag">Drill reading, not live NEA data. <a href="#" id="manualClear">Return to live</a></div>
     <div class="err" id="err"></div>
-    <div class="meta">
+    <div class="smeta">
       <span id="updated">Source: NEA via data.gov.sg</span>
-      <button class="btn" id="refresh" type="button">Refresh</button>
-      <a href="https://www.haze.gov.sg/" target="_blank" rel="noopener">NEA haze site</a>
+      <span><a href="https://www.haze.gov.sg/" target="_blank" rel="noopener">NEA haze site</a> &nbsp; <button class="btn" id="refresh" type="button">Refresh</button></span>
     </div>
   </section>
 
-  <!-- TRIGGER (exact) -->
-  <section class="trigger" id="trigger">
-    <div class="head">When the PSI exceeds 100, or the 1-hr PM<sub>2.5</sub> exceeds 55, visually check on students’ well-being, <i>especially</i> those with pre-existing lung or heart conditions.</div>
-    <p>If the student or staff is feeling unwell:</p>
-    <ul>
-      <li>Pull them out of the activity, alert the parents of the student, and send the student/staff for medical attention if necessary.</li>
-      <li>Those with breathing difficulties are to receive immediate medical attention from nearest GP, polyclinic or hospital.</li>
-      <li>Air-conditioned room(s) (minimally one room) equipped with air purifier(s) should be made available as a temporary holding room while awaiting transport.</li>
-    </ul>
-  </section>
+  <!-- 2. WHAT TO DO -->
+  <div class="sh">
+    <h2 id="doTitle">What to do</h2><div class="sub" id="doSub"></div>
+    <label class="pick">Show steps for <select class="sel" id="bandSel"></select></label>
+  </div>
+  <div class="acc" id="steps"></div>
 
-  <!-- MEASURES BY BAND -->
-  <section class="card">
-    <h2>Measures</h2>
-    <div class="tabs" id="tabs">
-      <button type="button" data-t="0">Normal<small>PSI ≤ 100</small></button>
-      <button type="button" data-t="1">Unhealthy<small>Elevated</small></button>
-      <button type="button" data-t="2">Very Unhealthy<small>High</small></button>
-      <button type="button" data-t="3">Hazardous<small>Very High</small></button>
-    </div>
+  <!-- 3. TOOLS AND REFERENCE -->
+  <div class="sh"><div><h2>Plan and check</h2><div class="sub">Activities, exams, drills, sources</div></div></div>
+  <div class="acc" id="ref">
 
-    <!-- 0 -->
-    <div class="panel p0" data-p="0">
-      <p class="lead">24-hr PSI 100 and below, and 1-hr PM<sub>2.5</sub> 55 and below.</p>
-      <p>No band measures apply. Continue to monitor NEA readings.</p>
-    </div>
-
-    <!-- 1 -->
-    <div class="panel p1" data-p="1">
-      <div class="ptitle">24-hr PSI 101 – 200 (UNHEALTHY) <span class="or">OR</span> <span class="pm">1-hr PM<sub>2.5</sub> 56 – 150 (ELEVATED)</span></div>
-      <h3 class="u">Curriculum &amp; student activities:</h3>
-      <div class="grp">
-        <div class="with">Students <span class="u">with</span> pre-existing lung or heart conditions / are feeling unwell</div>
-        <div>Avoid outdoor activities and physical exercise</div>
-        <div class="without">Students <span class="u">without</span> pre-existing conditions <i>and are feeling well</i></div>
-        <div><ul><li>Avoid prolonged outdoor/strenuous activities</li><li>Indoor non-strenuous physical activities acceptable</li></ul></div>
-      </div>
-      <p class="lead">Review the location, intensity and duration of physical/outdoor activities.</p>
-      <ul>
-        <li>Check if students are well before the start of the activity.</li>
-        <li>Students to be informed that they should alert their teachers if they are not well.</li>
-        <li>Look out for students who appear unwell during the activity</li>
-      </ul>
-      <p class="lead" style="margin-top:10px">Continue to monitor air quality closely, and make further adjustments to the activities (refer to <a href="#activity" class="u">Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</a>).</p>
-      <p class="lead" style="margin-top:10px">Air purifiers to be turned on with doors and windows closed.</p>
-      <ul><li>Periodically reopen doors or windows for better ventilation. This could be done naturally when the teacher leaves the classroom at the end of the lesson, or when students go to the toilet.</li></ul>
-      <div class="box staff">
-        <div class="lead u">Staff</div>
-        <ul>
-          <li><b><i>Minimise</i></b> prolonged or strenuous outdoor work.</li>
-          <li>N95 masks are <b class="u">not required</b> for indoor and outdoor work.</li>
-        </ul>
-      </div>
-      <div class="moe">
-        <div class="src">MOE press conference, 16 Oct 2026</div>
-        <div class="q">If the 1-hr PM2.5 reading is <span class="u">elevated</span> (56 – 150)</div>
-        <ul>
-          <li>Prolonged or strenuous outdoor physical activities will be avoided.</li>
-          <li>Indoor non-strenuous activities such as light physical exercises may continue.</li>
-          <li>Students who are unwell or have pre-existing heart or lung conditions will be excused from these activities.</li>
-          <li>Air purifiers will be deployed in indoor spaces, such as classrooms, labs, school halls, and Indoor Sports Halls.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 2 -->
-    <div class="panel p2" data-p="2">
-      <div class="ptitle">24-hr PSI 201 – 300 (VERY UNHEALTHY) <span class="or">OR</span> <span class="pm">1-hr PM<sub>2.5</sub> 151 – 250 (HIGH)</span></div>
-      <h3 class="u">Curriculum &amp; student activities:</h3>
-      <div class="grp">
-        <div class="with">Students <span class="u">with</span> pre-existing lung or heart conditions / are feeling unwell</div>
-        <div>Avoid outdoor activities and indoor physical activities</div>
-        <div class="without">Students <span class="u">without</span> pre-existing conditions <i>and are feeling well</i></div>
-        <div><ul><li>Avoid outdoor activities and strenuous indoor physical activities.</li><li>Indoor non-strenuous physical activities acceptable</li></ul></div>
-      </div>
-      <ul>
-        <li>Check if students are well before any activity.</li>
-        <li>Minimise after-school activities.</li>
-        <li>Air purifiers to be turned on with doors and windows closed.
-          <ul><li>Periodically reopen doors or windows to provide better ventilation. This could be done naturally when the teacher leaves the classroom at the end of the lesson, or when students go to the toilet.</li></ul>
-        </li>
-        <li>Students to consume their food in an indoor venue during recess.</li>
-      </ul>
-      <div class="box">
-        <p><b class="u">Dismissal:</b> <b>No early dismissal of students.</b></p>
-        <p>However,</p>
-        <ul>
-          <li>Allow parents to fetch their children home early if they are concerned about their child’s well-being; and</li>
-          <li><b>Check that students are asymptomatic</b> (i.e. students do not exhibit/report any symptoms as a result of the haze situation (e.g. coughing, wheezing, shortness of breath)) <b>before dismissing them</b>, <i>especially</i> those with pre-existing conditions.</li>
-        </ul>
-      </div>
-      <div class="box staff">
-        <div class="lead u">Staff<sup>5</sup></div>
-        <ul>
-          <li><b><i>Minimise</i></b> prolonged or strenuous outdoor work. <b><i>If unavoidable</i></b>, staff to use N95 mask.</li>
-          <li>N95 masks are <b class="u">not required</b> for indoor work.</li>
-        </ul>
-      </div>
-      <div class="moe">
-        <div class="src">MOE press conference, 16 Oct 2026</div>
-        <div class="q">If the 1-hr PM2.5 reading is <span class="u">high</span> (151 – 250)</div>
-        <ul>
-          <li>Students will remain in enclosed indoor spaces with air purifiers.</li>
-          <li>Students will avoid both outdoor activities and strenuous indoor activities, and have their meals indoors.</li>
-          <li>Schools will operate as per normal school hours.</li>
-          <li>Schools will replace outdoor activities (such as CCAs and camps) with indoor activities where possible. If not, the organisers will cancel or postpone them.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 3 -->
-    <div class="panel p3" data-p="3">
-      <div class="ptitle">24-hr PSI ≥ 301 (HAZARDOUS) <span class="or">OR</span> <span class="pm">1-hr PM<sub>2.5</sub> ≥ 251 (VERY HIGH)</span></div>
-      <div class="box">
-        <p><b>If PSI forecast for the following day is ≥301, MOE will consider school closure</b> for students in <i>Primary schools, Secondary schools &amp; Secondary section of IP schools</i>. If schools are to close, schools will implement home-based learning for students to ensure that students’ learning is not disrupted<sup>4</sup>. To support parents who are unable to make alternative childcare arrangements, schools and SCCs will continue to operate.</p>
-        <h3 style="text-align:center">FOR JCS, CI AND JC SECTION OF IP SCHOOLS</h3>
-        <p><b class="u">Curriculum &amp; student activities:</b> Students should be in air-conditioned spaces. Lessons could be modified where appropriate.</p>
-        <p><b class="u">Dismissal:</b> Check that students are asymptomatic before they are dismissed from school.</p>
-      </div>
-      <div class="box">
-        <p class="alarm">FOR TRANSIENT SPIKES DURING THE SCHOOL DAY</p>
-        <p><b class="u">Curriculum &amp; student activities:</b></p>
-        <ul>
-          <li><b>Scale down lessons</b> where possible till air quality improves and drops below hazardous.</li>
-          <li><b>All students</b> should be in either air-conditioned rooms or rooms with doors and windows closed with air purifiers deployed.</li>
-          <li><b>Avoid after-school activities.</b></li>
-        </ul>
-        <p style="margin-top:10px"><b class="u">Dismissal:</b> <b>No early dismissal of students.</b> However,</p>
-        <ul>
-          <li>Allow parents to fetch their children home early if they are concerned about their child’s well-being; and</li>
-          <li><b>Check that students are asymptomatic before dismissing them</b>, <i>especially</i> those with pre-existing conditions.</li>
-          <li>Encourage parent/caregiver of students with pre-existing conditions to pick them up from school at <b>dismissal time</b> <i>(unless they are taking school bus)</i>, <b><i>especially</i></b> if the child is in primary school.</li>
-        </ul>
-      </div>
-      <div class="box staff">
-        <div class="lead u">Staff<sup>5</sup></div>
-        <ul>
-          <li><b><i>Minimise</i></b> all outdoor work. <b><i>If unavoidable</i></b>, staff to use N95 mask.</li>
-          <li>N95 masks are <b class="u">not required</b> for indoor work.</li>
-        </ul>
-      </div>
-      <div class="moe">
-        <div class="src">MOE press conference, 16 Oct 2026</div>
-        <div class="q">If the 1-hr PM2.5 reading is <span class="u">very high</span> (251 and above)</div>
-        <ul>
-          <li>Schools will scale down lessons, by reducing the intensity of indoor activities, and suspend all physical and after-school activities.</li>
-        </ul>
-        <div class="q">If the 24-hr PSI forecast for the following day is in the <span class="u">hazardous</span> range (300 and above)</div>
-        <ul>
-          <li>MOE, MSF and ECDA will strongly encourage parents and guardians to keep their <span class="hl">infants and young children</span> at home.</li>
-          <li>MOE will consider closing schools and transitioning to home-based learning for younger students from <span class="hl">preschool up to secondary level</span>.</li>
-          <li>Kindergarten programmes, Early Intervention Programme for Infants and Children (EIPIC and EIPIC-P) programmes, private programmes, as well as preschool-based early intervention programmes such as the Development Support-Plus programme and Development Support-Learning Support programme, will also be suspended.</li>
-        </ul>
-        <div class="q">To support students whose parents/guardians are unable to make alternative care arrangements</div>
-        <ul>
-          <li>Primary and secondary schools (including SPED schools) as well as Student Care Centres and Special Student Care Centres in our schools and SPED schools will remain physically open.</li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="fn"><sup>4</sup> For extended school closure, schools may need to activate Full Home-Based Learning. Please refer to SOP 5.1 on Curriculum Continuity during Extended Unscheduled School Closure.<br>
-    <sup>5</sup> Schools should look out for staff who may be more vulnerable to effects of haze, e.g., elderly,pregnant staff, staff with pre-existing lung/heart conditions. Schools should minimise and avoid outdoor work for them when the 24-hr PSI is &gt;200 and &gt;300 respectively.</p>
-  </section>
-
-  <!-- ACTIVITY CHECK -->
-  <section class="card" id="activity">
-    <h2>Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</h2>
-    <div class="qs" id="qs">
-      <div class="aq"><div class="ql">Outdoors?</div><div class="yn" data-k="o"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></div></div>
-      <div class="aq"><div class="ql">Is the activity Strenuous<sup>1</sup>?</div><div class="yn" data-k="s"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></div></div>
-      <div class="aq"><div class="ql">Prolonged<sup>2</sup>?</div><div class="yn" data-k="p"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></div></div>
-    </div>
-    <div class="nomatch" id="nomatch">No row in the table matches this combination.</div>
-    <div class="rows" id="rows">
-      <div class="row" data-m="YYY"><div class="tags">OUTDOORS · STRENUOUS · PROLONGED</div><div class="ex">School road run, sports carnival, CCAs conducted outdoors, outdoor adventure camps</div>(1) Reduce intensity, shorten the duration of activity and move activity indoors where feasible; <b>OR</b> (2) Cancel/reschedule activity</div>
-      <div class="row" data-m="YYN"><div class="tags">OUTDOORS · STRENUOUS · NOT PROLONGED</div><div class="ex">PE lessons, CCAs conducted outdoors</div>(1) Reduce intensity of activity; <b>OR</b> (2) Move activity indoors and reduce intensity; <b>OR</b> (3) Cancel/reschedule activity</div>
-      <div class="row" data-m="YNY"><div class="tags">OUTDOORS · NOT STRENUOUS · PROLONGED</div><div class="ex">Fun-fair/carnival</div>(1) Reduce duration of activity; <b>OR</b> (2) Move activity indoors; <b>OR</b> (3) Cancel/reschedule activity</div>
-      <div class="row" data-m="YNN"><div class="tags">OUTDOORS · NOT STRENUOUS · NOT PROLONGED</div><div class="ex">Learning Journeys</div>Can generally proceed with activity; where appropriate, consider reducing the duration of activity, especially for younger students</div>
-      <div class="row" data-m="NYN"><div class="tags">INDOORS · STRENUOUS · NOT PROLONGED</div><div class="ex">PE conducted indoors<br>CCAs conducted indoors</div>Especially in areas without air conditioning or air purifiers, (1) Reduce the intensity of activity; <b>OR</b> (2) Cancel/reschedule activity</div>
-    </div>
-    <div class="notes" style="margin-top:12px">
-      <p class="lead u">Notes:</p>
-      <ol>
-        <li>Strenuous activity causes your heart rate to increase significantly. Your breathing will get harder and faster and it will be more difficult to hold a conversation. The exercise tolerance of children may vary from child to child, based on their individual physical fitness and health condition. If a child feels unwell, he/she is to stop participating in the activity, be moved indoors (with air purifier) and seek medical attention, as appropriate to the severity of the child’s condition.
+    <details name="ref" id="activity">
+      <summary><span class="no ic">✓</span><span><span class="st">Plan an activity</span><span class="pv">Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <p class="lead">Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”</p>
+        <div class="qs">
+          <div class="q"><span class="ql">Outdoors?</span><span class="yn" data-k="0"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></span></div>
+          <div class="q"><span class="ql">Is the activity Strenuous<sup>1</sup>?</span><span class="yn" data-k="1"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></span></div>
+          <div class="q"><span class="ql">Prolonged<sup>2</sup>?</span><span class="yn" data-k="2"><button type="button" data-v="Y">Yes</button><button type="button" data-v="N">No</button></span></div>
+        </div>
+        <div class="result empty" id="result">Answer the three questions above.</div>
+        <div class="notes">
+          <p class="lead u">Notes:</p>
           <ol>
-            <li>Examples of strenuous activities are circuit training, jogging/running, mass PE involving aerobic-type exercises.</li>
-            <li>Examples of non-strenuous activities are stretching, walking, static practice tasks, e.g., passing/shooting when stationary.</li>
+            <li>Strenuous activity causes your heart rate to increase significantly. Your breathing will get harder and faster and it will be more difficult to hold a conversation. The exercise tolerance of children may vary from child to child, based on their individual physical fitness and health condition. If a child feels unwell, he/she is to stop participating in the activity, be moved indoors (with air purifier) and seek medical attention, as appropriate to the severity of the child’s condition.
+              <ol>
+                <li>Examples of strenuous activities are circuit training, jogging/running, mass PE involving aerobic-type exercises.</li>
+                <li>Examples of non-strenuous activities are stretching, walking, static practice tasks, e.g., passing/shooting when stationary.</li>
+              </ol>
+            </li>
+            <li>Prolonged is defined as continuous exposure for several hours.</li>
           </ol>
-        </li>
-        <li>Prolonged is defined as continuous exposure for several hours.</li>
-      </ol>
-    </div>
-  </section>
+        </div>
+      </div>
+    </details>
 
-  <!-- MOE 16 OCT -->
-  <section class="card">
-    <h2>MOE press conference, 16 Oct 2026</h2>
-    <details>
-      <summary>MOE and Special Education (SPED) schools continuity plans</summary>
-      <ul>
-        <li>Available forecasts and advisories, as well as actual ground sitation will be taken into consideration to make an informed decision.</li>
-        <li>School leaders will take into account the 1-hour PM 2.5 readings and exercise judgement in managing school-based learning and activities.</li>
-        <li>Measures will be adjusted where needed to safeguard the health and well-being of our students and staff.</li>
-        <li class="hl">If there is a need to move nationally, MOE will make the announcement through our schools and official channels.</li>
-      </ul>
+    <details name="ref">
+      <summary><span class="no ic">✎</span><span><span class="st">National Examinations</span><span class="pv">O and A Level papers, MCs, rescheduling</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <div class="src">MOE press conference, 16 Oct 2026</div>
+        <ul>
+          <li>Students taking the O- and A-Level exams will sit for their papers in enclosed air-conditioned venues with air purifiers.</li>
+          <li>If they are unwell and unable to take or continue with an exam, they should see a doctor, obtain a medical certificate (MC), and apply for special consideration through their schools. Their schools will guide them on the necessary procedure.</li>
+          <li>Should the 24-hour PSI forecast reach hazardous levels, we will consider rescheduling O-Level papers in line with the health advisory for younger students.</li>
+          <li>The A-Level papers are generally less likely to be affected as the students are older, but we will also take reference from forecast as well as actual ground circumstances in making decisions on whether they will continue.</li>
+          <li>Details of any rescheduling of O- and A-Level papers to the earliest practicable date will be publicly announced by the Singapore Examinations and Assessments Board (SEAB).</li>
+          <li>Schools will also inform students and parents directly if any national exam needs to be rescheduled because of haze conditions.</li>
+        </ul>
+      </div>
     </details>
-    <details>
-      <summary>Our schools have already been taking precautionary measures</summary>
-      <ul>
-        <li>Adjusting activities</li>
-        <li>Deploying air purifiers</li>
-        <li>Paying extra attention to students who report to be unwell and/or have pre-existing health conditions</li>
-        <li>Taking practical steps to reduce exposure to haze where necessary</li>
-      </ul>
-    </details>
-    <details>
-      <summary>National Examinations</summary>
-      <ul>
-        <li>Students taking the O- and A-Level exams will sit for their papers in enclosed air-conditioned venues with air purifiers.</li>
-        <li>If they are unwell and unable to take or continue with an exam, they should see a doctor, obtain a medical certificate (MC), and apply for special consideration through their schools. Their schools will guide them on the necessary procedure.</li>
-        <li>Should the 24-hour PSI forecast reach hazardous levels, we will consider rescheduling O-Level papers in line with the health advisory for younger students.</li>
-        <li>The A-Level papers are generally less likely to be affected as the students are older, but we will also take reference from forecast as well as actual ground circumstances in making decisions on whether they will continue.</li>
-        <li>Details of any rescheduling of O- and A-Level papers to the earliest practicable date will be publicly announced by the Singapore Examinations and Assessments Board (SEAB).</li>
-        <li>Schools will also inform students and parents directly if any national exam needs to be rescheduled because of haze conditions.</li>
-      </ul>
-    </details>
-    <details>
-      <summary>Junior Colleges, Millenia Institute and Post-Secondary Education Institutions</summary>
-      <ul>
-        <li>Junior Colleges (including the JC sections of Integrated Programme schools), Millennia Institute, ITE, polytechnics, Autonomous Universities and University of the Arts Singapore, because students are older, will generally continue in-person lessons.</li>
-        <li>We will also take reference from forecasts as well as actual circumstances on the ground in deciding whether to continue in-person activities or what measures should be adopted.</li>
-      </ul>
-    </details>
-  </section>
 
-  <!-- LINKS -->
-  <section class="card">
-    <h2>Official sources</h2>
-    <div class="links">
-      <a href="https://www.haze.gov.sg/" target="_blank" rel="noopener">NEA haze site <span>Readings, forecast, advisories</span></a>
-      <a href="https://www.nea.gov.sg/" target="_blank" rel="noopener">NEA <span>National Environment Agency</span></a>
-      <a href="https://go.gov.sg/minedu-hazepresscon-16oct" target="_blank" rel="noopener">Minister Desmond Lee’s remarks in full <span>MOE, 16 Oct 2026</span></a>
-      <a href="https://data.gov.sg/" target="_blank" rel="noopener">data.gov.sg <span>Live feed this app reads</span></a>
-    </div>
-  </section>
-
-  <!-- DRILL -->
-  <section class="card">
-    <details>
-      <summary>Drill: enter a reading</summary>
-      <p class="fn">Preview the measures for any reading. Use when briefing staff, or if the live feed is down.</p>
-      <form class="drill" id="drill">
-        <label>24-hr PSI<input type="number" min="0" max="999" inputmode="numeric" id="dPsi"></label>
-        <label>1-hr PM2.5<input type="number" min="0" max="999" inputmode="numeric" id="dPm"></label>
-        <button class="btn" type="submit">Apply</button>
-      </form>
+    <details name="ref">
+      <summary><span class="no ic">◎</span><span><span class="st">How MOE decides</span><span class="pv">Continuity plans and precautionary measures</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <div class="src">MOE press conference, 16 Oct 2026</div>
+        <p class="moeq">MOE and Special Education (SPED) schools continuity plans</p>
+        <ul>
+          <li>Available forecasts and advisories, as well as actual ground sitation will be taken into consideration to make an informed decision.</li>
+          <li>School leaders will take into account the 1-hour PM 2.5 readings and exercise judgement in managing school-based learning and activities.</li>
+          <li>Measures will be adjusted where needed to safeguard the health and well-being of our students and staff.</li>
+          <li class="hl">If there is a need to move nationally, MOE will make the announcement through our schools and official channels.</li>
+        </ul>
+        <p class="moeq">Our schools have already been taking precautionary measures</p>
+        <ul>
+          <li>Adjusting activities</li>
+          <li>Deploying air purifiers</li>
+          <li>Paying extra attention to students who report to be unwell and/or have pre-existing health conditions</li>
+          <li>Taking practical steps to reduce exposure to haze where necessary</li>
+        </ul>
+        <p class="moeq">Junior Colleges, Millenia Institute and Post-Secondary Education Institutions</p>
+        <ul>
+          <li>Junior Colleges (including the JC sections of Integrated Programme schools), Millennia Institute, ITE, polytechnics, Autonomous Universities and University of the Arts Singapore, because students are older, will generally continue in-person lessons.</li>
+          <li>We will also take reference from forecasts as well as actual circumstances on the ground in deciding whether to continue in-person activities or what measures should be adopted.</li>
+        </ul>
+      </div>
     </details>
-  </section>
 
-  <p class="foot">Readings: NEA via data.gov.sg, checked every 10 minutes while open. NEA updates hourly.<br>Measures transcribed from the MOE haze guidelines. Official announcements prevail.</p>
+    <details name="ref">
+      <summary><span class="no ic">▶</span><span><span class="st">Run a drill</span><span class="pv">Enter any reading to see its measures</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <p>Use when briefing staff, or if the live feed is down.</p>
+        <form class="drill" id="drill">
+          <label>24-hr PSI<input type="number" min="0" max="999" inputmode="numeric" id="dPsi"></label>
+          <label>1-hr PM2.5<input type="number" min="0" max="999" inputmode="numeric" id="dPm"></label>
+          <button class="btn" type="submit">Apply</button>
+        </form>
+      </div>
+    </details>
+
+    <details name="ref">
+      <summary><span class="no ic">↗</span><span><span class="st">Official sources</span><span class="pv">NEA, MOE, data.gov.sg</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <div class="links">
+          <a href="https://www.haze.gov.sg/" target="_blank" rel="noopener">NEA haze site <span>Readings, forecast, advisories</span></a>
+          <a href="https://www.nea.gov.sg/" target="_blank" rel="noopener">NEA <span>National Environment Agency</span></a>
+          <a href="https://go.gov.sg/minedu-hazepresscon-16oct" target="_blank" rel="noopener">Minister Desmond Lee’s remarks in full <span>MOE, 16 Oct 2026</span></a>
+          <a href="https://data.gov.sg/" target="_blank" rel="noopener">data.gov.sg <span>Live feed this app reads</span></a>
+        </div>
+      </div>
+    </details>
+
+    <details name="ref">
+      <summary><span class="no ic">?</span><span><span class="st">How this app works</span><span class="pv">Bands, regions, alerts</span></span><span class="chev"></span></summary>
+      <div class="body">
+        <ul>
+          <li>The band is set by whichever reading is worse: 24-hr PSI or 1-hr PM2.5.</li>
+          <li>Readings come from NEA via data.gov.sg. NEA updates hourly; this app checks every 10 minutes while open.</li>
+          <li>“Highest” takes the worst of the five regions.</li>
+          <li>Alerts: tap “Turn on alerts”. You are notified when the band changes, while the app is open. On iPhone, add Haze Ops to the Home Screen first.</li>
+          <li>Measures are transcribed from the MOE haze guidelines. Official announcements prevail.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <p class="foot">Haze Ops · Readings: NEA via data.gov.sg · Official announcements prevail</p>
 </div>
 
 <script>
@@ -442,15 +280,109 @@
     psi: ['https://api-open.data.gov.sg/v2/real-time/api/psi', 'https://api.data.gov.sg/v1/environment/psi'],
     pm:  ['https://api-open.data.gov.sg/v2/real-time/api/pm25', 'https://api.data.gov.sg/v1/environment/pm25']
   };
-  const REGIONS = [['central','Central'],['north','North'],['south','South'],['east','East'],['west','West'],['national','Highest']];
+  const REGIONS = [['central','Central'],['north','North'],['south','South'],['east','East'],['west','West'],['national','Highest of all regions']];
   const POLL_MS = 10 * 60 * 1000;
 
-  const TIERS = [
-    { name: 'Normal', gist: 'No band measures apply. Continue to monitor.' },
-    { name: 'Unhealthy / Elevated', gist: 'Avoid prolonged outdoor/strenuous activities. Indoor non-strenuous physical activities acceptable.' },
-    { name: 'Very Unhealthy / High', gist: 'Avoid outdoor activities and strenuous indoor physical activities. No early dismissal of students.' },
-    { name: 'Hazardous / Very High', gist: 'Scale down lessons where possible till air quality improves and drops below hazardous. Avoid after-school activities.' }
+  // ---------- content: exact text from the MOE guidelines, grouped into steps ----------
+  const WATCH = {
+    t: 'Watch for unwell students', ic: '!',
+    h: `<p class="trig">WHEN THE PSI EXCEEDS 100, OR THE 1-HR PM<sub>2.5</sub> EXCEEDS 55, VISUALLY CHECK ON STUDENTS’ WELL-BEING, <i>ESPECIALLY</i> THOSE WITH PRE-EXISTING LUNG OR HEART CONDITIONS.</p>
+      <p class="lead">If the student or staff is feeling unwell:</p>
+      <ul>
+        <li>Pull them out of the activity, alert the parents of the student, and send the student/staff for medical attention if necessary.</li>
+        <li>Those with breathing difficulties are to receive immediate medical attention from nearest GP, polyclinic or hospital.</li>
+        <li>Air-conditioned room(s) (minimally one room) equipped with air purifier(s) should be made available as a temporary holding room while awaiting transport.</li>
+      </ul>`
+  };
+  const FN4 = `<p class="fn"><sup>4</sup> For extended school closure, schools may need to activate Full Home-Based Learning. Please refer to SOP 5.1 on Curriculum Continuity during Extended Unscheduled School Closure.</p>`;
+  const FN5 = `<p class="fn"><sup>5</sup> Schools should look out for staff who may be more vulnerable to effects of haze, e.g., elderly,pregnant staff, staff with pre-existing lung/heart conditions. Schools should minimise and avoid outdoor work for them when the 24-hr PSI is &gt;200 and &gt;300 respectively.</p>`;
+  const MOE = 'What MOE has told the public';
+  const SRC = '<div class="src">MOE press conference, 16 Oct 2026</div>';
+  const WITH = '<div class="grp">Students <span class="u">with</span> pre-existing lung or heart conditions / are feeling unwell</div>';
+  const WITHOUT = '<div class="grp">Students <span class="u">without</span> pre-existing conditions <i>and are feeling well</i></div>';
+  const PLAN = '<p><a href="#activity" data-open="activity">Plan an activity with the Additional Guidelines ↓</a></p>';
+
+  const BANDS = [
+    {
+      name: 'Normal', range: '24-hr PSI 100 and below, and 1-hr PM2.5 55 and below',
+      gist: 'No band measures apply. Continue to monitor.',
+      steps: [
+        { t: 'Know the trigger', ic: '!', h: WATCH.h.replace('<p class="lead">', '<p class="lead" style="margin-top:8px">') },
+      ]
+    },
+    {
+      name: 'Unhealthy / Elevated', range: '24-hr PSI 101 – 200 (UNHEALTHY) OR 1-hr PM2.5 56 – 150 (ELEVATED)',
+      gist: 'Avoid prolonged outdoor/strenuous activities. Indoor non-strenuous physical activities acceptable.',
+      steps: [
+        WATCH,
+        { t: 'Students with lung or heart conditions, or unwell', h: WITH + '<p>Avoid outdoor activities and physical exercise</p>' },
+        { t: 'All other students', h: WITHOUT + '<ul><li>Avoid prolonged outdoor/strenuous activities</li><li>Indoor non-strenuous physical activities acceptable</li></ul>' },
+        { t: 'Lessons and activities', h: `<p class="lead">Review the location, intensity and duration of physical/outdoor activities.</p>
+            <ul><li>Check if students are well before the start of the activity.</li><li>Students to be informed that they should alert their teachers if they are not well.</li><li>Look out for students who appear unwell during the activity</li></ul>
+            <p class="lead">Continue to monitor air quality closely, and make further adjustments to the activities (refer to Additional Guidelines for Activities when Air Quality is “Unhealthy” / “Elevated”).</p>` + PLAN },
+        { t: 'Classrooms and air purifiers', h: `<p class="lead">Air purifiers to be turned on with doors and windows closed.</p>
+            <ul><li>Periodically reopen doors or windows for better ventilation. This could be done naturally when the teacher leaves the classroom at the end of the lesson, or when students go to the toilet.</li></ul>` },
+        { t: 'Staff', h: `<ul><li><b><i>Minimise</i></b> prolonged or strenuous outdoor work.</li><li>N95 masks are <b class="u">not required</b> for indoor and outdoor work.</li></ul>` },
+        { t: MOE, ic: 'i', h: SRC + `<p class="moeq">If the 1-hr PM2.5 reading is <span class="u">elevated</span> (56 – 150)</p>
+            <ul><li>Prolonged or strenuous outdoor physical activities will be avoided.</li><li>Indoor non-strenuous activities such as light physical exercises may continue.</li><li>Students who are unwell or have pre-existing heart or lung conditions will be excused from these activities.</li><li>Air purifiers will be deployed in indoor spaces, such as classrooms, labs, school halls, and Indoor Sports Halls.</li></ul>` }
+      ]
+    },
+    {
+      name: 'Very Unhealthy / High', range: '24-hr PSI 201 – 300 (VERY UNHEALTHY) OR 1-hr PM2.5 151 – 250 (HIGH)',
+      gist: 'Avoid outdoor activities and strenuous indoor physical activities. No early dismissal of students.',
+      steps: [
+        WATCH,
+        { t: 'Students with lung or heart conditions, or unwell', h: WITH + '<p>Avoid outdoor activities and indoor physical activities</p>' },
+        { t: 'All other students', h: WITHOUT + '<ul><li>Avoid outdoor activities and strenuous indoor physical activities.</li><li>Indoor non-strenuous physical activities acceptable</li></ul>' },
+        { t: 'Lessons and activities', h: '<ul><li>Check if students are well before any activity.</li><li>Minimise after-school activities.</li></ul>' + PLAN },
+        { t: 'Classrooms and air purifiers', h: `<ul><li>Air purifiers to be turned on with doors and windows closed.<ul><li>Periodically reopen doors or windows to provide better ventilation. This could be done naturally when the teacher leaves the classroom at the end of the lesson, or when students go to the toilet.</li></ul></li></ul>` },
+        { t: 'Recess', h: '<ul><li>Students to consume their food in an indoor venue during recess.</li></ul>' },
+        { t: 'Dismissal', h: `<p><b class="u">Dismissal:</b> <b>No early dismissal of students.</b></p><p>However,</p>
+            <ul><li>Allow parents to fetch their children home early if they are concerned about their child’s well-being; and</li>
+            <li><b>Check that students are asymptomatic</b> (i.e. students do not exhibit/report any symptoms as a result of the haze situation (e.g. coughing, wheezing, shortness of breath)) <b>before dismissing them</b>, <i>especially</i> those with pre-existing conditions.</li></ul>` },
+        { t: 'Staff', h: `<ul><li><b><i>Minimise</i></b> prolonged or strenuous outdoor work. <b><i>If unavoidable</i></b>, staff to use N95 mask.</li><li>N95 masks are <b class="u">not required</b> for indoor work.</li></ul>` + FN5 },
+        { t: MOE, ic: 'i', h: SRC + `<p class="moeq">If the 1-hr PM2.5 reading is <span class="u">high</span> (151 – 250)</p>
+            <ul><li>Students will remain in enclosed indoor spaces with air purifiers.</li><li>Students will avoid both outdoor activities and strenuous indoor activities, and have their meals indoors.</li><li>Schools will operate as per normal school hours.</li><li>Schools will replace outdoor activities (such as CCAs and camps) with indoor activities where possible. If not, the organisers will cancel or postpone them.</li></ul>` }
+      ]
+    },
+    {
+      name: 'Hazardous / Very High', range: '24-hr PSI ≥ 301 (HAZARDOUS) OR 1-hr PM2.5 ≥ 251 (VERY HIGH)',
+      gist: 'Scale down lessons where possible till air quality improves and drops below hazardous. Avoid after-school activities.',
+      steps: [
+        WATCH,
+        { t: 'Lessons and activities', h: `<p class="alarm">FOR TRANSIENT SPIKES DURING THE SCHOOL DAY</p><p><b class="u">Curriculum &amp; student activities:</b></p>
+            <ul><li><b>Scale down lessons</b> where possible till air quality improves and drops below hazardous.</li>
+            <li><b>All students</b> should be in either air-conditioned rooms or rooms with doors and windows closed with air purifiers deployed.</li>
+            <li><b>Avoid after-school activities.</b></li></ul>` },
+        { t: 'Dismissal', h: `<p class="alarm">FOR TRANSIENT SPIKES DURING THE SCHOOL DAY</p><p><b class="u">Dismissal:</b> <b>No early dismissal of students.</b> However,</p>
+            <ul><li>Allow parents to fetch their children home early if they are concerned about their child’s well-being; and</li>
+            <li><b>Check that students are asymptomatic before dismissing them</b>, <i>especially</i> those with pre-existing conditions.</li>
+            <li>Encourage parent/caregiver of students with pre-existing conditions to pick them up from school at <b>dismissal time</b> <i>(unless they are taking school bus)</i>, <b><i>especially</i></b> if the child is in primary school.</li></ul>` },
+        { t: 'Staff', h: `<ul><li><b><i>Minimise</i></b> all outdoor work. <b><i>If unavoidable</i></b>, staff to use N95 mask.</li><li>N95 masks are <b class="u">not required</b> for indoor work.</li></ul>` + FN5 },
+        { t: 'If tomorrow’s PSI forecast is 301 or above', h: `<p><b>If PSI forecast for the following day is ≥301, MOE will consider school closure</b> for students in <i>Primary schools, Secondary schools &amp; Secondary section of IP schools</i>. If schools are to close, schools will implement home-based learning for students to ensure that students’ learning is not disrupted<sup>4</sup>. To support parents who are unable to make alternative childcare arrangements, schools and SCCs will continue to operate.</p>
+            <p class="lead" style="margin-top:12px">FOR JCS, CI AND JC SECTION OF IP SCHOOLS</p>
+            <p><b class="u">Curriculum &amp; student activities:</b> Students should be in air-conditioned spaces. Lessons could be modified where appropriate.</p>
+            <p><b class="u">Dismissal:</b> Check that students are asymptomatic before they are dismissed from school.</p>` + FN4 },
+        { t: MOE, ic: 'i', h: SRC + `<p class="moeq">If the 1-hr PM2.5 reading is <span class="u">very high</span> (251 and above)</p>
+            <ul><li>Schools will scale down lessons, by reducing the intensity of indoor activities, and suspend all physical and after-school activities.</li></ul>
+            <p class="moeq">If the 24-hr PSI forecast for the following day is in the <span class="u">hazardous</span> range (300 and above)</p>
+            <ul><li>MOE, MSF and ECDA will strongly encourage parents and guardians to keep their <span class="hl">infants and young children</span> at home.</li>
+            <li>MOE will consider closing schools and transitioning to home-based learning for younger students from <span class="hl">preschool up to secondary level</span>.</li>
+            <li>Kindergarten programmes, Early Intervention Programme for Infants and Children (EIPIC and EIPIC-P) programmes, private programmes, as well as preschool-based early intervention programmes such as the Development Support-Plus programme and Development Support-Learning Support programme, will also be suspended.</li></ul>
+            <p class="moeq">To support students whose parents/guardians are unable to make alternative care arrangements</p>
+            <ul><li>Primary and secondary schools (including SPED schools) as well as Student Care Centres and Special Student Care Centres in our schools and SPED schools will remain physically open.</li></ul>` }
+      ]
+    }
   ];
+
+  const ACTIVITY = {
+    YYY: ['School road run, sports carnival, CCAs conducted outdoors, outdoor adventure camps', '(1) Reduce intensity, shorten the duration of activity and move activity indoors where feasible; <b>OR</b> (2) Cancel/reschedule activity'],
+    YYN: ['PE lessons, CCAs conducted outdoors', '(1) Reduce intensity of activity; <b>OR</b> (2) Move activity indoors and reduce intensity; <b>OR</b> (3) Cancel/reschedule activity'],
+    YNY: ['Fun-fair/carnival', '(1) Reduce duration of activity; <b>OR</b> (2) Move activity indoors; <b>OR</b> (3) Cancel/reschedule activity'],
+    YNN: ['Learning Journeys', 'Can generally proceed with activity; where appropriate, consider reducing the duration of activity, especially for younger students'],
+    NYN: ['PE conducted indoors, CCAs conducted indoors', 'Especially in areas without air conditioning or air purifiers, (1) Reduce the intensity of activity; <b>OR</b> (2) Cancel/reschedule activity']
+  };
+
   const psiBand = v => v >= 301 ? 'Hazardous' : v >= 201 ? 'Very unhealthy' : v >= 101 ? 'Unhealthy' : v >= 51 ? 'Moderate' : 'Good';
   const pmBand  = v => v >= 251 ? 'Very high' : v >= 151 ? 'High' : v >= 56 ? 'Elevated' : 'Normal';
   const psiTier = v => v >= 301 ? 3 : v >= 201 ? 2 : v >= 101 ? 1 : 0;
@@ -465,7 +397,8 @@
   let region = store.get('region', 'central');
   let live = null;      // { psi:{...}, pm:{...}, ts }
   let manual = null;    // { psi, pm }
-  let viewTier = null;  // tab chosen by user; null follows the live tier
+  let liveTier = null;
+  let shownTier = null; // band whose steps are on screen
 
   // ---------- data ----------
   async function latest(urls) {
@@ -494,7 +427,7 @@
       };
       $('err').classList.remove('show');
     } catch (e) {
-      $('err').textContent = 'Could not reach the NEA feed (' + e.message + '). Check the NEA haze site directly, or use Drill to enter a reading.';
+      $('err').textContent = 'Could not reach the NEA feed (' + e.message + '). Check the NEA haze site, or use Run a drill to enter a reading.';
       $('err').classList.add('show');
     }
     $('refresh').disabled = false;
@@ -514,11 +447,18 @@
     return { psi: valueFor(live.psi, region), pm: valueFor(live.pm, region) };
   }
 
+  function setColours(tier, el = document.documentElement) {
+    const rs = el.style;
+    rs.setProperty('--tc', `var(--t${tier})`);
+    rs.setProperty('--tcbg', `var(--t${tier}bg)`);
+    rs.setProperty('--tcbd', `var(--t${tier}bd)`);
+  }
+
   function render() {
-    renderRegions();
-    const c = current();
+    renderRegionSelect();
     $('manualFlag').classList.toggle('show', !!manual);
-    if (!c) return;
+    const c = current();
+    if (!c) { if (shownTier === null) renderSteps(0); return; }
     const tP = c.psi == null ? 0 : psiTier(c.psi);
     const tM = c.pm == null ? 0 : pmTier(c.pm);
     const tier = Math.max(tP, tM);
@@ -529,48 +469,62 @@
     $('pmBand').textContent = c.pm == null ? '' : pmBand(c.pm);
     $('psiBox').classList.toggle('drive', tier > 0 && tP === tier);
     $('pmBox').classList.toggle('drive', tier > 0 && tM === tier);
-    $('tierName').textContent = TIERS[tier].name;
-    $('tierGist').textContent = TIERS[tier].gist;
+    $('bandName').textContent = BANDS[tier].name;
+    $('gist').textContent = BANDS[tier].gist;
+    setColours(tier);
 
-    const rs = document.documentElement.style;
-    rs.setProperty('--tc', tier ? `var(--t${tier}bd)` : 'var(--t0)');
-    rs.setProperty('--tcbg', `var(--t${tier}bg)`);
-    $('tierName').style.color = `var(--t${tier})`;
+    if (manual) $('updated').textContent = 'Drill reading';
+    else if (live && live.ts) $('updated').textContent = 'NEA, ' + new Date(live.ts).toLocaleString('en-SG', { timeZone: 'Asia/Singapore', weekday: 'short', hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'short' });
+    document.title = (c.psi != null ? 'PSI ' + c.psi + ' · ' : '') + BANDS[tier].name + ' · Haze Ops';
 
-    $('trigger').classList.toggle('quiet', tier === 0);
-    if (!manual && live && live.ts) {
-      const d = new Date(live.ts);
-      $('updated').textContent = 'NEA reading ' + d.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', weekday: 'short', hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'short' });
-    } else if (manual) {
-      $('updated').textContent = 'Drill reading';
-    }
-    document.title = (c.psi != null ? 'PSI ' + c.psi + ' · ' : '') + TIERS[tier].name + ' · Haze Ops';
-
-    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('now', +b.dataset.t === tier));
-    showTab(viewTier ?? tier);
-
+    const changedBand = liveTier !== tier;
+    liveTier = tier;
+    renderBandSelect();
+    if (changedBand || shownTier === null) renderSteps(tier);
     if (!manual && live) checkChange(tier, c);
   }
 
-  function renderRegions() {
-    const box = $('regions');
-    box.innerHTML = '';
-    REGIONS.forEach(([k, label]) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = k === region ? 'on' : '';
-      b.innerHTML = label + (live && !manual ? `<span>${valueFor(live.psi, k) ?? ''}</span>` : '');
-      b.title = k === 'national' ? 'Highest reading across all regions' : label + ' region';
-      b.onclick = () => { region = k; store.set('region', k); viewTier = null; render(); };
-      box.appendChild(b);
-    });
+  function renderRegionSelect() {
+    const sel = $('region');
+    sel.innerHTML = REGIONS.map(([k, label]) => {
+      const v = live && !manual ? valueFor(live.psi, k) : null;
+      return `<option value="${k}"${k === region ? ' selected' : ''}>${label}${v != null ? ' · PSI ' + v : ''}</option>`;
+    }).join('');
+    sel.disabled = !!manual;
   }
 
-  function showTab(t) {
-    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('sel', +b.dataset.t === t));
-    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('sel', +p.dataset.p === t));
+  function renderBandSelect() {
+    const sel = $('bandSel');
+    sel.innerHTML = BANDS.map((b, i) => `<option value="${i}"${i === shownTier ? ' selected' : ''}>${i === liveTier ? 'Now: ' : ''}${b.name}</option>`).join('');
   }
-  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { viewTier = +b.dataset.t; showTab(viewTier); });
+
+  function renderSteps(tier) {
+    shownTier = tier;
+    const b = BANDS[tier];
+    const now = tier === liveTier;
+    $('doTitle').textContent = now ? 'What to do now' : 'If the band is ' + b.name;
+    $('doSub').textContent = b.range + '. Tap a step to open it.';
+    let n = 0;
+    $('steps').innerHTML = b.steps.map((s, i) => {
+      const ic = s.ic ? s.ic : String(++n);
+      const preview = s.h.replace(/<p class="(trig|src|grp|alarm)[^"]*">.*?<\/p>|<div class="(src|grp)">.*?<\/div>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      return `<details name="steps">
+        <summary><span class="no${s.ic ? ' ic' : ''}">${ic}</span><span><span class="st">${s.t}</span><span class="pv">${preview}</span></span><span class="chev"></span></summary>
+        <div class="body">${s.h}</div></details>`;
+    }).join('');
+    $('steps').querySelectorAll('[data-open]').forEach(a => a.onclick = e => {
+      e.preventDefault();
+      const d = $(a.dataset.open); d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    setColours(tier, $('steps'));
+    renderBandSelect();
+  }
+
+  $('region').onchange = e => { region = e.target.value; store.set('region', region); render(); };
+  $('bandSel').onchange = e => {
+    const t = +e.target.value;
+    renderSteps(t);
+  };
 
   // ---------- change alerts ----------
   function checkChange(tier, c) {
@@ -578,15 +532,12 @@
     const prev = store.get(key, null);
     store.set(key, String(tier));
     if (prev === null || +prev === tier) return;
-    const up = tier > +prev;
     const label = REGIONS.find(r => r[0] === region)[1];
-    const msg = `${up ? 'Up' : 'Down'} to ${TIERS[tier].name} (${label}). PSI ${c.psi ?? '–'}, PM2.5 ${c.pm ?? '–'}.`;
-    $('changedTxt').textContent = msg;
+    const msg = `${tier > +prev ? 'Up' : 'Down'} to ${BANDS[tier].name} (${label}). PSI ${c.psi ?? '–'}, PM2.5 ${c.pm ?? '–'}.`;
+    $('changed').textContent = 'Band changed: ' + msg;
     $('changed').classList.add('show');
-    viewTier = null;
-    notify('Haze Ops: ' + TIERS[tier].name, msg + ' ' + TIERS[tier].gist);
+    notify('Haze Ops: ' + BANDS[tier].name, msg + ' ' + BANDS[tier].gist);
   }
-  $('changedX').onclick = () => $('changed').classList.remove('show');
 
   async function notify(title, body) {
     if (store.get('alerts', '0') !== '1' || !('Notification' in window) || Notification.permission !== 'granted') return;
@@ -622,25 +573,18 @@
   };
 
   // ---------- activity check ----------
-  const ans = { o: null, s: null, p: null };
+  const ans = ['', '', ''];
   document.querySelectorAll('.yn').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
-    const k = g.dataset.k;
-    ans[k] = ans[k] === b.dataset.v ? null : b.dataset.v;
+    const k = +g.dataset.k;
+    ans[k] = ans[k] === b.dataset.v ? '' : b.dataset.v;
     g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === ans[k]));
-    filterRows();
+    const r = $('result');
+    if (ans.some(a => !a)) { r.className = 'result empty'; r.textContent = 'Answer the three questions above.'; return; }
+    const row = ACTIVITY[ans.join('')];
+    if (!row) { r.className = 'result empty'; r.textContent = 'This combination is not in the MOE table. Apply the measures for the current band.'; return; }
+    r.className = 'result';
+    r.innerHTML = `<div class="ex">${row[0]}</div>${row[1]}`;
   }));
-  function filterRows() {
-    const any = ans.o || ans.s || ans.p;
-    let hits = 0;
-    document.querySelectorAll('#rows .row').forEach(r => {
-      const m = r.dataset.m;
-      const ok = (!ans.o || m[0] === ans.o) && (!ans.s || m[1] === ans.s) && (!ans.p || m[2] === ans.p);
-      r.classList.toggle('match', !!any && ok);
-      if (ok) hits++;
-    });
-    $('rows').classList.toggle('filtered', !!any);
-    $('nomatch').classList.toggle('show', !!any && hits === 0);
-  }
 
   // ---------- drill ----------
   $('drill').onsubmit = e => {
@@ -648,10 +592,10 @@
     const psi = $('dPsi').value === '' ? null : +$('dPsi').value;
     const pm = $('dPm').value === '' ? null : +$('dPm').value;
     if (psi == null && pm == null) return;
-    manual = { psi, pm }; viewTier = null; render();
+    manual = { psi, pm }; render();
     $('status').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  $('manualClear').onclick = e => { e.preventDefault(); manual = null; viewTier = null; render(); };
+  $('manualClear').onclick = e => { e.preventDefault(); manual = null; render(); };
 
   // ---------- boot ----------
   $('refresh').onclick = load;
@@ -659,7 +603,7 @@
   setInterval(load, POLL_MS);
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   paintAlertBtn();
-  showTab(0);
+  render();
   load();
 })();
 </script>
