@@ -6,6 +6,7 @@ Live NEA readings, matched to the MOE school haze measures for that band.
 - Band: whichever of PSI or PM2.5 is higher sets the band (the guidelines say "OR"). Region defaults to Central; "Highest" takes the worst region.
 - Alerts: tap "Turn on alerts". When the band changes, the app shows a banner and a system notification. Alerts fire while the app is open (a background tab or the installed app counts). Alerts with the app fully closed need a push server, which this static site does not have.
 - Content: transcribed exactly from the MOE haze guidelines graphic, plus the MOE press conference slides of 16 Oct 2026. Source typos are kept as published.
+- Roles: "I am a …" picks Teacher, Operations Manager or School Leader. Steps filter by role (`WHO` in `index.html`). A "Your actions" step opens first with school follow ups for that band and role (`ACTIONS` in `index.html`). These are school procedure, not MOE text; edit them there.
 - Drill: enter any reading to preview the measures, for staff briefings or when the feed is down.
 
 Files: `index.html` (whole app), `sw.js` (offline shell, mobile notifications), `manifest.webmanifest`, `assets/`.

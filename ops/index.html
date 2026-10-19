@@ -102,6 +102,9 @@
   .body .hl{color:#3b4bb8;font-weight:700}
   .body .trig{font-weight:800;color:#c5302a;font-size:.9rem;line-height:1.4;margin-bottom:8px}
   .body .range{display:inline-block;font-size:.8rem;font-weight:700;background:var(--bg);border-radius:6px;padding:3px 8px;margin-bottom:8px}
+  .tag{display:inline-block;font-size:.72rem;font-weight:700;color:var(--ink3);background:var(--bg);border-radius:6px;padding:2px 8px;margin-bottom:8px}
+  .acts{padding-left:20px}
+  .acts li{margin:6px 0;font-weight:600}
   .src{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#3b4bb8;margin-bottom:6px}
 
   /* activity check */
@@ -312,6 +315,57 @@
   };
   const ROLES = { T: 'Teacher', O: 'Operations Manager', L: 'School Leader' };
 
+  // School follow up actions by band and role. School procedure, not MOE text: edit freely.
+  const ACTIONS = [
+    {
+      T: ['Turn on alerts in this app so you know when the band changes.'],
+      O: ['Turn on alerts in this app so you know when the band changes.', 'Keep air purifiers serviced and the holding room ready before haze season.'],
+      L: ['Turn on alerts in this app so you know when the band changes.', 'Name who monitors NEA readings each school day.']
+    },
+    {
+      T: ['Before any physical or outdoor activity, ask students if anyone feels unwell.',
+          'Send unwell students to the holding room and inform the general office.',
+          'Keep doors and windows closed with purifiers on. Reopen briefly at lesson change.',
+          'PE and CCA teachers: use Plan an activity before any outdoor session.'],
+      O: ['Set up the holding room now: air conditioned, purifier on.',
+          'Check purifiers in classrooms, labs, the hall and the ISH are working and switched on.',
+          'Brief estate and cleaning staff to minimise prolonged or strenuous outdoor work.',
+          'Alert the School Leader if NEA readings rise into the next band.'],
+      L: ['Tell staff the band and its measures, and who is monitoring NEA readings today.',
+          'Review outdoor activities in the next 24 hours: proceed, modify or reschedule.',
+          'Have Year Heads flag students with lung or heart conditions to their form teachers.',
+          'Prepare a parent message in case the band rises.']
+    },
+    {
+      T: ['Keep all lessons indoors. No outdoor activities and no strenuous indoor exercise.',
+          'Students eat at the indoor recess venue; teachers on duty supervise there.',
+          'Before dismissal, check every student for coughing, wheezing or shortness of breath.',
+          'If a parent fetches a student early, release through the general office.'],
+      O: ['Set up the indoor recess venue and inform canteen vendors.',
+          'Keep the holding room ready and purifiers running in every room in use.',
+          'Issue N95 masks to staff whose outdoor work cannot be avoided.',
+          'Keep elderly, pregnant and vulnerable staff off outdoor work.'],
+      L: ['Announce to staff: indoor measures in force, no early dismissal.',
+          'Message parents with MOE’s lines: parents may fetch their children early if concerned.',
+          'Replace outdoor CCAs and camps with indoor ones, or postpone them. Minimise after school activities.',
+          'Set up the early fetch process at the general office.']
+    },
+    {
+      T: ['Scale down lessons. Keep students in air conditioned rooms, or closed rooms with purifiers.',
+          'Cancel any after school activity you run.',
+          'Check every student is well before dismissal, especially those with lung or heart conditions.',
+          'Be ready to switch to Home Based Learning if MOE closes schools.'],
+      O: ['Confirm every room in use is air conditioned, or closed with a purifier running.',
+          'Stop all outdoor work that can wait. N95 for any that cannot; vulnerable staff do none.',
+          'Coordinate dismissal timing with the school bus operator.',
+          'If schools close, keep the school open for students whose parents cannot arrange care.'],
+      L: ['Watch tomorrow’s 24 hour PSI forecast. If 301 or above, prepare for MOE’s decision on closure.',
+          'Ready the Home Based Learning plan (SOP 5.1) and brief staff.',
+          'Message parents: no early dismissal; parents of students with lung or heart conditions are encouraged to fetch them at dismissal time.',
+          'For O Level candidates, watch for SEAB announcements on rescheduling.']
+    }
+  ];
+
   const BANDS = [
     {
       name: 'Normal', range: '24-hr PSI 100 and below, and 1-hr PM2.5 55 and below',
@@ -517,10 +571,13 @@
     $('doSub').textContent = b.range + '. Tap a step to open it.';
     let n = 0;
     const steps = b.steps.filter(s => !role || (s.who || WHO[s.t] || 'TOL').includes(role));
+    const mine = role && ACTIONS[tier][role];
+    if (mine && mine.length) steps.unshift({ t: 'Your actions', ic: '★', open: true,
+      h: '<div class="tag">School follow up. Not MOE guideline text.</div><ol class="acts">' + mine.map(a => `<li>${a}</li>`).join('') + '</ol>' });
     $('steps').innerHTML = steps.map((s, i) => {
       const ic = s.ic ? s.ic : String(++n);
-      const preview = s.h.replace(/<p class="(trig|src|grp|alarm)[^"]*">.*?<\/p>|<div class="(src|grp)">.*?<\/div>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-      return `<details name="steps">
+      const preview = s.h.replace(/<p class="(trig|src|grp|alarm)[^"]*">.*?<\/p>|<div class="(src|grp|tag)">.*?<\/div>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      return `<details name="steps"${s.open ? ' open' : ''}>
         <summary><span class="no${s.ic ? ' ic' : ''}">${ic}</span><span><span class="st">${s.t}</span><span class="pv">${preview}</span></span><span class="chev"></span></summary>
         <div class="body">${s.h}</div></details>`;
     }).join('');
