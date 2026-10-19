@@ -59,10 +59,10 @@ const FRAMEWORKS = {grow:GROW, act:ACT, across:ACROSS};
 /* A coach's follow up for each guiding question, used when that answer is
    the thinnest one in the entry. Written to be read by a Sec 1 to Sec 5. */
 const PROBES = {
-  g1:'Say it without the textbook’s words. What is it, in one sentence a Sec 1 would follow?',
+  g1:'Explain it in your own words, in one sentence a Sec 1 student would understand.',
   g2:'Which example would you use, and where would your friend get stuck first?',
   r1:'Name the exact place it breaks: which step, or which kind of question?',
-  r2:'When, where, and for how long? A plan without a time is only a wish.',
+  r2:'When, where and for how long will you do it? Write down the day and the time.',
   o1:'Where did you actually see this outside class this week? Be specific about the place.',
   o2:'Who did you tell, and what did they ask you back?',
   w1:'What do you already know that the next topic will build on? Name one idea.',
@@ -71,10 +71,10 @@ const PROBES = {
   a2:'Which part of the feedback would change your next attempt the most?',
   c1:'Which success criterion does this feedback sit under? Quote it.',
   c2:'Is this the same note as last time? If so, what has stopped you fixing it?',
-  t1:'Name the habit and its replacement: instead of X, I will Y.',
+  t1:'Name the habit you will change, and say what you will do instead.',
   t2:'What will you look at in two weeks to check? A redo, marks, a friend reading your work?',
   x1:'Point to one entry and quote yourself. What exactly could you do there that you could not before?',
-  x2:'Name the moment it broke down. Was it the skill, the setting, or the people?',
+  x2:'When did it go wrong? Was it the skill, the place, or the people you worked with?',
   x3:'Which lesson, CCA session or event next term will you use to try it, and how will you know?'
 };
 
@@ -157,21 +157,21 @@ const LEVELS = [
   {n:3, label:'Can teach it', help:'I do this reliably and could show a friend.'},
 ];
 const DEPTHS = {
-  surface:{label:'Base camp', help:'The words are here, but the details are still at the bottom of the hill.'},
-  working:{label:'On the climb', help:'Specific in places. One more concrete detail and a dated next step would take you higher.'},
-  deep:{label:'Ridge view', help:'Specific, honest and with a real next step. This is what reflection looks like.'}
+  surface:{label:'Just started', help:'You have written something. Now add details: what happened, when, and why.'},
+  working:{label:'Good details', help:'Some answers have details. Add one more example and a next step with a day on it.'},
+  deep:{label:'Well thought through', help:'Your answers are detailed and honest, and your next step is clear.'}
 };
 /* The competency read: how strongly the writing shows a competency, and
    whether the entry is about the task or about how the student worked. */
 const STRENGTHS = {
-  glimpse:{label:'Glimpse', help:'A word points here, but there is no moment yet.'},
-  clear:{label:'Clear', help:'A specific moment in your own words shows it.'},
-  strong:{label:'Strong', help:'A specific moment, and you say how or why.'}
+  glimpse:{label:'Glimpse', help:'A word hints at it, but you have not described a moment yet.'},
+  clear:{label:'Clear', help:'You describe a specific moment that shows it.'},
+  strong:{label:'Strong', help:'You describe a specific moment and say how or why.'}
 };
 const STANCES = {
-  task:{label:'Task talk', help:'This describes what the task was. The competencies live in how you worked it.'},
-  mixed:{label:'Getting there', help:'Some of the how is here. One more moment would tip it.'},
-  competency:{label:'Competency talk', help:'You are writing about how you thought and worked, not only what you did.'}
+  task:{label:'About the task', help:'You wrote about what the task was. Write more about how you worked on it.'},
+  mixed:{label:'Some of how you worked', help:'You wrote a little about how you worked. Add one more moment.'},
+  competency:{label:'About how you worked', help:'You wrote about how you thought and worked. This is what the wheel looks for.'}
 };
 const MOODS = [
   {id:'mountain', label:'Mountain', c:'linear-gradient(180deg,#0b1446,#33427f)'},
@@ -183,7 +183,7 @@ const ACCENTS = [
   {id:'yellow', c:'#FFE200'},{id:'coral', c:'#FF7A6B'},{id:'mint', c:'#5FD3A8'},{id:'sky', c:'#7CC0FF'},{id:'lilac', c:'#C4ACFF'}
 ];
 const EMOJIS = ['🐝','🌱','⛰️','🌊','🔥','🌙','⭐','🦉','🐢','🦁','🎯','🧭','📚','🎨','🎵','⚽','🧪','🔭','🌈','🍀'];
-const MOTTOS = ['Believe you can.','Non Vi Sed Arte.','Small steps, every week.','Not yet is not never.','Write it down, then climb.'];
+const MOTTOS = ['Believe you can.','Non Vi Sed Arte.','Small steps, every week.','Not yet is not never.','Write it down, then do it.'];
 
 /* ---------- built in reflective coach (works offline) ---------- */
 const VAGUE = ['stuff','things','everything','nothing','idk',"i don't know",'dont know','not sure','ok','okay','fine','good','bad','nice','fun','boring','a lot','study more','practise more','practice more','pay attention','listen more','revise more','try harder','work harder','focus more','do my best','be more careful','do better','improve more'];
@@ -230,9 +230,9 @@ function builtinCoach(entry, cls){
   const out = {source:'builtin', depth:'surface', gift:'', stretch:'', question:'', competency:''};
 
   if (!answered.length){
-    out.gift = 'You opened the log. That is the first step, and most people never take it.';
-    out.stretch = 'Nothing is written yet. Pick the question that feels easiest and write three honest sentences.';
-    out.question = PROBES[qs[0].id]; out.competency = 'Once there are words on the page, we can look at which competency they show.';
+    out.gift = 'You have started an entry. Well done for making time for it.';
+    out.stretch = 'Nothing is written yet. Start with the easiest question and write two or three sentences.';
+    out.question = PROBES[qs[0].id]; out.competency = 'Once you have written something, I can tell you which competency it shows.';
     return out;
   }
   const mean = answered.reduce((a,s)=>a+s.score,0)/answered.length;
@@ -242,9 +242,9 @@ function builtinCoach(entry, cls){
 
   // gift: the strongest answer, quoted
   const best = answered.slice().sort((a,b)=>b.score-a.score)[0]; const bestQ = qs.find(q=>q.id===best.id);
-  const QWHY = {r1:'you named the exact place it breaks, which is the honest start of any plan', a1:'you named the feeling and then looked past it to what the feedback is for', o1:'you found the idea outside the classroom', o2:'you tested the idea on a real person', c1:'you tied the feedback to a criterion instead of a mood', c2:'you noticed the pattern across pieces of feedback', w1:'you are reaching forward, not only looking back'};
-  const why = QWHY[best.id] || (best.flags.includes('reasoned') ? 'you gave a reason, not only a claim' : best.flags.includes('specific') ? 'it names something real instead of staying general' : 'you wrote it in your own words');
-  out.gift = `${teacher ? teacher + ' would notice this' : 'This'}: “${fragment(entry.answers[best.id])}”. It works because ${why}.`;
+  const QWHY = {r1:'you said exactly where you got stuck, so you know what to work on', a1:'you said how you felt, then thought about how the feedback can help you', o1:'you linked the idea to real life', o2:'you explained it to someone else', c1:'you linked the feedback to the success criteria', c2:'you compared it with feedback you had before', w1:'you thought ahead to the next topic'};
+  const why = QWHY[best.id] || (best.flags.includes('reasoned') ? 'you gave a reason for your answer' : best.flags.includes('specific') ? 'you gave a specific example' : 'you wrote it in your own words');
+  out.gift = `${teacher ? teacher + ' would be pleased with this' : 'Well done'}: “${fragment(entry.answers[best.id])}”. This is good because ${why}.`;
 
   // stretch: the weakest answered question, or the empty one that matters most
   const empties = scores.filter(s => s.flags.includes('empty'));
@@ -252,12 +252,12 @@ function builtinCoach(entry, cls){
   if (empties.length && (empties.some(e=>e.id===nextQ.id) || weak.score >= 1)) weak = empties.find(e=>e.id===nextQ.id) || empties[0];
   const weakQ = qs.find(q=>q.id===weak.id); const qtext = weakQ.q.replace(/<[^>]+>/g,'');
   let s = '';
-  if (weak.flags.includes('empty')) s = `“${qtext}” is still blank${weak.id===nextQ.id ? ', and that is the one that turns a reflection into a plan' : ''}.`;
-  else if (weak.flags.includes('thin')) s = weak.id===nextQ.id ? `“${entry.answers[weak.id].trim()}” is a wish, not a step. A step has a doing verb, a day and a place.` : `“${entry.answers[weak.id].trim()}” is too short to act on. Give “${qtext}” three honest sentences.`;
-  else if (weak.flags.includes('notime') || weak.flags.includes('noaction')) s = `Your plan (“${fragment(entry.answers[weak.id], 50)}”) needs ${!weak.hasAction ? 'a doing verb' : ''}${!weak.hasAction && !weak.hasTime ? ' and ' : ''}${!weak.hasTime ? 'a time and place' : ''}. Small steps only count when they are dated.`;
-  else if (weak.flags.includes('vague')) s = `“${weak.vague}” is doing a lot of work in your answer to “${qtext}”. Swap it for the exact thing.`;
-  else if (weak.flags.includes('echo')) s = `Your answer to “${qtext}” mostly repeats the question. Say it as if to a friend who was absent.`;
-  else s = `Your answer to “${qtext}” is the thinnest. One concrete detail (a number, a name, an example) would lift it.`;
+  if (weak.flags.includes('empty')) s = `You have not answered “${qtext}” yet.${weak.id===nextQ.id ? ' This answer is your plan, so please fill it in.' : ''}`;
+  else if (weak.flags.includes('thin')) s = weak.id===nextQ.id ? `“${entry.answers[weak.id].trim()}” is too general to act on. Write what you will do, on which day, and where.` : `“${entry.answers[weak.id].trim()}” is too short. Write two or three sentences for “${qtext}”.`;
+  else if (weak.flags.includes('notime') || weak.flags.includes('noaction')) s = `Your plan (“${fragment(entry.answers[weak.id], 50)}”) needs ${!weak.hasAction ? 'the exact thing you will do' : ''}${!weak.hasAction && !weak.hasTime ? ' and ' : ''}${!weak.hasTime ? 'a day and a time' : ''}. Then you will know exactly when to do it.`;
+  else if (weak.flags.includes('vague')) s = `In your answer to “${qtext}”, the word “${weak.vague}” is too general. Replace it with exactly what you mean.`;
+  else if (weak.flags.includes('echo')) s = `Your answer to “${qtext}” mostly repeats the question. Explain it as you would to a friend who missed the lesson.`;
+  else s = `Your answer to “${qtext}” is the shortest. Add one detail, such as a number, a name or an example.`;
   if (phrase) s = `${phrase} ${s}`;
   out.stretch = s;
   out.question = PROBES[weak.id];
@@ -267,18 +267,18 @@ function builtinCoach(entry, cls){
   const tagged = (entry.competencies||[]).map(t => COMPETENCIES.find(c=>c.id===t.id)).filter(Boolean);
   const taskHeavy = TASKWORDS.filter(k => all.toLowerCase().includes(k)).length >= 2 && !seen.length;
   if (!tagged.length && seen.length){
-    const top = seen[0].c; out.competency = `This reads like ${top.label.toLowerCase()}: ${top.plain} Tag it if you agree, and add one line on how it showed.`;
+    const top = seen[0].c; out.competency = `This shows ${top.label.toLowerCase()}: ${top.plain} If you agree, claim it and add one line on where it shows.`;
   } else if (!tagged.length){
-    out.competency = taskHeavy ? 'You have told me what the task was. Now tell me what you did with your mind: how you worked it out, how you got unstuck, who you explained it to. That is where the competencies live.' : 'Which competency did this stretch? Pick one and say where in your answers it shows.';
+    out.competency = taskHeavy ? 'You have written about what the task was. Now write about how you did it: how you worked it out, what you did when you were stuck, who you explained it to. This is where the competencies show.' : 'Which competency did you use? Pick one and say where your answers show it.';
   } else {
     const evidenced = tagged.filter(c => seen.some(s => s.c.id === c.id));
-    if (evidenced.length){ const c = evidenced[0]; const hit = seen.find(s=>s.c.id===c.id).hits[0]; out.competency = `You named ${c.label.toLowerCase()} and your writing shows it (“${hit.trim()}”). ${c.probe}`; }
-    else { const c = tagged[0]; out.competency = `You tagged ${c.label.toLowerCase()}, but I cannot yet see the moment it happened. ${c.probe}`; }
+    if (evidenced.length){ const c = evidenced[0]; const hit = seen.find(s=>s.c.id===c.id).hits[0]; out.competency = `You claimed ${c.label.toLowerCase()}, and your writing shows it (“${hit.trim()}”). ${c.probe}`; }
+    else { const c = tagged[0]; out.competency = `You claimed ${c.label.toLowerCase()}, but I cannot find where your writing shows it yet. ${c.probe}`; }
   }
   // success criteria connection for ACT
   if (entry.kind === 'act' && cls && Array.isArray(cls.criteria) && cls.criteria.length){
     const low = all.toLowerCase(); const hit = cls.criteria.find(c => tokens(c).filter(w=>w.length>4).some(w => low.includes(w)));
-    out.stretch += hit ? ` Good: this links to the success criterion “${hit}”.` : ` Your teacher’s success criteria are listed in this class; quote the one this feedback sits under.`;
+    out.stretch += hit ? ` Good: this links to the success criterion “${hit}”.` : ` Look at your teacher’s success criteria and quote the one this feedback is about.`;
   }
   return out;
 }
@@ -291,7 +291,7 @@ const COACH_SCHEMA = {
     gift:{type:'string', description:'One specific thing done well, quoting the student’s words. Under 60 words.'},
     stretch:{type:'string', description:'One thing to deepen, naming the guiding question it belongs to. Under 70 words.'},
     question:{type:'string', description:'One question for the student to answer now. Under 30 words.'},
-    competency:{type:'string', description:'Nudge from task talk to competency talk: name the E21CC competency the entry shows or could show, and ask for the moment. Under 60 words.'},
+    competency:{type:'string', description:'Help the student move from describing the task to describing how they worked: name the E21CC competency the entry shows or could show, and ask for the moment. Under 60 words.'},
     depth:{type:'string', enum:['surface','working','deep']},
     e21cc:{type:'object', additionalProperties:false, description:'The competency read against MOE’s 21st Century Competencies.',
       properties:{
@@ -329,9 +329,9 @@ function coachSchema(stmts){
 }
 /* The student chooses how the coach sounds. Honesty does not change with the tone. */
 const TONES = {
-  warm:{label:'Warm', help:'Encouraging, like a coach who believes in you.', line:'Tone: warm and encouraging, like a coach who believes in the student. Still honest: never praise what is not there.'},
-  direct:{label:'Direct', help:'Brief and plain. Names the gap.', line:'Tone: direct and brief. Name the gap plainly, with no softening and no filler.'},
-  playful:{label:'Playful', help:'Light, with energy. Never sarcastic.', line:'Tone: light and playful, with energy. At most one touch of humour; never sarcastic, never at the student’s expense.'}
+  warm:{label:'Warm', help:'Kind and encouraging.', line:'Tone: warm and encouraging, like a coach who believes in the student. Still honest: never praise what is not there.'},
+  direct:{label:'Direct', help:'Short and clear. Tells you what to fix.', line:'Tone: direct and brief. Name the gap plainly, with no softening and no filler.'},
+  playful:{label:'Playful', help:'Light and cheerful.', line:'Tone: light and playful, with energy. At most one touch of humour; never sarcastic, never at the student’s expense.'}
 };
 function coachSystem(cls, stmts, tone){
   const v = (cls && cls.voice) || {};
@@ -342,7 +342,8 @@ function coachSystem(cls, stmts, tone){
     'Competency lens (MOE 21st Century Competencies, 2023 refresh). Use these exact names and read the entry against MOE’s definitions.\n' + DOMAINS.map(d => d.name + ': ' + COMPETENCIES.filter(c => c.d === d.id).map(c => `${c.name} [id ${c.id}]: ${c.moe || c.plain}`).join(' | ')).join('\n'),
     'Competency read rules. Evidence must be a verbatim phrase from the student’s answers; never paraphrase, never invent. glimpse = a word or phrase hints at the competency with no specific moment; clear = a specific moment in the student’s words shows it, with a detail; strong = the moment plus how or why, or the competency drives the next step. At most four competencies, strongest first, and none where no phrase supports it. Stance: task = the entry describes what the task or lesson was, marks, or finishing, without how or why; mixed = some how or why; competency = the entry is about how the student thought, worked or related, with reasons. tagged_not_shown lists tags the student chose that the writing does not evidence. suggested lists up to two ids from the evidence the student should tag. The probe asks for the missing moment for one competency.',
     'Your job: help the student reflect more deeply and shift from describing the task to noticing how they learned and which competency they used. Never write the reflection for them. Quote their own words. No praise inflation: one honest gift, one stretch, one question. Plain English, short sentences, no jargon, no emoji. Do not mention marks or grades unless the student did. Do not use hyphens or dashes as punctuation; use commas, semicolons or colons.',
-    'Depth: surface = general words, no specifics, no dated next step; working = specific in places; deep = specific, honest, with a next step that has an action, a time and a place.'
+    'Depth: surface = general words, no specifics, no dated next step; working = specific in places; deep = specific, honest, with a next step that has an action, a time and a place.',
+    'Write like a caring secondary school teacher marking a reflection in the student’s book: name one thing done well using the student’s own words, one thing to work on next, and one question. Use plain language that a 14 year old reads easily. Say exactly what to do. No slogans, sayings or clever turns of phrase, and never use the pattern “X, not Y”.'
   ];
   if (TONES[tone]) lines.push(TONES[tone].line);
   lines.push('Anchor every part of your feedback in the competencies: say which competency the words show and how, and frame the stretch as what would make a competency more visible.');
@@ -387,7 +388,7 @@ function builtinE21cc(entry, stmts){
     const reasoned = REASONS.some(r => bl.includes(r)) || PROCESS.some(x => bl.includes(x));
     // a bare reason word is a glimpse; a specific moment is clear; both together are strong
     const strength = specific && reasoned ? 'strong' : specific ? 'clear' : 'glimpse';
-    const why = (strength === 'strong' ? 'A specific moment, and you say how or why: that is ' : strength === 'clear' ? 'A specific moment in your words shows ' : 'A word points at ') + c.label.toLowerCase() + '.';
+    const why = (strength === 'strong' ? 'You describe a specific moment and say how or why. This shows ' : strength === 'clear' ? 'You describe a specific moment. This shows ' : 'One word hints at ') + c.label.toLowerCase() + '.';
     evidence.push({id:c.id, strength, quote: fragment(best.s, 140), why, _score: hits*2 + (strength==='strong'?3:strength==='clear'?2:1)});
   }
   evidence.sort((x,y) => y._score - x._score);

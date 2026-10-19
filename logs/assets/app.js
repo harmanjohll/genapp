@@ -33,7 +33,7 @@ function newProfile(name, email, code){
     id:uid(), name:name.trim(), email:(email || '').trim().toLowerCase(),
     groups: code ? [{code:code.trim().toUpperCase(), type:'subject'}] : [],
     pin:null, created:Date.now(),
-    prefs:{mood:'mountain', accent:'yellow', size:'normal', avatar:EMOJIS[Math.floor(Math.random() * EMOJIS.length)], motto:MOTTOS[0]},
+    prefs:{mood:'mountain', accent:'yellow', size:'normal', avatar:AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)], motto:MOTTOS[0]},
     coach:{mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'},
     entries:[], drafts:{}, done:{}
   });
@@ -57,7 +57,11 @@ function fmtDay(t){ return new Date(t).toLocaleDateString('en-SG', {weekday:'sho
 function firstName(n){ return (n || '').trim().split(/\s+/)[0] || 'there'; }
 function plural(n, one, many){ return `${n} ${n === 1 ? one : (many || one + 's')}`; }
 function today(){ return new Date().toLocaleDateString('en-CA'); }
-function toast(msg, ms = 2600){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, ms); }
+function toast(msg, ms = 2600, action){
+  const t = $('#toast'); t.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button">${esc(action.label)}</button>` : ''}`;
+  if (action) $('button', t).onclick = () => { action.fn(); t.hidden = true; if (action.done) toast(action.done); };
+  t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, ms);
+}
 function icon(n){
   const P = {
     map:'<path d="M3 20l6-11 4 6 3-4 5 9z"/><path d="M14 6l1.5-2L17 6"/>',
@@ -74,7 +78,15 @@ function icon(n){
     eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', flag:'<path d="M5 21V4h11l-1.5 4L16 12H5"/>',
     wheel:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>',
     list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>', shelf:'<rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><path d="M17.5 5l3 .8-3.8 14.4-3-.8"/>',
-    book:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/>', star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'
+    book:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/>',
+    home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+    users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 5"/>',
+    tent:'<path d="M3 20 12 4l9 16"/><path d="M9 20l3-6 3 6"/><path d="M2 20h20"/>',
+    trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8 21h8"/>',
+    heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    sliders:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+    grow:'<circle cx="12" cy="12" r="8"/><path d="M12 4v4M20 12h-4M12 20v-4M4 12h4"/>', act:'<path d="M4 12h4l3-7 3 14 3-7h3"/>',
+    star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
 }
@@ -122,8 +134,47 @@ const COVERS = [
   {id:'crimson', label:'Crimson', c:'#861c27'}, {id:'teal', label:'Teal', c:'#0e5461'}, {id:'ochre', label:'Ochre', c:'#77560f'}
 ];
 const PAPERS = [{id:'lined', label:'Lined'}, {id:'dotted', label:'Dotted'}, {id:'plain', label:'Plain'}, {id:'dark', label:'Dark'}];
-const ICONS = ['🌱','🦉','🐝','⛰️','🌊','🔥','🌙','⭐','🐢','🦁','🎯','🧭','📚','🎨','🎵','⚽','🧪','🔭','🌈','🍀','🦊','🐬','🦋','🌻','🚀','🎸','🏀','🏸','🎭','🧩','✏️','🛶','🧗','🌿','🐉','🦖','🍉','☕','🎧','💡'];
+/* The student's icon: line drawings that look the same on every device.
+   Earlier logs stored an emoji; it maps to the nearest drawing. */
+const AVATARS = {
+  leaf:'<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19l8-8"/>',
+  owl:'<circle cx="8.5" cy="10.5" r="2.5"/><circle cx="15.5" cy="10.5" r="2.5"/><path d="M5 5l3 2.5M19 5l-3 2.5"/><path d="M5 9v5a7 7 0 0 0 14 0V9"/><path d="M11 14.5l1 1.5 1-1.5"/>',
+  bee:'<ellipse cx="12" cy="14" rx="5" ry="6"/><path d="M7.4 12h9.2M7.4 16h9.2"/><path d="M9 8.5C7 5 4 5 4 7.5S7 10 9 9.5M15 8.5c2-3.5 5-3.5 5-1S17 10 15 9.5"/>',
+  mountain:'<path d="M3 20l6-11 4 6 3-4 5 9z"/><path d="M14 6l1.5-2L17 6"/>',
+  wave:'<path d="M2 7c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/><path d="M2 12c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/><path d="M2 17c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2"/>',
+  flame:'<path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 8 0 4 3 7 7 7z"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  paw:'<circle cx="7" cy="8.5" r="1.8"/><circle cx="12" cy="6" r="1.8"/><circle cx="17" cy="8.5" r="1.8"/><path d="M12 11.5c-3 0-6 3.5-6 6.5 0 2 1.5 3 3 3 1.2 0 2-.6 3-.6s1.8.6 3 .6c1.5 0 3-1 3-3 0-3-3-6.5-6-6.5z"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  book:'<path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h12"/>',
+  palette:'<path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.5-.8 1.5-1.6 0-.9-.6-1.4-.6-2.2 0-1 .8-1.7 1.8-1.7H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  ball:'<circle cx="12" cy="12" r="9"/><path d="M12 7l4.3 3.1-1.6 5h-5.4l-1.6-5z"/><path d="M12 3v4M20.5 9.5l-4.2.6M17.5 19.5l-2.8-4.4M6.5 19.5l2.8-4.4M3.5 9.5l4.2.6"/>',
+  flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7.5 15h9"/>',
+  rocket:'<path d="M5 15c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.1 2.1 0 0 0-2.9-.1z"/><path d="M12 15l-3-3a22 22 0 0 1 2-4A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/>',
+  rainbow:'<path d="M22 17a10 10 0 0 0-20 0"/><path d="M18 17a6 6 0 0 0-12 0"/><path d="M14 17a2 2 0 0 0-4 0"/>',
+  fish:'<path d="M7 12c2.5-3.5 6-5 9-5 3 0 6 2.5 6 5s-3 5-6 5c-3 0-6.5-1.5-9-5z"/><path d="M7 12L2 8v8z"/><circle cx="17" cy="11" r=".6"/>',
+  butterfly:'<path d="M12 8v12"/><path d="M12 10C9 5 3 4 3 8c0 3 3 5 9 5"/><path d="M12 10c3-5 9-6 9-2 0 3-3 5-9 5"/><path d="M12 13c-3 0-6 2-5 5s4 1 5-2M12 13c3 0 6 2 5 5s-4 1-5-2"/>',
+  cat:'<path d="M4 4l4 4h8l4-4v9a8 8 0 0 1-16 0z"/><path d="M9 13h.01M15 13h.01M11 16.5l1 .8 1-.8"/>',
+  smile:'<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  bulb:'<path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  cup:'<path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M6 2v2M10 2v2M14 2v2"/>',
+  pencil:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8 21h8"/>'
+};
+const AVATAR_IDS = Object.keys(AVATARS);
+const EMOJI_AVATAR = {'🌱':'leaf','🌿':'leaf','🍀':'leaf','🦉':'owl','🐝':'bee','⛰':'mountain','🧗':'mountain','🌊':'wave','🛶':'wave','🔥':'flame','🌙':'moon','⭐':'star','🔭':'star','✨':'star','🐢':'paw','🦁':'paw','🎯':'target','🧭':'compass','📚':'book','🎨':'palette','🎵':'music','🎸':'music','🎧':'music','⚽':'ball','🏀':'ball','🏸':'ball','🧪':'flask','🌈':'rainbow','🦊':'cat','🐬':'fish','🦋':'butterfly','🌻':'sun','🚀':'rocket','🎭':'smile','🧩':'bulb','💡':'bulb','✏':'pencil','🐉':'bolt','🦖':'bolt','🍉':'heart','☕':'cup','🎓':'owl'};
+function avatarId(v){ return AVATARS[v] ? v : EMOJI_AVATAR[String(v || '').replace(/\uFE0F/g, '')] || 'leaf'; }
+function avatarSvg(v){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AVATARS[avatarId(v)]}</svg>`; }
+function iconPicker(){ const cur = avatarId(me.prefs.avatar); return `<div class="icons-pick" role="group" aria-label="Your icon">${AVATAR_IDS.map(id => `<button type="button" data-av="${id}" class="${cur === id ? 'on' : ''}" aria-pressed="${cur === id}" aria-label="${id[0].toUpperCase() + id.slice(1)}">${avatarSvg(id)}</button>`).join('')}</div>`; }
+function wireIconPicker(){ $$('[data-av]').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.av; saveDb(); $$('[data-av]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); const a = $('.cover .avatar'); if (a) a.innerHTML = avatarSvg(b.dataset.av); }); }
 function applyPrefs(){
+  if (me && !AVATARS[me.prefs.avatar]) me.prefs.avatar = avatarId(me.prefs.avatar);
   const p = me ? me.prefs : {cover:'navy', paper:'lined', accent:'yellow', size:'normal'};
   document.body.dataset.cover = p.cover || 'navy'; document.body.dataset.paper = p.paper || 'lined'; document.body.dataset.accent = p.accent || 'yellow'; document.body.dataset.size = p.size || 'normal';
   const m = document.getElementById('themeColor'); if (m) m.content = (COVERS.find(c => c.id === p.cover) || COVERS[0]).c;
@@ -515,6 +566,7 @@ window.addEventListener('DOMContentLoaded', boot);
 
 async function boot(){
   initRuntime();
+  const sk = $('.skip'); if (sk) sk.onclick = ev => { ev.preventDefault(); const m = $('#main'); if (m){ m.focus(); m.scrollIntoView(); } };
   if (db.current && db.profiles[db.current]) me = db.profiles[db.current];
   applyPrefs();
   const link = stashLink();
@@ -556,19 +608,20 @@ function route(){
   if (h.startsWith('#/welcome')) return renderWelcome();
   return renderHome();
 }
-/* The notebook: a cover with the student's title, bookmark tabs, and the page. */
-const TABS = [['e21cc', '#/', 'E21CC'], ['grow', '#/journal/grow', 'GROW'], ['act', '#/journal/act', 'ACT'], ['settings', '#/settings', 'Settings']];
+/* The notebook: a cover with Home, the log's title and the student's icon; ribbon tabs; the page. */
+const TABS = [['e21cc', '#/', 'E21CC', 'wheel'], ['grow', '#/journal/grow', 'GROW', 'grow'], ['act', '#/journal/act', 'ACT', 'act'], ['settings', '#/settings', 'Settings', 'sliders']];
 function frame(inner, active, opts = {}){
   document.body.classList.toggle('wide', !!opts.wide);
   const t = logTitle();
   $('#app').innerHTML = `
     <header class="cover">
-      <a class="brand" href="#/"><img src="assets/crest.png" alt=""><span><span class="word">${esc(t)}</span><span class="sub">${esc(me.name)}${t !== APP_NAME ? ' · ' + APP_NAME : ' · Beatty Secondary School'}</span></span></a>
-      <a class="avatar" href="#/settings" aria-label="Settings for ${esc(me.name)}">${esc(me.prefs.avatar)}</a>
+      <a class="homebtn" href="#/">${icon('home')}<span>Home</span></a>
+      <div class="brand"><span class="word">${esc(t)}</span><span class="sub">${esc(me.name)}${t !== APP_NAME ? ' · ' + APP_NAME : ''}</span></div>
+      <a class="avatar" href="#/settings" aria-label="Settings for ${esc(me.name)}">${avatarSvg(me.prefs.avatar)}</a>
     </header>
-    <nav class="tabs" aria-label="Sections of the log">${TABS.map(([id, href, label]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href}"${active === id ? ' aria-current="page"' : ''}>${id === 'settings' ? icon('settings') + '<span class="sr">Settings</span>' : id === 'e21cc' ? icon('wheel') + '<span>E21CC</span>' : '<span>' + label + '</span>'}</a>`).join('')}</nav>
-    <main class="page fade">${inner}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log lives on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export it in Settings to keep a copy.</footer>`;
+    <nav class="tabs" aria-label="Sections of the log">${TABS.map(([id, href, label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href}"${active === id ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}</nav>
+    <main class="page fade${opts.ribbon ? ' ribbon' : ''}" id="main" tabindex="-1">${inner}</main>
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
   scrollTop();
 }
 function scrollTop(){ window.scrollTo(0, 0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
@@ -584,11 +637,11 @@ function renderWelcome(){
       <img src="assets/crest.png" alt="" class="crest">
       <h1>E21CC<br>Learning Log</h1>
       <p class="motto">GROW by reflecting. ACT on feedback.</p>
-      <p class="meta">One log for everything you learn at Beatty: lessons, CCA, camps, competitions. Each entry is read for the 21st Century Competencies it shows, in your own words.</p>
+      <p class="meta">One log for everything you learn at Beatty: lessons, CCA, camps and competitions. Each entry gets feedback on the 21st Century Competencies your writing shows.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-e21cc">E21CC</span><span class="t-grow">GROW</span><span class="t-act">ACT</span></div>
     </section>
     ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
-      <button class="pcard" data-id="${p.id}"><span class="avatar">${esc(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
+      <button class="pcard" data-id="${p.id}"><span class="avatar">${avatarSvg(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
       <div id="pinBox" hidden style="margin-top:12px"></div>
       </section>` : ''}
     <section class="card fade">
@@ -638,11 +691,10 @@ function renderSetup(){
   frame(`
     <section class="hero"><h1>Make it yours</h1><p class="meta">Your subjects and CCA become bookmarks in your journals. You can change all of this later in Settings.</p></section>
     ${experiencesEditor()}
-    <section class="card"><h2>Your cover</h2>${coverPicker()}<span class="flabel" style="margin-top:14px">Your icon</span><div class="emojis">${ICONS.slice(0, 20).map(e => `<button type="button" data-e="${e}" class="${me.prefs.avatar === e ? 'on' : ''}">${e}</button>`).join('')}</div></section>
+    <section class="card"><h2>Your cover</h2>${coverPicker()}<span class="flabel" style="margin-top:14px">Your icon</span>${iconPicker()}</section>
     <div class="row" style="justify-content:space-between;margin-top:6px"><a class="btn ghost" href="#/">Skip for now</a><a class="btn acc" href="#/">${icon('check')} Open my log</a></div>
   `, 'settings');
-  wireExperiences(renderSetup); wireCover();
-  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; saveDb(); $$('.emojis button').forEach(x => x.classList.toggle('on', x === b)); $('.cover .avatar').textContent = b.dataset.e; });
+  wireExperiences(renderSetup); wireCover(); wireIconPicker();
 }
 
 /* ---------- the E21CC tab: the competency wheel ---------- */
@@ -661,11 +713,14 @@ function compLevelOf(e, id){
   return lv;
 }
 function compStats(){
-  const st = {}; for (const c of COMPETENCIES) st[c.id] = {level:0, n:0, lit:0, total:0, last:0};
-  for (const e of me.entries){ if (e.kind === 'across') continue; for (const c of COMPETENCIES){ const lv = compLevelOf(e, c.id); if (lv){ const s = st[c.id]; s.level = Math.max(s.level, lv); s.n++; s.last = Math.max(s.last, e.created); } } }
+  const st = {}; for (const c of COMPETENCIES) st[c.id] = {level:0, n:0, g:0, a:0, lit:0, total:0, last:0};
+  for (const e of me.entries){ if (e.kind === 'across') continue; for (const c of COMPETENCIES){ const lv = compLevelOf(e, c.id); if (lv){ const s = st[c.id]; s.level = Math.max(s.level, lv); s.n++; if (e.kind === 'act') s.a++; else s.g++; s.last = Math.max(s.last, e.created); } } }
   for (const s of myStatements()) for (const cid of s.competencies){ if (!st[cid]) continue; st[cid].total++; if (statementStatus(me.entries, s).lit) st[cid].lit++; }
   return st;
 }
+/* "from 2 GROW and 1 ACT entry": both journals feed the wheel, and the student can see it */
+function fromLine(x){ const parts = []; if (x.g) parts.push(`${x.g} GROW`); if (x.a) parts.push(`${x.a} ACT`); return parts.length ? `from ${parts.join(' and ')} ${x.n === 1 ? 'entry' : 'entries'}` : 'no entries yet'; }
+const STAR = '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>';
 function sector(cx, cy, r0, r1, a0, a1){
   const P = (r, a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
   const [x0, y0] = P(r1, a0), [x1, y1] = P(r1, a1), [x2, y2] = P(r0, a1), [x3, y3] = P(r0, a0); const big = a1 - a0 > 180 ? 1 : 0;
@@ -680,11 +735,11 @@ function wheelSvg(st){
     const x = st[c.id]; const col = DOMAIN_COLOUR[c.d]; const op = [0, .3, .62, .95][x.level];
     const mid = (a0 + a1) / 2, rm = (r0 + r1) / 2; const tx = cx + rm * Math.cos(mid * Math.PI / 180), ty = cy + rm * Math.sin(mid * Math.PI / 180);
     const rot = mid > 0 && mid < 180 ? mid - 90 : mid + 90; const lines = WHEEL_LABEL[c.id] || [c.label];
-    const label = `${c.label}: ${LEVEL_WORD[x.level]}, ${plural(x.n, 'entry', 'entries')}${x.total ? `, ${x.lit} of ${x.total} statements unlocked` : ''}. Open.`;
+    const label = `${c.label}: ${LEVEL_WORD[x.level]}, ${fromLine(x)}${x.total ? `, ${x.lit} of ${x.total} statements unlocked` : ''}. Open.`;
     let g = `<a href="#/c/${c.id}" class="seg lv${x.level}" aria-label="${esc(label)}"><title>${esc(label)}</title>`;
     g += `<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segbg"/>${x.level ? `<path d="${sector(cx, cy, r0, r1, a0, a1)}" fill="${col}" fill-opacity="${op}"/>` : ''}<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segline" stroke="${col}"/>`;
     g += `<text transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)}) rotate(${rot.toFixed(1)})" text-anchor="middle" font-size="${fs}" class="${x.level >= 2 ? 'on' : ''}">${lines.map((l, i) => `<tspan x="0" dy="${i === 0 ? (lines.length > 1 ? -fs * .2 : fs * .35) : fs * 1.1}">${esc(l)}</tspan>`).join('')}</text>`;
-    if (x.lit){ const ra = r1 - 7, sx = cx + ra * Math.cos(a1 * Math.PI / 180 - .16), sy = cy + ra * Math.sin(a1 * Math.PI / 180 - .16); g += `<text x="${sx.toFixed(1)}" y="${(sy + 4).toFixed(1)}" text-anchor="middle" class="star" font-size="11">★</text>`; }
+    if (x.lit){ const ra = r1 - 7, sx = cx + ra * Math.cos(a1 * Math.PI / 180 - .16), sy = cy + ra * Math.sin(a1 * Math.PI / 180 - .16); g += `<path class="star" transform="translate(${(sx - 6).toFixed(1)} ${(sy - 6).toFixed(1)}) scale(.5)" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>`; }
     return g + '</a>';
   };
   // the nine emerging competencies, three domains of 120 degrees, Thinking at the top
@@ -702,31 +757,35 @@ function renderHome(){
   const latest = E.find(e => e.kind !== 'across' && e.e21cc);
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
   const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
-  const drafts = Object.keys(me.drafts || {});
+  const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]));
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
   const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === termKey(Date.now())).map(e => e.basket));
-  frame(`
+  const fed = k => E.filter(e => e.kind === k && COMPETENCIES.some(c => compLevelOf(e, c.id))).length;
+  frame(`<div class="homegrid">
     <section class="titlepage">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
       <h1>Your competencies</h1>
+      <p class="lede">Every GROW and ACT entry you write adds to this wheel.</p>
       <div class="wheelwrap">${wheelSvg(st)}</div>
       ${domainLegend()}
-      <p class="tiny" style="text-align:center;margin:6px 0 0">A segment deepens with the strongest evidence in your own words. ★ marks an I can statement you unlocked. Tap any segment.</p>
+      <p class="tiny" style="text-align:center;margin:6px 0 0">The more clearly your words show a competency, the darker its part of the wheel. <svg class="istar" viewBox="0 0 24 24" aria-hidden="true">${STAR}</svg> marks an I can statement you have unlocked. Tap any part to see more.</p>
     </section>
-    <div class="verbs">
-      <a class="verb" href="#/write/grow"><span class="glyph">${ringSvg('grow')}</span><span><b>New GROW entry</b><span>Reflect on a lesson, a session, a day${drafts.includes('grow') ? ' · draft saved' : ''}</span></span><span class="go">${icon('plus')}</span></a>
-      <a class="verb" href="#/write/act"><span class="glyph">${ringSvg('act')}</span><span><b>New ACT entry</b><span>Act on feedback${drafts.includes('act') ? ' · draft saved' : ''}</span></span><span class="go">${icon('plus')}</span></a>
+    <div class="homeside">
+    <div class="acts">
+      <a class="actcard" href="#/write/grow"><span class="badge b-grow">GROW</span><b>New GROW entry</b><span class="sub">After a lesson, a training or a camp day${drafts.includes('grow') ? '. You have one unfinished.' : ''}</span></a>
+      <a class="actcard" href="#/write/act"><span class="badge b-act">ACT</span><b>New ACT entry</b><span class="sub">After you get feedback on your work${drafts.includes('act') ? '. You have one unfinished.' : ''}</span></a>
     </div>
     ${unread.length ? `<a class="card notecard" href="#/entry/${unread[0].e.id}">${icon('note')}<span><b>${plural(unread.length, 'new note')} from ${esc(unread[0].n.by)}</b><small>On ${esc(entryTitle(unread[0].e))}</small></span></a>` : ''}
     ${E.length ? `<section class="card"><h2>Where you stand</h2>
-      ${strong.length ? `<span class="kick">Showing most</span><div class="chips">${strong.map(x => `<a class="chip dchip" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}<small>${plural(x.n, 'entry', 'entries')}</small></a>`).join('')}</div>` : ''}
-      ${quiet.length ? `<span class="kick" style="margin-top:10px">Not shown yet</span><div class="chips">${quiet.map(x => `<a class="chip dchip quiet" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}</a>`).join('')}</div><p class="tiny" style="margin:8px 0 0">Not a gap to fill for its own sake: a place you have not looked yet. Tap one to see what it looks like in words.</p>` : ''}
-    </section>` : `<section class="card"><h2>How the wheel fills</h2><p class="muted">After a lesson, a training or a camp day, write a GROW entry. Claim a competency and point to where it shows. When your words back it, that segment of the wheel deepens.</p></section>`}
+      <p class="tiny" style="margin:0 0 8px">Your wheel uses ${plural(fed('grow'), 'GROW entry', 'GROW entries')} and ${plural(fed('act'), 'ACT entry', 'ACT entries')}.</p>
+      ${strong.length ? `<span class="kick">Shown most</span><div class="chips">${strong.map(x => `<a class="chip dchip" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}<small>${[x.g ? x.g + ' GROW' : '', x.a ? x.a + ' ACT' : ''].filter(Boolean).join(', ')}</small></a>`).join('')}</div>` : ''}
+      ${quiet.length ? `<span class="kick" style="margin-top:10px">Not shown yet</span><div class="chips">${quiet.map(x => `<a class="chip dchip quiet" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}</a>`).join('')}</div><p class="tiny" style="margin:8px 0 0">You have not written about these yet. Tap one to see what it looks like.</p>` : ''}
+    </section>` : `<section class="card"><h2>How the wheel fills</h2><p class="muted" style="margin:0">Write a GROW entry after a lesson, a training or a camp day, or an ACT entry when you get feedback. Either one fills the wheel. Claim a competency and say where it shows. When your words show it, that part of the wheel gets darker.</p></section>`}
     ${latest ? `<a class="card latest" href="#/entry/${latest.id}"><span class="kick">Latest feedback · ${esc(entryTitle(latest))}</span>${latestLine(latest)}</a>` : ''}
-    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Look across one domain: read this term’s evidence, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
-    ${nextEntry ? `<section class="card"><h2>Your next step</h2><div class="next"><input type="checkbox" id="doneNext" aria-label="Done"><p>${esc(nextStepOf(nextEntry))}</p></div><p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when it is done, honestly.</p></section>` : ''}
-  `, 'e21cc');
-  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Ticked. That is how habits are built.'); setTimeout(route, 400); };
+    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Choose one area. Read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
+    ${nextEntry ? `<section class="card"><h2>Your next step</h2><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p></section>` : ''}
+    </div></div>`, 'e21cc', {ribbon:true, wide:true});
+  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 function latestLine(e){
   const x = e.e21cc; const ev = (x.evidence || []).filter(v => !v.unverified && v.strength !== 'glimpse')[0];
@@ -737,12 +796,12 @@ function latestLine(e){
 /* ---------- a competency: what it means, its statements, the entries that show it ---------- */
 function stmtRow(st, compId){
   const s = st.stmt;
-  const ev = st.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}">${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
-  const sug = st.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === s.id); return `<div class="sugg"><span class="kick">Coach suggests</span><a href="#/entry/${e.id}">${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
+  const ev = st.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}"><span class="badge b-${k.e.kind}" style="margin-right:6px">${FRAMEWORKS[k.e.kind].name}</span>${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
+  const sug = st.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === s.id); return `<div class="sugg"><span class="kick">The coach suggests</span><a href="#/entry/${e.id}"><span class="badge b-${e.kind}" style="margin-right:6px">${FRAMEWORKS[e.kind].name}</span>${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
   const probe = (compOf(compId) || {}).probe || '';
   return `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><div class="grow">
     <p class="st-text">${s.level ? `<span class="lvl">${s.level === 1 ? 'Starting' : 'Stretching'}</span> ` : ''}${esc(s.text)}<span class="sr"> (${st.state === 'lit' ? 'unlocked' : st.state === 'linked' ? 'linked, not backed yet' : 'no evidence yet'})</span></p>
-    ${ev}${st.state === 'linked' ? `<small class="muted">Linked, but the words do not show it yet. ${esc(probe)}</small>` : ''}${sug}
+    ${ev}${st.state === 'linked' ? `<small class="muted">Linked, but your words do not show it yet. ${esc(probe)}</small>` : ''}${sug}
     <button class="btn small ${st.links.length ? 'ghost' : 'sec'}" data-linkone="${esc(s.id)}">${icon('link')} ${st.links.length ? 'Link another' : 'Link an entry'}</button></div></li>`;
 }
 function wireStmtButtons(compId){
@@ -762,15 +821,15 @@ function renderCompetency(id){
       <p class="kicker"><a href="#/">E21CC</a> · ${esc(d.label)}</p>
       <h1>${esc(c.label)}</h1>
       <p class="plain">${esc(c.plain)}</p>
-      <p class="meta"><span class="lvlbar">${[1, 2, 3].map(n => `<i class="${st.level >= n ? 'on' : ''}"></i>`).join('')}</span> ${LEVEL_WORD[st.level][0].toUpperCase() + LEVEL_WORD[st.level].slice(1)} · ${plural(st.n, 'entry', 'entries')}${st.total ? ` · ${st.lit} of ${st.total} statements unlocked` : ''}</p>
+      <p class="meta"><span class="lvlbar">${[1, 2, 3].map(n => `<i class="${st.level >= n ? 'on' : ''}"></i>`).join('')}</span> ${LEVEL_WORD[st.level][0].toUpperCase() + LEVEL_WORD[st.level].slice(1)} · ${fromLine(st)}${st.total ? ` · ${st.lit} of ${st.total} statements unlocked` : ''}</p>
     </section>
     ${STMT_SET.placeholder ? `<div class="notice">Starter statements. The school’s own I can statements will replace them.</div>` : ''}
     <section class="card"><h2>I can</h2>
-      <p class="tiny" style="margin:0 0 10px">A statement unlocks when you link an entry and your words in it show the statement. Linking alone is not enough.</p>
+      <p class="tiny" style="margin:0 0 10px">To unlock a statement, link an entry whose words show it.</p>
       ${stmts.length ? `<ul class="stmts">${stmts.map(x => stmtRow(x, id)).join('')}</ul>` : '<p class="muted">No statements for this competency yet.</p>'}
     </section>
-    <section class="card"><h2>Where it shows in your log</h2>
-      ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)} · ${FRAMEWORKS[e.kind].name}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
+    <section class="card"><h2>Where it shows in your log</h2>${shows.length ? `<p class="tiny" style="margin:0 0 8px">${fromLine(st)[0].toUpperCase() + fromLine(st).slice(1)}. GROW and ACT entries both count.</p>` : ''}
+      ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
     </section>
     <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
       <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
@@ -793,7 +852,7 @@ function linkDialog(sid, compId){
   dialog(`<h2>Link an entry</h2><p class="st-quote">${esc(s.text)}</p>
     ${showing.length ? `<span class="kick">Entries that show ${esc(compOf(compId).label.toLowerCase())}</span>${showing.map(btn).join('')}` : ''}
     ${others.length ? `<span class="kick" style="margin-top:10px">Other entries</span>${others.map(btn).join('')}` : ''}
-    ${!showing.length && !others.length ? '<p class="muted">Write a GROW or ACT entry first.</p>' : ''}
+    ${!showing.length && !others.length ? '<p class="muted">Write a GROW or ACT entry first, then link it here.</p>' : ''}
     <div class="row" style="margin-top:12px"><button class="btn sec" id="dClose">Cancel</button></div>`);
   $('#dClose').onclick = closeDialog;
   $$('#dlgBody [data-e], #inlineDlg [data-e]').forEach(b => b.onclick = () => {
@@ -810,60 +869,93 @@ function linkDialog(sid, compId){
 
 /* ---------- composer: GROW, ACT, and the termly look across ---------- */
 function draftKey(kind, basket){ return kind === 'across' ? 'across:' + basket : kind; }
+function draftHasWork(d){ return !!d && (Object.values(d.answers || {}).some(v => String(v || '').trim()) || !!(d.context && d.context.name) || !!d.subject || !!String(d.topic || '').trim()); }
+function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
+function applyPrefill(pre){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
 function openComposer(kind, editId, basket){
   if (kind === 'across' && !basketOf(basket)){ location.hash = '#/'; return; }
   const key = draftKey(kind, basket);
   if (!draft || draft.key !== key || (editId && draft.editId !== editId) || (!editId && draft.editId)){
     let base = me.drafts[key] ? JSON.parse(JSON.stringify(me.drafts[key])) : null;
-    // a Learning Log draft carries a subject, not a context
+    // a Learning Log draft carries a subject, not a context; it comes back only if the student chooses to continue it
     if (base && !base.context && base.subject) base.context = {type:inferContextType(base.subject), name:base.subject};
+    let ask = false;
     if (editId){
       const e = me.entries.find(x => x.id === editId);
       if (e){ base = JSON.parse(JSON.stringify(e)); base.coachAi = e.coach && e.coach.ai ? JSON.parse(JSON.stringify(e.coach.ai)) : null;
         // reads made before v2 carry no hash: they were made on these words
         if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements()); }
-    }
-    draft = Object.assign({kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], basket:basket || null, term:termKey(Date.now())}, base || {});
-    draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0;
+    } else if (base && kind !== 'across' && draftHasWork(base)) ask = true;
+    else if (base && kind !== 'across') base = null;
+    draft = Object.assign(freshDraft(kind, key, basket), base || {});
+    draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0; draft._ask = ask;
     if (!draft.context) draft.context = {type:inferContextType(draft.subject), name:draft.subject || ''};
     // nothing is assumed: the subject or experience comes from the student, or from the bookmark they started at
-    const pre = hashParts().q.get('x');
-    if (kind !== 'across' && pre && !editId){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
+    draft._pre = kind !== 'across' && !editId ? hashParts().q.get('x') || '' : '';
+    if (draft._pre && !ask) applyPrefill(draft._pre);
     if (kind === 'across') draft.lookedAt = acrossEvidence(basket, draft.term).map(x => ({eid:x.e.id, quote:x.q.quote})).slice(0, 8);
   }
   renderComposer();
 }
 function closeComposer(){ $('#sheet').innerHTML = ''; document.body.classList.remove('composing'); }
-function saveDraft(){ if (!draft) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; if (!draft.editId) me.drafts[draft.key] = d; saveDb(); }
+function saveDraft(){
+  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; d.saved = Date.now();
+  if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
+  saveDb();
+}
 function stepsOf(){ const fw = FRAMEWORKS[draft.kind]; return draft.kind === 'across' ? ['evidence', ...fw.steps.map((_, i) => 'letter' + i), 'readback'] : ['context', ...fw.steps.map((_, i) => 'letter' + i), 'lens', 'readback']; }
+/* An unfinished entry waits; the student decides whether to pick it up. */
+function resumeCard(fw){
+  const qs = fw.steps.flatMap(s => s.qs); const done = qs.filter(q => String(draft.answers[q.id] || '').trim()).length;
+  const what = [draft.context.name, draft.topic].filter(Boolean).join(' · ') || 'No subject or experience chosen yet';
+  const when = draft.saved;
+  return `<div class="resume">${stepHead(null, fw.name + ' journal', `You have an unfinished ${fw.name} entry`)}
+    <p style="margin:0 0 4px"><b>${esc(what)}</b></p>
+    <p class="tiny">${when ? 'Last saved ' + fmtDay(when) + ' · ' : ''}${done} of ${qs.length} questions answered</p>
+    <p class="muted">Do you want to continue it, or start a new one? Starting a new one deletes the unfinished entry.</p>
+    <div class="row"><button class="btn" id="rContinue">${icon('edit')} Continue it</button><button class="btn sec" id="rNew">${icon('plus')} Start a new one</button></div></div>`;
+}
 function renderComposer(){
   const fw = FRAMEWORKS[draft.kind]; const steps = stepsOf(); const n = steps.length; const i = Math.min(draft.step, n - 1); const kind = steps[i];
-  const stepsHtml = steps.map((_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('');
-  let body = '', head = '';
-  if (kind === 'context'){ head = stepHead(null, 'Before you start', fw.tagline); body = contextStep(fw); }
-  else if (kind === 'evidence'){ const b = basketOf(draft.basket); head = stepHead({colour:'yellow', letter:'L'}, `${termLabel(draft.term)} · ${esc(b.short)}`, 'Read your <em>evidence</em>'); body = evidenceStep(); }
-  else if (kind.startsWith('letter')){ const k = +kind.slice(6); const s = fw.steps[k]; head = stepHead(s, draft.kind === 'across' ? `Look across · ${esc(basketOf(draft.basket).short)}` : `${fw.name} · step ${k + 1} of ${fw.steps.length}`, s.title); body = letterStep(s); }
-  else if (kind === 'lens'){ head = stepHead(null, 'Your claim', 'Which <em>competency</em> did you use?'); body = lensStep(); }
-  else { head = stepHead(null, 'Read it back', 'Your reflection, and a <em>coach</em>'); body = readbackStep(); }
+  const ask = draft._ask; const counter = fw.tagline;
+  let body = '';
+  if (ask) body = resumeCard(fw);
+  else if (kind === 'context') body = stepHead(null, counter, 'What is this entry about?') + contextStep(fw);
+  else if (kind === 'evidence'){ const b = basketOf(draft.basket); body = stepHead({colour:'yellow', letter:'L'}, `${termLabel(draft.term)} · ${esc(b.short)}`, 'Read your <em>evidence</em>') + evidenceStep(); }
+  else if (kind.startsWith('letter')){ const s = fw.steps[+kind.slice(6)]; body = stepHead(s, draft.kind === 'across' ? `Look across · ${esc(basketOf(draft.basket).short)}` : counter, s.title) + letterStep(s); }
+  else if (kind === 'lens') body = stepHead(null, counter, 'Which <em>competency</em> did you use?') + lensStep();
+  else body = stepHead(null, counter, 'Read it back') + readbackStep();
   const last = i === n - 1;
-  const title = draft.kind === 'across' ? `Look across · ${basketOf(draft.basket).short}` : `${fw.name}${draft.context.name ? ' · ' + draft.context.name : ''}`;
-  $('#sheet').innerHTML = `<div class="sheet" role="dialog" aria-label="${esc(fw.name)} entry"><div class="inner">
-    <div class="bar"><button class="iconbtn" id="cClose" aria-label="Close">${icon('close')}</button><b class="grow">${esc(title)}</b><span class="tiny" style="color:inherit;opacity:.7">saved</span></div>
-    <div class="steps" aria-hidden="true">${stepsHtml}</div>
-    ${head}
-    <div class="card fade">${body}</div>
+  const title = draft.kind === 'across' ? `Look across · ${basketOf(draft.basket).short}` : draft.editId ? `Editing ${fw.name} entry` : draft.context.name && !ask ? `${fw.name} · ${draft.context.name}` : `New ${fw.name} entry`;
+  const saved = !draft.editId && !ask && me.drafts[draft.key];
+  $('#sheet').innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="inner">
+    <div class="bar"><button class="homebtn" id="cHome" type="button">${icon('home')}<span>Home</span></button><b>${esc(title)}</b><button class="roundbtn" id="cClose" type="button" aria-label="Close">${icon('close')}</button></div>
+    ${ask ? '<div style="height:8px"></div>' : `<div class="prog"><span>Step ${i + 1} of ${n}</span><div class="track" aria-hidden="true"><i style="width:${Math.round((i + 1) / n * 100)}%"></i></div>${saved ? `<span class="saved">${icon('check')} Draft saved</span>` : ''}</div>`}
+    <div class="card fade" id="main" tabindex="-1">${body}</div>
   </div>
-  <div class="dock"><div class="inner">
-    <button class="btn ghost" id="cBack" ${i === 0 ? 'disabled' : ''}>${icon('back')} Back</button>
-    ${last ? `<button class="btn acc" id="cSave">${icon('check')} ${draft.editId ? 'Save changes' : 'Log it'}</button>` : `<button class="btn" id="cNext">Next ${icon('arrow')}</button>`}
-  </div></div></div>`;
-  $('#cClose').onclick = () => { collect(); saveDraft(); draft = null; location.hash = draftReturn(); };
-  $('#cBack').onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
-  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); if (kind === 'context' && !draft.context.name){ toast('Choose the subject or experience first.'); const f = $('.xchips .chip') || $('[name=ctxName]'); if (f) f.focus(); return; } draft.step = i + 1; saveDraft(); renderComposer(); };
+  ${ask ? '' : `<div class="dock"><div class="inner">
+    ${i > 0 ? `<button class="btn ghost" id="cBack" type="button">${icon('back')} Back</button>` : ''}
+    ${last ? `<button class="btn acc go" id="cSave" type="button">${icon('check')} ${draft.editId ? 'Save changes' : 'Log it'}</button>` : `<button class="btn go" id="cNext" type="button">Next ${icon('arrow')}</button>`}
+  </div></div>`}</div>`;
+  const leave = to => { if (!draft._ask){ collect(); saveDraft(); } const kept = !draft._ask && !draft.editId && draftHasWork(draft); draft = null; location.hash = to; if (kept) toast('Draft saved. It will be waiting when you start a new entry.'); };
+  $('#cHome').onclick = () => leave('#/');
+  $('#cClose').onclick = () => leave(draftReturn());
+  const rc = $('#rContinue'); if (rc) rc.onclick = () => { draft._ask = false; renderComposer(); };
+  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre}); if (pre) applyPrefill(pre); renderComposer(); };
+  const bk = $('#cBack'); if (bk) bk.onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
+  const nx = $('#cNext'); if (nx) nx.onclick = () => {
+    collect();
+    if (kind === 'context'){
+      if (!draft.context.name){ toast('First choose a subject or an experience.'); const f = $('.xchips .chip') || $('.tile') || $('[name=ctxName]'); if (f) f.focus(); return; }
+      const undo = rememberExperience(draft.context);
+      if (undo){ const nm = draft.context.name; toast(`${nm} is now in your ${draft.context.type === 'subject' ? 'subjects' : draft.context.type === 'cca' ? 'CCA list' : 'experiences'}.`, 5000, {label:'Undo', fn:undo, done:`${nm} removed from your list.`}); }
+    }
+    draft.step = i + 1; saveDraft(); renderComposer();
+  };
   const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
-  $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', debounceSave));
+  $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', () => { t.dataset.typed = '1'; debounceSave(); }));
   $$('[data-where]', $('#sheet')).forEach(inp => inp.addEventListener('input', () => { const t = (draft.competencies || []).find(x => x.id === inp.dataset.where); if (t) t.where = inp.value.trim(); }));
   wireStep();
   document.body.classList.add('composing'); document.body.classList.remove('wide');
@@ -871,78 +963,111 @@ function renderComposer(){
   const first = $('.sheet textarea'); if (first && kind.startsWith('letter') && window.innerWidth > 760) first.focus();
 }
 function draftReturn(){ return !draft ? '#/' : draft.kind === 'across' ? '#/' : '#/journal/' + draft.kind; }
-/* If a teacher's group teaches the chosen subject or CCA, offer it; never pick a subject from the group. */
+/* If a teacher's group teaches the chosen subject or CCA, link it; never pick a subject from the group. */
 function matchGroup(){ if (!draft || draft.groupCode) return; const n = (draft.context.name || '').toLowerCase(); const g = myGroups().find(x => x.cfg && [x.cfg.subject, ...(x.cfg.subjects || [])].some(s => String(s || '').toLowerCase() === n)); if (g) draft.groupCode = g.code; }
 let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(() => { if (!draft) return; collect(); saveDraft(); }, 400); }
 function autosize(t){ t.style.height = 'auto'; t.style.height = Math.max(96, t.scrollHeight + 4) + 'px'; }
 function stepHead(s, kicker, title){
-  const m = s ? `<span class="medal ${s.colour}">${s.letter}</span>` : `<span class="medal navy">${icon('spark')}</span>`;
-  return `<div class="stephead">${m}<div><div class="kicker">${kicker}</div><h2>${title}</h2></div></div>`;
+  const m = s ? `<span class="medal ${s.colour}" aria-hidden="true">${s.letter}</span>` : `<span class="medal navy" aria-hidden="true">${icon('spark')}</span>`;
+  return `<div class="stephead">${m}<div><div class="kicker">${kicker}</div><h1>${title}</h1></div></div>`;
 }
 function collect(){
-  const sh = $('#sheet'); if (!sh || !draft) return;
+  const sh = $('#sheet'); if (!sh || !draft || draft._ask) return;
   $$('[data-a]', sh).forEach(el => { draft.answers[el.dataset.a] = el.value; });
-  const nm = $('[name=ctxName]', sh); if (nm){ draft.context.name = nm.value.trim(); const keep = $('#keepExp', sh); draft._keepExp = !keep || keep.checked; matchGroup(); }
+  const nm = $('[name=ctxName]', sh);
+  if (nm){ const v = nm.value.trim(); if (v) draft.context = {type:draft._pick || draft.context.type || 'subject', name:v}; else if (nm.dataset.typed === '1') draft.context = {type:draft._pick || 'subject', name:''}; matchGroup(); }
   const top = $('[name=topic]', sh); if (top) draft.topic = top.value.trim();
   const g = $('[name=groupCode]', sh); if (g) draft.groupCode = g.value;
   const ft = $('[name=feedbackText]', sh); if (ft) draft.feedbackText = ft.value.trim();
 }
+/* A new subject or experience the student picks joins their list, so it is there next time. */
+function rememberExperience(ctx){
+  if (!ctx || !ctx.name || ctx.type === 'across' || myExperiences().some(x => x.name.toLowerCase() === ctx.name.toLowerCase())) return null;
+  const x = me.experiences;
+  if (ctx.type === 'subject') x.subjects.push(ctx.name);
+  else if (ctx.type === 'cca') x.cca = [x.cca, ctx.name].filter(Boolean).join(', ');
+  else x.others.push({type:ctx.type, name:ctx.name});
+  saveDb();
+  return () => {
+    if (ctx.type === 'subject') x.subjects = x.subjects.filter(s => s !== ctx.name);
+    else if (ctx.type === 'cca') x.cca = String(x.cca || '').split(/\s*,\s*/).filter(s => s && s !== ctx.name).join(', ');
+    else x.others = x.others.filter(o => o.name !== ctx.name);
+    saveDb();
+  };
+}
+const PICK_TYPES = [['subject', 'Subject', 'book'], ['cca', 'CCA', 'users'], ['camp', 'Camp or trip', 'tent'], ['competition', 'Competition', 'trophy'], ['service', 'Service', 'heart'], ['other', 'Something else', 'spark']];
+function typeIcon(t){ return (PICK_TYPES.find(p => p[0] === t) || PICK_TYPES[5])[2]; }
+function groupLine(){
+  const gs = myGroups(); if (!gs.length) return '';
+  const g = gs.find(x => x.code === draft.groupCode);
+  return `<div class="grpline"><span>Teacher’s group: <b>${g ? esc(g.cfg ? groupName(g.cfg) : g.code) : 'none'}</b></span><button type="button" class="linkbtn" id="grpChange" aria-expanded="${!!draft._grpOpen}">Change</button></div>
+    ${draft._grpOpen ? `<label class="f" style="margin-top:6px"><span>Teacher’s group</span><select class="in" name="groupCode"><option value="">None</option>${gs.map(x => `<option value="${esc(x.code)}" ${draft.groupCode === x.code ? 'selected' : ''}>${esc(x.cfg ? groupName(x.cfg) : x.code)}</option>`).join('')}</select><small>The coach uses this teacher’s voice. This teacher can see the entry if you share it.</small></label>` : ''}`;
+}
 function contextStep(fw){
-  const ct = contextTypeOf(draft.context.type); const gs = myGroups();
-  const exps = myExperiences(); const cur = (draft.context.name || '').toLowerCase();
-  const usedNames = []; for (const e of me.entries.slice().sort((a, b) => b.created - a.created)){ const n = e.context && e.context.name; if (n && e.kind !== 'across' && !exps.some(x => x.name.toLowerCase() === n.toLowerCase()) && !usedNames.some(u => u.name.toLowerCase() === n.toLowerCase())) usedNames.push({type:e.context.type, name:n}); }
-  const all = [...exps, ...usedNames.slice(0, 6)];
-  const inList = all.some(x => x.name.toLowerCase() === cur);
-  const other = draft._other || (cur && !inList);
-  const chip = x => `<button type="button" class="chip ${x.name.toLowerCase() === cur && !other ? 'on' : ''}" data-exp="${esc(x.type)}|${esc(x.name)}" style="--g:${TYPE_COLOUR[x.type] || TYPE_COLOUR.other}"><i class="tdot"></i>${esc(x.name)}</button>`;
-  const sec = (label, list) => list.length ? `<span class="kick">${label}</span><div class="chips xchips">${list.map(chip).join('')}</div>` : '';
-  const list = Array.from(new Set(ct.id === 'subject' ? SUBJECTS : []));
+  const cur = draft.context || {type:'subject', name:''}; const curL = (cur.name || '').toLowerCase();
+  const exps = myExperiences(); const recent = [];
+  for (const e of me.entries.slice().sort((a, b) => b.created - a.created)){ const nm = e.context && e.context.name; if (nm && e.kind !== 'across' && ![...exps, ...recent].some(x => x.name.toLowerCase() === nm.toLowerCase())) recent.push({type:e.context.type, name:nm}); }
+  const usual = [...exps, ...recent.slice(0, 4)];
+  const inUsual = usual.some(x => x.name.toLowerCase() === curL);
+  const ptype = draft._pick !== undefined && draft._pick !== null ? draft._pick : (cur.name && !inUsual ? cur.type : '');
+  const chip = (x, withIcon = true) => { const on = x.name.toLowerCase() === curL; return `<button type="button" class="chip ${on ? 'on' : ''}" data-exp="${esc(x.type)}|${esc(x.name)}" aria-pressed="${on}">${withIcon ? icon(typeIcon(x.type)) : ''}${esc(x.name)}${withIcon && x.type === 'cca' ? ' <em>CCA</em>' : ''}</button>`; };
+  let panel = '';
+  if (ptype === 'subject'){
+    const list = [...new Set([...SUBJECTS, ...(me.experiences.subjects || [])])];
+    const typed = cur.type === 'subject' && cur.name && !list.some(x => x.toLowerCase() === curL);
+    panel = `<span class="mini" id="pkSubj">Which subject?</span><div class="chips" role="group" aria-labelledby="pkSubj">${list.map(x => chip({type:'subject', name:x}, false)).join('')}</div>
+      <label class="f" style="margin:12px 0 0"><span>Another subject</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="e.g. Additional Mathematics" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
+  } else if (ptype){
+    const ct = contextTypeOf(ptype); const known = usual.filter(x => x.type === ptype);
+    const typed = cur.type === ptype && cur.name && !known.some(x => x.name.toLowerCase() === curL);
+    const label = ptype === 'cca' ? 'Your CCA' : ptype === 'other' ? 'Where did the learning happen?' : `Name of the ${ct.label.toLowerCase()}`;
+    panel = `${known.length ? `<span class="mini" id="pkKnown">Yours so far</span><div class="chips" role="group" aria-labelledby="pkKnown">${known.map(x => chip(x, false)).join('')}</div>` : ''}
+      <label class="f" style="margin:${known.length ? '12px' : '0'} 0 0"><span>${known.length ? (ptype === 'cca' ? 'Another CCA' : 'Another one') : label}</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
+  }
+  const willAdd = cur.name && !exps.some(x => x.name.toLowerCase() === curL);
+  const where = cur.type === 'subject' ? 'subjects' : cur.type === 'cca' ? 'CCA list' : 'experiences';
+  const ct = contextTypeOf(cur.type);
   return `
-    <p class="muted">${fw.id === 'grow' ? 'Use this straight after a lesson, a training, a camp day or a competition, while it is still warm. Two honest sentences per question is plenty.' : 'Use this when feedback comes back: a marked piece, a coach’s comment, a peer’s note.'}</p>
-    <div class="f"><span class="flabel">What is this ${fw.id === 'grow' ? 'reflection' : 'feedback'} about?</span>
-      ${sec('My CCA', all.filter(x => x.type === 'cca'))}${sec('My subjects', all.filter(x => x.type === 'subject'))}${sec('Other experiences', all.filter(x => x.type !== 'cca' && x.type !== 'subject'))}
-      <div class="chips" style="margin-top:8px"><button type="button" class="chip ${other ? 'on' : ''}" data-other="1">${icon('plus')} Something else</button></div>
-      ${!exps.length ? `<p class="tiny" style="margin:8px 0 0">Add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a> and they appear here.</p>` : ''}
-    </div>
-    ${other ? `<div class="subpanel">
-      <div class="chips" id="ctxType" role="radiogroup">${CONTEXT_TYPES.map(c => `<button type="button" class="chip ${c.id === ct.id ? 'on' : ''}" data-ctype="${c.id}" role="radio" aria-checked="${c.id === ct.id}">${esc(c.label)}</button>`).join('')}</div>
-      <label class="f" style="margin-top:10px"><span>${ct.id === 'subject' ? 'Subject' : ct.label}</span><input class="in" name="ctxName" list="ctxList" value="${esc(draft.context.name)}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" enterkeyhint="next"><datalist id="ctxList">${list.map(s => `<option value="${esc(s)}">`).join('')}</datalist></label>
-      <label class="row" style="cursor:pointer"><input type="checkbox" id="keepExp" checked style="width:20px;height:20px;accent-color:var(--cover)"><span class="tiny">Add it to my experiences</span></label>
-    </div>` : ''}
-    <label class="f" style="margin-top:12px"><span>${fw.id === 'grow' ? ct.topic : 'What the feedback was on'}</span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}"></label>
-    ${gs.length ? `<label class="f"><span>Group</span><select class="in" name="groupCode"><option value="">None</option>${gs.map(g => `<option value="${esc(g.code)}" ${draft.groupCode === g.code ? 'selected' : ''}>${esc(g.cfg ? groupName(g.cfg) : g.code)}</option>`).join('')}</select><small>Sets whose voice the coach uses, and which teacher can see it if you share.</small></label>` : ''}
+    <p class="muted">${fw.id === 'grow' ? 'Write this soon after the lesson or activity. Two or three sentences for each question is enough.' : 'Write this when you get feedback: a marked piece of work, a comment from your coach, or a note from a friend.'}</p>
+    ${usual.length ? `<span class="mini" id="pkUsual">Your usual</span><div class="chips xchips" role="group" aria-labelledby="pkUsual">${usual.map(x => chip(x)).join('')}</div>` : ''}
+    <span class="mini" id="pkType">${usual.length ? 'Or choose a type' : 'Choose a type'}</span>
+    <div class="tiles" role="group" aria-labelledby="pkType">${PICK_TYPES.map(([id, l, ic]) => `<button type="button" class="tile ${ptype === id ? 'on' : ''}" data-ptype="${id}" aria-expanded="${ptype === id}">${icon(ic)}${l}</button>`).join('')}</div>
+    ${ptype ? `<div class="typepanel">${panel}${willAdd && cur.type === ptype ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}</div>` : willAdd ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}
+    ${!usual.length ? `<p class="tiny" style="margin:10px 0 0">Tip: add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a>, and they will appear at the top.</p>` : ''}
+    <label class="f" style="margin-top:16px"><span>${fw.id === 'grow' ? ct.topic : 'What was the feedback on?'} <small style="display:inline">(optional)</small></span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}" maxlength="80"></label>
+    ${groupLine()}
     ${fw.id === 'act' ? `
-    <div class="f"><span class="flabel">Who gave the feedback?</span>
-      <div class="seg" id="fbFrom">${['teacher','coach','peer','myself'].map(x => `<button type="button" data-v="${x}" class="${draft.feedbackFrom === x ? 'on' : ''}">${x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div></div>
-    <label class="f"><span>The feedback, in their words <small style="display:inline">(optional)</small></span><textarea class="in" name="feedbackText" placeholder="Copy or type what they said. Keeping the exact words makes the C step much easier.">${esc(draft.feedbackText)}</textarea></label>` : ''}
-    ${fw.id === 'grow' ? `<div class="notice"><b>The circle.</b> Gift, Rise, Own, Watch. The questions say “lesson”; read it as whatever you just learnt from. The coach can only work with what you write.</div>` : `<div class="notice"><b>Feedback is information,</b> not a verdict. Acknowledge it, Connect it, Test something.</div>`}`;
+    <div class="f" style="margin-top:12px"><span class="flabel" id="fbLbl">Who gave the feedback?</span>
+      <div class="seg" id="fbFrom" role="group" aria-labelledby="fbLbl">${['teacher','coach','peer','myself'].map(x => `<button type="button" data-v="${x}" class="${draft.feedbackFrom === x ? 'on' : ''}" aria-pressed="${draft.feedbackFrom === x}">${x === 'peer' ? 'A friend' : x[0].toUpperCase() + x.slice(1)}</button>`).join('')}</div></div>
+    <label class="f" style="margin-top:12px"><span>What did they say? <small style="display:inline">(optional)</small></span><textarea class="in" name="feedbackText" placeholder="Type what they said, in their words if you can. This helps with the Connect step.">${esc(draft.feedbackText)}</textarea></label>` : ''}
+    ${fw.id === 'grow' ? `<div class="notice"><b>GROW has four parts:</b> Gift, Rise, Own, Watch. Where a question says “lesson”, think of whatever you learnt from. The more you write, the more useful the feedback.</div>` : `<div class="notice"><b>ACT has three parts:</b> Acknowledge the feedback, Connect it to your goals, then Test one change.</div>`}`;
 }
 /* This term's evidence for a basket, strongest quote per entry. */
 function acrossEvidence(basket, term){ return me.entries.filter(e => e.kind !== 'across' && termKey(e.created) === term && basketsOf(e).includes(basket)).map(e => ({e, q:quoteFor(e, basket)})).filter(x => x.q).sort((a, b) => a.e.created - b.e.created); }
 function evidenceStep(){
   const b = basketOf(draft.basket); const ev = acrossEvidence(draft.basket, draft.term);
   const sts = myStatements().filter(s => s.basket === draft.basket).map(s => statementStatus(me.entries, s));
-  return `<p class="muted">${esc(b.label)}. Read what you wrote this term before you answer. Look for a pattern, not a highlight.</p>
-    ${ev.length ? `<ul class="evid">${ev.map(x => `<li><b>${esc(entryTitle(x.e))}</b> <span class="tiny">${fmtDay(x.e.created)}</span><q>${esc(x.q.quote)}</q><span class="str ${x.q.strength}">${STRENGTHS[x.q.strength].label}</span> <small>${esc(compOf(x.q.id).label)}</small></li>`).join('')}</ul>` : `<div class="notice">No evidence for this domain this term yet. You can still look across: what did you notice about yourself here, even without an entry?</div>`}
-    ${sts.length ? `<h3 style="margin-top:14px">Your statements</h3><ul class="stmts mini">${sts.map(st => `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><span>${esc(st.stmt.text)}</span></li>`).join('')}</ul>` : ''}`;
+  return `<p class="muted">${esc(b.label)}. Read what you wrote this term before you answer. Look for things that happened more than once.</p>
+    ${ev.length ? `<ul class="evid">${ev.map(x => `<li><b>${esc(entryTitle(x.e))}</b> <span class="tiny">${fmtDay(x.e.created)}</span><q>${esc(x.q.quote)}</q><span class="str ${x.q.strength}">${STRENGTHS[x.q.strength].label}</span> <small>${esc(compOf(x.q.id).label)}</small></li>`).join('')}</ul>` : `<div class="notice">You have no entries for this area this term yet. You can still answer: what did you notice about yourself here?</div>`}
+    ${sts.length ? `<h2 style="margin-top:14px">Your statements</h2><ul class="stmts mini">${sts.map(st => `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><span>${esc(st.stmt.text)}</span></li>`).join('')}</ul>` : ''}`;
 }
 function letterStep(s){
   return `${ringSvg(draft.kind, s.k)}` + s.qs.map(q => `
     <label class="q"><span>${q.q}</span>
-      <textarea class="in" data-a="${q.id}" placeholder="${q.next ? 'Instead of “study more”, write what, when and for how long.' : 'Three honest sentences are enough.'}">${esc(draft.answers[q.id] || '')}</textarea>
-      ${q.next ? `<span class="hint">A small step has a doing verb, a day and a place. Example: “Redo Q4 to Q6 on Tuesday after CCA, 20 minutes, then check with Wei Ling.”</span>` : ''}
+      <textarea class="in" data-a="${q.id}" placeholder="${q.next ? 'Instead of “study more”, write what you will do, when and for how long.' : 'Two or three sentences are enough.'}">${esc(draft.answers[q.id] || '')}</textarea>
+      ${q.next ? `<span class="hint">Write what you will do, when and where. For example: “Redo Q4 to Q6 on Tuesday after CCA, for 20 minutes, then check with Wei Ling.”</span>` : ''}
     </label>`).join('');
 }
 function lensStep(){
   const all = Object.values(draft.answers).join('\n'); const seen = detectCompetencies(all).slice(0, 3).map(x => x.c.id);
   const chosen = new Map((draft.competencies || []).map(t => [t.id, t]));
   return `
-    <p class="muted">Make a claim: up to two competencies you believe this entry shows. Then point to where it shows. The coach will look for it in your words, and say honestly whether it is there. A claim your words back deepens that segment of your E21CC wheel.</p>
-    ${DOMAINS.map(d => `<div class="domain"><h3>${esc(d.label)}</h3><div class="d">${esc(d.blurb)}</div>
+    <p class="muted">Choose up to two competencies you think this entry shows, and say where it shows. The coach checks your words for it. If your words show it, that part of your E21CC wheel gets darker. GROW and ACT entries both count.</p>
+    ${DOMAINS.map(d => `<div class="domain"><h2>${esc(d.label)}</h2><div class="d">${esc(d.blurb)}</div>
       ${COMPETENCIES.filter(c => c.d === d.id).map(c => { const t = chosen.get(c.id); const on = !!t;
-        return `<div class="comp ${on ? 'on' : ''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.label)} ${seen.includes(c.id) && !on ? '<span class="tag">maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>
+        return `<div class="comp ${on ? 'on' : ''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.label)} ${seen.includes(c.id) && !on ? '<span class="tag">Maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>
           ${on ? `<div class="levels" role="group" aria-label="How far along">${LEVELS.map(l => `<button type="button" data-l="${l.n}" class="${t.level === l.n ? 'on' : ''}" title="${esc(l.help)}">${l.label}</button>`).join('')}</div>
-          <label class="f" style="margin:10px 0 0"><span style="font-size:.9em">Where does it show? <small style="display:inline">(a few of your own words, optional)</small></span><input class="in" data-where="${c.id}" value="${esc(t.where || '')}" placeholder="e.g. when I checked both equations before deciding" maxlength="160"></label>` : ''}</div>`; }).join('')}
+          <label class="f" style="margin:10px 0 0"><span style="font-size:.92em">Where does it show? <small style="display:inline">(a few of your own words, optional)</small></span><input class="in" data-where="${c.id}" value="${esc(t.where || '')}" placeholder="e.g. when I checked both equations before deciding" maxlength="160"></label>` : ''}</div>`; }).join('')}
     </div>`).join('')}`;
 }
 function draftEntry(){
@@ -957,41 +1082,41 @@ function readbackStep(){
   return `
     <div class="readback">
       <p class="tiny">${esc(entryTitle(entry))} · ${fmtDate(Date.now())}</p>
-      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'left blank')}</p></div>`).join('')).join('')}
-      ${draft.kind !== 'across' ? `<p>${(draft.competencies || []).length ? '<span class="tiny">Your claim: </span>' + draft.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No claim made.</span>'}</p>` : ''}
+      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'Not answered')}</p></div>`).join('')).join('')}
+      ${draft.kind !== 'across' ? `<p>${(draft.competencies || []).length ? '<span class="tiny">Your claim: </span>' + draft.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No competency claimed.</span>'}</p>` : ''}
     </div>
-    <h3 style="margin-top:14px">Coach</h3>
-    ${autoEval() && !fresh ? `<p class="tiny">When you log this, it goes to the coach (no name, no email) to be read for competencies${stmts.length ? ' and statements' : ''}. You can switch that off in Settings.</p>` : ''}
-    ${stale ? `<div class="notice">Your words changed since the coach read this, so its read is set aside. Ask again, or log it and the coach reads the new version.</div>` : ''}
+    <h2 style="margin-top:14px">Feedback</h2>
+    ${autoEval() && !fresh ? `<p class="tiny">When you log this, the coach reads it (without your name or email) and gives feedback. You can turn this off in Settings.</p>` : ''}
+    ${stale ? `<div class="notice">You changed your words after the coach read them, so that feedback no longer applies. Ask again, or log the entry and the coach will read the new version.</div>` : ''}
     ${coachCard(fresh || b, cls, fresh ? fresh.e21cc : builtinE21cc(entry, stmts))}
-    ${mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="askAi" ${fresh || left <= 0 ? 'disabled' : ''}>${icon('spark')} ${draft.coachAi ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="aiMsg">${fresh ? 'Change your words to ask again.' : left <= 0 ? `Today’s ${dailyLimit()} coach reads are used up.` : left !== Infinity ? `${left} of ${dailyLimit()} coach reads left today.` : 'Sends this entry (no name, no email) to the coach service.'}</span></div>` : `<p class="tiny" style="margin-top:8px">This is the built in coach: it works offline and reads for specifics, reasons and a dated next step. An AI coach in your teacher’s voice can be switched on in Settings.</p>`}`;
+    ${mode !== 'builtin' ? `<div class="row" style="margin-top:10px"><button class="btn sec" id="askAi" ${fresh || left <= 0 ? 'disabled' : ''}>${icon('spark')} ${draft.coachAi ? 'Ask again' : 'Ask the AI coach'}</button><span class="tiny" id="aiMsg">${fresh ? 'Change your words to ask again.' : left <= 0 ? `Today’s ${dailyLimit()} coach reads are used up.` : left !== Infinity ? `${left} of ${dailyLimit()} coach reads left today.` : 'Sends this entry to the coach, without your name or email.'}</span></div>` : `<p class="tiny" style="margin-top:8px">This feedback comes from the built in coach, which works offline. It checks for details, reasons and a next step with a day. You can turn on an AI coach in Settings.</p>`}`;
 }
 function coachWho(src, model, cls){
-  if (src !== 'ai') return {name:'Built in coach', sub:'Reads for specifics, reasons and a dated next step', glyph:'🐝'};
+  if (src !== 'ai') return {name:'Built in coach', sub:'Checks for details, reasons and a next step', glyph:'bee'};
   const tone = (TONES[me.prefs.tone] || TONES.warm).label.toLowerCase();
-  if (String(model || '').startsWith('gemini')) return {name:'Gemini coach', sub:`${String(model).replace(/^gemini:/, '')} · ${tone} tone`, glyph:'✨'};
-  return {name:cls && cls.teacherName ? cls.teacherName + '’s coach' : 'AI coach', sub:`Claude · ${tone} tone`, glyph:'🎓'};
+  if (String(model || '').startsWith('gemini')) return {name:'Gemini coach', sub:`${String(model).replace(/^gemini:/, '')} · ${tone} tone`, glyph:'bulb'};
+  return {name:cls && cls.teacherName ? cls.teacherName + '’s coach' : 'AI coach', sub:`Claude · ${tone} tone`, glyph:'owl'};
 }
 function coachCard(c, cls, x){
   const d = DEPTHS[c.depth] || DEPTHS.surface; const lvl = c.depth === 'deep' ? 3 : c.depth === 'working' ? 2 : 1;
   const w = coachWho(c.source, c.model, cls);
   const seen = x ? (x.evidence || []).filter(v => v.strength !== 'glimpse' && !v.unverified).slice(0, 3) : [];
-  return `<div class="coach"><div class="who"><span class="avatar">${w.glyph}</span><div><b>${esc(w.name)}</b><small>${esc(w.sub)}</small></div></div>
+  return `<div class="coach"><div class="who"><span class="avatar">${avatarSvg(w.glyph)}</span><div><b>${esc(w.name)}</b><small>${esc(w.sub)}</small></div></div>
     ${x ? `<div class="part"><b>E21CC</b>${seen.length ? `<div class="chips">${seen.map(v => `<span class="chip dchip" style="--d:${DOMAIN_COLOUR[compOf(v.id).d]}">${esc(compOf(v.id).label)}<small>${STRENGTHS[v.strength].label}</small></span>`).join('')}</div>` : `<p>${esc(x.stance_note || 'No competency shows clearly yet.')}</p>`}</div>` : ''}
     <div class="depth"><i class="${lvl >= 1 ? 'on' : ''}"></i><i class="${lvl >= 2 ? 'on' : ''}"></i><i class="${lvl >= 3 ? 'on' : ''}"></i><b>${d.label}</b><span class="tiny">${esc(d.help)}</span></div>
-    <div class="part"><b>Gift</b><p>${esc(c.gift)}</p></div>
-    <div class="part"><b>Stretch</b><p>${esc(c.stretch)}</p></div>
+    <div class="part"><b>What went well</b><p>${esc(c.gift)}</p></div>
+    <div class="part"><b>What to work on</b><p>${esc(c.stretch)}</p></div>
     <div class="part"><b>Competency</b><p>${esc(c.competency)}</p></div>
-    <div class="part"><b>Answer this now</b><p class="ask">${esc(c.question)}</p></div>
+    <div class="part"><b>A question for you</b><p class="ask">${esc(c.question)}</p></div>
   </div>`;
 }
 function wireStep(){
   const sh = $('#sheet');
-  $$('[data-ctype]', sh).forEach(b => b.onclick = () => { collect(); draft.context.type = b.dataset.ctype; saveDraft(); renderComposer(); });
-  $$('[data-exp]', sh).forEach(b => b.onclick = () => { collect(); const s = b.dataset.exp; const i = s.indexOf('|'); draft.context = {type:s.slice(0, i), name:s.slice(i + 1)}; draft._other = false; matchGroup(); saveDraft(); renderComposer(); });
-  $$('[data-other]', sh).forEach(b => b.onclick = () => { collect(); draft._other = true; if (myExperiences().some(x => x.name.toLowerCase() === (draft.context.name || '').toLowerCase())) draft.context = {type:'other', name:''}; saveDraft(); renderComposer(); const n = $('[name=ctxName]'); if (n) n.focus(); });
+  $$('[data-ptype]', sh).forEach(b => b.onclick = () => { collect(); const t = b.dataset.ptype; const open = draft._pick === t || (draft._pick == null && $('.tile.on', sh) === b); draft._pick = open ? '' : t; if (!open && draft.context.type !== t) draft.context = {type:t, name:''}; saveDraft(); renderComposer(); if (!open && t !== 'subject'){ const n = $('[name=ctxName]'); if (n && !$('.typepanel .chip', sh)) n.focus(); } });
+  $$('[data-exp]', sh).forEach(b => b.onclick = () => { collect(); const s = b.dataset.exp; const i = s.indexOf('|'); draft.context = {type:s.slice(0, i), name:s.slice(i + 1)}; if (b.closest('.xchips')) draft._pick = ''; const n = $('[name=ctxName]', sh); if (n) n.value = ''; matchGroup(); saveDraft(); renderComposer(); });
+  const gc = $('#grpChange', sh); if (gc) gc.onclick = () => { collect(); draft._grpOpen = !draft._grpOpen; saveDraft(); renderComposer(); };
   const ts = $('#toSettings', sh); if (ts) ts.onclick = () => { collect(); saveDraft(); draft = null; };
-  const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x => x.classList.toggle('on', x === b)); saveDraft(); });
+  const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); saveDraft(); });
   $$('.comp', sh).forEach(card => {
     card.addEventListener('click', (ev) => {
       const lb = ev.target.closest('[data-l]'); const pick = ev.target.closest('.pick');
@@ -1001,12 +1126,12 @@ function wireStep(){
       if (!pick) return;
       const i = list.findIndex(x => x.id === id);
       if (i >= 0) list.splice(i, 1);
-      else { if (list.length >= 2){ toast('Two is the limit. Depth beats breadth.'); return; } list.push({id, level:2, where:''}); }
+      else { if (list.length >= 2){ toast('You can choose up to two. Remove one first.'); return; } list.push({id, level:2, where:''}); }
       saveDraft(); renderComposer();
     });
   });
   const ask = $('#askAi', sh); if (ask) ask.onclick = async () => {
-    ask.disabled = true; $('#aiMsg').innerHTML = '<span class="spin"></span> Reading your entry…';
+    ask.disabled = true; $('#aiMsg').innerHTML = '<span class="spin"></span> The coach is reading your entry…';
     try{ draft.coachAi = await aiCoach(draftEntry()); renderComposer(); }
     catch(e){ ask.disabled = e instanceof AllowanceError; $('#aiMsg').textContent = e.message; }
   };
@@ -1028,12 +1153,7 @@ function saveEntry(){
       me.entries[i] = migrateEntry(e);
     }
   } else { me.entries.push(migrateEntry(Object.assign(e, {links:[], notes:[], sent:{}}))); delete me.drafts[draft.key]; }
-  // a new experience typed in "Something else" joins the student's list, if they kept the box ticked
-  if (draft._other && draft._keepExp !== false && e.context && e.context.name && e.kind !== 'across' && !myExperiences().some(x => x.name.toLowerCase() === e.context.name.toLowerCase())){
-    if (e.context.type === 'subject') me.experiences.subjects.push(e.context.name);
-    else if (e.context.type === 'cca') me.experiences.cca = [me.experiences.cca, e.context.name].filter(Boolean).join(', ');
-    else me.experiences.others.push({type:e.context.type, name:e.context.name});
-  }
+  if (!draft.editId && e.kind !== 'across') rememberExperience(e.context);
   saveDb(); const id = e.id; const isEdit = !!draft.editId; draft = null; closeComposer();
   location.hash = '#/entry/' + id + (!isEdit ? '?new=1' : changed ? '?edited=1' : '');
 }
@@ -1045,7 +1165,7 @@ function answersWithNotes(e){
   return fw.steps.map(s => s.qs.map(q => {
     const ns = notes.filter(n => n.anchor === q.id).sort((a, b) => a.at - b.at);
     const latest = ns[ns.length - 1]; const older = ns.slice(0, -1);
-    return `<div class="qa-row${ns.length ? ' has-note' : ''}" data-anchor="${q.id}"><div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p></div>
+    return `<div class="qa-row${ns.length ? ' has-note' : ''}" data-anchor="${q.id}"><div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'Not answered')}</p></div>
       ${latest ? `<div class="notes">${older.length ? `<details class="older"><summary>${plural(older.length, 'earlier note')}</summary>${older.map(noteHtml).join('')}</details>` : ''}${noteHtml(latest)}</div>` : ''}</div>`;
   }).join('')).join('');
 }
@@ -1059,23 +1179,23 @@ function renderEntry(idq){
   const files = basketsOf(e);
   frame(`
     <p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'E21CC' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>
-    ${isNew || edited ? `<section class="hero"><h1>${isNew ? 'Logged.' : 'Saved.'}</h1><p class="motto">${esc(nextStepOf(e) || me.prefs.motto || 'Believe you can.')}</p><p class="meta">${nextStepOf(e) ? 'That is your next step. It waits for you on the E21CC page.' : 'Next time, give yourself a small step with a day on it.'}</p></section>` : ''}
+    ${isNew || edited ? `<div class="banner" role="status"><span class="medal yellow" aria-hidden="true">${icon('check')}</span><div><b>${isNew ? 'Logged.' : 'Saved.'}</b><p>${nextStepOf(e) ? `Your next step, also on your Home page: ${esc(nextStepOf(e))}` : 'Next time, add a small step with a day on it.'}</p></div></div>` : ''}
     <section class="card entrycard">
       <div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap">
-        <div class="grow"><span class="tiny">${esc(contextLine(e))} · ${fmtDay(e.created)}</span><h2 style="margin:2px 0 0">${esc(entryTitle(e))}</h2>
+        <div class="grow"><span class="tiny">${esc(contextLine(e))} · ${fmtDay(e.created)}</span><h1 style="margin:2px 0 0;font-size:1.45em">${esc(entryTitle(e))}</h1>
           ${files.length ? `<p class="tiny" style="margin:4px 0 0">Shows ${COMPETENCIES.filter(c => compLevelOf(e, c.id) >= 2).map(c => `<a href="#/c/${c.id}">${esc(c.label)}</a>`).join(', ') || files.map(b => esc(basketOf(b).short)).join(', ')}</p>` : ''}</div>
-        ${medal(e.kind, 'style="width:44px;height:44px;flex-basis:44px;font-size:1.2em"')}
+        <span class="badge b-${e.kind}">${fw.name}</span>
       </div>
       ${topNotes.map(noteHtml).join('')}
       ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
       ${e.kind === 'across' && (e.lookedAt || []).length ? `<details style="margin-top:10px"><summary>The evidence you looked across (${e.lookedAt.length})</summary><ul class="evid" style="margin-top:8px">${e.lookedAt.map(x => `<li><q>${esc(x.quote)}</q></li>`).join('')}</ul></details>` : ''}
       <div class="readback" style="margin-top:12px">${answersWithNotes(e)}</div>
-      ${e.kind !== 'across' ? `<p style="margin-top:8px">${(e.competencies || []).length ? '<span class="tiny">Claimed: </span>' + e.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No claim made.</span>'}</p>` : ''}
+      ${e.kind !== 'across' ? `<p style="margin-top:8px">${(e.competencies || []).length ? '<span class="tiny">You claimed: </span>' + e.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No competency claimed.</span>'}</p>` : ''}
       <div class="row" style="margin-top:6px">
         <button class="btn small" id="eShare">${icon('share')} Share</button>
         <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
         <button class="btn small sec" onclick="location.hash='#/${e.kind === 'across' ? 'across/' + e.basket : 'write/' + e.kind}/${e.id}'">${icon('edit')} Edit</button>
-        <button class="btn small ghost" id="eDel" style="color:var(--red)">${icon('trash')} Delete</button>
+        <button class="btn small ghost danger" id="eDel">${icon('trash')} Delete</button>
       </div>
       ${sentTo.length ? `<p class="tiny" style="margin:8px 0 0">Sent to ${sentTo.join(', ')}.</p>` : ''}
     </section>
@@ -1089,10 +1209,10 @@ function renderEntry(idq){
   let seen = false; for (const n of (e.notes || [])) if (!n.seen){ n.seen = true; seen = true; } if (seen) saveDb();
   $('#eShare').onclick = () => shareEntry(e);
   $('#eCopy').onclick = () => copyText(entryText(e, true));
-  $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It goes for good on this device. If you sent it to a teacher, their copy stays.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x => x.id !== e.id); saveDb(); closeDialog(); location.hash = '#/'; }; $('#dNo').onclick = closeDialog; };
+  $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It will be deleted from this device. If you sent it to a teacher, they keep their copy.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x => x.id !== e.id); saveDb(); closeDialog(); location.hash = '#/'; }; $('#dNo').onclick = closeDialog; };
   const ask = $('#eAsk'); if (ask) ask.onclick = () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; runAiFor(e); };
   const retry = $('#e21Retry'); if (retry) retry.onclick = () => { aiErrors.delete(e.id); runAiFor(e); renderEntry(idq); };
-  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('Two is the limit. Untag one on Edit first.'); return; } if (!list.some(t => t.id === b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested || []).filter(x => x !== b.dataset.tag); } saveDb(); toast('Claimed.'); renderEntry(idq); });
+  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('You can claim up to two. Edit the entry to remove one first.'); return; } if (!list.some(t => t.id === b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested || []).filter(x => x !== b.dataset.tag); } saveDb(); toast('Claimed.'); renderEntry(idq); });
   $$('[data-maylink]').forEach(b => b.onclick = () => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === b.dataset.maylink); addLink(e, b.dataset.maylink, m ? m.quote : ''); });
   // the smart action: a fresh or changed entry is read once by the coach
   if ((isNew || edited) && autoEval() && !fresh && !aiPending.has(e.id) && !aiErrors.has(e.id)){ runAiFor(e); renderEntry(idq); }
@@ -1103,25 +1223,25 @@ function e21ccCard(e, opts = {}){
   const claims = e.competencies || []; const claimed = new Set(claims.map(t => t.id));
   const seenEv = id => (x.evidence || []).find(v => v.id === id && v.strength !== 'glimpse');
   const cls = groupFor(e);
-  const who = esc(x.source === 'ai' ? coachWho('ai', (e.coach && e.coach.ai && e.coach.ai.model) || '', cls).name : 'Built in read');
+  const who = esc(x.source === 'ai' ? coachWho('ai', (e.coach && e.coach.ai && e.coach.ai.model) || '', cls).name : 'Built in coach');
   const claimRows = claims.map(t => { const c = compOf(t.id); if (!c) return ''; const l = LEVELS.find(z => z.n === t.level); const ev = seenEv(t.id);
     return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev ? ev.strength : 'none'}">${ev ? 'Seen · ' + STRENGTHS[ev.strength].label : 'Not seen yet'}</span></div>
       <small>Your claim: ${l ? l.label.toLowerCase() : 'claimed'}${t.where ? `, and you pointed to “${esc(t.where)}”` : ''}.</small>
-      ${ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : `<small>The words do not show the moment yet. ${esc(c.probe)}</small>`}</li>`; }).join('');
+      ${ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : `<small>Your words do not show this yet. ${esc(c.probe)}</small>`}</li>`; }).join('');
   const others = (x.evidence || []).filter(v => !claimed.has(v.id) && v.strength !== 'glimpse');
   const linked = new Set((e.links || []).map(l => l.sid));
   const may = (x.statements || []).filter(s => statementById(s.sid) && !linked.has(s.sid)).slice(0, 2);
   const err = opts.error;
   return `<section class="card" id="e21cc">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">E21CC feedback</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
-    ${err ? (err.allowance ? `<div class="notice">${esc(err.msg)}</div>` : `<div class="notice warn">The coach could not read this one: ${esc(err.msg)} The built in read stands. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>`) : ''}
-    ${e.kind === 'across' ? '' : claims.length ? `<span class="kick">Your claim, held against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You made no claim this time. Next time, name one competency and point to where it shows; the coach will check.</p>`}
-    ${others.length ? `<span class="kick" style="margin-top:12px">Also seen${e.kind === 'across' ? '' : ', not claimed'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' ? '' : `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Claim it</button>`}</li>`; }).join('')}</ul>` : ''}
-    ${may.length ? `<span class="kick" style="margin-top:12px">May back a statement</span><ul class="evid">${may.map(s => { const stmt = statementById(s.sid); return `<li><b>${esc(stmt.text)}</b><q>${esc(s.quote)}</q>${s.why ? `<small>${esc(s.why)}</small>` : ''}<button class="btn small sec" data-maylink="${esc(s.sid)}">${icon('link')} Link it</button></li>`; }).join('')}</ul>` : ''}
+    ${err ? (err.allowance ? `<div class="notice">${esc(err.msg)}</div>` : `<div class="notice warn">The coach could not read this entry: ${esc(err.msg)} The built in feedback is shown instead. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>`) : ''}
+    ${e.kind === 'across' ? '' : claims.length ? `<span class="kick">Your claim, checked against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You did not claim a competency this time. Next time, choose one and say where it shows, and the coach will check.</p>`}
+    ${others.length ? `<span class="kick" style="margin-top:12px">${e.kind === 'across' ? 'Shown in your words' : 'Also shown in your words'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' ? '' : `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Claim it</button>`}</li>`; }).join('')}</ul>` : ''}
+    ${may.length ? `<span class="kick" style="margin-top:12px">Could unlock a statement</span><ul class="evid">${may.map(s => { const stmt = statementById(s.sid); return `<li><b>${esc(stmt.text)}</b><q>${esc(s.quote)}</q>${s.why ? `<small>${esc(s.why)}</small>` : ''}<button class="btn small sec" data-maylink="${esc(s.sid)}">${icon('link')} Link it</button></li>`; }).join('')}</ul>` : ''}
     ${(e.links || []).length ? `<p class="tiny" style="margin-top:10px">Linked to: ${(e.links || []).map(l => { const s = statementById(l.sid); return s ? `<span class="tag">${linkBacked(e, s) ? '● ' : '○ '}${esc(s.text)}</span>` : ''; }).join('')}</p>` : ''}
     <div class="stance" style="margin-top:12px"><div class="track"><i class="${pos >= 0 ? 'on' : ''}"></i><i class="${pos >= 1 ? 'on' : ''}"></i><i class="${pos >= 2 ? 'on' : ''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
     ${x.probe ? `<div style="margin-top:8px"><span class="kick">Go deeper${compOf(x.probe_for) ? ' on ' + esc(compOf(x.probe_for).label) : ''}</span><p class="ask">${esc(x.probe)}</p></div>` : ''}
-    <p class="tiny" style="margin:10px 0 0">Glimpse: a word points here. Clear: a moment in your words. Strong: the moment and the why.${x.source !== 'ai' && aiReady() && !opts.pending && !err && !(e.coach && e.coach.ai) ? ' The coach has not read this one yet.' : ''}</p>
+    <p class="tiny" style="margin:10px 0 0">Glimpse: one word hints at it. Clear: you describe a moment. Strong: you describe a moment and say how or why.${x.source !== 'ai' && aiReady() && !opts.pending && !err && !(e.coach && e.coach.ai) ? ' The coach has not read this one yet.' : ''}</p>
   </section>`;
 }
 /* Share one entry: choose the adults; those whose sharing settings cover it come ticked. */
@@ -1142,7 +1262,8 @@ function entryRow(e){
   const fw = FRAMEWORKS[e.kind]; const c = coachOf(e); const first = fw.steps[0].qs[0].id;
   const unread = (e.notes || []).filter(n => !n.seen).length; const anySent = Object.keys(e.sent || {}).length;
   const comps = COMPETENCIES.filter(x => compLevelOf(e, x.id) >= 2).slice(0, 3);
-  return `<a class="entry" href="#/entry/${e.id}">${medal(e.kind)}<span class="grow"><b>${esc(entryTitle(e))}</b><small>${fmtDay(e.created)} · ${esc(contextLine(e))}${c && DEPTHS[c.depth] ? ' · ' + DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}</span></a>`;
+  const d = new Date(e.created);
+  return `<a class="entry" href="#/entry/${e.id}"><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b><small>${e.context && e.context.type && e.context.type !== 'subject' ? esc(typeLabel(e.context.type)) + ' · ' : ''}${c && DEPTHS[c.depth] ? DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}</span></a>`;
 }
 /* The student's own experiences, in their order: CCA first, then subjects, then the rest. */
 function myExperiences(){
@@ -1183,30 +1304,28 @@ function renderJournal(kind){
   const groupPanel = g => `<section class="gpanel" style="--g:${g.colour}">
       <div class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="kick">${pivot === 'experience' ? esc(typeLabel(g.type)) : pivot === 'competency' && g.comp ? esc(basketOf(compOf(g.comp).d).short) : esc(PIVOTS.find(p => p[0] === pivot)[1])}</span><h2 style="margin:0">${esc(g.label)}</h2></div>
         ${pivot === 'experience' ? `<a class="btn small" href="${newHref(g)}">${icon('plus')} New ${fw.name}</a>` : g.comp ? `<a class="btn small sec" href="#/c/${g.comp}">Open ${esc(g.label)}</a>` : ''}</div>
-      ${g.entries.length ? g.entries.map(entryRow).join('') : `<p class="muted" style="margin-top:10px">No ${fw.name} entries here yet.${pivot === 'experience' ? ` After your next ${g.type === 'cca' ? 'session' : g.type === 'subject' ? 'lesson' : 'one'}, start one from here.` : ''}</p>`}
+      ${g.entries.length ? g.entries.map(entryRow).join('') : `<p class="muted" style="margin-top:10px">No ${fw.name} entries here yet.${pivot === 'experience' ? ` Start one after your next ${g.type === 'cca' ? 'session' : g.type === 'subject' ? 'lesson' : 'activity'}.` : ''}</p>`}
     </section>`;
   let body = '';
   if (view === 'shelf'){
-    body = sel ? `<p style="margin:0 0 8px"><a class="backlink" href="${href({})}">${icon('back')} All notebooks</a></p>${groupPanel(sel)}`
+    body = sel ? `<p style="margin:0 0 4px"><a class="backlink" href="${href({})}">${icon('back')} All notebooks</a></p>${groupPanel(sel)}`
       : groups.length ? `<div class="shelf">${groups.map(g => `<a class="nb${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}"><span class="nb-title">${esc(g.label)}</span><span class="nb-meta">${pivot === 'experience' ? esc(typeLabel(g.type)) + '<br>' : ''}${plural(g.entries.length, 'entry', 'entries')}${g.entries[0] ? '<br>' + fmtDay(g.entries[0].created) : ''}</span></a>`).join('')}</div>` : '';
   } else {
-    const marks = `<div class="bookmarks" role="list"><a role="listitem" class="bm${sel ? '' : ' on'}" href="${href({})}">All <b>${total}</b></a>${groups.map(g => `<a role="listitem" class="bm${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}">${esc(g.label)} <b>${g.entries.length}</b></a>`).join('')}</div>`;
-    body = marks + (sel ? groupPanel(sel) : groups.filter(g => g.entries.length).map(g => `<section class="gblock" style="--g:${g.colour}"><h3><a href="${href({g:g.key})}">${esc(g.label)}</a> <span class="tiny">${plural(g.entries.length, 'entry', 'entries')}</span></h3>${g.entries.map(entryRow).join('')}</section>`).join(''));
+    body = sel ? groupPanel(sel) : groups.filter(g => g.entries.length).map(g => `<section class="gblock" style="--g:${g.colour}"><h2><a href="${href({g:g.key})}">${esc(g.label)}</a>${pivot === 'experience' && g.type === 'cca' ? '<span class="gtag">CCA</span>' : ''}<span class="tiny">${plural(g.entries.length, 'entry', 'entries')}</span></h2>${g.entries.map(entryRow).join('')}</section>`).join('');
   }
   const empty = !total;
+  const viewSw = `<div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks" aria-label="Bookmarks"${view === 'bookmarks' ? ' aria-current="true"' : ''}>${icon('list')}</a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks" aria-label="Shelf of notebooks"${view === 'shelf' ? ' aria-current="true"' : ''}>${icon('shelf')}</a></div>`;
+  const marks = view === 'bookmarks' ? `<div class="bookmarks" role="list"><a role="listitem" class="bm${sel ? '' : ' on'}" href="${href({})}">All <b>${total}</b></a>${groups.map(g => `<a role="listitem" class="bm${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}">${esc(g.label)} <b>${g.entries.length}</b></a>`).join('')}</div>` : '<span class="grow"></span>';
   frame(`
     <section class="jhead">
-      <span class="glyph">${ringSvg(kind)}</span>
-      <div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'GROW by reflecting, after a lesson, a training, a camp day.' : 'ACT on Feedback, whenever feedback comes back.'}</p></div>
+      <div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'Gift · Rise · Own · Watch' : 'Acknowledge · Connect · Test'}</p></div>
       <a class="btn acc" href="#/write/${kind}">${icon('plus')} New entry</a>
     </section>
-    <div class="jbar">
-      <div class="seg" role="group" aria-label="Organise by">${PIVOTS.map(([k, l]) => `<a class="${pivot === k ? 'on' : ''}" href="${href({p:k})}" ${pivot === k ? 'aria-current="true"' : ''}>${l}</a>`).join('')}</div>
-      <div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks">${icon('list')}<span class="sr">Bookmarks</span></a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks">${icon('shelf')}<span class="sr">Shelf</span></a></div>
-    </div>
-    ${empty && pivot === 'experience' && !myExperiences().length ? `<div class="notice">Add your subjects and CCA in <a href="#/settings">Settings</a> and they appear here as bookmarks.</div>` : ''}
+    <div class="sortby"><span id="sortLbl">Sort by</span><div class="seg" role="group" aria-labelledby="sortLbl">${PIVOTS.map(([k, l]) => `<a class="${pivot === k ? 'on' : ''}" href="${href({p:k})}" ${pivot === k ? 'aria-current="true"' : ''}>${l}</a>`).join('')}</div></div>
+    <div class="bmrow"${view === 'shelf' ? ' style="border-bottom:0"' : ''}>${marks}${viewSw}</div>
+    ${empty && pivot === 'experience' && !myExperiences().length ? `<div class="notice">Add your subjects and CCA in <a href="#/settings">Settings</a>, and they will appear here as bookmarks.</div>` : ''}
     ${body}
-    ${empty ? `<section class="card flat"><p class="muted" style="margin:0">Your ${fw.name} journal is empty. ${kind === 'grow' ? 'After your next lesson or session, write one: two honest sentences per question is plenty.' : 'Next time a marked piece or a comment comes back, write one.'}</p></section>` : ''}
+    ${empty ? `<section class="card flat"><p class="muted" style="margin:0">Your ${fw.name} journal is empty. ${kind === 'grow' ? 'After your next lesson or CCA session, write your first entry. Two or three sentences for each question is enough.' : 'When you next get feedback on your work, write your first entry.'}</p></section>` : ''}
   `, kind);
 }
 
@@ -1216,7 +1335,7 @@ function renderSharing(){
   const card = a => {
     const secs = sectionsOf(a); const unsent = unsentFor(a); const sink = a.sink && a.sink.kind && a.sink.kind !== 'none' ? (a.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'a link in Teams';
     return `<section class="card adult" data-a="${esc(a.id)}">
-      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : `<button class="btn small ghost" data-remove="${esc(a.id)}" style="color:var(--red)">${icon('trash')} Remove</button>`}</div>
+      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : `<button class="btn small ghost danger" data-remove="${esc(a.id)}">${icon('trash')} Remove</button>`}</div>
       <span class="flabel" style="margin-top:12px">What ${esc(a.name)} can see</span>
       <div class="chips">${SECTIONS.map(([k, l]) => `<button type="button" class="chip ${secs.includes(k) ? 'on' : ''}" data-sec="${k}" aria-pressed="${secs.includes(k)}">${secs.includes(k) ? icon('eye') : icon('lock')}${esc(l)}</button>`).join('')}</div>
       ${a.group ? `<span class="flabel" style="margin-top:12px">Which entries</span><div class="seg" role="group" aria-label="Which entries">${[['group', `Only ${a.groupLabel || 'this group'}`], ['all', 'All my entries']].map(([k, l]) => `<button type="button" data-scope="${k}" class="${scopeOf(a) === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>` : ''}
@@ -1254,11 +1373,11 @@ function experiencesEditor(){
     <p class="tiny" style="margin-top:0">These become bookmarks in your GROW and ACT journals, and the first choices when you write. Pick only what you take.</p>
     <span class="flabel">My subjects</span>
     <div class="chips" id="subjChips">${[...SUBJECTS, ...custom].map(s => `<button type="button" class="chip ${x.subjects.includes(s) ? 'on' : ''}" data-subj="${esc(s)}" aria-pressed="${x.subjects.includes(s)}">${x.subjects.includes(s) ? icon('check') : ''}${esc(s)}</button>`).join('')}</div>
-    <form class="row" id="addSubj" style="margin-top:8px"><input class="in grow" name="s" maxlength="40" placeholder="Another subject, e.g. Additional Mathematics"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    <form class="row" id="addSubj" style="margin-top:8px"><input class="in grow" name="s" maxlength="40" aria-label="Another subject" placeholder="Another subject, e.g. Additional Mathematics"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
     <label class="f" style="margin-top:14px"><span>My CCA</span><input class="in" id="ccaIn" value="${esc(x.cca)}" maxlength="80" placeholder="e.g. Football, or Choir, Robotics" autocapitalize="words"><small>It becomes your first experience bookmark. Separate two with a comma.</small></label>
     <span class="flabel">Other experiences</span>
     ${x.others.length ? `<ul class="groups">${x.others.map((o, i) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
-    <form class="row" id="addOther"><select class="in" name="t" style="width:auto">${CONTEXT_TYPES.filter(c => c.id !== 'subject' && c.id !== 'cca').map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    <form class="row" id="addOther"><select class="in" name="t" style="width:auto" aria-label="Type of experience">${CONTEXT_TYPES.filter(c => c.id !== 'subject' && c.id !== 'cca').map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" aria-label="Name of the experience" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
   </section>`;
 }
 function wireExperiences(rerender){
@@ -1291,13 +1410,13 @@ function renderSettings(){
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
       <label class="f"><span>Title of your log</span><input class="in" id="sTitle" value="${esc(p.title || '')}" maxlength="50" placeholder="E21CC Learning Log"><small>Shown on the cover. Leave blank for “E21CC Learning Log”.</small></label>
       <label class="f"><span>Your line</span><input class="in" id="sMotto" value="${esc(p.motto || '')}" maxlength="80" placeholder="A sentence you want to see every day"></label>
-      <div class="f"><span class="flabel">Your icon</span><div class="emojis">${ICONS.map(e => `<button type="button" data-e="${e}" class="${p.avatar === e ? 'on' : ''}">${e}</button>`).join('')}</div></div>
-      <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120" placeholder="name@students.edu.sg"><small>Only for sharing with teachers; their notes find you by it.</small></label>
+      <div class="f"><span class="flabel">Your icon</span>${iconPicker()}</div>
+      <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120" placeholder="name@students.edu.sg"><small>Only needed for sharing with teachers. Their notes reach you through it.</small></label>
     </section>
     <section class="card" id="look"><h2>Look</h2>
       ${coverPicker()}
       <span class="flabel" style="margin-top:14px">Highlight colour</span><div class="swatches">${ACCENTS.map(a => `<button type="button" class="sw ${p.accent === a.id ? 'on' : ''}" data-accent="${a.id}" style="--c:${a.c}" aria-label="${a.id}"></button>`).join('')}</div>
-      <span class="flabel" style="margin-top:14px">Text size</span><div class="seg">${[['normal','A'],['large','A+'],['xl','A++']].map(([k, l]) => `<button type="button" data-size="${k}" class="${p.size === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <span class="flabel" style="margin-top:14px" id="sizeLbl">Text size</span><div class="seg" role="group" aria-labelledby="sizeLbl">${[['normal','A'],['large','A+'],['xl','A++']].map(([k, l]) => `<button type="button" data-size="${k}" class="${p.size === k ? 'on' : ''}" aria-label="${k === 'normal' ? 'Normal' : k === 'large' ? 'Large' : 'Extra large'} text">${l}</button>`).join('')}</div>
     </section>
     <section class="card" id="coach"><h2>Coach</h2>
       <span class="flabel">Tone</span>
@@ -1306,7 +1425,7 @@ function renderSettings(){
       <div class="stack" id="coachMode">${modes.main.map(modeCard).join('')}</div>
       <div id="geminiBox" ${c.mode === 'gemini' ? '' : 'hidden'} class="subpanel">
         <label class="f"><span>Gemini API key</span><input class="in" id="sGKey" type="password" value="${esc(c.geminiKey || '')}" placeholder="Paste the key from Google AI Studio" autocomplete="off" autocapitalize="none" spellcheck="false"><small>Stored only in this browser. Make one at aistudio.google.com, and restrict it to the Generative Language API and this site. For testing by adults: Gemini’s terms do not allow users under 18.</small></label>
-        <div class="row"><label class="f grow" style="margin:0"><span>Model</span><select class="in" id="sGModel"><option value="${esc(c.geminiModel || GEMINI_DEFAULT)}">${esc(c.geminiModel || GEMINI_DEFAULT)}</option></select></label><button class="btn sec small" id="sGLoad" style="margin-top:24px">Load models</button></div>
+        <div class="row"><label class="f grow" style="margin:0"><span>Model</span><select class="in" id="sGModel"><option value="${esc(c.geminiModel || GEMINI_DEFAULT)}">${esc(c.geminiModel || GEMINI_DEFAULT)}</option></select></label><button class="btn sec small" id="sGLoad" style="margin-top:26px">Load models</button></div>
         <p class="tiny" id="sGMsg"></p>
       </div>
       <details style="margin-top:10px" ${['relay','local','key'].includes(c.mode) ? 'open' : ''}><summary>Other options</summary><div class="stack" id="coachMore" style="margin-top:8px">${modes.more.map(modeCard).join('')}</div>
@@ -1318,7 +1437,7 @@ function renderSettings(){
           <label class="f"><span>Anthropic API key</span><input class="in" id="sKey" type="password" value="${esc(c.key || '')}" placeholder="sk-ant-…" autocomplete="off"></label>
           <label class="f"><span>Model</span><select class="in" id="sModel">${[['claude-opus-5','Claude Opus 5'],['claude-sonnet-5','Claude Sonnet 5'],['claude-haiku-4-5','Claude Haiku 4.5']].map(([v, l]) => `<option value="${v}" ${c.model === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         </div></details>
-      <label class="row" id="autoRow" style="margin-top:12px;cursor:pointer" ${c.mode === 'builtin' ? 'hidden' : ''}><input type="checkbox" id="sAuto" ${c.auto !== false ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span>Give feedback on every entry when I log it<small style="display:block;color:var(--text-2)">Each version of your words is read once. Off means only when you press the button.</small></span></label>
+      <label class="check" id="autoRow" style="margin-top:8px" ${c.mode === 'builtin' ? 'hidden' : ''}><input type="checkbox" id="sAuto" ${c.auto !== false ? 'checked' : ''}><span>Give feedback on every entry when I log it<small style="display:block;color:var(--text-2)">Each version of your words is read once. Off means only when you press the button.</small></span></label>
       <p class="tiny" id="allowRow" ${METERED.includes(c.mode) ? '' : 'hidden'} style="margin-top:8px">Coach reads today: ${readsUsed()} of ${dailyLimit()}.</p>
       <div class="row" style="margin-top:8px"><button class="btn sec small" id="sTest" ${c.mode === 'builtin' ? 'hidden' : ''}>Test the coach</button><span class="tiny" id="sTestMsg"></span></div>
     </section>
@@ -1339,7 +1458,7 @@ function renderSettings(){
       </div>
       ${STORE.hasV1() && db.migratedFrom ? `<details style="margin-top:14px"><summary>The old Learning Log copy</summary><p class="tiny" style="margin-top:6px">Your old entries moved into this log on ${fmtDate(db.migratedAt || Date.now())}. A copy of the old log is still kept in this browser as a safety net. Once you have exported, you can remove it.</p><button class="btn small danger" id="sDropV1">Remove the old copy</button></details>` : ''}
       <details style="margin-top:14px"><summary>Change or remove PIN</summary>
-        <form id="pinChange" class="row" style="margin-top:8px"><input class="in grow" name="pin" inputmode="numeric" maxlength="4" placeholder="New 4 digit PIN, or blank to remove"><button class="btn small" type="submit">Set</button></form></details>
+        <form id="pinChange" class="row" style="margin-top:8px"><input class="in grow" name="pin" inputmode="numeric" maxlength="4" aria-label="New 4 digit PIN" placeholder="New 4 digit PIN, or blank to remove"><button class="btn small" type="submit">Set</button></form></details>
       <div class="row" style="margin-top:14px">
         <button class="btn ghost" id="sOut">${icon('user')} Switch person</button>
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
@@ -1353,8 +1472,7 @@ function renderSettings(){
   $('#sTitle').oninput = e => { me.prefs.title = e.target.value; sv(); const w = $('.cover .word'); if (w) w.textContent = logTitle(); };
   $('#sEmail').oninput = e => { me.email = e.target.value.trim().toLowerCase(); sv(); };
   $('#sMotto').oninput = e => { me.prefs.motto = e.target.value; sv(); };
-  $$('.emojis button').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.e; sv(); $$('.emojis button').forEach(x => x.classList.toggle('on', x === b)); $('.cover .avatar').textContent = b.dataset.e; });
-  wireCover();
+  wireIconPicker(); wireCover();
   $$('button[data-accent]').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('button[data-accent]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('button[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('button[data-size]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('[data-tone]').forEach(b => b.onclick = () => { me.prefs.tone = b.dataset.tone; saveDb(); $$('[data-tone]').forEach(x => x.classList.toggle('on', x === b)); });

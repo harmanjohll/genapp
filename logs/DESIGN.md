@@ -2,6 +2,40 @@
 
 October 2026. The Learning Log became the Competency Development Log: same frameworks, same coach, a new spine. The first part of this document covers that change. The rest is the Learning Log's design from September; it still holds for the frameworks, the coach, the relay and the mobile layout.
 
+## Flow, voice and interface pass (19 October 2026)
+
+Harman tested the rebuild and raised five points. What changed:
+- **No preset subject.** The "Mathematics" he saw came from a draft saved by the earlier build. An unfinished draft now asks first: continue it, or start a new one (which deletes it). A new entry starts blank.
+- **A better picker.** Step 1 asks "What is this entry about?":
+  - "Your usual" chips: the student's CCA, subjects and recent experiences.
+  - Six type tiles: Subject, CCA, Camp or trip, Competition, Service, Something else.
+  - Subject opens every subject; the other types open a name field.
+  - A new pick joins the student's list when they press Next, with Undo.
+  - The group dropdown became a quiet "Teacher's group" line with Change.
+- **Home everywhere.** A Home button sits top left on every page, in the entry editor (it saves the draft first) and in the teacher console.
+- **A teacher's voice.** Every student facing line and the built in coach were rewritten: plain words, short sentences, specific instructions, no sayings. The Gemini prompt asks for a caring secondary school teacher marking a reflection.
+- **ACT is visible in the wheel.** ACT always counted. Now the wheel labels, Where you stand and each competency page give GROW and ACT counts, and the entries carry a GROW or ACT badge.
+- **Interface: option A, Clothbound notebook**, chosen from four rendered options:
+  - a cloth cover and ribbon tabs with icons and labels;
+  - cream lined paper with a red margin, and a red ribbon on the E21CC page;
+  - a two column E21CC page on laptops.
+- **Accessibility.** The ui-ux-pro-max audit rules were applied:
+  - every icon is a line drawing, and emoji avatars map to drawn ones;
+  - every tap target is at least 44px;
+  - text contrast is at least 4.5:1, and focus rings show on cream paper;
+  - there is a skip link and a reduced motion setting;
+  - headings run in order, and every field has a label.
+
+**Verified.** An automated audit crawled every route at 320, 390 and 1280:
+- It found 137 problems before this pass and 0 after, on both the lined and the dark paper.
+- The sharing, credits, notes, console and Gemini suites still pass.
+- A new suite covers the new behaviour:
+  - the draft card;
+  - a subject chosen in two taps, and remembered;
+  - Home on every page and every editor step;
+  - an ACT entry filling its wheel segment;
+  - a wording check: no dashes, no hyphens, no old sayings. The school's guiding questions are exempt, being quoted word for word.
+
 ## E21CC Learning Log (19 October 2026)
 
 Harman restated the intent, and the front end was rebuilt around it:
