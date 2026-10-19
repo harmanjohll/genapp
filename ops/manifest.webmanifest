@@ -1,0 +1,14 @@
+{
+  "name": "Haze Ops",
+  "short_name": "Haze Ops",
+  "description": "Live PSI and PM2.5 with the MOE school haze measures for each band.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f5f8",
+  "theme_color": "#000C53",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
