@@ -1,15 +1,23 @@
-# E21CC Learning Log
+# E21CC Log
 
-One log per Beattyian, anchored in MOE's 21st Century Competencies, with two journals inside it: **GROW** (Gift, Rise, Own, Watch) after any learning moment, and **ACT on Feedback** (Acknowledge, Connect, Test) when feedback comes back. Every guiding question is quoted verbatim from the school's slides.
+One log per Beattyian, anchored in MOE's 21st Century Competencies. The Log holds journals: **GROW** (Gift, Rise, Own, Watch) after any learning moment, and **ACT on Feedback** (Acknowledge, Connect, Test) when feedback comes back. A third journal, **ASK**, is a placeholder until its questions are written. Every guiding question is quoted verbatim from the school's slides.
 
-The log is a notebook: bookmark tabs for E21CC, GROW, ACT and Settings, on paper the student chooses, under a cover in their colour.
-- **E21CC tab.** A competency wheel drawn like MOE's framework. Each segment deepens with the strongest evidence in the student's own words. Tap one for its I can statements and the entries that show it.
-- **Journals.** GROW and ACT are organised by the student's own subjects, CCA and experiences, as bookmarks or a shelf of notebooks. They pivot by date, competency or term.
-- **Entries.** The student chooses the subject or experience for every entry; nothing is preset. Each entry carries a claim (up to two competencies, and where they show), and the coach holds it against the words.
-- **Coach.** A built in coach works offline. For testing, an adult's Gemini API key gives AI feedback anchored in E21CC, in a tone the student chooses (warm, direct, playful). The school relay (Claude, school held key) is ready for later.
-- **Statements.** 28 starter I can statements, one starting and one stretching per competency, stand in until the school's own.
+Four places, the same on every device:
+- **Home.** The competency wheel, drawn like MOE's framework and shaded by the student's level in each competency; the statements secured this term; the ones almost there; the next step and the statement it aims for. A Showcase card is a placeholder for later.
+- **Competencies.** Each of the nine emerging competencies with its level (Emerging, Developing, Proficient, Leading). A competency page shows its two strands as ladders of Beatty's I can statements, Lower Sec then Upper Sec, each marked secured, started, linked or not yet. The social and emotional competencies show evidence only until the school's statements for them exist.
+- **Journals.** GROW, ACT and ASK, organised by the student's own subjects, CCA and experiences; they pivot by date, competency or term.
+- **Settings.** Sec level (which sets the band of statements), the view, the coach, experiences, groups, data.
 
-No accounts, no database. The log lives in the student's browser and exports as a file. Students can share sections with named adults; teachers read in a console and reply with notes in the margin.
+The student chooses one of four views, each with a light and a dark theme and a colour: **Clean record** (the default), **Case and notebooks**, **Editorial**, and **Bright and friendly**. Only the look changes.
+
+How it works:
+- **Claim.** Every entry ends with "Which I can statements does this entry show?": up to two, each with the sentence that shows it. Suggestions come from the competencies the words already show. Upper Sec statements are a stretch for Sec 1 and 2; Lower Sec is earlier ground for Sec 3 to 5.
+- **Backed.** A link counts when the entry's own words back it: the coach saw the competency, clearly, in a quote that is really there.
+- **Secured.** At least two backed entries, from two different subjects or CCAs, at least two weeks apart.
+- **Levels.** A band is met in a strand when half its statements, rounded up, are secured. Emerging: the competency shows in an entry. Developing: each strand's Lower Sec band is met (or an Upper Sec statement is secured there). Proficient: Developing, and an Upper Sec statement secured. Leading: the Upper Sec band met in every strand, and a teacher confirms it.
+- **Coach.** A built in coach works offline. For testing, an adult's Gemini API key gives AI feedback anchored in E21CC, in a tone the student chooses. The school relay (Claude, school held key) is ready for later. The coach sees only the student's own band of statements.
+
+No accounts, no database. The log lives in the student's browser and exports as a file. Students share sections with named adults; teachers read in a console, reply with notes in the margin, and confirm Leading.
 
 ## Run locally
 
@@ -26,13 +34,14 @@ python3 -m http.server 8000
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Student app: page, styles, and the three scripts below |
-| `assets/core.js` | Shared engine: frameworks, Look across, competency lens and baskets, statements and their evidence gate, built in coach, AI coach prompt and schema, link codec, v1 to v2 migration |
+| `index.html` | Student app: page and styles for the four views, and the three scripts below |
+| `assets/core.js` | Shared engine: frameworks, competency lens, Beatty's statements (embedded), the evidence gate, securing and levels, built in coach, AI coach prompt and schema, link codec, migration |
 | `assets/store.js` | The storage and transport seam: browser storage, form submissions, links. Phase 2 swaps it for OneDrive |
-| `assets/app.js` | Student app: notebook frame, E21CC wheel and competency pages, GROW and ACT journals, composer, entries, sharing, settings, the Gemini coach |
-| `teacher.html` | Teacher console: Inbox, Class grid, Students, group set up, guide |
+| `assets/app.js` | Student app: frame, Home, Competencies, journals, composer and claim, entries, sharing, settings, the Gemini coach |
+| `assets/fonts/` | Literata and Inter, subset to Latin (SIL Open Font License) |
+| `teacher.html` | Teacher console: Inbox, Class grid, Students, Statements, group set up, guide |
 | `classes/*.json` | Published group files, one per code (`DEMO.json` is a sample) |
-| `statements/*.json` | I can statement sets. `default.json` holds the 28 starter statements; `example-banded.json` shows statements by level band |
+| `statements/beatty-v1.json` | Beatty's I can statements, draft V1, with each strand's MOE milestones, Mission, Vision and DREAM tags, and the draft's open questions |
 | `relay/` | Cloudflare Worker that holds the school's API key and throttles per student |
 | `DESIGN.md` | Decisions, verification status, and the open questions |
 | `PHASE2-REQUEST.md` | What MOE IT needs to clear before the log can live in students' OneDrive |
@@ -47,20 +56,21 @@ python3 -m http.server 8000
 | `index.html?adult=1` | Also shows the adult held Anthropic key option in Settings |
 | `index.html?embed=1` | Forces the embedded layout (automatic inside a frame) |
 | `index.html#/config?c=…` | A share link carrying a whole group file (made in the console) |
-| `index.html#/note?n=…` | A teacher's margin notes for one student; opens only in the log whose email it was made for |
-| `index.html#/`, `#/journal/grow`, `#/journal/act`, `#/c/critical`, `#/write/grow`, `#/across/sec`, `#/settings`, `#/sharing` | The screens, addressable. Journals take `?p=experience|date|competency|term` and `?v=bookmarks|shelf` |
+| `index.html#/note?n=…` | A teacher's margin notes, or a confirmation of Leading, for one student; opens only in the log whose email it was made for |
+| `index.html#/`, `#/c`, `#/c/critical`, `#/journal/grow`, `#/journal/act`, `#/journal/ask`, `#/write/grow`, `#/across/sec`, `#/settings`, `#/sharing` | The screens, addressable. Journals take `?p=experience|date|competency|term` and `?v=bookmarks|shelf` |
 | `teacher.html#/in?p=…` | Items a student shared by link; opens in the teacher's Inbox |
 
 ## Quick start for a teacher
 
-1. Open `teacher.html`, Set up. Make a group file for each class or CCA: your voice, success criteria, the kind of group. Form teachers can also set the statement set and level band.
+1. Open `teacher.html`, Set up. Make a group file for each class or CCA: your voice, success criteria, the kind of group.
 2. Optional: connect a Microsoft Form with the eighteen fields (Set up walks through it). Without one, students send you a link in Teams.
-3. Give students the code or share link. They add the group, then open Sharing and turn on the sections you ask for.
-4. Read in the Inbox: paste new rows from the form's Excel sheet, or open the links students send. Write a note beside a paragraph, then Send notes: a Teams chat opens with the link.
+3. Give students the code or share link. They add the group, set their Sec level, then open Sharing and turn on the sections you ask for.
+4. Read in the Inbox: paste new rows from the form's Excel sheet, or open the links students send. Write a note beside a paragraph, then Send notes: a Teams chat opens with the link. A shared domain shows the student's levels; where Leading is waiting, press Confirm Leading and send the link.
+5. Statements shows Beatty's ladders, with the draft's open questions.
 
-## Replacing the sample statements
+## Changing the statements
 
-Edit `statements/default.json`, or add a new set (for example `statements/bty-2027.json`) and name it in the form class's group file. Keep each statement's `id` stable once students link to it. List the competency ids whose evidence can back each statement in `competencies`; a statement without them can only be lit by the AI coach's match.
+Edit `statements/beatty-v1.json`, then paste it into `DEFAULT_STATEMENTS` in `assets/core.js` (the header on one line, one strand per line) so the log works offline. Keep statement ids stable once students link to them: an id is the strand id plus its band and rung (`ct1.l1`, `ct1.u3`). A new set can also live in its own file and be named in the form class's group file.
 
 ## Testing with a Gemini key
 

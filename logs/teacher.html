@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000C53">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<title>E21CC Learning Log · Teacher console</title>
+<title>E21CC Log · Teacher console</title>
 <link rel="icon" href="assets/crest.png">
 <style>
 @font-face{font-family:'Literata';src:url(assets/fonts/literata-var-latin.woff2) format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
@@ -90,7 +90,7 @@ ol.steps li{margin-bottom:8px}
 .kpi div{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px}
 .kpi b{display:block;font-family:var(--serif);font-size:1.4em;color:var(--navy)} .kpi span{font-size:.8em;color:var(--text-2)}
 
-/* ---------- E21CC Learning Log console ---------- */
+/* ---------- E21CC Log console ---------- */
 .brand .word{line-height:1.15}
 .tabs{position:sticky;top:0;background:var(--bg);z-index:5}
 .badge{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--red);color:#fff;font-size:.78em;font-weight:700;text-align:center;margin-left:4px}
@@ -133,6 +133,26 @@ ol.steps li{margin-bottom:8px}
 .scard.on{border-color:var(--navy);background:var(--card-3)}
 .scard b{display:block;font-family:var(--serif);color:var(--navy)}
 .scard small{color:var(--text-2)}
+/* levels and Beatty's statements */
+.st.secured .mark{border-color:#1d7343;background:#1d7343}
+.st.started .mark{border-color:var(--navy);background:var(--yellow)}
+.lvrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.lvrow:first-of-type{border-top:0}
+.lvrow b{min-width:12em;font-family:var(--serif);color:var(--navy)}
+.lvp{display:inline-block;font-size:.8em;font-weight:700;padding:2px 9px;border-radius:999px;background:#e8edff;color:#1f3fa8;white-space:nowrap}
+.lvp.leading{background:var(--navy);color:#fff}
+.lvp.wait{background:var(--yellow);color:var(--navy)}
+.lvp.none{background:var(--card-3);color:var(--text-2)}
+.lvc{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 4px;border-radius:6px;font-size:.78em;font-weight:800;background:var(--card-3);color:var(--text-2);margin:0 1px}
+.lvc.l1{background:#e8edff;color:#1f3fa8}.lvc.l2{background:#c9d4ff;color:#14267a}.lvc.l3{background:#6f86e8;color:#fff}.lvc.l4{background:var(--navy);color:#fff}.lvc.w{background:var(--yellow);color:var(--navy)}
+.draft{display:inline-block;font:700 .72em var(--sans);letter-spacing:.08em;text-transform:uppercase;background:var(--yellow);color:var(--navy);padding:2px 8px;border-radius:6px;vertical-align:3px;margin-left:6px}
+.ladder{list-style:none;margin:4px 0 10px;padding:0}
+.ladder li{display:flex;gap:8px;padding:5px 0;border-top:1px dashed var(--line)}
+.ladder li:first-child{border-top:0}
+.ladder code{flex:none;font-size:.78em;background:var(--card-3);height:fit-content}
+.blabel{display:block;font-size:.76em;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-2);margin:10px 0 2px}
+.flags{background:var(--card-2);border-radius:var(--radius-s);padding:8px 12px;margin:8px 0 4px}
+.flags li{font-size:.9em;color:var(--text-2)}
 .dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
 .dlg .box{background:#fff;border-radius:var(--radius);padding:20px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
 </style>
@@ -140,7 +160,7 @@ ol.steps li{margin-bottom:8px}
 <body>
 <div class="app">
   <header class="top">
-    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">E21CC Learning Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
+    <a class="brand" href="index.html"><img src="assets/crest.png" alt=""><span><span class="word">E21CC Log · Teacher console</span><span class="sub">Beatty Secondary School</span></span></a>
     <button type="button" class="homebtn" id="tHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg><span>Home</span></button>
     <span class="tiny" style="flex-basis:100%">Everything on this page stays in your browser until you download or copy it.</span>
   </header>
@@ -148,6 +168,7 @@ ol.steps li{margin-bottom:8px}
     <button data-tab="inbox" class="on">Inbox<span class="badge" id="newBadge" hidden></span></button>
     <button data-tab="grid">Class grid</button>
     <button data-tab="students">Students</button>
+    <button data-tab="statements">Statements</button>
     <button data-tab="setup">Set up</button>
     <button data-tab="guide">Guide</button>
   </nav>
@@ -174,7 +195,7 @@ ol.steps li{margin-bottom:8px}
   <section id="tab-grid" data-tab="grid" hidden>
     <div class="card">
       <h1>The class at a glance.</h1>
-      <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. A domain column shows unlocked statements out of all, when the student shared that domain; otherwise the number of their shared entries that show it.</p>
+      <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. When a student shares a domain, its column shows their level in each competency (E Emerging, D Developing, P Proficient, L Leading, ! waiting for a teacher to confirm Leading); otherwise the number of their shared entries that show it.</p>
       <div class="row" style="margin-bottom:10px"><select class="in" id="gGroup" style="width:auto"></select><button class="btn sec small" id="gCsv">Download CSV</button></div>
       <div class="scroll" id="gridTable"></div>
     </div>
@@ -188,6 +209,17 @@ ol.steps li{margin-bottom:8px}
       <div class="students" id="studentCards"></div>
     </div>
     <div class="card" id="studentView" hidden></div>
+  </section>
+
+  <!-- ============ STATEMENTS ============ -->
+  <section id="tab-statements" data-tab="statements" hidden>
+    <div class="card">
+      <h1>Beatty’s I can statements<span class="draft" id="stDraft">Draft</span></h1>
+      <p class="muted" id="stAbout"></p>
+      <div class="notice"><b>How a statement is secured.</b> A student links an entry to a statement and points to the sentence that shows it. The coach checks that the words are really there. A statement is secured when at least two backed entries, from two different subjects or CCAs, sit at least two weeks apart.</div>
+      <div class="notice"><b>How levels are earned.</b> In each competency, a band is met in a strand when at least half its statements, rounded up, are secured. <b>Emerging</b>: the competency shows in an entry, or any statement is secured. <b>Developing</b>: in every strand, the Lower Sec band is met or an Upper Sec statement is secured. <b>Proficient</b>: Developing, and at least one Upper Sec statement secured. <b>Leading</b>: the Upper Sec band met in every strand, and a teacher confirms it. The social and emotional competencies have no statements yet, so they show evidence only.</div>
+    </div>
+    <div id="stList"></div>
   </section>
 
   <!-- ============ SET UP ============ -->
@@ -214,10 +246,10 @@ ol.steps li{margin-bottom:8px}
         </div>
         <div class="card" id="formOnly">
           <h2>I can statements (form class only)</h2>
-          <p class="muted">The form class decides which statement set a student sees, and at which level band. Leave blank for the school’s default set.</p>
+          <p class="muted">Leave both blank to use Beatty’s statements. Students choose their Sec level in their log, which sets their band; the band here applies only to students who have not.</p>
           <div class="two">
-            <label class="f"><span>Statement set</span><input class="in" id="statements" placeholder="default" autocapitalize="none" autocorrect="off" spellcheck="false"><small>The name of a file in <code>logs/statements/</code>, without <code>.json</code>.</small></label>
-            <label class="f"><span>Level band</span><input class="in" id="band" placeholder="e.g. lower" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Only for a banded set: the band id, such as <code>lower</code> or <code>upper</code>.</small></label>
+            <label class="f"><span>Statement set</span><input class="in" id="statements" placeholder="beatty-v1" autocapitalize="none" autocorrect="off" spellcheck="false"><small>The name of a file in <code>logs/statements/</code>, without <code>.json</code>.</small></label>
+            <label class="f"><span>Level band</span><input class="in" id="band" placeholder="e.g. lower" autocapitalize="none" autocorrect="off" spellcheck="false"><small><code>lower</code> (Sec 1 and 2) or <code>upper</code> (Sec 3 to 5).</small></label>
           </div>
         </div>
         <div class="card">
@@ -289,7 +321,7 @@ ol.steps li{margin-bottom:8px}
     <div class="card">
       <h2>Set up the Microsoft Form (once, about 15 minutes)</h2>
       <ol class="steps">
-        <li>Sign in at <code>forms.office.com</code> with your MOE account (or open Forms from OneDrive so the workbook is created next to it). New form, title it <i>Learning Log drop box: [your name]</i>.</li>
+        <li>Sign in at <code>forms.office.com</code> with your MOE account (or open Forms from OneDrive so the workbook is created next to it). New form, title it <i>E21CC Log drop box: [your name]</i>.</li>
         <li>Add eighteen questions in the order above. Use <b>Text</b> with <b>Long answer</b> on for <code>entry</code>, <code>competencies</code>, <code>nextStep</code> and the three <code>payload</code> questions; plain text for the rest. Make none of them required except <code>studentEmail</code>.</li>
         <li>Settings: <b>Anyone can respond</b>. Sign in is off, so students on iCON can submit without a Microsoft account. Turn off “Record name”.</li>
         <li>Top right <b>…</b> → <b>Get pre-filled URL</b> → switch on <b>Enable pre-filled answers</b>, type each field key into its own question, then <b>Get pre-filled link</b>. Paste that link above. The mapping table fills itself.</li>
@@ -313,8 +345,8 @@ ol.steps li{margin-bottom:8px}
   <section id="tab-guide" data-tab="guide" hidden>
     <div class="card">
       <h1>What this is</h1>
-      <p>An E21CC Learning Log for every Beattyian, from Secondary 1 onwards. Students write <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. Each entry carries a claim: which competency it shows, and where. A coach checks the claim against the student’s own words.</p>
-      <p>The E21CC page draws MOE’s framework as a wheel: core values at the centre, the five Social and Emotional Competencies around them, the nine emerging competencies outside. Each segment gets darker as the student’s own words show that competency more clearly. GROW and ACT entries both count. Each competency holds I can statements (a starting one and a stretching one) that unlock only when a linked entry’s words back them. Journals are organised by the student’s own subjects, CCA and experiences, and pivot by date, competency or term. Once a term, students look across one domain.</p>
+      <p>An E21CC Log for every Beattyian, from Secondary 1 onwards. It holds journals: <b>GROW by reflecting</b> after any learning moment (a lesson, a training, a camp day) and <b>ACT on Feedback</b> when feedback comes back, with the school’s guiding questions quoted verbatim. A third journal, ASK, is a placeholder until its questions are written. Each entry carries a claim: which of Beatty’s I can statements it shows, and the sentence that shows it. A coach checks the claim against the student’s own words.</p>
+      <p>Home draws MOE’s framework as a wheel: core values at the centre, the five Social and Emotional Competencies around them, the nine emerging competencies outside. Each of the nine is shaded by the student’s level, Emerging, Developing, Proficient or Leading, earned from the statements they secure (see Statements). GROW and ACT entries both count. Leading needs you: a student who meets it shows as waiting, and you confirm it from their shared domain. Journals are organised by the student’s own subjects, CCA and experiences. Once a term, students look across one domain.</p>
       <p>The log lives on the student’s device. You see a section only when the student opens it to you and presses Send. You reply in the margin.</p>
     </div>
     <div class="card">
@@ -330,7 +362,7 @@ ol.steps li{margin-bottom:8px}
     </div>
     <div class="card">
       <h2>The competency lens</h2>
-      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social and Emotional Competencies. Students claim at most two per entry, place themselves on three levels (tried it, getting there, can teach it) and point to where it shows.</p>
+      <p class="muted">MOE’s refreshed framework (2023) names nine Emerging 21CC in three domains, plus five Social and Emotional Competencies. Students claim at most two I can statements per entry and point to the sentence that shows each.</p>
       <div class="scroll" id="compList"></div>
     </div>
     <div class="card">
@@ -370,7 +402,7 @@ const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teache
 
 /* ---------- store: this browser only ---------- */
 const KEY = 'logs.teacher.v2', OLD_KEY = 'logs.teacher.v1';
-function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}}; }
+function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}, confirms:{}}; }
 function load(){
   try{
     const v2 = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v2) return Object.assign(blankStore(), v2);
@@ -379,11 +411,15 @@ function load(){
 }
 let store = load(); let cur = null; let openKey = null; let studentSel = null;
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{ toast('This browser is full. Download a CSV, then clear old items.'); } }
+/* Beatty's statements, the same set the students' logs use */
+const TSET = normaliseStatementSet(DEFAULT_STATEMENTS);
+function stmtText(id){ const x = TSET.list.find(s => s.id === id); return x ? x.text : id; }
+const LV_LETTER = {emerging:'E', developing:'D', proficient:'P', leading:'L'};
 function blank(){ return {code:'', type:'subject', level:'', teacherName:'', teacherEmail:'', subject:'', subjects:[], statements:'', band:'', voice:{tone:'', phrases:[], avoid:[], sample:''}, knowledge:'', criteria:[], relay:{url:'', token:'', daily:''}, sink:{kind:'none', url:'', fields:{}}}; }
 
 /* ---------- tabs ---------- */
 function goHome(){ showTab('inbox'); window.scrollTo(0, 0); }
-function showTab(t){ $$('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.tab === t)); $$('section[data-tab]').forEach(s => s.hidden = s.dataset.tab !== t); if (t === 'grid') renderGrid(); if (t === 'students') renderStudents(); if (t === 'inbox') renderInbox(); }
+function showTab(t){ $$('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.tab === t)); $$('section[data-tab]').forEach(s => s.hidden = s.dataset.tab !== t); if (t === 'grid') renderGrid(); if (t === 'students') renderStudents(); if (t === 'inbox') renderInbox(); if (t === 'statements') renderStatements(); }
 $$('.tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $('#tHome').onclick = goHome;
 
@@ -399,7 +435,7 @@ function addItems(from, items, via){
       store.items[key] = {key, sk, kind:'e', data:migrateEntry(it.e), received:Date.now(), opened:false, via}; have ? updated++ : added++;
     } else if (it.t === 'b' && it.b && it.b.basket){
       const key = sk + '|basket:' + it.b.basket; const have = store.items[key];
-      if (have && JSON.stringify(have.data.statements) === JSON.stringify(it.b.statements) && have.data.evidence === it.b.evidence) continue;
+      if (have && JSON.stringify(have.data.statements) === JSON.stringify(it.b.statements) && JSON.stringify(have.data.levels || {}) === JSON.stringify(it.b.levels || {}) && have.data.evidence === it.b.evidence) continue;
       store.items[key] = {key, sk, kind:'b', data:it.b, received:Date.now(), opened:false, via}; have ? updated++ : added++;
     }
   }
@@ -509,16 +545,22 @@ function readerHtml(it){
   const st = store.students[it.sk] || {};
   const head = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="tiny">${esc(st.name || '')}${st.email ? ' · ' + esc(st.email) : ''}</span><h2>${esc(itemTitle(it))}</h2></div><button class="btn small sec" data-close>Close</button></div>`;
   if (it.kind === 'b'){
-    const b = it.data;
-    return `<div class="reader">${head}<p class="tiny">${esc(basketOf(b.basket).label)} · ${plural(b.evidence || 0, 'entry', 'entries')} filed · ${(b.statements || []).filter(s => s.state === 'lit').length} of ${(b.statements || []).length} statements lit</p>
-      ${(b.statements || []).map(s => `<div class="st ${s.state}"><span class="mark" aria-hidden="true"></span><div><b style="font-family:var(--serif);color:var(--navy)">${esc(s.text)}</b>${(s.quotes || []).map(q => `<q style="display:block;font-family:var(--serif);font-style:italic">“${esc(q.quote)}”</q>`).join('')}<span class="tiny">${s.state === 'lit' ? 'Unlocked: backed by the student’s words' : s.state === 'linked' ? 'Linked, not backed yet' : 'No evidence yet'}</span></div></div>`).join('')}</div>`;
+    const b = it.data; const lv = b.levels || {}; const conf = (store.confirms[it.sk] || {});
+    const word = {secured:'Secured', started:'Started: one or more backed entries', linked:'Linked, not backed yet', lit:'Backed by the student’s words', none:'No evidence yet'};
+    const levels = Object.keys(lv).length ? `<div style="margin:8px 0 12px">${COMPETENCIES.filter(c => c.d === b.basket && lv[c.id]).map(c => { const x = lv[c.id];
+        return `<div class="lvrow"><b>${esc(c.label)}</b>${x.waiting ? '<span class="lvp wait">Leading: waiting for a teacher</span>' : `<span class="lvp ${x.level || 'none'}">${x.level ? x.level[0].toUpperCase() + x.level.slice(1) : 'Not yet'}</span>`}<span class="tiny">${x.secured} of ${x.total} secured</span>
+          ${x.waiting ? (conf[c.id] ? `<span class="tiny">You confirmed this on ${fmtDay(conf[c.id])}. If the student has not opened the link, send it again.</span> <button class="btn small sec" data-confirm="${esc(it.key)}|${c.id}">Send again</button>` : `<button class="btn small acc" data-confirm="${esc(it.key)}|${c.id}">Confirm Leading</button>`) : ''}</div>`; }).join('')}</div>` : '';
+    return `<div class="reader">${head}<p class="tiny">${esc(basketOf(b.basket).label)} · ${plural(b.evidence || 0, 'entry', 'entries')} filed${b.sec ? ' · Sec ' + esc(b.sec) : b.band ? ' · ' + esc(BAND_LABEL[b.band] || b.band) : ''}${b.set && b.set !== TSET.id ? ' · statement set ' + esc(b.set) : ''}</p>
+      ${levels}
+      ${(b.statements || []).length ? `<span class="blabel">Statements under way</span>` : '<p class="tiny">No statements started yet.</p>'}
+      ${(b.statements || []).map(s => `<div class="st ${s.state}"><span class="mark" aria-hidden="true"></span><div><b style="font-family:var(--serif);color:var(--navy)">${esc(s.text)}</b>${s.band ? ` <span class="tiny">${esc(BAND_LABEL[s.band] || s.band)}</span>` : ''}${(s.quotes || []).map(q => `<q style="display:block;font-family:var(--serif);font-style:italic">“${esc(q.quote)}”</q>`).join('')}<span class="tiny">${esc(word[s.state] || '')}</span></div></div>`).join('')}</div>`;
   }
   if (it.kind === 't') return `<div class="reader">${head}<p class="tiny">From a form without the payload questions: the text only, no notes possible.</p><pre>${esc(it.data.entry || '')}</pre>${it.data.competencies ? `<p class="tiny">${esc(it.data.competencies)}</p>` : ''}</div>`;
   const e = it.data; const fw = FRAMEWORKS[e.kind]; const notes = notesFor(it.key);
   const noteBlock = anchor => notes.filter(n => n.anchor === anchor).map(n => `<div class="mnote ${n.sentAt ? '' : 'pending'}"><span class="by">${n.sentAt ? 'Sent ' + fmtDay(n.sentAt) : 'Not sent yet'}</span><p>${esc(n.text)}</p>${n.sentAt ? '' : `<button class="x" data-delnote="${esc(it.key)}|${n.id}">Remove</button>`}</div>`).join('');
   const qs = fw.steps.flatMap(s => s.qs.map(q => ({s, q})));
   const claims = (e.competencies || []).map(t => { const c = compOf(t.id); const l = LEVELS.find(z => z.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>${t.where ? ` <span class="tiny">“${esc(t.where)}”</span>` : ''}` : ''; }).join(' ');
-  const links = (e.links || []).map(l => `<span class="tag">${esc(l.sid)}</span> <span class="tiny">“${esc(l.quote)}”</span>`).join(' ');
+  const links = (e.links || []).map(l => `<span class="tag">${esc(stmtText(l.sid))}</span> <span class="tiny">“${esc(l.quote)}”</span>`).join(' ');
   return `<div class="reader">${head}
     <p class="tiny">${esc(fw.tagline)} · ${e.context && e.context.type && e.context.type !== 'subject' && e.context.type !== 'across' ? esc(contextTypeOf(e.context.type).label) + ' · ' : ''}${fmtDate(e.created)}${e.updated && e.updated !== e.created ? ' · edited ' + fmtDay(e.updated) : ''}${e.depth && DEPTHS[e.depth] ? ' · ' + DEPTHS[e.depth].label : ''}</p>
     ${noteBlock('entry')}<button class="notebtn" data-note="${esc(it.key)}|entry">Note on the whole entry</button>
@@ -526,7 +568,8 @@ function readerHtml(it){
     ${e.kind === 'across' && (e.lookedAt || []).length ? `<details><summary>Evidence the student looked across (${e.lookedAt.length})</summary>${e.lookedAt.map(x => `<q style="display:block;font-family:var(--serif);font-style:italic">“${esc(x.quote)}”</q>`).join('')}</details>` : ''}
     ${qs.map(({s, q}) => `<div class="qa-row"><div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g, '')}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p>${e.answers[q.id] ? `<button class="notebtn" data-note="${esc(it.key)}|${q.id}">Note here</button>` : ''}</div><div class="side">${noteBlock(q.id)}</div></div>`).join('')}
     ${claims ? `<p><span class="tiny">Claimed:</span> ${claims}</p>` : e.kind !== 'across' ? '<p class="tiny">No claim made.</p>' : ''}
-    ${links ? `<p><span class="tiny">Linked to statements:</span> ${links}</p>` : ''}
+    ${links ? `<p><span class="tiny">I can statements claimed:</span> ${links}</p>` : ''}
+    ${e.target ? `<p class="tiny">Next time, aiming for: ${esc(stmtText(e.target))}</p>` : ''}
     ${readText(e.e21cc)}
     ${e.question ? `<p class="tiny">Coach’s question to the student: <i>${esc(e.question)}</i></p>` : ''}
     ${pendingNotes(it.sk).length ? `<div class="row" style="margin-top:10px"><button class="btn" data-sendnotes="${esc(it.sk)}">Send ${plural(pendingNotes(it.sk).length, 'note')} to ${esc((st.name || 'the student').split(' ')[0])}</button></div>` : ''}
@@ -547,6 +590,23 @@ function wireReader(root, rerender){
   });
   $$('[data-delnote]', root).forEach(b => b.onclick = () => { const [key, id] = splitLast(b.dataset.delnote); store.notes[key] = notesFor(key).filter(n => n.id !== id); save(); rerender(); });
   $$('[data-sendnotes]', root).forEach(b => b.onclick = () => sendNotes(b.dataset.sendnotes, rerender));
+  $$('[data-confirm]', root).forEach(b => b.onclick = () => { const [key, comp] = splitLast(b.dataset.confirm); const it = store.items[key]; if (it) confirmLeading(it.sk, comp, rerender); });
+}
+/* Leading needs a teacher: the confirmation goes back by a note link that names the competency. */
+async function confirmLeading(sk, comp, rerender){
+  const st = store.students[sk] || {}; const c = compOf(comp); if (!c) return;
+  const to = st.tag || (st.email ? await emailTag(st.email) : '');
+  if (!to){ dialog(`<h2>No email for this student</h2><p>A confirmation finds a student by their school email, and this domain came without one. Ask them to add their email in Settings and share again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
+  const by = {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''};
+  const at = Date.now();
+  const link = appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:[], confirms:[{comp, at}]});
+  const msg = `${by.name} confirmed Leading in ${c.label} on your E21CC Log. Open: ${link}`;
+  dialog(`<h2>Confirm Leading in ${esc(c.label)}</h2><p>${esc(st.name || 'The student')} has secured the Upper Sec statements in every strand. Confirm only if what you have seen matches: their entries, and their work with you. The link sets Leading in their log, and only opens for the student with the email ${esc(st.email || 'on the shared domain')}.</p>
+    <div class="row">${st.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(st.email, msg))}" target="_blank" rel="noopener">Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">Copy link</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn acc" id="dDone">I sent it</button><button class="btn sec" id="dClose">Not yet</button></div>`);
+  $('#dCopy').onclick = async () => { try{ await navigator.clipboard.writeText(link); toast('Copied.'); }catch{ prompt('Copy this link:', link); } };
+  $('#dDone').onclick = () => { store.confirms[sk] = store.confirms[sk] || {}; store.confirms[sk][comp] = at; save(); closeDialog(); toast('Marked as sent.'); rerender(); };
+  $('#dClose').onclick = closeDialog;
 }
 /* Notes go back by a per student link; never a class wide bundle. */
 async function sendNotes(sk, rerender){
@@ -555,7 +615,7 @@ async function sendNotes(sk, rerender){
   if (!to){ dialog(`<h2>No email for this student</h2><p>Notes find a student by their school email, and this item came without one. Ask them to add their email in Settings and send again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
   const by = {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''};
   const link = appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:list.map(({it, n}) => ({id:n.id, eid:it.data.id, anchor:n.anchor, text:n.text, at:n.at}))});
-  const msg = `${by.name} left ${plural(list.length, 'note')} on your E21CC Learning Log. Open: ${link}`;
+  const msg = `${by.name} left ${plural(list.length, 'note')} on your E21CC Log. Open: ${link}`;
   dialog(`<h2>Send ${plural(list.length, 'note')} to ${esc(st.name || 'the student')}</h2><p>The link opens in ${esc((st.name || 'their').split(' ')[0])}’s log, beside the paragraphs you wrote on. It only opens for the student with the email ${esc(st.email || 'on the entry')}.</p>
     <div class="row">${st.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(st.email, msg))}" target="_blank" rel="noopener">Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">Copy link</button></div>
     <p class="tiny" style="margin-top:8px">${link.length > 7000 ? `Long link (${link.length} characters): if Teams cuts it, send fewer notes at a time.` : 'Teams not working? Copy the link into a chat or an email to the student.'}</p>
@@ -599,7 +659,7 @@ function studentRows(code){
       notes:its.reduce((a, i) => a + (store.notes[i.key] || []).filter(n => n.sentAt).length, 0), baskets:{}};
     for (const b of BASKET_IDS){
       const snap = its.find(i => i.kind === 'b' && i.data.basket === b);
-      row.baskets[b] = snap ? {lit:(snap.data.statements || []).filter(s => s.state === 'lit').length, total:(snap.data.statements || []).length, snap:true} : {n:es.filter(e => basketsOf(e).includes(b)).length};
+      row.baskets[b] = snap ? {levels:snap.data.levels || null, lit:(snap.data.statements || []).filter(s => s.state === 'lit' || s.state === 'secured').length, total:snap.data.total || (snap.data.statements || []).length, snap:true} : {n:es.filter(e => basketsOf(e).includes(b)).length};
     }
     rows.push(row);
   }
@@ -607,10 +667,11 @@ function studentRows(code){
 }
 function renderGrid(){
   groupOptions($('#gGroup'), 'All groups'); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
-  const cell = c => c.snap ? `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}` : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
+  const lvCell = (b, lv) => COMPETENCIES.filter(c => c.d === b && lv[c.id]).map(c => { const x = lv[c.id]; const i = ['emerging', 'developing', 'proficient', 'leading'].indexOf(x.level) + 1; return `<span class="lvc ${x.waiting ? 'w' : 'l' + i}" title="${esc(c.label)}: ${x.waiting ? 'Leading, waiting for you to confirm' : x.level || 'not yet'}">${x.waiting ? '!' : LV_LETTER[x.level] || '·'}</span>`; }).join('');
+  const cell = (c, b) => c.snap ? (c.levels ? lvCell(b, c.levels) || '<span class="cell0">·</span>' : `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}`) : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
   $('#gridTable').innerHTML = rows.length ? `<table class="gridtable"><thead><tr><th>Student</th><th>GROW<br><span class="tiny">T${tp.term}</span></th><th>ACT<br><span class="tiny">T${tp.term}</span></th>${DOMAINS.map(d => `<th>${esc(d.short)}</th>`).join('')}<th>Last entry</th><th>Notes sent</th></tr></thead><tbody>
-    ${rows.map(r => `<tr><td><button class="notebtn" data-student="${esc(r.sk)}">${esc(r.name)}</button></td><td>${r.grow || '<span class="cell0">·</span>'}</td><td>${r.act || '<span class="cell0">·</span>'}</td>${BASKET_IDS.map(b => `<td>${cell(r.baskets[b])}</td>`).join('')}<td>${r.last ? fmtDay(r.last) : ''}</td><td>${r.notes || ''}</td></tr>`).join('')}</tbody></table>
-    <p class="tiny">A dot means nothing shared there yet. In domain columns, “2/5” is unlocked statements out of all; a plain number counts shared entries that show that domain.</p>` : '<p class="muted">No students yet. Bring entries in through the Inbox.</p>';
+    ${rows.map(r => `<tr><td><button class="notebtn" data-student="${esc(r.sk)}">${esc(r.name)}</button></td><td>${r.grow || '<span class="cell0">·</span>'}</td><td>${r.act || '<span class="cell0">·</span>'}</td>${BASKET_IDS.map(b => `<td>${cell(r.baskets[b], b)}</td>`).join('')}<td>${r.last ? fmtDay(r.last) : ''}</td><td>${r.notes || ''}</td></tr>`).join('')}</tbody></table>
+    <p class="tiny">A dot means nothing shared there yet. In a shared domain, one letter per competency, in order (${DOMAINS.filter(d => d.id !== 'sec').map(d => esc(d.short) + ': ' + COMPETENCIES.filter(c => c.d === d.id).map(c => esc(c.label)).join(', ')).join('; ')}). Hover a letter for its name. A plain number counts shared entries that show that domain.</p>` : '<p class="muted">No students yet. Bring entries in through the Inbox.</p>';
   $$('[data-student]').forEach(b => b.onclick = () => { studentSel = b.dataset.student; showTab('students'); });
 }
 $('#gGroup').onchange = renderGrid;
@@ -618,9 +679,21 @@ $('#gCsv').onclick = () => {
   const rows = studentRows($('#gGroup').value); if (!rows.length) return toast('Nothing to export.');
   const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
   const head = ['student','email','grow_this_term','act_this_term', ...DOMAINS.map(d => d.short), 'last_entry','notes_sent'];
-  const lines = [head.map(q).join(',')].concat(rows.map(r => [r.name, r.email, r.grow, r.act, ...BASKET_IDS.map(b => { const c = r.baskets[b]; return c.snap ? `${c.lit} of ${c.total} lit` : `${c.n} entries`; }), r.last ? new Date(r.last).toISOString().slice(0, 10) : '', r.notes].map(q).join(',')));
+  const lines = [head.map(q).join(',')].concat(rows.map(r => [r.name, r.email, r.grow, r.act, ...BASKET_IDS.map(b => { const c = r.baskets[b]; return c.snap ? (c.levels ? COMPETENCIES.filter(k => k.d === b && c.levels[k.id]).map(k => `${k.label}: ${c.levels[k.id].waiting ? 'Leading (waiting)' : c.levels[k.id].level || 'not yet'}`).join('; ') : `${c.lit} of ${c.total} lit`) : `${c.n} entries`; }), r.last ? new Date(r.last).toISOString().slice(0, 10) : '', r.notes].map(q).join(',')));
   download(`class-grid-${new Date().toISOString().slice(0, 10)}.csv`, '﻿' + lines.join('\n'), 'text/csv');
 };
+
+/* ---------- Beatty's statements: the ladders, with the draft's open questions ---------- */
+function renderStatements(){
+  $('#stDraft').textContent = 'Draft ' + (TSET.draft || '');
+  $('#stAbout').textContent = `${TSET.title}. Lower Sec is Sec 1 and 2; Upper Sec is Sec 3 to 5. Statements are quoted word for word from the draft. A student sees their own band first and can claim the other.`;
+  $('#stList').innerHTML = DOMAINS.filter(d => d.id !== 'sec').map(d => `<div class="card"><h2>${esc(d.label)}</h2>${COMPETENCIES.filter(c => c.d === d.id).map(c => `<details><summary>${esc(c.label)}</summary>${TSET.strands.filter(st => st.comp === c.id).map(st => {
+      const tags = [st.mvv.m && st.mvv.m.length ? 'Mission: ' + st.mvv.m.join(', ') : '', st.mvv.vi && st.mvv.vi.length ? 'Vision: ' + st.mvv.vi.join(', ') : '', st.mvv.va && st.mvv.va.length ? 'DREAM: ' + st.mvv.va.join(', ') : ''].filter(Boolean).join(' · ');
+      return `<h3 style="margin-top:10px">Strand ${st.n}: ${esc(st.name)}</h3>${tags ? `<p class="tiny" style="margin:0">${esc(tags)}</p>` : ''}
+        ${['lower', 'upper'].map(b => `<span class="blabel">${esc(BAND_LABEL[b])}</span>${st.milestone && st.milestone[b] ? `<p class="tiny" style="margin:0 0 4px">MOE: ${esc(st.milestone[b])}</p>` : ''}<ol class="ladder">${st[b].map(s => `<li><code>${esc(s.id)}</code><span>${esc(s.text)}</span></li>`).join('')}</ol>`).join('')}
+        ${st.notes.length ? `<div class="flags"><b class="tiny">Open in the draft</b><ul>${st.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}`; }).join('')}</details>`).join('')}</div>`).join('')
+    + `<div class="card flat"><h2>${esc(basketOf('sec').label)}</h2><p class="muted" style="margin:0">No statements yet. Students’ entries still show evidence of these, with no level.</p></div>`;
+}
 
 /* ---------- students ---------- */
 function renderStudents(){
@@ -707,7 +780,7 @@ $('#delClass').onclick = () => { if (!cur.code || !confirm(`Forget ${cur.code} o
 $('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; try{ const c = normaliseClass(JSON.parse(await f.text())); cur = c; if (c.code){ store.classes[c.code] = c; store.current = c.code; save(); } fill(); toast('Loaded ' + (c.code || 'group')); }catch{ toast('Not a group file.'); } ev.target.value = ''; };
 $('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); download(`${cur.code}.json`, JSON.stringify(cleanClass(), null, 2)); };
 $('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
-$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`E21CC Learning Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Claim a competency and point to where it shows.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
+$('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`E21CC Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Choose the I can statement your entry shows and point to the sentence that shows it.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
 
 /* ---------- drop box mapping ---------- */
 const FIELDS = FORM_FIELDS;

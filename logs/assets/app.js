@@ -1,5 +1,7 @@
 /* ==================================================================
-   E21CC Learning Log: the student app.
+   E21CC Log: the student app. The Log holds the GROW and ACT journals
+   (ASK comes later), Beatty's I can statements, and a level for each
+   competency earned from the statements an entry secures.
    Needs core.js and store.js. Nothing leaves the device unless the
    student presses a button that says so.
    ================================================================== */
@@ -33,7 +35,7 @@ function newProfile(name, email, code){
     id:uid(), name:name.trim(), email:(email || '').trim().toLowerCase(),
     groups: code ? [{code:code.trim().toUpperCase(), type:'subject'}] : [],
     pin:null, created:Date.now(),
-    prefs:{mood:'mountain', accent:'yellow', size:'normal', avatar:AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)], motto:MOTTOS[0]},
+    prefs:{look:'b', colour:'navy', theme:'light', accent:'yellow', size:'normal', avatar:AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)], motto:MOTTOS[0]},
     coach:{mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'},
     entries:[], drafts:{}, done:{}
   });
@@ -86,7 +88,9 @@ function icon(n){
     heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
     sliders:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
     grow:'<circle cx="12" cy="12" r="8"/><path d="M12 4v4M20 12h-4M12 20v-4M4 12h4"/>', act:'<path d="M4 12h4l3-7 3 14 3-7h3"/>',
-    star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'
+    star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', ask:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/>',
+    chev:'<path d="M9 6l6 6-6 6"/>', ladder:'<path d="M7 3v18M17 3v18M7 7h10M7 12h10M7 17h10"/>'
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n] || ''}</svg>`;
 }
@@ -128,12 +132,17 @@ function arcPath(cx, cy, r, a1, a2){
   return `M ${x1} ${y1} A ${r} ${r} 0 ${a2 - a1 > 180 ? 1 : 0} 1 ${x2} ${y2}`;
 }
 function medal(kind, extra = ''){ const m = {grow:['navy','G'], act:['red','A'], across:['yellow','L']}[kind] || ['navy','?']; return `<span class="medal ${m[0]}" ${extra}>${m[1]}</span>`; }
-/* The notebook's look: a cover colour, a paper, the student's accent. */
+/* The four views the student can choose, each with a light and a dark theme, and a colour. */
+const LOOKS = [
+  {id:'a', label:'Case and notebooks', help:'A cloth case with lined paper notebooks.'},
+  {id:'b', label:'Clean record', help:'Calm and light, in Beatty navy and yellow.'},
+  {id:'c', label:'Editorial', help:'Like a printed magazine: serif type, rules and space.'},
+  {id:'d', label:'Bright and friendly', help:'Rounded shapes, warm colours, big buttons.'}
+];
 const COVERS = [
   {id:'navy', label:'Navy', c:'#0d1b5e'}, {id:'forest', label:'Forest', c:'#1d4a37'}, {id:'plum', label:'Plum', c:'#4a2a5c'},
   {id:'crimson', label:'Crimson', c:'#861c27'}, {id:'teal', label:'Teal', c:'#0e5461'}, {id:'ochre', label:'Ochre', c:'#77560f'}
 ];
-const PAPERS = [{id:'lined', label:'Lined'}, {id:'dotted', label:'Dotted'}, {id:'plain', label:'Plain'}, {id:'dark', label:'Dark'}];
 /* The student's icon: line drawings that look the same on every device.
    Earlier logs stored an emoji; it maps to the nearest drawing. */
 const AVATARS = {
@@ -172,12 +181,14 @@ const EMOJI_AVATAR = {'🌱':'leaf','🌿':'leaf','🍀':'leaf','🦉':'owl','�
 function avatarId(v){ return AVATARS[v] ? v : EMOJI_AVATAR[String(v || '').replace(/\uFE0F/g, '')] || 'leaf'; }
 function avatarSvg(v){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AVATARS[avatarId(v)]}</svg>`; }
 function iconPicker(){ const cur = avatarId(me.prefs.avatar); return `<div class="icons-pick" role="group" aria-label="Your icon">${AVATAR_IDS.map(id => `<button type="button" data-av="${id}" class="${cur === id ? 'on' : ''}" aria-pressed="${cur === id}" aria-label="${id[0].toUpperCase() + id.slice(1)}">${avatarSvg(id)}</button>`).join('')}</div>`; }
-function wireIconPicker(){ $$('[data-av]').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.av; saveDb(); $$('[data-av]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); const a = $('.cover .avatar'); if (a) a.innerHTML = avatarSvg(b.dataset.av); }); }
+function wireIconPicker(){ $$('[data-av]').forEach(b => b.onclick = () => { me.prefs.avatar = b.dataset.av; saveDb(); $$('[data-av]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); const a = $('.topbar .avatar'); if (a) a.innerHTML = avatarSvg(b.dataset.av); }); }
 function applyPrefs(){
   if (me && !AVATARS[me.prefs.avatar]) me.prefs.avatar = avatarId(me.prefs.avatar);
-  const p = me ? me.prefs : {cover:'navy', paper:'lined', accent:'yellow', size:'normal'};
-  document.body.dataset.cover = p.cover || 'navy'; document.body.dataset.paper = p.paper || 'lined'; document.body.dataset.accent = p.accent || 'yellow'; document.body.dataset.size = p.size || 'normal';
-  const m = document.getElementById('themeColor'); if (m) m.content = (COVERS.find(c => c.id === p.cover) || COVERS[0]).c;
+  const p = me ? me.prefs : {look:'b', colour:'navy', theme:'light', accent:'yellow', size:'normal'};
+  const B = document.body.dataset;
+  B.look = LOOKS.some(l => l.id === p.look) ? p.look : 'b'; B.colour = p.colour || 'navy'; B.theme = p.theme === 'dark' ? 'dark' : 'light'; B.accent = p.accent || 'yellow'; B.size = p.size || 'normal';
+  // the browser bar takes the colour of the top of the page
+  const m = document.getElementById('themeColor'); if (m) m.content = B.theme === 'dark' ? '#10131f' : B.look === 'a' ? (COVERS.find(c => c.id === p.colour) || COVERS[0]).c : B.look === 'c' ? '#f7f4ee' : B.look === 'd' ? '#fff6e5' : '#ffffff';
 }
 function logTitle(){ return (me && me.prefs.title && me.prefs.title.trim()) || APP_NAME; }
 
@@ -213,8 +224,9 @@ function decodeConfig(b64){
   try{ const json = decodeURIComponent(escape(atob(b64.replace(/-/g, '+').replace(/_/g, '/')))); const cfg = JSON.parse(json); if (!cfg.code) throw 0; cfg.code = String(cfg.code).toUpperCase(); return cfg; }catch{ return null; }
 }
 
-/* ---------- I can statements: the form group may name a set; otherwise the default ---------- */
-let STMT_SET = normaliseStatementSet(DEFAULT_STATEMENTS);
+/* ---------- I can statements: Beatty's own set; a form group may name another ---------- */
+const BUILTIN_SET = normaliseStatementSet(DEFAULT_STATEMENTS);
+let STMT_SET = BUILTIN_SET;
 async function loadStatements(){ await loadStatementSet(); refreshBuiltinStatements(); }
 /* Built in reads made before statements existed (or under another set) get their suggestions recomputed; AI reads are left alone. */
 function refreshBuiltinStatements(){
@@ -224,7 +236,10 @@ function refreshBuiltinStatements(){
 }
 async function loadStatementSet(){
   const f = myGroups().find(g => groupType(g) === 'form' && g.cfg && g.cfg.statements);
-  const id = (f && String(f.cfg.statements).replace(/[^\w.-]/g, '')) || 'default';
+  let id = (f && String(f.cfg.statements).replace(/[^\w.-]/g, '')) || BUILTIN_SET.id;
+  // the starter sets are retired: groups that still name them get Beatty's set
+  if (id === 'default' || id === 'example-banded') id = BUILTIN_SET.id;
+  if (id === BUILTIN_SET.id){ STMT_SET = BUILTIN_SET; return; }
   const cached = db.statementSets[id];
   if (cached && cached._fetched && Date.now() - cached._fetched < 6 * 3600e3){ STMT_SET = normaliseStatementSet(cached) || STMT_SET; return; }
   try{
@@ -233,7 +248,14 @@ async function loadStatementSet(){
   }catch{}
   if (cached) STMT_SET = normaliseStatementSet(cached) || STMT_SET;
 }
-function myStatements(){ return statementsFor(STMT_SET, me && me.band); }
+/* The student's band (from their Sec level, else their form group), their statements, and the rest of the ladder. */
+function myBand(){ return bandFor(STMT_SET, me); }
+function bandLabel(b){ return ((STMT_SET.bands || []).find(x => x.id === b) || {label:BAND_LABEL[b] || ''}).label; }
+function myStatements(){ return statementsFor(STMT_SET, myBand()); }
+function otherStatements(){ return otherBandFor(STMT_SET, myBand()); }
+function isStretch(s){ return !!(s && s.band && s.band !== myBand()); }
+function stretchWord(s){ return s.band === 'upper' ? 'Stretch' : 'Earlier ground'; }
+function levelsNow(){ const out = {}; for (const c of COMPETENCIES) out[c.id] = levelOf(me.entries, STMT_SET, c.id, me.confirmed); return out; }
 function statementById(id){ return STMT_SET.list.find(s => s.id === id) || null; }
 
 /* ---------- the coach ---------- */
@@ -395,7 +417,7 @@ async function runAiFor(e){
 function nextStepOf(e){ return e.kind === 'grow' ? e.answers.r2 : e.kind === 'act' ? e.answers.t1 : e.answers.x3; }
 function coachOf(e){ return e.coach && (e.coach.ai || e.coach.builtin); }
 function depthOf(e){ const c = coachOf(e); return c ? c.depth : ''; }
-function claimText(e){ const t = (e.competencies || []).map(x => { const c = compOf(x.id); const l = LEVELS.find(z => z.n === x.level); return c ? `${c.label} (${l ? l.label : ''})` : ''; }).filter(Boolean); return 'Claimed: ' + (t.length ? t.join('; ') : 'none') + (e.e21cc ? '. ' + e21ccSummary(e.e21cc) : ''); }
+function claimText(e){ const ls = (e.links || []).map(l => statementById(l.sid)).filter(Boolean).map(s => s.text); const t = (e.competencies || []).map(x => (compOf(x.id) || {}).label).filter(Boolean); return (ls.length ? 'I can statements: ' + ls.join('; ') + '. ' : '') + 'Claimed: ' + (t.length ? t.join('; ') : 'none') + (e.e21cc ? '. ' + e21ccSummary(e.e21cc) : ''); }
 function entryTitle(e){
   if (e.kind === 'across') return `Look across: ${(basketOf(e.basket) || {}).short || ''}`;
   const ctx = e.context || {}; const name = ctx.name || e.subject || FRAMEWORKS[e.kind].name;
@@ -436,12 +458,15 @@ function sharesEntry(a, e){
 }
 function version(e){ return e.updated || e.created; }
 function isSent(a, e){ return !!(e.sent && e.sent[a.id] >= version(e)); }
+/* What a domain shares: each competency's level, and the statements under way with the quotes that back them. */
 function basketSnapshot(b){
-  const entries = me.entries;
-  return {basket:b, set:STMT_SET.id, evidence:entries.filter(e => e.kind !== 'across' && basketsOf(e).includes(b)).length,
-    statements:myStatements().filter(s => s.basket === b).map(s => { const st = statementStatus(entries, s); return {id:s.id, text:s.text, state:st.state, quotes:st.links.filter(k => k.backed).slice(0, 3).map(k => ({eid:k.e.id, quote:k.l.quote}))}; })};
+  const entries = me.entries; const comps = COMPETENCIES.filter(c => c.d === b);
+  const levels = {}; for (const c of comps){ const L = levelOf(entries, STMT_SET, c.id, me.confirmed); if (!L.none) levels[c.id] = {level:L.level, waiting:L.waiting, secured:L.secured, total:L.total}; }
+  const all = STMT_SET.list.filter(s => s.basket === b);
+  return {basket:b, set:STMT_SET.id, band:myBand(), sec:me.level || null, evidence:entries.filter(e => e.kind !== 'across' && basketsOf(e).includes(b)).length, levels, total:all.length,
+    statements:all.map(s => { const st = statementStatus(entries, s); return {id:s.id, text:s.text, comp:s.comp, band:s.band, state:st.state, quotes:st.backing.slice(0, 3).map(k => ({eid:k.e.id, quote:k.l.quote}))}; }).filter(x => x.state !== 'none')};
 }
-function snapHash(s){ return fnvHex(JSON.stringify(s.statements) + '|' + s.evidence); }
+function snapHash(s){ return fnvHex(JSON.stringify(s.statements) + '|' + JSON.stringify(s.levels || {}) + '|' + s.evidence); }
 function unsentFor(a){
   const items = me.entries.filter(e => sharesEntry(a, e) && !isSent(a, e)).sort((x, y) => x.created - y.created).map(e => ({t:'e', id:e.id, title:entryTitle(e), e}));
   for (const b of BASKET_IDS) if (sectionsOf(a).includes(b)){ const s = basketSnapshot(b); if ((me.sentBaskets[a.id] || {})[b] !== snapHash(s)) items.push({t:'b', id:'basket:' + b, title:`${basketOf(b).short}: statements and evidence`, b, snap:s}); }
@@ -490,7 +515,7 @@ async function deliver(a, chosen){
   }
   // no drop box: a link that opens in the adult's teacher console
   const link = consoleUrl() + '#/in?p=' + await packCDL('i', {v:1, from, items:payloadItems});
-  const msg = `${me.name}: ${plural(chosen.length, 'item')} from my E21CC Learning Log. Open in your teacher console: ${link}`;
+  const msg = `${me.name}: ${plural(chosen.length, 'item')} from my E21CC Log. Open in your teacher console: ${link}`;
   dialog(`<h2>Send a link to ${esc(a.name)}</h2><p>${esc(a.name)} has no drop box, so send a link. It opens in their teacher console and adds ${plural(chosen.length, 'item')}. Anyone with the link can read it, so send it only to them.</p>
     <div class="row">${a.email ? `<a class="btn" id="dTeams" href="${esc(teamsChatUrl(a.email, msg))}" target="_blank" rel="noopener">${icon('send')} Open Teams chat</a>` : ''}<button class="btn sec" id="dCopy">${icon('copy')} Copy link</button></div>
     <p class="tiny" style="margin-top:8px">${link.length > 7000 ? `This link is long (${link.length} characters). If Teams cuts it, send fewer items at a time.` : 'Teams not working? Copy the link and paste it into a chat or email to them.'}</p>
@@ -514,7 +539,9 @@ async function importNoteLink(text){
   const d = got.data || {};
   if (!me.email) throw new Error('Add your school email in Settings first. Notes find you by it.');
   if (d.to !== await emailTag(me.email)) throw new Error('This note is addressed to a different student email. Check the email in Settings, or ask your teacher to resend it.');
-  const by = d.by || {}; let added = 0, pending = 0, first = null;
+  const by = d.by || {}; let added = 0, pending = 0, first = null; const confirmed = [];
+  // a teacher's confirmation of Leading in a competency
+  for (const c of (Array.isArray(d.confirms) ? d.confirms : [])){ if (!c || !compOf(c.comp) || compOf(c.comp).d === 'sec') continue; me.confirmed[c.comp] = {by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:Number(c.at) || Date.now()}; confirmed.push(c.comp); }
   for (const n of (Array.isArray(d.notes) ? d.notes : [])){
     if (!n || !n.id || !n.text) continue;
     const note = {id:String(n.id), by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:n.at || Date.now(), anchor:String(n.anchor || 'entry'), text:String(n.text).slice(0, 600), seen:false};
@@ -523,7 +550,7 @@ async function importNoteLink(text){
     if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; }
   }
   saveDb();
-  return {added, pending, first, by:by.name || 'Your teacher'};
+  return {added, pending, first, confirmed, by:by.name || 'Your teacher'};
 }
 function applyPendingNotes(){
   let n = 0; me.pendingNotes = (me.pendingNotes || []).filter(p => { const e = me.entries.find(x => x.id === p.eid); if (!e) return true; if (!e.notes.some(x => x.id === p.note.id)){ e.notes.push(p.note); n++; } return false; });
@@ -537,7 +564,8 @@ async function processStashedLink(h){
   const q = new URLSearchParams(h.split('?')[1] || '');
   try{
     const r = await importNoteLink(q.get('n') || '');
-    if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); location.hash = '#/entry/' + r.first; }
+    if (r.confirmed.length){ const L = r.confirmed.map(c => compOf(c).label).join(', '); toast(`${r.by} confirmed Leading in ${L}.`, 4200); location.hash = '#/c/' + r.confirmed[0]; }
+    else if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); location.hash = '#/entry/' + r.first; }
     else if (r.pending) dialog(`<h2>A note for an entry not on this device</h2><p>${esc(r.by)} wrote on ${plural(r.pending, 'entry', 'entries')} that this device does not have. Import your exported log (Settings, Your data) and the note will land in place.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`), $('#dClose').onclick = closeDialog;
     else toast('You already have these notes.');
   }catch(err){ dialog(`<h2>That note did not open</h2><p>${esc(err.message)}</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; }
@@ -577,7 +605,7 @@ async function boot(){
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
-  if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c/')) route(); }
+  if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
   processStashedLink(link || null);
 }
 async function importConfigFromHash(){
@@ -604,33 +632,38 @@ function route(){
   if (h.startsWith('#/basket/')){ location.hash = '#/'; return; }
   closeComposer();
   if (h.startsWith('#/entry/')) return renderEntry(h.slice(8));
-  if (h.startsWith('#/c/')) return renderCompetency(parts[2]);
-  if (h.startsWith('#/journal/')) return renderJournal(parts[2] === 'act' ? 'act' : 'grow');
+  if (h.startsWith('#/c/') && parts[2]) return renderCompetency(parts[2]);
+  if (h === '#/c' || h.startsWith('#/c?') || h.startsWith('#/c/')) return renderCompetencies();
+  if (h.startsWith('#/journal/')){ const k = ['grow', 'act', 'ask'].includes(parts[2]) ? parts[2] : 'grow'; return k === 'ask' ? renderAsk() : renderJournal(k); }
+  if (h === '#/journal') { location.hash = '#/journal/' + lastJournal(); return; }
   if (h.startsWith('#/setup')) return renderSetup();
   if (h.startsWith('#/sharing')) return renderSharing();
   if (h.startsWith('#/settings')) return renderSettings();
   if (h.startsWith('#/welcome')) return renderWelcome();
   return renderHome();
 }
-/* The notebook: a cover with Home, the log's title and the student's icon; ribbon tabs; the page.
-   On a laptop the page can open flat into two leaves (an index or context on the left, what you
-   opened on the right). Below that width the leaves stack. On a phone the tabs hang from the bottom. */
-const TABS = [['e21cc', '#/', 'E21CC', 'wheel'], ['grow', '#/journal/grow', 'GROW', 'grow'], ['act', '#/journal/act', 'ACT', 'act'], ['settings', '#/settings', 'Settings', 'sliders']];
+/* The Log: a top bar with its name, the student and their Sec level; four places (Home,
+   Competencies, Journals, Settings); the page. On a phone the places sit in a bar at the
+   bottom, on a tablet under the top bar, and on a laptop in a sidebar (or across the top in
+   the Editorial view) with New GROW and New ACT beside them. On a laptop a page can open
+   into two leaves, or three columns on Home. */
+const TABS = [['home', '#/', 'Home', 'home'], ['comp', '#/c', 'Competencies', 'wheel'], ['journals', '#/journal', 'Journals', 'shelf'], ['settings', '#/settings', 'Settings', 'sliders']];
 const DESK = window.matchMedia ? window.matchMedia('(min-width:1024px)') : {matches:true};
 function isDesk(){ return !!DESK.matches; }
+function lastJournal(){ const k = me && me.prefs.journal && me.prefs.journal.kind; return ['grow', 'act', 'ask'].includes(k) ? k : 'grow'; }
 let lastFrameKey = '';
 function frame(inner, active, opts = {}){
-  document.body.classList.toggle('wide', !!opts.wide);
+  document.body.classList.toggle('wide', !!opts.wide); document.body.classList.remove('atwelcome');
   const t = logTitle(); const spread = inner && typeof inner === 'object';
-  const body = spread ? `<div class="leaf l">${inner.left}</div><div class="leaf r">${inner.right}</div>` : inner;
+  const body = !spread ? inner : inner.cols ? inner.cols.map((c, i) => `<div class="col c${i + 1}">${c}</div>`).join('') : `<div class="leaf l">${inner.left}</div><div class="leaf r">${inner.right}</div>`;
+  const href = id => id === 'journals' ? '#/journal/' + lastJournal() : TABS.find(x => x[0] === id)[1];
   $('#app').innerHTML = `
-    <header class="cover">
-      <a class="homebtn" href="#/">${icon('home')}<span>Home</span></a>
-      <div class="brand"><span class="word">${esc(t)}</span><span class="sub">${esc(me.name)}${t !== APP_NAME ? ' · ' + APP_NAME : ''}</span></div>
-      <a class="avatar" href="#/settings" aria-label="Settings for ${esc(me.name)}">${avatarSvg(me.prefs.avatar)}</a>
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="${esc(t)}, ${esc(me.name)}: Home"><span class="avatar" aria-hidden="true">${avatarSvg(me.prefs.avatar)}</span><span class="bt"><span class="word">${esc(t)}</span><span class="sub">${esc(me.name)}${me.level ? ' · Sec ' + me.level : ''}</span></span></a>
     </header>
-    <nav class="tabs" aria-label="Sections of the log">${TABS.map(([id, href, label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href}"${active === id ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}</nav>
-    <main class="page fade${spread ? ' spread' : ''}${opts.ribbon ? ' ribbon' : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
+    <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
+      <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
+    <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
     <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
@@ -641,17 +674,17 @@ function scrollTop(){ window.scrollTo(0, 0); if (EMBED){ try{ document.documentE
 
 /* ---------- welcome, then a first page that makes it yours ---------- */
 function renderWelcome(){
-  document.body.classList.remove('wide');
+  document.body.classList.remove('wide'); document.body.classList.add('atwelcome');
   const profiles = Object.values(db.profiles).sort((a, b) => b.created - a.created);
   const pre = db._preClass || '';
   $('#app').innerHTML = `
   <div class="welcome">
     <section class="cover-big fade">
       <img src="assets/crest.png" alt="" class="crest">
-      <h1>E21CC<br>Learning Log</h1>
+      <h1>E21CC<br>Log</h1>
       <p class="motto">GROW by reflecting. ACT on feedback.</p>
-      <p class="meta">One log for everything you learn at Beatty: lessons, CCA, camps and competitions. Each entry gets feedback on the 21st Century Competencies your writing shows.</p>
-      <div class="cover-tabs" aria-hidden="true"><span class="t-e21cc">E21CC</span><span class="t-grow">GROW</span><span class="t-act">ACT</span></div>
+      <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
+      <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
     <div class="wcol">
     ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
@@ -701,25 +734,29 @@ async function pickProfile(id){
   };
   $('#pinForm input').focus();
 }
-/* First page after the name: subjects, CCA, a cover and an icon. All of it can wait. */
+/* First page after the name: Sec level, subjects and CCA, a view and an icon. All of it can wait. */
+function levelPicker(){ return `<div class="f"><span class="flabel" id="lvLbl">Your level</span><div class="seg wrap" role="group" aria-labelledby="lvLbl">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-lv="${n}" class="${me.level === n ? 'on' : ''}" aria-pressed="${me.level === n}">Sec ${n}</button>`).join('')}</div><small class="help">Sec 1 and 2 work towards the Lower Sec statements, and Sec 3 to 5 towards Upper Sec. You can claim the others too.</small></div>`; }
+function wireLevel(after){ $$('[data-lv]').forEach(b => b.onclick = () => { me.level = +b.dataset.lv; saveDb(); $$('[data-lv]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); const sub = $('.topbar .sub'); if (sub) sub.textContent = `${me.name} · Sec ${me.level}`; refreshBuiltinStatements(); if (after) after(); }); }
 function renderSetup(){
   frame(leaves(`
-    <section class="hero"><h1>Make it yours</h1><p class="meta">Your subjects and CCA become bookmarks in your journals. You can change all of this later in Settings.</p></section>
+    <section class="hero"><h1>Make it yours</h1><p class="meta">Your level decides which I can statements you work towards. Your subjects and CCA become bookmarks in your journals. You can change all of this later in Settings.</p></section>
+    <section class="card">${levelPicker()}</section>
     ${experiencesEditor()}<!--leaf-->
-    <section class="card"><h2>Your cover</h2>${coverPicker()}<span class="flabel" style="margin-top:14px">Your icon</span>${iconPicker()}</section>
+    <section class="card"><h2>Your view</h2>${lookPicker()}<span class="flabel" style="margin-top:14px">Your icon</span>${iconPicker()}</section>
     <div class="row" style="justify-content:space-between;margin-top:6px"><a class="btn ghost" href="#/">Skip for now</a><a class="btn acc" href="#/">${icon('check')} Open my log</a></div>
   `, 'minmax(0,1fr) minmax(0,1fr)'), 'settings', {wide:true});
-  wireExperiences(renderSetup); wireCover(); wireIconPicker();
+  wireExperiences(renderSetup); wireLook(); wireIconPicker(); wireLevel();
 }
 
-/* ---------- the E21CC tab: the competency wheel ---------- */
+/* ---------- the wheel, levels and statements ---------- */
 const DOMAIN_COLOUR = {cait:'#1f3fa8', cci:'#0f7a6b', cgc:'#b23a48', sec:'#c98a00'};
 const WHEEL_LABEL = {critical:['Critical'], adaptive:['Adaptive'], inventive:['Inventive'], communication:['Communication'], collaboration:['Collaboration'], information:['Information'],
   civic:['Civic'], global:['Global'], crosscultural:['Cross', 'cultural'], selfaware:['Self', 'awareness'], selfmanage:['Self', 'management'], socialaware:['Social', 'awareness'], relationship:['Relationships'], decisions:['Decisions']};
-const LEVEL_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
+const EV_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
+const LEVEL_SHADE = [0, .22, .45, .72, .95];
 function weekKey(t){ const d = new Date(t); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
 function streak(entries){ const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now()); if (!weeks.has(w)) w -= 7 * 864e5; while (weeks.has(w)){ n++; w -= 7 * 864e5; } return n; }
-/* How each competency stands: the strongest evidence (3 strong, 2 clear, 1 glimpse or claim), entries, statements lit. */
+/* The strongest evidence of a competency in one entry: 3 strong, 2 clear, 1 glimpse or claim. */
 function compLevelOf(e, id){
   let lv = 0;
   // a quote the coach could not find in the student's words counts for nothing
@@ -727,34 +764,40 @@ function compLevelOf(e, id){
   if (!lv && (e.competencies || []).some(t => t.id === id)) lv = 1;
   return lv;
 }
+/* How each competency stands: its level, earned from secured statements, and its evidence in GROW and ACT entries. */
 function compStats(){
-  const st = {}; for (const c of COMPETENCIES) st[c.id] = {level:0, n:0, g:0, a:0, lit:0, total:0, last:0};
-  for (const e of me.entries){ if (e.kind === 'across') continue; for (const c of COMPETENCIES){ const lv = compLevelOf(e, c.id); if (lv){ const s = st[c.id]; s.level = Math.max(s.level, lv); s.n++; if (e.kind === 'act') s.a++; else s.g++; s.last = Math.max(s.last, e.created); } } }
-  for (const s of myStatements()) for (const cid of s.competencies){ if (!st[cid]) continue; st[cid].total++; if (statementStatus(me.entries, s).lit) st[cid].lit++; }
+  const st = {}; for (const c of COMPETENCIES) st[c.id] = {ev:0, n:0, g:0, a:0, last:0};
+  for (const e of me.entries){ if (e.kind === 'across') continue; for (const c of COMPETENCIES){ const lv = compLevelOf(e, c.id); if (lv){ const s = st[c.id]; s.ev = Math.max(s.ev, lv); s.n++; if (e.kind === 'act') s.a++; else s.g++; s.last = Math.max(s.last, e.created); } } }
+  for (const c of COMPETENCIES){ const L = levelOf(me.entries, STMT_SET, c.id, me.confirmed); Object.assign(st[c.id], {L, idx:L.idx, secured:L.secured, total:L.total, none:L.none}); }
   return st;
 }
 /* "from 2 GROW and 1 ACT entry": both journals feed the wheel, and the student can see it */
 function fromLine(x){ const parts = []; if (x.g) parts.push(`${x.g} GROW`); if (x.a) parts.push(`${x.a} ACT`); return parts.length ? `from ${parts.join(' and ')} ${x.n === 1 ? 'entry' : 'entries'}` : 'no entries yet'; }
+function levelWord(x){ return x.none ? 'Evidence only' : x.L.waiting ? 'Leading: waiting for a teacher' : x.idx ? LOG_LEVELS[x.idx - 1].label : 'Not yet'; }
+function meter(idx, label){ return `<span class="meter" role="img" aria-label="${esc(label)}">${[1, 2, 3, 4].map(n => `<i class="${idx >= n ? 'on' : ''}"></i>`).join('')}</span>`; }
 const STAR = '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>';
 function sector(cx, cy, r0, r1, a0, a1){
   const P = (r, a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
   const [x0, y0] = P(r1, a0), [x1, y1] = P(r1, a1), [x2, y2] = P(r0, a1), [x3, y3] = P(r0, a0); const big = a1 - a0 > 180 ? 1 : 0;
   return `M${x0.toFixed(2)} ${y0.toFixed(2)}A${r1} ${r1} 0 ${big} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}A${r0} ${r0} 0 ${big} 0 ${x3.toFixed(2)} ${y3.toFixed(2)}Z`;
 }
-/* MOE's framework drawn as rings: values at the centre, the five social and
-   emotional competencies around them, the nine emerging competencies outside.
-   Each segment deepens with the strongest evidence in the student's words. */
+/* MOE's framework drawn as rings: values at the centre, the five social and emotional
+   competencies around them, the nine emerging competencies outside. Each outer part is
+   shaded by the student's level; the social and emotional ring shows evidence only. */
 function wheelSvg(st){
-  const cx = 160, cy = 160; let s = `<svg class="wheel" viewBox="0 0 320 320" role="group" aria-label="Your 21st Century Competencies">`;
+  const cx = 160, cy = 160; let s = `<svg class="wheel" viewBox="0 0 320 320" role="group" aria-label="Your competencies, each shaded by your level">`;
+  s += `<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" class="hatchbg"/><line x1="0" y1="0" x2="0" y2="6" stroke="${DOMAIN_COLOUR.sec}" stroke-width="2.4" stroke-opacity=".6"/></pattern></defs>`;
   const seg = (c, r0, r1, a0, a1, fs) => {
-    const x = st[c.id]; const col = DOMAIN_COLOUR[c.d]; const op = [0, .3, .62, .95][x.level];
+    const x = st[c.id]; const col = DOMAIN_COLOUR[c.d]; const sec = c.d === 'sec'; const d = sector(cx, cy, r0, r1, a0, a1);
     const mid = (a0 + a1) / 2, rm = (r0 + r1) / 2; const tx = cx + rm * Math.cos(mid * Math.PI / 180), ty = cy + rm * Math.sin(mid * Math.PI / 180);
     const rot = mid > 0 && mid < 180 ? mid - 90 : mid + 90; const lines = WHEEL_LABEL[c.id] || [c.label];
-    const label = `${c.label}: ${LEVEL_WORD[x.level]}, ${fromLine(x)}${x.total ? `, ${x.lit} of ${x.total} statements unlocked` : ''}. Open.`;
-    let g = `<a href="#/c/${c.id}" class="seg lv${x.level}" aria-label="${esc(label)}"><title>${esc(label)}</title>`;
-    g += `<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segbg"/>${x.level ? `<path d="${sector(cx, cy, r0, r1, a0, a1)}" fill="${col}" fill-opacity="${op}"/>` : ''}<path d="${sector(cx, cy, r0, r1, a0, a1)}" class="segline" stroke="${col}"/>`;
-    g += `<text transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)}) rotate(${rot.toFixed(1)})" text-anchor="middle" font-size="${fs}" class="${x.level >= 2 ? 'on' : ''}">${lines.map((l, i) => `<tspan x="0" dy="${i === 0 ? (lines.length > 1 ? -fs * .2 : fs * .35) : fs * 1.1}">${esc(l)}</tspan>`).join('')}</text>`;
-    if (x.lit){ const ra = r1 - 7, sx = cx + ra * Math.cos(a1 * Math.PI / 180 - .16), sy = cy + ra * Math.sin(a1 * Math.PI / 180 - .16); g += `<path class="star" transform="translate(${(sx - 6).toFixed(1)} ${(sy - 6).toFixed(1)}) scale(.5)" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>`; }
+    const label = sec ? `${c.label}: evidence only, ${EV_WORD[x.ev]}, ${fromLine(x)}. Open.` : `${c.label}: ${levelWord(x)}, ${x.secured} of ${x.total} statements secured, ${fromLine(x)}. Open.`;
+    let g = `<a href="#/c/${c.id}" class="seg${sec ? ' sec' : ''} lv${x.idx || 0}" aria-label="${esc(label)}"><title>${esc(label)}</title><path d="${d}" class="segbg"/>`;
+    if (sec){ if (x.ev >= 2) g += `<path d="${d}" fill="url(#hatch)"/>`; }
+    else if (x.idx) g += `<path d="${d}" fill="${col}" fill-opacity="${LEVEL_SHADE[x.idx]}"/>`;
+    g += `<path d="${d}" class="segline" stroke="${col}"/>`;
+    g += `<text transform="translate(${tx.toFixed(1)} ${ty.toFixed(1)}) rotate(${rot.toFixed(1)})" text-anchor="middle" font-size="${fs}" class="${!sec && x.idx >= 3 ? 'on' : ''}">${lines.map((l, i) => `<tspan x="0" dy="${i === 0 ? (lines.length > 1 ? -fs * .2 : fs * .35) : fs * 1.1}">${esc(l)}</tspan>`).join('')}</text>`;
+    if (x.secured){ const ra = r1 - 7, sx = cx + ra * Math.cos(a1 * Math.PI / 180 - .16), sy = cy + ra * Math.sin(a1 * Math.PI / 180 - .16); g += `<path class="star" transform="translate(${(sx - 6).toFixed(1)} ${(sy - 6).toFixed(1)}) scale(.5)" d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>`; }
     return g + '</a>';
   };
   // the nine emerging competencies, three domains of 120 degrees, Thinking at the top
@@ -764,43 +807,61 @@ function wheelSvg(st){
   s += `<circle cx="${cx}" cy="${cy}" r="46" class="core"/><text x="${cx}" y="${cy - 3}" text-anchor="middle" font-size="11" class="corelabel">Core</text><text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="11" class="corelabel">values</text>`;
   return s + '</svg>';
 }
-function domainLegend(){ return `<div class="dlegend">${DOMAINS.map(d => `<span><i style="background:${DOMAIN_COLOUR[d.id]}"></i>${esc(d.short)}</span>`).join('')}</div>`; }
+function wheelLegend(){ return `<div class="wlegend">${LOG_LEVELS.map((l, i) => `<span><i style="opacity:${LEVEL_SHADE[i + 1]}"></i>${l.label}</span>`).join('')}<span><i class="hatch"></i>SEC: evidence only</span></div>`; }
+/* The statement's place: its competency, its strand, its band, and Stretch when it is beyond the student's band. */
+function stmtMeta(s, withComp = true){ return `${withComp ? esc(compOf(s.comp).label) + ' · ' : ''}Strand ${s.strandN} · ${esc(bandLabel(s.band))}${isStretch(s) ? ` <span class="stag">${s.band === 'upper' ? icon('star') : ''}${esc(stretchWord(s))}</span>` : ''}`; }
+function ctxNames(x){ return [...new Set(x.backing.map(k => contextName(k.e)).filter(Boolean))]; }
+function progressWord(x){ const n = x.backing.length; return x.secured ? 'Secured' : n < SECURE.entries ? `${n} of ${SECURE.entries} entries` : `${n} entries`; }
+function levelRows(st, comps, big){
+  return `<ul class="lvlist${big ? ' big' : ''}">${comps.map(c => { const x = st[c.id];
+    return `<li><a href="#/c/${c.id}"><i class="cdot" style="--d:${DOMAIN_COLOUR[c.d]}" aria-hidden="true"></i><span class="ln"><b>${esc(c.label)}</b>${big ? `<small>${x.none ? (x.n ? `In ${plural(x.n, 'entry', 'entries')}` : 'Not in your entries yet') : `${x.secured} of ${x.total} statements secured`}</small>` : ''}</span>${x.none ? '' : meter(x.idx, `${c.label}: ${levelWord(x)}`)}<span class="lw">${esc(levelWord(x))}</span></a></li>`; }).join('')}</ul>`;
+}
 function renderHome(){
   const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E);
-  const ranked = COMPETENCIES.map(c => Object.assign({c}, st[c.id])).sort((a, b) => b.level - a.level || b.n - a.n);
-  const strong = ranked.filter(x => x.level).slice(0, 3); const quiet = ranked.filter(x => !x.level).slice(0, 4);
-  const latest = E.find(e => e.kind !== 'across' && e.e21cc);
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
   const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]));
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
-  const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === termKey(Date.now())).map(e => e.basket));
-  const fed = k => E.filter(e => e.kind === k && COMPETENCIES.some(c => compLevelOf(e, c.id))).length;
-  frame(leaves(`
-    <section class="titlepage">
+  const tk = termKey(Date.now()); const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === tk).map(e => e.basket));
+  const latest = E.find(e => e.kind !== 'across' && e.e21cc);
+  const all = STMT_SET.list.map(x => statementStatus(me.entries, x));
+  const securedNow = all.filter(x => x.secured && termKey(x.securedAt) === tk).sort((a, b) => b.securedAt - a.securedAt);
+  const securedAll = all.filter(x => x.secured).length;
+  const lastAt = x => Math.max(...x.backing.map(k => k.e.created));
+  const almost = all.filter(x => x.state === 'started').sort((a, b) => b.backing.length - a.backing.length || lastAt(b) - lastAt(a)).slice(0, 3);
+  const aim = nextEntry && nextEntry.target ? statementById(nextEntry.target) : null;
+  const sitem = x => `<li><i class="cdot" style="--d:${DOMAIN_COLOUR[compOf(x.stmt.comp).d]}" aria-hidden="true"></i><div><p class="stt"><a href="#/c/${x.stmt.comp}">${esc(x.stmt.text)}</a></p><small>${esc(compOf(x.stmt.comp).label)}${ctxNames(x).length ? ' · ' + esc(ctxNames(x).join(' and ')) : ''}${x.secured ? ' · ' + fmtDay(x.securedAt).replace(/^\w+,?\s*/, '') : ''}</small>${x.secured ? '' : `<small class="miss"><b>${progressWord(x)}.</b> ${esc(x.missing)}</small>`}</div></li>`;
+  const outer = COMPETENCIES.filter(c => c.d !== 'sec');
+  frame({cols:[`
+    <section class="card wheelcard" style="--o:1">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
       <h1>Your competencies</h1>
-      <p class="lede">Every GROW and ACT entry you write adds to this wheel.</p>
       <div class="wheelwrap">${wheelSvg(st)}</div>
+      ${wheelLegend()}
+      <p class="tiny center">Each part darkens as your level rises. <svg class="istar" viewBox="0 0 24 24" aria-hidden="true">${STAR}</svg> marks a secured statement. Tap a part to open it.</p>
     </section>
-    <div class="wheelhelp">
-      ${domainLegend()}
-      <p class="tiny" style="text-align:center;margin:6px 0 0">The more clearly your words show a competency, the darker its part of the wheel. <svg class="istar" viewBox="0 0 24 24" aria-hidden="true">${STAR}</svg> marks an I can statement you have unlocked. Tap any part to see more.</p>
-    </div><!--leaf-->
-    <div class="acts">
-      <a class="actcard" href="#/write/grow"><span class="badge b-grow">GROW</span><b>New GROW entry</b><span class="sub">After a lesson, a training or a camp day${drafts.includes('grow') ? '. You have one unfinished.' : ''}</span></a>
-      <a class="actcard" href="#/write/act"><span class="badge b-act">ACT</span><b>New ACT entry</b><span class="sub">After you get feedback on your work${drafts.includes('act') ? '. You have one unfinished.' : ''}</span></a>
+    <div class="acts" style="--o:2">
+      <a class="btn big" href="#/write/grow">${icon('plus')}<span>New GROW${drafts.includes('grow') ? '<small>1 unfinished</small>' : ''}</span></a>
+      <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT${drafts.includes('act') ? '<small>1 unfinished</small>' : ''}</span></a>
     </div>
-    ${unread.length ? `<a class="card notecard" href="#/entry/${unread[0].e.id}">${icon('note')}<span><b>${plural(unread.length, 'new note')} from ${esc(unread[0].n.by)}</b><small>On ${esc(entryTitle(unread[0].e))}</small></span></a>` : ''}
-    ${E.length ? `<section class="card"><h2>Where you stand</h2>
-      <p class="tiny" style="margin:0 0 8px">Your wheel uses ${plural(fed('grow'), 'GROW entry', 'GROW entries')} and ${plural(fed('act'), 'ACT entry', 'ACT entries')}.</p>
-      ${strong.length ? `<span class="kick">Shown most</span><div class="chips">${strong.map(x => `<a class="chip dchip" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}<small>${[x.g ? x.g + ' GROW' : '', x.a ? x.a + ' ACT' : ''].filter(Boolean).join(', ')}</small></a>`).join('')}</div>` : ''}
-      ${quiet.length ? `<span class="kick" style="margin-top:10px">Not shown yet</span><div class="chips">${quiet.map(x => `<a class="chip dchip quiet" style="--d:${DOMAIN_COLOUR[x.c.d]}" href="#/c/${x.c.id}">${esc(x.c.label)}</a>`).join('')}</div><p class="tiny" style="margin:8px 0 0">You have not written about these yet. Tap one to see what it looks like.</p>` : ''}
-    </section>` : `<section class="card"><h2>How the wheel fills</h2><p class="muted" style="margin:0">Write a GROW entry after a lesson, a training or a camp day, or an ACT entry when you get feedback. Either one fills the wheel. Claim a competency and say where it shows. When your words show it, that part of the wheel gets darker.</p></section>`}
-    ${latest ? `<a class="card latest" href="#/entry/${latest.id}"><span class="kick">Latest feedback · ${esc(entryTitle(latest))}</span>${latestLine(latest)}</a>` : ''}
-    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Choose one area. Read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
-    ${nextEntry ? `<section class="card"><h2>Your next step</h2><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p></section>` : ''}
-  `, 'minmax(0,1fr) minmax(0,1fr)'), 'e21cc', {ribbon:true, wide:true, cls:'homespread'});
+    ${unread.length ? `<a class="card notecard" style="--o:3" href="#/entry/${unread[0].e.id}">${icon('note')}<span><b>${plural(unread.length, 'new note')} from ${esc(unread[0].n.by)}</b><small>On ${esc(entryTitle(unread[0].e))}</small></span></a>` : ''}`,
+  `
+    <section class="card" style="--o:7"><p class="kicker">Levels</p><h2>Competencies</h2>
+      ${levelRows(st, outer)}
+      <p class="tiny" style="margin:10px 0 0">Social and emotional competencies show evidence only, until the school’s statements for them are ready. <a href="#/c">All competencies</a></p>
+    </section>`,
+  `
+    ${nextEntry ? `<section class="card" style="--o:4"><p class="kicker">Your next step</p><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label>${aim ? `<p class="aimline">${icon('ladder')}<span>Aiming for: <a href="#/c/${aim.comp}">${esc(aim.text)}</a></span></p>` : ''}<p class="tiny" style="margin:8px 0 0">From your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p></section>` : ''}
+    <section class="card" style="--o:5"><p class="kicker">Secured this term</p>
+      ${securedNow.length ? `<ul class="slist">${securedNow.slice(0, 4).map(sitem).join('')}</ul>${securedNow.length > 4 ? `<p class="tiny">And ${securedNow.length - 4} more.</p>` : ''}` : `<p class="muted" style="margin:0">${securedAll ? 'Nothing new this term yet.' : 'Nothing secured yet.'} A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart.</p>`}
+    </section>
+    <section class="card" style="--o:6"><p class="kicker">Almost there</p>
+      ${almost.length ? `<ul class="slist">${almost.map(sitem).join('')}</ul>` : `<p class="muted" style="margin:0">When you write an entry, choose the I can statement it shows. Once your words back it, it appears here until it is secured.</p>`}
+    </section>
+    ${latest ? `<a class="card latest" style="--o:8" href="#/entry/${latest.id}"><span class="kick">Latest feedback · ${esc(entryTitle(latest))}</span>${latestLine(latest)}</a>` : ''}
+    ${tp.inTerm && daysLeft <= 21 && acrossDone.size < 4 ? `<section class="card flat" style="--o:9"><h2>Term ${tp.term} ends in ${plural(daysLeft, 'day')}</h2><p class="muted">Choose one area. Read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></section>` : ''}
+    <section class="card flat showcase" style="--o:10"><p class="kicker">Showcase · coming later</p><p class="muted" style="margin:0">Once you have secured statements, you will pick your best entries here to show for applications. A teacher checks what goes in.</p></section>
+  `]}, 'home', {wide:true, cls:'home'});
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 function latestLine(e){
@@ -809,16 +870,42 @@ function latestLine(e){
   return `${ev ? `<p style="margin:4px 0 0"><b>${esc(compOf(ev.id).label)}</b> <span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></p>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}` : `<p class="muted" style="margin:4px 0 0">${esc(x.stance_note || '')}</p>`}${c && c.question ? `<p class="ask">${esc(c.question)}</p>` : ''}`;
 }
 
-/* ---------- a competency: what it means, its statements, the entries that show it ---------- */
-function stmtRow(st, compId){
-  const s = st.stmt;
-  const ev = st.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}"><span class="badge b-${k.e.kind}" style="margin-right:6px">${FRAMEWORKS[k.e.kind].name}</span>${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
-  const sug = st.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === s.id); return `<div class="sugg"><span class="kick">The coach suggests</span><a href="#/entry/${e.id}"><span class="badge b-${e.kind}" style="margin-right:6px">${FRAMEWORKS[e.kind].name}</span>${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
-  const probe = (compOf(compId) || {}).probe || '';
-  return `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><div class="grow">
-    <p class="st-text">${s.level ? `<span class="lvl">${s.level === 1 ? 'Starting' : 'Stretching'}</span> ` : ''}${esc(s.text)}<span class="sr"> (${st.state === 'lit' ? 'unlocked' : st.state === 'linked' ? 'linked, not backed yet' : 'no evidence yet'})</span></p>
-    ${ev}${st.state === 'linked' ? `<small class="muted">Linked, but your words do not show it yet. ${esc(probe)}</small>` : ''}${sug}
-    <button class="btn small ${st.links.length ? 'ghost' : 'sec'}" data-linkone="${esc(s.id)}">${icon('link')} ${st.links.length ? 'Link another' : 'Link an entry'}</button></div></li>`;
+/* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
+function renderCompetencies(){
+  const st = compStats(); const band = myBand();
+  const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? '<p class="tiny" style="margin:8px 0 0">The school is still writing its statements for these. Your entries show evidence of them in the meantime.</p>' : ''}</section>`;
+  frame(leaves(`
+    <section class="hero"><h1>Competencies</h1>
+      <p class="meta">Your level in each competency comes from the I can statements you secure. A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart.</p>
+      <p class="meta">${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Set your level in <a href="#/settings?s=me">Settings</a> so the log shows the right statements. Until then you see ${esc(bandLabel(band))}.`}</p>
+      <details class="howlv"><summary>How levels work</summary><ol class="lvkey">${LOG_LEVELS.map((l, i) => `<li>${meter(i + 1, l.label)}<div><b>${l.label}</b><span>${esc(l.help)}</span></div></li>`).join('')}</ol></details>
+    </section>
+    ${dom(DOMAINS[0])}<!--leaf-->${dom(DOMAINS[1])}${dom(DOMAINS[2])}${dom(DOMAINS[3])}
+  `, 'minmax(0,1fr) minmax(0,1fr)'), 'comp', {wide:true, cls:'complist'});
+}
+const MARK = {secured:'check', started:'clock', linked:'link'};
+function stmtRow(x){
+  const s = x.stmt; const stretch = isStretch(s) && x.state === 'none';
+  const ctx = ctxNames(x);
+  const line = x.secured ? `Secured${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}` : x.backing.length ? `<b>${progressWord(x)}</b>${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}. ${esc(x.missing)}` : x.links.length ? 'Linked, but your words do not show it yet.' : '';
+  const sr = {secured:'secured', started:'started', linked:'linked, not backed yet', none:'not started'}[x.state];
+  const ev = x.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}"><span class="badge b-${k.e.kind}" style="margin-right:6px">${FRAMEWORKS[k.e.kind].name}</span>${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}${k.backed ? '' : `<small class="muted">${esc((compOf(s.comp) || {}).probe || '')}</small>`}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
+  const sug = x.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(y => y.sid === s.id); return `<div class="sugg"><span class="kick">The coach suggests</span><a href="#/entry/${e.id}"><span class="badge b-${e.kind}" style="margin-right:6px">${FRAMEWORKS[e.kind].name}</span>${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
+  return `<li class="st s-${x.state}${stretch ? ' stretch' : ''}"><span class="mk" aria-hidden="true">${MARK[x.state] ? icon(MARK[x.state]) : stretch ? icon('star') : ''}</span><div class="grow">
+    <p class="st-text">${esc(s.text)}<span class="sr"> (${sr})</span></p>
+    ${line ? `<small class="stl">${line}</small>` : ''}
+    <details class="stx"><summary>${x.links.length ? plural(x.links.length, 'linked entry', 'linked entries') : x.suggested.length ? 'The coach suggests an entry' : 'Link an entry'}</summary>
+      ${ev}${sug}<button class="btn small sec" data-linkone="${esc(s.id)}">${icon('link')} ${x.links.length ? 'Link another entry' : 'Link an entry'}</button></details>
+  </div></li>`;
+}
+function mvvLine(m){ const k = []; if ((m.m || []).length) k.push('Mission: ' + m.m.join(', ')); if ((m.vi || []).length) k.push('Vision: ' + m.vi.join(', ')); if ((m.va || []).length) k.push('DREAM: ' + m.va.join(', ')); return k.join(' · '); }
+function strandHtml(r){
+  const st = r.strand; const own = myBand() === 'upper' ? 'upper' : 'lower'; const other = own === 'upper' ? 'lower' : 'upper';
+  const block = b => r[b].length ? `<p class="bandlbl">${b === own ? `${esc(bandLabel(b))} · your band` : `${b === 'upper' ? icon('star') : ''}${esc(bandLabel(b))} · ${b === 'upper' ? 'stretch' : 'earlier ground'}`}</p><ul class="ladder">${r[b].map(stmtRow).join('')}</ul>` : '';
+  const mvv = mvvLine(st.mvv);
+  return `<section class="card strand"><p class="kicker">Strand ${st.n}</p><h2>${esc(st.name)}</h2>${mvv ? `<p class="mvv">${esc(mvv)}</p>` : ''}
+    ${block(own)}${block(other)}
+    ${st.milestone && (st.milestone.lower || st.milestone.upper) ? `<details class="ms"><summary>MOE milestones for this strand</summary>${st.milestone.lower ? `<p>${esc(st.milestone.lower)}</p>` : ''}${st.milestone.upper ? `<p>${esc(st.milestone.upper)}</p>` : ''}</details>` : ''}</section>`;
 }
 function wireStmtButtons(compId){
   $$('[data-linkone]').forEach(b => b.onclick = () => linkDialog(b.dataset.linkone, compId));
@@ -827,41 +914,45 @@ function wireStmtButtons(compId){
 }
 function bestQuote(e, id){ return ((e.e21cc && e.e21cc.evidence) || []).filter(v => v.id === id && v.quote && !v.unverified).sort((a, b) => ({strong:3, clear:2, glimpse:1}[b.strength] - {strong:3, clear:2, glimpse:1}[a.strength]))[0] || null; }
 function renderCompetency(id){
-  const c = compOf(id); if (!c){ location.hash = '#/'; return; }
-  const d = basketOf(c.d); const st = compStats()[id];
-  const stmts = myStatements().filter(s => s.competencies.includes(id)).map(s => statementStatus(me.entries, s));
+  const c = compOf(id); if (!c){ location.hash = '#/c'; return; }
+  const d = basketOf(c.d); const st = compStats()[id]; const L = st.L;
   const shows = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, id)).sort((a, b) => compLevelOf(b, id) - compLevelOf(a, id) || b.created - a.created);
   const tk = termKey(Date.now()); const across = me.entries.find(e => e.kind === 'across' && e.basket === c.d && e.term === tk);
-  frame(leaves(`
-    <section class="hero comp-hero" style="--d:${DOMAIN_COLOUR[c.d]}">
-      <p class="kicker"><a href="#/">E21CC</a> · ${esc(d.label)}</p>
+  const head = `<section class="hero comp-hero" style="--d:${DOMAIN_COLOUR[c.d]}">
+      <p class="kicker"><a href="#/c">Competencies</a> · ${esc(d.short)}</p>
       <h1>${esc(c.label)}</h1>
-      <p class="plain">${esc(c.plain)}</p>
-      <p class="meta"><span class="lvlbar">${[1, 2, 3].map(n => `<i class="${st.level >= n ? 'on' : ''}"></i>`).join('')}</span> ${LEVEL_WORD[st.level][0].toUpperCase() + LEVEL_WORD[st.level].slice(1)} · ${fromLine(st)}${st.total ? ` · ${st.lit} of ${st.total} statements unlocked` : ''}</p>
-    </section>
-    ${STMT_SET.placeholder ? `<div class="notice">Starter statements. The school’s own I can statements will replace them.</div>` : ''}
-    <section class="card"><h2>I can</h2>
-      <p class="tiny" style="margin:0 0 10px">To unlock a statement, link an entry whose words show it.</p>
-      ${stmts.length ? `<ul class="stmts">${stmts.map(x => stmtRow(x, id)).join('')}</ul>` : '<p class="muted">No statements for this competency yet.</p>'}
-    </section><!--leaf-->
+      ${L.none ? `<p class="lvline"><span class="pill lv none">Evidence only</span> <span class="tiny">${esc(fromLine(st))}</span></p>`
+        : `<p class="lvline"><span class="pill lv">${esc(levelWord(st))}</span> <span class="tiny">${L.secured} of ${L.total} statements secured</span></p>${meter(st.idx, `${c.label}: ${levelWord(st)}`)}${L.next ? `<p class="nextlv">${esc(L.next)}</p>` : ''}${L.confirmed ? `<p class="tiny">Leading confirmed by ${esc(L.confirmed.by)} on ${fmtDate(L.confirmed.at)}.</p>` : ''}`}
+    </section>`;
+  const ladders = L.none ? `<section class="card flat"><h2>No statements yet</h2><p class="muted" style="margin:0">The school is still writing its I can statements for the social and emotional competencies. Until then, ${esc(c.label.toLowerCase())} shows as evidence from your entries, with no level.</p></section>` : L.strands.map(strandHtml).join('');
+  frame(leaves(`${head}${ladders}<!--leaf-->
     <section class="card"><h2>Where it shows in your log</h2>${shows.length ? `<p class="tiny" style="margin:0 0 8px">${fromLine(st)[0].toUpperCase() + fromLine(st).slice(1)}. GROW and ACT entries both count.</p>` : ''}
       ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
     </section>
+    <section class="card"><h2>What it means</h2><p class="plain">${esc(c.plain)}</p>${c.moe ? `<p class="tiny">MOE: “${esc(c.moe)}”</p>` : ''}</section>
     <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
       <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
-  `, 'minmax(0,1fr) minmax(0,1fr)'), 'e21cc', {wide:true});
+  `, 'minmax(0,3fr) minmax(0,2fr)'), 'comp', {wide:true, key:'comp:' + id});
   wireStmtButtons(id);
+}
+/* The competencies an entry claims follow the statements it is linked to, so the coach checks them. */
+function claimsFromLinks(links, old){
+  const byComp = new Map(); for (const l of links){ const s = statementById(l.sid); if (s && !byComp.has(s.comp)) byComp.set(s.comp, l.quote || ''); }
+  const prev = new Map((old || []).map(t => [t.id, t]));
+  return [...byComp].map(([id, q]) => prev.get(id) || {id, level:2, where:q.slice(0, 160)});
 }
 function addLink(e, sid, quote){
   if (!e) return; const s = statementById(sid);
-  e.links = (e.links || []).filter(l => l.sid !== sid); e.links.push({sid, quote:String(quote || '').slice(0, 400), at:Date.now()}); saveDb();
-  closeDialog();
-  toast(s && linkBacked(e, s) ? 'Linked, and your words back it. The statement is unlocked.' : 'Linked. The coach has not seen it in your words yet.', 3400);
+  e.links = (e.links || []).filter(l => l.sid !== sid); e.links.push({sid, quote:String(quote || '').slice(0, 400), at:Date.now()});
+  if (s && !(e.competencies || []).some(t => t.id === s.comp)) e.competencies = (e.competencies || []).concat([{id:s.comp, level:2, where:String(quote || '').slice(0, 160)}]);
+  saveDb(); closeDialog();
+  const x = s ? securedOf(me.entries, s) : null;
+  toast(!s ? 'Linked.' : x.secured ? 'Linked. That statement is now secured.' : linkBacked(e, s) ? `Linked, and your words back it. ${x.missing}` : 'Linked. The coach has not seen it in your words yet.', 4200);
   route();
 }
 /* Link an entry: pick an entry, then the sentence of yours that shows the statement. */
 function linkDialog(sid, compId){
-  const s = statementById(sid); if (!s) return;
+  const s = statementById(sid); if (!s) return; compId = compId || s.comp;
   const showing = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, compId)).sort((a, b) => b.created - a.created);
   const others = me.entries.filter(e => e.kind !== 'across' && !showing.includes(e)).sort((a, b) => b.created - a.created).slice(0, 20);
   const btn = e => `<button class="entry" data-e="${e.id}">${medal(e.kind)}<span class="grow"><b>${esc(entryTitle(e))}</b><small>${fmtDay(e.created)}${(e.links || []).some(l => l.sid === sid) ? ' · already linked' : ''}</small></span></button>`;
@@ -873,7 +964,7 @@ function linkDialog(sid, compId){
   $('#dClose').onclick = closeDialog;
   $$('#dlgBody [data-e], #inlineDlg [data-e]').forEach(b => b.onclick = () => {
     const e = me.entries.find(x => x.id === b.dataset.e); const sents = sentencesOf(entryAnswersText(e));
-    const sug = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === sid);
+    const sug = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === sid) || bestQuote(e, compId);
     const pre = sug ? sents.findIndex(t => normText(t).includes(normText(sug.quote)) || normText(sug.quote).includes(normText(t))) : -1;
     dialog(`<h2>Which words show it?</h2><p class="st-quote">${esc(s.text)}</p><p class="tiny">Pick the sentence from “${esc(entryTitle(e))}” that shows this.</p>
       <div class="stack" id="sentList">${sents.map((t, i) => `<label class="pick-row"><input type="radio" name="sent" value="${i}" ${i === (pre >= 0 ? pre : 0) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('') || '<p class="muted">This entry has no words yet.</p>'}</div>
@@ -882,11 +973,22 @@ function linkDialog(sid, compId){
     $('#dLink').onclick = () => { const r = $$('#sentList input').find(x => x.checked); addLink(e, sid, r ? sents[+r.value] : ''); };
   });
 }
+/* From an entry's feedback: the coach saw a competency; which of its statements do these words show? */
+function claimDialog(e, compId){
+  const c = compOf(compId); const ev = bestQuote(e, compId);
+  const list = myStatements().concat(otherStatements()).filter(s => s.comp === compId);
+  if (!list.length){ toast('This competency has no statements yet.'); return; }
+  dialog(`<h2>Which statement does it show?</h2><p class="tiny">${esc(c.label)}${ev && ev.quote ? `. Your words: “${esc(ev.quote)}”` : ''}</p>
+    <div class="stack" id="stList">${list.map((s, i) => `<label class="pick-row"><input type="radio" name="st" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(s.text)}</b><small>${stmtMeta(s, false)}${(e.links || []).some(l => l.sid === s.id) ? ' · already linked' : ''}</small></span></label>`).join('')}</div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="dLink">${icon('link')} Link</button><button class="btn sec" id="dClose">Cancel</button></div>`);
+  $('#dClose').onclick = closeDialog;
+  $('#dLink').onclick = () => { const r = $$('#stList input').find(x => x.checked); const sents = sentencesOf(entryAnswersText(e)); const q = ev && ev.quote ? (sents.find(t => normText(t).includes(normText(ev.quote))) || ev.quote) : ''; addLink(e, list[+r.value].id, q); };
+}
 
 /* ---------- composer: GROW, ACT, and the termly look across ---------- */
 function draftKey(kind, basket){ return kind === 'across' ? 'across:' + basket : kind; }
 function draftHasWork(d){ return !!d && (Object.values(d.answers || {}).some(v => String(v || '').trim()) || !!(d.context && d.context.name) || !!d.subject || !!String(d.topic || '').trim()); }
-function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
+function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], claims:[], target:'', basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
 function applyPrefill(pre){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
 function openComposer(kind, editId, basket){
   if (kind === 'across' && !basketOf(basket)){ location.hash = '#/'; return; }
@@ -900,12 +1002,15 @@ function openComposer(kind, editId, basket){
       const e = me.entries.find(x => x.id === editId);
       if (e){ base = JSON.parse(JSON.stringify(e)); base.coachAi = e.coach && e.coach.ai ? JSON.parse(JSON.stringify(e.coach.ai)) : null;
         // reads made before v2 carry no hash: they were made on these words
-        if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements()); }
+        if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements());
+        // the statements it is linked to become the claim
+        base.claims = (e.links || []).filter(l => statementById(l.sid)).map(l => ({sid:l.sid, quote:l.quote || ''})); }
     } else if (base && kind !== 'across' && draftHasWork(base)) ask = true;
     else if (base && kind !== 'across') base = null;
     draft = Object.assign(freshDraft(kind, key, basket), base || {});
     draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0; draft._ask = ask;
     if (!draft.context) draft.context = {type:inferContextType(draft.subject), name:draft.subject || ''};
+    if (!Array.isArray(draft.claims)) draft.claims = [];
     // nothing is assumed: the subject or experience comes from the student, or from the bookmark they started at
     draft._pre = kind !== 'across' && !editId ? hashParts().q.get('x') || '' : '';
     if (draft._pre && !ask) applyPrefill(draft._pre);
@@ -915,11 +1020,11 @@ function openComposer(kind, editId, basket){
 }
 function closeComposer(){ $('#sheet').innerHTML = ''; document.body.classList.remove('composing'); }
 function saveDraft(){
-  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; d.saved = Date.now();
+  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._pickQ; d.saved = Date.now();
   if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
   saveDb();
 }
-function stepsOf(){ const fw = FRAMEWORKS[draft.kind]; return draft.kind === 'across' ? ['evidence', ...fw.steps.map((_, i) => 'letter' + i), 'readback'] : ['context', ...fw.steps.map((_, i) => 'letter' + i), 'lens', 'readback']; }
+function stepsOf(){ const fw = FRAMEWORKS[draft.kind]; return draft.kind === 'across' ? ['evidence', ...fw.steps.map((_, i) => 'letter' + i), 'readback'] : ['context', ...fw.steps.map((_, i) => 'letter' + i), 'claim', 'readback']; }
 /* An unfinished entry waits; the student decides whether to pick it up. */
 function resumeCard(fw){
   const qs = fw.steps.flatMap(s => s.qs); const done = qs.filter(q => String(draft.answers[q.id] || '').trim()).length;
@@ -939,7 +1044,7 @@ function renderComposer(){
   else if (kind === 'context') body = stepHead(null, counter, 'What is this entry about?') + contextStep(fw);
   else if (kind === 'evidence'){ const b = basketOf(draft.basket); body = stepHead({colour:'yellow', letter:'L'}, `${termLabel(draft.term)} · ${esc(b.short)}`, 'Read your <em>evidence</em>') + evidenceStep(); }
   else if (kind.startsWith('letter')){ const s = fw.steps[+kind.slice(6)]; body = stepHead(s, draft.kind === 'across' ? `Look across · ${esc(basketOf(draft.basket).short)}` : counter, s.title) + letterStep(s); }
-  else if (kind === 'lens') body = stepHead(null, counter, 'Which <em>competency</em> did you use?') + lensStep();
+  else if (kind === 'claim') body = stepHead(null, counter, 'Which <em>I can</em> statements does this entry show?') + claimStep();
   else body = stepHead(null, counter, 'Read it back') + readbackStep();
   const last = i === n - 1;
   const title = draft.kind === 'across' ? `Look across · ${basketOf(draft.basket).short}` : draft.editId ? `Editing ${fw.name} entry` : draft.context.name && !ask ? `${fw.name} · ${draft.context.name}` : `New ${fw.name} entry`;
@@ -977,7 +1082,6 @@ function renderComposer(){
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
   $$('textarea.in', $('#sheet')).forEach(t => { autosize(t); t.addEventListener('input', () => { autosize(t); debounceSave(); }); });
   $$('input.in', $('#sheet')).forEach(t => t.addEventListener('input', () => { t.dataset.typed = '1'; debounceSave(); }));
-  $$('[data-where]', $('#sheet')).forEach(inp => inp.addEventListener('input', () => { const t = (draft.competencies || []).find(x => x.id === inp.dataset.where); if (t) t.where = inp.value.trim(); }));
   wireStep();
   document.body.classList.add('composing'); document.body.classList.remove('wide');
   scrollTop();
@@ -985,18 +1089,18 @@ function renderComposer(){
 }
 /* On a laptop the editor has a guide beside it: the ring, every step, what the entry is about, and a tip. */
 function stepLabel(fw, st){
-  if (st === 'context') return 'What it is about'; if (st === 'evidence') return 'Your evidence'; if (st === 'lens') return 'Your claim'; if (st === 'readback') return 'Read it back';
+  if (st === 'context') return 'What it is about'; if (st === 'evidence') return 'Your evidence'; if (st === 'claim') return 'Your statements'; if (st === 'readback') return 'Read it back';
   const s = fw.steps[+st.slice(6)]; return `${s.letter} · ${s.title.replace(/<[^>]+>/g, '')}`;
 }
 function stepFilled(fw, st){
-  if (st === 'context') return !!draft.context.name; if (st === 'lens') return (draft.competencies || []).length > 0;
+  if (st === 'context') return !!draft.context.name; if (st === 'claim') return (draft.claims || []).length > 0;
   if (st.startsWith('letter')) return fw.steps[+st.slice(6)].qs.every(q => String(draft.answers[q.id] || '').trim());
   return false;
 }
 function guideTip(fw, st){
   if (st === 'context') return ['Pick the lesson or activity this entry is about. If it is not listed, choose a type and type its name.'];
   if (st === 'evidence') return ['Read what you wrote this term. Look for things that happened more than once.'];
-  if (st === 'lens') return ['Only claim a competency if you can point to a moment in your answers.'];
+  if (st === 'claim') return ['Only choose a statement if you can point to a sentence in your answers that shows it.', 'A statement is secured when two entries back it, from two different subjects or CCAs, at least two weeks apart.'];
   if (st === 'readback') return ['Read your answers once more. Change anything vague before you log it.'];
   return fw.steps[+st.slice(6)].qs.map(q => PROBES[q.id]).filter(Boolean);
 }
@@ -1027,6 +1131,7 @@ function collect(){
   const top = $('[name=topic]', sh); if (top) draft.topic = top.value.trim();
   const g = $('[name=groupCode]', sh); if (g) draft.groupCode = g.value;
   const ft = $('[name=feedbackText]', sh); if (ft) draft.feedbackText = ft.value.trim();
+  const tg = $('[name=target]', sh); if (tg) draft.target = tg.value;
 }
 /* A new subject or experience the student picks joins their list, so it is there next time. */
 function rememberExperience(ctx){
@@ -1099,29 +1204,51 @@ function evidenceStep(){
     ${ev.length ? `<ul class="evid">${ev.map(x => `<li><b>${esc(entryTitle(x.e))}</b> <span class="tiny">${fmtDay(x.e.created)}</span><q>${esc(x.q.quote)}</q><span class="str ${x.q.strength}">${STRENGTHS[x.q.strength].label}</span> <small>${esc(compOf(x.q.id).label)}</small></li>`).join('')}</ul>` : `<div class="notice">You have no entries for this area this term yet. You can still answer: what did you notice about yourself here?</div>`}
     ${sts.length ? `<h2 style="margin-top:14px">Your statements</h2><ul class="stmts mini">${sts.map(st => `<li class="st ${st.state}"><span class="mark" aria-hidden="true"></span><span>${esc(st.stmt.text)}</span></li>`).join('')}</ul>` : ''}`;
 }
+/* GROW's Watch and ACT's Test look ahead: the student may name a statement to aim for next time. */
+function aimField(){
+  const opts = COMPETENCIES.filter(c => strandsOf(STMT_SET, c.id).length).map(c => `<optgroup label="${esc(c.label)}">${myStatements().concat(otherStatements()).filter(s => s.comp === c.id).map(s => `<option value="${esc(s.id)}" ${draft.target === s.id ? 'selected' : ''}>${esc(s.text)}${isStretch(s) ? ' (' + stretchWord(s).toLowerCase() + ')' : ''}</option>`).join('')}</optgroup>`).join('');
+  return `<label class="f aim"><span>Next time, aim for <small style="display:inline">(optional)</small></span><select class="in" name="target"><option value="">No statement chosen</option>${opts}</select><small>An I can statement to work towards in your next entry. It shows on your Home page beside your next step.</small></label>`;
+}
 function letterStep(s){
+  const ahead = (draft.kind === 'grow' && s.k === 'w') || (draft.kind === 'act' && s.k === 't');
   return `${ringSvg(draft.kind, s.k)}` + s.qs.map(q => `
     <label class="q"><span>${q.q}</span>
       <textarea class="in" data-a="${q.id}" placeholder="${q.next ? 'Instead of “study more”, write what you will do, when and for how long.' : 'Two or three sentences are enough.'}">${esc(draft.answers[q.id] || '')}</textarea>
       ${q.next ? `<span class="hint">Write what you will do, when and where. For example: “Redo Q4 to Q6 on Tuesday after CCA, for 20 minutes, then check with Wei Ling.”</span>` : ''}
-    </label>`).join('');
+    </label>`).join('') + (ahead && STMT_SET.strands ? aimField() : '');
 }
-function lensStep(){
-  const all = Object.values(draft.answers).join('\n'); const seen = detectCompetencies(all).slice(0, 3).map(x => x.c.id);
-  const chosen = new Map((draft.competencies || []).map(t => [t.id, t]));
-  return `
-    <p class="muted">Choose up to two competencies you think this entry shows, and say where it shows. The coach checks your words for it. If your words show it, that part of your E21CC wheel gets darker. GROW and ACT entries both count.</p>
-    ${DOMAINS.map(d => `<div class="domain"><h2>${esc(d.label)}</h2><div class="d">${esc(d.blurb)}</div>
-      ${COMPETENCIES.filter(c => c.d === d.id).map(c => { const t = chosen.get(c.id); const on = !!t;
-        return `<div class="comp ${on ? 'on' : ''}" data-c="${c.id}"><button type="button" class="pick" aria-pressed="${on}"><b>${esc(c.label)} ${seen.includes(c.id) && !on ? '<span class="tag">Maybe</span>' : ''}</b><span>${esc(c.plain)}</span></button>
-          ${on ? `<div class="levels" role="group" aria-label="How far along">${LEVELS.map(l => `<button type="button" data-l="${l.n}" class="${t.level === l.n ? 'on' : ''}" title="${esc(l.help)}">${l.label}</button>`).join('')}</div>
-          <label class="f" style="margin:10px 0 0"><span style="font-size:.92em">Where does it show? <small style="display:inline">(a few of your own words, optional)</small></span><input class="in" data-where="${c.id}" value="${esc(t.where || '')}" placeholder="e.g. when I checked both equations before deciding" maxlength="160"></label>` : ''}</div>`; }).join('')}
-    </div>`).join('')}`;
+/* The claim: which of Beatty's I can statements this entry shows. At most two, each with the
+   sentence that shows it. Suggestions come from the competencies the words already show. */
+function claimSuggestions(entry){
+  const x = builtinE21cc(entry, myStatements()); const band = myBand();
+  const comps = [...new Set([...x.evidence.filter(v => v.strength !== 'glimpse').map(v => v.id), ...detectCompetencies(entryAnswersText(entry)).map(d => d.c.id)])].filter(id => strandsOf(STMT_SET, id).length).slice(0, 3);
+  const out = [];
+  for (const id of comps) for (const st of strandsOf(STMT_SET, id)){ const own = st[band] || st.lower; const pick = own.find(s => !securedOf(me.entries, s).secured) || own[0]; if (pick) out.push(pick); }
+  return out.slice(0, 4);
+}
+function claimStep(){
+  const claims = draft.claims || (draft.claims = []); const entry = draftEntry();
+  const sents = sentencesOf(entryAnswersText(entry)); const sug = claimSuggestions(entry); const chosen = new Set(claims.map(c => c.sid));
+  const card = s => { const on = chosen.has(s.id); const cl = claims.find(c => c.sid === s.id); const picking = on && draft._pickQ === s.id;
+    return `<div class="claim${on ? ' on' : ''}"><button type="button" class="cpick" data-claim="${esc(s.id)}" aria-pressed="${on}"><span class="cbox" aria-hidden="true">${on ? icon('check') : ''}</span><span class="grow"><b>${esc(s.text)}</b><small>${stmtMeta(s)}</small></span></button>
+      ${on ? `<div class="where">${cl.quote ? `<span>Where it shows: <q>${esc(cl.quote)}</q></span>` : '<span>Choose the sentence that shows it.</span>'} <button type="button" class="linkbtn" data-chq="${esc(s.id)}" aria-expanded="${picking}">${cl.quote ? 'Change' : 'Choose'}</button></div>
+        ${picking ? `<div class="stack sents" role="radiogroup" aria-label="The sentence that shows it">${sents.map((t, i) => `<label class="pick-row"><input type="radio" name="q-${esc(s.id)}" data-q="${esc(s.id)}" value="${i}" ${normText(t) === normText(cl.quote) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('') || '<p class="muted">Write your answers first, then come back.</p>'}</div>` : ''}` : ''}</div>`; };
+  const extra = claims.map(c => statementById(c.sid)).filter(s => s && !sug.some(x => x.id === s.id));
+  const browse = draft._browse || ''; const band = myBand(); const other = band === 'upper' ? 'lower' : 'upper';
+  return `<p class="muted">Choose up to two. Then point to the sentence in your answers that shows each one. The coach checks your words, and each statement they back moves towards secured.</p>
+    ${extra.length ? `<span class="mini">Your choices</span>${extra.map(card).join('')}` : ''}
+    ${sug.length ? `<span class="mini">Suggested from your words</span>${sug.map(card).join('')}` : `<div class="notice">Your answers do not clearly show a competency yet. Browse the statements below, or go back and add a moment where you reasoned, worked with others or connected your learning to the world.</div>`}
+    <span class="mini" id="brLbl">Browse all statements</span>
+    <div class="chips" role="group" aria-labelledby="brLbl">${DOMAINS.filter(d => COMPETENCIES.some(c => c.d === d.id && strandsOf(STMT_SET, c.id).length)).map(d => `<button type="button" class="chip${browse === d.id ? ' on' : ''}" data-browse="${d.id}" aria-expanded="${browse === d.id}">${esc(d.short)}</button>`).join('')}</div>
+    ${browse ? COMPETENCIES.filter(c => c.d === browse).map(c => `<details class="bcomp" data-bc="${c.id}"${draft._bc === c.id ? ' open' : ''}><summary>${esc(c.label)}</summary>${strandsOf(STMT_SET, c.id).map(st => `<p class="bandlbl">Strand ${st.n} · ${esc(st.name)}</p>${st[band].concat(st[other]).map(card).join('')}`).join('')}</details>`).join('') : ''}
+    <p class="tiny" style="margin-top:12px">Social and emotional competencies have no statements yet. The coach still notices them in your words.</p>`;
 }
 function draftEntry(){
   const base = {id:draft.editId || draft._id || (draft._id = uid()), kind:draft.kind, created:draft.created || Date.now(), answers:draft.answers};
   if (draft.kind === 'across'){ const b = basketOf(draft.basket); return Object.assign(base, {basket:draft.basket, term:draft.term, context:{type:'across', name:b.label}, subject:b.short, topic:termLabel(draft.term), lookedAt:draft.lookedAt || [], groupCode:'', competencies:[]}); }
-  return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText, competencies:draft.competencies || []});
+  const claims = draft.claims || [];
+  return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText,
+    competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || ''});
 }
 function readbackStep(){
   const fw = FRAMEWORKS[draft.kind]; const entry = draftEntry(); const cls = groupFor(entry); const stmts = myStatements();
@@ -1131,7 +1258,8 @@ function readbackStep(){
     <div class="readback">
       <p class="tiny">${esc(entryTitle(entry))} · ${fmtDate(Date.now())}</p>
       ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'Not answered')}</p></div>`).join('')).join('')}
-      ${draft.kind !== 'across' ? `<p>${(draft.competencies || []).length ? '<span class="tiny">Your claim: </span>' + draft.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>`; }).join('') : '<span class="tiny">No competency claimed.</span>'}</p>` : ''}
+      ${draft.kind !== 'across' ? ((draft.claims || []).length ? `<div class="backs"><span class="kick">Your statements</span><ul class="blist">${draft.claims.map(c => { const st = statementById(c.sid); return st ? `<li><b>${esc(st.text)}</b><small>${stmtMeta(st)}${c.quote ? ` · “${esc(c.quote)}”` : ''}</small></li>` : ''; }).join('')}</ul></div>` : '<p class="tiny">No statement chosen. You can link one later from the entry or a competency page.</p>') : ''}
+      ${draft.target && statementById(draft.target) ? `<p class="tiny">Next time, aiming for: ${esc(statementById(draft.target).text)}</p>` : ''}
     </div>
     <h2 style="margin-top:14px">Feedback</h2>
     ${autoEval() && !fresh ? `<p class="tiny">When you log this, the coach reads it (without your name or email) and gives feedback. You can turn this off in Settings.</p>` : ''}
@@ -1165,24 +1293,34 @@ function wireStep(){
   const gc = $('#grpChange', sh); if (gc) gc.onclick = () => { collect(); draft._grpOpen = !draft._grpOpen; saveDraft(); renderComposer(); };
   const ts = $('#toSettings', sh); if (ts) ts.onclick = () => { collect(); saveDraft(); draft = null; };
   const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); saveDraft(); });
-  $$('.comp', sh).forEach(card => {
-    card.addEventListener('click', (ev) => {
-      const lb = ev.target.closest('[data-l]'); const pick = ev.target.closest('.pick');
-      const id = card.dataset.c; const list = draft.competencies || (draft.competencies = []);
-      if (lb){ const t = list.find(x => x.id === id); if (t) t.level = +lb.dataset.l; saveDraft(); renderComposer(); return; }
-      if (ev.target.closest('[data-where]') || ev.target.closest('label')) return;
-      if (!pick) return;
-      const i = list.findIndex(x => x.id === id);
-      if (i >= 0) list.splice(i, 1);
-      else { if (list.length >= 2){ toast('You can choose up to two. Remove one first.'); return; } list.push({id, level:2, where:''}); }
-      saveDraft(); renderComposer();
-    });
+  const keepScroll = fn => { const y = window.scrollY; fn(); window.scrollTo(0, y); };
+  $$('[data-claim]', sh).forEach(b => b.onclick = () => {
+    const sid = b.dataset.claim; const list = draft.claims || (draft.claims = []); const i = list.findIndex(c => c.sid === sid);
+    if (i >= 0){ list.splice(i, 1); if (draft._pickQ === sid) draft._pickQ = null; }
+    else {
+      if (list.length >= 2){ toast('You can choose up to two. Remove one first.'); return; }
+      // start from the sentence where the coach saw this competency, if there is one
+      const st = statementById(sid); const entry = draftEntry(); const ev = (builtinE21cc(entry, []).evidence || []).find(v => v.id === st.comp && v.strength !== 'glimpse');
+      const sents = sentencesOf(entryAnswersText(entry)); const q = ev ? sents.find(t => normText(t).includes(normText(ev.quote.replace(/…$/, '')))) || '' : '';
+      list.push({sid, quote:q}); draft._pickQ = q ? null : sid;
+    }
+    saveDraft(); keepScroll(renderComposer);
   });
+  $$('[data-chq]', sh).forEach(b => b.onclick = () => { draft._pickQ = draft._pickQ === b.dataset.chq ? null : b.dataset.chq; keepScroll(renderComposer); });
+  $$('[data-q]', sh).forEach(r => r.onchange = () => { const c = (draft.claims || []).find(x => x.sid === r.dataset.q); const sents = sentencesOf(entryAnswersText(draftEntry())); if (c) c.quote = sents[+r.value] || ''; draft._pickQ = null; saveDraft(); keepScroll(renderComposer); });
+  $$('[data-browse]', sh).forEach(b => b.onclick = () => { draft._browse = draft._browse === b.dataset.browse ? '' : b.dataset.browse; keepScroll(renderComposer); });
+  $$('details.bcomp', sh).forEach(d => d.addEventListener('toggle', () => { if (d.open) draft._bc = d.dataset.bc; else if (draft._bc === d.dataset.bc) draft._bc = ''; }));
   const ask = $('#askAi', sh); if (ask) ask.onclick = async () => {
     ask.disabled = true; $('#aiMsg').innerHTML = '<span class="spin"></span> The coach is reading your entry…';
     try{ draft.coachAi = await aiCoach(draftEntry()); renderComposer(); }
     catch(e){ ask.disabled = e instanceof AllowanceError; $('#aiMsg').textContent = e.message; }
   };
+}
+/* The claim becomes the entry's links; links to statements no longer in the set are kept as they were. */
+function linksFromClaims(prev){
+  if (draft.kind === 'across') return prev;
+  const now = Date.now(); const out = (draft.claims || []).map(c => ({sid:c.sid, quote:String(c.quote || '').slice(0, 400), at:(prev.find(l => l.sid === c.sid) || {}).at || now}));
+  return out.concat(prev.filter(l => !statementById(l.sid)));
 }
 function saveEntry(){
   collect(); const e = draftEntry(); const stmts = myStatements(); const h = inputHash(e, stmts);
@@ -1194,13 +1332,14 @@ function saveEntry(){
   if (draft.editId){
     const i = me.entries.findIndex(x => x.id === draft.editId); const old = me.entries[i];
     if (old){
-      e.created = old.created; e.pushed = old.pushed; e.sent = old.sent || {}; e.notes = old.notes || []; e.links = old.links || [];
+      e.created = old.created; e.pushed = old.pushed; e.sent = old.sent || {}; e.notes = old.notes || [];
+      e.links = linksFromClaims(old.links || []);
       changed = inputHash(old, stmts) !== h;
       if (!changed && !fresh && old.coach && old.coach.ai){ e.coach.ai = old.coach.ai; e.e21cc = old.e21cc; }   // same words: keep the read that was paid for
       if (!changed) e.updated = old.updated || old.created;
       me.entries[i] = migrateEntry(e);
     }
-  } else { me.entries.push(migrateEntry(Object.assign(e, {links:[], notes:[], sent:{}}))); delete me.drafts[draft.key]; }
+  } else { me.entries.push(migrateEntry(Object.assign(e, {links:linksFromClaims([]), notes:[], sent:{}}))); delete me.drafts[draft.key]; }
   if (!draft.editId && e.kind !== 'across') rememberExperience(e.context);
   saveDb(); const id = e.id; const isEdit = !!draft.editId; draft = null; closeComposer();
   location.hash = '#/entry/' + id + (!isEdit ? '?new=1' : changed ? '?edited=1' : '');
@@ -1216,6 +1355,16 @@ function answersWithNotes(e){
     return `<div class="qa-row${ns.length ? ' has-note' : ''}" data-anchor="${q.id}"><div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'Not answered')}</p></div>
       ${latest ? `<div class="notes">${older.length ? `<details class="older"><summary>${plural(older.length, 'earlier note')}</summary>${older.map(noteHtml).join('')}</details>` : ''}${noteHtml(latest)}</div>` : ''}</div>`;
   }).join('')).join('');
+}
+/* The statements an entry is linked to, and how far each has come. */
+function backsHtml(e){
+  const links = (e.links || []).map(l => ({l, s:statementById(l.sid)})).filter(x => x.s);
+  const aim = e.target ? statementById(e.target) : null;
+  const legacy = !links.length && (e.competencies || []).length ? `<p style="margin-top:8px"><span class="tiny">You claimed: </span>${e.competencies.map(t => { const c = compOf(t.id); return c ? `<span class="tag">${esc(c.label)}</span>` : ''; }).join('')}</p>` : '';
+  return `${links.length ? `<div class="backs"><span class="kick">Statements this entry backs</span><ul class="blist">${links.map(({l, s}) => { const ok = linkBacked(e, s); const x = securedOf(me.entries, s);
+      return `<li class="${ok ? 'ok' : 'no'}"><span class="mk" aria-hidden="true">${icon(ok ? (x.secured ? 'check' : 'clock') : 'link')}</span><div><p class="stt"><a href="#/c/${s.comp}">${esc(s.text)}</a></p><small>${esc(compOf(s.comp).label)} · ${ok ? `<b>${progressWord(x)}</b>${x.secured ? '' : '. ' + esc(x.missing)}` : 'Not backed yet: your words do not show it'}</small></div></li>`; }).join('')}</ul></div>`
+    : legacy || '<p class="tiny" style="margin-top:8px">No statement linked yet. Edit the entry, or link one from its feedback.</p>'}
+    ${aim ? `<p class="aimline">${icon('ladder')}<span>Next time, aiming for: <a href="#/c/${aim.comp}">${esc(aim.text)}</a></span></p>` : ''}`;
 }
 function entryParts(e, f = {}){
   const fw = FRAMEWORKS[e.kind]; const cls = groupFor(e);
@@ -1235,7 +1384,7 @@ function entryParts(e, f = {}){
       ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
       ${e.kind === 'across' && (e.lookedAt || []).length ? `<details style="margin-top:10px"><summary>The evidence you looked across (${e.lookedAt.length})</summary><ul class="evid" style="margin-top:8px">${e.lookedAt.map(x => `<li><q>${esc(x.quote)}</q></li>`).join('')}</ul></details>` : ''}
       <div class="readback" style="margin-top:12px">${answersWithNotes(e)}</div>
-      ${e.kind !== 'across' ? `<p style="margin-top:8px">${(e.competencies || []).length ? '<span class="tiny">You claimed: </span>' + e.competencies.map(t => { const c = compOf(t.id); const l = LEVELS.find(x => x.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>` : ''; }).join('') : '<span class="tiny">No competency claimed.</span>'}</p>` : ''}
+      ${e.kind !== 'across' ? backsHtml(e) : ''}
       <div class="row" style="margin-top:6px">
         <button class="btn small" id="eShare">${icon('share')} Share</button>
         <button class="btn small sec" id="eCopy">${icon('copy')} Copy</button>
@@ -1259,7 +1408,7 @@ function wireEntry(e, f, rerender){
   $('#eDel').onclick = () => { dialog(`<h2>Delete this entry?</h2><p>It will be deleted from this device. If you sent it to a teacher, they keep their copy.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { me.entries = me.entries.filter(x => x.id !== e.id); saveDb(); closeDialog(); location.hash = f.after || '#/'; }; $('#dNo').onclick = closeDialog; };
   const ask = $('#eAsk'); if (ask) ask.onclick = () => { ask.disabled = true; $('#eAskMsg').innerHTML = '<span class="spin"></span>'; runAiFor(e); };
   const retry = $('#e21Retry'); if (retry) retry.onclick = () => { aiErrors.delete(e.id); runAiFor(e); rerender(); };
-  $$('[data-tag]').forEach(b => b.onclick = () => { const list = e.competencies || (e.competencies = []); if (list.length >= 2){ toast('You can claim up to two. Edit the entry to remove one first.'); return; } if (!list.some(t => t.id === b.dataset.tag)) list.push({id:b.dataset.tag, level:2}); if (e.e21cc){ e.e21cc.suggested = (e.e21cc.suggested || []).filter(x => x !== b.dataset.tag); } saveDb(); toast('Claimed.'); rerender(); });
+  $$('[data-claimc]').forEach(b => b.onclick = () => claimDialog(e, b.dataset.claimc));
   $$('[data-maylink]').forEach(b => b.onclick = () => { const m = ((e.e21cc && e.e21cc.statements) || []).find(x => x.sid === b.dataset.maylink); addLink(e, b.dataset.maylink, m ? m.quote : ''); });
   // the smart action: a fresh or changed entry is read once by the coach
   if ((f.isNew || f.edited) && autoEval() && !aiFresh(e) && !aiPending.has(e.id) && !aiErrors.has(e.id)){ runAiFor(e); rerender(); }
@@ -1271,8 +1420,8 @@ function renderEntry(idq){
   if (isDesk() && e.kind !== 'across'){ redirect(`#/journal/${e.kind}?e=${encodeURIComponent(id)}${q ? '&' + q : ''}`); return; }
   const f = {isNew:(q || '').includes('new=1'), edited:(q || '').includes('edited=1'), after:e.kind === 'across' ? '#/' : '#/journal/' + e.kind};
   const P = entryParts(e, f);
-  const crumb = `<p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'E21CC' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>`;
-  frame(isDesk() ? {left:crumb + P.banner + P.words, right:P.feedback, split:'minmax(0,1fr) minmax(0,1fr)'} : crumb + P.banner + P.words + P.feedback, e.kind === 'across' ? 'e21cc' : e.kind, {wide:true, key:'entry:' + id});
+  const crumb = `<p class="crumb"><a class="backlink" href="${e.kind === 'across' ? '#/c' : '#/journal/' + e.kind}">${icon('back')} ${e.kind === 'across' ? 'Competencies' : FRAMEWORKS[e.kind].name + ' journal'}</a></p>`;
+  frame(isDesk() ? {left:crumb + P.banner + P.words, right:P.feedback, split:'minmax(0,1fr) minmax(0,1fr)'} : crumb + P.banner + P.words + P.feedback, e.kind === 'across' ? 'comp' : 'journals', {wide:true, key:'entry:' + id});
   wireEntry(e, f, () => renderEntry(idq));
 }
 function e21ccCard(e, opts = {}){
@@ -1282,21 +1431,26 @@ function e21ccCard(e, opts = {}){
   const seenEv = id => (x.evidence || []).find(v => v.id === id && v.strength !== 'glimpse');
   const cls = groupFor(e);
   const who = esc(x.source === 'ai' ? coachWho('ai', (e.coach && e.coach.ai && e.coach.ai.model) || '', cls).name : 'Built in coach');
-  const claimRows = claims.map(t => { const c = compOf(t.id); if (!c) return ''; const l = LEVELS.find(z => z.n === t.level); const ev = seenEv(t.id);
+  const links = (e.links || []).map(l => ({l, s:statementById(l.sid)})).filter(x => x.s);
+  const claimRows = links.length ? links.map(({l, s}) => { const c = compOf(s.comp); const ev = seenEv(s.comp); const ok = linkBacked(e, s);
+    return `<li><div class="row" style="justify-content:space-between"><b>${esc(s.text)}</b><span class="str ${ok ? (ev ? ev.strength : 'clear') : 'none'}">${ok ? 'Backed' : 'Not seen yet'}</span></div>
+      <small>${esc(c.label)}${l.quote ? `. You pointed to “${esc(l.quote)}”` : ''}.</small>
+      ${ok ? (ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : '') : `<small>Your words do not show this yet. ${esc(c.probe)}</small>`}</li>`; }).join('')
+    : claims.map(t => { const c = compOf(t.id); if (!c) return ''; const ev = seenEv(t.id);
     return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev ? ev.strength : 'none'}">${ev ? 'Seen · ' + STRENGTHS[ev.strength].label : 'Not seen yet'}</span></div>
-      <small>Your claim: ${l ? l.label.toLowerCase() : 'claimed'}${t.where ? `, and you pointed to “${esc(t.where)}”` : ''}.</small>
+      ${t.where ? `<small>You pointed to “${esc(t.where)}”.</small>` : ''}
       ${ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : `<small>Your words do not show this yet. ${esc(c.probe)}</small>`}</li>`; }).join('');
-  const others = (x.evidence || []).filter(v => !claimed.has(v.id) && v.strength !== 'glimpse');
+  const linkedComps = new Set(links.map(k => k.s.comp));
+  const others = (x.evidence || []).filter(v => !claimed.has(v.id) && !linkedComps.has(v.id) && v.strength !== 'glimpse');
   const linked = new Set((e.links || []).map(l => l.sid));
-  const may = (x.statements || []).filter(s => statementById(s.sid) && !linked.has(s.sid)).slice(0, 2);
+  const may = e.kind === 'across' ? [] : (x.statements || []).filter(s => statementById(s.sid) && !linked.has(s.sid) && !linkedComps.has(statementById(s.sid).comp)).slice(0, 2);
   const err = opts.error;
   return `<section class="card" id="e21cc">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">E21CC feedback</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
     ${err ? (err.allowance ? `<div class="notice">${esc(err.msg)}</div>` : `<div class="notice warn">The coach could not read this entry: ${esc(err.msg)} The built in feedback is shown instead. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>`) : ''}
-    ${e.kind === 'across' ? '' : claims.length ? `<span class="kick">Your claim, checked against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You did not claim a competency this time. Next time, choose one and say where it shows, and the coach will check.</p>`}
-    ${others.length ? `<span class="kick" style="margin-top:12px">${e.kind === 'across' ? 'Shown in your words' : 'Also shown in your words'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' ? '' : `<button class="btn small sec" data-tag="${ev.id}">${icon('plus')} Claim it</button>`}</li>`; }).join('')}</ul>` : ''}
-    ${may.length ? `<span class="kick" style="margin-top:12px">Could unlock a statement</span><ul class="evid">${may.map(s => { const stmt = statementById(s.sid); return `<li><b>${esc(stmt.text)}</b><q>${esc(s.quote)}</q>${s.why ? `<small>${esc(s.why)}</small>` : ''}<button class="btn small sec" data-maylink="${esc(s.sid)}">${icon('link')} Link it</button></li>`; }).join('')}</ul>` : ''}
-    ${(e.links || []).length ? `<p class="tiny" style="margin-top:10px">Linked to: ${(e.links || []).map(l => { const s = statementById(l.sid); return s ? `<span class="tag">${linkBacked(e, s) ? '● ' : '○ '}${esc(s.text)}</span>` : ''; }).join('')}</p>` : ''}
+    ${e.kind === 'across' ? '' : claimRows ? `<span class="kick">Your claim, checked against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You did not choose a statement this time. If the coach sees a competency below, link it to a statement.</p>`}
+    ${others.length ? `<span class="kick" style="margin-top:12px">${e.kind === 'across' ? 'Shown in your words' : 'Also shown in your words'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' || !strandsOf(STMT_SET, ev.id).length ? '' : `<button class="btn small sec" data-claimc="${ev.id}">${icon('link')} Link a statement</button>`}</li>`; }).join('')}</ul>` : ''}
+    ${may.length ? `<span class="kick" style="margin-top:12px">Could back a statement</span><ul class="evid">${may.map(s => { const stmt = statementById(s.sid); return `<li><b>${esc(stmt.text)}</b><q>${esc(s.quote)}</q>${s.why ? `<small>${esc(s.why)}</small>` : ''}<button class="btn small sec" data-maylink="${esc(s.sid)}">${icon('link')} Link it</button></li>`; }).join('')}</ul>` : ''}
     <div class="stance" style="margin-top:12px"><div class="track"><i class="${pos >= 0 ? 'on' : ''}"></i><i class="${pos >= 1 ? 'on' : ''}"></i><i class="${pos >= 2 ? 'on' : ''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
     ${x.probe ? `<div style="margin-top:8px"><span class="kick">Go deeper${compOf(x.probe_for) ? ' on ' + esc(compOf(x.probe_for).label) : ''}</span><p class="ask">${esc(x.probe)}</p></div>` : ''}
     <p class="tiny" style="margin:10px 0 0">Glimpse: one word hints at it. Clear: you describe a moment. Strong: you describe a moment and say how or why.${x.source !== 'ai' && aiReady() && !opts.pending && !err && !(e.coach && e.coach.ai) ? ' The coach has not read this one yet.' : ''}</p>
@@ -1316,12 +1470,17 @@ function shareEntry(e){
 /* ---------- the GROW and ACT journals: bookmarks or a shelf, pivoted four ways ---------- */
 const PIVOTS = [['experience', 'Experience'], ['date', 'Date'], ['competency', 'Competency'], ['term', 'Term']];
 const TYPE_COLOUR = {cca:'#0f7a6b', subject:'#1f3fa8', camp:'#2f6b3a', competition:'#b23a48', service:'#a8740b', other:'#6a3f86', across:'#c98a00'};
+function backsLine(e){
+  const l = (e.links || []).find(x => statementById(x.sid)); if (!l) return '';
+  const s = statementById(l.sid); const x = securedOf(me.entries, s); const ok = linkBacked(e, s); const more = (e.links || []).filter(y => statementById(y.sid)).length - 1;
+  return `<span class="backsl">${icon('link')}<span>Backs: ${esc(s.text)} <b>${ok ? progressWord(x) : 'Not backed yet'}</b>${more > 0 ? ` and ${more} more` : ''}</span></span>`;
+}
 function entryRow(e){
   const fw = FRAMEWORKS[e.kind]; const c = coachOf(e); const first = fw.steps[0].qs[0].id;
   const unread = (e.notes || []).filter(n => !n.seen).length; const anySent = Object.keys(e.sent || {}).length;
   const comps = COMPETENCIES.filter(x => compLevelOf(e, x.id) >= 2).slice(0, 3);
   const d = new Date(e.created);
-  return `<a class="entry" href="#/entry/${e.id}"><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b><small>${e.context && e.context.type && e.context.type !== 'subject' ? esc(typeLabel(e.context.type)) + ' · ' : ''}${c && DEPTHS[c.depth] ? DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}</span></a>`;
+  return `<a class="entry" href="#/entry/${e.id}"><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b><small>${e.context && e.context.type && e.context.type !== 'subject' ? esc(typeLabel(e.context.type)) + ' · ' : ''}${c && DEPTHS[c.depth] ? DEPTHS[c.depth].label : ''}${anySent ? '<span class="dot ok" title="shared"></span>' : ''}${unread ? ` <span class="newnote">${plural(unread, 'new note')}</span>` : ''}</small><span class="snip">${esc(e.answers[first] || nextStepOf(e) || '')}</span>${backsLine(e) || (comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : '')}</span></a>`;
 }
 /* The student's own experiences, in their order: CCA first, then subjects, then the rest. */
 function myExperiences(){
@@ -1345,14 +1504,26 @@ function journalGroups(kind, pivot){
   } else if (pivot === 'term'){
     for (const e of E){ const k = termKey(e.created); add('t:' + k, termLabel(k), {colour:'var(--cover)'}, e); }
   } else {
-    for (const c of COMPETENCIES){ for (const e of E) if (compLevelOf(e, c.id)) add('c:' + c.id, c.label, {colour:DOMAIN_COLOUR[c.d], comp:c.id}, e); }
+    // notebooks carry white text, so the social and emotional ochre is darkened for them
+    for (const c of COMPETENCIES){ for (const e of E) if (compLevelOf(e, c.id)) add('c:' + c.id, c.label, {colour:c.d === 'sec' ? '#8a5f00' : DOMAIN_COLOUR[c.d], comp:c.id}, e); }
     const none = E.filter(e => !COMPETENCIES.some(c => compLevelOf(e, c.id))); for (const e of none) add('c:none', 'No competency yet', {colour:'var(--g5)'}, e);
   }
   return [...groups.values()];
 }
+/* The three journals, switched in one place. ASK is still being written. */
+function jswitch(kind){ return `<nav class="jswitch seg" aria-label="Journals">${[['grow', 'GROW'], ['act', 'ACT'], ['ask', 'ASK']].map(([k, l]) => `<a href="#/journal/${k}" class="${kind === k ? 'on' : ''}"${kind === k ? ' aria-current="page"' : ''}>${l}${k === 'ask' ? '<small>soon</small>' : ''}</a>`).join('')}</nav>`; }
+function renderAsk(){
+  if (me.prefs.journal.kind !== 'ask'){ me.prefs.journal.kind = 'ask'; saveDb(); }
+  frame(`${jswitch('ask')}
+    <section class="jhead"><div class="grow"><h1>ASK journal</h1><p class="meta">Coming soon</p></div></section>
+    <section class="card askcard"><span class="medal navy" aria-hidden="true">${icon('ask')}</span><div><h2>The third journal is on its way</h2>
+      <p>Your E21CC Log will hold three journals: GROW after lessons, ACT after feedback, and ASK. The school is still writing the ASK questions, so this journal stays closed for now.</p>
+      <p class="muted">Until then, keep writing GROW and ACT entries. Both back your I can statements.</p>
+      <div class="row"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></div></section>`, 'journals', {wide:true, cls:'askpage'});
+}
 function renderJournal(kind){
   const fw = FRAMEWORKS[kind]; const {q} = hashParts();
-  const pref = me.prefs.journal; const pivot = PIVOTS.some(p => p[0] === q.get('p')) ? q.get('p') : pref.pivot; const view = q.get('v') === 'shelf' || q.get('v') === 'bookmarks' ? q.get('v') : pref.view;
+  const pref = me.prefs.journal; if (pref.kind !== kind){ pref.kind = kind; saveDb(); } const pivot = PIVOTS.some(p => p[0] === q.get('p')) ? q.get('p') : pref.pivot; const view = q.get('v') === 'shelf' || q.get('v') === 'bookmarks' ? q.get('v') : pref.view;
   if (pivot !== pref.pivot || view !== pref.view){ pref.pivot = pivot; pref.view = view; saveDb(); }
   const groups = journalGroups(kind, pivot); const gkey = q.get('g') || ''; const sel = groups.find(g => g.key === gkey) || null;
   const total = me.entries.filter(e => e.kind === kind).length;
@@ -1375,7 +1546,7 @@ function renderJournal(kind){
   if (isDesk()) return journalSpread(kind, {fw, q, pivot, view, groups, sel, gkey, total, href, newHref});
   const viewSw = `<div class="seg icons" role="group" aria-label="View"><a class="${view === 'bookmarks' ? 'on' : ''}" href="${href({v:'bookmarks', g:gkey})}" title="Bookmarks" aria-label="Bookmarks"${view === 'bookmarks' ? ' aria-current="true"' : ''}>${icon('list')}</a><a class="${view === 'shelf' ? 'on' : ''}" href="${href({v:'shelf', g:gkey})}" title="Shelf of notebooks" aria-label="Shelf of notebooks"${view === 'shelf' ? ' aria-current="true"' : ''}>${icon('shelf')}</a></div>`;
   const marks = view === 'bookmarks' ? `<div class="bookmarks" role="list"><a role="listitem" class="bm${sel ? '' : ' on'}" href="${href({})}">All <b>${total}</b></a>${groups.map(g => `<a role="listitem" class="bm${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}">${esc(g.label)} <b>${g.entries.length}</b></a>`).join('')}</div>` : '<span class="grow"></span>';
-  frame(`
+  frame(`${jswitch(kind)}
     <section class="jhead">
       <div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'Gift · Rise · Own · Watch' : 'Acknowledge · Connect · Test'}</p></div>
       <a class="btn acc" href="#/write/${kind}">${icon('plus')} New entry</a>
@@ -1385,13 +1556,13 @@ function renderJournal(kind){
     ${empty && pivot === 'experience' && !myExperiences().length ? `<div class="notice">Add your subjects and CCA in <a href="#/settings">Settings</a>, and they will appear here as bookmarks.</div>` : ''}
     ${body}
     ${empty ? `<section class="card flat"><p class="muted" style="margin:0">Your ${fw.name} journal is empty. ${kind === 'grow' ? 'After your next lesson or CCA session, write your first entry. Two or three sentences for each question is enough.' : 'When you next get feedback on your work, write your first entry.'}</p></section>` : ''}
-  `, kind);
+  `, 'journals');
 }
 
 function readerRow(e, href, on){
   const d = new Date(e.created); const comps = COMPETENCIES.filter(x => compLevelOf(e, x.id) >= 2).slice(0, 2);
   const unread = (e.notes || []).filter(n => !n.seen).length;
-  return `<a class="rrow${on ? ' on' : ''}" href="${href}"${on ? ' aria-current="true"' : ''}><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b>${comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : ''}${unread ? `<span class="newnote">${plural(unread, 'new note')}</span>` : ''}</span></a>`;
+  return `<a class="rrow${on ? ' on' : ''}" href="${href}"${on ? ' aria-current="true"' : ''}><span class="dt" aria-hidden="true"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-SG', {month:'short'})}</span></span><span class="grow"><b>${esc(entryTitle(e))}</b>${backsLine(e) || (comps.length ? `<span class="cdots">${comps.map(x => `<i style="--d:${DOMAIN_COLOUR[x.d]}">${esc(x.label)}</i>`).join('')}</span>` : '')}${unread ? `<span class="newnote">${plural(unread, 'new note')}</span>` : ''}</span></a>`;
 }
 function journalSpread(kind, o){
   const {fw, q, pivot, view, groups, sel, gkey, total, href, newHref} = o;
@@ -1404,7 +1575,7 @@ function journalSpread(kind, o){
     : `<nav class="jindex" aria-label="Bookmarks"><a class="ji${sel ? '' : ' on'}" href="${href({})}"${sel ? '' : ' aria-current="true"'}><span class="grow">All</span><b>${total}</b></a>${groups.map(g => `<a class="ji${sel === g ? ' on' : ''}${g.entries.length ? '' : ' empty'}" href="${href({g:g.key})}" style="--g:${g.colour}"${sel === g ? ' aria-current="true"' : ''}><i class="tdot" aria-hidden="true"></i><span class="grow">${esc(g.label)}${pivot === 'experience' && g.type === 'cca' ? ' <span class="gtag">CCA</span>' : ''}</span><b>${g.entries.length}</b></a>`).join('')}</nav>`;
   const rows = list.length ? `<div class="rrows">${list.map(e => readerRow(e, href({g:gkey, e:e.id}), cur && e.id === cur.id)).join('')}</div>`
     : `<p class="muted">No ${fw.name} entries ${sel ? 'here' : ''} yet.</p>`;
-  const left = `<div class="lstick">
+  const left = `${jswitch(kind)}<div class="lstick">
     <section class="jhead"><div class="grow"><h1>${fw.name} journal</h1><p class="meta">${kind === 'grow' ? 'Gift · Rise · Own · Watch' : 'Acknowledge · Connect · Test'}</p></div>
       <a class="btn acc" href="${sel ? newHref(sel) : '#/write/' + kind}">${icon('plus')} New entry</a></section>
     <div class="sortby"><span id="sortLbl">Sort by</span><div class="seg" role="group" aria-labelledby="sortLbl">${PIVOTS.map(([k, l]) => `<a class="${pivot === k ? 'on' : ''}" href="${href({p:k})}" ${pivot === k ? 'aria-current="true"' : ''}>${l}</a>`).join('')}</div>${viewSw}</div>
@@ -1420,7 +1591,7 @@ function journalSpread(kind, o){
     <p class="muted">${kind === 'grow' ? 'Write a GROW entry after a lesson, a CCA session or a camp day. Two or three sentences for each question is enough.' : 'Write an ACT entry when you get feedback on your work: a marked piece, a comment from your coach, or a note from a friend.'}</p>
     <ol class="fwsteps">${fw.steps.map(st => `<li><span class="medal ${st.colour}" aria-hidden="true">${st.letter}</span><div><b>${st.title}</b><span>${st.qs.map(x => x.q).join(' ')}</span></div></li>`).join('')}</ol>
     <a class="btn acc" href="#/write/${kind}">${icon('plus')} Write your first ${fw.name} entry</a></section>`;
-  frame({left, right, split:'minmax(0,2fr) minmax(0,3fr)'}, kind, {wide:true, key:'journal:' + kind});
+  frame({left, right, split:'minmax(0,2fr) minmax(0,3fr)'}, 'journals', {wide:true, key:'journal:' + kind});
   if (cur){
     wireEntry(cur, f, () => renderJournal(kind));
     const r = $('.leaf.r'); if (r && r.getBoundingClientRect().top < 0) r.scrollIntoView({block:'start'});
@@ -1443,7 +1614,7 @@ function renderSharing(){
   };
   frame(leaves(`
     <section class="hero"><h1>Sharing</h1><p class="meta">Your log is yours. Each adult sees only the sections you open to them, and only when you send.</p></section>
-    <div class="notice">GROW and ACT share whole entries. A domain shares its I can statements, the quotes that back them, and your look across. Teachers reply with notes in the margin.</div>
+    <div class="notice">GROW and ACT share whole entries. A domain shares your levels, the I can statements you have started or secured with the quotes that back them, and your look across. Teachers reply with notes in the margin, and can confirm Leading.</div>
     ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}<!--leaf-->
     <section class="card"><h2>Invite a mentor or another adult</h2>
       <form id="addAdult" class="two">
@@ -1487,14 +1658,16 @@ function wireExperiences(rerender){
   $$('[data-dropx]').forEach(b => b.onclick = () => { x.others.splice(+b.dataset.dropx, 1); saveDb(); rerender(); });
   $('#addOther').onsubmit = ev => { ev.preventDefault(); const f = new FormData(ev.target); const n = String(f.get('n') || '').trim(); if (!n) return; x.others.push({type:String(f.get('t') || 'other'), name:n}); saveDb(); rerender(); };
 }
-function coverPicker(){
+/* The view (four looks), its colour, and light or dark. Nothing on the page changes but its look. */
+function lookPicker(){
   const p = me.prefs;
-  return `<span class="flabel">Cover colour</span><div class="swatches">${COVERS.map(c => `<button type="button" class="sw cv ${p.cover === c.id ? 'on' : ''}" data-cover="${c.id}" style="--c:${c.c}" aria-label="${c.label}" title="${c.label}"></button>`).join('')}</div>
-    <span class="flabel" style="margin-top:14px">Paper</span><div class="papers">${PAPERS.map(x => `<button type="button" class="paper-opt pp-${x.id} ${p.paper === x.id ? 'on' : ''}" data-paper="${x.id}"><i></i>${x.label}</button>`).join('')}</div>`;
+  return `<span class="flabel" id="lookLbl">View</span><div class="looks" role="group" aria-labelledby="lookLbl">${LOOKS.map(l => `<button type="button" class="lookopt lk-${l.id}${p.look === l.id ? ' on' : ''}" data-lk="${l.id}" aria-pressed="${p.look === l.id}"><i class="lkprev" aria-hidden="true"><b></b><b></b><b></b></i><span><b>${l.label}</b><small>${l.help}</small></span></button>`).join('')}</div>
+    <span class="flabel" style="margin-top:14px">Colour</span><div class="swatches">${COVERS.map(c => `<button type="button" class="sw ${p.colour === c.id ? 'on' : ''}" data-col="${c.id}" style="--c:${c.c}" aria-label="${c.label}" aria-pressed="${p.colour === c.id}"></button>`).join('')}</div>
+    <span class="flabel" style="margin-top:14px" id="thLbl">Theme</span><div class="seg" role="group" aria-labelledby="thLbl">${[['light', 'Light'], ['dark', 'Dark']].map(([k, l]) => `<button type="button" data-th="${k}" class="${p.theme === k ? 'on' : ''}" aria-pressed="${p.theme === k}">${l}</button>`).join('')}</div>`;
 }
-function wireCover(){
-  $$('[data-cover]').forEach(b => b.onclick = () => { me.prefs.cover = b.dataset.cover; saveDb(); applyPrefs(); $$('[data-cover]').forEach(x => x.classList.toggle('on', x === b)); });
-  $$('[data-paper]').forEach(b => b.onclick = () => { me.prefs.paper = b.dataset.paper; saveDb(); applyPrefs(); $$('[data-paper]').forEach(x => x.classList.toggle('on', x === b)); });
+function wireLook(){
+  const pick = (sel, key, attr) => $$(`[${sel}]`).forEach(b => b.onclick = () => { me.prefs[key] = b.getAttribute(sel); saveDb(); applyPrefs(); $$(`[${sel}]`).forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); });
+  pick('data-lk', 'look'); pick('data-col', 'colour'); pick('data-th', 'theme');
 }
 
 /* ---------- settings ---------- */
@@ -1505,18 +1678,19 @@ function renderSettings(){
   const secOn = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')) ? hashParts().q.get('s') : 'me';
   const modeCard = ([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span><b>${l}</b><small>${h}</small></span></label>`;
   frame(leaves(`
-    <section class="hero"><h1>Settings</h1><p class="meta">Make the log yours, choose your coach, and list what you learn from.</p>
+    <section class="hero"><h1>Settings</h1><p class="meta">Your level, your view, your coach, and what you learn from.</p>
       <nav class="jumps" aria-label="Jump to">${SETTINGS_SECS.slice(0, 6).map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav>
       <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id ? 'on' : ''}"${secOn === id ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
     <section class="card" id="me"><h2>Me</h2>
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
-      <label class="f"><span>Title of your log</span><input class="in" id="sTitle" value="${esc(p.title || '')}" maxlength="50" placeholder="E21CC Learning Log"><small>Shown on the cover. Leave blank for “E21CC Learning Log”.</small></label>
+      ${levelPicker()}
+      <label class="f"><span>Title of your log</span><input class="in" id="sTitle" value="${esc(p.title || '')}" maxlength="50" placeholder="E21CC Log"><small>Shown at the top. Leave blank for “E21CC Log”.</small></label>
       <label class="f"><span>Your line</span><input class="in" id="sMotto" value="${esc(p.motto || '')}" maxlength="80" placeholder="A sentence you want to see every day"></label>
       <div class="f"><span class="flabel">Your icon</span>${iconPicker()}</div>
       <label class="f"><span>School email</span><input class="in" id="sEmail" type="email" value="${esc(me.email)}" maxlength="120" placeholder="name@students.edu.sg"><small>Only needed for sharing with teachers. Their notes reach you through it.</small></label>
     </section>
     <section class="card" id="look"><h2>Look</h2>
-      ${coverPicker()}
+      ${lookPicker()}
       <span class="flabel" style="margin-top:14px">Highlight colour</span><div class="swatches">${ACCENTS.map(a => `<button type="button" class="sw ${p.accent === a.id ? 'on' : ''}" data-accent="${a.id}" style="--c:${a.c}" aria-label="${a.id}"></button>`).join('')}</div>
       <span class="flabel" style="margin-top:14px" id="sizeLbl">Text size</span><div class="seg" role="group" aria-labelledby="sizeLbl">${[['normal','A'],['large','A+'],['xl','A++']].map(([k, l]) => `<button type="button" data-size="${k}" class="${p.size === k ? 'on' : ''}" aria-label="${k === 'normal' ? 'Normal' : k === 'large' ? 'Large' : 'Extra large'} text">${l}</button>`).join('')}</div>
     </section>
@@ -1566,16 +1740,16 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
-    <section class="card flat" id="about"><h2>About</h2><p class="tiny">E21CC Learning Log for Beattyians. GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
+    <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
   `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
   if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
   const sv = () => { saveDb(); applyPrefs(); };
   $$('[data-jump]').forEach(a => a.onclick = ev => { ev.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); });
   $('#sName').oninput = e => { me.name = e.target.value; sv(); };
-  $('#sTitle').oninput = e => { me.prefs.title = e.target.value; sv(); const w = $('.cover .word'); if (w) w.textContent = logTitle(); };
+  $('#sTitle').oninput = e => { me.prefs.title = e.target.value; sv(); const w = $('.topbar .word'); if (w) w.textContent = logTitle(); };
   $('#sEmail').oninput = e => { me.email = e.target.value.trim().toLowerCase(); sv(); };
   $('#sMotto').oninput = e => { me.prefs.motto = e.target.value; sv(); };
-  wireIconPicker(); wireCover();
+  wireIconPicker(); wireLook(); wireLevel();
   $$('button[data-accent]').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('button[data-accent]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('button[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('button[data-size]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('[data-tone]').forEach(b => b.onclick = () => { me.prefs.tone = b.dataset.tone; saveDb(); $$('[data-tone]').forEach(x => x.classList.toggle('on', x === b)); });

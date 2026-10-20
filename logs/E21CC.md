@@ -1,4 +1,4 @@
-# E21CC: the competency lens behind the Learning Log
+# E21CC: the competency lens behind the E21CC Log
 
 Research brief, September 2026, for the competency layer of `logs/`. The point of this document is to make sure the lens students see uses MOE's own names and definitions, so that the log, the SLS 21CC Navigator, EAGLES and the syllabus tables all speak one language.
 
