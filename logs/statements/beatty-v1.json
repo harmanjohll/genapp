@@ -1,0 +1,636 @@
+{
+ "id": "beatty-v1",
+ "version": 1,
+ "draft": "V1",
+ "title": "Beatty Secondary School: contextualised E21CC framework",
+ "about": "Beatty's I can statements, taken from E21CC_Statements_for_BTYSS_V1.docx. Where the draft held an original and a proposed rewrite, the rewrite is used; deleted text is dropped. Statements are quoted word for word. Each strand is a ladder: Lower Sec (Sec 1 and 2) then Upper Sec (Sec 3 to 5). Statement ids are the strand id plus l1, l2 or u1, u2 and so on; keep them stable once students link entries to them. The notes on each strand list what the draft left open for the school to settle.",
+ "bands": [
+  {
+   "id": "lower",
+   "label": "Lower Sec",
+   "levels": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "upper",
+   "label": "Upper Sec",
+   "levels": [
+    3,
+    4,
+    5
+   ]
+  }
+ ],
+ "mvvKey": {
+  "m": "Mission: Adaptive Thinkers, Agile Learners, Active Contributors",
+  "vi": "Vision: Purpose Driven Steward",
+  "va": "DREAM values: Discipline, Resilience, Empathy, Adaptability, Mindfulness"
+ },
+ "strands": [
+  {
+   "id": "ct1",
+   "comp": "critical",
+   "n": 1,
+   "name": "Exercises sound reasoning and decision-making",
+   "milestone": {
+    "lower": "At Lower Sec, students use evidence to explain reasoning (Level 3.1).",
+    "upper": "At Upper Sec, students use evidence and adopt different viewpoints to explain their reasoning and decisions, having considered the implications of the relationship among different viewpoints."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers"
+    ],
+    "vi": [],
+    "va": [
+     "Mindfulness",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can explain my thinking and decisions using evidence.",
+    "I can consider viewpoints different from my own and use them, alongside evidence, to explain my reasoning more fully."
+   ],
+   "upper": [
+    "I can work out how different viewpoints relate to each other, including where they conflict.",
+    "I can explain what those conflicts mean for my conclusion and make decisions I can defend.",
+    "I can weigh evidence and different viewpoints independently and make decisions I can defend on principle rather than preference."
+   ],
+   "notes": [
+    "Reviewer comment on the milestone: \"Need to have this?\" (Level 3.1)."
+   ]
+  },
+  {
+   "id": "ct2",
+   "comp": "critical",
+   "n": 2,
+   "name": "Uses metacognition to enhance, monitor and regulate thinking",
+   "milestone": {
+    "lower": "At Lower Sec, students can reflect on their thoughts, attitudes, behaviour and actions during their learning experiences, and determine the modifications (changes) required.",
+    "upper": "At Upper Sec, students can plan, organise and evaluate their thinking strategies to monitor their learning, suspend judgement, reassess conclusions and consider alternatives to refine their thoughts, attitudes, behaviour and actions."
+   },
+   "mvv": {
+    "m": [
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Mindfulness",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can reflect on how I think and learn, and identify changes I can make to improve.",
+    "I can adjust my attitudes, behaviours and strategies to make a difference to my learning."
+   ],
+   "upper": [
+    "I can plan and monitor my own thinking strategies, and evaluate the effectiveness for my learning.",
+    "I can reassess my conclusions and consider alternatives before refining my attitudes and actions.",
+    "I can take ownership of my growth as a learner by consistently reflecting on and improving how I think, learn and act."
+   ],
+   "notes": [
+    "Reviewer comment: metacognition is called Adaptive Learning in Beatty's own VMV. School leaders to decide which name to use.",
+    "Upper Sec 1 asks \"effectiveness of what?\"; the wording is unresolved."
+   ]
+  },
+  {
+   "id": "at3",
+   "comp": "adaptive",
+   "n": 3,
+   "name": "Assesses different contexts and situations to make connections and draw new insights",
+   "milestone": {
+    "lower": "At Lower Sec, students can understand the similarities and differences between different contexts or situations and how this might affect their perspective or approach.",
+    "upper": "At Upper Sec, students can draw on the similarities and differences between different contexts or situations to extract new insights to inform their perspective or approach."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Adaptability",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can identify similarities and differences between different situations, and use these connections to understand things in a new way.",
+    "I can use the connections made and apply what I have learnt in another context."
+   ],
+   "upper": [
+    "I can identify what is similar and what is different between two situations.",
+    "I can use the insights drawn from different contexts to sharpen my perspective, challenge my assumptions and approach problems in more creative and effective ways."
+   ],
+   "notes": [
+    "Upper Sec 1 (the proposed rewrite) reads easier than Lower Sec 1. The ladder needs checking.",
+    "Reviewer comment on Upper Sec 2: would \"creative\" be needed, or \"approach situations differently\"?"
+   ]
+  },
+  {
+   "id": "at4",
+   "comp": "adaptive",
+   "n": 4,
+   "name": "Manages complexities and ambiguities by adjusting one's perspective and strategies",
+   "milestone": {
+    "lower": "At Lower Sec, students can draw on different perspectives and strategies to adjust their approach when required, applying learnt knowledge and skills in unfamiliar contexts.",
+    "upper": "At Upper Sec, students can draw on different perspectives and strategies to adjust their approach when required, adapting learnt knowledge and skills in new and unexpected contexts to solve complex and unexpected problems."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Adaptability",
+     "Resilience"
+    ]
+   },
+   "lower": [
+    "I can engage with different perspectives and adjust my approach when I face unfamiliar situations.",
+    "I can adjust my approach when things do not go as expected, and stay open to trying new strategies."
+   ],
+   "upper": [
+    "I can adapt my strategies and mindset when facing complex, ambiguous or unexpected challenges.",
+    "I can draw on diverse perspectives to help me solve new problems.",
+    "I can adapt both my strategies and my mindset in complex, real-world contexts to respond with confidence and integrity."
+   ],
+   "notes": []
+  },
+  {
+   "id": "it5",
+   "comp": "inventive",
+   "n": 5,
+   "name": "Explores possibilities and generates novel and useful ideas",
+   "milestone": {
+    "lower": "At Lower Sec, students can generate ideas that may involve modifying existing ones and explore different pathways that are appropriate to respond to an issue or challenge.",
+    "upper": "At Upper Sec, students can generate ideas that are unique or modified substantially from existing ones and explore different pathways that lead to solutions."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [],
+    "va": [
+     "Adaptability",
+     "Resilience",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can explore different possibilities and generate ideas in response to issues or challenges, including by building on or modifying existing ones.",
+    "I can develop and refine my ideas by testing them against the issue or challenge at hand."
+   ],
+   "upper": [
+    "I can generate new ideas by exploring multiple pathways.",
+    "I can take creative risks and use feedback to develop them into solutions that are genuinely useful.",
+    "I can generate and develop original ideas to make a difference to the challenges I encounter."
+   ],
+   "notes": [
+    "Reviewer comment on \"creative risks\": unconventional or uncertain?"
+   ]
+  },
+  {
+   "id": "it6",
+   "comp": "inventive",
+   "n": 6,
+   "name": "Evaluates and refines ideas to formulate novel and useful solutions",
+   "milestone": {
+    "lower": "At Lower Sec, students can evaluate and refine their ideas using relevant strategies and based on a set of criteria that is appropriate for the task or context.",
+    "upper": "At Upper Sec, students can evaluate and refine their ideas iteratively, using relevant strategies and based on a set of criteria that is appropriate for the task or context."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Discipline",
+     "Resilience",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can evaluate my ideas using relevant criteria to identify what is working and what is not.",
+    "I can refine my thinking and make deliberate improvements to arrive at a better solution."
+   ],
+   "upper": [
+    "I can evaluate and refine my ideas using relevant criteria to identify what is working and what is not.",
+    "I can challenge my own ideas and use this to push my thinking towards creative and robust solutions.",
+    "I can develop creative and useful solutions through evaluation, creative risk-taking and a deep awareness of the needs of the issue."
+   ],
+   "notes": [
+    "Upper Sec 1 nearly repeats Lower Sec 1.",
+    "Reviewer comment on Upper Sec 2: keep \"useful solutions\" rather than \"robust\"?"
+   ]
+  },
+  {
+   "id": "co1",
+   "comp": "communication",
+   "n": 1,
+   "name": "Effectively communicates information and co-constructs meaning",
+   "milestone": {
+    "lower": "At Lower Sec, students can convey and evaluate knowledge to co-construct new understandings and ideas coherently, while considering the specific purpose and context of communication.",
+    "upper": "At Upper Sec, students can convey and critically evaluate knowledge to co-construct new understandings and complex ideas persuasively and with impact, while considering the specific purpose and context of communication."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Empathy",
+     "Discipline",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can express my ideas clearly and confidently, using appropriate language and tone to suit the purpose, audience and context.",
+    "I can check whether my message is understood and build on others’ ideas to learn together.",
+    "I can process information shared with me and consider how it connects with the information I already have."
+   ],
+   "upper": [
+    "I can present complex ideas persuasively, using appropriate language and tone to suit the purpose, audience and context.",
+    "I can critically evaluate what I share and how I share it to ensure my communication is honest, accurate and responsible.",
+    "I can build on what others contribute to work towards shared insight rather than just conveying my own views.",
+    "I can gather feedback from my audience and synthesise different viewpoints to achieve a deeper understanding."
+   ],
+   "notes": [
+    "Lower Sec 3 and Upper Sec 4 were proposed additions in the draft.",
+    "Reviewer comments on Upper Sec 2: overlap with adjusting, and \"where did these come from?\""
+   ]
+  },
+  {
+   "id": "co2",
+   "comp": "communication",
+   "n": 2,
+   "name": "Engages empathetically with diverse perspectives",
+   "milestone": {
+    "lower": "At Lower Sec, students respond with respect and empathy, and are sensitive to the diverse backgrounds that influence different perspectives while interacting with others.",
+    "upper": "At Upper Sec, students respond with respect and empathy, and are sensitive to the diverse backgrounds that influence the context of communication with others."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [],
+    "va": [
+     "Empathy",
+     "Mindfulness",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can listen actively and acknowledge others' feelings and viewpoints.",
+    "I can ask thoughtful questions with empathy to better understand others’ perspectives."
+   ],
+   "upper": [
+    "I can validate others’ feelings and viewpoints, helping everyone feel heard, respected and valued.",
+    "I can adjust how I communicate to build trust, resolve misunderstandings, and encourage open dialogue."
+   ],
+   "notes": [
+    "The Upper Sec rewrites merge four earlier statements into two."
+   ]
+  },
+  {
+   "id": "cl3",
+   "comp": "collaboration",
+   "n": 3,
+   "name": "Interacts and works effectively in group settings to contribute to shared goals",
+   "milestone": {
+    "lower": "At Lower Sec, students can manage disagreements with group members and take in suggestions, while contributing to the completion of a task to meet the shared goals.",
+    "upper": "At Upper Sec, students can mediate conflict and disagreement, reaching compromises or consensus for collective decisions to meet shared goals."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can contribute meaningfully to group work, doing my fair share and supporting my teammates to help the group succeed.",
+    "I can manage disagreements and help the group find a way forward to achieve our shared goals."
+   ],
+   "upper": [
+    "I can build consensus and lead my team towards shared goals.",
+    "I can help teammates understand each other's perspectives, de-escalate tension and work through disagreements to strengthen relationships."
+   ],
+   "notes": []
+  },
+  {
+   "id": "cl4",
+   "comp": "collaboration",
+   "n": 4,
+   "name": "Collectively defines and negotiates roles and tasks to achieve group goals",
+   "milestone": {
+    "lower": "At Lower Sec, students can determine and effectively assume the role they will play by considering the dynamics of the group.",
+    "upper": "At Upper Sec, students can reflect on their working relationships with the group and adapt to contribute to the shared goals, as determined collectively by its members."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Discipline",
+     "Adaptability",
+     "Empathy"
+    ]
+   },
+   "lower": [
+    "I can take on a clear role in my group, communicate my responsibilities to my teammates and contribute to a shared work plan.",
+    "I can follow through on my responsibilities and check in with my team to make sure our shared plan is on track."
+   ],
+   "upper": [
+    "I can reflect on how I work with others and use this to improve how the group works.",
+    "I can adapt my role to serve the group's needs when the situation calls for it.",
+    "I can help my team define responsibilities collectively and ensure that every member is set up to contribute meaningfully."
+   ],
+   "notes": []
+  },
+  {
+   "id": "in5",
+   "comp": "information",
+   "n": 5,
+   "name": "Employs effective strategies to locate information and exercises discernment",
+   "milestone": {
+    "lower": "At Lower Sec, students can select, organise and synthesise information from multiple sources and verify the accuracy, credibility and currency of information by cross-referencing multiple sources.",
+    "upper": "At Upper Sec, students can refine search results, organise information systematically and manage information sensitively, and evaluate the accuracy, credibility and relevance of information."
+   },
+   "mvv": {
+    "m": [
+     "Agile Learners",
+     "Adaptive Thinkers"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can search for information from multiple sources and check whether it is accurate and credible.",
+    "I can organise the information I find in a way that supports my learning and helps me make better decisions."
+   ],
+   "upper": [
+    "I can refine and organise information from diverse sources, assessing its accuracy, credibility and relevance with rigour.",
+    "I can evaluate information by interrogating its assumptions, biases and limitations.",
+    "I can manage information with discernment and sensitivity, and take responsibility for how I apply it in my learning and decision-making."
+   ],
+   "notes": [
+    "Reviewer comments: is \"with rigour\" needed; is \"interrogating\" too strong (\"questioning\")?"
+   ]
+  },
+  {
+   "id": "in6",
+   "comp": "information",
+   "n": 6,
+   "name": "Creates and shares information ethically and maintains a positive online presence",
+   "milestone": {
+    "lower": "At Lower Sec, students can consider the impact of what they share and create, maintain positive relationships with others, and acknowledge sources of information.",
+    "upper": "At Upper Sec, students can contribute to information and perspectives shared in constructive and ethical ways, and manage their online reputation and relationships responsibly."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Discipline",
+     "Empathy"
+    ]
+   },
+   "lower": [
+    "I can share information responsibly by considering its impact on others, whether online or offline.",
+    "I can exercise self-control in how I behave online and offline, making deliberate choices about what I post, share and say."
+   ],
+   "upper": [
+    "I can contribute to conversations and platforms in constructive and ethical ways, and hold myself to a high standard of honesty and care in what I share.",
+    "I can manage a positive online presence by being aware that my digital footprint shapes how others see me and what I stand for, now and in the future."
+   ],
+   "notes": [
+    "Reviewer comments: Lower Sec 2 overlaps with Lower Sec 1; \"where did this come from?\" on Upper Sec 1."
+   ]
+  },
+  {
+   "id": "cv1",
+   "comp": "civic",
+   "n": 1,
+   "name": "Demonstrates understanding of values, ideals and issues of personal, community and national significance",
+   "milestone": {
+    "lower": "At Lower Sec, students can describe and explain issues that affect the culture, social and economic development, governance, future and identity of Singapore, and understand multiple perspectives on them.",
+    "upper": "At Upper Sec, students can explain, analyse, evaluate, and construct new understandings of issues that affect Singapore, and manage tensions among multiple perspectives to work towards a common good."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Empathy",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can explain issues that affect Singapore's society, culture and future.",
+    "I can understand why people hold different views based on their values and life experiences."
+   ],
+   "upper": [
+    "I can analyse issues from multiple perspectives to understand the reasons and values behind each viewpoint.",
+    "I can share thoughtful views on societal issues to contribute positively as a responsible citizen."
+   ],
+   "notes": []
+  },
+  {
+   "id": "cv2",
+   "comp": "civic",
+   "n": 2,
+   "name": "Plays active and constructive roles to improve the school, community and nation",
+   "milestone": {
+    "lower": "At Lower Sec, students can plan and organise programmes with others that contribute to school and community, with support, and can differentiate the civic roles played by individuals, groups and organisations in contributing to the community and nation.",
+    "upper": "At Upper Sec, students can independently identify appropriate and constructive steps to address issues, and initiate, plan and organise programmes with others that contribute to school, community and/or nation, and evaluate the complementary civic roles played by individuals, groups, organisations and government."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can work with others to plan and carry out projects that help my school and community.",
+    "I can take steps to make a positive difference on the people around me.",
+    "I can explain how different people and organisations each play a role in making our community better."
+   ],
+   "upper": [
+    "I can identify issues that matter and plan constructive ways to address them.",
+    "I can lead group efforts around a common goal to improve my school and community.",
+    "I can evaluate how individuals, groups and organisations work together to build a better society."
+   ],
+   "notes": []
+  },
+  {
+   "id": "gl3",
+   "comp": "global",
+   "n": 3,
+   "name": "Aware of global issues, interconnections and trends, and forms informed perspectives",
+   "milestone": {
+    "lower": "At Lower Sec, students can demonstrate awareness of global issues, explain their impact and describe Singapore's role in addressing issues in the global community.",
+    "upper": "At Upper Sec, students can actively find out about global issues, analyse them and discern their implications for individuals, Singapore and other countries."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can identify global issues and explain how they affect Singapore and my everyday life.",
+    "I can form my own views on what global events and trends mean for me and my school."
+   ],
+   "upper": [
+    "I can research global issues and analyse how these issues impact Singapore and other countries.",
+    "I can develop well-reasoned and responsible views on global events and trends."
+   ],
+   "notes": [
+    "The draft notes that another school frames this as considering global issues and trends from multiple perspectives and their relevance to Singapore."
+   ]
+  },
+  {
+   "id": "gl4",
+   "comp": "global",
+   "n": 4,
+   "name": "Interacts confidently with people from Singapore and beyond on global issues",
+   "milestone": {
+    "lower": "At Lower Sec, students can interact respectfully with people from Singapore and other countries to understand each other better and/or discuss global issues and reach relevant conclusions.",
+    "upper": "At Upper Sec, students can interact respectfully and confidently with people from Singapore and other countries on various platforms to discuss global issues and recommend appropriate actions to address them."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can interact respectfully with people from different backgrounds and countries.",
+    "I can share my thoughts on global issues with others, listen openly to theirs, and build a common understanding."
+   ],
+   "upper": [
+    "I can connect confidently and respectfully with people locally and globally to discuss world issues.",
+    "I can propose realistic, well-informed solutions to global issues while staying sensitive to different needs and perspectives."
+   ],
+   "notes": []
+  },
+  {
+   "id": "cc5",
+   "comp": "crosscultural",
+   "n": 5,
+   "name": "Aware of and appreciates the cultural background and identity of self and others",
+   "milestone": {
+    "lower": "At Lower Sec, students can appreciate the value of a diversity of cultural and religious communities' heritage, customs, and perspectives, and their contributions to Singapore and the world.",
+    "upper": "At Upper Sec, students can appreciate the value of a diversity of cultural and religious communities' heritage, customs, perspectives, and contributions, and identify commonalities between one's own and other cultures."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can respect and value the traditions, cultures, and beliefs of different communities in Singapore and around the world.",
+    "I can reflect on how my own culture and background shape how I view the world."
+   ],
+   "upper": [
+    "I can understand how different cultural histories and life experiences shape the way people see themselves and society.",
+    "I can find common ground and shared values across different cultural and religious backgrounds.",
+    "I can use my understanding of cultural diversity to build meaningful relationships based on mutual respect."
+   ],
+   "notes": []
+  },
+  {
+   "id": "cc6",
+   "comp": "crosscultural",
+   "n": 6,
+   "name": "Shows sensitivity and openness in interactions with diverse communities to promote social cohesion",
+   "milestone": {
+    "lower": "At Lower Sec, students can demonstrate empathy, awareness of their own biases, and appropriate behaviour towards the lived experiences of people from different social, cultural and religious backgrounds within and beyond Singapore.",
+    "upper": "At Upper Sec, students can demonstrate appropriate skills and behaviour to work together with people from a diverse range of social, cultural and religious backgrounds within and beyond Singapore, and contribute to promoting social cohesion."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Adaptability",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can identify my own assumptions and biases and see how they affect how I treat others.",
+    "I can show empathy and respect to people from all backgrounds to help build a united school and community."
+   ],
+   "upper": [
+    "I can collaborate effectively with diverse teams by respecting differences and bringing out the best in everyone.",
+    "I can bridge differences and promote social harmony in my school, community, and nation."
+   ],
+   "notes": []
+  }
+ ]
+}

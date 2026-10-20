@@ -1,12 +1,12 @@
 {
-  "name": "E21CC Learning Log · Beatty Secondary School",
+  "name": "E21CC Log · Beatty Secondary School",
   "short_name": "E21CC Log",
-  "description": "GROW and ACT journals with feedback anchored in MOE’s 21st Century Competencies.",
+  "description": "The E21CC Log for Beattyians: GROW and ACT journals, Beatty’s I can statements, and a level for each competency.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0d1b5e",
-  "theme_color": "#0d1b5e",
+  "background_color": "#f4f5f9",
+  "theme_color": "#0b1b5c",
   "icons": [
     {
       "src": "assets/icon-192.png",

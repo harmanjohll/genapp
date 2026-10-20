@@ -1,6 +1,60 @@
-# E21CC Learning Log: design, decisions, and the questions that are yours
+# E21CC Log: design, decisions, and the questions that are yours
 
-October 2026. The Learning Log became the Competency Development Log: same frameworks, same coach, a new spine. The first part of this document covers that change. The rest is the Learning Log's design from September; it still holds for the frameworks, the coach, the relay and the mobile layout.
+October 2026. The Learning Log became the Competency Development Log, then the E21CC Log: same frameworks, same coach, a new spine. The newest change comes first. Older sections keep the names of their time; the September design at the end still holds for the frameworks, the coach and the relay.
+
+## The E21CC Log: journals, Beatty's statements, levels, four views (20 October 2026)
+
+Harman named the frame and asked for the school's own statements, a gradation, and a better layout.
+- **Names.** The frame is the **E21CC Log**: a case that holds loose leaves and notebooks. Inside are journals: GROW, ACT, and ASK (a placeholder until its questions are written). No portfolio or folio wording anywhere.
+- **Structure.** Four places on every device: Home, Competencies, Journals (GROW, ACT, ASK switched in one place), Settings. Old addresses still work. Home holds the wheel shaded by level, what was secured this term, what is almost there, the next step and its aim, and a Showcase placeholder.
+- **The statements.** Beatty's draft V1 (`E21CC_Statements_for_BTYSS_V1.docx`), parsed with its tracked changes: where a cell held an original and a rewrite, the rewrite is used.
+  - 9 competencies, 2 strands each: 18 strands, 38 Lower Sec and 47 Upper Sec statements, each strand a ladder.
+  - Ids are the strand plus band and rung (`ct1.l1`, `ct1.u3`). The set lives in `statements/beatty-v1.json` and is embedded in `core.js` so the log works offline.
+  - Statements are quoted word for word, hyphens included; the wording checks exempt them.
+  - Mission, Vision and DREAM tags show quietly under each strand; MOE's milestones sit in a fold.
+- **Flagged for the school, not fixed** (in the JSON's notes and the console's Statements tab):
+  - the 16 reviewer comments;
+  - Adaptive Thinking 3: the Upper Sec rewrite reads easier than its Lower Sec statement;
+  - Inventive Thinking 6: an Upper Sec cell repeats a Lower Sec statement.
+- **The claim.** The last writing step asks "Which I can statements does this entry show?" Up to two, each with the sentence of the student's that shows it. Suggestions come from the competencies the words already show. The choice becomes the entry's links; its competency claims follow, so the coach checks them. GROW's Watch and ACT's Test can name a statement to aim for next time; Home shows it beside the next step.
+- **Bands.** Sec 1 and 2 work towards Lower Sec, with Upper Sec as a stretch they can claim; Sec 3 to 5 work towards Upper Sec, with Lower Sec as earlier ground. The student sets their Sec level in setup or Settings; a form group's band applies only if they have not. The coach is given only the student's own band.
+- **Secured.** A link counts when the entry's own words back it (the gate is unchanged). A statement is secured by at least two backed entries, from two different subjects or CCAs, at least two weeks apart. The log says what is missing: one more entry, from somewhere other than Football, on or after a date (a date already past is not mentioned).
+- **Levels**, earned, never judged overall. A band is met in a strand when half its statements, rounded up, are secured.
+  - Emerging: the competency shows in an entry, or any statement is secured.
+  - Developing: in every strand, the Lower Sec band is met or an Upper Sec statement is secured.
+  - Proficient: Developing, and an Upper Sec statement secured.
+  - Leading: the Upper Sec band met in every strand, and a teacher confirms it. Until then the log reads "Leading: waiting for a teacher".
+  - The social and emotional competencies stay on the wheel as evidence only (hatched), with no level, until their statements exist.
+- **The teacher console.**
+  - A Statements tab shows every ladder, with the Draft V1 label and the open questions.
+  - A shared domain now carries each competency's level and the statements under way. The Class grid shows one letter per competency (E, D, P, L, and ! where Leading waits).
+  - Confirm Leading makes a note link that names the competency. It opens only in the log of the student whose email it was made for, like margin notes, and sets Leading there.
+- **Four views, chosen in Settings.** Clean record (the default), Case and notebooks, Editorial, Bright and friendly; each with a light and a dark theme and the student's colour.
+  - One set of markup: `body[data-look]`, `data-theme` and `data-colour` swap tokens; components use tokens only.
+  - On a laptop the places sit in a sidebar, or in a row across the top in Editorial. On a phone they sit in a bottom bar styled for each view.
+  - Old cover and paper choices carry across: the cover colour becomes the colour, dark paper the dark theme.
+  - Inter (four weights, Latin only, about 100 KB) is bundled so Clean record looks the same on every device.
+
+Verified:
+- **Engine fixtures.** One entry; two entries in one subject; two subjects within two weeks; then secured. The ladder from Emerging to Developing to Proficient, then waiting, then Leading once confirmed. SEC has no level.
+- **New suite, t9** (26 checks):
+  - the set's counts, and the embedded copy matches the JSON word for word;
+  - Sec 2 and Sec 4 bands, and the coach gets only the student's band;
+  - the ladders as the student sees them, including the missing piece;
+  - Home's secured, almost there and aim;
+  - SEC evidence only, and the ASK placeholder;
+  - the claim capped at two, saved as links;
+  - Leading waiting, the console's Confirm Leading link opened by the student, and refused for another student;
+  - the views kept after reload;
+  - no portfolio or folio, and the new name.
+- **Earlier suites** updated and passing: t6 (23), t2 (17), t4 (12), t7 (21), t8 (20).
+- **Audit:** 0 findings at 320, 390, 768, 1280 and 1920 for all four views, light and dark (overflow, 44px targets, AA contrast, labels, names, headings, text under 12px, Home).
+
+Open, for Harman:
+1. Who may confirm Leading: any teacher the student shares a domain with (as built), or only the form teacher?
+2. Developing can be reached through Upper Sec statements alone. That rewards a stretch, but it means a student can skip Lower Sec ground in a strand. Keep it?
+3. The draft's open questions above need the school's wording before V2; ids should stay stable through the edit.
+4. Showcase and ASK are placeholders: their design waits for your decisions.
 
 ## Layouts that fit the device (19 October 2026)
 
