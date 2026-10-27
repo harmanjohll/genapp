@@ -40,7 +40,7 @@ const ctx = {
   yearId: 'sec3',
 };
 
-const CSS_FILES = ['tokens3.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
+const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
 const PINNED = [...CSS_FILES, 'main.js'];
 
 function pass(name, ok, extra) {
@@ -126,7 +126,7 @@ function payloadSweep() {
   const parts = [
     join(root, 'index.html'),
     ...CSS_FILES.map((f) => join(root, 'assets/css', f)),
-    join(root, 'assets/fonts/literata-var-latin.woff2'),
+    join(root, 'assets/fonts/bricolage-var-latin.woff2'),
     ...EAGER_DATA.map((n) => join(root, 'data', `${n}.json`)),
   ];
   parts.forEach((p) => { try { total += statSync(p).size; } catch { failures.push({ why: `missing: ${p}` }); } });
@@ -145,7 +145,7 @@ function payloadSweep() {
  * ones the v2 audit measured slipping under AA on 'later' paper.
  */
 function contrastSweep() {
-  const css = readFileSync(join(root, 'assets/css/tokens3.css'), 'utf8');
+  const css = readFileSync(join(root, 'assets/css/tokens4.css'), 'utf8');
   const failures = [];
   const hex = (name, scope) => {
     const section = scope === 'dark'
@@ -308,6 +308,21 @@ function v4DashSweep() {
   return { ok, fails };
 }
 
+/** Every module parses. The engine sweeps only import the engine, so a
+    syntax error in a screen or a ui module would otherwise ship silently. */
+async function syntaxSweep() {
+  const { spawnSync } = await import('node:child_process');
+  const { readdirSync } = await import('node:fs');
+  const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : e.name.endsWith('.js') ? [join(d, e.name)] : []));
+  const files = [...walk(join(root, 'assets/js')), join(root, 'sw.js')];
+  const fails = files.map((f) => ({ f, r: spawnSync(process.execPath, ['--check', f], { encoding: 'utf8' }) }))
+    .filter((x) => x.r.status !== 0).map((x) => ({ file: x.f.replace(root, ''), err: (x.r.stderr || '').split('\n').slice(0, 4).join(' ') }));
+  const ok = !fails.length;
+  pass('Syntax', ok, `${files.length} modules parse`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
 const results = [
   ['version', versionSweep()],
   ['css-vars', cssVarSweep()],
@@ -328,6 +343,7 @@ const results = [
   ['grades', v4GradesSweep()],
   ['psle', v4PsleSweep()],
   ['dashes', v4DashSweep()],
+  ['syntax', await syntaxSweep()],
 ];
 
 const bad = results.filter(([, r]) => !r.ok);

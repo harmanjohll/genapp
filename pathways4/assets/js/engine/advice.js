@@ -174,6 +174,10 @@ export function advise({ yearId, plan, ctx, offer }) {
       : `If any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level, ${listNames(opens)} ${verbOpen}. One alone does not.`;
     return {
       kind: 'pair',
+      result: `${listNames(opens)} ${verbOpen}`,
+      cond: g.n === 1
+        ? `if ${sayName(g.first.a.s)} moves to ${g.first.a.to} and ${sayName(g.first.b.s)} moves to ${g.first.b.to}`
+        : `if any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level`,
       moves: pool.map((m) => ({ sid: m.s.id, name: sayName(m.s), from: m.from, to: m.to })),
       any: g.n > 1,
       opens,
@@ -264,6 +268,12 @@ function finish(group, timing, afterRows) {
     nearer,
     still,
     line: `${verb}, ${result}`,
+    // Result first, condition second: the ticket leads with what opens.
+    result: opens.length
+      ? `${listNames(opens)} ${opens.length === 1 ? 'opens' : 'open'}`
+      : `${listNames(nearer)} ${nearer.length === 1 ? 'comes' : 'come'} closer`,
+    alsoNearer: opens.length ? nearer : [],
+    cond: verb.replace(/^If /, 'if '),
     // Only the reasons every subject in the group shares: Geography to G3
     // answers JC's Humanities rule, Maths to G3 does not.
     because: becauseLines(m.rules.filter((r) => group.every((x) => x.rules.some((y) => y.label === r.label && y.dest === r.dest)))),

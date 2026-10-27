@@ -64,38 +64,41 @@ function resultHtml(api) {
   const school = rules.school;
   const names = Object.fromEntries((rules.subjects || []).map((s) => [s.id, s.name]));
 
+  const LVI = { G1: 0, G2: 1, G3: 2 };
   return `
     <div class="psle-result arrive">
-      <div class="advsum">
-        <span class="bignum">${sc.score}</span>
-        <span><strong>PSLE Score</strong> <span class="small">(4 is the strongest, 30 the widest range)</span></span>
+      <div class="scorepass">
+        <div class="sp-score"><span class="sp-k">PSLE Score</span><b>${sc.score}</b><span class="sp-scale">4 strongest, 30 widest</span></div>
+        <div class="sp-group">${post.groups.length
+          ? `<span class="sp-k">Posting Group</span><b>${post.groups.join(' or ')}</b><span class="sp-scale">${post.groups.length > 1 ? 'You choose one' : `Most subjects start at ${esc(start.base)}`}</span>`
+          : '<span class="sp-k">Posting Group</span><b>·</b><span class="sp-scale">See below</span>'}</div>
       </div>
       ${post.groups.length ? `
-        <h2 class="advh">Posting Group ${post.groups.length > 1 ? `${post.groups.join(' or ')}` : post.groups[0]}</h2>
         ${post.note ? `<p class="small">${esc(post.note)}</p>` : ''}
         ${post.groups.length > 1 ? `
           <div class="segtabs compact" role="radiogroup" aria-label="Posting Group">
             ${post.groups.map((g) => `<button type="button" role="radio" class="segtab press" data-action="ps-group" data-v="${g}" aria-checked="${chosen === g}" aria-selected="${chosen === g}">Group ${g}</button>`).join('')}
           </div>` : ''}
         <h2 class="advh">Sec 1 starting levels</h2>
-        <p class="small">Most subjects start at ${esc(start.base)}. Where the PSLE allows a more demanding start, the choice is shown: tap the level you would take.</p>
-        <div class="subjrows">
+        <p class="small">Where the PSLE allows a more demanding start, the switch is live: slide to the level you would take.</p>
+        <div class="subjgrid">
           ${(rules.subjects || []).map((s) => {
             const opts = start.options[s.id] || [start.base];
             const cur = start.plan[SUBJ_PLAN_ID[s.id]];
-            return `<div class="subjrow"><span class="subjname">${esc(names[s.id])}${opts.length > 1 ? '<span class="subjnote">you can choose</span>' : ''}</span>
-              <span class="lvlrow">${['G1', 'G2', 'G3'].map((l) => opts.includes(l)
-                ? `<button type="button" class="lvl press" data-action="ps-pick" data-sid="${esc(s.id)}" data-level="${l}" aria-pressed="${cur === l}" ${opts.length < 2 ? 'disabled' : ''}>${l}</button>`
-                : '<span class="lvl-none" aria-hidden="true"></span>').join('')}</span></div>`;
+            return `<div class="subj" data-held="${cur}"><span class="subj-name">${esc(names[s.id])}${opts.length > 1 ? '<small>You can choose</small>' : '<small>Set by the Posting Group</small>'}</span>
+              <span class="lvsw" data-level="${cur}" style="--i:${LVI[cur]}"><i class="lvsw-thumb" aria-hidden="true"></i>${['G1', 'G2', 'G3'].map((l) => opts.includes(l)
+                ? `<button type="button" class="lvsw-b" data-action="ps-pick" data-sid="${esc(s.id)}" data-level="${l}" aria-pressed="${cur === l}" aria-label="${esc(names[s.id])} at ${l}" ${opts.length < 2 ? 'disabled' : ''}>${l}</button>`
+                : '<span class="lvsw-b off" aria-hidden="true"></span>').join('')}</span></div>`;
           }).join('')}
-          <div class="subjrow"><span class="subjname">Geography, History<span class="subjnote">can move from Sec 2</span></span><span class="lvlrow"><span class="pill" data-tone="quiet">${esc(start.base)}</span></span></div>
+          <div class="subj" data-held="${start.base}"><span class="subj-name">Geography, History<small>Can move up from Sec 2</small></span>
+            <span class="lvsw" data-level="${start.base}" style="--i:${LVI[start.base]}"><i class="lvsw-thumb" aria-hidden="true"></i>${['G1', 'G2', 'G3'].map((l) => `<span class="lvsw-b${l === start.base ? '' : ' off'}" aria-hidden="true">${l === start.base ? l : ''}</span>`).join('')}</span></div>
         </div>
         ${hmtlEligible(psle) ? `<p class="callout small">${icon('spark')} ${esc((rules.hmtl && rules.hmtl.text) || '')}</p>` : ''}
         <p class="small">${esc((rules.upgrades && rules.upgrades.note) || '')}</p>
         ${school ? `
-          <div class="callout">
-            <p class="caps">${esc(school.name)}, ${esc(String(school.year))} posting</p>
-            <p>${school.ranges.map((r) => `Group ${r.group}: ${esc(r.range)}`).join(' · ')}</p>
+          <div class="schoolrange">
+            <p class="sr-h">${esc(school.name)} in the ${esc(String(school.year))} posting</p>
+            <div class="sr-cells">${school.ranges.map((r) => `<span><small>Group ${r.group}</small><b>${esc(r.range.replace(' to ', '\u2009to\u2009'))}</b></span>`).join('')}</div>
             <p class="small">${esc(school.note)}</p>
           </div>` : ''}
         <div class="nextcard">

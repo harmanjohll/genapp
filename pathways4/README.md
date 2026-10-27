@@ -22,6 +22,10 @@ Research notes, with every source, are in `research/`.
 - **Planning and conversation together.** Every piece of advice carries the
   words to say to a real person, voiced for a student, a parent or a teacher.
   My plan gathers it all on one printable page.
+- **The night line.** Navy and signal yellow, a departures board that flips
+  as you slide a level, advice as tickets, scores as a train on a track.
+  Bricolage Grotesque and JetBrains Mono (OFL) and Phosphor icons (MIT),
+  all bundled: still zero network calls at runtime.
 - **The game, restyled.** Play is unchanged underneath and now reads its
   subjects from the year pages.
 

@@ -1,0 +1,334 @@
+/* Design tokens, v3. All identity lives here; a school skin is a change to
+   this file, not a rebuild.
+
+   Two voices, one ethic. The four reach states and the accent exist at two
+   volumes: the wash voice (quiet, marks UI state, v2's values kept) and the
+   line voice (full chroma, allowed ONLY on drawn strokes in SVG - the map,
+   the scenes, the lifeline - never on a word about a student). No red
+   anywhere, in either voice: nothing in this app is a failure state.
+
+   Eras. The game walks a life from 13 to 48. body[data-era] moves the paper
+   (kept from v2, mixes raised because the v2 pass measured nobody saw them),
+   and v3 adds what v2's spec promised and never shipped: the surface follows
+   the paper, the grain rises as life acquires texture, and --tempo slows the
+   motion tokens as the decades pass. Semantic hues never move: the three
+   level hues and the four reach states mean the same thing at every age, or
+   they mean nothing.
+
+   Type. One bundled variable serif (Literata, OFL, committed to the repo,
+   same origin, no CDN) so the identity face is the same on the Android
+   phones and Chromebooks the cohort actually holds. v2's Georgia rendered as
+   four different serifs across the fleet, in fake bold. The stack names Noto
+   Serif so a failed font load still lands somewhere designed. */
+
+@layer tokens;
+
+/* Design tokens, v4. Night line and signal yellow.
+
+   v3 dressed the app in warm paper, terracotta and a serif: the palette and
+   type every generated "considered" site reaches for, and the reason v4 read
+   as generic. v4 takes its identity from the thing the app has always been
+   about, a transit network, and from the school it is built in: deep navy
+   (the night line) and signal yellow (the platform edge, Beatty's own
+   colour). One sans family with a real personality (Bricolage Grotesque,
+   OFL) and one mono for codes, grades and counts (JetBrains Mono, OFL),
+   both bundled, same origin, no CDN.
+
+   Rules carried from v3, unchanged:
+   - Reach states are semantic and never move: open, within reach, a longer
+     road, another road in. Full chroma only on drawn strokes.
+   - No red anywhere. Nothing in this app is a failure state.
+   - Level hues G1, G2, G3 have equal visual weight; none reads as "best".
+
+   Two accent tokens, because yellow is a fill, never text on light paper:
+   --accent fills (buttons, the current station, the train), --accent-ink is
+   the text that sits on it, --accent-dk is "accent as text" (navy blue on
+   light, yellow after dark). */
+
+@layer tokens;
+
+@layer tokens {
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../fonts/bricolage-var-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-var-latin.woff2') format('woff2');
+}
+
+:root {
+  /* ink and paper: cool, never cream */
+  --ink:        #0B1430;
+  --ink-soft:   #29344F;
+  --ink-mute:   #4F5A73;
+  --ink-faint:  #56617A;
+  --paper:      #F3F5F9;
+  --paper-warm: #E8ECF3;
+  --paper-base:      #F3F5F9;
+  --paper-warm-base: #E8ECF3;
+  --surface:      #FFFFFF;
+  --surface-base: #FFFFFF;
+  --rule:       #D5DBE6;
+  --rule-soft:  #E3E7EF;
+
+  /* the night line: chrome, boards, the pass */
+  --night:      #0B1A3F;
+  --night-2:    #13265A;
+  --night-ink:  #EEF2FB;
+  --night-mute: #A9B6D6;
+  --night-rule: #24376B;
+  /* selected state for tabs and chips: night on paper, yellow after dark */
+  --sel-bg:     #0B1A3F;
+  --sel-ink:    #EEF2FB;
+  --on-lv:      #FFFFFF;
+
+  /* Subject levels. Three hues of deliberately equal weight. Never reused. */
+  --g1:       #0D857A;
+  --g1-wash:  rgba(13, 133, 122, 0.08);
+  --g2:       #2E62D9;
+  --g2-wash:  rgba(46, 98, 217, 0.08);
+  --g3:       #8A3DB8;
+  --g3-wash:  rgba(138, 61, 184, 0.08);
+
+  /* Reach states, wash voice. */
+  --open:         #15803D;
+  --open-wash:    rgba(21, 128, 61, 0.10);
+  --open-ink:     #136C35;
+  --within:       #8A5300;
+  --within-wash:  rgba(234, 160, 20, 0.16);
+  --longer:       #2357B8;
+  --longer-wash:  rgba(35, 87, 184, 0.10);
+  --other:        #6B4BB3;
+  --other-wash:   rgba(107, 75, 179, 0.10);
+
+  /* Reach states, line voice: strokes in drawn SVG only. */
+  --line-open:   #1FA855;
+  --line-within: #F2A20C;
+  --line-longer: #3D7FEA;
+  --line-other:  #9A6BF0;
+  --line-accent: #FFC21A;
+  --line-faint:  #C3CBDA;
+
+  --compass:      #2357B8;
+  --compass-wash: rgba(35, 87, 184, 0.08);
+
+  /* Action: signal yellow. */
+  --accent:      #FFC21A;
+  --accent-ink:  #0B1430;
+  --accent-dk:   #1D3FA8;
+  --accent-dkr:  #142F85;
+  --accent-wash: rgba(255, 194, 26, 0.22);
+  --flag:        #6E5325;
+  --flag-wash:   rgba(255, 194, 26, 0.18);
+
+  /* type: one family with character, one mono */
+  --display: 'Bricolage Grotesque', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --body:    'Bricolage Grotesque', 'Segoe UI', Roboto, system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-hero:  clamp(2.4rem, 8vw, 4.6rem);
+  --t-h1:    clamp(1.8rem, 5vw, 2.9rem);
+  --t-h2:    clamp(1.3rem, 3vw, 1.7rem);
+  --t-h3:    1.18rem;
+  --t-body:  1.0625rem;
+  --t-small: 0.92rem;
+  --t-micro: 0.8125rem;
+
+  --lh-hero: 0.98;
+  --lh-h:    1.08;
+  --lh-body: 1.55;
+
+  /* spacing */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 104px;
+
+  /* shape: one documented system. Buttons and switches are pills, cards
+     and boards 18, inputs and tiles 12. */
+  --r-sm: 12px; --r-md: 18px; --r-lg: 24px; --r-pill: 999px;
+
+  /* motion */
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-door: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --tempo:     1;
+  --dur:       calc(420ms * var(--tempo));
+  --dur-fast:  calc(180ms * var(--tempo));
+  --dur-draw:  calc(900ms * var(--tempo));
+
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-o: 0;
+
+  --gutter: clamp(16px, 4vw, 40px);
+  --max:    1200px;
+  --max-narrow: 780px;
+
+  /* shadows tinted to the night, never pure black */
+  --shadow-sm: 0 1px 2px rgba(11, 26, 63, 0.07);
+  --shadow:    0 6px 24px rgba(11, 26, 63, 0.09);
+  --shadow-lg: 0 18px 48px rgba(11, 26, 63, 0.18);
+
+  --tap: 44px;
+}
+
+/* ---- eras: ambient only, semantics never move ----------------------------
+   Paper and surface drift together from warm sand toward cool slate as the
+   decades pass; the grain rises; the tempo slows. Derived from the live
+   theme's own base with color-mix so a manual theme toggle is never fought. */
+@supports (background: color-mix(in srgb, red 50%, blue)) {
+  body[data-era="postsec"] {
+    --paper: color-mix(in srgb, var(--paper-base) 91%, #7A8CA3 9%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 91%, #7A8CA3 9%);
+    --surface: color-mix(in srgb, var(--surface-base) 96%, #7A8CA3 4%);
+    --grain-o: 0.025; --tempo: 1.05;
+  }
+  body[data-era="twenties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 89%, #6E8797 11%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 89%, #6E8797 11%);
+    --surface: color-mix(in srgb, var(--surface-base) 95%, #6E8797 5%);
+    --grain-o: 0.035; --tempo: 1.1;
+  }
+  body[data-era="thirties"] {
+    --paper: color-mix(in srgb, var(--paper-base) 86%, #66788E 14%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 86%, #66788E 14%);
+    --surface: color-mix(in srgb, var(--surface-base) 94%, #66788E 6%);
+    --grain-o: 0.05; --tempo: 1.18;
+  }
+  body[data-era="later"] {
+    --paper: color-mix(in srgb, var(--paper-base) 84%, #5E6B7A 16%);
+    --paper-warm: color-mix(in srgb, var(--paper-warm-base) 84%, #5E6B7A 16%);
+    --surface: color-mix(in srgb, var(--surface-base) 93%, #5E6B7A 7%);
+    --grain-o: 0.065; --tempo: 1.25;
+  }
+}
+
+/* ---- dark: night in the same city, not an inversion ----------------------
+   Elevation by surface lightness, shadows nearly gone; the wash alphas rise
+   because tinted translucency dies on black; the drawn lines get a faint
+   glow that only exists after dark (applied in app.css, gated on theme). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:        #EEF2FB;
+    --ink-soft:   #CBD4EA;
+    --ink-mute:   #A3AFCC;
+    --ink-faint:  #98A5C4;
+    --paper:      #070D1F;
+    --paper-warm: #0C1530;
+    --paper-base:      #070D1F;
+    --paper-warm-base: #0C1530;
+    --surface:      #101A36;
+    --surface-base: #101A36;
+    --rule:       #26355F;
+    --rule-soft:  #1A2648;
+
+    --night:      #0B1A3F;
+    --night-2:    #142A63;
+    --night-ink:  #EEF2FB;
+    --night-mute: #A9B6D6;
+    --night-rule: #24376B;
+    --sel-bg:     #FFC21A;
+    --sel-ink:    #0B1430;
+    --on-lv:      #0B1430;
+
+    --g1:       #3CC2B3;  --g1-wash:  rgba(60, 194, 179, 0.14);
+    --g2:       #7EA2FF;  --g2-wash:  rgba(126, 162, 255, 0.14);
+    --g3:       #C98AF0;  --g3-wash:  rgba(201, 138, 240, 0.14);
+
+    --open:     #4ADE80;  --open-wash: rgba(74, 222, 128, 0.14);  --open-ink: #6EE79A;
+    --within:   #FBBF24;  --within-wash: rgba(251, 191, 36, 0.16);
+    --longer:   #7EA8FF;  --longer-wash: rgba(126, 168, 255, 0.15);
+    --other:    #B79CFF;  --other-wash: rgba(183, 156, 255, 0.15);
+
+    --line-open:   #34D27A;
+    --line-within: #FBBF24;
+    --line-longer: #6B9CFF;
+    --line-other:  #B08CFF;
+    --line-accent: #FFC21A;
+    --line-faint:  #2C3B66;
+
+    --compass:  #9DB7FF;  --compass-wash: rgba(157, 183, 255, 0.12);
+
+    --accent:      #FFC21A;
+    --accent-ink:  #0B1430;
+    --accent-dk:   #FFD25A;
+    --accent-dkr:  #FFE08A;
+    --accent-wash: rgba(255, 194, 26, 0.16);
+    --flag:        #FFD25A;  --flag-wash: rgba(255, 194, 26, 0.14);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow:    0 8px 24px rgba(0, 3, 15, 0.45);
+    --shadow-lg: 0 18px 48px rgba(0, 3, 15, 0.6);
+  }
+}
+:root[data-theme="dark"] {
+  --ink:        #EEF2FB;
+  --ink-soft:   #CBD4EA;
+  --ink-mute:   #A3AFCC;
+  --ink-faint:  #98A5C4;
+  --paper:      #070D1F;
+  --paper-warm: #0C1530;
+  --paper-base:      #070D1F;
+  --paper-warm-base: #0C1530;
+  --surface:      #101A36;
+  --surface-base: #101A36;
+  --rule:       #26355F;
+  --rule-soft:  #1A2648;
+
+  --night:      #0B1A3F;
+  --night-2:    #142A63;
+  --night-ink:  #EEF2FB;
+  --night-mute: #A9B6D6;
+  --night-rule: #24376B;
+  --sel-bg:     #FFC21A;
+  --sel-ink:    #0B1430;
+  --on-lv:      #0B1430;
+
+  --g1:       #3CC2B3;  --g1-wash:  rgba(60, 194, 179, 0.14);
+  --g2:       #7EA2FF;  --g2-wash:  rgba(126, 162, 255, 0.14);
+  --g3:       #C98AF0;  --g3-wash:  rgba(201, 138, 240, 0.14);
+
+  --open:     #4ADE80;  --open-wash: rgba(74, 222, 128, 0.14);  --open-ink: #6EE79A;
+  --within:   #FBBF24;  --within-wash: rgba(251, 191, 36, 0.16);
+  --longer:   #7EA8FF;  --longer-wash: rgba(126, 168, 255, 0.15);
+  --other:    #B79CFF;  --other-wash: rgba(183, 156, 255, 0.15);
+
+  --line-open:   #34D27A;
+  --line-within: #FBBF24;
+  --line-longer: #6B9CFF;
+  --line-other:  #B08CFF;
+  --line-accent: #FFC21A;
+  --line-faint:  #2C3B66;
+
+  --compass:  #9DB7FF;  --compass-wash: rgba(157, 183, 255, 0.12);
+
+  --accent:      #FFC21A;
+  --accent-ink:  #0B1430;
+  --accent-dk:   #FFD25A;
+  --accent-dkr:  #FFE08A;
+  --accent-wash: rgba(255, 194, 26, 0.16);
+  --flag:        #FFD25A;  --flag-wash: rgba(255, 194, 26, 0.14);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow:    0 8px 24px rgba(0, 3, 15, 0.45);
+  --shadow-lg: 0 18px 48px rgba(0, 3, 15, 0.6);
+}
+
+/* ---- board mode: theatre, not enlargement --------------------------------
+   The projector is the one screen thirty students see at once. Scaling the
+   root scales every rem in the app; main.js also forces the dark theme so a
+   lit projector in a lit classroom keeps its contrast. */
+:root[data-board] { font-size: 22px; }
+@media (min-width: 1400px) { :root[data-board] { font-size: 26px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; --dur-fast: 0ms; --dur-draw: 0ms; }
+}
+
+} /* @layer tokens */

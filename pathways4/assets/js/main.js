@@ -21,9 +21,10 @@
 import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.0.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
-  reconcile, setSound, MODES, setEffective, setRole, setFamilies,
+  reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
 } from './state.js?v=4.0.0';
 import { effective } from './engine/years.js?v=4.0.0';
+import { runStrip } from './ui/yearstrip.js?v=4.0.0';
 import { esc, onAction } from './ui/dom.js?v=4.0.0';
 import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.0.0';
 import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.0.0';
@@ -228,6 +229,7 @@ async function paint({ scrollTo = null, fromPop = false } = {}) {
   document.title = `${title} · Paths`;
   app.innerHTML = '';
   def.render(app, api(def));
+  runStrip(app);
   bindGlossary(app);
   renderChrome();
 
@@ -317,14 +319,14 @@ function renderChrome() {
   head.hidden = false;
   head.innerHTML = `<div class="wrap headrow">
     <button type="button" class="brand press" data-action="go" data-s="home" aria-label="Paths. Home.">
-      <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path d="M6 24 C12 24 10 8 16 8 M16 8 C22 8 20 24 26 24" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="6" cy="24" r="2.6" fill="var(--line-open)"/><circle cx="26" cy="24" r="2.6" fill="var(--line-longer)"/></svg>
+      <svg class="brand-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><path d="M7 23 C12 23 11 9 16 9 C21 9 20 23 25 23" fill="none" stroke="var(--night)" stroke-width="3" stroke-linecap="round"/><circle cx="7" cy="23" r="2.4" fill="var(--night)"/><circle cx="25" cy="23" r="2.4" fill="var(--night)"/></svg>
       <span>Paths</span>
     </button>
     <nav class="topnav" aria-label="Main">
       ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.label)}</button>`).join('')}
     </nav>
     <span class="headspace"></span>
-    <button type="button" class="chip press" data-action="role" aria-label="Viewing as ${esc(ROLE_LABEL[st.role])}. Change.">${icon('q_who')}<span>${esc(ROLE_LABEL[st.role])}</span></button>
+    <button type="button" class="rolechip press" data-action="role" aria-label="Viewing as ${esc(ROLE_LABEL[st.role])}. Change.">${icon(st.role)}<span>${esc(ROLE_LABEL[st.role])}</span></button>
     <button type="button" class="iconbtn press" data-action="settings" aria-label="Settings">${icon('settings')}</button>
   </div>
   ${isGuest() ? `<p class="guestline">${esc(copy('chrome.guest', 'Guest: nothing is saved on this phone.'))}</p>` : ''}`;
@@ -397,6 +399,19 @@ onAction(document.body, {
     nav(btn.dataset.s, q);
   },
   role: (btn) => roleSheet(btn),
+  // Tickets live on several screens; their two actions live here.
+  'tk-copy': async (btn) => {
+    try { await navigator.clipboard.writeText(btn.dataset.text); btn.innerHTML = `${icon('check')} Copied`; } catch { btn.textContent = 'Select the line above to copy'; }
+  },
+  'tk-keep': (btn) => {
+    toggleAction(btn.dataset.text);
+    const on = getState().actions.includes(btn.dataset.text);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.innerHTML = on ? `${icon('check')} Kept` : `${icon('ticket')} Keep`;
+    const t = btn.closest('.ticket');
+    if (t) t.classList.toggle('kept', on);
+    announce(on ? 'Kept on My plan.' : 'Taken off My plan.');
+  },
   'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
   settings: (btn) => settingsSheet(btn),
   'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },

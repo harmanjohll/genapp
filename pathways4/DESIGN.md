@@ -37,3 +37,27 @@ no ranking of destinations, no red, nothing leaves the device).
 - Grades: known plans give known L1R4, ELR2B2 and ELMAB3.
 - PSLE: every uniform AL maps to a Posting Group or a sentence.
 - Dashes: no dashes in v4 data a reader sees.
+
+## Visual language: the night line (second pass, 2026-10-27)
+
+The first v4 build kept v3's look (warm paper, terracotta, a serif, a
+labelled card for everything) and read as generic. The second pass makes the
+app's own metaphor literal: school is a transit line.
+
+| Element | What it is | Why |
+| --- | --- | --- |
+| Palette | Night navy (`--night`) and signal yellow (`--accent`), cool paper, semantic transit hues unchanged | Beatty's own colours; yellow is the platform edge. No cream, no clay, no red |
+| Type | Bricolage Grotesque (display and text) and JetBrains Mono (codes, grades, counts), both OFL, bundled | A sans with character for teenagers; mono makes every number read like a timetable |
+| Icons | Phosphor bold, MIT, inlined | One maintained family instead of hand drawn glyphs |
+| Year line | Sticky navy band, yellow track, station roundels P6 to After, phase labels, a YOU tag, a train that glides to the page you open | Wayfinding is the one motion that always plays |
+| Station sign | Big mono code (S3) on a navy block with a yellow platform edge | Where you are, at a glance |
+| Level switch | Three way pill with a sliding thumb in the level hue | One control per subject, feedback in the control itself |
+| Departures board | Eight rows, data order, board words (Open, Nearly, Longer, Other road); rows flip when a tap changes them | The answer to every tap, in a form students read daily |
+| Dock | The board folded into a bar on phones: count, next best move, eight lamps | The answer stays in view while the finger is on the list |
+| Tickets | Advice as a ticket: stub with the move (G2 to G3), body that leads with what opens, the words to say, Keep punches it | Result first, then condition, then conversation |
+| Score track | Aggregate drawn as a line, cut offs as stations, now as a hollow marker, target as the train | A gap you can see, with the grade steps named under it |
+| Pass | My plan as a navy pass with the year line and each year's levels | The page that goes to the next conversation, and prints |
+
+Shape system: controls are pills; cards, boards and tickets 18px; tiles 24px;
+keys 12px. Motion: train glide, thumb slide, row flip, dock bump, ticket
+punch, arrival stagger; all off under `prefers-reduced-motion`.

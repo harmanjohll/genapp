@@ -1,35 +1,34 @@
-// A year page: P6, Sec 1, Sec 2, Sec 3, Sec 4 or Sec 5.
+// A year page: P6, Sec 1, Sec 2, Sec 3, Sec 4 or Sec 5. (v4 visual pass)
 //
-// THE PROBLEM THIS SCREEN SOLVES. v3's Plan was 3.8 phone screens of one
-// list: subjects, then the lever, then the map, then the next step. A tap
-// and its answer were never on screen together. v4 splits the page into
-// tabs that each fit a screen (Levels, Advice, Targets, This year) and
-// keeps the answer in view while the student taps: a dock on phones, a
-// side panel on wide screens. Long subject lists (Sec 3 onwards) are cut
-// into group chips, so one group is on the glass at a time.
+// Read it like a platform. The station sign says where you are; the levels
+// are switches you slide; the departures board answers every slide in view
+// (a dock on phones, a panel on wide screens) and flips the rows that
+// changed; advice arrives as tickets you can keep. Tabs keep each part to
+// one screen: Levels, Advice, Targets (Sec 3 on), This year.
 //
-// THE HOT PATH. A level tap patches the row, the dock, the aside and the
+// THE HOT PATH. A level tap patches the tile, the board, the dock and the
 // advice badge in place. It never repaints the list under the finger.
 
 import {
-  getState, setYearLevel, replaceYearPlan, setYear, YEARS, toggleAction,
+  getState, setYearLevel, replaceYearPlan, setYear, YEARS,
 } from '../state.js?v=4.0.0';
 import { reach } from '../engine/reach.js?v=4.0.0';
 import { pulse } from '../engine/pulse.js?v=4.0.0';
-import { evalPlan, subjectsForYear, carryForward, isLower, prevYear } from '../engine/years.js?v=4.0.0';
+import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.0.0';
 import { advise } from '../engine/advice.js?v=4.0.0';
-import { railMap, mapPips, openCount } from '../ui/map.js?v=4.0.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.0.0';
+import { openCount } from '../ui/map.js?v=4.0.0';
 import { destSheetHtml } from '../ui/destsheet.js?v=4.0.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.0.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.0.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.0.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.0.0';
 import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.0.0';
 import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.0.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
-const LINE = { 'open': 'var(--line-open)', 'within-reach': 'var(--line-within)', 'longer-route': 'var(--line-longer)', 'other-route': 'var(--line-other)' };
+const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
 let lastLine = '';
 let lastYear = null;
 
@@ -49,8 +48,7 @@ function tabsFor(y) {
 }
 
 function meta(api, y) {
-  const years = (api.data.years && api.data.years.years) || {};
-  return years[y] || {};
+  return ((api.data.years && api.data.years.years) || {})[y] || {};
 }
 
 function reachFor(api, y, plan) {
@@ -77,7 +75,7 @@ export default {
     const here = st.yearSet && st.year === y;
     const idx = YEARS.findIndex((x) => x.id === y);
     const nowIdx = YEARS.findIndex((x) => x.id === st.year);
-    const stance = !st.yearSet ? '' : (here ? 'The year you are in' : (idx > nowIdx ? 'Looking ahead' : 'Looking back'));
+    const stance = !st.yearSet ? '' : (here ? 'You are here' : (idx > nowIdx ? 'Looking ahead' : 'Looking back'));
 
     const plan = (st.plans && st.plans[y]) || {};
     const showResult = y !== 'p6';
@@ -88,24 +86,27 @@ export default {
     root.innerHTML = `
     ${yearStrip(y, st)}
     <div class="wrap yearwrap">
-      <header class="yhead">
-        <p class="kicker">${esc(m.phase || '')}${m.phase ? ' · ' : ''}Age ${age}${stance ? ` · <span class="stance" data-here="${here}">${esc(stance)}</span>` : ''}</p>
-        <h1>${esc(LABEL[y])}: ${esc(m.headline || '')}</h1>
-        ${m.lede ? `<p class="lede">${esc(m.lede)}</p>` : ''}
-        ${!st.yearSet ? `<p class="small"><button type="button" class="linkbtn" data-action="yr-mine">This is my year</button></p>` : ''}
+      <header class="sign arrive">
+        <div class="sign-code" aria-hidden="true">${esc(CODE[y])}</div>
+        <div class="sign-body">
+          <p class="sign-meta">${esc(m.phase || '')} <span>Age ${age}</span>${stance ? ` <b data-here="${here}">${esc(stance)}</b>` : ''}</p>
+          <h1><span class="sr-only">${esc(LABEL[y])}: </span>${esc(m.headline || LABEL[y])}</h1>
+          ${m.lede ? `<p class="sign-lede">${esc(m.lede)}</p>` : ''}
+          ${!st.yearSet ? `<button type="button" class="btn ghost small press" data-action="yr-mine">This is my year</button>` : ''}
+        </div>
       </header>
 
       <div class="segtabs" role="tablist" aria-label="${esc(LABEL[y])}">
         ${tabs.map(([id, label]) => `
           <button type="button" role="tab" class="segtab press" id="tab-${id}" data-action="yr-tab" data-tab="${id}"
-            aria-selected="${tab === id}" aria-controls="panel">${esc(label)}${id === 'advice' && advCount ? `<i class="segbadge" id="advbadge">${advCount}</i>` : ''}</button>`).join('')}
+            aria-selected="${tab === id}" aria-controls="panel">${esc(label)}${id === 'advice' && advCount ? `<i class="segbadge">${advCount}</i>` : ''}</button>`).join('')}
       </div>
 
       <div class="ylayout${showResult ? ' has-aside' : ''}">
         <section class="ymain" id="panel" role="tabpanel" aria-labelledby="tab-${tab}">
           ${panel(tab, api, y, plan, rows, adv)}
         </section>
-        ${showResult ? `<aside class="yaside" aria-label="What this opens" id="yaside">${asideHtml(api, y, rows, adv)}</aside>` : ''}
+        ${showResult ? `<aside class="yaside" aria-label="What these levels open" id="yaside">${asideHtml(api, y, rows, adv)}</aside>` : ''}
       </div>
     </div>
     ${showResult && tab === 'levels' ? `<div class="dock" id="dock" role="status">${dockHtml(rows, adv)}</div>` : ''}`;
@@ -138,6 +139,10 @@ function groupsFor(api, y) {
   return { subjects, groups };
 }
 
+function shortGroup(g) {
+  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common' }[g.id] || g.label;
+}
+
 function levelsHtml(api, y, plan) {
   const st = getState();
   const { subjects, groups } = groupsFor(api, y);
@@ -151,26 +156,32 @@ function levelsHtml(api, y, plan) {
   const li = api.data.subjects.levelInfo || {};
   const count = Object.keys(plan).length;
   const g3 = Object.values(plan).filter((l) => l === 'G3').length;
+  const flat = groups.flatMap((g) => g.flat);
 
   return `
     ${carry ? `
-      <div class="callout arrive">
-        <p><strong>Start from your ${esc(LABEL[carry.from])} levels?</strong> ${esc(isLower(carry.from) && !isLower(y)
-          ? 'Your Science becomes one science option and your strongest Humanities becomes the Humanities pair. Change anything after.'
-          : 'Everything carries across as it was. Change anything after.')}</p>
-        <button type="button" class="btn press" data-action="yr-carry">Carry ${esc(LABEL[carry.from])} forward</button>
+      <div class="carry arrive">
+        <span class="carry-ic">${icon('train')}</span>
+        <div>
+          <p class="carry-h">Carry your ${esc(LABEL[carry.from])} levels forward?</p>
+          <p class="small">${esc(isLower(carry.from) && !isLower(y)
+            ? 'Science becomes one science option, and your strongest Humanities becomes the pair. Change anything after.'
+            : 'Everything comes across as it was. Change anything after.')}</p>
+        </div>
+        <button type="button" class="btn press" data-action="yr-carry">Carry forward</button>
       </div>` : ''}
     ${fromPsle ? `
-      <div class="callout arrive">
-        <p><strong>Use your PSLE starting levels?</strong> The P6 page worked them out from your PSLE results.</p>
+      <div class="carry arrive">
+        <span class="carry-ic">${icon('spark')}</span>
+        <div><p class="carry-h">Use your PSLE starting levels?</p><p class="small">Worked out on the P6 page.</p></div>
         <button type="button" class="btn press" data-action="yr-psle">Use them</button>
       </div>` : ''}
 
-    <p class="legend small">
-      ${['G1', 'G2', 'G3'].map((l) => `<span class="legend-i"><b class="lvdot" data-level="${l}"></b>${l} ${esc((li[l] && li[l].plain) || '')}</span>`).join('')}
-    </p>
+    <div class="lvkey">
+      ${['G1', 'G2', 'G3'].map((l) => `<span class="lvkey-i" style="--lvc:var(--${l.toLowerCase()})"><b>${l}</b>${esc((li[l] && li[l].plain) || '')}</span>`).join('')}
+    </div>
 
-    ${!isLower(y) ? `<p class="loadline-v4"><strong>${count} subject${count === 1 ? '' : 's'}</strong>${count ? `, ${g3} at G3` : ''}. <span class="small">${esc(loadNote(api, count, g3))}</span></p>` : ''}
+    ${!isLower(y) ? `<p class="loadmeter"><span class="lm-n">${count}</span> subjects <span class="lm-g3">${g3} at G3</span><span class="lm-note">${esc(loadNote(api, count, g3))}</span></p>` : ''}
 
     ${chunked ? `
       <div class="groupchips" role="tablist" aria-label="Subject groups">
@@ -181,27 +192,22 @@ function levelsHtml(api, y, plan) {
         }).join('')}
       </div>` : ''}
 
-    <div class="subjlist">
-      ${(chunked ? [active] : groups).filter(Boolean).map((g) => `
-        <div class="subjgroup">
-          ${chunked ? '' : `<h2 class="caps">${esc(g.label)}</h2>`}
-          ${g.note ? `<p class="small groupnote">${esc(g.note)}</p>` : ''}
-          <div class="subjrows">${g.rows.map((s) => subjRow(s, plan)).join('')}</div>
-          ${g.flat.length ? `<p class="small" style="margin-top:8px">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${g.flat.map((s) => esc(s.name)).join(' · ')}.</p>` : ''}
-        </div>`).join('')}
-    </div>
+    ${(chunked ? [active] : groups.filter((g) => g.rows.length)).filter(Boolean).map((g) => `
+      <section class="subjgroup">
+        ${chunked ? '' : `<h2 class="grouph">${esc(g.label)}</h2>`}
+        ${g.note ? `<p class="small groupnote">${esc(g.note)}</p>` : ''}
+        <div class="subjgrid">${g.rows.map((s) => subjTile(s, plan)).join('')}</div>
+      </section>`).join('')}
 
-    ${chunked ? nextGroupBtn(groups, active) : ''}
+    ${flat.length && !chunked ? `<p class="small flatline">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${flat.map((s) => esc(s.name)).join(', ')}.</p>` : ''}
+
+    ${chunked ? nextGroupBtn(groups, active) : `<p class="nextgroup"><button type="button" class="btn press" data-action="yr-tab" data-tab="advice">See the advice ${icon('arrow')}</button></p>`}
 
     <div class="notes">
-      ${j.up ? `<p class="small">${icon('calendar')} ${esc(j.up)}</p>` : ''}
-      ${j.note ? `<p class="small">${esc(j.note)}</p>` : ''}
-      <p class="small">${esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
+      ${j.up ? `<p>${icon('calendar')} ${esc(j.up)}</p>` : ''}
+      ${j.note ? `<p>${esc(j.note)}</p>` : ''}
+      <p>${esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
     </div>`;
-}
-
-function shortGroup(g) {
-  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common' }[g.id] || g.label;
 }
 
 function nextGroupBtn(groups, active) {
@@ -215,111 +221,97 @@ function nextGroupBtn(groups, active) {
 
 function loadNote(api, n, g3) {
   const l = (api.data.copy && api.data.copy.load) || {};
-  if (n === 0) return 'Pick the subjects you take, or plan to.';
+  if (n === 0) return 'Slide in the subjects you take, or plan to.';
   if (n < 5) return l.early || '';
   if (n >= 9) return l.heavy || '';
   if (g3 >= 5) return l.solid || '';
   return l.spread || '';
 }
 
-function subjRow(s, plan) {
-  const held = plan[s.id] || null;
+const LVI = { G1: 0, G2: 1, G3: 2 };
+
+/** A subject tile with a three way level switch. The thumb slides. */
+export function subjTile(s, plan, action = 'yr-lvl') {
+  const held = plan[s.id] || '';
   return `
-  <div class="subjrow" data-sid="${esc(s.id)}" data-held="${held || ''}">
-    <span class="subjname">${esc(s.name)}
-      ${s.compulsory ? '<span class="subjnote">everyone takes this</span>' : ''}
-      ${s.status === 'provisional' && !s.compulsory ? '<span class="subjnote">selected schools</span>' : ''}
+  <div class="subj" data-sid="${esc(s.id)}" data-held="${held}">
+    <span class="subj-name">${esc(s.name)}
+      ${s.compulsory ? '<small>Everyone takes this</small>' : ''}
+      ${s.status === 'provisional' && !s.compulsory ? '<small>Selected schools</small>' : ''}
     </span>
-    <span class="lvlrow" role="group" aria-label="${esc(s.name)} level">
+    <span class="lvsw" role="group" aria-label="${esc(s.name)} level" data-level="${held}" style="--i:${held ? LVI[held] : 0}">
+      <i class="lvsw-thumb" aria-hidden="true"></i>
       ${['G1', 'G2', 'G3'].map((l) => (s.levels || []).includes(l)
-        ? `<button type="button" class="lvl press settle" data-action="yr-lvl" data-sid="${esc(s.id)}" data-level="${l}"
+        ? `<button type="button" class="lvsw-b" data-action="${action}" data-sid="${esc(s.id)}" data-level="${l}"
             aria-pressed="${held === l}" aria-label="${esc(s.name)} at ${l}${held === l ? ', picked. Tap to clear.' : ''}">${l}</button>`
-        : '<span class="lvl-none" aria-hidden="true"></span>').join('')}
+        : '<span class="lvsw-b off" aria-hidden="true"></span>').join('')}
     </span>
   </div>`;
+}
+
+/** Patch a tile in place after a tap. */
+export function patchTile(root, sid, level, name) {
+  const tile = root.querySelector(`.subj[data-sid="${CSS.escape(sid)}"]`);
+  if (!tile) return;
+  tile.dataset.held = level || '';
+  const sw = tile.querySelector('.lvsw');
+  if (sw) {
+    sw.dataset.level = level || '';
+    if (level) sw.style.setProperty('--i', LVI[level]);
+  }
+  tile.querySelectorAll('.lvsw-b[data-level]').forEach((b) => {
+    const on = level === b.dataset.level;
+    b.setAttribute('aria-pressed', String(on));
+    b.setAttribute('aria-label', `${name} at ${b.dataset.level}${on ? ', picked. Tap to clear.' : ''}`);
+  });
 }
 
 /* ---- advice ----------------------------------------------------------------- */
 
 function adviceHtml(api, y, rows, adv) {
   const st = getState();
-  const rw = roleWords(st.role);
   const open = openCount(rows);
   const top = adv.singles[0];
   const rest = adv.singles.slice(1);
-  const lowerNote = isLower(y)
-    ? `<p class="small">Read through the Sec 3 combination these levels usually lead to. That is an inference, not a promise: your school sets the real one.</p>`
-    : '';
 
   if (adv.start && !Object.keys((st.plans || {})[y] || {}).length) {
     return `
-      <div class="empty">
-        <p class="lede">${esc(adv.start.line)}</p>
+      <div class="emptystate">
+        <span class="es-ic">${icon('train')}</span>
+        <p class="es-h">No levels on this page yet.</p>
+        <p class="small">${esc(adv.start.line)}</p>
         <button type="button" class="btn press" data-action="yr-tab" data-tab="levels">Set levels</button>
       </div>`;
   }
 
   return `
-    <div class="advsum">
-      <span class="bignum">${open}</span>
-      <span><strong>of ${rows.length} open from these ${esc(LABEL[y])} levels.</strong> <span class="small">Every one of the eight keeps a road in, whatever happens.</span></span>
-    </div>
-    ${lowerNote}
+    <div class="mobile-board">${boardHtml(rows, { key: `adv-${y}`, title: `From these ${LABEL[y]} levels` })}</div>
+    ${isLower(y) ? '<p class="small inferline">Read through the Sec 3 combination these levels usually lead to. An inference, not a promise: your school sets the real one.</p>' : ''}
     ${adv.start && adv.start.missing ? `<p class="callout small">${esc(adv.start.line)} <button type="button" class="linkbtn" data-action="yr-tab" data-tab="levels">Add them</button></p>` : ''}
 
     ${top ? `
-      <h2 class="advh">${icon('spark')} The move that opens most</h2>
-      ${moveCard(top, st.role, rw, true)}` : (open === rows.length ? `
-      <div class="callout good"><p><strong>All eight are open from here.</strong> The question now is not which door, but which two years you actually want. Play a life forward to test one.</p>
-      <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>` : '')}
+      <h2 class="advh">Your best move</h2>
+      ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
+      <div class="allopen">
+        <p class="allopen-n">8/8</p>
+        <div><p class="allopen-h">Every destination is open from here.</p>
+        <p class="small">The question now is not which door but which two years you want. Play one forward to test it.</p>
+        <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>
+      </div>` : '')}
 
     ${rest.length ? `
-      <h2 class="advh">Other single moves</h2>
-      <div class="advlist">${rest.map((m) => moveCard(m, st.role, rw, false)).join('')}</div>` : ''}
+      <h2 class="advh">More moves</h2>
+      <div class="ticketlist">${rest.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.pairs.length ? `
       <h2 class="advh">Two moves together</h2>
-      <p class="small">Some doors need two things at once. These open something no single move does.</p>
-      <div class="advlist">${adv.pairs.map((m) => moveCard(m, st.role, rw, false)).join('')}</div>` : ''}
+      <p class="small advsub">These open something no single move does.</p>
+      <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.holds.length ? `
-      <h2 class="advh">${icon('hold')} What is holding your doors open</h2>
-      <p class="small">Worth knowing before anyone suggests easing a subject down. Easing down is sometimes right; it should be a decision, not a surprise.</p>
-      <div class="advlist">${adv.holds.map((m) => holdCard(m, st.role)).join('')}</div>` : ''}
-
-    <h2 class="advh">Where these levels reach</h2>
-    <p class="small">Tap a station for what it asks, what it costs, and the other roads in.</p>
-    <div id="yr-rail">${railMap(rows, { tappable: true })}</div>`;
-}
-
-function moveCard(m, role, rw, hero) {
-  const say = sayMove(m, role);
-  const listed = getState().actions.includes(say);
-  const chips = m.kind === 'pair' ? m.moves.map((x) => `${x.name} → ${x.to}`) : (m.any ? m.names.map((n) => `${n} → ${m.to}`) : []);
-  return `
-  <article class="advcard${hero ? ' hero' : ''}">
-    <p class="advline">${esc(m.line)}</p>
-    ${chips.length ? `<p class="advchips">${chips.map((c) => `<span class="pill" data-tone="quiet">${esc(c)}</span>`).join('')}</p>` : ''}
-    ${m.because && m.because.length ? `<p class="small advwhy">Because ${m.because.map((b) => esc(b)).join('; ')}.</p>` : ''}
-    ${m.still && m.still.length ? `<p class="small advwhy">After that: ${m.still.slice(0, 3).map((s) => `${esc(s.dest)} next asks ${esc(s.next.toLowerCase())}`).join('; ')}.</p>` : ''}
-    ${m.when ? `<p class="small advwhen">${icon('calendar')} When: ${esc(m.when)}. With: ${esc(m.who)}.</p>` : ''}
-    <div class="saybox">
-      <p class="caps">${icon('talk')} ${esc(rw.say)}</p>
-      <p class="sayline">${esc(say)}</p>
-      <p class="btnrow">
-        <button type="button" class="btn ghost small press" data-action="yr-copy" data-text="${esc(say)}">${icon('copy')} Copy</button>
-        <button type="button" class="btn ghost small press" data-action="yr-list" data-text="${esc(say)}" aria-pressed="${listed}">${listed ? `${icon('check')} On my list` : `${icon('plus')} Add to my list`}</button>
-      </p>
-    </div>
-  </article>`;
-}
-
-function holdCard(h, role) {
-  return `
-  <article class="advcard hold">
-    <p class="advline">${esc(h.line)}</p>
-    <p class="sayline small">${esc(sayMove(h, role))}</p>
-  </article>`;
+      <h2 class="advh">Holding your doors open</h2>
+      <p class="small advsub">Worth knowing before anyone suggests easing a subject down. Sometimes that is right; it should be a decision, not a surprise.</p>
+      <div class="holdlist">${adv.holds.map((h) => holdHtml(h)).join('')}</div>` : ''}`;
 }
 
 /* ---- this year ------------------------------------------------------------- */
@@ -330,18 +322,18 @@ function yearHtml(api, y) {
   const talk = (m.talk && m.talk[st.role]) || [];
   return `
     ${(m.happens || []).length ? `
-      <h2 class="advh">${icon('calendar')} What happens this year</h2>
+      <h2 class="advh">What happens this year</h2>
       <ol class="timeline">
         ${m.happens.map((h) => `<li><span class="tl-when">${esc(h.when || '')}</span><span class="tl-what">${esc(h.what)}${h.status === 'provisional' ? ' <span class="src-chip provisional">varies by school</span>' : ''}</span></li>`).join('')}
       </ol>` : ''}
     ${(m.decisions || []).length ? `
       <h2 class="advh">Decisions in ${esc(LABEL[y])}</h2>
-      <ul class="declist">${m.decisions.map((d) => `<li>${esc(d.text || d)}</li>`).join('')}</ul>` : ''}
+      <div class="decgrid">${m.decisions.map((d, i) => `<div class="dec"><span class="dec-n">${i + 1}</span><p>${esc(d.text || d)}</p></div>`).join('')}</div>` : ''}
     ${talk.length ? `
-      <h2 class="advh">${icon('talk')} ${st.role === 'parent' ? 'Questions to ask at home' : st.role === 'teacher' ? 'Questions for the conversation' : 'Questions worth asking'}</h2>
-      <ul class="talklist">${talk.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
-      <p class="small">Showing the ${esc(st.role)} version. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>` : ''}
-    ${m.source ? `<p class="small srcline">${esc(m.source)}</p>` : ''}`;
+      <h2 class="advh">${st.role === 'parent' ? 'Ask at home' : st.role === 'teacher' ? 'Ask in the conversation' : 'Worth asking'}</h2>
+      <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
+      <p class="small">The ${esc(st.role)} version. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>` : ''}
+    ${m.source ? `<p class="srcline">${esc(m.source)}</p>` : ''}`;
 }
 
 /* ---- the answer, kept in view ----------------------------------------------- */
@@ -349,44 +341,34 @@ function yearHtml(api, y) {
 function dockHtml(rows, adv) {
   const open = openCount(rows);
   const top = adv && adv.singles[0];
-  const k = lastLine || 'open now';
-  const line = top ? `Next: ${top.short}` : (open === rows.length ? 'All eight are open from here.' : 'Set a level and this answers.');
+  const k = lastLine || 'Open now';
+  const line = top ? top.short : (open === rows.length ? 'Every destination is open.' : 'Slide a level and this answers.');
   return `
     <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} open. ${esc(lastLine)} ${esc(line)} Open the advice.">
-      <span class="dock-num">${open}<small>/${rows.length}</small></span>
-      <span class="dock-words"><span class="dock-k">${esc(k)}</span><span class="dock-line">${esc(line)}</span></span>
-      ${mapPips(rows)}
+      <span class="dock-num"><b>${open}</b>/${rows.length}</span>
+      <span class="dock-words"><span class="dock-k">${esc(k)}</span><span class="dock-line">${top ? `${icon('ticket')} ` : ''}${esc(line)}</span></span>
+      ${lampsHtml(rows)}
     </button>`;
 }
 
 function asideHtml(api, y, rows, adv) {
-  const open = openCount(rows);
-  const top = adv.singles.slice(0, 2);
+  const top = adv.singles[0];
   return `
-    <div class="asidecard">
-      <p class="caps">From these ${esc(LABEL[y])} levels</p>
-      <p class="aside-num"><span class="bignum">${open}</span> of ${rows.length} open ${mapPips(rows)}</p>
-      ${lastLine ? `<p class="small aside-last">${esc(lastLine)}</p>` : ''}
-      <ul class="minilist">${rows.map((r) => `<li><button type="button" class="press" data-action="dest" data-id="${esc(r.id)}">
-        <svg class="stn" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6" fill="var(--surface)" stroke="${LINE[r.state]}" stroke-width="3"/></svg>
-        <span class="ml-name">${esc(r.railName)}</span><span class="ml-status" data-tone="${esc(r.status.tone)}">${esc(r.status.text)}</span></button></li>`).join('')}</ul>
-      ${top.length ? `
-        <p class="caps" style="margin-top:16px">Best next moves</p>
-        ${top.map((m) => `<p class="aside-move">${esc(m.line)}</p>`).join('')}
-        <button type="button" class="btn ghost small press" data-action="yr-tab" data-tab="advice">All advice</button>` : ''}
-    </div>`;
+    ${boardHtml(rows, { key: `aside-${y}`, title: `From these ${LABEL[y]} levels` })}
+    ${lastLine ? `<p class="aside-last">${esc(lastLine)}</p>` : ''}
+    ${top ? `<div class="aside-ticket">${ticketHtml(top, { compact: true })}
+      <button type="button" class="btn ghost small press" data-action="yr-tab" data-tab="advice">All advice ${icon('arrow')}</button></div>` : ''}`;
 }
 
 /* ---- bindings ----------------------------------------------------------------- */
 
 function bind(root, api, y) {
   onAction(root, {
-    'yr-tab': (btn) => { api.setQuery({ tab: btn.dataset.tab }); api.refresh(); window.scrollTo(0, 0); },
+    'yr-tab': (btn) => { api.setQuery({ tab: btn.dataset.tab }); api.refresh(); window.scrollTo({ top: 0 }); },
     'yr-group': (btn) => {
       api.setQuery({ g: btn.dataset.g });
       api.refresh();
-      const list = root.querySelector('.groupchips');
-      if (list) list.scrollIntoView({ block: 'nearest' });
+      root.querySelector('.groupchips')?.scrollIntoView({ block: 'nearest' });
     },
     'yr-mine': () => { setYear(y); api.refresh(); },
     'yr-carry': () => {
@@ -406,16 +388,7 @@ function bind(root, api, y) {
       const wasHeld = plan[sid] === level;
       const subj = api.ctx().subjects.find((s) => s.id === sid);
       setYearLevel(y, sid, wasHeld ? null : level, subj && subj.name);
-
-      const row = root.querySelector(`.subjrow[data-sid="${CSS.escape(sid)}"]`);
-      if (row) {
-        row.dataset.held = wasHeld ? '' : level;
-        row.querySelectorAll('.lvl').forEach((b) => {
-          const on = !wasHeld && b.dataset.level === level;
-          b.setAttribute('aria-pressed', String(on));
-          b.setAttribute('aria-label', `${subj.name} at ${b.dataset.level}${on ? ', picked. Tap to clear.' : ''}`);
-        });
-      }
+      patchTile(root, sid, wasHeld ? null : level, subj ? subj.name : sid);
 
       const now = getState().plans[y];
       const nextRows = reachFor(api, y, now);
@@ -427,7 +400,7 @@ function bind(root, api, y) {
       lastLine = p.line || '';
       const adv = advise({ yearId: y, plan: now, ctx: api.ctx(), offer: getState().offer });
       const dock = root.querySelector('#dock');
-      if (dock) dock.innerHTML = dockHtml(nextRows, adv);
+      if (dock) { dock.innerHTML = dockHtml(nextRows, adv); dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump'); }
       const aside = root.querySelector('#yaside');
       if (aside) aside.innerHTML = asideHtml(api, y, nextRows, adv);
       const n = adv.singles.length + adv.pairs.length;
@@ -437,11 +410,11 @@ function bind(root, api, y) {
         if (n && !badge) { badge = document.createElement('i'); badge.className = 'segbadge'; tab.appendChild(badge); }
         if (badge) { if (n) badge.textContent = String(n); else badge.remove(); }
       }
-      const load = root.querySelector('.loadline-v4');
+      const load = root.querySelector('.loadmeter');
       if (load) {
         const cnt = Object.keys(now).length;
         const g3 = Object.values(now).filter((l) => l === 'G3').length;
-        load.innerHTML = `<strong>${cnt} subject${cnt === 1 ? '' : 's'}</strong>${cnt ? `, ${g3} at G3` : ''}. <span class="small">${esc(loadNote(api, cnt, g3))}</span>`;
+        load.innerHTML = `<span class="lm-n">${cnt}</span> subjects <span class="lm-g3">${g3} at G3</span><span class="lm-note">${esc(loadNote(api, cnt, g3))}</span>`;
       }
       root.querySelectorAll('.gchip').forEach((g) => {
         const grp = (api.data.subjects.groups || []).find((x) => x.id === g.dataset.g);
@@ -456,20 +429,7 @@ function bind(root, api, y) {
     dest: (btn) => {
       const plan = getState().plans[y] || {};
       const row = reachFor(api, y, plan).find((r) => r.id === btn.dataset.id);
-      if (row) api.sheet(destSheetHtml(row, api.data) + `<p><button type="button" class="btn ghost small" data-action="go" data-s="dest" data-id="${esc(row.id)}">Open the full page</button></p>`, btn);
-    },
-
-    'yr-copy': async (btn) => {
-      try { await navigator.clipboard.writeText(btn.dataset.text); btn.innerHTML = `${icon('check')} Copied`; } catch { btn.textContent = 'Select and copy the line above'; }
-    },
-    'yr-list': (btn) => {
-      toggleAction(btn.dataset.text);
-      const on = getState().actions.includes(btn.dataset.text);
-      btn.setAttribute('aria-pressed', String(on));
-      btn.innerHTML = on ? `${icon('check')} On my list` : `${icon('plus')} Add to my list`;
-      api.announce(on ? 'Added to My plan.' : 'Taken off My plan.');
+      if (row) api.sheet(destSheetHtml(row, api.data) + `<p><button type="button" class="btn press" data-action="go" data-s="dest" data-id="${esc(row.id)}">Open the full page ${icon('arrow')}</button></p>`, btn);
     },
   });
 }
-
-export { prevYear };

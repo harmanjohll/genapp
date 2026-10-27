@@ -34,17 +34,17 @@ const NEST = 15;            // each pale road leaves a little lower than the las
 const LANE_LABEL = 176;     // straight run a lane needs to carry its own name
 
 const F = {
-  caps: '700 24px system-ui, sans-serif',
-  want: '600 52px Georgia, serif',
-  sub: '400 28px system-ui, sans-serif',
-  station: '600 31px Georgia, serif',
-  stationPlain: '400 30px system-ui, sans-serif',
-  year: '400 24px system-ui, sans-serif',
-  beat: '400 23px system-ui, sans-serif',
-  lane: '600 21px system-ui, sans-serif',
-  chip: '600 25px system-ui, sans-serif',
-  became: '600 40px Georgia, serif',
-  foot: '400 24px system-ui, sans-serif',
+  caps: '700 24px Bricolage Grotesque, system-ui, sans-serif',
+  want: '600 52px Bricolage Grotesque, system-ui, sans-serif',
+  sub: '400 28px Bricolage Grotesque, system-ui, sans-serif',
+  station: '600 31px Bricolage Grotesque, system-ui, sans-serif',
+  stationPlain: '400 30px Bricolage Grotesque, system-ui, sans-serif',
+  year: '400 24px Bricolage Grotesque, system-ui, sans-serif',
+  beat: '400 23px Bricolage Grotesque, system-ui, sans-serif',
+  lane: '600 21px Bricolage Grotesque, system-ui, sans-serif',
+  chip: '600 25px Bricolage Grotesque, system-ui, sans-serif',
+  became: '600 40px Bricolage Grotesque, system-ui, sans-serif',
+  foot: '400 24px Bricolage Grotesque, system-ui, sans-serif',
 };
 
 const css = (v, fallback) =>
@@ -314,7 +314,7 @@ export function drawStoryMap(run, data, opts = {}) {
   g.fillText(L.subLine, M, L.subY);
   if (L.endHead) {
     g.fillStyle = P.accentDk;
-    g.font = '600 30px Georgia, serif';
+    g.font = '600 30px Bricolage Grotesque, system-ui, sans-serif';
     g.fillText(L.endHead, M, L.endHeadY);
   }
 
@@ -457,7 +457,7 @@ export function drawStoryMap(run, data, opts = {}) {
       g.beginPath();
       g.arc(SPINE - 40, st.y, 6, 0, Math.PI * 2);
       g.fillStyle = P.open; g.fill();
-      g.font = '600 23px system-ui, sans-serif';
+      g.font = '600 23px Bricolage Grotesque, system-ui, sans-serif';
       st.opened.forEach((label) => {
         g.fillStyle = P.open;
         g.fillText(`${label}, open`, LABEL_X, ty);
@@ -469,11 +469,11 @@ export function drawStoryMap(run, data, opts = {}) {
   // the one caption the map needs: what the pale lines mean
   if (forkSt && L.refusedRoads.length) {
     g.fillStyle = P.inkMute;
-    g.font = '400 21px system-ui, sans-serif';
+    g.font = '400 21px Bricolage Grotesque, system-ui, sans-serif';
     const cap = rejoinSt
       ? `The pale roads are the ones I did not take. They meet mine again at ${(rejoinSt.step.title || '').toLowerCase()}.`
       : 'The pale roads are the ones I did not take. This run stopped before they came back.';
-    wrapLines(g, cap, '400 21px system-ui, sans-serif', W - M * 2, 2)
+    wrapLines(g, cap, '400 21px Bricolage Grotesque, system-ui, sans-serif', W - M * 2, 2)
       .forEach((line, k) => g.fillText(line, M, L.mapBottom + 22 + k * 28));
   }
 

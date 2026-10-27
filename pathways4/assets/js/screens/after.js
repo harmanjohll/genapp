@@ -18,11 +18,14 @@ import { report } from '../engine/grades.js?v=4.0.0';
 import { openCount } from '../ui/map.js?v=4.0.0';
 import { yearStrip } from '../ui/yearstrip.js?v=4.0.0';
 import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
+import { BOARD_WORD } from '../ui/board.js?v=4.0.0';
 import { decorate } from '../ui/glossary.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
+export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
 const LINE = { 'open': 'var(--line-open)', 'within-reach': 'var(--line-within)', 'longer-route': 'var(--line-longer)', 'other-route': 'var(--line-other)' };
 
@@ -59,22 +62,29 @@ export const after = {
     root.innerHTML = `
     ${yearStrip('after', st)}
     <div class="wrap yearwrap">
-      <header class="yhead">
-        <p class="kicker">After Sec · Age 16 to 17</p>
-        <h1>Eight places to go next</h1>
-        <p class="lede">Every one keeps a road in, whatever your subjects. Your levels change how direct the road is, never whether one exists.</p>
-        <p class="small">${esc(basisLine(api))} ${open} of ${rows.length} open on that plan.</p>
+      <header class="sign arrive">
+        <div class="sign-code" aria-hidden="true">AS</div>
+        <div class="sign-body">
+          <p class="sign-meta">After Sec <span>Age 16 to 17</span></p>
+          <h1>Eight lines out of secondary school</h1>
+          <p class="sign-lede">Every one keeps a road in, whatever your subjects. Levels change how direct the road is, never whether one exists.</p>
+        </div>
       </header>
-      <div class="destgrid">
-        ${rows.map((r) => `
-          <button type="button" class="destcard press" data-action="go" data-s="dest" data-id="${esc(r.id)}">
-            <span class="destcard-top">${station(r.state)}<span class="pill" data-tone="${esc(r.state)}">${esc(STATE_WORD[r.state])}</span></span>
-            <span class="destcard-name">${esc(r.name)}</span>
-            <span class="small">${esc(r.duration || '')}${r.leadsTo ? ` · ${esc(r.leadsTo)}` : ''}</span>
-            <span class="destcard-status" data-tone="${esc(r.status.tone)}">${esc(r.status.text)}</span>
+      <p class="basis">${icon('train')} ${esc(basisLine(api))} <b>${open} of ${rows.length}</b> open on that plan.</p>
+      <div class="linegrid">
+        ${rows.map((r, i) => `
+          <button type="button" class="linecard press arrive" style="--lc:${LINE[r.state]};animation-delay:${Math.min(i, 7) * 40}ms" data-action="go" data-s="dest" data-id="${esc(r.id)}">
+            <span class="lc-band" aria-hidden="true"><span class="lc-code">${esc(DEST_CODE[r.id] || '')}</span></span>
+            <span class="lc-body">
+              <span class="lc-status" data-state="${esc(r.state)}">${esc(BOARD_WORD[r.state])}</span>
+              <span class="lc-name">${esc(r.name)}</span>
+              <span class="lc-feels">${esc(r.feels || '')}</span>
+              <span class="lc-meta">${esc(r.duration || '')}${r.leadsTo ? `<br>${esc(r.leadsTo)}` : ''}</span>
+              <span class="lc-next">${esc(r.status.text)}</span>
+            </span>
           </button>`).join('')}
       </div>
-      <p class="small srcline">Listed alphabetically by short name, so the order means nothing. Figures checked ${esc(niceDate((api.data.pathways._meta || {}).accessed))}.</p>
+      <p class="srcline">Listed alphabetically by short name, so the order means nothing. Figures checked ${esc(niceDate((api.data.pathways._meta || {}).accessed))}.</p>
     </div>`;
   },
 };
@@ -117,27 +127,23 @@ export const dest = {
     root.innerHTML = `
     ${yearStrip('after', st)}
     <div class="wrap-narrow yearwrap">
-      <p class="crumb"><button type="button" class="linkbtn" data-action="go" data-s="after">${icon('arrow', 'flip')} All eight</button></p>
-      <header class="yhead">
-        <p class="kicker">${esc(r.duration || '')}${r.leadsTo ? ` · ${esc(r.leadsTo)}` : ''}</p>
-        <h1>${esc(d.name)}</h1>
-        ${r.feels ? `<p class="lede">${esc(r.feels)}</p>` : ''}
-      </header>
-
-      <section class="destsec">
-        <div class="advsum">${station(r.state)}
-          <span><strong>${esc(STATE_WORD[r.state])}.</strong> <span class="small">${r.status.text !== STATE_WORD[r.state] ? `${esc(r.status.text)}. ` : ''}${esc(basisLine(api))}</span></span>
+      <p class="crumb"><button type="button" class="linkbtn" data-action="go" data-s="after">${icon('back')} All eight lines</button></p>
+      <header class="linesign arrive" style="--lc:${LINE[r.state]}">
+        <span class="ls-code" aria-hidden="true">${esc(DEST_CODE[id] || '')}</span>
+        <div class="ls-body">
+          <p class="ls-meta">${esc(r.duration || '')}${r.leadsTo ? ` · ${esc(r.leadsTo)}` : ''}</p>
+          <h1>${esc(d.name)}</h1>
+          ${r.feels ? `<p class="ls-feels">${esc(r.feels)}</p>` : ''}
         </div>
-        ${moves.length ? `
-          <h2 class="advh">${icon('spark')} ${r.state === 'open' ? 'Already open. These would also help' : 'The moves that bring it closer'}</h2>
-          <div class="advlist">${moves.map((m) => `
-            <article class="advcard">
-              <p class="advline">${esc(m.line)}</p>
-              ${m.when ? `<p class="small advwhen">${icon('calendar')} ${esc(m.when)} · ${esc(m.who)}</p>` : ''}
-              <p class="sayline small">${esc(sayMove(m, st.role))}</p>
-            </article>`).join('')}
-          </div>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on your year page and this shows the exact moves that bring ${esc(r.railName)} closer.</p>` : '')}
-      </section>
+        <span class="ls-status" data-state="${esc(r.state)}">${esc(BOARD_WORD[r.state])}</span>
+      </header>
+      <p class="basis">${icon('train')} ${r.status.text !== STATE_WORD[r.state] ? `${esc(r.status.text)}. ` : ''}${esc(basisLine(api))}</p>
+
+      ${moves.length ? `
+      <section class="destsec">
+        <h2 class="advh">${r.state === 'open' ? 'Already open. These would help too' : 'The moves that bring it closer'}</h2>
+        <div class="ticketlist">${moves.map((m, i) => ticketHtml(m, { hero: i === 0 && r.state !== 'open' })).join('')}</div>
+      </section>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on your year page and this shows the exact moves that bring ${esc(r.railName)} closer.</p>` : '')}
 
       <section class="destsec">
         <h2 class="advh">What it asks</h2>
