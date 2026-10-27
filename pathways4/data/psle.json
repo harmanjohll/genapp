@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "source": "MOE PSLE scoring and S1 posting pages; MOE Full SBB FAQ; MOE curriculum page on Higher Mother Tongue; MOE SchoolFinder (Beatty Secondary)",
+    "url": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups",
+    "accessed": "2026-10-27",
+    "units": "PSLE Achievement Levels (AL 1 best to AL 8), PSLE Score 4 to 32",
+    "notes": "Read from search engine extracts of the primary MOE pages on 2026-10-27; the pages themselves could not be opened end to end from the research session. Eyeball once against moe.gov.sg before a class uses this. Everything a student enters here is hypothetical and stays on the device."
+  },
+  "subjects": [
+    { "id": "el", "name": "English" },
+    { "id": "mtl", "name": "Mother Tongue" },
+    { "id": "maths", "name": "Mathematics" },
+    { "id": "science", "name": "Science" }
+  ],
+  "standardBands": [
+    { "al": 1, "marks": "90 and above" }, { "al": 2, "marks": "85 to 89" }, { "al": 3, "marks": "80 to 84" },
+    { "al": 4, "marks": "75 to 79" }, { "al": 5, "marks": "65 to 74" }, { "al": 6, "marks": "45 to 64" },
+    { "al": 7, "marks": "20 to 44" }, { "al": 8, "marks": "below 20" }
+  ],
+  "foundationBands": [
+    { "grade": "A", "al": 6, "marks": "75 to 100" }, { "grade": "B", "al": 7, "marks": "30 to 74" }, { "grade": "C", "al": 8, "marks": "below 30" }
+  ],
+  "postingGroups": [
+    { "min": 4, "max": 20, "groups": [3], "status": "confirmed" },
+    { "min": 21, "max": 22, "groups": [3, 2], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 23, "max": 24, "groups": [2], "status": "confirmed" },
+    { "min": 25, "max": 25, "groups": [2, 1], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 26, "max": 30, "groups": [1], "needs": "AL 7 or better in both English and Mathematics", "status": "confirmed" }
+  ],
+  "noGroup": "This score does not map to a Posting Group. That is a conversation with the primary school about the routes that exist, including specialised schools and repeating P6. It is not the end of a road.",
+  "upgrades": {
+    "status": "confirmed",
+    "groups": [1, 2],
+    "subjects": ["el", "mtl", "maths", "science"],
+    "rules": [
+      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: can start this subject at G3." },
+      { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: can start this subject at G2." }
+    ],
+    "note": "Schools offer these, and families decide. Starting higher is a choice, not an instruction."
+  },
+  "hmtl": {
+    "text": "Higher Mother Tongue in Sec 1 is open to AL 1 or 2 in Mother Tongue, or Distinction or Merit in Higher Mother Tongue, whatever the overall score (2026 Sec 1 intake onwards). Schools can offer it to others too.",
+    "status": "confirmed"
+  },
+  "school": {
+    "name": "Beatty Secondary",
+    "year": 2025,
+    "ranges": [
+      { "group": 3, "range": "12 to 18" },
+      { "group": 2, "range": "21 to 25" },
+      { "group": 1, "range": "25 to 28" }
+    ],
+    "note": "The score of the last student admitted in the 2025 posting, from MOE SchoolFinder. Ranges move every year and are not a promise either way.",
+    "url": "https://www.moe.gov.sg/schoolfinder/schooldetail/beatty-secondary-school",
+    "status": "confirmed"
+  }
+}

@@ -1,0 +1,221 @@
+{
+ "_meta": {
+  "source": "MOE fees and financial assistance pages, ITE and polytechnic fee schedules, autonomous university subsidised fee tables, CPF Education Scheme, SkillsFuture Credit, and the four self help groups",
+  "url": "https://www.moe.gov.sg/financial-matters/financial-assistance",
+  "accessed": "2026-08-09",
+  "units": "Singapore dollars, for a Singapore Citizen, before assistance",
+  "status": "provisional",
+  "notes": "EVERY FIGURE HERE IS PROVISIONAL AND NEEDS A HUMAN AGAINST THE NAMED PAGE. Fee schedules change annually and vary by course and by school, so bands are used rather than point figures wherever the real number varies: a precise wrong number is worse than an honest range. Costs are listed before help on purpose, because a page that opened with reassurance would read as a sales pitch. The four truths at the end are the actual guidance; the tables are the evidence for them."
+ },
+ "sources": {
+  "moe_fees": "MOE school fees pages for government, government aided, independent and specialised schools",
+  "ite_fees": "ITE course fees pages",
+  "poly_fees": "The five polytechnics' published fee schedules",
+  "arts_fees": "Published fee schedules of the arts institutions",
+  "uni_fees": "Autonomous university published subsidised fee tables",
+  "moe_fas": "MOE Financial Assistance Scheme criteria and coverage",
+  "moe_edusave": "MOE Edusave scheme pages",
+  "moe_psea": "MOE Post Secondary Education Account pages",
+  "moe_bursary": "MOE Higher Education Bursary and institution bursary pages",
+  "moe_loan": "Tuition Fee Loan terms published by the institutions",
+  "cpf_edu": "CPF Education Scheme pages",
+  "selfhelp": "CDAC, MENDAKI, SINDA and Eurasian Association assistance pages",
+  "school_fund": "School based student welfare funds, which each school administers",
+  "sf_credit": "SkillsFuture Credit scheme pages"
+ },
+ "costs": [
+  {
+   "id": "sec",
+   "label": "Secondary school, government or government aided",
+   "fee": "About 5 a month",
+   "misc": "Standard miscellaneous fees on top, usually under 25 a month",
+   "note": "For a Singapore Citizen. Permanent Residents and international students pay published higher rates.",
+   "status": "provisional",
+   "sourceRef": "moe_fees",
+   "covers": [
+    "sec5"
+   ]
+  },
+  {
+   "id": "indep",
+   "label": "Independent school",
+   "fee": "Several hundred a month",
+   "misc": "Varies by school, and published by each",
+   "note": "The Independent School Bursary exists precisely because this figure is large, and it reaches well into middle incomes.",
+   "status": "provisional",
+   "sourceRef": "moe_fees",
+   "covers": []
+  },
+  {
+   "id": "jc",
+   "label": "Junior college or Millennia Institute",
+   "fee": "About 6 a month",
+   "misc": "Miscellaneous fees usually under 30 a month",
+   "note": "Three years at Millennia Institute rather than two, so the total is one more year of the same small number.",
+   "status": "provisional",
+   "sourceRef": "moe_fees",
+   "covers": [
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ite",
+   "label": "ITE, Nitec or Higher Nitec",
+   "fee": "About 400 to 600 a year",
+   "misc": "Plus a one time registration fee and course materials",
+   "note": "The lowest fee of any post secondary route, and the ITE bursaries reduce it further.",
+   "status": "provisional",
+   "sourceRef": "ite_fees",
+   "covers": [
+    "nitec",
+    "hnitec"
+   ]
+  },
+  {
+   "id": "poly",
+   "label": "Polytechnic diploma",
+   "fee": "About 3,000 a year",
+   "misc": "Three years for most diplomas, so budget for three",
+   "note": "Before any bursary. A family on the lower income tiers can end up paying a small fraction of this.",
+   "status": "provisional",
+   "sourceRef": "poly_fees",
+   "covers": [
+    "poly",
+    "pfp"
+   ]
+  },
+  {
+   "id": "arts",
+   "label": "Arts institution diploma or degree",
+   "fee": "Higher than a polytechnic diploma",
+   "misc": "Materials and studio costs are real and are not in the fee",
+   "note": "Published per course. There are bursaries specific to the arts institutions, and the materials cost is the one families forget.",
+   "status": "provisional",
+   "sourceRef": "arts_fees",
+   "covers": [
+    "arts"
+   ]
+  },
+  {
+   "id": "uni",
+   "label": "Degree at a local autonomous university",
+   "fee": "About 8,000 to 10,000 a year",
+   "misc": "More for medicine, dentistry and law, and four years for most degrees",
+   "note": "Subsidised rate for a Singapore Citizen. The Tuition Fee Loan covers most of it and charges no interest while studying.",
+   "status": "provisional",
+   "sourceRef": "uni_fees",
+   "covers": []
+  }
+ ],
+ "help": [
+  {
+   "id": "fas",
+   "label": "MOE Financial Assistance Scheme",
+   "what": "School fees, standard miscellaneous fees, textbooks, uniforms, and subsidies for transport and meals.",
+   "who": "Singapore Citizens in government and government aided schools, on household income criteria.",
+   "howMuch": "In practice this takes the cost of secondary school close to nothing.",
+   "howToGet": "One form from the school's general office, once a year. The form teacher can start it.",
+   "status": "provisional",
+   "sourceRef": "moe_fas"
+  },
+  {
+   "id": "edusave",
+   "label": "Edusave",
+   "what": "An account in the student's own name, topped up every year, for enrichment and approved programmes.",
+   "who": "Every Singapore Citizen in school. Nothing to apply for.",
+   "howMuch": "An annual contribution, plus awards and bursaries paid into the same account.",
+   "howToGet": "It is already there. The school can say what the balance is and what it can be spent on.",
+   "status": "provisional",
+   "sourceRef": "moe_edusave"
+  },
+  {
+   "id": "psea",
+   "label": "Post Secondary Education Account",
+   "what": "Where the Edusave balance goes at the end of secondary school, to be spent on approved post secondary fees.",
+   "who": "Singapore Citizens. It can be used for a sibling's fees as well as your own.",
+   "howMuch": "Whatever was left over, plus government top ups.",
+   "howToGet": "Automatic. Fee payment through the institution can draw on it directly.",
+   "status": "provisional",
+   "sourceRef": "moe_psea"
+  },
+  {
+   "id": "bursary",
+   "label": "Bursaries at ITE, polytechnic and university",
+   "what": "Money that reduces the fee and does not have to be paid back.",
+   "who": "Income tiered, and the tiers reach further up than most families assume.",
+   "howMuch": "At the lower tiers a large part of the fee, and at middle incomes still a real amount.",
+   "howToGet": "Applied for through the institution, usually in the first weeks. Deadlines are early and easy to miss.",
+   "status": "provisional",
+   "sourceRef": "moe_bursary"
+  },
+  {
+   "id": "loan",
+   "label": "Tuition Fee Loan",
+   "what": "A loan for most of the subsidised fee at a polytechnic or a university.",
+   "who": "Available broadly, not only on low income.",
+   "howMuch": "Up to most of the fee, with no interest charged while still studying.",
+   "howToGet": "Through the institution at enrolment. A guarantor is needed.",
+   "status": "provisional",
+   "sourceRef": "moe_loan"
+  },
+  {
+   "id": "cpf",
+   "label": "CPF Education Scheme",
+   "what": "Paying fees from a parent's or a sibling's CPF Ordinary Account, repaid with interest after graduating.",
+   "who": "Singapore Citizens and Permanent Residents at approved institutions.",
+   "howMuch": "Up to a share of the account balance, per the scheme's limits.",
+   "howToGet": "An application through CPF, with the student agreeing to repay.",
+   "status": "provisional",
+   "sourceRef": "cpf_edu"
+  },
+  {
+   "id": "selfhelp",
+   "label": "The self help groups and community funds",
+   "what": "Bursaries and tuition support from CDAC, MENDAKI, SINDA and the Eurasian Association.",
+   "who": "By community, and each publishes its own criteria.",
+   "howMuch": "Varies, and can be held at the same time as a school or institution bursary.",
+   "howToGet": "Directly, and separately from the school. Ask, because nobody will offer.",
+   "status": "provisional",
+   "sourceRef": "selfhelp"
+  },
+  {
+   "id": "school",
+   "label": "The school's own welfare fund",
+   "what": "The quiet money for a camp fee, a trip, a pair of shoes, a laptop.",
+   "who": "Anybody in the school with a need, decided in the school.",
+   "howMuch": "Small amounts, quickly, and often without a form.",
+   "howToGet": "Ask the form teacher or the year head. This is the fastest help in the system.",
+   "status": "provisional",
+   "sourceRef": "school_fund"
+  },
+  {
+   "id": "skillsfuture",
+   "label": "SkillsFuture Credit, later",
+   "what": "Credit for courses across a working life, with a larger top up in mid career.",
+   "who": "Singapore Citizens, from twenty five, with the mid career top up from forty.",
+   "howMuch": "An opening amount, periodic top ups, and a substantial mid career addition.",
+   "howToGet": "Nothing to apply for. It sits in an account until it is used.",
+   "status": "provisional",
+   "sourceRef": "sf_credit"
+  }
+ ],
+ "truths": [
+  {
+   "head": "The fee is not the barrier it looks like",
+   "body": "Every route after secondary school has a bursary attached to it, and the income tiers reach further up than families expect. The most expensive route also has the largest loan behind it, interest free while studying."
+  },
+  {
+   "head": "Nobody offers. Everybody has to ask",
+   "body": "Almost all of this is applied for, once, on a form, in the first weeks of a school year. A family that does not know a scheme exists is not offered it, which is why knowing the names on this page is worth money."
+  },
+  {
+   "head": "The cheapest route is not the least ambitious one",
+   "body": "ITE costs the least and its graduates start earning earliest. Four years of pay while another route is still paying fees is a real advantage, and it is not an argument against the other routes."
+  },
+  {
+   "head": "Money is a reason to ask, not to stop",
+   "body": "A family that decides a route is unaffordable without asking has closed a door the system left open. The ECG counsellor and the school's general office both know exactly which forms apply."
+  }
+ ]
+}

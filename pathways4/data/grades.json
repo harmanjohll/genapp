@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "source": "SEAB SEC grading pages; MOE PSE pages for JC and MI, polytechnic, PFP, ITE 2 year and 3 year Higher Nitec, with their grade mapping tables",
+    "url": "https://www.moe.gov.sg/post-secondary/admissions/pse",
+    "accessed": "2026-10-27",
+    "units": "grade points, lower is better",
+    "notes": "Read from search engine extracts of the primary pages on 2026-10-27. G3 points equal the grade number by the O Level convention; no SEC page restating it was seen. Grades entered here are the student's own hypothetical targets, for planning and goal setting. They are never a prediction."
+  },
+  "scales": {
+    "G3": { "grades": ["A1", "A2", "B3", "B4", "C5", "C6", "D7", "E8", "9"], "points": { "A1": 1, "A2": 2, "B3": 3, "B4": 4, "C5": 5, "C6": 6, "D7": 7, "E8": 8, "9": 9 } },
+    "G2": { "grades": ["1", "2", "3", "4", "5", "6"], "points": { "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6 } },
+    "G1": { "grades": ["A", "B", "C", "D", "E"], "points": { "A": 1, "B": 2, "C": 3, "D": 4, "E": 5 } }
+  },
+  "mapDown": {
+    "status": "confirmed",
+    "note": "A G3 grade counts at its G2 or G1 equivalent where a score is read at that level. There is no mapping upwards.",
+    "G3toG2": { "A1": "1", "A2": "1", "B3": "1", "B4": "2", "C5": "2", "C6": "2", "D7": "3", "E8": "4", "9": "5" },
+    "G3toG1": { "A1": "A", "A2": "A", "B3": "A", "B4": "A", "C5": "A", "C6": "A", "D7": "A", "E8": "B", "9": "C" },
+    "G2toG1": { "1": "A", "2": "A", "3": "A", "4": "B", "5": "C", "6": "D" }
+  },
+  "aggregates": [
+    { "id": "L1R4", "name": "L1R4", "plain": "English, a Humanities, a Maths or Science, one more of either, and your best other subject, all at G3.", "level": "G3", "dests": [{ "id": "jc", "cutoff": 16 }, { "id": "mi", "cutoff": 20 }], "bonus": "Bonus points can take off up to 3.", "status": "confirmed" },
+    { "id": "ELR2B2", "name": "ELR2B2", "plain": "English, two relevant subjects and your best other at G3, plus a fifth subject at its G2 value.", "level": "G3", "dests": [{ "id": "poly", "cutoff": 22 }], "bonus": "CCA can take off 2 points. Each course type counts different relevant subjects; this uses your best ones.", "status": "confirmed" },
+    { "id": "ELMAB3", "name": "ELMAB3 at G2 value", "plain": "English, Maths and your best three others, each counted at its G2 value.", "level": "G2", "dests": [{ "id": "pfp", "cutoff": 12 }, { "id": "hnitec", "cutoff": 19 }, { "id": "sec5", "cutoff": 21 }], "bonus": "No bonus points for PFP or Higher Nitec.", "status": "confirmed" }
+  ],
+  "excluded": { "G3": ["9"], "G2": ["5", "6"], "note": "These grades cannot be used in polytechnic, PFP or ITE course requirements." }
+}

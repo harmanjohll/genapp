@@ -1,0 +1,115 @@
+{
+ "_meta": {
+  "source": "SkillsFuture Singapore, MySkillsFuture, MOE press releases and parliamentary replies on the SkillsFuture Level Up Programme",
+  "url": "https://www.skillsfuture.gov.sg/",
+  "accessed": "2026-08-05",
+  "units": "Singapore dollars, ages in years",
+  "notes": "Supplies the Long View ribbon. Its job is proportion: secondary school is the small band on the left. Markers are spaced at least four years apart so no two tap targets overlap at 375px. Several figures are provisional."
+ },
+ "ribbon": {
+  "from": 12,
+  "to": 65,
+  "youLabel": "I am here"
+ },
+ "bands": [
+  {
+   "id": "sec",
+   "from": 13,
+   "to": 16,
+   "label": "School",
+   "tone": "school"
+  },
+  {
+   "id": "postsec",
+   "from": 17,
+   "to": 20,
+   "label": "After school",
+   "tone": "school"
+  },
+  {
+   "id": "early",
+   "from": 21,
+   "to": 29,
+   "label": "Finding my feet",
+   "tone": "work"
+  },
+  {
+   "id": "mid",
+   "from": 30,
+   "to": 44,
+   "label": "Building",
+   "tone": "work"
+  },
+  {
+   "id": "later",
+   "from": 45,
+   "to": 65,
+   "label": "Often somewhere new",
+   "tone": "work"
+  }
+ ],
+ "markers": [
+  {
+   "age": 14,
+   "title": "I choose my subject levels",
+   "body": "The bit that feels enormous. It is adjustable, and students change levels every year.",
+   "status": "confirmed"
+  },
+  {
+   "age": 16,
+   "title": "I sit the SEC",
+   "body": "One certificate, every subject and the level I took it at. First sat in 2027.",
+   "status": "confirmed"
+  },
+  {
+   "age": 18,
+   "title": "After school starts",
+   "body": "JC, MI, poly, a foundation year or ITE. Every one of them has roads leading on.",
+   "status": "confirmed"
+  },
+  {
+   "age": 22,
+   "title": "First real job, for most people",
+   "body": "By now nobody asks about my Sec 2 subjects. Within a few years they stop asking about the diploma too.",
+   "status": "provisional"
+  },
+  {
+   "age": 26,
+   "title": "SkillsFuture Credit is mine",
+   "body": "From 25, credit to spend on courses I pick. Not tied to an employer or to what I studied.",
+   "url": "https://www.skillsfuture.gov.sg/",
+   "status": "provisional"
+  },
+  {
+   "age": 31,
+   "title": "A lot of people change direction",
+   "body": "Early switches are ordinary here. Work study routes exist so somebody can move without stopping work.",
+   "status": "provisional"
+  },
+  {
+   "age": 36,
+   "title": "The part nobody plans for",
+   "body": "Industries change under people. The ones who handle it are not those who chose right at fourteen.",
+   "status": "provisional"
+  },
+  {
+   "age": 41,
+   "title": "SkillsFuture Level Up",
+   "body": "At 40: a $4,000 credit, plus half my income as a monthly allowance while studying full time. Over 36,000 people used it in its first year, to April 2025.",
+   "url": "https://www.skillsfuture.gov.sg/",
+   "status": "confirmed"
+  },
+  {
+   "age": 48,
+   "title": "A subsidised diploma, at any age",
+   "body": "Up to 90 percent off a full time diploma at ITE, the polys, NAFA or LASALLE. People start in their forties and fifties.",
+   "status": "confirmed"
+  },
+  {
+   "age": 56,
+   "title": "Still learning, still hiring",
+   "body": "Retirement and re employment ages keep rising. My working life will be longer than my parents' was.",
+   "status": "provisional"
+  }
+ ]
+}
