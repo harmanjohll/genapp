@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HTML = join(root, 'index.html');
-const SUBRESOURCES = ['assets/css/tokens3.css', 'assets/css/base.css', 'assets/css/app.css', 'assets/css/play.css', 'assets/css/v4.css', 'assets/fonts/literata-var-latin.woff2', 'assets/js/main.js'];
+const SUBRESOURCES = ['assets/css/tokens4.css', 'assets/css/base.css', 'assets/css/app.css', 'assets/css/play.css', 'assets/css/v4.css', 'assets/fonts/bricolage-var-latin.woff2', 'assets/js/main.js'];
 
 /** Every .js under assets/js, at any depth. */
 function jsFiles(dir) {

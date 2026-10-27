@@ -15,6 +15,9 @@ import { report } from '../engine/grades.js?v=4.0.0';
 import { psleScore } from '../engine/psle.js?v=4.0.0';
 import { openCount, mapPips } from '../ui/map.js?v=4.0.0';
 import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
+import { boardHtml } from '../ui/board.js?v=4.0.0';
+import { STRIP } from '../ui/yearstrip.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
 
@@ -43,74 +46,72 @@ export default {
     const wants = ((api.data.futures || {}).futures || []);
     const want = st.aim ? wants.find((w) => w.id === st.aim) : null;
 
+    const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
     root.innerHTML = `
-    <div class="wrap-narrow yearwrap">
-      <header class="yhead">
-        <p class="kicker">${st.yearSet ? `${esc(LABEL[st.year])} · ` : ''}For the next conversation</p>
-        <h1>${esc(rw.plan)}</h1>
-        <p class="lede">Everything this device holds, on one page. Bring it to a parent, a form teacher or an ECG counsellor.</p>
-        <p class="btnrow no-print">
-          <button type="button" class="btn press" data-action="mp-print">${icon('print')} Print or save as PDF</button>
-          <button type="button" class="btn ghost press" data-action="mp-carry">Carry to another device</button>
-          <span class="small" id="mp-note"></span>
-        </p>
-      </header>
-
-      <section class="destsec">
-        <h2 class="advh">${icon('steps')} Year by year</h2>
-        <ol class="journey">
-          <li data-filled="${sc.complete}">
-            <span class="j-year">P6</span>
-            <span class="j-body">${sc.complete ? `PSLE Score ${sc.score} (planning)` : '<span class="small">Not set</span>'}</span>
-            <button type="button" class="linkbtn no-print" data-action="go" data-s="year" data-y="p6">${sc.complete ? 'Change' : 'Set'}</button>
+    <div class="wrap yearwrap planwrap">
+      <section class="pass arrive" aria-labelledby="pass-h">
+        <div class="pass-top">
+          <div>
+            <p class="pass-k">${st.yearSet ? `Now in ${esc(LABEL[st.year])}` : 'Year not set'} · for the next conversation</p>
+            <h1 id="pass-h">${esc(rw.plan)}</h1>
+          </div>
+          <p class="pass-open"><b>${open}</b><span>of ${rows.length} open</span></p>
+        </div>
+        <ol class="pass-line">
+          <li data-filled="${sc.complete}" data-now="${st.yearSet && st.year === 'p6'}">
+            <button type="button" class="pl-stn press no-print-btn" data-action="go" data-s="year" data-y="p6"><i></i><b>P6</b></button>
+            <span class="pl-body">${sc.complete ? `<span class="pl-chip">PSLE ${sc.score}</span>` : '<span class="pl-none">not set</span>'}</span>
           </li>
           ${PLAN_YEARS.map((y) => {
             const p = st.plans[y] || {};
             const ids = Object.keys(p);
             return `<li data-filled="${ids.length > 0}" data-now="${st.yearSet && st.year === y}">
-              <span class="j-year">${esc(LABEL[y])}${st.yearSet && st.year === y ? '<small>now</small>' : ''}</span>
-              <span class="j-body">${ids.length ? ids.map((id) => `<span class="jchip"><span>${esc(byId[id] ? (byId[id].shortName || byId[id].name) : id)}</span><b class="lvtag" data-level="${p[id]}">${p[id]}</b></span>`).join('') : '<span class="small">Not set</span>'}</span>
-              <button type="button" class="linkbtn no-print" data-action="go" data-s="year" data-y="${y}">${ids.length ? 'Change' : 'Set'}</button>
+              <button type="button" class="pl-stn press" data-action="go" data-s="year" data-y="${y}"><i></i><b>${esc(CODE[y])}</b></button>
+              <span class="pl-body">${ids.length ? ids.map((id) => `<span class="pl-chip" data-level="${p[id]}">${esc(byId[id] ? (byId[id].shortName || byId[id].name) : id)} <b>${p[id]}</b></span>`).join('') : '<span class="pl-none">not set</span>'}</span>
             </li>`;
           }).join('')}
         </ol>
+        <p class="btnrow no-print">
+          <button type="button" class="btn press" data-action="mp-print">${icon('print')} Print or save PDF</button>
+          <button type="button" class="btn ghost on-night press" data-action="mp-carry">Carry to another device</button>
+          <span class="small pass-note" id="mp-note"></span>
+        </p>
       </section>
 
-      <section class="destsec">
-        <h2 class="advh">Where it points</h2>
-        <div class="advsum"><span class="bignum">${open}</span><span><strong>of ${rows.length} open</strong> ${mapPips(rows)} <span class="small">${e.yearId ? `from the ${esc(LABEL[e.yearId])} levels.` : 'Set a year to make this yours.'} Every one keeps a road in.</span></span></div>
-        <ul class="openlist">
-          ${rows.map((r) => `<li data-state="${esc(r.state)}"><button type="button" class="linkbtn" data-action="go" data-s="dest" data-id="${esc(r.id)}">${esc(r.railName)}</button> <span class="small">${esc(r.status.text)}</span></li>`).join('')}
-        </ul>
-      </section>
+      <div class="plangrid">
+        <section class="destsec">
+          ${boardHtml(rows, { key: 'plan', title: e.yearId ? `From the ${LABEL[e.yearId]} levels` : 'Where it points' })}
+        </section>
+
+        <section class="destsec">
+          <h2 class="advh">${st.role === 'student' ? 'Tickets I kept' : 'Tickets kept'}</h2>
+          ${want ? `<p class="small">Want: <strong>${esc(want.want || want.id)}</strong></p>` : ''}
+          ${st.actions.length ? `<ul class="keptlist">${st.actions.map((a, i) => `<li>${icon('ticket')}<span>${esc(a)}</span><button type="button" class="linkbtn small no-print" data-action="mp-drop" data-i="${i}">Remove</button></li>`).join('')}</ul>`
+            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">No tickets kept yet.</p><p class="small">Every piece of advice is a ticket with the words to say. Tap Keep and it lands here.</p></div>`}
+          <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="act">Pick three moves for this term</button></p>
+        </section>
+      </div>
 
       ${top.length ? `
       <section class="destsec">
-        <h2 class="advh">${icon('spark')} Best next moves</h2>
-        <ol class="movesum">${top.map((m) => `<li><p>${esc(m.line)}</p><p class="small sayline">${esc(sayMove(m, st.role))}</p></li>`).join('')}</ol>
+        <h2 class="advh">Best next moves</h2>
+        <div class="ticketlist">${top.map((m) => ticketHtml(m)).join('')}</div>
       </section>` : ''}
 
       ${rep.length ? `
       <section class="destsec">
-        <h2 class="advh">${icon('target')} Targets</h2>
-        <ul class="targetsum">${rep.map((a) => {
+        <h2 class="advh">Targets</h2>
+        <div class="targetcells">${rep.map((a) => {
           const ref = a.basis === 'target' ? a.target : a.now;
-          return `<li><strong>${esc(a.name)} ${ref.value == null ? '·' : ref.value}</strong> <span class="small">(${a.basis}) ${a.dests.map((d) => `${esc(d.name)} asks ${d.cutoff}${ref.value != null ? (ref.value <= d.cutoff ? ' ✓' : `, ${d.gap} to go`) : ''}`).join(' · ')}</span></li>`;
-        }).join('')}</ul>
+          return `<div class="tcell"><span class="tcell-k">${esc(a.name)} <small>${a.basis}</small></span><b>${ref.value == null ? '·' : ref.value}</b>
+            <span class="tcell-d">${a.dests.map((d) => `<span data-meets="${ref.value != null && ref.value <= d.cutoff}">${esc(d.name)} ${d.cutoff}</span>`).join('')}</span></div>`;
+        }).join('')}</div>
       </section>` : ''}
-
-      <section class="destsec">
-        <h2 class="advh">${icon('flag')} ${st.role === 'student' ? 'Things I said I would do' : 'Things on the list'}</h2>
-        ${want ? `<p class="small">Want: <strong>${esc(want.want || want.id)}</strong></p>` : ''}
-        ${st.actions.length ? `<ul class="todolist">${st.actions.map((a, i) => `<li><span>${esc(a)}</span><button type="button" class="linkbtn small no-print" data-action="mp-drop" data-i="${i}">Remove</button></li>`).join('')}</ul>`
-          : `<p class="small">Nothing yet. Every piece of advice has an "Add to my list" button: the words to say, to the right person.</p>`}
-        <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="act">Pick three moves for this term</button></p>
-      </section>
 
       ${talk.length ? `
       <section class="destsec">
-        <h2 class="advh">${icon('talk')} Talk it through</h2>
-        <ul class="talklist">${talk.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
+        <h2 class="advh">Talk it through</h2>
+        <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
         <p class="small no-print">The ${esc(st.role)} version. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>
       </section>` : ''}
 

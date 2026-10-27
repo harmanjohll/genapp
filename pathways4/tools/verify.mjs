@@ -40,7 +40,7 @@ const ctx = {
   yearId: 'sec3',
 };
 
-const CSS_FILES = ['tokens3.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
+const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
 const PINNED = [...CSS_FILES, 'main.js'];
 
 function pass(name, ok, extra) {
@@ -126,7 +126,7 @@ function payloadSweep() {
   const parts = [
     join(root, 'index.html'),
     ...CSS_FILES.map((f) => join(root, 'assets/css', f)),
-    join(root, 'assets/fonts/literata-var-latin.woff2'),
+    join(root, 'assets/fonts/bricolage-var-latin.woff2'),
     ...EAGER_DATA.map((n) => join(root, 'data', `${n}.json`)),
   ];
   parts.forEach((p) => { try { total += statSync(p).size; } catch { failures.push({ why: `missing: ${p}` }); } });
@@ -145,7 +145,7 @@ function payloadSweep() {
  * ones the v2 audit measured slipping under AA on 'later' paper.
  */
 function contrastSweep() {
-  const css = readFileSync(join(root, 'assets/css/tokens3.css'), 'utf8');
+  const css = readFileSync(join(root, 'assets/css/tokens4.css'), 'utf8');
   const failures = [];
   const hex = (name, scope) => {
     const section = scope === 'dark'
