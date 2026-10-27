@@ -308,6 +308,21 @@ function v4DashSweep() {
   return { ok, fails };
 }
 
+/** Every module parses. The engine sweeps only import the engine, so a
+    syntax error in a screen or a ui module would otherwise ship silently. */
+async function syntaxSweep() {
+  const { spawnSync } = await import('node:child_process');
+  const { readdirSync } = await import('node:fs');
+  const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : e.name.endsWith('.js') ? [join(d, e.name)] : []));
+  const files = [...walk(join(root, 'assets/js')), join(root, 'sw.js')];
+  const fails = files.map((f) => ({ f, r: spawnSync(process.execPath, ['--check', f], { encoding: 'utf8' }) }))
+    .filter((x) => x.r.status !== 0).map((x) => ({ file: x.f.replace(root, ''), err: (x.r.stderr || '').split('\n').slice(0, 4).join(' ') }));
+  const ok = !fails.length;
+  pass('Syntax', ok, `${files.length} modules parse`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
 const results = [
   ['version', versionSweep()],
   ['css-vars', cssVarSweep()],
@@ -328,6 +343,7 @@ const results = [
   ['grades', v4GradesSweep()],
   ['psle', v4PsleSweep()],
   ['dashes', v4DashSweep()],
+  ['syntax', await syntaxSweep()],
 ];
 
 const bad = results.filter(([, r]) => !r.ok);
