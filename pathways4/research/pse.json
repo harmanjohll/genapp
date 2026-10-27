@@ -1,0 +1,330 @@
+{
+  "_meta": {
+    "accessed": "2026-10-27",
+    "method_note": "WebFetch could not resolve any host in this session (getaddrinfo ENOTFOUND for moe.gov.sg, seab.gov.sg, school sites) and direct curl to moe.gov.sg was refused by the egress proxy. All facts were gathered from WebSearch result extracts of the cited pages. 'confirmed' means the search extract quoted or paraphrased a primary page (moe.gov.sg / seab.gov.sg / institution site) stating the rule; a human should spot-check the confirmed items against the live pages before release. 'provisional' means a secondary source, a pre-2028 (2026 JAE) primary source, or inference.",
+    "sources": [
+      {"id": "moe_pse", "title": "MOE: Post-Secondary Admissions Exercise (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse", "kind": "primary"},
+      {"id": "moe_pse_jcmi", "title": "MOE: Junior colleges and Millennia Institute - Admission criteria (PSE, page updated 16 Mar 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/jc-and-mi", "kind": "primary"},
+      {"id": "moe_jae_2028", "title": "MOE: JAE changes from 2028", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/changes-from-2028", "kind": "primary"},
+      {"id": "moe_infosheet1", "title": "MOE COS 2025 Infosheet 1: Revised Junior College (JC) Admission Criteria (6 Mar 2025)", "url": "https://www.moe.gov.sg/news/press-releases/20250306-infosheet-1-revised-jc-admission-criteria", "kind": "primary"},
+      {"id": "moe_pse_poly", "title": "MOE: Polytechnic diploma course (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/polytechnic-diploma-course", "kind": "primary"},
+      {"id": "moe_pse_pfp", "title": "MOE: Polytechnic Foundation Programme (PFP) (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/pfp", "kind": "primary"},
+      {"id": "moe_pse_hn2", "title": "MOE: Institute of Technical Education 2-Year Higher Nitec (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-2-year-higher-nitec", "kind": "primary"},
+      {"id": "moe_pse_hn3", "title": "MOE: Institute of Technical Education 3-Year Higher Nitec (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-3-year-higher-nitec", "kind": "primary"},
+      {"id": "moe_pse_explore", "title": "MOE: Pathways, courses and programmes (PSE explore pathways)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways", "kind": "primary"},
+      {"id": "moe_fsbb_faq", "title": "MOE Full SBB FAQ", "url": "https://www.moe.gov.sg/microsites/psle-fsbb/full-subject-based-banding/faq.html", "kind": "primary"},
+      {"id": "moe_jae_poly", "title": "MOE: JAE Polytechnic admission and courses (2026 JAE rules, CCA points table)", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/polytechnics", "kind": "primary"},
+      {"id": "moe_jae_criteria", "title": "MOE: JAE Admission criteria (pre-2028 bonus point table)", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/admission-criteria", "kind": "primary"},
+      {"id": "moe_jae2026_aggtypes", "title": "MOE: Polytechnic Aggregate Types Computation ELR2B2 (2026 JAE) PDF", "url": "https://www.moe.gov.sg/-/media/files/post-secondary/2026-jae/polytechnic-aggregate-types-computation-2026-jae.pdf", "kind": "primary"},
+      {"id": "moe_2023_ite", "title": "MOE press release 21 Jul 2023: Changes to admissions requirements for ITE upgraders / DPP ends AY2028", "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027", "kind": "primary"},
+      {"id": "seab_grading", "title": "SEAB: National Examinations' Grading System", "url": "https://www.seab.gov.sg/newsroom/national-examinations--grading-system/", "kind": "primary"},
+      {"id": "seab_sec", "title": "SEAB: Secondary Education Certificate (SEC)", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "kind": "primary"},
+      {"id": "sp_aggtypes", "title": "Singapore Polytechnic: Selection criteria for O-Level holders, aggregate computation", "url": "https://www.sp.edu.sg/admissions/guides/selection-criteria-for-o-level-holders-aggregate-computation", "kind": "primary"},
+      {"id": "np_elr2b2", "title": "Ngee Ann Polytechnic: ELR2B2 & Intake", "url": "https://www.np.edu.sg/admissions-enrolment/academic-matters/elr2b2", "kind": "primary"},
+      {"id": "tp_aggtypes_2027", "title": "Temasek Polytechnic: 2027 Aggregate Types and Relevant Subject (PDF)", "url": "https://www.tp.edu.sg/content/dam/tp-web/files/admissions/2027%20Aggregate%20Types%20and%20Relevant%20Subject.pdf", "kind": "primary"},
+      {"id": "nyp_pfp", "title": "NYP: PFP Entry Requirements (from 2026 onwards, cluster-based admission)", "url": "https://www.nyp.edu.sg/student/study/polytechnic-foundation-programme/new-2026-intake-cluster-based-admission", "kind": "primary"},
+      {"id": "tp_pfp", "title": "TP: N(A)-Level Students (PFP)", "url": "https://www.tp.edu.sg/admissions-and-finance/application-guide-for-prospective-students/na-level-students-pfp.html", "kind": "primary"},
+      {"id": "lasalle_eae", "title": "LASALLE: Diploma Early Admissions Exercise", "url": "https://www.lasalle.edu.sg/study/admissions/diploma-eae-admissions/", "kind": "primary"},
+      {"id": "nafa_theatre", "title": "NAFA: Diploma in Theatre (English Drama) entry requirements", "url": "https://www.nafa.edu.sg/programmes/diploma-in-theatre-(english-drama)", "kind": "primary"},
+      {"id": "ite_itsn", "title": "ITE Course Finder: Higher Nitec in IT Systems & Networks", "url": "https://www.ite.edu.sg/course-finder/higher-nitec-in-it-systems-and-networks/", "kind": "primary"},
+      {"id": "moe_cf_hn_ee2", "title": "MOE CourseFinder: Higher Nitec in Electrical Engineering (2 Years)", "url": "https://www.moe.gov.sg/coursefinder/coursedetail/higher-nitec-in-electrical-engineering-2-years", "kind": "primary"},
+      {"id": "moe_cf_hn_elec3", "title": "MOE CourseFinder: Higher Nitec in Electronics Engineering (3 years)", "url": "https://www.moe.gov.sg/coursefinder/coursedetail/higher-nitec-in-electronics-engineering-3-years", "kind": "primary"},
+      {"id": "njc_subj", "title": "National JC: Subject Combinations", "url": "https://www.nationaljc.moe.edu.sg/subject-combinations/", "kind": "secondary"},
+      {"id": "cjc_subj", "title": "Catholic JC: Subject Combinations / 2025 subject registration briefing", "url": "https://cjcopenhouse.moe.edu.sg/eopenhouse/academic-information/subject-combinations/", "kind": "secondary"},
+      {"id": "hci_subj", "title": "HCI: A-Level subjects info for 2026 JC1", "url": "https://www.hci.edu.sg/files/College/A_Level_Subjects_info_for_2026_JC1_10Oct.pdf", "kind": "secondary"},
+      {"id": "sajc_faq", "title": "SAJC: Admissions FAQ", "url": "https://www.standrewsjc.moe.edu.sg/admissions/faq/", "kind": "secondary"},
+      {"id": "sch_wrss_2026", "title": "Woodlands Ring Sec: Sec 3 2026 Parent Engagement, Post-Secondary Education (school briefing slides)", "url": "https://isomer-user-content.by.gov.sg/819/a987a0e9-ec30-420f-a124-4b89c784f3be/4__Parent_Engagement_Sec_3_2026_Post_Secondary_Education.pdf", "kind": "secondary"},
+      {"id": "sch_navalbase_g1", "title": "Naval Base Sec: Subject Combination Booklet G1 2025 (G2-to-G1 mapping)", "url": "https://www.navalbasesec.moe.edu.sg/files/2025%20sub%20combi/Subject_Combi_Booklet_G1_2025.pdf", "kind": "secondary"},
+      {"id": "sgschoolkaki_agg", "title": "sgschoolkaki: JAE 2026 Polytechnic Aggregate Types Guide (ELR2B2-A/B/C/D)", "url": "https://sgschoolkaki.com/jae-2026-poly-aggregate-types", "kind": "secondary"},
+      {"id": "ancourage_g2conv", "title": "Ancourage Academy: G3 to G2 Grade Conversion, Poly and PFP 2028", "url": "https://ancourage.academy/articles/g2-grade-conversion-poly-pfp-admission-singapore", "kind": "secondary"},
+      {"id": "edukatesg_pfp_dpp", "title": "edukatesg: PFP and DPP across the 2026-2028 cohort change (6 Oct 2026)", "url": "https://edukatesg.com/2026/10/06/how-singapore-education-works-pfp-and-dpp-across-the-2026-2028-cohort-change/", "kind": "secondary"}
+    ]
+  },
+
+  "grades": {
+    "G3": {
+      "scale": ["A1", "A2", "B3", "B4", "C5", "C6", "D7", "E8", "9"],
+      "points": {"A1": 1, "A2": 2, "B3": 3, "B4": 4, "C5": 5, "C6": 6, "D7": 7, "E8": 8, "9": 9},
+      "status": "confirmed",
+      "sourceRef": ["seab_grading", "moe_pse_jcmi"],
+      "note": "Scale confirmed by SEAB (G3 adopts the O-Level grading structure; GCE O-Level is treated as equivalent to G3 by MOE). Points = grade number is the long-standing O-Level aggregate convention; no SEC page restating the point values was seen, so treat the points column as provisional-by-convention. Certificate award: E8 or better at G3."
+    },
+    "G2": {
+      "scale": ["1", "2", "3", "4", "5", "6"],
+      "points": {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6},
+      "status": "confirmed",
+      "sourceRef": ["seab_grading", "moe_pse_hn2"],
+      "note": "Scale confirmed (G2 adopts N(A)-Level structure; N(A) treated as equivalent to G2). Points = grade number in ELMAB3 (ITE 2-year page computes aggregate from G2-equivalent grades directly). Certificate award: grade 5 or better. Grade 6 counts in ITE aggregates but cannot meet MERs."
+    },
+    "G1": {
+      "scale": ["A", "B", "C", "D", "E"],
+      "points": {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5},
+      "status": "confirmed",
+      "sourceRef": ["moe_pse_hn3", "sch_navalbase_g1"],
+      "note": "Points are the ITE aggregate points in the MOE 3-Year Higher Nitec mapping table. Certificate award: grade D or better. G1 E usable in ITE aggregate but not to meet MERs."
+    },
+    "mapping": {
+      "g2_in_g3_aggregate": {
+        "rule": "No G2-to-G3 up-mapping is published. Instead, mixed aggregates are computed in G2-equivalent points for the slot(s) allowed at G2. In ELR2B2 (poly, 2028+), EL, R1, R2 and B1 use the G3 grade (points 1-9 but 9 unusable); B2 ALWAYS uses a G2-equivalent grade: a G2 subject contributes its G2 grade (1-4 usable), a G3 subject in the B2 slot is mapped down with g3_to_g2_equivalent. G3 grade 9 and G2 grades 5 and 6 cannot be used in ELR2B2.",
+        "elr2b2_b2_points": {"G2:1": 1, "G2:2": 2, "G2:3": 3, "G2:4": 4, "G2:5": null, "G2:6": null, "G3 subject in B2": "map via g3_to_g2_equivalent"},
+        "l1r4": "Not allowed: all L1R4 subjects (JC and MI) must be taken at G3.",
+        "arts_lasalle": "LASALLE 2028+: 4 non-English subjects, one may be G2; if all four are G3, the lowest-grade one is mapped G3->G2. Same shape as ELR2B2 R2B2 part."
+      },
+      "g3_to_g2_equivalent": {"A1": 1, "A2": 1, "B3": 1, "B4": 2, "C5": 2, "C6": 2, "D7": 3, "E8": 4, "9": 5},
+      "g2_to_g1_equivalent": {"1": "A", "2": "A", "3": "A", "4": "B", "5": "C", "6": "D"},
+      "g3_to_g1_equivalent": {"A1": "A", "A2": "A", "B3": "A", "B4": "A", "C5": "A", "C6": "A", "D7": "A", "E8": "B", "9": "C"},
+      "same_subject_two_levels": "If the same subject was taken at two levels, both are mapped and the better equivalent grade is used (ITE pages).",
+      "usability": {
+        "ELR2B2": "G3 9 and G2 5/6 cannot be used.",
+        "PFP_ELMAB3": "G3 9 and G2 5/6 cannot be used.",
+        "HN2_ELMAB3": "G3 9 (->5) and G2 6 can be used in the aggregate but cannot satisfy course MERs.",
+        "HN3_G1_aggregates": "G3 9, G2 6, G1 E can be used in the aggregate but cannot satisfy MERs.",
+        "Sec5_G2_aggregates": "At least grade 5 at G2 (equivalent) for every subject used."
+      },
+      "status": "confirmed",
+      "sourceRef": ["moe_pse_poly", "moe_pse_pfp", "moe_pse_hn2", "moe_pse_hn3", "seab_grading", "moe_pse_explore"],
+      "note": "G3->G2 table appears identically on MOE poly, PFP, ITE 2-year pages and SEAB; MOE worked example: G3 B4 -> G2 2. G3->G1 is the composition of the two published tables (provisional for the composed form; the MOE 3-Year page shows the same bands per search extract)."
+    }
+  },
+
+  "aggregates": {
+    "L1R4": {
+      "what": "First language + 4 relevant subjects, gross aggregate; net = gross - bonus points (net used for posting).",
+      "subjectsCounted": [
+        "L1: G3 English Language or G3 Higher MTL (if HMTL is L1, the corresponding MTL cannot also be an R subject)",
+        "R1: a Humanities subject (G3)",
+        "R2: a Mathematics or Science subject (G3)",
+        "R3: a Humanities, Mathematics or Science subject (G3)",
+        "R4: any best remaining G3 subject"
+      ],
+      "allSubjectsLevel": "G3",
+      "status": "confirmed",
+      "sourceRef": ["moe_infosheet1", "moe_pse_jcmi", "moe_jae_2028"]
+    },
+    "ELR2B2": {
+      "what": "EL + 2 relevant subjects (R1, R2, defined by course aggregate type A-D) + 2 best other subjects (B1, B2); net = gross - CCA bonus points.",
+      "subjectsCounted": ["EL (G3 grade)", "R1 (G3 grade)", "R2 (G3 grade)", "B1 (G3 grade)", "B2 (G2-equivalent grade; may be a G2 subject, or a G3 subject mapped down)"],
+      "status": "confirmed",
+      "sourceRef": ["moe_pse_poly"],
+      "note": "Hence 4 subjects must be G3 (EL, R1, R2, B1). The max contribution of B2 drops from ~8 (old O-Level) to 4, which is why the cut-off moved from 26 to 22."
+    },
+    "ELMAB3": {
+      "what": "EL + Mathematics/Additional Mathematics + 3 best other subjects, all at G2-equivalent grades; gross (no bonus).",
+      "subjectsCounted": ["EL", "MA (maths or amaths)", "B1", "B2", "B3"],
+      "computedAt": "G2-equivalent",
+      "status": "confirmed",
+      "sourceRef": ["moe_pse_pfp", "moe_pse_hn2", "moe_pse_explore"],
+      "note": "One search extract of the PFP page glossed B1/B3 as '1st and 3rd best-scoring subject'; the ITE 2-year page states '3 Best Subjects (B1, B2 and B3)'. Treat as EL + MA + 3 best subjects. Used by PFP (<=12), ITE 2-year Higher Nitec (<=19), Sec 5 (<=21) and Sec 5 all-G3 option (<=19)."
+    },
+    "ELB3": {"what": "EL + 3 best subjects at G2-equivalent, gross", "subjectsCounted": ["EL", "B1", "B2", "B3"], "status": "confirmed", "sourceRef": ["moe_pse_explore"], "note": "Sec 5 route only (<=14)."},
+    "MAB3": {"what": "Maths + 3 best subjects at G2-equivalent, gross", "subjectsCounted": ["MA", "B1", "B2", "B3"], "status": "confirmed", "sourceRef": ["moe_pse_explore"], "note": "Sec 5 route only (<=14)."},
+    "ITE_G1_types": {
+      "what": "3-Year Higher Nitec MER aggregate types on G1-equivalent grades (4 subjects).",
+      "types": {
+        "R2B2": "R1 = English, R2 = Mathematics, + 2 best subjects",
+        "R1B3-A": "R1 = Mathematics + 3 best",
+        "R1B3-B": "R1 = Mathematics or Science + 3 best",
+        "R1B3-C": "R1 = English + 3 best",
+        "B4": "4 best subjects, no grade requirement"
+      },
+      "subjectGradeForRandB": "G3 A1-E8, G2 1-5, G1 A-D (B4: none)",
+      "status": "confirmed",
+      "sourceRef": ["moe_pse_hn3"],
+      "note": "No numeric aggregate cut-off for these types was found."
+    },
+    "Arts_4subj": {
+      "what": "LASALLE/NAFA diploma (2028+): EL G3 C6 pass + aggregate of 4 other subjects (3 at G3 + 1 at G2, or 4 G3 with the lowest mapped to G2) <= 21.",
+      "status": "confirmed",
+      "sourceRef": ["lasalle_eae", "nafa_theatre"]
+    }
+  },
+
+  "bonus": {
+    "jc_mi": {
+      "cap": 3,
+      "capNote": "Lowered from 4 to 3 from 2028; MI aligned with JC.",
+      "lep_extra": "Students selected for Chinese/Malay/Tamil Language Elective Programme get +2 beyond the cap (max total 5).",
+      "items": [
+        {"text": "CCA (LEAPS 2.0) Excellent: 2 points; Good: 1 point", "points": {"excellent": 2, "good": 1}, "status": "provisional", "sourceRef": ["moe_jae_criteria", "moe_pse_poly"], "note": "Values from current JAE / PSE poly pages; no 2028 JC-specific table seen."},
+        {"text": "Affiliated JC chosen as 1st (or 1st and 2nd) choice: 2 points", "points": 2, "status": "provisional", "sourceRef": ["moe_jae_criteria"], "note": "Older MOE page; not reconfirmed for 2028."},
+        {"text": "EL and Higher MTL grade A1-C6 (JC/MI admission): 2 points", "points": 2, "status": "provisional", "sourceRef": ["moe_jae_criteria"], "note": "Older MOE page wording as extracted; not reconfirmed for 2028."},
+        {"text": "Selected JC programmes (e.g. elective programmes): 2 points", "points": 2, "status": "provisional", "sourceRef": ["moe_jae_2028"], "note": "Mentioned without a list of programmes."}
+      ],
+      "status": "confirmed",
+      "sourceRef": ["moe_infosheet1", "moe_jae_2028"],
+      "statusNote": "Cap and LEP rule confirmed; per-item values provisional."
+    },
+    "poly": {
+      "items": [{"text": "CCA Excellent (A1/A2): 2 points; Good (B3-C6): 1 point; subtracted from ELR2B2 gross", "points": {"excellent": 2, "good": 1}, "status": "confirmed", "sourceRef": ["moe_pse_poly", "moe_jae_poly"]}],
+      "cap": null,
+      "capNote": "No separate poly cap stated; only CCA points found (so effectively max 2). Cut-off 22 is on the NET aggregate."
+    },
+    "pfp": {"text": "Gross ELMAB3 (no bonus points)", "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
+    "hnitec2": {"text": "Gross ELMAB3, excluding CCA points", "status": "confirmed", "sourceRef": ["moe_pse_hn2", "moe_pse_explore"]},
+    "hnitec3": {"text": "Not stated", "status": "provisional", "sourceRef": []},
+    "sec5": {"text": "Gross aggregates", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
+    "arts": {"text": "NAFA notes bonus points may count toward the aggregate (O-Level route wording)", "status": "provisional", "sourceRef": ["nafa_theatre"]}
+  },
+
+  "destinations": {
+    "jc": {
+      "eligibility": [
+        {"text": "L1R4 gross aggregate <= 16 (replaces L1R5 <= 20 from 2028)", "status": "confirmed", "sourceRef": ["moe_infosheet1", "moe_pse_jcmi"]},
+        {"text": "All subjects used in L1R4 (L1 + R1-R4 = five subjects) must be taken at G3; GCE O-Level counts as G3. This is the '5 subjects at G3' rule; no other G3-count requirement was found.", "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+        {"text": "R1 Humanities, R2 Maths/Science, R3 Humanities or Maths/Science, R4 any (three R subjects must span both Humanities and Maths/Science groups)", "status": "confirmed", "sourceRef": ["moe_infosheet1"]},
+        {"text": "G3 English Language A1-C6", "subjects": ["el"], "minLevel": "G3", "minGrade": "C6", "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+        {"text": "G3 Mathematics or G3 Additional Mathematics A1-D7", "subjects": ["maths", "amaths"], "minLevel": "G3", "minGrade": "D7", "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+        {"text": "MTL (or MTL-in-lieu): G3 A1-D7, or G2 1-5, or G1 A-D; G3 HMTL A1-E8 also satisfies. MTL need NOT be G3.", "subjects": ["mtl", "hmtl"], "minLevel": "G1", "minGrade": {"G3": "D7", "G2": "5", "G1": "D", "HMTL_G3": "E8"}, "status": "confirmed", "sourceRef": ["moe_jae_2028", "moe_fsbb_faq", "moe_pse_jcmi"]},
+        {"text": "Bonus cap 3 (+2 for selected MTL LEP); net = gross - bonus", "status": "confirmed", "sourceRef": ["moe_infosheet1"]}
+      ],
+      "aggregate": {"type": "L1R4", "cutoff": 16, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+      "families": [
+        {"id": "jc_math_sci", "name": "Science/Maths (H2 Mathematics)", "subjectNeeds": [
+          {"text": "H2 Maths assumes G3/O-Level Additional Mathematics; typical indicative cut-off B3-B4 in A Maths (NJC also accepts A2 in Maths). Without A Maths, colleges advise H1 Maths or a readiness test.", "subjects": ["amaths", "maths"], "minLevel": "G3", "minGrade": "B4", "status": "provisional", "sourceRef": ["njc_subj", "cjc_subj", "hci_subj"]}]},
+        {"id": "jc_physics", "name": "H2 Physics", "subjectNeeds": [
+          {"text": "Physics or Science (Physics, Chemistry/Biology); indicative B3 Physics or A2 combined science; some JCs require H2 Maths alongside", "subjects": ["physics", "sci_pc", "sci_pb"], "minLevel": "G3", "minGrade": "B3", "status": "provisional", "sourceRef": ["cjc_subj", "hci_subj"]}]},
+        {"id": "jc_chemistry", "name": "H2 Chemistry", "subjectNeeds": [
+          {"text": "Chemistry or Science (Physics/Biology, Chemistry); grade cut-off varies by JC", "subjects": ["chemistry", "sci_pc", "sci_cb"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["cjc_subj", "hci_subj"]}]},
+        {"id": "jc_biology", "name": "H2 Biology", "subjectNeeds": [
+          {"text": "Biology or Science (Physics/Chemistry, Biology); indicative B4 Biology or B3 combined science (CJC)", "subjects": ["biology", "sci_pb", "sci_cb"], "minLevel": "G3", "minGrade": "B4", "status": "provisional", "sourceRef": ["cjc_subj"]}]},
+        {"id": "jc_humanities", "name": "Humanities/Arts (H2 Econs, History, Geography, Literature)", "subjectNeeds": [
+          {"text": "No published common prerequisite found; colleges set their own. Prior Literature/History/Geography is generally helpful for the matching H2 subject.", "subjects": ["literature", "history", "geography", "hum_ss_lit", "hum_ss_hist", "hum_ss_geog", "economics"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": []}]},
+        {"id": "jc_art_music", "name": "H2 Art / H2 Music", "subjectNeeds": [
+          {"text": "Not researched in primary sources; colleges typically expect prior Art/Music or portfolio/audition. Unverified.", "subjects": ["art", "higher_art", "music", "higher_music"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": []}]}
+      ]
+    },
+
+    "mi": {
+      "eligibility": [
+        {"text": "L1R4 gross aggregate <= 20", "status": "confirmed", "sourceRef": ["moe_infosheet1", "moe_pse_jcmi"]},
+        {"text": "All L1R4 subjects at G3; same R1-R4 subject-group structure as JC", "status": "confirmed", "sourceRef": ["moe_pse_jcmi", "moe_infosheet1"]},
+        {"text": "Same subject grade floors as JC: EL G3 C6, G3 Maths/A Maths D7, MTL as JC", "subjects": ["el", "maths", "amaths", "mtl"], "status": "confirmed", "sourceRef": ["moe_pse_jcmi"], "note": "MOE page lists the requirements jointly for JC/MI; extract was partly garbled."},
+        {"text": "Bonus cap aligned with JC (3)", "status": "confirmed", "sourceRef": ["moe_infosheet1"]}
+      ],
+      "aggregate": {"type": "L1R4", "cutoff": 20, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+      "families": []
+    },
+
+    "poly": {
+      "eligibility": [
+        {"text": "ELR2B2 NET aggregate <= 22 (Diploma in Nursing: ELR2B2-C net <= 24); replaces 26/28", "status": "confirmed", "sourceRef": ["moe_pse_poly"]},
+        {"text": "EL, R1, R2, B1 counted at G3 grade (so these four must be G3 subjects); B2 counted at G2-equivalent grade: B2 may be a G2 subject, or a G3 subject mapped down. Correction to app wording: it is specifically the B2 slot, and it is always G2-equivalent even when taken at G3.", "status": "confirmed", "sourceRef": ["moe_pse_poly"]},
+        {"text": "G3 grade 9 and G2 grades 5-6 cannot be used in ELR2B2", "status": "confirmed", "sourceRef": ["moe_pse_poly"]},
+        {"text": "EL must be G3 (it is used at G3 grade). Course-specific MERs (e.g. EL 1-7, Maths 1-6) still apply; 2028 MERs to be published on CourseFinder mid-2027.", "subjects": ["el"], "minLevel": "G3", "minGrade": null, "status": "confirmed", "sourceRef": ["moe_pse_poly"]},
+        {"text": "Maths at G2 is not generally allowed as R1 under types B/C/D because R1/R2 must be G3; a G2 Maths could only sit in B2. Inference.", "subjects": ["maths"], "status": "provisional", "sourceRef": ["moe_pse_poly"]}
+      ],
+      "aggregate": {"type": "ELR2B2", "cutoff": 22, "cutoffNursing": 24, "gross": false, "status": "confirmed", "sourceRef": ["moe_pse_poly"]},
+      "families": [
+        {"id": "poly_A", "name": "ELR2B2-A: business, humanities, media, early childhood-type courses", "subjectNeeds": [
+          {"text": "R1 from 1st group (arts/humanities/business list: Art, Business Studies, Combined Humanities, Economics, Geography, History, Literature, Music, etc.)", "subjects": ["art", "higher_art", "economics", "geography", "history", "literature", "hum_ss_geog", "hum_ss_hist", "hum_ss_lit", "music", "higher_music", "poa"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["moe_jae2026_aggtypes", "sp_aggtypes"]},
+          {"text": "R2 from 2nd group (wider list incl. Mathematics, MTL, D&T, F&N, sciences)", "subjects": ["maths", "amaths", "mtl", "hmtl", "dt", "nfs", "sci_pc", "sci_pb", "sci_cb", "physics", "chemistry", "biology"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["moe_jae2026_aggtypes", "sgschoolkaki_agg"]}]},
+        {"id": "poly_B", "name": "ELR2B2-B: business with mathematics (e.g. Accountancy & Finance)", "subjectNeeds": [
+          {"text": "R1 = Mathematics or Additional Mathematics", "subjects": ["maths", "amaths"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["sp_aggtypes", "tp_aggtypes_2027"]},
+          {"text": "R2 from 2nd group (humanities/arts/commerce list per one source; sources disagree)", "subjects": ["poa", "economics", "geography", "history", "literature", "art"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["moe_jae2026_aggtypes", "sgschoolkaki_agg"]}]},
+        {"id": "poly_C", "name": "ELR2B2-C: engineering, IT, applied & health sciences (Nursing uses C)", "subjectNeeds": [
+          {"text": "R1 = Mathematics or Additional Mathematics", "subjects": ["maths", "amaths"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["sp_aggtypes", "np_elr2b2"]},
+          {"text": "R2 = a science/technology subject (Biology, Chemistry, Physics, combined sciences, Computing, D&T, F&N, Electronics...)", "subjects": ["physics", "chemistry", "biology", "sci_pc", "sci_pb", "sci_cb", "computing", "dt", "nfs", "electronics"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["sgschoolkaki_agg", "np_elr2b2"]}]},
+        {"id": "poly_D", "name": "ELR2B2-D: design and architecture", "subjectNeeds": [
+          {"text": "R1 = Mathematics or Additional Mathematics (per SP table)", "subjects": ["maths", "amaths"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["sp_aggtypes"]},
+          {"text": "Must have sat one 2nd-group subject (Art, D&T, Design Studies, sciences per one source)", "subjects": ["art", "higher_art", "dt", "physics", "chemistry", "biology"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["sp_aggtypes", "tp_aggtypes_2027"]}]}
+      ],
+      "familiesNote": "Only four aggregate types (A-D) exist in 2026 JAE and TP's 2027 table; no ELR2B2-E was found. The app's A=business, B=engineering, C=design, D=health, E=media mapping is wrong: C covers engineering/IT/applied & health sciences and Nursing, D covers design/architecture, B covers maths-based business (accountancy). Retention of A-D under PSE 2028 is implied by MOE's 'ELR2B2-C' Nursing rule but full 2028 subject lists are not yet published (mid-2027)."
+    },
+
+    "pfp": {
+      "eligibility": [
+        {"text": "ELMAB3 GROSS aggregate computed at G2-equivalent grades <= 12 (no CCA bonus)", "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
+        {"text": "Open to students offering G3 subjects or a mix of G2 and G3; G3 grades mapped down to G2 equivalent", "status": "confirmed", "sourceRef": ["moe_pse_pfp", "moe_fsbb_faq"]},
+        {"text": "G3 grade 9 and G2 grades 5-6 cannot be used", "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
+        {"text": "Subject MERs at G2-equivalent: EL 3, Maths 3, a relevant subject 3, two best subjects 4 (plus cluster MERs)", "subjects": ["el", "maths", "amaths"], "minLevel": "G2", "minGrade": "3", "status": "provisional", "sourceRef": ["moe_fsbb_faq", "nyp_pfp", "tp_pfp"], "note": "Stated on poly PFP pages for AY2026 (N(A) basis) and per search extract of the MOE FSBB FAQ; re-check MOE PFP page."}
+      ],
+      "aggregate": {"type": "ELMAB3", "computedAt": "G2-equivalent", "cutoff": 12, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
+      "families": [
+        {"id": "pfp_sciences", "name": "Sciences cluster", "subjectNeeds": [{"text": "Relevant science subject at G2-equivalent 3", "subjects": ["sci_pc", "sci_pb", "sci_cb", "physics", "chemistry", "biology", "nfs"], "minLevel": "G2", "minGrade": "3", "status": "provisional", "sourceRef": ["nyp_pfp", "tp_pfp"]}]},
+        {"id": "pfp_eng_tech", "name": "Engineering & Technology cluster", "subjectNeeds": [{"text": "Relevant science/D&T subject at G2-equivalent 3", "subjects": ["sci_pc", "sci_pb", "sci_cb", "physics", "chemistry", "biology", "dt", "nfs"], "minLevel": "G2", "minGrade": "3", "status": "provisional", "sourceRef": ["tp_pfp"]}]},
+        {"id": "pfp_design", "name": "Design cluster", "subjectNeeds": [{"text": "Same relevant-subject list as sciences at some polys; design courses may add art/portfolio", "subjects": ["dt", "art", "sci_pc", "sci_pb", "sci_cb"], "minLevel": "G2", "minGrade": "3", "status": "provisional", "sourceRef": ["tp_pfp"]}]},
+        {"id": "pfp_hamb", "name": "Humanities, Arts, Media & Business cluster", "subjectNeeds": [{"text": "Relevant humanities/business subject at G2-equivalent 3 (PoA, Literature, History, Geography, Art...)", "subjects": ["poa", "literature", "history", "geography", "hum_ss_geog", "hum_ss_hist", "hum_ss_lit", "art"], "minLevel": "G2", "minGrade": "3", "status": "provisional", "sourceRef": ["tp_pfp", "nyp_pfp"]}]}
+      ],
+      "familiesNote": "PFP is cluster-based since AY2026; cluster names differ by polytechnic."
+    },
+
+    "hnitec": {
+      "label": "ITE 2-Year Higher Nitec (direct entry to Year 2 of Higher Nitec)",
+      "eligibility": [
+        {"text": "ELMAB3 GROSS aggregate (G2-equivalent grades) <= 19, excluding CCA points, plus course MERs", "status": "confirmed", "sourceRef": ["moe_pse_hn2", "moe_pse_explore"]},
+        {"text": "Admission set at G2; students with a mix of G3 and G2 subjects can apply. Replaces DPP, which ceases from the AY2028 ITE intake.", "status": "confirmed", "sourceRef": ["moe_pse_hn3", "moe_pse_hn2"]},
+        {"text": "G3 9 and G2 6 usable in aggregate but not for MERs; same subject at two levels: better equivalent used", "status": "confirmed", "sourceRef": ["moe_pse_hn2"]}
+      ],
+      "aggregate": {"type": "ELMAB3", "computedAt": "G2-equivalent", "cutoff": 19, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_hn2"]},
+      "families": [
+        {"id": "ite_engineering", "name": "Engineering", "subjectNeeds": [{"text": "Example 2026 MER (Higher Nitec Electrical Engineering 2-yr, O-Level grades): EL 1-8, Maths/A Maths 1-7, one science-type subject 1-8", "subjects": ["el", "maths", "amaths", "physics", "chemistry", "sci_pc", "sci_pb", "sci_cb", "electronics"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["moe_cf_hn_ee2"]}]},
+        {"id": "ite_infocomm", "name": "Info-comm Technology & Digital Media", "subjectNeeds": [{"text": "Example (Higher Nitec IT Systems & Networks): EL 1-8, Maths 1-7, approved science subject 1-8 (Biology, Chemistry, Combined Science, Physics, etc.)", "subjects": ["el", "maths", "amaths", "physics", "chemistry", "biology", "sci_pc", "sci_pb", "sci_cb", "computing"], "minLevel": "G3", "minGrade": null, "status": "provisional", "sourceRef": ["ite_itsn"]}]},
+        {"id": "ite_business_services", "name": "Business & Services", "subjectNeeds": [{"text": "MERs not found for 2028; some services courses (accounting, hospitality, event mgmt) require Maths to have been sat", "subjects": ["el", "maths"], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": []}]},
+        {"id": "ite_applied_health", "name": "Applied & Health Sciences", "subjectNeeds": [{"text": "MERs not found", "subjects": [], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": []}]},
+        {"id": "ite_design_media", "name": "Design & Media", "subjectNeeds": [{"text": "MERs not found", "subjects": [], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": []}]}
+      ]
+    },
+
+    "nitec": {
+      "label": "ITE 3-Year Higher Nitec (Year 1 entry; Nitec as an entry qualification is replaced by Higher Nitec for SEC students)",
+      "eligibility": [
+        {"text": "Open to all SEC candidates at any level. Year 1 admission set at G1: aggregate on four subjects at G1-equivalent grades.", "status": "confirmed", "sourceRef": ["moe_pse_hn3", "moe_pse"]},
+        {"text": "Must meet MER of one aggregate type (R2B2, R1B3-A, R1B3-B, R1B3-C, B4) plus course MERs. R/B subjects need G3 A1-E8 / G2 1-5 / G1 A-D; B4 has no grade requirement.", "status": "confirmed", "sourceRef": ["moe_pse_hn3"]},
+        {"text": "Most SEC students enter 3-year Higher Nitec; eligible students may take the 2-year accelerated route", "status": "confirmed", "sourceRef": ["moe_pse_explore"]}
+      ],
+      "aggregate": {"type": "ITE_G1_types", "computedAt": "G1-equivalent", "cutoff": null, "status": "confirmed", "sourceRef": ["moe_pse_hn3"], "note": "No numeric cut-off published; MER is per aggregate type."},
+      "families": [
+        {"id": "ite3_engineering", "name": "Engineering", "subjectNeeds": [{"text": "Example (Higher Nitec Electronics Engineering 3-yr): Maths or Science at A-D or 1-5, plus any 2 other subjects A-D or 1-5; some applied subjects may replace Science", "subjects": ["maths", "science_g1", "sci_pc", "sci_pb", "sci_cb", "physics", "chemistry", "electronics"], "minLevel": "G1", "minGrade": "D", "status": "provisional", "sourceRef": ["moe_cf_hn_elec3"]}]},
+        {"id": "ite3_infocomm", "name": "Info-comm Technology & Digital Media", "subjectNeeds": [{"text": "Example (IT Systems & Networks 3-yr): N-Level route Maths or Science A-D/1-5 plus two others; likely R1B3-B", "subjects": ["maths", "science_g1", "computing"], "minLevel": "G1", "minGrade": "D", "status": "provisional", "sourceRef": ["ite_itsn"]}]},
+        {"id": "ite3_business_services", "name": "Business & Services", "subjectNeeds": [{"text": "Aggregate-type mapping not published; R1B3-C (English) or R2B2 plausible. Unverified.", "subjects": ["el"], "minLevel": "G1", "minGrade": null, "status": "provisional", "sourceRef": []}]},
+        {"id": "ite3_applied_health", "name": "Applied & Health Sciences", "subjectNeeds": [{"text": "Not found", "subjects": [], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": []}]},
+        {"id": "ite3_design_media", "name": "Design & Media", "subjectNeeds": [{"text": "Not found; B4 or R1B3-C plausible. Unverified.", "subjects": [], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": []}]}
+      ]
+    },
+
+    "sec5": {
+      "eligibility": [
+        {"text": "Route 1: 3 or more G3 passes AND not eligible for JC, MI or Poly Year 1", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
+        {"text": "Route 2: 2 or fewer G3 passes AND gross ELMAB3 <= 21, or ELB3 <= 14, or MAB3 <= 14, computed at G2 (at least grade 5 at G2 for every subject used)", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
+        {"text": "To offer ALL subjects at G3 in 5th year: gross ELMAB3 (G2-computed, each subject at least grade 5) <= 19", "status": "confirmed", "sourceRef": ["moe_pse_explore", "sch_wrss_2026"]},
+        {"text": "Definition of a 'G3 pass' (C6? E8?) not stated in sources found", "status": "provisional", "sourceRef": []}
+      ],
+      "aggregate": {"type": "ELMAB3|ELB3|MAB3", "computedAt": "G2-equivalent", "cutoff": {"ELMAB3": 21, "ELB3": 14, "MAB3": 14, "allG3Option_ELMAB3": 19}, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
+      "families": []
+    },
+
+    "arts": {
+      "eligibility": [
+        {"text": "LASALLE diploma (2028 intake onwards): G3 English pass at C6 or better AND aggregate <= 21 in 4 other subjects, one of which may be G2; if all four are G3 the lowest-grade one is mapped G3->G2. Portfolio/interview also required.", "subjects": ["el"], "minLevel": "G3", "minGrade": "C6", "status": "confirmed", "sourceRef": ["lasalle_eae"]},
+        {"text": "NAFA diploma (2028 onwards, e.g. Theatre): aggregate <= 21 in 4 subjects (3 at G3 + 1 at G2) excluding English; audition/portfolio. English requirement not restated in extract.", "status": "confirmed", "sourceRef": ["nafa_theatre"]}
+      ],
+      "aggregate": {"type": "EL pass + 4 subjects (3 G3 + 1 G2-equivalent)", "cutoff": 21, "status": "confirmed", "sourceRef": ["lasalle_eae", "nafa_theatre"]},
+      "families": [
+        {"id": "arts_visual_design", "name": "Visual arts & design diplomas", "subjectNeeds": [{"text": "Portfolio required; no specific subject prerequisite found", "subjects": ["art", "higher_art", "dt"], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": ["lasalle_eae"]}]},
+        {"id": "arts_performing", "name": "Performing arts (music, theatre, dance)", "subjectNeeds": [{"text": "Audition required; no specific subject prerequisite found", "subjects": ["music", "higher_music", "drama"], "minLevel": null, "minGrade": null, "status": "provisional", "sourceRef": ["nafa_theatre"]}]}
+      ]
+    }
+  },
+
+  "changes_since_2026_08_05": [
+    {"text": "No new MOE press release, Parliamentary reply or SEAB notice changing PSE 2028 rules was found dated after 2026-08-05. MOE pages still say 2028-specific course information (CourseFinder MERs, aggregate-type lists) will be updated in mid-2027.", "status": "provisional", "sourceRef": ["moe_pse_poly", "moe_pse_hn2"]},
+    {"text": "Corrections to app data found during verification (not new announcements): (1) poly B2 slot is always at G2-equivalent, not 'one of the two best may be G2'; (2) 22/24 are NET (after CCA) poly cut-offs; (3) JC/MI bonus cap is 3 (+2 LEP); (4) JC MTL can be G2 (1-5) or G1 (A-D); (5) ELR2B2 has 4 types A-D, no -E, and the app's family labels are wrong; (6) 3-year Higher Nitec uses G1-equivalent aggregate types, not G2; (7) G3 9 / G2 5-6 unusable in ELR2B2 and PFP ELMAB3 but usable in ITE aggregates.", "status": "confirmed", "sourceRef": ["moe_pse_poly", "moe_infosheet1", "moe_jae_2028", "moe_pse_hn3"]},
+    {"text": "Secondary explainers published Oct 2026 (edukatesg 6 Oct and 24 Oct 2026) restate the same rules; no changes.", "status": "provisional", "sourceRef": ["edukatesg_pfp_dpp"]}
+  ],
+
+  "open_questions": [
+    "Live verification: every 'confirmed' item came via search-engine extracts because WebFetch/curl could not reach moe.gov.sg in this session. Spot-check the MOE PSE pages directly.",
+    "Exact 2028 per-item JC/MI bonus values (CCA, affiliation, HMTL, elective programmes) under the cap of 3: null / provisional.",
+    "Does JC/MI conditional admission (old rule: L1R4/L1R5 near-miss with A1/A2 grades, or missing a subject floor and re-sitting) continue under PSE 2028? Not found.",
+    "Definition of a 'G3 pass' for the Sec 5 '3 or more G3 passes' rule (C6 or E8?): not found.",
+    "Is there an explicit cap on poly bonus points under PSE beyond CCA's 2 points? Not found.",
+    "Numeric aggregate cut-off (if any) for 3-Year Higher Nitec G1 aggregate types: not found; MER is per type.",
+    "Which ITE courses/clusters use which G1 aggregate type (R2B2 / R1B3-A/B/C / B4): not published.",
+    "2028 ELR2B2-A..D relevant-subject lists under SEC and per-course MERs (e.g. Maths 1-6, science 1-6): to be published mid-2027; 2026 JAE lists used as provisional and sources disagree on B and D 2nd groups.",
+    "Whether a G2 subject can be used as poly R1/R2 for any aggregate type (MOE text says R1, R2 use G3 grade, implying no).",
+    "Whether PFP ELMAB3 uses B1+B2+B3 or B1+B3 (one extract said '1st and 3rd best'); ITE page uses B1, B2, B3.",
+    "PFP per-cluster MER subject lists for 2028 (EL 3, Maths 3, relevant 3, best two 4 is from AY2026 poly pages and an MOE FAQ extract).",
+    "JC H2 Art/Music and humanities prerequisites: not researched from primary JC pages.",
+    "NAFA English requirement for 2028 SEC route: not restated in extract."
+  ]
+}

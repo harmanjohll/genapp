@@ -1,0 +1,120 @@
+{
+ "_meta": {
+  "source": "MOE post secondary admissions pages, MOE press release on ITE upgrader admissions to polytechnics from AY2027, ITE and polytechnic progression pages",
+  "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027",
+  "accessed": "2026-08-05",
+  "units": "years, GPA points",
+  "notes": "The onward edges of the system. Every destination must have at least one, which is what makes a dead end impossible to render. The honest field is never cut: it is the credibility of the whole route system."
+ },
+ "routes": [
+  {
+   "id": "poly_to_uni",
+   "label": "Poly, then university",
+   "steps": [
+    "Poly diploma",
+    "Degree"
+   ],
+   "years": 6,
+   "detail": "Diplomas carry exemptions, so a degree often starts in Year 2.",
+   "honest": "Competitive, and the diploma GPA is what counts.",
+   "status": "provisional"
+  },
+  {
+   "id": "ite_to_poly",
+   "label": "ITE, then poly",
+   "steps": [
+    "Higher Nitec",
+    "Poly diploma"
+   ],
+   "years": 5,
+   "detail": "Finish Higher Nitec at GPA 2.5 to apply. A raw 3.5 guarantees a place.",
+   "honest": "About two years longer than going straight.",
+   "status": "confirmed"
+  },
+  {
+   "id": "ite_to_poly_to_uni",
+   "label": "ITE, poly, then a degree",
+   "steps": [
+    "Higher Nitec",
+    "Poly diploma",
+    "Degree"
+   ],
+   "years": 8,
+   "detail": "The long road, and people finish it every year. Each step stands on its own.",
+   "honest": "Longer, and paid work is available the whole way.",
+   "status": "provisional"
+  },
+  {
+   "id": "nitec_to_hnitec",
+   "label": "Nitec, then Higher Nitec",
+   "steps": [
+    "Higher Nitec Year 1",
+    "Same course, Year 2"
+   ],
+   "years": 3,
+   "detail": "Start at Year 1 of the same 3 year course. Same certificate at the end.",
+   "honest": "One extra year, same destination.",
+   "status": "provisional"
+  },
+  {
+   "id": "pfp_to_poly",
+   "label": "Foundation year, then poly",
+   "steps": [
+    "Foundation year",
+    "Poly diploma"
+   ],
+   "years": 4,
+   "detail": "A year inside the polytechnic, then straight into Year 1.",
+   "honest": "Nobody can tell from the diploma afterwards.",
+   "status": "provisional"
+  },
+  {
+   "id": "sec5_then_jc",
+   "label": "A fifth year, then JC",
+   "steps": [
+    "Sec 5",
+    "Junior College"
+   ],
+   "years": 3,
+   "detail": "One more year at a harder level, then the JC route on that.",
+   "honest": "A year behind, invisible by my thirties.",
+   "status": "provisional"
+  },
+  {
+   "id": "sec5_then_poly",
+   "label": "A fifth year, then poly",
+   "steps": [
+    "Sec 5",
+    "Poly diploma"
+   ],
+   "years": 4,
+   "detail": "The most common reason to take a fifth year.",
+   "honest": "Worth it for a specific course I want.",
+   "status": "provisional"
+  },
+  {
+   "id": "work_study",
+   "label": "Work and study together",
+   "steps": [
+    "A job",
+    "A qualification"
+   ],
+   "years": 3,
+   "detail": "SkillsFuture Work Study runs at Certificate, Diploma and Degree level, and it pays.",
+   "honest": "Hard, because it is a job and a course at once.",
+   "status": "provisional"
+  },
+  {
+   "id": "later_degree",
+   "label": "A degree later",
+   "steps": [
+    "Work",
+    "Part time degree"
+   ],
+   "years": 4,
+   "detail": "SUSS and SIT run part time and applied degrees built for working adults.",
+   "honest": "Most people who do this start after thirty.",
+   "status": "provisional"
+  }
+ ]
+}

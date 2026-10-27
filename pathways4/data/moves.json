@@ -1,0 +1,626 @@
+{
+ "_meta": {
+  "source": "MOE admissions pages and school ECG practice",
+  "url": "https://www.moe.gov.sg/post-secondary/admissions",
+  "accessed": "2026-08-05",
+  "notes": "Asks are free because asking costs courage, not hours: a hand of five, two playable a year, and playing one draws another. Commitments spend points because three months is three months. Every flag set here is read by a callback card, which is the whole promise of a move: do it now, and the story remembers."
+ },
+ "rule": "Two kinds. Superpowers are asks: free, held in a hand of five, two a year, and using one teaches me another. Commitments take real time, so they sit among my choices and spend my points.",
+ "moves": [
+  {
+   "id": "ask_help",
+   "label": "Get help with the subject I dread",
+   "ages": [
+    13,
+    17
+   ],
+   "body": "Go to the teacher after class. Say which part I do not get. That is the whole move.",
+   "outcome": "The teacher shows me where it actually went wrong, which is never where I thought.",
+   "gain": {
+    "skills": 1
+   },
+   "disp": {
+    "persistence": 1
+   },
+   "sets": "asked_help",
+   "ic": "persistence",
+   "kind": "ask",
+   "missed": "The subject I dread stayed the subject I dread.",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "ecg",
+   "label": "Book a chat with my ECG counsellor",
+   "ages": [
+    13,
+    17
+   ],
+   "body": "Every secondary school and JC has one, and it is free. Bring one question. Where could I go is a good one.",
+   "outcome": "They show me two roads I did not know existed. Nobody makes me take either.",
+   "disp": {
+    "flexibility": 1,
+    "optimism": 1
+   },
+   "sets": "ecg_seen",
+   "ic": "q_where",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "yearhead",
+   "label": "Ask my Year Head what moving up takes",
+   "ages": [
+    13,
+    16
+   ],
+   "body": "Not a promise. A question: what would my marks need to look like to take this at G3?",
+   "outcome": "Now I know the number. It is smaller than the rumour said.",
+   "disp": {
+    "risk": 1
+   },
+   "sets": "asked_up",
+   "ic": "risk",
+   "kind": "ask",
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "parents",
+   "label": "Tell my parents what I actually want",
+   "ages": [
+    13,
+    20
+   ],
+   "body": "They have a plan for me. They cannot compare it with mine if mine stays secret.",
+   "outcome": "One awkward dinner. After it, one fewer thing to carry alone.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "optimism": 1
+   },
+   "sets": "told_parents",
+   "ic": "d_people",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "shadow",
+   "label": "Ask for a job shadowing day",
+   "ages": [
+    15,
+    17
+   ],
+   "body": "My school or a family friend can set one up. One day watching someone actually do the job.",
+   "outcome": "The job is not what I imagined. Better or worse, now I know which.",
+   "gain": {
+    "portfolio": 1
+   },
+   "disp": {
+    "curiosity": 1
+   },
+   "sets": "seen_work",
+   "ic": "curiosity",
+   "kind": "commit",
+   "cost": 1,
+   "missed": "The shadowing day ran with somebody else asking the questions.",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "eae_prep",
+   "label": "Prepare for my Early Admissions interview",
+   "ages": [
+    15,
+    17
+   ],
+   "body": "EAE shortlists me, then interviews me, and some courses set an aptitude test. Most people arrive having prepared nothing.",
+   "outcome": "I practise saying out loud why this course, with the folder open beside me. The panel asks exactly that, and I have an answer.",
+   "gain": {
+    "portfolio": 1,
+    "network": 1
+   },
+   "sets": "eae_ready",
+   "ic": "d_portfolio",
+   "check": "Ask the course whether it interviews, tests, or both.",
+   "kind": "commit",
+   "cost": 1,
+   "missed": "The interview came around with no rehearsal behind it.",
+   "opens": "d_eae",
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "dsa",
+   "label": "Ask what my talent counts for in DSA",
+   "ages": [
+    15,
+    16
+   ],
+   "body": "DSA takes Sec 4s into JC on talent: sport, CCA, a subject I am unusually good at. Fair warning, an accepted offer is binding. I am choosing, not keeping options.",
+   "outcome": "Early Admissions weighs it for a polytechnic course, and an arts school reads it on a portfolio. Naming it changes how I treat it.",
+   "disp": {
+    "curiosity": 1
+   },
+   "sets": "dsa_aware",
+   "ic": "g_elective",
+   "check": "DSA for junior colleges, at moe.gov.sg. Accepted offers commit me to that JC.",
+   "kind": "commit",
+   "cost": 1,
+   "missed": "The talent stayed a hobby nobody at an admissions desk heard about.",
+   "at": [
+    "sec"
+   ]
+  },
+  {
+   "id": "intern",
+   "label": "Treat my attachment like a real job",
+   "ages": [
+    17,
+    19
+   ],
+   "body": "Poly internships and ITE attachments are where employers first see me. Show up like it is the job, because it is.",
+   "outcome": "My supervisor writes three sentences about me at the end. People read those.",
+   "gain": {
+    "skills": 1,
+    "network": 1
+   },
+   "sets": "attached",
+   "ic": "t_skills",
+   "kind": "commit",
+   "cost": 1,
+   "missed": "The attachment stayed a timetable entry.",
+   "opens": "d_people",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
+  },
+  {
+   "id": "exchange",
+   "label": "Put my name down for a semester abroad",
+   "ages": [
+    17,
+    24
+   ],
+   "body": "Poly, ITE and uni all run overseas stints. The form is shorter than the queue for it is.",
+   "outcome": "Three months somewhere nothing works the way I assume. I come back harder to rattle.",
+   "disp": {
+    "flexibility": 2
+   },
+   "sets": "exchanged",
+   "ic": "flexibility",
+   "kind": "commit",
+   "cost": 2,
+   "missed": "The exchange cohort flew without me.",
+   "at": [
+    "poly",
+    "arts",
+    "uni"
+   ]
+  },
+  {
+   "id": "mentor",
+   "label": "Ask a working adult for one hour",
+   "ages": [
+    19,
+    30
+   ],
+   "body": "Find one person doing the thing I want. Ask for an hour and bring questions. Most people say yes and nobody asks them.",
+   "outcome": "One hour of how it really works, which no website has.",
+   "gain": {
+    "network": 2
+   },
+   "sets": "found_mentor",
+   "ic": "d_people",
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "formteacher",
+   "label": "Ask the teacher who knows me best which subject fits",
+   "ages": [
+    13,
+    17
+   ],
+   "body": "They see me every week and they have an opinion. Nobody ever asks for it.",
+   "outcome": "They name something I am good at that I had not counted as a skill.",
+   "disp": {
+    "curiosity": 1
+   },
+   "gain": {
+    "skills": 1
+   },
+   "sets": "asked_form",
+   "ic": "q_who",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "senior",
+   "label": "Ask a senior who took the road I want",
+   "ages": [
+    14,
+    20
+   ],
+   "body": "One year above me, same school, already there. Ask what they wish they had known.",
+   "outcome": "Straight answers, no brochure voice. Some of it puts me off, which is also useful.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "curiosity": 1
+   },
+   "sets": "asked_senior",
+   "ic": "d_people",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "openhouse",
+   "label": "Go to an open house and ask one real question",
+   "ages": [
+    14,
+    18
+   ],
+   "body": "Everyone walks around collecting flyers. Ask a lecturer what students find hardest in year one.",
+   "outcome": "The answer is specific and nothing like the flyer. I remember it for years.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "curiosity": 1,
+    "risk": 1
+   },
+   "sets": "went_open",
+   "ic": "curiosity",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns"
+   ]
+  },
+  {
+   "id": "cca",
+   "label": "Ask my CCA teacher for something harder",
+   "ages": [
+    13,
+    17
+   ],
+   "body": "Not a bigger title. A real job nobody wants: run the thing, teach the juniors, fix what is broken.",
+   "outcome": "I am trusted with something before I feel ready, which is how it always goes.",
+   "gain": {
+    "portfolio": 1
+   },
+   "disp": {
+    "persistence": 1
+   },
+   "sets": "led_cca",
+   "ic": "t_portfolio",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "family",
+   "label": "Ask someone in my family who took another road",
+   "ages": [
+    13,
+    24
+   ],
+   "body": "An uncle, a cousin, anyone who did not do what everyone expected. Ask how it worked out.",
+   "outcome": "Someone in my own family is proof the standard road is not the only one.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "optimism": 1,
+    "flexibility": 1
+   },
+   "sets": "asked_family",
+   "ic": "d_sflu",
+   "kind": "ask",
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite",
+    "arts",
+    "ns",
+    "uni",
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "lecturer",
+   "label": "Ask my lecturer how they got into this",
+   "ages": [
+    17,
+    22
+   ],
+   "body": "Poly and ITE lecturers worked in the trade before they taught it. Most are glad to be asked.",
+   "outcome": "They tell me the route they actually took, which was not the neat one on the website.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "curiosity": 1
+   },
+   "sets": "asked_lecturer",
+   "ic": "q_who",
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
+  },
+  {
+   "id": "careercoach",
+   "label": "Book a session with my campus career centre",
+   "ages": [
+    17,
+    24
+   ],
+   "body": "Poly, ITE and every university run one. They know which employers hire from my course, and it is free while I am enrolled.",
+   "outcome": "They read my resume properly and tell me the two things wrong with it.",
+   "gain": {
+    "portfolio": 1
+   },
+   "disp": {
+    "flexibility": 1
+   },
+   "sets": "used_careers",
+   "ic": "q_where",
+   "kind": "ask",
+   "at": [
+    "poly",
+    "ite",
+    "arts",
+    "uni"
+   ]
+  },
+  {
+   "id": "supervisor",
+   "label": "Ask my supervisor what would get me promoted",
+   "ages": [
+    22,
+    34
+   ],
+   "body": "Not a complaint. A question: what would I need to be doing for this to be the obvious next step?",
+   "outcome": "They name two things. One I expected. The other I had never thought about.",
+   "gain": {
+    "skills": 1
+   },
+   "disp": {
+    "risk": 1
+   },
+   "sets": "asked_boss",
+   "ic": "risk",
+   "kind": "ask",
+   "at": [
+    "work"
+   ]
+  },
+  {
+   "id": "peer_ask",
+   "label": "Ask how somebody got the life I want",
+   "ages": [
+    30,
+    55
+   ],
+   "body": "Not their job. Their week. How they got the hours to look like that.",
+   "outcome": "It was arranged on purpose, in steps, and they will tell me the steps if I ask.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "curiosity": 1,
+    "flexibility": 1
+   },
+   "sets": "asked_peer",
+   "ic": "d_people",
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "younger",
+   "label": "Ask somebody younger to teach me something",
+   "ages": [
+    34,
+    55
+   ],
+   "body": "They know the tools I have been avoiding. Asking costs me nothing but the admission.",
+   "outcome": "Half an hour, and the thing I was dreading turns out to be learnable.",
+   "gain": {
+    "skills": 1,
+    "network": 1
+   },
+   "disp": {
+    "curiosity": 1
+   },
+   "sets": "asked_younger",
+   "ic": "curiosity",
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "family_late",
+   "label": "Tell the people at home what might change",
+   "ages": [
+    30,
+    55
+   ],
+   "body": "A change at forty lands on everyone I live with. Say it out loud before it is decided.",
+   "outcome": "They had noticed. Saying it makes it a plan the household is in on, not a surprise.",
+   "gain": {
+    "network": 1
+   },
+   "disp": {
+    "optimism": 1,
+    "risk": 1
+   },
+   "sets": "told_home",
+   "ic": "d_people",
+   "kind": "ask",
+   "at": [
+    "work",
+    "cet"
+   ]
+  },
+  {
+   "id": "lead_role",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "risk",
+   "label": "Put my name up for class comm or EXCO",
+   "body": "Class committee, CCA committee, house, prefect, peer support.",
+   "outcome": "I get the role and the clipboard, and the term teaches me what carrying something actually costs.",
+   "missed": "Somebody else took the clipboard this year.",
+   "check": "Ask my form teacher when nominations open.",
+   "gain": {
+    "network": 1,
+    "skills": 1
+   },
+   "disp": {
+    "risk": 1,
+    "optimism": 1
+   },
+   "sets": "led_cca",
+   "ages": [
+    13,
+    18
+   ],
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "via_lead",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "optimism",
+   "label": "Lead my VIA project instead of attending it",
+   "body": "Values in Action, planned by I rather than handed to me.",
+   "outcome": "I pick who it serves, arrange it, and write what changed. It reads completely differently in an application.",
+   "missed": "The VIA hours got collected. Nothing else did.",
+   "check": "Ask who signs off a student proposed VIA project.",
+   "gain": {
+    "network": 1,
+    "portfolio": 1
+   },
+   "disp": {
+    "optimism": 1,
+    "persistence": 1
+   },
+   "sets": "helped_someone",
+   "ages": [
+    14,
+    17
+   ],
+   "at": [
+    "sec",
+    "jc",
+    "mi"
+   ]
+  },
+  {
+   "id": "peer_tutor",
+   "kind": "commit",
+   "cost": 1,
+   "ic": "persistence",
+   "label": "Tutor a younger student every week",
+   "body": "One hour a week, same student, all term.",
+   "outcome": "Explaining it badly twice is how I find out I only half knew it. By June I know it cold.",
+   "missed": "Nobody was tutored, and the topic stayed half known.",
+   "check": "Ask whether my school runs a peer tutoring scheme.",
+   "gain": {
+    "skills": 1,
+    "network": 1
+   },
+   "disp": {
+    "persistence": 1
+   },
+   "sets": "helped_someone",
+   "ages": [
+    14,
+    19
+   ],
+   "at": [
+    "sec",
+    "jc",
+    "mi",
+    "poly",
+    "ite"
+   ]
+  }
+ ]
+}
