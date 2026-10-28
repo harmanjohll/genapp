@@ -1,0 +1,24 @@
+name = "learning-log-coach"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://harmanjohll.github.io"
+MODEL = "claude-opus-5"
+
+# Per student: 6 coach calls a minute, keyed on class token plus the app's
+# x-student tag. The app also stops each student at a daily allowance.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+simple = { limit = 6, period = 60 }
+
+# Backstop per IP address: 120 a minute, roomy enough for a whole class on
+# one school network, tight enough to stop a script.
+[[ratelimits]]
+name = "LIMITER_IP"
+namespace_id = "1002"
+simple = { limit = 120, period = 60 }
+
+# Secrets are set with: npx wrangler secret put ANTHROPIC_API_KEY
+#                       npx wrangler secret put CLASS_TOKENS
