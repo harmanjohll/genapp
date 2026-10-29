@@ -1,0 +1,3 @@
+# Secrets the deploy flow asks for. Never commit real values.
+ANTHROPIC_API_KEY=
+CLASS_TOKENS=
