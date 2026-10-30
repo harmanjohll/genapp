@@ -115,12 +115,13 @@ function ringSvg(kind, active){
       <path d="M26 92 L46 62 L58 78 L74 48 L88 70 L100 58 L114 92 Z" fill="#000C53"/><path d="M68 56 L74 48 L80 56 Z" fill="#FFE200"/>
       <text x="70" y="112" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="11" fill="#5a5f7a">Look across</text></svg>`;
   }
-  // ACT: three arcs, navy, yellow, red, as on the slide.
-  const arcs = [{k:'a', c:'#000C53', from:150, to:270}, {k:'c', c:'#FFE200', from:270, to:390}, {k:'t', c:'#EC3237', from:30, to:150}];
+  // ACT: three arcs, navy, yellow, red, as on the slide. The current step's arc is wider; none is faded,
+  // so each letter keeps its contrast. The red is a shade deeper than the slide's, for the white T.
+  const arcs = [{k:'a', c:'#000C53', from:150, to:270}, {k:'c', c:'#FFE200', from:270, to:390}, {k:'t', c:'#c8252b', from:30, to:150}];
   let s = `<svg class="ring" viewBox="0 0 140 140" aria-hidden="true">`;
   for (const a of arcs){
     const on = a.k === active;
-    s += `<path d="${arcPath(70, 70, on ? 50 : 46, a.from, a.to)}" fill="none" stroke="${a.c}" stroke-width="${on ? 22 : 16}" stroke-linecap="butt" opacity="${active && !on ? .45 : 1}"/>`;
+    s += `<path d="${arcPath(70, 70, on ? 50 : 46, a.from, a.to)}" fill="none" stroke="${a.c}" stroke-width="${on ? 22 : 16}" stroke-linecap="butt"/>`;
     const mid = (a.from + a.to) / 2 * Math.PI / 180; const x = 70 + 48 * Math.cos(mid), y = 70 + 48 * Math.sin(mid);
     s += `<text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="18" fill="${a.k === 'c' ? '#000C53' : '#fff'}">${a.k.toUpperCase()}</text>`;
   }
@@ -868,19 +869,30 @@ function levelRows(st, comps, big){
    the student points at, taps or tabs to. What next?: steps for now, then for the longer term,
    each with a reason the student can act on. */
 function setupDone(){ return !!me.level && myExperiences().length > 0; }
-function compPanel(c, x){
+/* The panel beside the wheel: one competency's level, its strands, the next statement, and the
+   student's own words that showed it. Before anything is pointed at, the most recently active one. */
+function pbar(n, t, met){ const p = t ? Math.round(100 * n / t) : 0; return `<span class="pbar${met ? ' met' : ''}" role="img" aria-label="${n} of ${t} secured"><i style="width:${p}%"></i></span>`; }
+function compPanel(c, x, recent){
   const d = DOMAINS.find(k => k.id === c.d);
-  const body = x.none
-    ? `<p class="lvline"><span class="pill lv none">Evidence only</span></p><p class="tiny">${esc(EV_WORD[x.ev][0].toUpperCase() + EV_WORD[x.ev].slice(1))}, ${esc(fromLine(x))}. The school is still writing statements for this one.</p>`
-    : `<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p>${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}`;
-  return `<p class="kicker">${esc(d.short)}</p><h3>${esc(c.label)}</h3>${body}<a class="btn small sec" href="#/c/${c.id}">${icon('arrow')} Open ${esc(c.label)}</a>`;
+  const shown = me.entries.filter(e => e.kind !== 'across' && compLevelOf(e, c.id) >= 2).sort((a, b) => b.created - a.created).map(e => ({e, q:bestQuote(e, c.id)})).find(k => k.q);
+  const qt = shown ? shown.q.quote.replace(/…$/, '') : ''; const qs = qt.length > 170 ? qt.slice(0, 168).replace(/\s+\S*$/, '') + '…' : qt;
+  const words = shown ? `<div class="cpq"><span class="kick">In your words</span><q>${esc(qs)}</q><small>${esc(contextName(shown.e) || FRAMEWORKS[shown.e.kind].name)} · ${fmtDay(shown.e.created)}</small></div>` : '';
+  const head = `<p class="kicker">${recent ? 'Most recent · ' : ''}${esc(d.short)}</p><h2>${esc(c.label)}</h2>`;
+  const open = `<a class="btn small sec" href="#/c/${c.id}">${icon('arrow')} Open ${esc(c.label)}</a>`;
+  if (x.none) return head + `<p class="lvline"><span class="pill lv none">Evidence only</span></p><p class="tiny">${esc(EV_WORD[x.ev][0].toUpperCase() + EV_WORD[x.ev].slice(1))}, ${esc(fromLine(x))}. The school is still writing statements for this one.</p>${words}${open}`;
+  const strands = x.L.strands.map(r => `<li><span class="sn">${esc(r.strand.name)}</span><span class="sbars"><span class="sb">Lower Sec ${pbar(r.sl, r.lower.length, r.lowerMet)} <b>${r.sl}/${r.lower.length}</b></span><span class="sb">Upper Sec ${pbar(r.su, r.upper.length, r.upperMet)} <b>${r.su}/${r.upper.length}</b></span></span></li>`).join('');
+  const aim = x.L.target ? `<p class="cpaim">${icon('ladder')}<span>Aim at: “${esc(x.L.target.text.replace(/\.$/, ''))}”</span></p>` : '';
+  return head + `<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul>${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}`;
 }
-function panelDefault(sNow, sAll){ return `<p class="tiny hint">${icon('wheel')}<span>${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see your level there and your next step.</span></p>`; }
-function wireWheel(st){
+function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
+function wheelHint(sNow, sAll){ return `<p class="tiny hint">${icon('wheel')}<span>${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
-  let sel = '';
-  const show = id => { if (sel === id) return; sel = id; panel.innerHTML = compPanel(compOf(id), st[id]); $$('.wheel a.seg').forEach(a => a.classList.toggle('sel', a.dataset.comp === id)); };
+  // the most recent competency is shown only where the panel has room beside the wheel
+  let sel = getComputedStyle(panel).display === 'none' ? '' : first;
+  const mark = id => $$('.wheel a.seg').forEach(a => a.classList.toggle('sel', a.dataset.comp === id)); if (sel) mark(sel);
+  const show = id => { if (sel === id) return; sel = id; panel.classList.remove('is-default'); panel.innerHTML = compPanel(compOf(id), st[id]); mark(id); };
   $$('.wheel a.seg').forEach(a => {
     a.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse') show(a.dataset.comp); });
     a.addEventListener('focus', () => { if (a.matches(':focus-visible')) show(a.dataset.comp); });
@@ -920,32 +932,37 @@ function renderHome(){
   if (aim) later.push(nextItem('star', `<b>Aiming for:</b> “${esc(aim.text.replace(/\.$/, ''))}”. You chose it in your ${FRAMEWORKS[aimEntry.kind].name} entry on ${fmtDay(aimEntry.created)}.`, `#/c/${aim.comp}`, 'See the ladder'));
   const waiting = outer.filter(c => st[c.id].L.waiting);
   if (waiting.length) later.push(nextItem('users', `<b>${esc(waiting.map(c => c.label).join(', '))}:</b> ready for ${esc(W[2])}. Share your log with a teacher and ask them to confirm it.`, '#/sharing', 'Share'));
-  const close = outer.filter(c => !st[c.id].L.waiting && st[c.id].L.need > 0 && st[c.id].idx < 3).sort((a, b) => st[a.id].L.need - st[b.id].L.need || st[b.id].idx - st[a.id].idx || st[b.id].last - st[a.id].last).slice(0, aim ? 1 : 2);
-  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}${x.idx ? `, now ${esc(W[x.idx - 1])}` : ''}.</b> ${esc(x.L.next)}`, `#/c/${c.id}`, 'See what it takes')); }
+  const close = outer.filter(c => st[c.id].idx >= 1 && !st[c.id].L.waiting && st[c.id].L.need > 0 && st[c.id].idx < 3).sort((a, b) => st[a.id].L.need - st[b.id].L.need || st[b.id].idx - st[a.id].idx || st[b.id].last - st[a.id].last).slice(0, aim ? 1 : 2);
+  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}, now ${esc(W[x.idx - 1])}.</b> ${esc(x.L.next)}`, `#/c/${c.id}`, 'See what it takes')); }
+  // nothing started yet: one way in, rather than a list of competencies that all say the same
+  if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
   if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
-  frame(leaves(`
+  const first = recentComp(st);
+  frame(`
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
       <h1>Where am I now?</h1>
       <div class="nowgrid">
         <div class="wheelwrap">${wheelSvg(st)}</div>
-        <div class="cpanel" id="cpanel">${panelDefault(securedNow, securedAll)}</div>
+        <div class="cpanel is-default" id="cpanel">${compPanel(first, st[first.id], true)}</div>
       </div>
+      ${wheelHint(securedNow, securedAll)}
       ${wheelLegend(st)}
-
     </section>
     <div class="acts">
       <a class="btn big" href="#/write/grow">${icon('plus')}<span>New GROW</span></a>
       <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT</span></a>
-    </div><!--leaf-->
+    </div>
     <section class="card nextcard">
       <h2>What next?</h2>
-      <div class="nxpart"><h3 class="nxh">Immediate <small>this week</small></h3><ul class="nxlist">${now.slice(0, nFirst).join('')}${plan}${now.slice(nFirst).join('')}</ul></div>
-      <div class="nxpart"><h3 class="nxh">Longer term <small>this term and beyond</small></h3><ul class="nxlist">${later.join('')}</ul></div>
+      <div class="nxparts">
+        <div class="nxpart"><h3 class="nxh">Immediate <small>this week</small></h3><ul class="nxlist">${now.slice(0, nFirst).join('')}${plan}${now.slice(nFirst).join('')}</ul></div>
+        <div class="nxpart"><h3 class="nxh">Longer term <small>this term and beyond</small></h3><ul class="nxlist">${later.join('')}</ul></div>
+      </div>
     </section>
-  `, 'minmax(0,1.3fr) minmax(0,1fr)'), 'home', {wide:true, cls:'home'});
-  wireWheel(st);
+  `, 'home', {wide:true, cls:'home'});
+  wireWheel(st, first.id);
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 
