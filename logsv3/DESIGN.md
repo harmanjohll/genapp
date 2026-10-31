@@ -2,6 +2,56 @@
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, and v3 makes Home simpler and help more specific. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
 
+## v3, second pass: a full width Home, and a colour and state audit (30 October 2026)
+
+Harman asked for a bigger "Where am I now?" that fills the screen and adapts to the device. He also reported that in Bright and friendly some tabs lost their words under the mouse, and asked for a thorough check of the colours and layouts.
+
+### Home
+- One column. Where am I now? spans the page, and What next? sits below it, Immediate beside Longer term once the card is wide enough. Each card is a CSS container, so the layout follows the room it has, not the device's name:
+  - under 600px (a phone): the wheel, then the panel after a tap;
+  - from 600px (a tablet): wheel and panel side by side;
+  - from 960px (a laptop): the wheel up to 560px;
+  - from 1400px: the wheel up to 640px.
+- The panel shows more:
+  - the competency's level;
+  - each strand's Lower Sec and Upper Sec progress;
+  - the next step and the statement to aim at;
+  - "In your words", a quote from the newest entry that showed it.
+- Before anything is pointed at, the panel shows the most recently active competency. On a phone it waits for a tap, so New GROW and New ACT stay on the first screen.
+- Longer term no longer lists several competencies that all say "Write an entry that shows it". Started competencies come first. With none started there is one item: "Start with one competency."
+
+### Why the words disappeared
+- Bright and friendly's hover rule for tabs, `body[data-look="d"] .tab:hover`, outranked `.tab.on`. Hovering the active tab turned its background white under white words (light), or dark under dark words (dark).
+- The guide's hover rule did the same to the current step in every look.
+- Hover now applies only to what is not selected (`:not(.on):hover`): tabs, steps, journal rows, reader rows and settings links.
+
+### What the earlier audit missed, and what checks it now
+The visual audit had looked only at resting states, in the navy colour, and skipped SVG text. A new sweep, part of the test scripts used to build v3, runs all 48 combinations of look, theme and colour, at 390 and 1280. It forces `:hover` and `:focus-visible` on every control through the browser's developer protocol, and checks:
+- text contrast at rest, on hover and on focus;
+- SVG text against what is drawn under it (the wheel, the rings);
+- each selected state against its surroundings (3:1);
+- the focus ring against its surroundings (3:1);
+- form field edges (3:1);
+- meters and bars (3:1).
+
+The first run found 929 distinct problems. Among them:
+- **Editorial dark** with any colour except navy put dark words on a dark coloured fill in every button and selected chip, at 1.57:1. It now uses the colour's light tint.
+- **Form fields** had edges of 1.4:1 to 1.5:1. A `--field-line` token per look and theme now gives at least 3:1.
+- **The selected segment** (GROW and ACT, Experience and Date, Sec 1 to 5, Light and Dark) was a white pill on a pale track, at 1.2:1. It now has a ring in the student's colour.
+- **The focus ring** was blue, and nearly invisible on the cloth colours of Case and notebooks. Every focus ring now has a halo of the opposite tone, and on the cloth it is yellow.
+- **Clean record's current tab** was marked in yellow only, 1.2:1 on white. It now has a navy edge.
+- **The ACT ring** faded its other arcs under full strength letters. The arcs stay full colour now (the current one is wider), and the red is a shade deeper for the white T.
+- **Empty notebooks** were partly transparent, so their words were too. They are now dulled with a filter instead.
+- **The teacher console**:
+  - a yellow focus ring on cream, 1.2:1;
+  - a yellow underline for the current tab;
+  - faint field edges;
+  - white on the brand red, 4.14:1.
+
+  Each is fixed: a blue ring, a navy underline, darker edges, and a deeper red where red carries words.
+
+The sweep now finds 0 problems in every combination, and 0 in the console. The route audit finds 0 at 320, 390, 768, 1024 by 768, 1280, 1440 and 1920, in every look and theme.
+
 ## v3: a simpler Home, three levels, help beside every question (29 October 2026)
 
 Harman asked for a third version, at `logsv3/`, with eight changes:

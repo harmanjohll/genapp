@@ -3,9 +3,9 @@
 This is the third version of the E21CC Log, served at `genapp/logsv3/` beside `genapp/logsv2/` and the first version at `genapp/logs/`. Both earlier versions are unchanged. v3 keeps its own log in the browser; the first time it opens, it copies in the v2 log (or, if there is none, the first version's), once, and never writes back.
 
 What v3 changes:
-- **Home in two parts.**
-  - Where am I now?: the competency wheel. Pointing at a part (mouse), tapping it (phone or tablet) or tabbing to it (keyboard) shows its level, statements secured and next step beside the wheel. On a touch screen a second tap opens the competency.
-  - What next?: Immediate (this week: the two settings if missing, a teacher's note, the plan to tick, an unfinished entry, the statement almost secured, a GROW if none this week) and Longer term (the statement aimed for, a level waiting for a teacher, the nearest next level, the term's look across).
+- **Home in two parts, each the full width of the page.**
+  - Where am I now?: the competency wheel, as large as the screen allows, with a panel beside it (below it on a phone). The panel shows a competency's level, each strand's progress, the next step and the statement to aim at, and the student's own words that showed it. Before anything is pointed at, it shows the most recently active competency. Pointing at a part (mouse), tapping it (phone or tablet) or tabbing to it (keyboard) shows that one; on a touch screen a second tap opens it.
+  - What next?, below, with Immediate and Longer term side by side on a wide screen: Immediate (this week: the two settings if missing, a teacher's note, the plan to tick, an unfinished entry, the statement almost secured, a GROW if none this week) and Longer term (the statement aimed for, a level waiting for a teacher, the nearest next level, the term's look across).
   - New GROW and New ACT sit under the wheel on a phone, and in the sidebar on a laptop.
 - **Three levels, in the words of the student's look.** The top level needs the Upper Sec band in every strand and a teacher's confirmation. v2's Leading folds into it, and confirmations carry over.
 
