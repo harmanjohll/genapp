@@ -1,0 +1,115 @@
+/* ==================================================================
+   Storage and transport seam for the E21CC Log.
+
+   The Log lives at e21cclog/, an address that stays the same from version
+   to version, under one lasting key. On first open it copies the newest
+   earlier log in once (v3, then v2, then the first version) and never
+   writes back; the older versions are kept read only in e21cclog/legacy/.
+   Later versions change the data in place, through migrateDb on open.
+
+   Phase 1 (now): LocalStore keeps the log in this browser; FormsTransport
+   sends chosen items to an adult's Microsoft or Google Form; share and note
+   links carry items and margin notes as CDL payloads.
+
+   Phase 2 (after MOE IT clears it): OneDriveStore and GraphTransport take
+   the same shapes, so screens do not change. See PHASE2-REQUEST.md.
+   Needs core.js loaded first.
+   ================================================================== */
+'use strict';
+
+const DB_KEY = 'e21cclog';
+const DB_KEY_EARLIER = [['v3', 'cdl.logsv3'], ['v2', 'cdl.logsv2'], ['first', 'cdl.v2']];  // earlier versions' logs: copied in once, never written
+const DB_KEY_V1 = 'logs.v1';   // the Learning Log's key: read once, never written, kept as a rollback copy
+
+const LocalStore = {
+  guest:false,
+  open(){
+    if (this.guest) return migrateDb({});
+    try{
+      const cur = localStorage.getItem(DB_KEY);
+      if (cur) return migrateDb(JSON.parse(cur));
+      for (const [from, key] of DB_KEY_EARLIER){
+        const old = localStorage.getItem(key);
+        if (old){ const d = migrateDb(JSON.parse(old)); delete d.copiedFromFirst; delete d.copiedNoticed; d.copiedFrom = from; d.copiedAt = Date.now(); this.save(d); return d; }
+      }
+      const v1 = localStorage.getItem(DB_KEY_V1);
+      if (v1){ const d = migrateDb(JSON.parse(v1)); d.migratedFrom = DB_KEY_V1; d.migratedAt = Date.now(); this.save(d); return d; }
+    }catch{}
+    return migrateDb({});
+  },
+  save(db){ if (this.guest) return true; try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }catch{ return false; } },
+  hasV1(){ try{ return !!localStorage.getItem(DB_KEY_V1); }catch{ return false; } },
+  dropV1(){ try{ localStorage.removeItem(DB_KEY_V1); }catch{} },
+  exportProfile(p){ return JSON.stringify({app:'cdl', schemaVersion:2, exported:new Date().toISOString(), profile:p}, null, 2); },
+  /* Reads a v2 export, a Learning Log v1 export, or a bare profile. */
+  parseImport(text){ const d = JSON.parse(text); const p = d && (d.profile || d); if (!p || !Array.isArray(p.entries)) throw new Error('not a log'); return migrateProfile(JSON.parse(JSON.stringify(p))); }
+};
+
+/* ---------- what an adult receives ---------- */
+const FORM_FIELDS = ['timestamp','studentName','studentEmail','classCode','teacherEmail','framework','subject','topic','entry','competencies','depth','nextStep','entryId','context','section','payload1','payload2','payload3'];
+
+/* A compact copy of an entry for an adult: the words, the claim, the read.
+   Coach prose is left out to keep links and form answers small. */
+function compactEntry(e){
+  const answers = {}; for (const [k, v] of Object.entries(e.answers || {})) if (String(v || '').trim()) answers[k] = v;
+  const x = e.e21cc || null; const c = e.coach && (e.coach.ai || e.coach.builtin);
+  const out = {id:e.id, kind:e.kind, created:e.created, updated:e.updated || e.created, context:e.context, topic:e.topic || '', groupCode:e.groupCode || '', answers,
+    competencies:(e.competencies || []).map(t => ({id:t.id, level:t.level, where:t.where || ''})),
+    links:(e.links || []).map(l => ({sid:l.sid, quote:l.quote})),
+    depth:c ? c.depth : '', question:c ? c.question : '', target:e.target || '', followThrough:e.followThrough || null,
+    // how the coach met the student: statuses, the stretch, help given, follow through, a content question
+    read:c ? {nothing:!!c.nothing, answers:c.answers || [], stretch_qid:c.stretch_qid || '', follow_through:c.follow_through || null, scaffold:c.scaffold ? {level:c.scaffold.level || 1} : null, content_check:c.content_check || '', gift:c.gift || '', stretch:c.stretch || ''} : null};
+  if (e.kind === 'act'){ out.feedbackFrom = e.feedbackFrom || ''; out.feedbackText = e.feedbackText || ''; }
+  if (e.kind === 'across'){ out.basket = e.basket; out.term = e.term; out.lookedAt = (e.lookedAt || []).slice(0, 8); }
+  if (x) out.e21cc = {source:x.source, stance:x.stance, evidence:(x.evidence || []).map(v => ({id:v.id, strength:v.strength, quote:v.quote || '', unverified:!!v.unverified})), statements:(x.statements || []).map(s => ({sid:s.sid, quote:s.quote})), ksvd:(x.ksvd || []).map(k => ({id:k.id, strength:k.strength, quote:k.quote}))};
+  return out;
+}
+
+/* Packs items into as few submissions as the form allows: each answer at most
+   `chunk` characters across payload1 to payload3, and (Microsoft Forms) the
+   whole pre filled link under `budget` characters. */
+async function buildSubmissions(sink, readable, from, items, opts){
+  const chunk = (opts && opts.chunk) || 3900; const budget = (sink && sink.maxUrl) || (opts && opts.budget) || 8000;
+  const out = []; let i = 0;
+  while (i < items.length){
+    let n = items.length - i, sub = null;
+    for (; n >= 1; n--){
+      const slice = items.slice(i, i + n);
+      const payload = await packCDL('i', {v:1, from, items:slice});
+      const parts = splitCDL(payload, chunk); if (parts.length > 3 && n > 1) continue;
+      const fields = Object.assign({}, readable(slice), {payload1:parts[0] || '', payload2:parts[1] || '', payload3:parts[2] || ''});
+      if (parts.length > 3) fields.payload3 = parts.slice(2).join('');   // a single item too big for three answers: the form may truncate it
+      const url = sink && sink.kind === 'msforms' ? formUrl(sink, fields) : '';
+      if (url && url.length > budget && n > 1) continue;
+      if (url && url.length > budget){ fields.entry = String(fields.entry || '').slice(0, 300); fields.competencies = String(fields.competencies || '').slice(0, 300); }
+      sub = {items:slice, fields, url: sink && sink.kind === 'msforms' ? formUrl(sink, fields) : ''}; break;
+    }
+    out.push(sub); i += sub.items.length;
+  }
+  return out;
+}
+function formUrl(sink, fields){
+  const u = new URL(sink.url); const map = sink.fields || {};
+  for (const [k, id] of Object.entries(map)) if (k in fields && fields[k] !== '') u.searchParams.set(id, String(fields[k]));
+  return u.toString();
+}
+function mappedCount(sink, fields){ return Object.keys(sink.fields || {}).filter(k => k in fields).length; }
+
+const FormsTransport = {
+  /* Google Forms accepts a silent POST when the form allows responses from outside the organisation. */
+  postGoogle(sink, fields){
+    const action = sink.url.replace(/\/viewform.*$/, '/formResponse').replace(/\?.*$/, '');
+    const f = document.createElement('form'); f.method = 'POST'; f.action = action; f.target = 'pushframe'; f.style.display = 'none';
+    for (const [k, id] of Object.entries(sink.fields || {})){ if (!(k in fields)) continue; const inp = document.createElement('input'); inp.name = id; inp.value = fields[k]; f.appendChild(inp); }
+    let fr = document.querySelector('iframe[name=pushframe]'); if (!fr){ fr = document.createElement('iframe'); fr.name = 'pushframe'; fr.style.display = 'none'; document.body.appendChild(fr); }
+    document.body.appendChild(f); f.submit(); setTimeout(() => f.remove(), 3000);
+  },
+  /* Microsoft Forms has no silent submit: the form opens filled in and the student presses Submit. */
+  openMicrosoft(url){ window.open(url, '_blank', 'noopener'); }
+};
+
+/* ---------- links ---------- */
+function consoleUrl(){ return location.href.replace(/[#?].*$/, '').replace(/index\.html$/, '').replace(/\/?$/, '/') + 'teacher.html'; }
+function appUrl(){ return location.href.replace(/[#?].*$/, '').replace(/teacher\.html$/, '').replace(/index\.html$/, '').replace(/\/?$/, '/') + 'index.html'; }
+/* A Teams chat with one person, message filled in. Falls back to copying when Teams is not available. */
+function teamsChatUrl(email, message){ return `https://teams.microsoft.com/l/chat/0/0?users=${encodeURIComponent(email)}&message=${encodeURIComponent(message)}`; }
