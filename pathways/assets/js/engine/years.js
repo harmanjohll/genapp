@@ -12,7 +12,7 @@
 //
 // Pure: no DOM, no storage.
 
-import { project } from './project.js?v=4.0.0';
+import { project } from './project.js?v=4.1.0';
 
 export const YEAR_IDS = ['p6', 'sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
 export const PLAN_YEARS = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'];

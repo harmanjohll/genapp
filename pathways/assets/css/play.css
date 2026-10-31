@@ -24,7 +24,7 @@
 .grid.two { grid-template-columns: 1fr; }
 @media (min-width: 700px) { .grid.two { grid-template-columns: 1fr 1fr; } }
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
-.btn.accent { background: var(--accent); color: #fff; }
+.btn.accent { background: var(--accent); color: var(--accent-ink); }
 .btn.accent:hover { background: var(--accent-dkr); }
 .fade-up { animation: arrive var(--dur) var(--ease) both; }
 .gloss {
@@ -60,9 +60,9 @@
 .near-chip { background: var(--compass-wash); color: var(--compass); }
 .mv-tag { background: var(--accent-wash); color: var(--accent-dk); }
 .subjchip .lv { font-weight: 800; margin-left: 2px; }
-.lv-g1, .lvchip.lv-g1.on { color: #fff; background: var(--g1); }
-.lv-g2, .lvchip.lv-g2.on { color: #fff; background: var(--g2); }
-.lv-g3, .lvchip.lv-g3.on { color: #fff; background: var(--g3); }
+.lv-g1, .lvchip.lv-g1.on { color: var(--on-lv); background: var(--g1); }
+.lv-g2, .lvchip.lv-g2.on { color: var(--on-lv); background: var(--g2); }
+.lv-g3, .lvchip.lv-g3.on { color: var(--on-lv); background: var(--g3); }
 .subjchip .lv { padding: 0 6px; border-radius: var(--r-pill); }
 
 /* ---- the line strip --------------------------------------------------------- */

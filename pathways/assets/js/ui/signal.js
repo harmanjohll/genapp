@@ -10,8 +10,8 @@
 // Data order always (never ranked). SVG is decoration; the list of names and
 // states is in the accessible label and in the text beside it.
 
-import { esc } from './dom.js?v=4.0.0';
-import { stateWord } from './labels.js?v=4.0.0';
+import { esc } from './dom.js?v=4.1.0';
+import { stateWord } from './labels.js?v=4.1.0';
 
 export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 
@@ -65,7 +65,7 @@ export function signalHtml(rows, o = {}) {
       ${lamps}
     </svg>
     <p class="sg-key" aria-hidden="true">
-      <span data-k="open">Open now</span><span data-k="near">A move or more away</span><span data-k="other">Another way in</span>
+      <span data-k="open">Open now</span><span data-k="near">1 to 2 moves away</span><span data-k="far">3 to 5 moves away</span><span data-k="other">Another route in</span>
     </p>
   </figure>`;
 }

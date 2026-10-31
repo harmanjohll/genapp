@@ -127,7 +127,7 @@
   justify-content: center;
   border-radius: var(--r-pill);
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-ink);
   font-size: 11px;
   font-style: normal;
   font-weight: 700;
@@ -163,13 +163,13 @@ main { padding-bottom: 96px; } /* room for the tab bar */
   padding: 0 var(--s-5);
   border-radius: var(--r-pill);
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-ink);
   font-weight: 700;
   font-size: var(--t-body);
   border: 1.5px solid transparent;
   text-decoration: none;
 }
-.btn:hover { background: var(--accent-dkr); color: #fff; }
+.btn:hover { background: var(--accent-dkr); color: var(--accent-ink); }
 .btn.ghost {
   background: transparent;
   color: var(--accent-dk);
@@ -401,7 +401,7 @@ button.rm-row { position: relative; }
   justify-content: center;
 }
 .guess-n:hover { border-color: var(--accent); background: var(--accent-wash); }
-.guess-n[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: #fff; }
+.guess-n[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
 
 .reveal-line {
   font-family: var(--display);
@@ -511,9 +511,9 @@ button.rm-row { position: relative; }
   color: var(--ink-soft);
   background: var(--surface);
 }
-.lvl[data-level="G1"][aria-pressed="true"] { background: var(--g1); border-color: var(--g1); color: #fff; }
-.lvl[data-level="G2"][aria-pressed="true"] { background: var(--g2); border-color: var(--g2); color: #fff; }
-.lvl[data-level="G3"][aria-pressed="true"] { background: var(--g3); border-color: var(--g3); color: #fff; }
+.lvl[data-level="G1"][aria-pressed="true"] { background: var(--g1); border-color: var(--g1); color: var(--on-lv); }
+.lvl[data-level="G2"][aria-pressed="true"] { background: var(--g2); border-color: var(--g2); color: var(--on-lv); }
+.lvl[data-level="G3"][aria-pressed="true"] { background: var(--g3); border-color: var(--g3); color: var(--on-lv); }
 .lvl[data-level="G1"]:not([aria-pressed="true"]):hover { border-color: var(--g1); background: var(--g1-wash); }
 .lvl[data-level="G2"]:not([aria-pressed="true"]):hover { border-color: var(--g2); background: var(--g2-wash); }
 .lvl[data-level="G3"]:not([aria-pressed="true"]):hover { border-color: var(--g3); background: var(--g3-wash); }
@@ -635,7 +635,7 @@ button.rm-row { position: relative; }
   width: 30px; height: 30px;
   border-radius: 50%;
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-ink);
   font-weight: 700;
   display: inline-flex;
   align-items: center;

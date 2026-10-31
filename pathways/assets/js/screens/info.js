@@ -12,8 +12,8 @@
 // money.json's own register is the guide: costs first, in full, then the
 // help, then the sentences that matter more than either table.
 
-import { getState, setSchoolKind } from '../state.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
+import { getState, setSchoolKind } from '../state.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
 
 function fmtDate(iso) {
   const d = new Date(iso);
@@ -30,7 +30,7 @@ function provline(text, accessed) {
 
 export const money = {
   id: 'money',
-  title: 'Costs and help',
+  title: 'Fees and financial help',
   era: 'school',
 
   render(root, api) {
@@ -45,7 +45,7 @@ export const money = {
     root.innerHTML = `
     <div class="wrap-narrow">
       <header class="hero">
-        <h1>${esc(api.copy('info.moneyHead', 'Costs and help'))}</h1>
+        <h1>${esc(api.copy('info.moneyHead', 'Fees and financial help'))}</h1>
         <p class="lede">${esc(thesis
           ? `${thesis.head}. Here is every cost in the open, and the help attached to each one.`
           : api.copy('info.moneyLede', 'Every cost in the open, and the help attached to each one.'))}</p>
@@ -98,7 +98,7 @@ export const money = {
 
 export const work = {
   id: 'work',
-  title: 'The work itself',
+  title: 'Jobs and sectors',
   era: 'school',
 
   render(root, api) {
@@ -112,7 +112,7 @@ export const work = {
     root.innerHTML = `
     <div class="wrap-narrow">
       <header class="hero">
-        <h1>${esc(api.copy('info.workHead', 'The work itself'))}</h1>
+        <h1>${esc(api.copy('info.workHead', 'Jobs and sectors'))}</h1>
         <p class="lede">${esc(api.copy('info.workLede', 'Sixteen parts of working Singapore: what each one actually is, what a day in it looks like, and a real way in at more than one level.'))}</p>
       </header>
 
@@ -177,7 +177,7 @@ const APPLIES = {
 
 export const schools = {
   id: 'schools',
-  title: 'My kind of school',
+  title: 'My school type',
   era: 'school',
 
   render(root, api) {
@@ -191,7 +191,7 @@ export const schools = {
     root.innerHTML = `
     <div class="wrap-narrow">
       <header class="hero">
-        <h1>${esc(api.copy('info.schoolsHead', 'My kind of school'))}</h1>
+        <h1>${esc(api.copy('info.schoolsHead', 'My school type'))}</h1>
         <p class="lede">${esc(api.copy('info.schoolsLede', 'The rest of this tool makes one assumption: the common road, Sec 1 to 4 in a mainstream school, with the SEC exam at the end. That is most students, and it is not everybody. This page is where the assuming stops.'))}</p>
       </header>
 
