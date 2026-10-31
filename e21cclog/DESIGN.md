@@ -1,6 +1,74 @@
-# E21CC Log v3: design, decisions, and the questions that are yours
+# E21CC Log: design, decisions, and the questions that are yours
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, and v3 makes Home simpler and help more specific. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
+
+## One home, legacy mode, a safe log, and tests in the repo (31 October 2026)
+
+Harman asked, before any building, for an audit of every part of the Log and for next steps. He then chose:
+- **One permanent home**, `genapp/e21cclog/`, with the version shown in the app and not in the address.
+- **The first version and v2 in legacy mode**, read only, with a way to bring newer entries across.
+- **All four "now" steps.**
+- **A pilot plan.**
+- **Four moves to raise the Log**, to be built one at a time once confirmed: the prediction check and if, then plans; the teaching loop; evidence beyond writing; the conference pack and Showcase.
+- **Entries stay full length.** I said I would watch how often students write during the pilot.
+
+### The audit, in short
+- **Data and trust.**
+  - The log lived only in one browser, with nothing asking the browser to keep it, no backup reminder and no offline copy.
+  - Three live versions copied once and then drifted apart.
+  - The PIN is a deterrent, not a lock.
+  - Student AI waits on the school relay and MOE IT.
+- **Concept.**
+  - Writing is the only evidence, which favours fluent writers.
+  - The securing rule has not been tried on real data.
+  - Assessed reflection risks becoming performance.
+  - Level words that follow the look split a class's language.
+  - The statements, the KSVD map and the help examples are drafts.
+- **Students.**
+  - Entries are long.
+  - The claim step is abstract for Sec 1.
+  - Wheel labels were about 9px on phones.
+  - Home was crowded on a tablet held upright.
+  - There were many choices, and no first run walkthrough.
+  - Accessibility past colour was unchecked.
+- **Teachers and process.**
+  - The Form and Teams route is heavy, with no triage and no class view.
+  - There are no training materials and no pilot.
+  - The tests lived outside the repo.
+
+### What changed
+- **One home.** `logsv3/` became `e21cclog/`. `logs/` and `logsv2/` moved to `e21cclog/legacy/v1/` and `/v2/`, with history kept. Short pages at the old addresses forward, hash and query kept:
+  - note, group, class code and share links go to the Log;
+  - other pages go to the legacy copy.
+- **One lasting store.** `e21cclog` and `e21cclog.teacher`, copied once from the newest older log. `migrateDb` now keeps where the log came from, whether the browser keeps it, and entries brought across.
+- **Legacy mode.** `legacy/bridge.js`:
+  - makes saving do nothing;
+  - closes the writing routes;
+  - adds a banner with **Open my E21CC Log** and **Bring newer entries across**.
+- **A safe log.**
+  - A persistent storage request.
+  - An install card, with the steps on iPads and a button on Chrome.
+  - Backup prompts after 5 new entries, or 3 weeks with something new.
+  - A status list in Settings, Your data.
+  - An offline copy (`sw.js`). It goes to the network first for pages and scripts, so a page and its scripts never fall out of step.
+  - A backup and restore for the console.
+  - A first visit no longer reloads when the offline copy takes charge; only an update does.
+- **Polish.**
+  - Wheel labels now render at about 11px on a phone.
+  - On a tablet the wheel sits on top, with the panel below it in two parts.
+  - Laptops keep the panel beside the wheel from a 900px card.
+  - The term line says only "Term 4 · Week 7"; the entries count and the streak moved into the hint under the wheel.
+- **Accessibility.**
+  - Opening an entry moves focus to its heading; each new step does too.
+  - Escape closes an entry, keeping the draft; focus returns to what opened it.
+  - The skip link hides behind an open entry.
+  - Forced colours mode gives selected states an outline.
+  - The console's group filter has a label.
+- **Tests in the repo.** `e21cclog/tests/` holds every suite, the sweeps and the audit, with `run.sh` and a CI workflow. Two new suites:
+  - t12 covers the new home and the safe log;
+  - t13 covers axe, the keyboard, 200% zoom and forced colours.
+
+  A VoiceOver check for an iPad is written out in the README for a person to run.
 
 ## v3, second pass: a full width Home, and a colour and state audit (30 October 2026)
 

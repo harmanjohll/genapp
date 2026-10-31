@@ -1,6 +1,53 @@
-# E21CC Log v3
+# E21CC Log
 
-This is the third version of the E21CC Log, served at `genapp/logsv3/` beside `genapp/logsv2/` and the first version at `genapp/logs/`. Both earlier versions are unchanged. v3 keeps its own log in the browser; the first time it opens, it copies in the v2 log (or, if there is none, the first version's), once, and never writes back.
+The E21CC Log lives at `genapp/e21cclog/` for students and `genapp/e21cclog/teacher.html` for teachers. The address stays the same from version to version, so bookmarks and links shared in Teams keep working. The version shows only inside the app: the small badge, and Settings, About. This is version 3.
+
+## Where things are
+| Path | What it is |
+| --- | --- |
+| `e21cclog/` | The Log: the student app, the teacher console, the statements, the tests |
+| `e21cclog/legacy/v1/`, `e21cclog/legacy/v2/` | The first version and v2, kept read only so nothing is lost. A banner sends students to the Log, and **Bring newer entries across** adds anything written there after the move (the newer copy of an entry wins) |
+| `logs/`, `logsv2/`, `logsv3/` | Short pages left at the old addresses. Teacher note links, group links, class codes and share links go to the Log; other pages go to their legacy copy |
+| `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
+
+The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). The first time it opens, it copies in the newest older log once (v3, then v2, then the first version) and never writes back. Later versions change the data in place.
+
+## Keeping the log safe
+Until Phase 2 puts each log in the student's OneDrive, the log lives in one browser, and a cleared history, a new device or Safari's tracking prevention can lose it. So the Log:
+- **Asks the browser to keep it** (persistent storage), once there is an entry.
+- **Offers to install itself to the Home Screen.** On an iPad it gives the steps; on Chrome it shows a button. An installed app is not cleared the way an ordinary site can be.
+- **Asks for a backup.** After 5 new entries, or 3 weeks with anything new, What next? offers **Back up now**, a file the student keeps in OneDrive or Files. Settings, Your data shows the last backup, whether the browser has agreed to keep the log, and whether the Log is installed.
+- **Opens without wifi.** An offline copy (`sw.js`) serves pages and scripts from the network first, with the copy kept for when the network is down.
+- **Backs up the console too.** The teacher console has **Back up the console** and **Restore from a backup**.
+
+## Tests
+`e21cclog/tests/run.sh` starts a local server and a mock coach relay, then runs:
+- every suite (t2 to t13);
+- the console sweep;
+- one colour sweep per look.
+
+`FULL=1 run.sh` adds the full 48 combination colour sweep and the route audit at 7 screen sizes. You need Node, Python 3, Playwright with Chromium, and `npm ci` in `e21cclog/tests`.
+
+| Suite | Covers |
+| --- | --- |
+| t2, t4, t6 to t10 | Groups and relay, links and the console, the composer, layouts, statements and levels, the coach |
+| t11 | Version 3: Home, levels in the look's words, GROW wording, the (i), the aim, the settings alert |
+| t12 | The new home: forwarding, legacy mode, the lasting store, backups, installing, the offline copy, console backup |
+| t13 | Accessibility: axe, the keyboard, 200% zoom, forced colours |
+| `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
+
+A screen reader still needs a person. The **VoiceOver check for an iPad** (about 10 minutes):
+1. Turn on VoiceOver (Settings, Accessibility).
+2. Open the Log, and swipe through Home. Each part of the wheel should read its competency and level, and What next? should read as a list.
+3. Double tap New GROW. Focus should land on the step's heading.
+4. Swipe through the step: each question, its (i) button, the box and I'm stuck.
+5. Open an (i). Its help should be read.
+6. Close the entry. Focus should return to New GROW.
+7. In Settings, turn on a look and a theme. The pressed state should be read.
+
+Note anything that is silent, out of order, or unclear.
+
+## Version 3
 
 What v3 changes:
 - **Home in two parts, each the full width of the page.**
@@ -79,8 +126,8 @@ No accounts, no database. The log lives in the student's browser and exports as 
 ```bash
 # from the repository root
 python3 -m http.server 8000
-# students:  http://localhost:8000/logsv3/
-# teachers:  http://localhost:8000/logsv3/teacher.html
+# students:  http://localhost:8000/e21cclog/
+# teachers:  http://localhost:8000/e21cclog/teacher.html
 ```
 
 `file://` works for the student app except for loading group files by code; use a share link instead.
@@ -98,6 +145,10 @@ python3 -m http.server 8000
 | `classes/*.json` | Published group files, one per code (`DEMO.json` is a sample) |
 | `statements/beatty-v1.json` | Beatty's I can statements, draft V1, with each strand's MOE milestones, Mission, Vision and DREAM tags, and the draft's open questions |
 | `relay/` | Cloudflare Worker that holds the school's API key and throttles per student |
+| `sw.js` | The offline copy: pages and scripts from the network first, kept for when the wifi is down |
+| `manifest.webmanifest` | Lets the Log install to a Home Screen |
+| `legacy/` | The first version and v2, read only, and `bridge.js`, which adds their banner and brings newer entries across |
+| `tests/` | Every browser test; `run.sh` runs them |
 | `DESIGN.md` | Decisions, verification status, and the open questions |
 | `PHASE2-REQUEST.md` | What MOE IT needs to clear before the log can live in students' OneDrive |
 | `E21CC.md` | Research brief on MOE's refreshed 21CC framework, with sources |

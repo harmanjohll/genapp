@@ -1,9 +1,11 @@
 /* ==================================================================
-   Storage and transport seam for the E21CC Log v3.
+   Storage and transport seam for the E21CC Log.
 
-   v3 is a third site (logsv3/) beside logs/ and logsv2/, on the same
-   origin, so it keeps its own key. On first open it copies the newest
-   earlier log in once (v2, else the first site), and never writes back.
+   The Log lives at e21cclog/, an address that stays the same from version
+   to version, under one lasting key. On first open it copies the newest
+   earlier log in once (v3, then v2, then the first version) and never
+   writes back; the older versions are kept read only in e21cclog/legacy/.
+   Later versions change the data in place, through migrateDb on open.
 
    Phase 1 (now): LocalStore keeps the log in this browser; FormsTransport
    sends chosen items to an adult's Microsoft or Google Form; share and note
@@ -15,8 +17,8 @@
    ================================================================== */
 'use strict';
 
-const DB_KEY_V3 = 'cdl.logsv3';
-const DB_KEY_EARLIER = [['v2', 'cdl.logsv2'], ['first', 'cdl.v2']];  // earlier sites' logs: copied in once, never written
+const DB_KEY = 'e21cclog';
+const DB_KEY_EARLIER = [['v3', 'cdl.logsv3'], ['v2', 'cdl.logsv2'], ['first', 'cdl.v2']];  // earlier versions' logs: copied in once, never written
 const DB_KEY_V1 = 'logs.v1';   // the Learning Log's key: read once, never written, kept as a rollback copy
 
 const LocalStore = {
@@ -24,8 +26,8 @@ const LocalStore = {
   open(){
     if (this.guest) return migrateDb({});
     try{
-      const v3 = localStorage.getItem(DB_KEY_V3);
-      if (v3) return migrateDb(JSON.parse(v3));
+      const cur = localStorage.getItem(DB_KEY);
+      if (cur) return migrateDb(JSON.parse(cur));
       for (const [from, key] of DB_KEY_EARLIER){
         const old = localStorage.getItem(key);
         if (old){ const d = migrateDb(JSON.parse(old)); delete d.copiedFromFirst; delete d.copiedNoticed; d.copiedFrom = from; d.copiedAt = Date.now(); this.save(d); return d; }
@@ -35,7 +37,7 @@ const LocalStore = {
     }catch{}
     return migrateDb({});
   },
-  save(db){ if (this.guest) return true; try{ localStorage.setItem(DB_KEY_V3, JSON.stringify(db)); return true; }catch{ return false; } },
+  save(db){ if (this.guest) return true; try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }catch{ return false; } },
   hasV1(){ try{ return !!localStorage.getItem(DB_KEY_V1); }catch{ return false; } },
   dropV1(){ try{ localStorage.removeItem(DB_KEY_V1); }catch{} },
   exportProfile(p){ return JSON.stringify({app:'cdl', schemaVersion:2, exported:new Date().toISOString(), profile:p}, null, 2); },
