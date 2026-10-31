@@ -8,13 +8,13 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=4.0.0';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.0.0';
-import { esc, onAction } from './dom.js?v=4.0.0';
-import { icon } from './icons.js?v=4.0.0';
-import { listNames, sayName } from '../engine/advice.js?v=4.0.0';
+import { getState, setGrade } from '../state.js?v=4.1.0';
+import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.1.0';
+import { esc, onAction } from './dom.js?v=4.1.0';
+import { icon } from './icons.js?v=4.1.0';
+import { listNames, sayName } from '../engine/advice.js?v=4.1.0';
 
-const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec 2 yr', sec5: 'Sec 5' };
+const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };
 
 function names(api) {
@@ -72,8 +72,8 @@ function trackSvg(a, refVal, nowVal, tgtVal) {
     <line x1="${pad}" y1="62" x2="${W - pad}" y2="62" stroke="var(--rule)" stroke-width="8" stroke-linecap="round"/>
     <line x1="${pad}" y1="62" x2="${reach}" y2="62" stroke="var(--line-open)" stroke-width="8" stroke-linecap="round" opacity="0.5"/>
     ${ticks.map((v) => `<text x="${x(v)}" y="104" text-anchor="middle" class="tk-tick">${v}</text>`).join('')}
-    <text x="${pad}" y="14" class="tk-end">Stronger</text>
-    <text x="${W - pad}" y="14" text-anchor="end" class="tk-end">Wider</text>
+    <text x="${pad}" y="14" class="tk-end">Lower is better</text>
+    <text x="${W - pad}" y="14" text-anchor="end" class="tk-end">Higher</text>
     ${dests.map((d, i) => `
       <g class="tk-stn">
         <circle cx="${x(d.cutoff)}" cy="62" r="9" fill="var(--surface)" stroke="var(--ink)" stroke-width="3.5"/>

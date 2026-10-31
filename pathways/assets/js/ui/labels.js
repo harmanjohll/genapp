@@ -5,28 +5,35 @@
 // transit vocabulary (departures, tickets, a pass) for students who enjoy
 // it; the visuals are the same in both. The choice is stored on the device.
 
-import { getState } from '../state.js?v=4.0.0';
+import { getState } from '../state.js?v=4.1.0';
 
 const WORDS = {
   plain: {
     answer: 'What is open',
     answerFrom: (y) => `What your ${y} levels open`,
-    state_open: 'Open',
-    'state_within-reach': 'Nearly',
-    'state_longer-route': 'Further',
-    'state_other-route': 'Another way in',
+    // State words match the engine's distance bands (reach.js): open, within
+    // 2 level moves, within 5, further. Counted, so nothing is left to guess.
+    state_open: 'Open now',
+    'state_within-reach': '1 to 2 moves away',
+    'state_longer-route': '3 to 5 moves away',
+    'state_other-route': 'Another route in',
     move: 'Move',
-    nextMove: 'Your next move',
-    moreMoves: 'More moves',
+    nextMove: 'Your best move',
+    moreMoves: 'Other moves that help',
     pairMoves: 'Two moves together',
-    movesTab: 'Next move',
-    keep: 'Save',
+    movesTab: 'Best moves',
+    movesShort: 'Moves',
+    keep: 'Save move',
     kept: 'Saved',
     keptList: 'Saved moves',
     keptCount: (n) => `${n} ${n === 1 ? 'move' : 'moves'} saved`,
-    noneKept: 'No moves saved yet. Every move has a Save button.',
-    plan: 'My plan',
+    noneKept: 'No moves saved yet. Every move has a Save move button.',
+    plan: 'Saved',
+    planTitle: 'Your saved moves and summary',
+    openPlan: 'See saved moves',
     years: 'Your school years',
+    afterTitle: '8 places to go after secondary school',
+    allPlaces: 'All 8 places',
   },
   line: {
     answer: 'Departures',
@@ -40,13 +47,18 @@ const WORDS = {
     moreMoves: 'More tickets',
     pairMoves: 'Two tickets together',
     movesTab: 'Tickets',
+    movesShort: 'Tickets',
     keep: 'Keep',
     kept: 'Kept',
     keptList: 'Tickets kept',
     keptCount: (n) => `${n} ${n === 1 ? 'ticket' : 'tickets'} kept`,
     noneKept: 'No tickets kept yet. Every ticket has a Keep button.',
     plan: 'My pass',
+    planTitle: 'My pass',
+    openPlan: 'Open my pass',
     years: 'The line',
+    afterTitle: 'Eight lines out of secondary school',
+    allPlaces: 'All eight lines',
   },
 };
 

@@ -8,11 +8,11 @@
 // is pure wayfinding, so it is the one that always plays (unless motion is
 // reduced).
 
-import { esc } from './dom.js?v=4.0.0';
-import { icon } from './icons.js?v=4.0.0';
+import { esc } from './dom.js?v=4.1.0';
+import { icon } from './icons.js?v=4.1.0';
 
 export const STRIP = [
-  { id: 'p6', label: 'Pri 6', name: 'Primary 6', code: 'P6', phase: 'Primary' },
+  { id: 'p6', label: 'P6', name: 'Primary 6', code: 'P6', phase: 'Primary' },
   { id: 'sec1', label: 'Sec 1', name: 'Sec 1', code: 'S1', phase: 'Lower Sec' },
   { id: 'sec2', label: 'Sec 2', name: 'Sec 2', code: 'S2', phase: 'Lower Sec' },
   { id: 'sec3', label: 'Sec 3', name: 'Sec 3', code: 'S3', phase: 'Upper Sec' },

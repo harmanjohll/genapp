@@ -15,17 +15,17 @@
 // Under it, the live signal for this year, then three quiet doors. A first
 // visit never lands here: the router sends it to the start.
 
-import { getState, setYear, YEARS } from '../state.js?v=4.0.0';
-import { reach } from '../engine/reach.js?v=4.0.0';
-import { evalPlan, isLower, prevYear } from '../engine/years.js?v=4.0.0';
-import { advise } from '../engine/advice.js?v=4.0.0';
-import { psleScore } from '../engine/psle.js?v=4.0.0';
-import { signalHtml } from '../ui/signal.js?v=4.0.0';
-import { stepArt } from '../ui/scenes.js?v=4.0.0';
-import { sayMove } from '../ui/talk.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
-import { icon } from '../ui/icons.js?v=4.0.0';
-import { t } from '../ui/labels.js?v=4.0.0';
+import { getState, setYear, YEARS } from '../state.js?v=4.1.0';
+import { reach } from '../engine/reach.js?v=4.1.0';
+import { evalPlan, isLower, prevYear } from '../engine/years.js?v=4.1.0';
+import { advise } from '../engine/advice.js?v=4.1.0';
+import { psleScore } from '../engine/psle.js?v=4.1.0';
+import { signalHtml } from '../ui/signal.js?v=4.1.0';
+import { stepArt } from '../ui/scenes.js?v=4.1.0';
+import { sayMove } from '../ui/talk.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
+import { icon } from '../ui/icons.js?v=4.1.0';
+import { t } from '../ui/labels.js?v=4.1.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -51,7 +51,7 @@ function nextStep(api) {
   if (y === 'p6') {
     const sc = api.data.psle ? psleScore(st.psle || {}, api.data.psle) : { complete: false };
     return sc.complete
-      ? { art: 'levels', title: 'Carry your PSLE levels into Sec 1', body: `PSLE Score ${sc.score}. Your Sec 1 page turns those levels into what they open.`, cta: 'Open Sec 1', s: 'year', y: 'sec1' }
+      ? { art: 'levels', title: 'Use your PSLE levels for Sec 1', body: `PSLE Score ${sc.score}. Your Sec 1 page turns those levels into what they open.`, cta: 'Open Sec 1', s: 'year', y: 'sec1' }
       : { art: 'levels', title: 'Enter your PSLE ALs', body: 'See your Posting Group and the level each subject would start at in Sec 1.', cta: 'Enter ALs', s: 'year', y: 'p6' };
   }
   const plan = (st.plans && st.plans[y]) || {};
@@ -60,7 +60,7 @@ function nextStep(api) {
     const carry = from && Object.keys((st.plans || {})[from] || {}).length;
     return {
       art: 'levels', title: `Set your ${LABEL[y]} levels`,
-      body: carry ? `Carry your ${LABEL[from]} levels forward in one tap, then adjust.` : 'Slide in each subject. The lamps show what each level opens.',
+      body: carry ? `Copy your ${LABEL[from]} levels across in one tap, then adjust.` : 'Slide in each subject. The lamps show what each level opens.',
       cta: 'Set levels', s: 'year', y, tab: 'levels',
     };
   }
@@ -77,7 +77,7 @@ function nextStep(api) {
   return {
     art: 'move', title: 'Say it to someone this week',
     body: said || talk[0] || 'Bring your plan to a parent, a form teacher or your ECG counsellor.',
-    cta: `Open ${t('plan')}`, s: 'myplan',
+    cta: t('openPlan'), s: 'myplan',
   };
 }
 
@@ -111,9 +111,9 @@ function renderHome(root, api) {
     </section>` : ''}
 
     <nav class="hm-doors arrive d2" aria-label="More">
-      <button type="button" class="hm-door press" data-action="go" data-s="year">${icon('steps')}<span><b>My year</b><small>Levels, moves, targets</small></span></button>
+      <button type="button" class="hm-door press" data-action="go" data-s="year">${icon('steps')}<span><b>Subjects</b><small>Set levels, see best moves, grade targets</small></span></button>
       <button type="button" class="hm-door press" data-action="go" data-s="play">${icon('play')}<span><b>Play a life forward</b><small>A ten minute game</small></span></button>
-      <button type="button" class="hm-door press" data-action="go" data-s="myplan">${icon('flag')}<span><b>${esc(t('plan'))}</b><small>${esc(t('keptCount', st.actions.length))}</small></span></button>
+      <button type="button" class="hm-door press" data-action="go" data-s="myplan">${icon('flag')}<span><b>${esc(t('plan'))}</b><small>${esc(t('keptCount', st.actions.length))}, ready to share</small></span></button>
     </nav>
   </div>`;
 

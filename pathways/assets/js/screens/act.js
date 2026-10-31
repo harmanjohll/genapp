@@ -11,8 +11,8 @@
 
 import {
   getState, setAim, toggleAction, carryUrl, carrySummary,
-} from '../state.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
+} from '../state.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
 
 function fill(tpl, vars) {
   return String(tpl).replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
@@ -85,7 +85,7 @@ function closeHtml(api) {
   const done = (getState().actions || []).length > 0;
   return `
     <div class="btnrow">
-      <button type="button" class="btn ghost small press" data-action="ac-carry">${esc(api.copy('chrome.carry', 'Carry this to another device'))}</button>
+      <button type="button" class="btn ghost small press" data-action="ac-carry">${esc(api.copy('chrome.carry', 'Send this to another device'))}</button>
       <span class="small" id="ac-carry-note">${esc(carryNote())}</span>
     </div>
     ${done

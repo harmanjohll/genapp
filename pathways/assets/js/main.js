@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.0.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.1.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
   setLabelMode, markStart,
-} from './state.js?v=4.0.0';
-import { effective } from './engine/years.js?v=4.0.0';
-import { runStrip } from './ui/yearstrip.js?v=4.0.0';
-import { t } from './ui/labels.js?v=4.0.0';
-import { esc, onAction } from './ui/dom.js?v=4.0.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.0.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.0.0';
-import { icon } from './ui/icons.js?v=4.0.0';
-import { cue, setMutePredicate } from './sound.js?v=4.0.0';
+} from './state.js?v=4.1.0';
+import { effective } from './engine/years.js?v=4.1.0';
+import { runStrip } from './ui/yearstrip.js?v=4.1.0';
+import { t } from './ui/labels.js?v=4.1.0';
+import { esc, onAction } from './ui/dom.js?v=4.1.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.1.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.1.0';
+import { icon } from './ui/icons.js?v=4.1.0';
+import { cue, setMutePredicate } from './sound.js?v=4.1.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -208,7 +208,7 @@ function failedScreen(id, missing) {
 }
 
 function screenLabel(s) {
-  return { year: 'My year', after: 'After Sec', myplan: 'My plan', play: 'Play', act: 'Act', adults: 'For the adults', money: 'Money', work: 'Work', schools: 'My school' }[s] || s;
+  return { year: 'Subjects', after: 'After Sec', myplan: 'Saved', play: 'Play', act: 'Act', adults: 'For parents and teachers', money: 'Fees and financial help', work: 'Jobs and sectors', schools: 'My school type' }[s] || s;
 }
 
 async function paint({ scrollTo = null, fromPop = false } = {}) {
@@ -307,9 +307,9 @@ function themeNow() {
 // student could not tell which one came first.
 const NAV_ITEMS = [
   { s: 'home', label: 'Home', icon: 'home' },
-  { s: 'year', label: 'My year', icon: 'steps' },
-  { s: 'explore', label: 'Explore', icon: 'map' },
-  { s: 'myplan', label: 'My plan', icon: 'flag' },
+  { s: 'year', label: 'Subjects', icon: 'steps' },
+  { s: 'explore', label: 'Pathways', icon: 'map' },
+  { s: 'myplan', label: 'Saved', icon: 'flag' },
 ];
 const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
 
@@ -332,7 +332,7 @@ function renderChrome() {
       ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.s === 'myplan' ? t('plan') : n.label)}</button>`).join('')}
     </nav>
     <span class="headspace"></span>
-    <button type="button" class="rolechip press" data-action="role" aria-label="Viewing as ${esc(ROLE_LABEL[st.role])}. Change.">${icon(st.role)}<span>${esc(ROLE_LABEL[st.role])}</span></button>
+    <button type="button" class="rolechip press" data-action="role" aria-label="I am a ${esc(ROLE_LABEL[st.role].toLowerCase())}. Change who is reading.">${icon(st.role)}<span><small>I am:</small> ${esc(ROLE_LABEL[st.role])}</span>${icon('caret', 'chev')}</button>
     <button type="button" class="iconbtn press" data-action="settings" aria-label="Settings">${icon('settings')}</button>
   </div>
   ${isGuest() ? `<p class="guestline">${esc(copy('chrome.guest', 'Guest: nothing is saved on this phone.'))}</p>` : ''}`;
@@ -372,18 +372,18 @@ function settingsSheet(trigger) {
   openSheetRouted(`
     <h2 id="sheet-title">Settings</h2>
     <div class="setlist">
-      ${switchRow('set-line', 'Line mode words', 'Talk like a transit system: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
+      ${switchRow('set-line', 'Transit words (Line mode)', 'Use transit words: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
       ${switchRow('set-families', 'Course families', 'Show course groups and their subject asks on each destination page.', st.families)}
       ${switchRow('set-theme', 'Dark colours', 'Night in the same city.', themeNow() === 'dark')}
       ${switchRow('set-sound', 'Sound', 'Five small cues in the game.', st.soundOn)}
     </div>
     <p class="caps" style="margin-top:20px">Also here</p>
     <div class="morerow">
-      <button type="button" class="chip press" data-action="go" data-s="work">The work itself</button>
-      <button type="button" class="chip press" data-action="go" data-s="money">Costs and help</button>
-      <button type="button" class="chip press" data-action="go" data-s="schools">My kind of school</button>
+      <button type="button" class="chip press" data-action="go" data-s="work">Jobs and sectors</button>
+      <button type="button" class="chip press" data-action="go" data-s="money">Fees and financial help</button>
+      <button type="button" class="chip press" data-action="go" data-s="schools">My school type</button>
       <button type="button" class="chip press" data-action="go" data-s="adults">For parents and teachers</button>
-      <button type="button" class="chip press" data-action="words">Words, explained</button>
+      <button type="button" class="chip press" data-action="words">Glossary</button>
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
     <p class="small" style="margin-top:16px">Everything stays on this device. No account, no server, nothing collected.</p>`, trigger);
