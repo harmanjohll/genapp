@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/');
 const OUT = process.argv[2] || require('./shots.js')('audit.md');
-const SEED = (() => { const d = JSON.parse(fs.readFileSync(__dirname + '/../' + (process.env.SEED || 'seed3.json'), 'utf8')); const [look, theme] = (process.env.LOOK || 'b:light').split(':'); Object.assign(d.profiles[d.current].prefs, {look, theme:theme || 'light'}); return JSON.stringify(d); })();
+const SEED = (() => { const d = JSON.parse(fs.readFileSync(require('path').join(__dirname, 'fixtures', process.env.SEED || 'seed3.json'), 'utf8')); const [look, theme] = (process.env.LOOK || 'b:light').split(':'); Object.assign(d.profiles[d.current].prefs, {look, theme:theme || 'light'}); return JSON.stringify(d); })();
 const VIEWS_ENV = process.env.VIEWS ? process.env.VIEWS.split(',').map(v => v.split('x').map(Number)) : null;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const VIEWS_DEFAULT = [[320, 640], [390, 844], [768, 1024], [1280, 900], [1920, 1080]];
