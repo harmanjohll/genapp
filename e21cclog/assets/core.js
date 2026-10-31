@@ -776,7 +776,13 @@ function stuckUser(entry, qid, level, profile){
    E21CC Log: shared helpers
    ================================================================== */
 const APP_NAME = 'E21CC Log';
-const SITE_MARK = 'v3';   // this site is the third version, beside logs/ and logsv2/
+const SITE_MARK = 'v3';   // the version, shown in the app only: the address (e21cclog/) never changes
+const APP_VERSION = {label:'Version 3', date:'October 2026', notes:[
+  'Home in two parts: Where am I now? and What next?',
+  'Three levels, named in the words of your look',
+  'Help beside every question, from its (i)',
+  'A permanent home at e21cclog/, which keeps your log safe from version to version'
+]};
 const BASKET_IDS = DOMAINS.map(d => d.id);
 function basketOf(id){ return DOMAINS.find(d => d.id === id) || null; }
 function compOf(id){ return COMPETENCIES.find(c => c.id === id) || null; }
@@ -1152,6 +1158,8 @@ function migrateProfile(p){
 function migrateDb(d){
   d = d && typeof d === 'object' ? d : {};
   const out = {schemaVersion:2, profiles:d.profiles || {}, current:d.current || null, groups:d.groups || {}, statementSets:d.statementSets || {}};
+  // kept as they are: whether the browser agreed to keep the log, entries brought across from an older version, and where the log was copied from
+  for (const k of ['persist', 'broughtAcross', 'copiedFrom', 'copiedAt', 'copiedNoticed']) if (d[k] !== undefined) out[k] = d[k];
   if (d.classes) for (const [code, cfg] of Object.entries(d.classes)) if (!out.groups[code]) out.groups[code] = cfg;
   for (const p of Object.values(out.profiles)) migrateProfile(p);
   return out;

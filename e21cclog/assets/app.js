@@ -617,6 +617,8 @@ window.addEventListener('DOMContentLoaded', boot);
 async function boot(){
   initRuntime();
   const sk = $('.skip'); if (sk) sk.onclick = ev => { ev.preventDefault(); const m = $('#main'); if (m){ m.focus(); m.scrollIntoView(); } };
+  // Escape closes an open entry, keeping the draft, unless it closed something smaller first
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !ev.defaultPrevented && document.body.classList.contains('composing') && !document.querySelector('dialog[open]')){ const c = $('#cClose'); if (c){ ev.preventDefault(); c.click(); } } });
   if (DESK.addEventListener) DESK.addEventListener('change', () => { if (!me) return; if (draft && document.body.classList.contains('composing')) renderComposer(); else { lastFrameKey = ''; route(); } });
   const typing = el => el && el.matches && el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select');
   document.addEventListener('focusin', ev => { if (typing(ev.target)) document.body.classList.add('typing'); });
@@ -629,8 +631,10 @@ async function boot(){
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
   processStashedLink(link || null);
-  // the first time v2 opens, it brings in the first site's log; say so once
-  if (db.copiedFrom && !db.copiedNoticed){ db.copiedNoticed = true; saveDb(); const was = db.copiedFrom === 'v2' ? 'v2' : 'the first version'; setTimeout(() => toast(`Your log from ${was} was copied in. ${was === 'v2' ? 'v2' : 'The first version'} is unchanged.`, 5200), 600); }
+  // the first time the Log opens at its permanent home, it brings in the newest older log; say so once
+  if (db.copiedFrom && !db.copiedNoticed){ db.copiedNoticed = true; saveDb(); const msg = db.copiedFrom === 'v3' ? 'Your log has moved to its permanent home. Nothing was lost.' : `Your log from ${db.copiedFrom === 'v2' ? 'v2' : 'the first version'} was copied in. The older version is kept, read only.`; setTimeout(() => toast(msg, 5200), 600); }
+  if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
+  keepSafe();
 }
 async function importConfigFromHash(){
   const q = new URLSearchParams((location.hash.split('?')[1]) || ''); const cfg = decodeConfig(q.get('c') || '');
@@ -666,6 +670,43 @@ function route(){
   if (h.startsWith('#/welcome')) return renderWelcome();
   return renderHome();
 }
+/* ---------- keeping the log safe ----------
+   The log lives in this browser. Three things help it last until Phase 2 puts it in OneDrive:
+   asking the browser to keep it, installing the Log to the Home Screen (installed apps are not
+   cleared as ordinary sites can be), and backups the student keeps as files. An offline copy of the
+   app (sw.js) lets it open without wifi. */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (me && (location.hash || '#/') === '#/') route(); });
+function installed(){ return !!((window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true); }
+function isApple(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function canInstall(){ return !installed() && (!!installEvt || isApple()); }
+async function askPersist(){ if (GUEST || !navigator.storage || !navigator.storage.persist) return; try{ const ok = (await navigator.storage.persisted()) || (await navigator.storage.persist()); db.persist = {at:Date.now(), granted:!!ok}; saveDb(); }catch{} }
+function keepSafe(){
+  if (GUEST) return;
+  if (me && me.entries.length && !(db.persist && db.persist.granted)) askPersist();
+  if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)){
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => { const w = reg.installing; if (!w) return; w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) toast('A new version of the Log is ready.', 9000, {label:'Reload', fn:() => w.postMessage('skip')}); }); });
+    }).catch(() => {});
+    // reload only when a new version replaces the copy already in charge; a first visit just carries on
+    const had = !!navigator.serviceWorker.controller; let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (!had || reloading) return; reloading = true; location.reload(); });
+  }
+}
+/* A backup is due after five new entries, or after three weeks with anything new, since the last one. */
+function backupDue(){
+  if (!me || GUEST || !me.entries.length) return false;
+  const b = me.backup || {at:Math.min(...me.entries.map(e => e.created)), count:0}; const fresh = me.entries.length - b.count;
+  return fresh >= 5 || (fresh >= 1 && Date.now() - b.at >= 21 * 864e5);
+}
+function backupNow(){ download(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me)); me.backup = {at:Date.now(), count:me.entries.length}; saveDb(); }
+function installHow(){ return installEvt ? `<button type="button" class="btn small" id="doInstall">${icon('down')} Install the Log</button>` : `<span class="tiny" style="flex-basis:100%">On an iPad or iPhone: tap <b>Share</b>, then <b>Add to Home Screen</b>. Open the Log from its new icon from then on.</span>`; }
+function wireSafe(){
+  const ib = $('#doInstall'); if (ib) ib.onclick = async () => { if (!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch{} installEvt = null; route(); };
+  const bb = $('#nxBackup'); if (bb) bb.onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); setTimeout(route, 300); };
+  const ih = $('#nxInstallLater'); if (ih) ih.onclick = () => { me.installLater = Date.now(); saveDb(); route(); };
+}
+
 /* The Log: a top bar with its name, the student and their Sec level; four places (Home,
    Competencies, Journals, Settings); the page. On a phone the places sit in a bar at the
    bottom, on a tablet under the top bar, and on a laptop in a sidebar (or across the top in
@@ -849,8 +890,8 @@ function wheelSvg(st){
   };
   // the nine emerging competencies, three domains of 120 degrees, Thinking at the top
   const outer = ['cait', 'cci', 'cgc'].flatMap(d => COMPETENCIES.filter(c => c.d === d));
-  outer.forEach((c, i) => { const a0 = -150 + i * 40; s += seg(c, 104, 156, a0 + .6, a0 + 40 - .6, 9.5); });
-  COMPETENCIES.filter(c => c.d === 'sec').forEach((c, i) => { const a0 = -126 + i * 72; s += seg(c, 50, 100, a0 + .8, a0 + 72 - .8, 8.6); });
+  outer.forEach((c, i) => { const a0 = -150 + i * 40; s += seg(c, 104, 156, a0 + .6, a0 + 40 - .6, 11.5); });
+  COMPETENCIES.filter(c => c.d === 'sec').forEach((c, i) => { const a0 = -126 + i * 72; s += seg(c, 50, 100, a0 + .8, a0 + 72 - .8, 10.4); });
   s += `<circle cx="${cx}" cy="${cy}" r="46" class="core"/><text x="${cx}" y="${cy - 3}" text-anchor="middle" font-size="11" class="corelabel">Core</text><text x="${cx}" y="${cy + 11}" text-anchor="middle" font-size="11" class="corelabel">values</text>`;
   return s + '</svg>';
 }
@@ -879,13 +920,13 @@ function compPanel(c, x, recent){
   const words = shown ? `<div class="cpq"><span class="kick">In your words</span><q>${esc(qs)}</q><small>${esc(contextName(shown.e) || FRAMEWORKS[shown.e.kind].name)} · ${fmtDay(shown.e.created)}</small></div>` : '';
   const head = `<p class="kicker">${recent ? 'Most recent · ' : ''}${esc(d.short)}</p><h2>${esc(c.label)}</h2>`;
   const open = `<a class="btn small sec" href="#/c/${c.id}">${icon('arrow')} Open ${esc(c.label)}</a>`;
-  if (x.none) return head + `<p class="lvline"><span class="pill lv none">Evidence only</span></p><p class="tiny">${esc(EV_WORD[x.ev][0].toUpperCase() + EV_WORD[x.ev].slice(1))}, ${esc(fromLine(x))}. The school is still writing statements for this one.</p>${words}${open}`;
+  if (x.none) return `<div class="cpa">${head}<p class="lvline"><span class="pill lv none">Evidence only</span></p><p class="tiny">${esc(EV_WORD[x.ev][0].toUpperCase() + EV_WORD[x.ev].slice(1))}, ${esc(fromLine(x))}. The school is still writing statements for this one.</p></div><div class="cpb">${words}${open}</div>`;
   const strands = x.L.strands.map(r => `<li><span class="sn">${esc(r.strand.name)}</span><span class="sbars"><span class="sb">Lower Sec ${pbar(r.sl, r.lower.length, r.lowerMet)} <b>${r.sl}/${r.lower.length}</b></span><span class="sb">Upper Sec ${pbar(r.su, r.upper.length, r.upperMet)} <b>${r.su}/${r.upper.length}</b></span></span></li>`).join('');
   const aim = x.L.target ? `<p class="cpaim">${icon('ladder')}<span>Aim at: “${esc(x.L.target.text.replace(/\.$/, ''))}”</span></p>` : '';
-  return head + `<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul>${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}`;
+  return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll){ return `<p class="tiny hint">${icon('wheel')}<span>${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n, weeks){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}${weeks ? `, ${weeks} week${weeks > 1 ? 's' : ''} running` : ''}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -923,6 +964,8 @@ function renderHome(){
   if (unread.length) now.push(nextItem('note', `<b>Read ${esc(unread[0].n.by)}’s note</b> on ${esc(entryTitle(unread[0].e))}${unread.length > 1 ? `, and ${plural(unread.length - 1, 'more note')}` : ''}.`, `#/entry/${unread[0].e.id}`, 'Read it'));
   const plan = nextEntry ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:4px 0 0">Your plan from your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p>${followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : ''}</div></li>` : '';
   const nFirst = now.length;
+  if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
+  if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k, 'Carry on'));
   if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
@@ -941,13 +984,13 @@ function renderHome(){
   const first = recentComp(st);
   frame(`
     <section class="card wheelcard">
-      <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}${E.length ? ` · ${plural(E.length, 'entry', 'entries')}${s ? ` · ${s} week${s > 1 ? 's' : ''} in a row` : ''}` : ''}</p>
+      <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
       <div class="nowgrid">
         <div class="wheelwrap">${wheelSvg(st)}</div>
         <div class="cpanel is-default" id="cpanel">${compPanel(first, st[first.id], true)}</div>
       </div>
-      ${wheelHint(securedNow, securedAll)}
+      ${wheelHint(securedNow, securedAll, E.length, s)}
       ${wheelLegend(st)}
     </section>
     <div class="acts">
@@ -962,7 +1005,7 @@ function renderHome(){
       </div>
     </section>
   `, 'home', {wide:true, cls:'home'});
-  wireWheel(st, first.id);
+  wireWheel(st, first.id); wireSafe();
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 
@@ -1121,7 +1164,12 @@ function openComposer(kind, editId, basket){
   }
   renderComposer();
 }
-function closeComposer(){ $('#sheet').innerHTML = ''; document.body.classList.remove('composing'); }
+let composerFrom = '';
+function closeComposer(){
+  const was = document.body.classList.contains('composing'); $('#sheet').innerHTML = ''; document.body.classList.remove('composing');
+  // focus goes back to what opened the entry, or to the page
+  if (was) setTimeout(() => { const t = composerFrom && [...document.querySelectorAll(`a[href="${composerFrom}"]`)].find(a => a.offsetParent); const m = t || $('#main'); if (m) m.focus({preventScroll:true}); }, 80);
+}
 function saveDraft(){
   if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._pickQ; d.saved = Date.now();
   if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
@@ -1140,6 +1188,8 @@ function resumeCard(fw){
     <div class="row"><button class="btn" id="rContinue">${icon('edit')} Continue it</button><button class="btn sec" id="rNew">${icon('plus')} Start a new one</button></div></div>`;
 }
 function renderComposer(){
+  const wasOpen = document.body.classList.contains('composing');
+  if (!wasOpen){ const a = document.activeElement; composerFrom = a && a.getAttribute && a.getAttribute('href') || ''; }
   const fw = FRAMEWORKS[draft.kind]; const steps = stepsOf(); const n = steps.length; const i = Math.min(draft.step, n - 1); const kind = steps[i];
   const ask = draft._ask; const counter = fw.tagline;
   let body = '';
@@ -1188,7 +1238,11 @@ function renderComposer(){
   wireStep();
   document.body.classList.add('composing'); document.body.classList.remove('wide');
   scrollTop();
-  const first = $('.sheet textarea'); if (first && kind.startsWith('letter') && window.innerWidth > 760) first.focus();
+  const first = $('.sheet textarea'); const stepMoved = renderComposer.at !== draft.key + ':' + i; renderComposer.at = draft.key + ':' + i;
+  if (first && kind.startsWith('letter') && window.innerWidth > 760 && stepMoved) first.focus();
+  // a keyboard or screen reader user lands in the entry, and on each new step's heading
+  else if (!wasOpen || stepMoved){ const h = $('.sheet h1'); if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); } }
+
 }
 /* On a laptop the editor has a guide beside it: the ring, every step, what the entry is about, and a tip. */
 function stepLabel(fw, st){
@@ -1340,7 +1394,7 @@ function wireQInfo(sh){
   });
   // the sheet is drawn afresh on every step, so these go on it rather than on the page
   const root = $('.sheet', sh) || sh;
-  root.addEventListener('keydown', ev => { if (ev.key === 'Escape'){ const open = all.find(b => b.getAttribute('aria-expanded') === 'true'); if (open){ ev.stopPropagation(); set(open, false); open.focus(); } } });
+  root.addEventListener('keydown', ev => { if (ev.key === 'Escape'){ const open = all.find(b => b.getAttribute('aria-expanded') === 'true'); if (open){ ev.preventDefault(); set(open, false); open.focus(); } } });
   root.addEventListener('click', ev => { if (!ev.target.closest('.qhead')) all.forEach(b => set(b, false)); });
 }
 /* Help while writing: a question first, then a frame, then a model from another subject.
@@ -1529,6 +1583,7 @@ function saveEntry(){
   } else { me.entries.push(migrateEntry(Object.assign(e, {links:linksFromClaims([]), notes:[], sent:{}}))); delete me.drafts[draft.key]; }
   if (!draft.editId && e.kind !== 'across') rememberExperience(e.context);
   saveDb(); const id = e.id; const isEdit = !!draft.editId; draft = null; closeComposer();
+  if (!(db.persist && db.persist.granted)) askPersist();
   location.hash = '#/entry/' + id + (!isEdit ? '?new=1' : changed ? '?edited=1' : '');
 }
 
@@ -1917,9 +1972,14 @@ function renderSettings(){
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
     <section class="card" id="data"><h2>Your data</h2>
-      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so export now and then. The file imports back here, on any device.</p>
+      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
+      <ul class="safe">
+        <li>${icon(me.backup ? 'check' : 'clock')}<span>${me.backup ? `Last backed up on ${fmtDate(me.backup.at)}, with ${plural(me.backup.count, 'entry', 'entries')}.` : 'Not backed up yet.'}</span></li>
+        <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if you do not open it for a while. Installing the Log, or backing up, keeps it safe.'}</span></li>
+        <li>${icon(installed() ? 'check' : 'home')}<span>${installed() ? 'The Log is installed on this device.' : 'The Log is not installed on this device.'}</span>${!installed() && canInstall() ? `<span class="safe-how">${installHow()}</span>` : ''}</li>
+      </ul>
       <div class="row">
-        <button class="btn sec" id="sExport">${icon('down')} Export log</button>
+        <button class="btn sec" id="sExport">${icon('down')} Back up (export)</button>
         <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
         <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
       </div>
@@ -1931,7 +1991,9 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
-    <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p></section>
+    <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
+      <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working.</p>
+      <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
   `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
   if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
   const sv = () => { saveDb(); applyPrefs(); };
@@ -1977,7 +2039,7 @@ function renderSettings(){
   $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
   $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
-  $('#sExport').onclick = () => download(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me));
+  $('#sExport').onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); }; wireSafe();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
     try{

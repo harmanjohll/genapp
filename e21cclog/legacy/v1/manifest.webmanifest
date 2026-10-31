@@ -1,6 +1,6 @@
 {
-  "name": "E21CC Log v3 · Beatty Secondary School",
-  "short_name": "E21CC Log v3",
+  "name": "E21CC Log · Beatty Secondary School",
+  "short_name": "E21CC Log",
   "description": "The E21CC Log for Beattyians: GROW and ACT journals, Beatty’s I can statements, and a level for each competency.",
   "start_url": "./index.html",
   "scope": "./",
