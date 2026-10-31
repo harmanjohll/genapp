@@ -3,8 +3,21 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "4.0.0",
+  "version": "4.1.0",
   "releases": [
+    {
+      "version": "4.1.0",
+      "date": "2026-10-31",
+      "head": "Clearer words, readable at night",
+      "changes": [
+        "Every button and label is now readable in dark mode. Text on coloured fills follows the theme, and a new check stops white text on light fills from coming back.",
+        "The four places are now Home, Subjects, Pathways and Saved.",
+        "The tabs say what you do: Set levels, Best moves, Grade targets, Year guide.",
+        "Distance in moves: Open now, 1 to 2 moves away, 3 to 5 moves away, or Another route in.",
+        "Clearer place names: Sec 5, NAFA or LASALLE, Higher Nitec (2 yrs) and Higher Nitec (3 yrs).",
+        "Buttons name their action: Save move, Copy words, Skip setup, Copy your Sec 2 levels into Sec 3. The header shows who is reading: I am: Student."
+      ]
+    },
     {
       "version": "4.0.0",
       "date": "2026-10-27",

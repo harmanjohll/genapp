@@ -5,10 +5,10 @@
 // one obvious next step is the last thing on the panel: carry these levels
 // into Sec 1.
 
-import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.0.0';
-import { psleScore, postingFor, startLevels, hmtlEligible } from '../engine/psle.js?v=4.0.0';
-import { esc, onAction } from './dom.js?v=4.0.0';
-import { icon } from './icons.js?v=4.0.0';
+import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.1.0';
+import { psleScore, postingFor, startLevels, hmtlEligible } from '../engine/psle.js?v=4.1.0';
+import { esc, onAction } from './dom.js?v=4.1.0';
+import { icon } from './icons.js?v=4.1.0';
 
 const SUBJ_PLAN_ID = { el: 'el', mtl: 'mtl', maths: 'maths', science: 'ls_science' };
 
@@ -102,7 +102,7 @@ function resultHtml(api) {
             <p class="small">${esc(school.note)}</p>
           </div>` : ''}
         <div class="nextcard">
-          <p><strong>Carry these into Sec 1.</strong> They become your Sec 1 page, where the advice starts.</p>
+          <p><strong>Use these as your Sec 1 levels.</strong> Your Sec 1 page then shows what they open and your best moves.</p>
           <button type="button" class="btn press" data-action="ps-use">Use as my Sec 1 levels ${icon('arrow')}</button>
         </div>` : `
         <p class="callout">${esc(post.note)}</p>`}

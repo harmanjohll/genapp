@@ -11,23 +11,23 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.0.0';
-import { reach } from '../engine/reach.js?v=4.0.0';
-import { pulse } from '../engine/pulse.js?v=4.0.0';
-import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.0.0';
-import { advise } from '../engine/advice.js?v=4.0.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.0.0';
-import { openCount } from '../ui/map.js?v=4.0.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.0.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.0.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.0.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.0.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.0.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
-import { icon } from '../ui/icons.js?v=4.0.0';
-import { signalHtml } from '../ui/signal.js?v=4.0.0';
-import { t, lineMode } from '../ui/labels.js?v=4.0.0';
+} from '../state.js?v=4.1.0';
+import { reach } from '../engine/reach.js?v=4.1.0';
+import { pulse } from '../engine/pulse.js?v=4.1.0';
+import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.1.0';
+import { advise } from '../engine/advice.js?v=4.1.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.1.0';
+import { openCount } from '../ui/map.js?v=4.1.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=4.1.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.1.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.1.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.1.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.1.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
+import { icon } from '../ui/icons.js?v=4.1.0';
+import { signalHtml } from '../ui/signal.js?v=4.1.0';
+import { t, lineMode } from '../ui/labels.js?v=4.1.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
@@ -50,10 +50,10 @@ function yearId(api) {
 }
 
 function tabsFor(y) {
-  if (y === 'p6') return [['psle', 'PSLE'], ['year', 'This year']];
-  const tabs = [['levels', 'Levels'], ['advice', t('movesTab')]];
-  if (!isLower(y)) tabs.push(['targets', 'Targets']);
-  tabs.push(['year', 'This year']);
+  if (y === 'p6') return [['psle', 'PSLE results|PSLE'], ['year', 'Year guide|Guide']];
+  const tabs = [['levels', 'Set levels|Levels'], ['advice', `${t('movesTab')}|${t('movesShort')}`]];
+  if (!isLower(y)) tabs.push(['targets', 'Grade targets|Targets']);
+  tabs.push(['year', 'Year guide|Guide']);
   return tabs;
 }
 
@@ -69,7 +69,7 @@ function reachFor(api, y, plan) {
 
 export default {
   id: 'year',
-  title: (q) => (q && q.y && LABEL[q.y]) || 'My year',
+  title: (q) => (q && q.y ? `${LABEL[q.y]} subjects` : 'Subjects'),
   era: 'school',
 
   render(root, api) {
@@ -109,7 +109,7 @@ export default {
       <div class="segtabs" role="tablist" aria-label="${esc(LABEL[y])}">
         ${tabs.map(([id, label]) => `
           <button type="button" role="tab" class="segtab press" id="tab-${id}" data-action="yr-tab" data-tab="${id}"
-            aria-selected="${tab === id}" aria-controls="panel">${esc(label)}${id === 'advice' && advCount ? `<i class="segbadge">${advCount}</i>` : ''}</button>`).join('')}
+            aria-selected="${tab === id}" aria-controls="panel" aria-label="${esc(label.split('|')[0])}"><span class="tl-long">${esc(label.split('|')[0])}</span><span class="tl-short" aria-hidden="true">${esc(label.split('|')[1] || label.split('|')[0])}</span>${id === 'advice' && advCount ? `<i class="segbadge">${advCount}</i>` : ''}</button>`).join('')}
       </div>
 
       <div class="ylayout${showResult ? ' has-aside' : ''}">
@@ -173,12 +173,12 @@ function levelsHtml(api, y, plan) {
       <div class="carry arrive">
         <span class="carry-ic">${icon('train')}</span>
         <div>
-          <p class="carry-h">Carry your ${esc(LABEL[carry.from])} levels forward?</p>
+          <p class="carry-h">Start from your ${esc(LABEL[carry.from])} levels?</p>
           <p class="small">${esc(isLower(carry.from) && !isLower(y)
             ? 'Science becomes one science option, and your strongest Humanities becomes the pair. Change anything after.'
             : 'Everything comes across as it was. Change anything after.')}</p>
         </div>
-        <button type="button" class="btn press" data-action="yr-carry">Carry forward</button>
+        <button type="button" class="btn press" data-action="yr-carry">Copy ${esc(LABEL[carry.from])} levels into ${esc(LABEL[y])}</button>
       </div>` : ''}
     ${fromPsle ? `
       <div class="carry arrive">
@@ -320,8 +320,8 @@ function adviceHtml(api, y, rows, adv) {
       <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.holds.length ? `
-      <h2 class="advh">Holding your doors open</h2>
-      <p class="small advsub">Worth knowing before anyone suggests easing a subject down. Sometimes that is right; it should be a decision, not a surprise.</p>
+      <h2 class="advh">Levels to keep</h2>
+      <p class="small advsub">These levels are what keep places open. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
       <div class="holdlist">${adv.holds.map((h) => holdHtml(h)).join('')}</div>` : ''}`;
 }
 

@@ -183,6 +183,17 @@ function contrastSweep() {
       });
     });
   });
+  // Text on coloured fills (buttons, chips, the level switch): the fill and
+  // its text token must still pass after dark, where the fills get lighter.
+  [['--on-lv', '--g1'], ['--on-lv', '--g2'], ['--on-lv', '--g3'], ['--on-lv', '--open'],
+    ['--accent-ink', '--accent'], ['--sel-ink', '--sel-bg'], ['--night-ink', '--night']].forEach(([fgName, bgName]) => {
+    ['light', 'dark'].forEach((theme) => {
+      const fg = hex(fgName, theme); const bg = hex(bgName, theme);
+      if (!fg || !bg) { failures.push({ why: `token ${fgName} or ${bgName} (${theme}) not found as hex` }); return; }
+      const r = ratio(fg, bg);
+      if (r < 4.5) failures.push({ why: `${fgName} on ${bgName} (${theme}) = ${r.toFixed(2)}:1, needs 4.5:1` });
+    });
+  });
   const ok = failures.length === 0;
   pass('Contrast', ok);
   if (!ok) console.table(failures);
@@ -323,6 +334,25 @@ async function syntaxSweep() {
   return { ok, fails };
 }
 
+/** No rule may put white text on a fill that gets lighter after dark. */
+function whiteOnFillSweep() {
+  const fails = [];
+  CSS_FILES.forEach((f) => {
+    const css = readFileSync(join(root, 'assets/css', f), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const body = m[2];
+      if (/(^|;)\s*color:\s*(#fff\b|#ffffff\b|white\b)/i.test(body)
+        && /background(-color)?:[^;]*var\(--(g1|g2|g3|open|accent|line-open)\)/.test(body)) {
+        fails.push({ file: f, rule: m[1].trim().slice(0, 60) });
+      }
+    }
+  });
+  const ok = !fails.length;
+  pass('White on fills', ok, 'no white text on level, open or accent fills');
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
 const results = [
   ['version', versionSweep()],
   ['css-vars', cssVarSweep()],
@@ -344,6 +374,7 @@ const results = [
   ['psle', v4PsleSweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
+  ['white-on-fill', whiteOnFillSweep()],
 ];
 
 const bad = results.filter(([, r]) => !r.ok);

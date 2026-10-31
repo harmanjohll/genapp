@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode,
-} from '../state.js?v=4.0.0';
-import { reach } from '../engine/reach.js?v=4.0.0';
-import { evalPlan, isLower } from '../engine/years.js?v=4.0.0';
-import { advise } from '../engine/advice.js?v=4.0.0';
-import { signalHtml } from '../ui/signal.js?v=4.0.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=4.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
-import { subjTile, patchTile } from './year.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
-import { icon } from '../ui/icons.js?v=4.0.0';
-import { t } from '../ui/labels.js?v=4.0.0';
+} from '../state.js?v=4.1.0';
+import { reach } from '../engine/reach.js?v=4.1.0';
+import { evalPlan, isLower } from '../engine/years.js?v=4.1.0';
+import { advise } from '../engine/advice.js?v=4.1.0';
+import { signalHtml } from '../ui/signal.js?v=4.1.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=4.1.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.1.0';
+import { subjTile, patchTile } from './year.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
+import { icon } from '../ui/icons.js?v=4.1.0';
+import { t } from '../ui/labels.js?v=4.1.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -95,7 +95,7 @@ function bar(step, back = true) {
   return `<div class="st-bar">
     ${back ? `<button type="button" class="st-back press" data-action="st-back" aria-label="Back">${icon('back')}</button>` : '<span></span>'}
     ${dots(step)}
-    <button type="button" class="st-skip press" data-action="st-skip">Skip</button>
+    <button type="button" class="st-skip press" data-action="st-skip">Skip setup</button>
   </div>`;
 }
 
@@ -192,10 +192,10 @@ function renderIntro(root, api) {
   ];
   root.innerHTML = `
   <section class="st st-intro">
-    <div class="st-introbar"><button type="button" class="st-skip press" data-action="st-go" data-step="year">Skip</button></div>
+    <div class="st-introbar"><button type="button" class="st-skip press" data-action="st-go" data-step="year">Skip intro</button></div>
     <p class="st-caps" aria-live="polite">${caps.map((c, i) => `<span style="--i:${i}"${i === caps.length - 1 ? ' class="last"' : ''}>${esc(c)}</span>`).join('')}</p>
     <div class="st-stage">${introArt(ex)}</div>
-    <p class="st-legend"><span data-k="open">Open now</span><span data-k="ring">A move or more away</span></p>
+    <p class="st-legend"><span data-k="open">Open now</span><span data-k="ring">Not open yet: 1 or more moves away</span></p>
     <div class="st-introcopy">
       <h1>See what your levels open.</h1>
       <button type="button" class="btn big press" data-action="st-go" data-step="year">Try it with my levels ${icon('arrow')}</button>

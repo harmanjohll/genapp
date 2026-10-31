@@ -5,11 +5,11 @@
 // say to a real person. "Keep" puts the words on My plan, and the ticket is
 // punched: a small, honest acknowledgement that the student did something.
 
-import { getState } from '../state.js?v=4.0.0';
-import { sayMove, roleWords } from './talk.js?v=4.0.0';
-import { esc } from './dom.js?v=4.0.0';
-import { icon } from './icons.js?v=4.0.0';
-import { t } from './labels.js?v=4.0.0';
+import { getState } from '../state.js?v=4.1.0';
+import { sayMove, roleWords } from './talk.js?v=4.1.0';
+import { esc } from './dom.js?v=4.1.0';
+import { icon } from './icons.js?v=4.1.0';
+import { t } from './labels.js?v=4.1.0';
 
 const LV_COLOR = { G1: 'var(--g1)', G2: 'var(--g2)', G3: 'var(--g3)' };
 
@@ -30,7 +30,7 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
   return `
   <article class="ticket${hero ? ' tk-hero' : ''}${compact ? ' compact' : ''}${kept ? ' kept' : ''}" style="--tc:${LV_COLOR[to] || 'var(--accent)'}">
     <div class="tk-stub">
-      <span class="tk-kind">${m.kind === 'add' ? 'Add' : m.kind === 'pair' ? 'Pair' : 'Raise'}</span>
+      <span class="tk-kind">${m.kind === 'add' ? 'Add a subject' : m.kind === 'pair' ? 'Two moves' : 'Move up'}</span>
       <span class="tk-move">${from ? `<b>${esc(from)}</b>${icon('arrow')}` : ''}<b class="tk-to">${esc(to || '')}</b></span>
       <span class="tk-who">${esc(who)}</span>
     </div>
@@ -50,7 +50,7 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
         <p class="say-line">${esc(say)}</p>
       </div>
       <p class="tk-actions">
-        <button type="button" class="btn ghost small press" data-action="tk-copy" data-text="${esc(say)}">${icon('copy')} Copy</button>
+        <button type="button" class="btn ghost small press" data-action="tk-copy" data-text="${esc(say)}">${icon('copy')} Copy words</button>
         <button type="button" class="btn small press tk-keep" data-action="tk-keep" data-text="${esc(say)}" aria-pressed="${kept}">${kept ? `${icon('check')} ${t('kept')}` : `${icon('ticket')} ${t('keep')}`}</button>
       </p>`}
     </div>

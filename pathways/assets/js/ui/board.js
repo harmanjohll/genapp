@@ -8,8 +8,8 @@
 // Ethics carried: no row ever says closed. The weakest word on the board is
 // OTHER ROAD, and it is true: every destination keeps a road in.
 
-import { esc } from './dom.js?v=4.0.0';
-import { stateWord, t } from './labels.js?v=4.0.0';
+import { esc } from './dom.js?v=4.1.0';
+import { stateWord, t } from './labels.js?v=4.1.0';
 
 // Board words follow the reader's vocabulary (plain by default).
 export const BOARD_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });

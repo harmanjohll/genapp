@@ -10,20 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=4.0.0';
-import { reach } from '../engine/reach.js?v=4.0.0';
-import { effective } from '../engine/years.js?v=4.0.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=4.0.0';
-import { report } from '../engine/grades.js?v=4.0.0';
-import { openCount } from '../ui/map.js?v=4.0.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.0.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
-import { BOARD_WORD } from '../ui/board.js?v=4.0.0';
-import { DEST_CODE } from '../ui/signal.js?v=4.0.0';
-import { decorate } from '../ui/glossary.js?v=4.0.0';
-import { esc, onAction } from '../ui/dom.js?v=4.0.0';
-import { icon } from '../ui/icons.js?v=4.0.0';
+import { getState, setFamilies } from '../state.js?v=4.1.0';
+import { reach } from '../engine/reach.js?v=4.1.0';
+import { effective } from '../engine/years.js?v=4.1.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=4.1.0';
+import { report } from '../engine/grades.js?v=4.1.0';
+import { openCount } from '../ui/map.js?v=4.1.0';
+import { yearStrip } from '../ui/yearstrip.js?v=4.1.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.1.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.1.0';
+import { BOARD_WORD } from '../ui/board.js?v=4.1.0';
+import { DEST_CODE } from '../ui/signal.js?v=4.1.0';
+import { t } from '../ui/labels.js?v=4.1.0';
+import { decorate } from '../ui/glossary.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.1.0';
+import { icon } from '../ui/icons.js?v=4.1.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
@@ -66,7 +67,7 @@ export const after = {
         <div class="sign-code" aria-hidden="true">AS</div>
         <div class="sign-body">
           <p class="sign-meta">After Sec <span>Age 16 to 17</span></p>
-          <h1>Eight lines out of secondary school</h1>
+          <h1>${esc(t('afterTitle'))}</h1>
           <p class="sign-lede">Every one keeps a road in, whatever your subjects. Levels change how direct the road is, never whether one exists.</p>
         </div>
       </header>
@@ -127,7 +128,7 @@ export const dest = {
     root.innerHTML = `
     ${yearStrip('after', st)}
     <div class="wrap-narrow yearwrap">
-      <p class="crumb"><button type="button" class="linkbtn" data-action="go" data-s="after">${icon('back')} All eight lines</button></p>
+      <p class="crumb"><button type="button" class="linkbtn" data-action="go" data-s="after">${icon('back')} ${esc(t('allPlaces'))}</button></p>
       <header class="linesign arrive" style="--lc:${LINE[r.state]}">
         <span class="ls-code" aria-hidden="true">${esc(DEST_CODE[id] || '')}</span>
         <div class="ls-body">
