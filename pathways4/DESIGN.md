@@ -61,3 +61,21 @@ app's own metaphor literal: school is a transit line.
 Shape system: controls are pills; cards, boards and tickets 18px; tiles 24px;
 keys 12px. Motion: train glide, thumb slide, row flip, dock bump, ticket
 punch, arrival stagger; all off under `prefers-reduced-motion`.
+
+## Flow pass: the first five minutes (2026-10-31)
+
+Problem: a first-time student did not know what to tap first. Fix:
+
+- **Wordless intro** (first open only, skippable): switches feed one hub,
+  every road out of it is drawn, lamps light, one switch slides up and two
+  more light, none goes dark. Then "See what your levels open."
+- **Guided start** (`screens/start.js`): year, core levels with the live
+  signal above them, reveal, one next move with the words to say. Ends on
+  "Saved. Next time, start here." Skip counts as done. Deep links skip it.
+- **Live signal** (`ui/signal.js`): you wired to the eight destinations. A
+  lit lamp on a solid wire is open; dashed is a move or more away; dotted is
+  another way in; no wire is ever cut. It is the default answer everywhere.
+- **Home is one next step**, computed from what the device holds.
+- **Four nav items**: Home, My year, Explore, My plan.
+- **Words switch** (`ui/labels.js`): plain words by default; Line mode turns
+  on departures, tickets and a pass. Same visuals in both.

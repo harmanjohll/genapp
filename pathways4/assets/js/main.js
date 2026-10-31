@@ -22,9 +22,11 @@ import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loade
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
+  setLabelMode, markStart,
 } from './state.js?v=4.0.0';
 import { effective } from './engine/years.js?v=4.0.0';
 import { runStrip } from './ui/yearstrip.js?v=4.0.0';
+import { t } from './ui/labels.js?v=4.0.0';
 import { esc, onAction } from './ui/dom.js?v=4.0.0';
 import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.0.0';
 import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.0.0';
@@ -71,7 +73,9 @@ export function announce(text) {
 // ---- screens ----------------------------------------------------------------
 
 const SCREENS = {
+  start:   { mod: './screens/start.js', exp: 'default' },
   home:    { mod: './screens/home.js', exp: 'default' },
+  explore: { mod: './screens/explore.js', exp: 'default' },
   year:    { mod: './screens/year.js', exp: 'default' },
   after:   { mod: './screens/after.js', exp: 'after' },
   dest:    { mod: './screens/after.js', exp: 'dest' },
@@ -179,8 +183,9 @@ document.addEventListener('close', (e) => {
   else sheetPushed = false;
 }, true);
 
+// A first visit lands on the guided start; every visit after, on Home.
 function defaultScreen() {
-  return 'home';
+  return getState().seenStart ? 'home' : 'start';
 }
 
 // ---- paint -------------------------------------------------------------------
@@ -298,17 +303,18 @@ function themeNow() {
     || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 }
 
+// Four doors. v4's first pass had five of equal weight, and a first-time
+// student could not tell which one came first.
 const NAV_ITEMS = [
   { s: 'home', label: 'Home', icon: 'home' },
-  { s: 'year', label: 'Years', icon: 'steps' },
-  { s: 'after', label: 'After Sec', icon: 'map' },
-  { s: 'play', label: 'Play', icon: 'play' },
+  { s: 'year', label: 'My year', icon: 'steps' },
+  { s: 'explore', label: 'Explore', icon: 'map' },
   { s: 'myplan', label: 'My plan', icon: 'flag' },
 ];
 const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
 
 function navCurrent(s) {
-  if (s === 'dest') return 'after';
+  if (['after', 'dest', 'play', 'work', 'money', 'schools', 'adults'].includes(s)) return 'explore';
   if (s === 'act') return 'myplan';
   return s;
 }
@@ -323,7 +329,7 @@ function renderChrome() {
       <span>Paths</span>
     </button>
     <nav class="topnav" aria-label="Main">
-      ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.label)}</button>`).join('')}
+      ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.s === 'myplan' ? t('plan') : n.label)}</button>`).join('')}
     </nav>
     <span class="headspace"></span>
     <button type="button" class="rolechip press" data-action="role" aria-label="Viewing as ${esc(ROLE_LABEL[st.role])}. Change.">${icon(st.role)}<span>${esc(ROLE_LABEL[st.role])}</span></button>
@@ -336,7 +342,7 @@ function renderChrome() {
     ${NAV_ITEMS.map((n) => `
       <button type="button" class="tab press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">
         ${icon(n.icon)}
-        <span>${esc(n.label)}</span>
+        <span>${esc(n.s === 'myplan' ? t('plan') : n.label)}</span>
       </button>`).join('')}
   </div>`;
 }
@@ -366,6 +372,7 @@ function settingsSheet(trigger) {
   openSheetRouted(`
     <h2 id="sheet-title">Settings</h2>
     <div class="setlist">
+      ${switchRow('set-line', 'Line mode words', 'Talk like a transit system: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
       ${switchRow('set-families', 'Course families', 'Show course groups and their subject asks on each destination page.', st.families)}
       ${switchRow('set-theme', 'Dark colours', 'Night in the same city.', themeNow() === 'dark')}
       ${switchRow('set-sound', 'Sound', 'Five small cues in the game.', st.soundOn)}
@@ -377,6 +384,7 @@ function settingsSheet(trigger) {
       <button type="button" class="chip press" data-action="go" data-s="schools">My kind of school</button>
       <button type="button" class="chip press" data-action="go" data-s="adults">For parents and teachers</button>
       <button type="button" class="chip press" data-action="words">Words, explained</button>
+      <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
     <p class="small" style="margin-top:16px">Everything stays on this device. No account, no server, nothing collected.</p>`, trigger);
 }
@@ -407,15 +415,17 @@ onAction(document.body, {
     toggleAction(btn.dataset.text);
     const on = getState().actions.includes(btn.dataset.text);
     btn.setAttribute('aria-pressed', String(on));
-    btn.innerHTML = on ? `${icon('check')} Kept` : `${icon('ticket')} Keep`;
-    const t = btn.closest('.ticket');
-    if (t) t.classList.toggle('kept', on);
-    announce(on ? 'Kept on My plan.' : 'Taken off My plan.');
+    btn.innerHTML = on ? `${icon('check')} ${t('kept')}` : `${icon('ticket')} ${t('keep')}`;
+    const tk = btn.closest('.ticket');
+    if (tk) tk.classList.toggle('kept', on);
+    announce(on ? `${t('kept')} on ${t('plan')}.` : `Taken off ${t('plan')}.`);
   },
   'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
   settings: (btn) => settingsSheet(btn),
   'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
+  'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },
+  'replay-start': () => { markStart(false); nav('start', {}); },
   'set-theme': (btn) => {
     const on = flip(btn);
     document.documentElement.dataset.theme = on ? 'dark' : 'light';

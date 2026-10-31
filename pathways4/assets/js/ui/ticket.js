@@ -9,10 +9,11 @@ import { getState } from '../state.js?v=4.0.0';
 import { sayMove, roleWords } from './talk.js?v=4.0.0';
 import { esc } from './dom.js?v=4.0.0';
 import { icon } from './icons.js?v=4.0.0';
+import { t } from './labels.js?v=4.0.0';
 
 const LV_COLOR = { G1: 'var(--g1)', G2: 'var(--g2)', G3: 'var(--g3)' };
 
-export function ticketHtml(m, { hero = false, compact = false } = {}) {
+export function ticketHtml(m, { hero = false, compact = false, simple = false } = {}) {
   const st = getState();
   const rw = roleWords(st.role);
   const say = sayMove(m, st.role);
@@ -40,9 +41,9 @@ export function ticketHtml(m, { hero = false, compact = false } = {}) {
       ${!compact && nearer.length && opened.length ? `<p class="tk-dests">
         ${nearer.map((d) => `<span class="dchip" data-state="near">${esc(d)} closer</span>`).join('')}
       </p>` : ''}
-      ${!compact && m.because && m.because.length ? `<p class="tk-why">Because ${m.because.map((b) => esc(b)).join('; ')}.</p>` : ''}
-      ${!compact && m.still && m.still.length ? `<p class="tk-why">Then: ${m.still.slice(0, 2).map((s) => `${esc(s.dest)} next asks ${esc(/^(A|An|One|Two|Three|Four|Five)\b/.test(s.next) ? s.next.charAt(0).toLowerCase() + s.next.slice(1) : s.next)}`).join('; ')}.</p>` : ''}
-      ${!compact && m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when)}. ${esc(m.who)}.</p>` : ''}
+      ${!compact && !simple && m.because && m.because.length ? `<p class="tk-why">Because ${m.because.map((b) => esc(b)).join('; ')}.</p>` : ''}
+      ${!compact && !simple && m.still && m.still.length ? `<p class="tk-why">Then: ${m.still.slice(0, 2).map((s) => `${esc(s.dest)} next asks ${esc(/^(A|An|One|Two|Three|Four|Five)\b/.test(s.next) ? s.next.charAt(0).toLowerCase() + s.next.slice(1) : s.next)}`).join('; ')}.</p>` : ''}
+      ${!compact && !simple && m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when)}. ${esc(m.who)}.</p>` : ''}
       ${compact ? '' : `
       <div class="say">
         <span class="say-who">${icon('talk')} ${esc(rw.say)}</span>
@@ -50,10 +51,10 @@ export function ticketHtml(m, { hero = false, compact = false } = {}) {
       </div>
       <p class="tk-actions">
         <button type="button" class="btn ghost small press" data-action="tk-copy" data-text="${esc(say)}">${icon('copy')} Copy</button>
-        <button type="button" class="btn small press tk-keep" data-action="tk-keep" data-text="${esc(say)}" aria-pressed="${kept}">${kept ? `${icon('check')} Kept` : `${icon('ticket')} Keep`}</button>
+        <button type="button" class="btn small press tk-keep" data-action="tk-keep" data-text="${esc(say)}" aria-pressed="${kept}">${kept ? `${icon('check')} ${t('kept')}` : `${icon('ticket')} ${t('keep')}`}</button>
       </p>`}
     </div>
-    <span class="tk-punch" aria-hidden="true">Kept</span>
+    <span class="tk-punch" aria-hidden="true">${esc(t('kept'))}</span>
   </article>`;
 }
 

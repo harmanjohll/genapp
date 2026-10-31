@@ -1,29 +1,33 @@
-// Home. (v4 visual pass)
+// Home: one next step.
 //
-// First visit: the line is the question. A full bleed night band, one
-// sentence, who is reading, and the school years drawn as a big transit
-// line you tap to say where you are. No form, no wizard: tapping a station
-// is the answer and takes you there.
+// The first v4 home was a bento of four equal tiles plus four links, and a
+// student could not tell which mattered first. Now Home answers one question,
+// "what should I do next?", with one dominant card computed from what this
+// device holds:
 //
-// Every visit after: a bento of four tiles that each do one job. Your
-// station (where you are, what is open, the best move as a ticket), the
-// departures board (all eight, live), the game (a skyline, because Play is
-// a story), and your plan (what you kept, ready for the next conversation).
+//   no year            tell us your year (back to the start)
+//   P6                 enter PSLE ALs, then carry them into Sec 1
+//   no levels          set this year's levels
+//   a move exists      your next move, as a card
+//   upper sec, no targets   set grade targets
+//   otherwise          say it to someone this week
+//
+// Under it, the live signal for this year, then three quiet doors. A first
+// visit never lands here: the router sends it to the start.
 
-import { getState, setYear, YEARS, markWelcome, isGuest, setRole } from '../state.js?v=4.0.0';
+import { getState, setYear, YEARS } from '../state.js?v=4.0.0';
 import { reach } from '../engine/reach.js?v=4.0.0';
-import { evalPlan } from '../engine/years.js?v=4.0.0';
+import { evalPlan, isLower, prevYear } from '../engine/years.js?v=4.0.0';
 import { advise } from '../engine/advice.js?v=4.0.0';
-import { openCount } from '../ui/map.js?v=4.0.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.0.0';
-import { boardHtml } from '../ui/board.js?v=4.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
-import { skyline } from '../ui/scenes.js?v=4.0.0';
+import { psleScore } from '../engine/psle.js?v=4.0.0';
+import { signalHtml } from '../ui/signal.js?v=4.0.0';
+import { stepArt } from '../ui/scenes.js?v=4.0.0';
+import { sayMove } from '../ui/talk.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
+import { t } from '../ui/labels.js?v=4.0.0';
 
-const ROLE = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
-const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
+const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
 export default {
   id: 'home',
@@ -32,121 +36,87 @@ export default {
   render(root, api) {
     const st = getState();
     document.body.dataset.dock = 'off';
-    if (!st.yearSet) return renderFirst(root, api);
-    return renderHome(root, api);
+    if (!st.seenStart) { setTimeout(() => api.nav('start', {}, { replace: true }), 0); return; }
+    renderHome(root, api);
   },
 };
 
-function renderFirst(root, api) {
+function nextStep(api) {
   const st = getState();
-  const q = st.role === 'student' ? 'Where are you on the line?' : st.role === 'parent' ? "Where is your child on the line?" : 'Where is the student on the line?';
-  root.innerHTML = `
-  <section class="welcome">
-    <div class="wrap welcome-in">
-      <h1 class="welcome-h arrive">${esc(q)}</h1>
-      <p class="welcome-sub arrive d1">Tap a year. See what every subject level opens, and the exact move that opens more.</p>
-
-      <div class="rolebar arrive d1" role="radiogroup" aria-label="Who is reading">
-        ${Object.entries(ROLE).map(([id, l]) => `<button type="button" role="radio" class="rolebar-b press" data-action="hm-role" data-id="${id}" aria-checked="${st.role === id}">${icon(id)}<span>${esc(l)}</span></button>`).join('')}
-      </div>
-
-      <ol class="bigline arrive d2" aria-label="School years">
-        ${YEARS.map((y, i) => `<li style="--i:${i}">
-          <button type="button" class="bigstn press" data-action="hm-year" data-id="${y.id}">
-            <span class="bigstn-dot" aria-hidden="true"></span>
-            <span class="bigstn-code">${esc(CODE[y.id])}</span>
-            <span class="bigstn-name">${esc(y.id === 'p6' ? 'Primary 6' : y.label)}</span>
-          </button>
-        </li>`).join('')}
-        <li class="bigline-end" aria-hidden="true"><span class="bigstn-dot"></span><span class="bigstn-code">AS</span><span class="bigstn-name">After Sec</span></li>
-      </ol>
-
-      <ul class="promises arrive d3">
-        <li>${icon('check')} No account, no sign in</li>
-        <li>${icon('check')} Nothing leaves this device</li>
-        <li>${icon('check')} It never says a road is closed</li>
-      </ul>
-    </div>
-  </section>`;
-  onAction(root, {
-    'hm-role': (btn) => { setRole(btn.dataset.id); api.refresh(); },
-    'hm-year': (btn) => { setYear(btn.dataset.id); markWelcome(null); api.nav('year', { y: btn.dataset.id }); },
-  });
+  const c = api.ctx();
+  if (!st.yearSet) {
+    return { art: 'year', title: 'Tell us your year', body: 'Everything here is read from your levels, one school year at a time.', cta: 'Start', s: 'start' };
+  }
+  const y = st.year;
+  if (y === 'p6') {
+    const sc = api.data.psle ? psleScore(st.psle || {}, api.data.psle) : { complete: false };
+    return sc.complete
+      ? { art: 'levels', title: 'Carry your PSLE levels into Sec 1', body: `PSLE Score ${sc.score}. Your Sec 1 page turns those levels into what they open.`, cta: 'Open Sec 1', s: 'year', y: 'sec1' }
+      : { art: 'levels', title: 'Enter your PSLE ALs', body: 'See your Posting Group and the level each subject would start at in Sec 1.', cta: 'Enter ALs', s: 'year', y: 'p6' };
+  }
+  const plan = (st.plans && st.plans[y]) || {};
+  if (!Object.keys(plan).length) {
+    const from = prevYear(y);
+    const carry = from && Object.keys((st.plans || {})[from] || {}).length;
+    return {
+      art: 'levels', title: `Set your ${LABEL[y]} levels`,
+      body: carry ? `Carry your ${LABEL[from]} levels forward in one tap, then adjust.` : 'Slide in each subject. The lamps show what each level opens.',
+      cta: 'Set levels', s: 'year', y, tab: 'levels',
+    };
+  }
+  const a = advise({ yearId: y, plan, ctx: c, offer: st.offer });
+  const top = a.singles[0] || a.pairs[0];
+  if (top && !st.actions.includes(sayMove(top, st.role))) {
+    return { art: 'move', k: t('nextMove'), title: top.result, body: `${top.cond.charAt(0).toUpperCase()}${top.cond.slice(1)}.`, cta: 'See this move', s: 'year', y, tab: 'advice' };
+  }
+  if (!isLower(y) && !Object.keys(st.grades.target || {}).length) {
+    return { art: 'reveal', title: 'Set your grade targets', body: 'See the scores JC, polytechnic and the others read, and which grades would close a gap.', cta: 'Set targets', s: 'year', y, tab: 'targets' };
+  }
+  const talk = ((((api.data.years || {}).years || {})[y] || {}).talk || {})[st.role] || [];
+  const said = st.actions[0];
+  return {
+    art: 'move', title: 'Say it to someone this week',
+    body: said || talk[0] || 'Bring your plan to a parent, a form teacher or your ECG counsellor.',
+    cta: `Open ${t('plan')}`, s: 'myplan',
+  };
 }
 
 function renderHome(root, api) {
   const st = getState();
-  const y = st.year;
-  const yr = YEARS.find((x) => x.id === y);
-  const meta = ((api.data.years || {}).years || {})[y] || {};
   const c = api.ctx();
-  const yp = (st.plans && st.plans[y]) || {};
-  const n = Object.keys(yp).length;
-  let top = null;
-  let rows = [];
-  if (y !== 'p6') {
-    const ep = evalPlan(y, yp, c.subjects);
-    rows = c.destinations.map((d) => reach(ep, d, { ...c, plan: ep, yearId: y }));
-    const a = n ? advise({ yearId: y, plan: yp, ctx: c, offer: st.offer }) : null;
-    top = a && a.singles[0];
-  }
-  const effRows = c.destinations.map((d) => reach(c.plan, d, c));
-  const cta = y === 'p6' ? 'Enter PSLE ALs' : (n ? (top ? 'All advice' : `Open ${yr.label}`) : `Set ${yr.label} levels`);
+  const y = st.yearSet ? st.year : null;
+  const ns = nextStep(api);
+  const showSig = y && y !== 'p6' && Object.keys((st.plans || {})[y] || {}).length;
+  const rows = showSig ? (() => {
+    const ep = evalPlan(y, st.plans[y], c.subjects);
+    return c.destinations.map((d) => reach(ep, d, { ...c, plan: ep, yearId: y }));
+  })() : null;
 
   root.innerHTML = `
-  ${yearStrip(null, st)}
-  <div class="wrap homewrap">
-    <div class="bento">
-      <section class="tile tile-station arrive" aria-labelledby="ts-h">
-        <div class="ts-head">
-          <span class="ts-code" aria-hidden="true">${esc(CODE[y])}</span>
-          <div>
-            <p class="ts-meta">${esc(meta.phase || '')} · ${st.role === 'student' ? 'You are in' : 'Now in'} ${esc(yr.label)}</p>
-            <h1 id="ts-h">${esc(meta.headline || yr.label)}</h1>
-          </div>
-        </div>
-        ${y !== 'p6' && n ? `<p class="ts-open"><b>${openCount(rows)}</b><span>of ${rows.length} destinations open from your ${esc(yr.label)} levels</span></p>` : `<p class="ts-lede">${esc(meta.lede || '')}</p>`}
-        ${n ? `<div class="ts-combo" aria-label="Your ${esc(yr.label)} levels">${Object.entries(yp).map(([id, lv]) => {
-          const sj = c.subjects.find((x) => x.id === id);
-          return `<span class="pl-chip" data-level="${lv}">${esc(sj ? (sj.shortName || sj.name) : id)} <b>${lv}</b></span>`;
-        }).join('')}</div>` : ''}
-        ${top ? `<p class="ts-k">Your best move</p><div class="ts-ticket">${ticketHtml(top, { compact: true })}</div>` : ''}
-        <p class="btnrow">
-          <button type="button" class="btn big press" data-action="go" data-s="year" data-y="${esc(y)}" ${n && top ? 'data-tab="advice"' : ''}>${esc(cta)} ${icon('arrow')}</button>
-          <button type="button" class="btn ghost on-night press" data-action="hm-change">Not ${esc(yr.label)}?</button>
-        </p>
-      </section>
+  <div class="wrap-narrow homewrap">
+    ${y ? `<p class="hm-where">${st.role === 'student' ? 'You are in' : 'Now in'} <b>${esc(LABEL[y])}</b> <button type="button" class="linkbtn" data-action="hm-change">Change</button></p>` : ''}
 
-      <section class="tile tile-board arrive d1">
-        ${boardHtml(effRows, { key: 'home', compact: true, title: 'After Sec' })}
-        <button type="button" class="tile-link press" data-action="go" data-s="after">What each place asks and costs ${icon('arrow')}</button>
-      </section>
+    <section class="nextstep arrive" aria-labelledby="ns-h">
+      <div class="ns-art">${stepArt(ns.art)}</div>
+      <p class="ns-k">${esc(ns.k || 'Your next step')}</p>
+      <h1 id="ns-h">${esc(ns.title)}</h1>
+      <p class="ns-p">${esc(ns.body)}</p>
+      <button type="button" class="btn big press" data-action="go" data-s="${esc(ns.s)}"${ns.y ? ` data-y="${esc(ns.y)}"` : ''}${ns.tab ? ` data-tab="${esc(ns.tab)}"` : ''}>${esc(ns.cta)} ${icon('arrow')}</button>
+    </section>
 
-      <button type="button" class="tile tile-play press arrive d2" data-action="go" data-s="play">
-        <span class="tp-art" aria-hidden="true">${skyline('school')}</span>
-        <span class="tp-body">
-          <span class="tile-h">Play a life forward</span>
-          <span class="tile-p">${st.liveRun ? 'Your story is mid chapter. Pick it back up.' : (st.runs.length ? `${st.runs.length} lived on this device. Try another road.` : 'From your subjects to age 35. Ten minutes, no choice ends the story.')}</span>
-          <span class="tile-go">${icon('play')} ${st.liveRun ? 'Continue' : 'Play'}</span>
-        </span>
-      </button>
+    ${rows ? `
+    <section class="hm-signal arrive d1">
+      ${signalHtml(rows, { key: 'home', caption: `From your ${LABEL[y]} levels` })}
+      <button type="button" class="linkbtn" data-action="go" data-s="after">What each place asks and costs ${icon('arrow')}</button>
+    </section>` : ''}
 
-      <button type="button" class="tile tile-plan press arrive d3" data-action="go" data-s="myplan">
-        <span class="tile-h">${st.role === 'student' ? 'My plan' : 'The plan'}</span>
-        <span class="tpl-n"><b>${st.actions.length}</b> ${st.actions.length === 1 ? 'ticket' : 'tickets'} kept</span>
-        <span class="tile-p">Everything on one page for the next conversation. It prints.</span>
-        <span class="tile-go">${icon('ticket')} Open</span>
-      </button>
-    </div>
-
-    <nav class="morelinks" aria-label="Also here">
-      <button type="button" class="ml press" data-action="go" data-s="work">${icon('d_portfolio')}<span>The work itself</span></button>
-      <button type="button" class="ml press" data-action="go" data-s="money">${icon('target')}<span>Costs and help</span></button>
-      <button type="button" class="ml press" data-action="go" data-s="schools">${icon('home')}<span>My kind of school</span></button>
-      <button type="button" class="ml press" data-action="go" data-s="adults">${icon('d_people')}<span>For parents and teachers</span></button>
+    <nav class="hm-doors arrive d2" aria-label="More">
+      <button type="button" class="hm-door press" data-action="go" data-s="year">${icon('steps')}<span><b>My year</b><small>Levels, moves, targets</small></span></button>
+      <button type="button" class="hm-door press" data-action="go" data-s="play">${icon('play')}<span><b>Play a life forward</b><small>A ten minute game</small></span></button>
+      <button type="button" class="hm-door press" data-action="go" data-s="myplan">${icon('flag')}<span><b>${esc(t('plan'))}</b><small>${esc(t('keptCount', st.actions.length))}</small></span></button>
     </nav>
-    ${isGuest() ? '' : '<p class="small homenote">Nothing you do here leaves this device. No account, no server, nothing collected.</p>'}
   </div>`;
+
   onAction(root, {
     'hm-change': () => {
       api.sheet(`<h2 id="sheet-title">Which year?</h2><div class="yeargrid">${YEARS.map((x) => `<button type="button" class="btn ${x.id === y ? '' : 'ghost'} press" data-action="hm-pick" data-id="${x.id}">${esc(x.label)}</button>`).join('')}</div>`);

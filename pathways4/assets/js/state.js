@@ -41,6 +41,8 @@ const initial = () => ({
   grades: { now: {}, target: {} },  // SEC grades, hypothetical, for goal setting
   role: 'student',      // student | parent | teacher: changes the voice, never the facts
   families: false,      // course families on destination pages: opt in
+  seenStart: false,     // the wordless intro and the guided start, had once
+  labelMode: 'plain',   // 'plain' words by default; 'line' turns on the transit vocabulary
   activities: [],
   aim: null,
   actions: [],
@@ -93,6 +95,7 @@ function load() {
   ['now', 'target'].forEach((k) => { if (!base.grades[k] || typeof base.grades[k] !== 'object') base.grades[k] = {}; });
   if (!base.psle || typeof base.psle !== 'object' || Array.isArray(base.psle)) base.psle = {};
   if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
+  if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
   ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
@@ -100,10 +103,10 @@ function load() {
     const m = params.get('s') || params.get('mode');
     if (m && MODES[m]) { base.mode = m; base.seenWelcome = true; }
     const p = params.get('p');
-    if (p) { base.plan = decodePlan(p); base._fromLink = true; base.seenWelcome = true; }
+    if (p) { base.plan = decodePlan(p); base._fromLink = true; base.seenWelcome = true; base.seenStart = true; }
     ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].forEach((yid) => {
       const v = params.get(yid);
-      if (v) { base.plans[yid] = decodePlan(v); base._fromLink = true; base.seenWelcome = true; }
+      if (v) { base.plans[yid] = decodePlan(v); base._fromLink = true; base.seenWelcome = true; base.seenStart = true; }
     });
     // A v3 style link carries one plan and a year: file it under that year.
     if (p && !['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].some((yid) => params.get(yid))) {
@@ -249,6 +252,18 @@ export function setRole(role) {
   if (!['student', 'parent', 'teacher'].includes(role)) return;
   state.role = role;
   persist(); notify({ kind: 'role' });
+}
+
+/** The guided start is had once. Skipping counts as having it. */
+export function markStart(done = true) {
+  state.seenStart = !!done;
+  persist(); notify({ kind: 'start' });
+}
+
+export function setLabelMode(mode) {
+  if (!['plain', 'line'].includes(mode)) return;
+  state.labelMode = mode;
+  persist(); notify({ kind: 'labels' });
 }
 
 export function setFamilies(on) {
