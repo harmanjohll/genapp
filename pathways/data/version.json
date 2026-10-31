@@ -1,47 +1,35 @@
 {
   "_meta": {
-    "source": "Hand maintained with each release",
-    "url": "",
-    "accessed": "2026-08-04",
-    "units": "not applicable",
-    "notes": "The app ships from a branch and a student's browser caches it, so a class can be sitting on three different builds without anyone knowing. The version is baked in here and compared against what the device last saw. On a change, one sheet, once, listing what moved in the student's own words. Bump `version` and put the newest block first in `releases`. Entries are for the person using it: what is different on their screen, never what changed in the code."
+    "purpose": "Version stamp and release notes, shown in the what changed sheet.",
+    "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "1.2.0",
+  "version": "4.0.0",
   "releases": [
     {
-      "version": "1.2.0",
-      "date": "2026-08-05",
-      "head": "What is new",
+      "version": "4.0.0",
+      "date": "2026-10-27",
+      "head": "Year by year",
       "changes": [
-        "Journey stays where you left it. Tapping a choice no longer throws you back to the top of the page.",
-        "You can say what else you do besides lessons. A CCA, training, leadership, looking after people at home, a job. It tells you what that is building and where it can go.",
-        "Your week counts in Journey now. It pays into every school year on its own, without a turn spent on it.",
-        "At Sec 1 and Sec 2 your subjects are no longer counted as a load. They are compulsory, so that was never your decision to be measured on.",
-        "The Aa button says Words, because that is what it opens."
+        "A page for every year, P6 to Sec 5, on one transit line you can tap along.",
+        "Advice that names the move: which subject, which level, and what it opens.",
+        "Targets: enter the grades you expect and aim for, and see the scores each place reads.",
+        "My plan: one page for the next conversation, voiced for a student, a parent or a teacher.",
+        "The admission rules for 2028 re-checked, with the course families behind an option.",
+        "A new look: the night line. Navy and signal yellow, a departures board that answers every tap, advice as tickets you keep, and your score drawn as a train on a track.",
+        "A guided start: a short wordless intro, then four steps to your first move. Home now shows one next step."
       ]
     },
     {
-      "version": "1.1.0",
-      "date": "2026-08-05",
-      "head": "What is new",
+      "version": "3.0.0",
+      "date": "2026-08-22",
+      "head": "A new map",
       "changes": [
-        "You can undo a year now. Change your mind on the screen right after you live it.",
-        "Before you start, three lines on how a turn works.",
-        "You can play the short game: just the school years, to 18. It fits one lesson.",
-        "Aim remembers what you said you would do, and asks you about it next time."
-      ]
-    },
-    {
-      "version": "1.0.0",
-      "date": "2026-08-04",
-      "head": "What is new",
-      "changes": [
-        "Your year is decided as a whole now. Pick what you do, pick who you ask, then tap Live this year once.",
-        "People you can ask sit beside the year. Asking is free and does not spend your points.",
-        "Points change with your real load. A fuller year gives you fewer, and the line under them says why.",
-        "Aim knows what you already played and what your subjects reach right now.",
-        "A class code, so your whole class can see what it holds between everyone.",
-        "The turn screen no longer slides sideways on a phone."
+        "The map is now the whole tool: it is the home screen, it answers every subject you tap in Plan, it grows as you play, and it is the card you keep at the end.",
+        "The back button works everywhere, and a reload puts you back where you were.",
+        "First visit asks your year and your guess once, then never again.",
+        "The rulebook now arrives in three steps: a plain word, a plain sentence, and the exact rule with its source behind one fold.",
+        "Money, work and your school now appear where they matter, not only as pages.",
+        "One face for the words on every phone, and dark mode is a proper night."
       ]
     }
   ]

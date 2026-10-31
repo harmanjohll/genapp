@@ -16,7 +16,7 @@
 // frightened. A padlock is a claim about a person's future that no aggregate
 // entitles anyone to make.
 
-import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js';
+import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=4.0.0';
 
 export const STATES = {
   'open':         { label: 'Open now',        order: 0 },
@@ -104,6 +104,11 @@ export function reach(rawPlan, destination, ctx) {
     id: destination.id,
     name: destination.name,
     railName: destination.railName || destination.name,
+    // The data's own display order rides along. v1 dropped it here, and the
+    // caller's "restore data order" sort silently compared undefined to
+    // undefined, so the list re-sorted by state and distance on every tap:
+    // a ranking, which is the one thing this app must never draw.
+    order: destination.order || 0,
     state,
     status: statusLine(destination, state, moves),
     distance,
@@ -247,6 +252,7 @@ export function runInvariantSweep(ctx) {
   });
 
   failures.push(...monotonicityFailures(ctx));
+  failures.push(...classCodeFailures(ctx));
 
   const ok = failures.length === 0;
   const style = ok ? 'color:#2F7D5B;font-weight:700' : 'color:#B23A2A;font-weight:700';
@@ -391,9 +397,49 @@ const B36 = (n) => Math.max(0, Math.min(35, Math.round(n))).toString(36).toUpper
 export function classCode(plan, wantKindLetter, reaches) {
   const n = Object.keys(plan || {}).length;
   const g3 = Object.values(plan || {}).filter((l) => l === 'G3').length;
+  // Bit i is destination i IN DATA ORDER, for every student, or the union
+  // means nothing. v1 took the caller's list as given, the caller passed a
+  // state-sorted list, and every mask degenerated into a prefix of 1s: the
+  // teacher's "this room holds N of the 8" was silently the single strongest
+  // student's count. Ordering here, inside the encoder, makes the contract
+  // structural instead of a comment in another file.
+  const inDataOrder = (reaches || []).slice()
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
   let mask = 0;
-  (reaches || []).forEach((r, i) => { if (i < 8 && r.state === 'open') mask |= (1 << i); });
+  inDataOrder.forEach((r, i) => { if (i < 8 && r.state === 'open') mask |= (1 << i); });
   return `${(wantKindLetter || '-').toUpperCase()}${B36(n)}${B36(g3)}${mask.toString(36).toUpperCase().padStart(2, '0')}`;
+}
+
+/**
+ * The round trip the classroom depends on. Two synthetic students, codes
+ * encoded exactly as the share sheet encodes them, union decoded exactly as
+ * the teacher page decodes it, compared against ground truth. v1 failed this
+ * in the field: a strong student's mask claimed the whole room. Even a
+ * DELIBERATELY state-sorted input must survive, because the encoder now owns
+ * the ordering.
+ */
+function classCodeFailures(ctx) {
+  const out = [];
+  const plans = [
+    Object.fromEntries(ctx.subjects.filter((s) => (s.levels || []).includes('G3')).slice(0, 6).map((s) => [s.id, 'G3'])),
+    Object.fromEntries(ctx.subjects.filter((s) => (s.levels || []).includes('G1')).slice(0, 6).map((s) => [s.id, 'G1'])),
+  ];
+  const truth = new Set();
+  let union = 0;
+  plans.forEach((plan) => {
+    const rs = ctx.destinations.map((d) => reach(plan, d, { ...ctx, plan }));
+    rs.forEach((r) => { if (r.state === 'open') truth.add(r.id); });
+    // Worst-case caller: hand the encoder a state-sorted list on purpose.
+    const decoded = readClassCode(classCode(plan, 'R', sortReaches(rs)));
+    if (!decoded) { out.push({ why: 'class code failed to parse its own output' }); return; }
+    union |= decoded.mask;
+  });
+  let held = 0;
+  for (let i = 0; i < ctx.destinations.length && i < 8; i += 1) if (union & (1 << i)) held += 1;
+  if (held !== truth.size) {
+    out.push({ why: `class code union says ${held} destinations held, ground truth is ${truth.size}` });
+  }
+  return out;
 }
 
 export function readClassCode(code) {

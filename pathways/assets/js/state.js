@@ -1,19 +1,26 @@
 // Global app state. Tiny pub/sub store, no framework, no dependencies.
 // Everything is local. Nothing is sent anywhere. There is no account.
 //
-// notify() carries a typed event so subscribers can update surgically instead
-// of repainting the document. A full repaint on every chip tap destroys focus,
-// makes transitions impossible, and re-runs the glossary regex over the page.
+// v3 keeps its own key, so a device that used v1 or v2 keeps that state
+// untouched and v3 starts clean. Nothing migrates: the builds model runs
+// differently, and a half understood run is worse than a fresh one.
+//
+// One vocabulary. v2 called the same three surfaces Plan/Now/now,
+// Play/Journey/journey and Act/Aim/aim across labels, modules, state and
+// URLs. v3 says plan, play, act everywhere, including the address bar.
 
-const STORAGE_KEY = 'pathways.state.v1';
+const STORAGE_KEY = 'pathways4.state.v1';
 
 export const MODES = {
-  now:     { id: 'now',     label: 'Now' },
-  journey: { id: 'journey', label: 'Journey' },
-  aim:     { id: 'aim',     label: 'Aim' },
+  plan: { id: 'plan', label: 'Plan' },
+  play: { id: 'play', label: 'Play' },
+  act:  { id: 'act',  label: 'Act' },
 };
 
+// P6 is a page, not a game start: the game always begins at Sec 1, so its
+// age carries 13 for the engine and the page says 12 itself.
 export const YEARS = [
+  { id: 'p6',   label: 'P6',    age: 13, realAge: 12 },
   { id: 'sec1', label: 'Sec 1', age: 13 },
   { id: 'sec2', label: 'Sec 2', age: 14 },
   { id: 'sec3', label: 'Sec 3', age: 15 },
@@ -25,43 +32,120 @@ const LEVEL_CODE = { G1: '1', G2: '2', G3: '3' };
 const CODE_LEVEL = { 1: 'G1', 2: 'G2', 3: 'G3' };
 
 const initial = () => ({
-  mode: 'now',
+  mode: 'plan',
   year: 'sec2',
-  plan: {},          // { subjectId: 'G1' | 'G2' | 'G3' }
-  activities: [],    // activity ids the student says they carry besides lessons
+  yearSet: false,       // sec2 is only a guess until the student answers
+  plan: {},             // the effective plan: derived from `plans`, never set directly
+  plans: { sec1: {}, sec2: {}, sec3: {}, sec4: {}, sec5: {} },
+  psle: {},             // { el: { al: 1..8, foundation: bool }, ... } hypothetical
+  grades: { now: {}, target: {} },  // SEC grades, hypothetical, for goal setting
+  role: 'student',      // student | parent | teacher: changes the voice, never the facts
+  families: false,      // course families on destination pages: opt in
+  seenStart: false,     // the wordless intro and the guided start, had once
+  labelMode: 'plain',   // 'plain' words by default; 'line' turns on the transit vocabulary
+  activities: [],
   aim: null,
   actions: [],
   runs: [],
-  liveRun: null,     // a Journey run in progress, so a refresh does not destroy it
-  looked: [],        // subject ids whose detail has been opened, drives the breadth counter
+  liveRun: null,
+  looked: [],
   guesses: {},
-  offer: null,       // subject ids this school runs, null means all
+  offer: null,
   seenIntro: false,
-  seenVersion: null,   // the release this device has already been shown
+  seenWelcome: false,   // the first-run conversation, had once, never a toll gate
+  landingGuess: null,   // what they guessed, quoted only in the session it was made
+  soundOn: false,       // five small cues, opt in, remembered
+  seenVersion: null,
+  history: [],          // plan snapshots: { t, plan, open }, one a day at most
+  // Which kind of secondary school this is, if the student said. Null means the
+  // app carries on assuming the common one and saying so out loud, which is what
+  // it did before anybody could answer. Stored because a student in a specialised
+  // school should not have to re read the same disclaimer every visit.
+  schoolKind: null,
 });
+
+// A guest session: ?guest=1. Reads nothing this device holds and writes
+// nothing back. Built for a parent playing their own school years on their
+// child's phone: the child's plan, stories, wants and term list must be
+// exactly as they were when the phone is handed back, and none of them are
+// the parent's to see. Carry-link params still apply, because the guest link
+// itself says what to load.
+const GUEST = (() => {
+  try { return new URLSearchParams(location.search).get('guest') === '1'; } catch { return false; }
+})();
+
+export function isGuest() { return GUEST; }
 
 function load() {
   let base;
   try {
-    base = Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
+    base = GUEST ? initial()
+      : Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
   } catch {
     base = initial();
   }
-  // The URL params are checked below, but the persisted values never were, and
-  // they are no more trustworthy: they were written by whatever revision of
-  // this app ran last, which may predate today's mode and year ids entirely.
-  if (!MODES[base.mode]) base.mode = 'now';
+  if (!MODES[base.mode]) base.mode = 'plan';
   if (!YEARS.some((v) => v.id === base.year)) base.year = 'sec2';
+  if (!MODES[base.mode]) base.mode = 'plan';
+  if (!base.plans || typeof base.plans !== 'object') base.plans = {};
+  ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].forEach((y) => {
+    if (!base.plans[y] || typeof base.plans[y] !== 'object' || Array.isArray(base.plans[y])) base.plans[y] = {};
+  });
+  if (!base.grades || typeof base.grades !== 'object') base.grades = { now: {}, target: {} };
+  ['now', 'target'].forEach((k) => { if (!base.grades[k] || typeof base.grades[k] !== 'object') base.grades[k] = {}; });
+  if (!base.psle || typeof base.psle !== 'object' || Array.isArray(base.psle)) base.psle = {};
+  if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
+  if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
-  ['actions', 'runs', 'looked', 'activities'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
+  ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
     const params = new URLSearchParams(location.search);
-    const m = params.get('mode');
-    if (m && MODES[m]) base.mode = m;
+    const m = params.get('s') || params.get('mode');
+    if (m && MODES[m]) { base.mode = m; base.seenWelcome = true; }
     const p = params.get('p');
-    if (p) { base.plan = decodePlan(p); base._fromLink = true; }
+    if (p) { base.plan = decodePlan(p); base._fromLink = true; base.seenWelcome = true; base.seenStart = true; }
+    ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].forEach((yid) => {
+      const v = params.get(yid);
+      if (v) { base.plans[yid] = decodePlan(v); base._fromLink = true; base.seenWelcome = true; base.seenStart = true; }
+    });
+    // A v3 style link carries one plan and a year: file it under that year.
+    if (p && !['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].some((yid) => params.get(yid))) {
+      const yy = params.get('y');
+      if (yy && base.plans[yy]) base.plans[yy] = decodePlan(p);
+    }
     const y = params.get('y');
-    if (y && YEARS.some((v) => v.id === y)) base.year = y;
+    if (y && YEARS.some((v) => v.id === y)) { base.year = y; base.yearSet = true; }
+    // A carry link, read back. Everything here is additive and everything is
+    // validated, because a link is the one input a stranger can hand a student and
+    // a malformed one must never break the app or overwrite more than it names.
+    const want = params.get('want');
+    if (want && /^[a-z_]{2,20}$/.test(want)) { base.aim = want; base._fromLink = true; }
+    const sk = params.get('sk');
+    if (sk && /^[a-z_]{2,20}$/.test(sk)) { base.schoolKind = sk; base._fromLink = true; }
+    const act = params.get('act');
+    if (act) {
+      const ids = act.split('~').filter((x) => /^[a-z_0-9]{2,24}$/.test(x)).slice(0, 20);
+      if (ids.length) { base.activities = ids; base._fromLink = true; }
+    }
+    const todo = params.get('todo');
+    if (todo) {
+      // A link is the one input a stranger fully controls, and this one writes into
+      // a child's list of things they said they would do. Everything is escaped on
+      // render, so nothing can execute, but escaped abuse is still abuse sitting in
+      // somebody's list. So a commitment arriving by link has to look like a
+      // sentence this app could have produced: ordinary words and ordinary
+      // punctuation, no angle brackets, no braces, no urls.
+      const SANE = /^[A-Za-z0-9 ,.'’()%:;?!$-]{3,120}$/;
+      const list = todo.split('|').map((x) => {
+        try { return decodeURIComponent(x).trim(); } catch { return ''; }
+      }).filter((x) => SANE.test(x) && !/https?:/i.test(x)).slice(0, 12);
+      // Merged rather than replaced, so opening a link on a device that already
+      // holds commitments adds to them instead of deleting somebody's term.
+      if (list.length) {
+        base.actions = [...new Set([...(base.actions || []), ...list])];
+        base._fromLink = true;
+      }
+    }
   } catch { /* a malformed link must never break the app */ }
   return base;
 }
@@ -69,9 +153,6 @@ function load() {
 const state = load();
 const listeners = new Set();
 
-// A plan arriving by link is written straight to storage. Without this it lives
-// only in memory and is lost the moment the student navigates without the
-// parameter, which defeats the point of carrying it to another device.
 if (state._fromLink) { delete state._fromLink; persist(); }
 
 function notify(evt) {
@@ -81,15 +162,8 @@ function notify(evt) {
 }
 
 function persist() {
+  if (GUEST) return;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* private mode */ }
-}
-
-function syncUrl() {
-  try {
-    const url = new URL(location.href);
-    url.searchParams.set('mode', state.mode);
-    history.replaceState({}, '', url);
-  } catch { /* ignore */ }
 }
 
 export function getState() { return state; }
@@ -101,14 +175,9 @@ export function subscribe(fn) {
 
 export function setMode(id) {
   if (!MODES[id]) return;
-  // A tap on the mode you are already in still repaints. The early return that
-  // used to sit here made that tap do literally nothing, which is invisible
-  // when the screen is healthy and indistinguishable from a dead app when a
-  // paint has failed: the one gesture a person reaches for to unstick a screen
-  // is the tab itself.
   if (state.mode !== id) {
     state.mode = id;
-    persist(); syncUrl();
+    persist();
   }
   notify({ kind: 'mode' });
 }
@@ -116,10 +185,10 @@ export function setMode(id) {
 export function setYear(id) {
   if (!YEARS.some((y) => y.id === id)) return;
   state.year = id;
+  state.yearSet = true;
   persist(); notify({ kind: 'year' });
 }
 
-/** The hot path. Emits a typed event so mode-now can update in place. */
 export function setSubjectLevel(subjectId, level, subjectName) {
   const had = Object.keys(state.plan).length;
   const prev = state.plan[subjectId] || null;
@@ -135,6 +204,71 @@ export function setSubjectLevel(subjectId, level, subjectName) {
     action: level === null ? 'clear' : (prev ? 'raise' : 'set'),
     first: had === 0,
   });
+}
+
+/** One level in one year's plan. The effective plan is recomputed by the
+    caller (it needs the subject list for the projection) via setEffective. */
+export function setYearLevel(yearId, subjectId, level, subjectName) {
+  const plan = state.plans[yearId];
+  if (!plan) return;
+  const prev = plan[subjectId] || null;
+  const had = Object.keys(plan).length;
+  if (level === null) delete plan[subjectId];
+  else plan[subjectId] = level;
+  persist();
+  notify({
+    kind: 'plans', yearId, subjectId, subjectName: subjectName || subjectId, level, prev,
+    action: level === null ? 'clear' : (prev ? 'raise' : 'set'), first: had === 0,
+  });
+}
+
+export function replaceYearPlan(yearId, plan) {
+  if (!state.plans[yearId]) return;
+  state.plans[yearId] = { ...plan };
+  persist(); notify({ kind: 'plans', yearId, action: 'replace' });
+}
+
+export function setEffective(plan) {
+  const same = JSON.stringify(plan) === JSON.stringify(state.plan);
+  state.plan = { ...plan };
+  persist();
+  if (!same) notify({ kind: 'plan', action: 'derived' });
+}
+
+export function setPsle(subject, value) {
+  if (value == null) delete state.psle[subject];
+  else state.psle[subject] = { ...(state.psle[subject] || {}), ...value };
+  persist(); notify({ kind: 'psle' });
+}
+
+export function setGrade(which, subjectId, grade) {
+  const bag = state.grades[which];
+  if (!bag) return;
+  if (grade == null || grade === '') delete bag[subjectId]; else bag[subjectId] = grade;
+  persist(); notify({ kind: 'grades', which, subjectId });
+}
+
+export function setRole(role) {
+  if (!['student', 'parent', 'teacher'].includes(role)) return;
+  state.role = role;
+  persist(); notify({ kind: 'role' });
+}
+
+/** The guided start is had once. Skipping counts as having it. */
+export function markStart(done = true) {
+  state.seenStart = !!done;
+  persist(); notify({ kind: 'start' });
+}
+
+export function setLabelMode(mode) {
+  if (!['plain', 'line'].includes(mode)) return;
+  state.labelMode = mode;
+  persist(); notify({ kind: 'labels' });
+}
+
+export function setFamilies(on) {
+  state.families = !!on;
+  persist(); notify({ kind: 'families' });
 }
 
 export function clearPlan() {
@@ -158,6 +292,20 @@ export function markLooked(subjectId) {
 export function setAim(futureId) {
   state.aim = futureId;
   persist(); notify({ kind: 'aim' });
+}
+
+/**
+ * Which kind of secondary school this is.
+ *
+ * One string on the device, and the only reason it exists is that the app makes
+ * an assumption on the Plan screen and a student for whom the assumption is wrong
+ * should be able to say so once rather than reading past it every visit. Null is a
+ * real answer and the default: it means keep assuming the common road and keep
+ * saying that out loud.
+ */
+export function setSchoolKind(id) {
+  state.schoolKind = id || null;
+  persist(); notify({ kind: 'schoolKind' });
 }
 
 export function toggleAction(text) {
@@ -188,14 +336,6 @@ export function clearRuns() {
   persist(); notify({ kind: 'runs' });
 }
 
-/**
- * What a student carries besides their subjects.
- *
- * Held here rather than inside a run because it is a fact about this term, not
- * about a story: it outlives every run, and both Mode NOW and the Journey
- * engine read it. Ids only. Nothing about a CCA, a job or who is looked after
- * at home leaves the device, same as everything else in this file.
- */
 export function toggleActivity(id) {
   const i = state.activities.indexOf(id);
   if (i >= 0) state.activities.splice(i, 1); else state.activities.push(id);
@@ -207,16 +347,6 @@ export function setOffer(ids) {
   persist(); notify({ kind: 'offer' });
 }
 
-/**
- * The build a device last saw.
- *
- * This ships from a branch to a browser that caches aggressively, so a class
- * can be sitting on three different builds with nobody aware of it. The
- * version is baked into the data, compared against what this device saw last,
- * and the difference is shown once. A student who has never opened the app is
- * not shown a changelog: the first run is marked silently, because a list of
- * what changed is meaningless to someone who has seen none of it.
- */
 export function markVersionSeen(v) {
   state.seenVersion = v;
   persist();
@@ -227,33 +357,77 @@ export function markIntroSeen() {
   persist();
 }
 
+/**
+ * The plan, photographed for the student's own future self.
+ *
+ * One snapshot a day at most, only when the plan is non empty and actually
+ * different from the last photograph, capped at twelve. It exists so Plan can
+ * say "since March: English G2 to G3, two more doors open", which is the
+ * cheapest proof this app can offer that a road moves. Device local, like
+ * everything else.
+ */
+export function snapshotPlan(openCount) {
+  const today = new Date().toISOString().slice(0, 10);
+  const plan = { ...state.plan };
+  if (!Object.keys(plan).length) return;
+  const hist = state.history;
+  const last = hist[hist.length - 1];
+  const same = last && JSON.stringify(last.plan) === JSON.stringify(plan) && last.open === openCount;
+  if (same) return;
+  if (last && last.t === today) { last.plan = plan; last.open = openCount; persist(); return; }
+  hist.push({ t: today, plan, open: openCount });
+  if (hist.length > 12) hist.shift();
+  persist();
+}
+
+/** The most recent snapshot at least `days` old and different from today's plan. */
+export function sincePoint(days) {
+  const cutoff = Date.now() - days * 86400000;
+  const candidates = state.history.filter((h) => new Date(h.t).getTime() <= cutoff);
+  const last = candidates[candidates.length - 1];
+  if (!last) return null;
+  if (JSON.stringify(last.plan) === JSON.stringify(state.plan)) return null;
+  return last;
+}
+
+/** The welcome's one question: asked once. Skipping counts as answering;
+    v2 keyed the reveal on the guess and re-quizzed the skippers forever. */
+export function markWelcome(guess) {
+  state.seenWelcome = true;
+  if (guess != null) state.landingGuess = guess;
+  persist();
+}
+
+export function setSound(on) {
+  state.soundOn = !!on;
+  persist(); notify({ kind: 'sound' });
+}
+
 export function currentYear() {
-  return YEARS.find((y) => y.id === state.year) || YEARS[1];
+  return YEARS.find((y) => y.id === state.year) || YEARS[2];
 }
 
 // --- reconciling stored state with today's data ---------------------------
-// The storage key has never changed, but the data underneath it has: subject
-// ids were renamed against SEAB, the journey engine was rebuilt twice, chance
-// cards were rewritten. localStorage survives every deploy, so a student who
-// used an old revision carries a plan keyed by subjects that no longer exist
-// and a saved run shaped for an engine that no longer runs it. Resurrecting
-// that run threw during paint, the error was swallowed, and the mode showed
-// nothing, forever, on every device that had ever used the old version.
-// Nothing is migrated, because none of it can be: a run is a story told by a
-// particular engine against particular content. What no longer validates is
-// dropped, and the plan keeps every subject that still exists.
 
 function validRun(r, cardIds) {
   if (!r || typeof r !== 'object') return false;
   if (!Number.isFinite(r.startAge) || !Number.isFinite(r.stepIndex)) return false;
   if (typeof r.done !== 'boolean') return false;
   if (r.short !== undefined && typeof r.short !== 'boolean') return false;
+  if (r.ns !== undefined && r.ns !== null && typeof r.ns !== 'boolean') return false;
   if (!Array.isArray(r.steps) || !Array.isArray(r.doors) || !Array.isArray(r.flags) || !Array.isArray(r.raises)) return false;
   if (!r.ledger || typeof r.ledger !== 'object' || !['skills', 'network', 'portfolio'].every((k) => Number.isFinite(r.ledger[k]))) return false;
   if (!r.disp || typeof r.disp !== 'object' || !['curiosity', 'persistence', 'flexibility', 'optimism', 'risk'].every((k) => Number.isFinite(r.disp[k]))) return false;
   if (r.plan == null || typeof r.plan !== 'object' || Array.isArray(r.plan)) return false;
   if (r.want != null && (typeof r.want !== 'object' || typeof r.want.label !== 'string')) return false;
-  if (r.pending != null && !(typeof r.pending === 'object' && cardIds.has(r.pending.cardId))) return false;
+  if (r.pending != null && typeof r.pending !== 'object') return false;
+  // The pending card is checked against the deck only when the deck is here.
+  // reconcile runs at boot and the chance deck is a deferred file, so for one
+  // release this line ran against an empty set and quietly deleted the story
+  // of any student who closed the tab while a chance card was on screen. The
+  // journey screen already self heals a pending id the deck no longer has, so
+  // when the deck is absent the right answer is to keep the run.
+  if (r.pending != null && cardIds.size && !cardIds.has(r.pending.cardId)) return false;
   return true;
 }
 
@@ -268,6 +442,7 @@ export function reconcile(data) {
     });
   };
   prunePlan(state.plan);
+  Object.values(state.plans).forEach(prunePlan);
   state.looked = state.looked.filter((id) => levelsById[id]);
   Object.keys(state.guesses).forEach((id) => { if (!levelsById[id]) delete state.guesses[id]; });
   if (state.offer) {
@@ -301,8 +476,6 @@ export function reconcile(data) {
 }
 
 // --- carrying a plan between devices -------------------------------------
-// School Chromebooks are shared and profiles get wiped, so localStorage alone
-// means week two starts from nothing. A link carries the plan and nothing else.
 
 export function encodePlan(plan) {
   return Object.entries(plan || state.plan)
@@ -320,9 +493,62 @@ export function decodePlan(str) {
 }
 
 export function shareUrl() {
-  const url = new URL(location.href);
+  // Built from a clean origin and path: v2 built on location.href, so
+  // ?guest=1 or ?board=1 rode along into a link a student sent a parent.
+  const url = new URL(location.origin + location.pathname);
   url.searchParams.set('p', encodePlan());
   url.searchParams.set('y', state.year);
-  url.searchParams.set('mode', state.mode);
+  url.searchParams.set('s', 'plan');
   return url.toString();
+}
+
+/**
+ * THE SCHOOL COMPUTER LAB, WHICH THIS APP HAD NO ANSWER FOR.
+ *
+ * Everything is on the device and nothing is sent anywhere, which is the right
+ * trade and it has one consequence nobody had dealt with: a class run in a
+ * computer lab loses everything at the bell. Thirty five students set a
+ * combination, tick three commitments, name a want, play a road, and then log off
+ * a machine that will be somebody else's on Thursday. The share link carried the
+ * subject plan and nothing else, so the commitments, which are the entire point of
+ * the last screen, did not survive the lesson.
+ *
+ * So there is a link that carries the whole of it. Still no account and still no
+ * server: the state travels IN THE URL, which means a student can mail it to
+ * themselves, put it in their notes, or scan it off the board, and a school that
+ * would never let an app store data about children does not have to.
+ *
+ * WHAT IS DELIBERATELY LEFT OUT. The written reflection at thirty eight, and the
+ * activities list. Both are on the private side of the line the parent page
+ * already draws: a student writes honestly at thirty eight because nothing is
+ * watching, and the activities include looking after somebody at home or working
+ * in a family business. A link a student might paste into a group chat is not the
+ * place for either.
+ *
+ * The encoding is deliberately plain rather than compact. A link somebody can read
+ * is a link somebody can trust, and a student who can see that it says el3~maths3
+ * and nothing about their reflection can check the promise for themselves.
+ */
+export function carryUrl() {
+  const url = new URL(location.origin + location.pathname);
+  Object.entries(state.plans).forEach(([yid, p]) => { if (Object.keys(p).length) url.searchParams.set(yid, encodePlan(p)); });
+  url.searchParams.set('y', state.year);
+  if (state.aim) url.searchParams.set('want', state.aim);
+  if (state.schoolKind) url.searchParams.set('sk', state.schoolKind);
+  if ((state.activities || []).length) url.searchParams.set('act', state.activities.join('~'));
+  const acts = (state.actions || []).filter(Boolean);
+  if (acts.length) url.searchParams.set('todo', acts.map((a) => encodeURIComponent(a)).join('|'));
+  url.searchParams.set('s', 'myplan');
+  return url.toString();
+}
+
+/** How much a carry link is currently holding, for the sentence beside it. */
+export function carrySummary() {
+  return {
+    subjects: Object.keys(state.plan || {}).length,
+    todo: (state.actions || []).filter(Boolean).length,
+    want: !!state.aim,
+    school: !!state.schoolKind,
+    activities: (state.activities || []).length,
+  };
 }

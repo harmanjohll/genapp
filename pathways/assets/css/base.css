@@ -1,4 +1,10 @@
-/* Base: reset, typography, layout scaffolding, focus, print. */
+/* Base, v3. Reset, type, focus, press, the five motion verbs, print.
+   One definition per thing: if a rule needs changing, it changes here,
+   it does not get a dated patch section below. */
+
+@layer base;
+
+@layer base {
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -10,127 +16,153 @@ body {
   font-size: var(--t-body);
   line-height: var(--lh-body);
   color: var(--ink);
-  /* Flat. Two fixed attachment radial gradients used to live here; they cost a
-     repaint on every scroll on mid range Android and bought nothing. */
   background: var(--paper);
-  -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(var(--ribbon-h) + env(safe-area-inset-bottom, 0px));
+  transition: background-color calc(var(--dur) * 2) var(--ease);
+  overflow-wrap: break-word;
 }
 
-h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: var(--lh-h); margin: 0; }
+/* The grain: one fixed composited layer, never on a scrolling box.
+   Invisible at 13, tangible at 48. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--grain);
+  opacity: var(--grain-o);
+  transition: opacity calc(var(--dur) * 2) var(--ease);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: var(--lh-h);
+  margin: 0 0 var(--s-3);
+  letter-spacing: -0.012em;
+}
 h1 { font-size: var(--t-h1); }
 h2 { font-size: var(--t-h2); }
-h3 { font-size: var(--t-h3); font-family: var(--body); font-weight: 650; }
-p  { margin: 0 0 var(--s-3); }
-p:last-child { margin-bottom: 0; }
+h3 { font-size: var(--t-h3); }
 
-a { color: var(--accent-dk); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+p { margin: 0 0 var(--s-3); }
 
-button { font: inherit; color: inherit; }
+a { color: var(--accent-dk); text-underline-offset: 2px; }
+a:hover { color: var(--accent-dkr); }
 
-ul { margin: 0 0 var(--s-3); padding-left: 1.15em; }
-li { margin-bottom: var(--s-1); }
-
-.wrap { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
-.narrow { max-width: 660px; }
-
-.sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Focus is never removed, only restyled. Keyboard users are first class here. */
+img, svg, canvas { max-width: 100%; height: auto; display: block; }
+
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--r-sm);
 }
 
+::selection { background: var(--accent-wash); }
+
+/* Every tappable thing acknowledges the tap. v2 had one :active rule in
+   2,336 lines, for a touch-first audience. */
+button:active,
+a.btn:active,
+.press:active {
+  transform: scale(0.98);
+  transition-duration: 90ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active, a.btn:active, .press:active { transform: none; }
+}
+
 .skip-link {
-  position: absolute; left: var(--s-3); top: -60px; z-index: 200;
-  background: var(--ink); color: var(--paper);
-  padding: var(--s-3) var(--s-4); min-height: var(--tap);
-  display: inline-flex; align-items: center; border-radius: var(--r-sm);
-  transition: top var(--dur-fast) var(--ease);
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  color: var(--ink);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
 }
-.skip-link:focus { top: var(--s-3); }
+.skip-link:focus { left: var(--s-4); }
 
-/* type helpers */
-.lede { font-size: 1.06rem; color: var(--ink-soft); }
-.small { font-size: var(--t-small); }
-.micro { font-size: var(--t-micro); }
-.mute { color: var(--ink-mute); }
-.faint { color: var(--ink-faint); }
-.serif { font-family: var(--display); }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.wrap-narrow { max-width: var(--max-narrow); margin: 0 auto; padding: 0 var(--gutter); }
+
 .caps {
-  text-transform: uppercase; letter-spacing: 0.08em;
-  font-size: var(--t-micro); font-weight: 650; color: var(--ink-mute);
+  font-family: var(--body);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
 }
 
-/* motion */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
+.small { font-size: var(--t-small); color: var(--ink-mute); }
+
+/* ---- the five motion verbs ------------------------------------------------
+   ARRIVE - content enters. Staggered, at most four items deep.
+   DRAW   - a line draws itself. The house signature; SVG strokes only.
+   TRAVEL - a thing moves to where it now lives (FLIP in JS, this eases it).
+   OPEN   - the door ceremony (play.css owns the choreography).
+   SETTLE - a state changes in place, no movement, a tone shift. */
+
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: none; }
 }
-.fade-up { animation: fadeUp var(--dur) var(--ease) both; }
-.d1 { animation-delay: 60ms; }
-.d2 { animation-delay: 120ms; }
-.d3 { animation-delay: 180ms; }
-.d4 { animation-delay: 240ms; }
+.arrive { animation: arrive var(--dur) var(--ease) both; }
+.arrive.d1 { animation-delay: 60ms; }
+.arrive.d2 { animation-delay: 120ms; }
+.arrive.d3 { animation-delay: 180ms; }
+
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--draw-len, 1000); }
+  to   { stroke-dashoffset: 0; }
+}
+.draw {
+  stroke-dasharray: var(--draw-len, 1000);
+  animation: draw-line var(--dur-draw) var(--ease) both;
+}
+
+.travel { transition: transform var(--dur) var(--ease); }
+
+.settle { transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-up { animation: none; }
+  .arrive, .draw { animation: none; }
+  .draw { stroke-dasharray: none; }
+  .travel, .settle { transition: none; }
+  body, body::before { transition: none; }
 }
 
-/* app shell */
-/* Scroll anchoring off, on purpose.
-   Every mode repaints by replacing this element's whole subtree, and Chrome's
-   scroll anchoring then picks a fresh anchor and nudges the scroll to keep it
-   visually still. That is the right instinct for a document growing an image
-   above the fold and exactly wrong here: the mode has already restored the
-   scroll the student chose, and the browser moved it afterwards. Journey took
-   the damage, where a turn is several taps and every tap shifted the page. */
-#app { min-height: 60vh; overflow-anchor: none; }
-
-/* Not sticky, at any width.
-   Pinned, it covered between 23 and 68 pixels of content at every scroll
-   position measured, on every viewport. The summary bar is the thing that has
-   to stay visible, because it is the live consequence of the last tap. The
-   header is navigation, and navigation can be scrolled back to. */
-.site-head {
-  padding: var(--s-3) 0;
-  border-bottom: 1px solid var(--rule-soft);
-  background: var(--paper);
-}
-.site-head .wrap {
-  display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
-}
-.brand { font-family: var(--display); font-size: 1.05rem; font-weight: 600; margin-right: auto; }
-
-.site-foot {
-  margin-top: var(--s-8);
-  padding: var(--s-6) 0 var(--s-7);
-  border-top: 1px solid var(--rule-soft);
-  color: var(--ink-mute);
-  font-size: var(--t-small);
-}
-
-/* Keyboard users scrolling under the sticky header.
-   Without this, tabbing to a row scrolls it flush to the viewport top, which
-   is underneath the header, so the focused control is invisible. */
-.srow, .door, .choice, .future-btn, .btn, .lchip, .pip {
-  scroll-margin-top: var(--scroll-pad, 24px);
-  scroll-margin-bottom: calc(var(--ribbon-h) + var(--s-5));
-}
-
+/* ---- print ---------------------------------------------------------------
+   The parent page and the story card print. Chrome does not. */
 @media print {
-  body { background: #fff; padding: 0; }
-  .site-head, .ribbon, .modebar, .pips, .pulsebar, .no-print { display: none !important; }
-  .card, .panel { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
-  /* The two pane layout is a screen affordance. On paper it is one column. */
-  .now-grid { display: block; }
-  .pane-doors { position: static; max-height: none; overflow: visible; }
-  .srows { display: block; }
-  .grp { position: static; }
-  dialog.sheet { display: none; }
+  body { background: #fff; color: #000; }
+  body::before { display: none; }
+  .site-head, .site-foot, .tabbar, .no-print { display: none !important; }
+  a { color: inherit; text-decoration: none; }
 }
+
+} /* @layer base */

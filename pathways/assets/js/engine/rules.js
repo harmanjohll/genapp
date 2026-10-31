@@ -84,6 +84,21 @@ export function evaluate(test, plan, ctx) {
       return { satisfied: false, distance: shortfall, shortfall };
     }
 
+    // v4: one of a named list at a level, for rules like JC's "a Humanities
+    // subject at G3" or "Mathematics or Additional Mathematics at G3".
+    // Monotone for the same reason groupAtLevel is: adding or raising a
+    // subject can only raise `have`.
+    case 'anyAtLevel': {
+      const ids = test.subjects || [];
+      const have = ids.filter((id) => plan[id] && meets(plan[id], test.min)).length;
+      const need = test.count || 1;
+      if (have >= need) return { satisfied: true, distance: 0 };
+      // Distance counts level steps on the nearest candidate, so a G2 holder
+      // is one step away and someone not taking any is two or three.
+      const best = Math.max(0, ...ids.map((id) => levelValue(plan[id])));
+      return { satisfied: false, distance: Math.max(1, levelValue(test.min) - best) * (need - have), shortfall: need - have };
+    }
+
     case 'totalSubjects': {
       const have = Object.keys(plan).length;
       if (have >= test.min) return { satisfied: true, distance: 0 };
@@ -121,6 +136,7 @@ export function moveFor(rule, res, ctx) {
   if (t.type === 'totalSubjects') {
     return `Take ${res.shortfall} more subject${res.shortfall === 1 ? '' : 's'}.`;
   }
+  if (t.type === 'anyAtLevel') return `${rule.move || rule.label}.`;
   return rule.label;
 }
 
@@ -142,6 +158,7 @@ export function moveShortFor(rule, res, ctx) {
   }
   if (t.type === 'groupAtLevel') return `A ${t.group} at ${t.min}`;
   if (t.type === 'totalSubjects') return `${res.shortfall} more subjects`;
+  if (t.type === 'anyAtLevel') return rule.short || rule.label;
   return rule.label;
 }
 

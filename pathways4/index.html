@@ -2,66 +2,36 @@
 <html lang="en-SG">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Paths: plan secondary school, year by year</title>
-<meta name="description" content="A planning and conversation tool for Singapore students, parents and teachers under Full Subject Based Banding. Year by year levels, advice that names the exact move, grade targets, and a game that plays a life forward. Nothing here says a road is closed.">
-<meta name="app-version" content="4.0.0">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13161C" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F7F5F0'/%3E%3Cpath d='M6 24 C12 24 10 8 16 8 M16 8 C22 8 20 24 26 24' fill='none' stroke='%23C25E3A' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='6' cy='24' r='2.6' fill='%231E9463'/%3E%3Ccircle cx='26' cy='24' r='2.6' fill='%233B7FC4'/%3E%3C/svg%3E">
-
-<link rel="preload" href="./assets/fonts/bricolage-var-latin.woff2?v=4.0.0" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="./assets/css/tokens4.css?v=4.0.0">
-<link rel="stylesheet" href="./assets/css/base.css?v=4.0.0">
-<link rel="stylesheet" href="./assets/css/app.css?v=4.0.0">
-<link rel="stylesheet" href="./assets/css/play.css?v=4.0.0">
-<link rel="stylesheet" href="./assets/css/v4.css?v=4.0.0">
-
-<!-- The module graph is three levels deep; without these hints a school
-     connection walks it one round trip at a time. -->
-<link rel="modulepreload" href="./assets/js/main.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/state.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/data-loader.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/sound.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/ui/dom.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/ui/sheet.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/ui/icons.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/ui/glossary.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/ui/map.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/engine/years.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/engine/reach.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/engine/rules.js?v=4.0.0">
-<link rel="modulepreload" href="./assets/js/engine/project.js?v=4.0.0">
-<link rel="preload" href="./data/subjects.json?v=4.0.0" as="fetch" crossorigin>
-<link rel="preload" href="./data/pathways.json?v=4.0.0" as="fetch" crossorigin>
-<link rel="preload" href="./data/progressions.json?v=4.0.0" as="fetch" crossorigin>
-<link rel="preload" href="./data/copy.json?v=4.0.0" as="fetch" crossorigin>
-<link rel="preload" href="./data/glossary.json?v=4.0.0" as="fetch" crossorigin>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paths has moved</title>
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="2; url=../pathways/">
+<script>
+// Forward to ../pathways/, keeping any ?query and #hash.
+// This address used to host a version with an offline cache; that
+// registration is removed first so it cannot keep serving old files.
+(function () {
+  var target = '../pathways/' + location.search + location.hash;
+  var go = function () { location.replace(target); };
+  try {
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      var done = navigator.serviceWorker.getRegistrations().then(function (rs) {
+        return Promise.all(rs.filter(function (r) { return location.href.indexOf(r.scope) === 0; })
+          .map(function (r) { return r.unregister(); }));
+      });
+      Promise.race([done, new Promise(function (ok) { setTimeout(ok, 800); })]).then(go, go);
+      return;
+    }
+  } catch (e) { /* fall through */ }
+  go();
+})();
+</script>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: #0B1A3F; color: #EEF2FB; font: 17px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+  a { color: #FFC21A; font-weight: 700; }
+</style>
 </head>
-<body data-era="school">
-<a class="skip-link" href="#app">Skip to the tool</a>
-
-<header class="site-head" id="site-head" hidden></header>
-
-<noscript>
-  <div class="wrap"><div class="section">
-    <strong>This tool needs JavaScript.</strong>
-    <p style="margin:8px 0 0">Everything runs in your browser. Nothing you type is sent anywhere, and there is no account.</p>
-  </div></div>
-</noscript>
-
-<main id="app" tabindex="-1"></main>
-
-<nav class="tabbar" id="tabbar" hidden></nav>
-
-<footer class="site-foot" id="site-foot">
-  <div class="wrap foot-row">
-    <p class="small"><strong>A thinking tool, not official advice.</strong> Confirm anything that matters with your school's ECG counsellor and at <a href="https://www.moe.gov.sg/post-secondary/admissions/pse">moe.gov.sg</a>. Everything stays on this device.</p>
-    <p class="small foot-links-row"><a href="./?s=adults&amp;tab=evidence">What this is built on</a> · <a href="./?s=adults&amp;tab=counsellor">For ECG counsellors</a> · <span id="foot-build"></span></p>
-  </div>
-</footer>
-
-<script type="module" src="./assets/js/main.js?v=4.0.0"></script>
+<body>
+<p>The latest Paths now lives at genapp/pathways. <a href="../pathways/">Open it here</a>.</p>
 </body>
 </html>

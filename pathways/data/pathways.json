@@ -2,16 +2,36 @@
   "_meta": {
     "source": "MOE post secondary admissions pages, MOE press releases on admission criteria changes for the first SEC cohort, ITE and polytechnic admissions pages",
     "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
-    "accessed": "2026-07-31",
+    "accessed": "2026-10-27",
     "units": "aggregate points, lower is better",
-    "notes": "Criteria apply to the first SEC cohort entering post secondary in 2028. Structural rules are evaluated by the app. Performance rules are never evaluated, because this app does not predict grades. Everything marked provisional was read from search summaries rather than a primary MOE page. See OPEN_QUESTIONS.md. Rows are ordered alphabetically by railName so the ordering is visibly arbitrary and cannot be read as prestige."
+    "notes": "Criteria apply to the first SEC cohort entering post secondary in 2028, admitted through the PSE (one exercise replacing the JAE, PFP and DPP exercises). Figures marked confirmed were corroborated against extracts of the primary MOE, SEAB and ITE pages plus two or more independent sources on 2026-08-05; the session could not open the primary pages end to end, so eyeball them once before students use this. Revised 2026-10-27 from search engine extracts of the MOE PSE pages: JC and MI need all five L1R4 subjects at G3; polytechnic B2 counts at its G2 equivalent; 3 year Higher Nitec is graded at G1; LASALLE and NAFA ask for G3 English. Structural rules are evaluated by the app. Performance rules are shown, and computed only from grades a student chooses to enter as targets."
   },
   "sources": {
-    "moe_sec": { "title": "Full SBB and the SEC examination", "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb", "accessed": "2026-07-31" },
-    "moe_pse": { "title": "Post secondary admissions", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways", "accessed": "2026-07-31" },
-    "moe_pfp": { "title": "Polytechnic Foundation Programme eligibility", "url": "https://www.moe.gov.sg/post-secondary/admissions/pfp/eligibility-criteria", "accessed": "2026-07-31" },
-    "moe_ite_upgraders": { "title": "ITE upgrader admissions to polytechnics from AY2027", "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027", "accessed": "2026-07-31" },
-    "seab_sec": { "title": "Secondary Education Certificate", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "accessed": "2026-07-31" }
+    "moe_sec": {
+      "title": "Full SBB and the SEC examination",
+      "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+      "accessed": "2026-07-31"
+    },
+    "moe_pse": {
+      "title": "Post secondary admissions",
+      "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+      "accessed": "2026-07-31"
+    },
+    "moe_pfp": {
+      "title": "Polytechnic Foundation Programme eligibility",
+      "url": "https://www.moe.gov.sg/post-secondary/admissions/pfp/eligibility-criteria",
+      "accessed": "2026-07-31"
+    },
+    "moe_ite_upgraders": {
+      "title": "ITE upgrader admissions to polytechnics from AY2027",
+      "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027",
+      "accessed": "2026-07-31"
+    },
+    "seab_sec": {
+      "title": "Secondary Education Certificate",
+      "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
+      "accessed": "2026-07-31"
+    }
   },
   "destinations": [
     {
@@ -19,18 +39,37 @@
       "railName": "A fifth year",
       "name": "A fifth year at school",
       "order": 10,
-      "openLabel": "Decided by your results",
+      "openLabel": "Decided by my results",
       "duration": "1 more year",
       "feels": "Same school, one more year, subjects at a harder level.",
       "leadsTo": "The SEC again, then any route.",
       "structural": [
-        { "id": "s5_open", "label": "Decided on results, not your plan", "test": { "type": "always" }, "status": "confirmed" }
+        {
+          "id": "s5_open",
+          "label": "Decided on results, not my plan",
+          "test": {
+            "type": "always"
+          },
+          "status": "confirmed"
+        }
       ],
       "performance": [
-        { "label": "Three or more G3 passes", "note": "And not qualifying for JC, MI or Polytechnic Year 1.", "status": "provisional", "sourceRef": "moe_pse" },
-        { "label": "Or ELMAB3 21, ELB3 14, or MAB3 14 at G2", "note": "With two or fewer G3 passes, and Grade 5 at G2 in every subject counted.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "Three or more G3 passes",
+          "note": "And not qualifying for JC, MI or Polytechnic Year 1.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        },
+        {
+          "label": "Or ELMAB3 21, ELB3 14, or MAB3 14 at G2",
+          "note": "With two or fewer G3 passes, and Grade 5 at G2 in every subject counted. Taking every fifth year subject at G3 needs ELMAB3 19.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["It exists so one year does not decide everything."],
+      "alsoIn": [
+        "It exists so one year does not decide everything."
+      ],
       "routesIfNotHere": [],
       "status": "provisional"
     },
@@ -39,97 +78,331 @@
       "railName": "Arts institutions",
       "name": "NAFA and LASALLE",
       "order": 20,
-      "openLabel": "Open, on a portfolio",
+      "openLabel": "Open, with a portfolio",
       "duration": "3 years",
-      "feels": "You audition or show a portfolio. The work is the entry.",
+      "feels": "I audition or show a portfolio. The work is the entry.",
       "leadsTo": "A diploma, then a degree or practice.",
       "structural": [
-        { "id": "arts_open", "label": "Open from any combination of levels", "test": { "type": "always" }, "status": "confirmed" }
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "provisional",
+          "note": "LASALLE and NAFA, 2028 intake: G3 English at C6 or better."
+        },
+        {
+          "label": "Five subjects at G2 or above",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G2",
+            "min": 5
+          },
+          "status": "provisional",
+          "note": "21 points or better across four other subjects, one of which may be G2."
+        }
       ],
       "performance": [
-        { "label": "Portfolio or audition carries the most weight", "note": "Results matter less here than anywhere else in the system.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "Portfolio or audition carries the most weight",
+          "note": "Results set the floor and the work decides: 21 points or better across four subjects besides English.",
+          "status": "provisional",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Start a portfolio now. It does not depend on your levels."],
+      "alsoIn": [
+        "Start a portfolio now. It does not depend on my levels."
+      ],
       "routesIfNotHere": [],
       "status": "provisional"
     },
     {
       "id": "hnitec",
-      "railName": "Higher Nitec at ITE",
-      "name": "ITE, Higher Nitec",
-      "order": 30,
-      "duration": "2 to 3 years",
+      "railName": "Higher Nitec, Year 2",
+      "name": "ITE, Higher Nitec, straight into Year 2",
+      "order": 40,
+      "duration": "2 more years",
       "feels": "Hands on from week one, on the equipment the industry uses.",
       "leadsTo": "Higher Nitec, then work or poly.",
       "structural": [
-        { "id": "hn_el", "label": "English at G2 or above", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G2" }, "status": "provisional" },
-        { "id": "hn_maths", "label": "Mathematics at G2 or above", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" },
-        { "id": "hn_count", "label": "Five subjects at G2 or above", "test": { "type": "countAtLevel", "level": "G2", "min": 5 }, "status": "provisional" }
+        {
+          "id": "hn_el",
+          "label": "English at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G2"
+          },
+          "status": "provisional"
+        },
+        {
+          "id": "hn_maths",
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "status": "provisional"
+        },
+        {
+          "id": "hn_count",
+          "label": "Five subjects at G2 or above",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G2",
+            "min": 5
+          },
+          "status": "provisional"
+        }
       ],
       "performance": [
-        { "label": "ELMAB3 19 or better for direct Year 2 entry", "note": "From AY2028. The 3 year version starts at Year 1 and takes a wider entry.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "ELMAB3 19 or better, at G2 grades",
+          "note": "From AY2028, this skips Year 1 of the same 3 year course. It replaced the DPP.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Early Admissions looks at interest, before results."],
-      "routesIfNotHere": ["nitec_to_hnitec"],
-      "status": "provisional"
+      "alsoIn": [
+        "Early Admissions looks at interest, before results."
+      ],
+      "routesIfNotHere": [
+        "nitec_to_hnitec"
+      ],
+      "status": "confirmed"
     },
     {
       "id": "jc",
       "railName": "Junior College",
       "name": "Junior College",
-      "order": 40,
+      "order": 50,
       "duration": "2 years",
-      "feels": "Fast and essay heavy. You narrow to a few subjects and go deep.",
+      "feels": "Fast and essay heavy. I narrow to a few subjects and go deep.",
       "leadsTo": "A Levels, then university.",
       "structural": [
-        { "id": "jc_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
-        { "id": "jc_g3", "label": "Five subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 5 }, "status": "provisional" },
-        { "id": "jc_maths", "label": "Mathematics at G3", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G3" }, "status": "provisional", "soft": true }
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "L1 is English or Higher Mother Tongue; English must also reach C6."
+        },
+        {
+          "label": "Mathematics or Additional Mathematics at G3",
+          "short": "Maths to G3",
+          "move": "Take Mathematics, or Additional Mathematics, at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "A G3 Mathematics at D7 or better is a grade floor."
+        },
+        {
+          "label": "A Humanities subject at G3",
+          "short": "A Humanities at G3",
+          "move": "Take a Humanities subject at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "geography",
+              "history",
+              "literature",
+              "art",
+              "higher_art",
+              "music",
+              "higher_music",
+              "economics"
+            ],
+            "min": "G3"
+          },
+          "status": "provisional",
+          "note": "R1 is a Humanities subject. Which arts subjects count is read from older JAE lists."
+        },
+        {
+          "label": "Five subjects at G3",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G3",
+            "min": 5
+          },
+          "status": "confirmed",
+          "note": "All five subjects counted in L1R4 must be G3."
+        }
       ],
       "performance": [
-        { "label": "L1R4 aggregate of 16 or better", "note": "One language plus four relevant subjects at G3. This replaced L1R5 of 20.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "L1R4 of 16 or better, all at G3",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points take off up to 3.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        },
+        {
+          "label": "Grade floors",
+          "note": "English C6 and a G3 Maths D7. Mother Tongue need not be G3: D7 at G3, 5 at G2 or D at G1 all count.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Direct School Admission takes talent, before results."],
-      "routesIfNotHere": ["poly_to_uni", "ite_to_poly_to_uni", "sec5_then_jc"],
-      "status": "provisional"
+      "alsoIn": [
+        "Direct School Admission takes talent, before results."
+      ],
+      "routesIfNotHere": [
+        "poly_to_uni",
+        "ite_to_poly_to_uni",
+        "sec5_then_jc"
+      ],
+      "status": "confirmed"
     },
     {
       "id": "mi",
       "railName": "Millennia Institute",
       "name": "Millennia Institute",
-      "order": 50,
+      "order": 60,
       "duration": "3 years",
       "feels": "The same A Levels as JC, over three years instead of two.",
       "leadsTo": "A Levels, then university.",
       "structural": [
-        { "id": "mi_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
-        { "id": "mi_g3", "label": "Five subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 5 }, "status": "provisional" }
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "L1 is English or Higher Mother Tongue; English must also reach C6."
+        },
+        {
+          "label": "Mathematics or Additional Mathematics at G3",
+          "short": "Maths to G3",
+          "move": "Take Mathematics, or Additional Mathematics, at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "A G3 Mathematics at D7 or better is a grade floor."
+        },
+        {
+          "label": "A Humanities subject at G3",
+          "short": "A Humanities at G3",
+          "move": "Take a Humanities subject at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "geography",
+              "history",
+              "literature",
+              "art",
+              "higher_art",
+              "music",
+              "higher_music",
+              "economics"
+            ],
+            "min": "G3"
+          },
+          "status": "provisional",
+          "note": "R1 is a Humanities subject. Which arts subjects count is read from older JAE lists."
+        },
+        {
+          "label": "Five subjects at G3",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G3",
+            "min": 5
+          },
+          "status": "confirmed",
+          "note": "All five subjects counted in L1R4 must be G3."
+        }
       ],
       "performance": [
-        { "label": "L1R4 aggregate of 16 or better", "note": "The same qualifying aggregate as JC, over three years rather than two.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "L1R4 of 20 or better, all at G3",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points take off up to 3.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        },
+        {
+          "label": "Grade floors",
+          "note": "English C6 and a G3 Maths D7. Mother Tongue need not be G3: D7 at G3, 5 at G2 or D at G1 all count.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Some students choose the extra year on purpose."],
-      "routesIfNotHere": ["poly_to_uni", "ite_to_poly_to_uni", "sec5_then_jc"],
-      "status": "provisional"
+      "alsoIn": [
+        "Some students choose the extra year on purpose."
+      ],
+      "routesIfNotHere": [
+        "poly_to_uni",
+        "ite_to_poly_to_uni",
+        "sec5_then_jc"
+      ],
+      "status": "confirmed"
     },
     {
       "id": "nitec",
-      "railName": "Nitec at ITE",
-      "name": "ITE, Nitec",
-      "order": 60,
-      "duration": "2 years",
+      "railName": "Higher Nitec, Year 1",
+      "name": "ITE, 3 year Higher Nitec",
+      "order": 30,
+      "duration": "3 years, or leave with a Nitec after 2",
       "feels": "Learn a trade by doing it, in a workshop, kitchen or studio.",
-      "leadsTo": "Nitec, then Higher Nitec or work.",
+      "leadsTo": "Higher Nitec, then poly or work. Nitec marks the exit stop.",
       "structural": [
-        { "id": "n_el", "label": "English at G1 or above", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G1" }, "status": "provisional" },
-        { "id": "n_count", "label": "Four subjects at G1 or above", "test": { "type": "countAtLevel", "level": "G1", "min": 4 }, "status": "provisional" }
+        {
+          "id": "n_el",
+          "label": "English at G1 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G1"
+          },
+          "status": "provisional"
+        },
+        {
+          "id": "n_count",
+          "label": "Four subjects at G1 or above",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G1",
+            "min": 4
+          },
+          "status": "provisional"
+        }
       ],
       "performance": [
-        { "label": "Built to take the whole range of the cohort", "note": "Courses set their own subject requirements. Popular ones are competitive.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "Built to take the whole range of the cohort",
+          "note": "Counted at G1 equivalent grades on one of five aggregate types. No cut off is published; popular courses are competitive.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Traineeships pay you while you train."],
+      "alsoIn": [
+        "One course now, not two stacked ones. Leaving after Year 2 with a Nitec and returning later is a real road."
+      ],
       "routesIfNotHere": [],
-      "status": "provisional"
+      "status": "confirmed"
     },
     {
       "id": "pfp",
@@ -137,19 +410,55 @@
       "name": "Polytechnic Foundation Programme",
       "order": 70,
       "duration": "1 year, then the diploma",
-      "feels": "A year inside the polytechnic, building the foundation your diploma needs.",
+      "feels": "A year inside the polytechnic, building the foundation my diploma needs.",
       "leadsTo": "Straight into Year 1 of a diploma.",
       "structural": [
-        { "id": "pfp_el", "label": "English at G2 or above", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G2" }, "status": "provisional" },
-        { "id": "pfp_maths", "label": "Mathematics at G2 or above", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" },
-        { "id": "pfp_g2", "label": "Five subjects at G2 or above", "test": { "type": "countAtLevel", "level": "G2", "min": 5 }, "status": "provisional" }
+        {
+          "id": "pfp_el",
+          "label": "English at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G2"
+          },
+          "status": "provisional"
+        },
+        {
+          "id": "pfp_maths",
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "status": "provisional"
+        },
+        {
+          "id": "pfp_g2",
+          "label": "Five subjects at G2 or above",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G2",
+            "min": 5
+          },
+          "status": "provisional"
+        }
       ],
       "performance": [
-        { "label": "ELMAB3 12 or better", "note": "English, Mathematics and three best, all counted at G2 equivalent grades.", "status": "provisional", "sourceRef": "moe_pfp" }
+        {
+          "label": "ELMAB3 12 or better",
+          "note": "English, Mathematics and three best, all counted at G2 equivalent grades. G3 grades map down, so any mix of levels can apply from the 2028 intake.",
+          "status": "confirmed",
+          "sourceRef": "moe_pfp"
+        }
       ],
-      "alsoIn": ["The diploma at the end is the same as everyone else's."],
-      "routesIfNotHere": ["ite_to_poly"],
-      "status": "provisional"
+      "alsoIn": [
+        "I apply into a cluster of related courses, and the diploma at the end is the same as everyone else's."
+      ],
+      "routesIfNotHere": [
+        "ite_to_poly"
+      ],
+      "status": "confirmed"
     },
     {
       "id": "poly",
@@ -157,19 +466,73 @@
       "name": "Polytechnic",
       "order": 80,
       "duration": "3 years",
-      "feels": "You pick a field on day one and work in it. Labs, studios, an internship.",
+      "feels": "I pick a field on day one and work in it. Labs, studios, an internship.",
       "leadsTo": "A diploma, then work or university.",
       "structural": [
-        { "id": "poly_el", "label": "English at G3", "test": { "type": "subjectAtLevel", "subject": "el", "min": "G3" }, "status": "provisional" },
-        { "id": "poly_g3", "label": "Four subjects at G3", "test": { "type": "countAtLevel", "level": "G3", "min": 4 }, "status": "provisional" },
-        { "id": "poly_maths", "label": "Mathematics at G2 or above", "test": { "type": "subjectAtLevel", "subject": "maths", "min": "G2" }, "status": "provisional" }
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed"
+        },
+        {
+          "label": "Four subjects at G3",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G3",
+            "min": 4
+          },
+          "status": "confirmed",
+          "note": "English, two relevant subjects and the best other subject count at G3."
+        },
+        {
+          "label": "Five subjects at G2 or above",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G2",
+            "min": 5
+          },
+          "status": "confirmed",
+          "note": "The fifth subject (B2) always counts at its G2 equivalent, so it can be a G2 subject."
+        },
+        {
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "status": "provisional",
+          "soft": true,
+          "note": "Most courses ask for Mathematics; course minimums for 2028 are published mid 2027."
+        }
       ],
       "performance": [
-        { "label": "ELR2B2 22 or better", "note": "One counted subject may sit at G2 from the 2028 intake. Courses add their own requirements.", "status": "provisional", "sourceRef": "moe_pse" }
+        {
+          "label": "ELR2B2 of 22 or better, after CCA points",
+          "note": "English, two relevant subjects and the best other at G3, plus a fifth at G2 value. Nursing reads 24.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        },
+        {
+          "label": "Grades that cannot count",
+          "note": "G3 grade 9, and G2 grades 5 and 6, cannot be used in the score. CCA can take off 2 points.",
+          "status": "confirmed",
+          "sourceRef": "moe_pse"
+        }
       ],
-      "alsoIn": ["Early Admissions can give you a place before results."],
-      "routesIfNotHere": ["pfp_to_poly", "ite_to_poly", "sec5_then_poly"],
-      "status": "provisional"
+      "alsoIn": [
+        "Early Admissions can give me a place before results."
+      ],
+      "routesIfNotHere": [
+        "pfp_to_poly",
+        "ite_to_poly",
+        "sec5_then_poly"
+      ],
+      "status": "confirmed"
     }
   ]
 }

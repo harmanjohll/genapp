@@ -1,219 +1,508 @@
-// Entry point. Loads data, mounts the shell, renders the active mode.
+// Entry point: the router, the screen contract, the shell chrome. (v4)
+//
+// v4 changes the map of the app, not the contract: the three verbs (Plan,
+// Play, Act) become five places a family actually goes - Home, the year
+// pages (P6 to Sec 5, one page each), After Sec (the destinations), Play,
+// and My plan (the conversation card). Old v3 addresses redirect.
+//
+// v2 had no router. history.replaceState wrote URLs it then refused to read,
+// the Android back gesture exited the site from any depth, every reload
+// landed on the landing, and satellites navigated by full page reload. Every
+// one of those was a symptom of the same missing part, so v3 starts here.
+//
+// THE SCREEN CONTRACT. Every screen declares { id, title, needs, era,
+// render }. The router does the rest, identically, for all of them: fetch
+// what the screen needs (one manifest, MODE_DATA - v2 kept two lists and
+// their disagreement produced an infinite, error-free spinner), set the era,
+// swap the DOM, move focus, retitle the document, announce the arrival in a
+// live region that exists from boot, and manage scroll. A screen never
+// touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll } from './data-loader.js';
-import { getState, subscribe, setMode, setYear, setLiveRun, reconcile, markVersionSeen, MODES, YEARS, currentYear } from './state.js';
-import { initGlossary, openFullList } from './components/glossary.js';
-import { mountRibbon, updateRibbon } from './components/timeline-ribbon.js';
-import { onAction, esc } from './components/dom.js';
-import { icon } from './components/icons.js';
-import { openSheet, onSheetAction, close as closeSheet } from './components/sheet.js';
-import { runInvariantSweep } from './engine/reach.js';
-import { projectionSweep } from './engine/project.js';
-import { runCopyBudget } from './engine/copy-budget.js';
-import { runJourneySweep } from './engine/journey.js';
-import { renderNow } from './modes/mode-now.js';
-import { renderJourney, resetJourney } from './modes/mode-journey.js';
-import { renderAim } from './modes/mode-aim.js';
-import { renderTeacher } from './modes/mode-teacher.js';
-import { renderParent } from './modes/mode-parent.js';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.0.0';
+import {
+  getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
+  reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
+  setLabelMode, markStart,
+} from './state.js?v=4.0.0';
+import { effective } from './engine/years.js?v=4.0.0';
+import { runStrip } from './ui/yearstrip.js?v=4.0.0';
+import { t } from './ui/labels.js?v=4.0.0';
+import { esc, onAction } from './ui/dom.js?v=4.0.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.0.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.0.0';
+import { icon } from './ui/icons.js?v=4.0.0';
+import { cue, setMutePredicate } from './sound.js?v=4.0.0';
 
 const app = document.getElementById('app');
-const head = document.getElementById('site-head');
-
-let data = null;
-let ctx = null;
 const params = new URLSearchParams(location.search);
 
-// The teacher layer is reachable by URL only. It was in the student header, and
-// thirty five students find a button labelled Teacher in about ninety seconds.
-let extraMode = ['teacher', 'parent'].includes(params.get('mode')) ? params.get('mode') : null;
-if (params.get('board') === '1') document.body.dataset.board = 'true';
+// ---- one-off document states ----------------------------------------------
 
-init();
+const BOARD = params.get('board') === '1';
+if (BOARD) {
+  document.documentElement.dataset.board = 'true';
+  document.documentElement.dataset.theme = 'dark'; // a lit projector needs dark ground
+}
 
-async function init() {
+const THEME_KEY = 'pathways4.theme';
+try {
+  const t = localStorage.getItem(THEME_KEY);
+  if (t && !BOARD) document.documentElement.dataset.theme = t;
+} catch { /* private mode */ }
+
+setMutePredicate(() => {
+  if (!getState().soundOn) return true;
+  if (BOARD) return true;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+  return false;
+});
+
+// The live region exists from boot. v2 created it lazily on first announce,
+// so the first announcement of a session could be dropped.
+const announcer = document.createElement('p');
+announcer.id = 'announcer';
+announcer.className = 'sr-only';
+announcer.setAttribute('aria-live', 'polite');
+document.body.appendChild(announcer);
+let announceTimer = null;
+export function announce(text) {
+  clearTimeout(announceTimer);
+  announceTimer = setTimeout(() => { announcer.textContent = text; }, 80);
+}
+
+// ---- screens ----------------------------------------------------------------
+
+const SCREENS = {
+  start:   { mod: './screens/start.js', exp: 'default' },
+  home:    { mod: './screens/home.js', exp: 'default' },
+  explore: { mod: './screens/explore.js', exp: 'default' },
+  year:    { mod: './screens/year.js', exp: 'default' },
+  after:   { mod: './screens/after.js', exp: 'after' },
+  dest:    { mod: './screens/after.js', exp: 'dest' },
+  myplan:  { mod: './screens/myplan.js', exp: 'default' },
+  play:    { mod: './screens/play.js', exp: 'default' },
+  act:     { mod: './screens/act.js', exp: 'default' },
+  adults:  { mod: './screens/adults.js', exp: 'default' },
+  money:   { mod: './screens/info.js', exp: 'money' },
+  work:    { mod: './screens/info.js', exp: 'work' },
+  schools: { mod: './screens/info.js', exp: 'schools' },
+};
+
+// v2 bookmarks and printed teacher notes point at ?mode=. They keep working.
+const LEGACY = {
+  now: { s: 'year' }, journey: { s: 'play' }, aim: { s: 'myplan' },
+  parent: { s: 'adults', tab: 'parent' }, teacher: { s: 'adults', tab: 'teacher' },
+  counsellor: { s: 'adults', tab: 'counsellor' }, evidence: { s: 'adults', tab: 'evidence' },
+  work: { s: 'work' }, money: { s: 'money' }, schools: { s: 'schools' },
+};
+
+const held = new Map();
+async function screenDef(id) {
+  const entry = SCREENS[id];
+  if (!held.has(id)) {
+    held.set(id, import(`${entry.mod}?v=${encodeURIComponent(BUILD)}`)
+      .then((m) => (entry.exp === 'default' ? m.default : m[entry.exp])));
+  }
+  return held.get(id);
+}
+
+// ---- routing ----------------------------------------------------------------
+
+let data = null;
+let route = { s: null, q: {} };
+let painting = 0;
+
+function parseRoute() {
+  const q = new URLSearchParams(location.search);
+  let s = q.get('s');
+  const legacy = !s && LEGACY[q.get('mode')];
+  if (legacy) { s = legacy.s; if (legacy.tab) q.set('tab', legacy.tab); }
+  // v3 addresses: Plan becomes your year page.
+  if (s === 'plan') s = 'year';
+  if (!SCREENS[s]) s = null;
+  const extras = {};
+  ['tab', 'sector', 'kind', 'y', 'id', 'g'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
+  return { s, q: extras };
+}
+
+function routeUrl(s, q = {}) {
+  const url = new URL(location.origin + location.pathname);
+  if (s !== 'home') url.searchParams.set('s', s);
+  Object.entries(q).forEach(([k, v]) => { if (v != null) url.searchParams.set(k, v); });
+  if (BOARD) url.searchParams.set('board', '1');
+  if (isGuest()) url.searchParams.set('guest', '1');
+  return url;
+}
+
+export function nav(s, q = {}, { replace = false } = {}) {
+  if (!SCREENS[s]) return;
+  if (sheetIsOpen()) closeSheet();
+  const entry = { v3: { s, q }, scrollY: 0 };
+  // Remember where the leaving screen was scrolled to, so back restores it.
+  try { history.replaceState({ ...(history.state || {}), scrollY: window.scrollY }, '', location.href); } catch { /* fine */ }
+  try {
+    history[replace ? 'replaceState' : 'pushState'](entry, '', routeUrl(s, q));
+  } catch { /* about: contexts */ }
+  route = { s, q };
+  if (MODES[s]) setMode(s);
+  paint({ scrollTo: 0 });
+}
+
+// The back button is real. A pop with a sheet open closes the sheet; a pop
+// with a route behind it repaints that route and restores its scroll.
+let sheetPushed = false;
+let closingFromPop = false;
+window.addEventListener('popstate', (e) => {
+  if (sheetIsOpen()) {
+    closingFromPop = true;
+    closeSheet();
+    closingFromPop = false;
+    // A sheet opened without its own history entry (the game's sheets):
+    // back should only close it, so the popped route entry goes straight
+    // back on before the URL visibly changes.
+    if (!sheetPushed) {
+      try { history.pushState({ v3: route, scrollY: window.scrollY }, '', routeUrl(route.s, route.q)); } catch { /* fine */ }
+    }
+    sheetPushed = false;
+    return;
+  }
+  const st = (e.state && e.state.v3) || parseRoute();
+  route = { s: st.s || defaultScreen(), q: st.q || parseRoute().q };
+  if (MODES[route.s]) setMode(route.s);
+  paint({ scrollTo: (e.state && e.state.scrollY) || 0, fromPop: true });
+});
+
+/** A sheet becomes a history entry, so back closes it instead of the site. */
+export function openSheetRouted(html, trigger, footHtml) {
+  openSheet(html, trigger, footHtml);
+  try { history.pushState({ ...(history.state || {}), sheet: true }, '', location.href); sheetPushed = true; } catch { sheetPushed = false; }
+}
+document.addEventListener('close', (e) => {
+  if (!e.target.classList || !e.target.classList.contains('sheet')) return;
+  if (sheetPushed && !closingFromPop) { sheetPushed = false; try { history.back(); } catch { /* fine */ } }
+  else sheetPushed = false;
+}, true);
+
+// A first visit lands on the guided start; every visit after, on Home.
+function defaultScreen() {
+  return getState().seenStart ? 'home' : 'start';
+}
+
+// ---- paint -------------------------------------------------------------------
+
+function loadingScreen(id) {
+  return `<div class="wrap-narrow section"><p class="loadline" role="status">${esc(copy('chrome.loading', 'Getting this screen ready.'))}</p></div>`;
+}
+
+function failedScreen(id, missing) {
+  const works = Object.keys(SCREENS).filter((k) => !(MODE_DATA[k] || []).some((n) => missing.includes(n)));
+  return `<div class="wrap-narrow section">
+    <h1>${esc(copy('chrome.partHead', 'That screen did not arrive'))}</h1>
+    <p>${esc(copy('chrome.partBody', 'The connection dropped part of the tool. Everything already here still works.'))}</p>
+    <p class="btnrow">
+      <button class="btn" type="button" data-action="retry">${esc(copy('chrome.retry', 'Try again'))}</button>
+      ${works.filter((w) => w !== id && w !== 'home').slice(0, 3).map((w) =>
+        `<button class="btn ghost" type="button" data-action="go" data-s="${w}">${esc(screenLabel(w))}</button>`).join('')}
+    </p>
+  </div>`;
+}
+
+function screenLabel(s) {
+  return { year: 'My year', after: 'After Sec', myplan: 'My plan', play: 'Play', act: 'Act', adults: 'For the adults', money: 'Money', work: 'Work', schools: 'My school' }[s] || s;
+}
+
+async function paint({ scrollTo = null, fromPop = false } = {}) {
+  const token = ++painting;
+  const id = route.s;
+  const def = await screenDef(id).catch(() => null);
+  if (token !== painting) return;
+  if (!def) { app.innerHTML = failedScreen(id, []); return; }
+
+  const needs = MODE_DATA[id] || [];
+  const missing = needs.filter((n) => !have(n));
+  if (missing.length) {
+    app.innerHTML = loadingScreen(id);
+    await ensureData(needs);
+    if (token !== painting) return;
+    const still = needs.filter((n) => !have(n));
+    if (still.length) { app.innerHTML = failedScreen(id, still); renderChrome(); return; }
+  }
+
+  document.body.dataset.era = def.era || 'school';
+  document.body.dataset.screen = id;
+  const title = typeof def.title === 'function' ? def.title(route.q) : def.title;
+  document.title = `${title} · Paths`;
+  app.innerHTML = '';
+  def.render(app, api(def));
+  runStrip(app);
+  bindGlossary(app);
+  renderChrome();
+
+  if (scrollTo != null) window.scrollTo(0, scrollTo);
+  const h1 = app.querySelector('h1');
+  if (h1 && !fromPop) {
+    h1.setAttribute('tabindex', '-1');
+    h1.focus({ preventScroll: true });
+  }
+  announce(`${title}.`);
+}
+
+export function refresh() { paint({ scrollTo: null, fromPop: true }); }
+
+// ---- what screens get ---------------------------------------------------------
+
+function copy(path, fallback) {
+  const parts = path.split('.');
+  let node = data && data.copy;
+  for (const p of parts) node = node && node[p];
+  return (typeof node === 'string' && node) || fallback || '';
+}
+
+function ctx() {
+  const st = getState();
+  return {
+    subjects: data.subjects.subjects || [],
+    destinations: data.pathways.destinations || [],
+    routesById: Object.fromEntries(((data.progressions || {}).routes || []).map((r) => [r.id, r])),
+    pathwaysMeta: data.pathways._meta,
+    yearId: st.year,
+    plan: st.plan,
+  };
+}
+
+function api(def) {
+  return {
+    data, ctx, copy, nav, refresh, announce, cue,
+    sheet: openSheetRouted, closeSheet,
+    board: BOARD,
+    route: () => route,
+    // Change the query of the current screen without a new history entry
+    // (a tab inside a page is a place to come back to, not a step to undo).
+    setQuery: (q) => {
+      route = { s: route.s, q: { ...route.q, ...q } };
+      Object.keys(route.q).forEach((k) => { if (route.q[k] == null) delete route.q[k]; });
+      try { history.replaceState({ v3: route, scrollY: window.scrollY }, '', routeUrl(route.s, route.q)); } catch { /* fine */ }
+    },
+  };
+}
+
+/** The effective plan follows the year plans, always. */
+function syncEffective() {
+  if (!data) return;
+  const e = effective(getState().plans, data.subjects.subjects || []);
+  setEffective(e.plan);
+}
+
+// ---- chrome --------------------------------------------------------------------
+
+const head = document.getElementById('site-head');
+const tabs = document.getElementById('tabbar');
+
+function themeNow() {
+  return document.documentElement.dataset.theme
+    || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+
+// Four doors. v4's first pass had five of equal weight, and a first-time
+// student could not tell which one came first.
+const NAV_ITEMS = [
+  { s: 'home', label: 'Home', icon: 'home' },
+  { s: 'year', label: 'My year', icon: 'steps' },
+  { s: 'explore', label: 'Explore', icon: 'map' },
+  { s: 'myplan', label: 'My plan', icon: 'flag' },
+];
+const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
+
+function navCurrent(s) {
+  if (['after', 'dest', 'play', 'work', 'money', 'schools', 'adults'].includes(s)) return 'explore';
+  if (s === 'act') return 'myplan';
+  return s;
+}
+
+function renderChrome() {
+  const st = getState();
+  const cur = navCurrent(route.s);
+  head.hidden = false;
+  head.innerHTML = `<div class="wrap headrow">
+    <button type="button" class="brand press" data-action="go" data-s="home" aria-label="Paths. Home.">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="9" fill="var(--accent)"/><path d="M7 23 C12 23 11 9 16 9 C21 9 20 23 25 23" fill="none" stroke="var(--night)" stroke-width="3" stroke-linecap="round"/><circle cx="7" cy="23" r="2.4" fill="var(--night)"/><circle cx="25" cy="23" r="2.4" fill="var(--night)"/></svg>
+      <span>Paths</span>
+    </button>
+    <nav class="topnav" aria-label="Main">
+      ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.s === 'myplan' ? t('plan') : n.label)}</button>`).join('')}
+    </nav>
+    <span class="headspace"></span>
+    <button type="button" class="rolechip press" data-action="role" aria-label="Viewing as ${esc(ROLE_LABEL[st.role])}. Change.">${icon(st.role)}<span>${esc(ROLE_LABEL[st.role])}</span></button>
+    <button type="button" class="iconbtn press" data-action="settings" aria-label="Settings">${icon('settings')}</button>
+  </div>
+  ${isGuest() ? `<p class="guestline">${esc(copy('chrome.guest', 'Guest: nothing is saved on this phone.'))}</p>` : ''}`;
+
+  tabs.hidden = BOARD;
+  tabs.innerHTML = `<div class="tabrow" aria-label="Main">
+    ${NAV_ITEMS.map((n) => `
+      <button type="button" class="tab press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">
+        ${icon(n.icon)}
+        <span>${esc(n.s === 'myplan' ? t('plan') : n.label)}</span>
+      </button>`).join('')}
+  </div>`;
+}
+
+function roleSheet(trigger) {
+  const st = getState();
+  openSheetRouted(`
+    <h2 id="sheet-title">Who is reading?</h2>
+    <p class="small">The facts never change. The questions and the voice do: a parent gets questions to ask their child, a teacher gets questions to ask a student.</p>
+    <div class="rolegrid">
+      ${Object.entries(ROLE_LABEL).map(([id, label]) => `<button type="button" class="btn ${st.role === id ? '' : 'ghost'} press" data-action="pick-role" data-id="${id}" aria-pressed="${st.role === id}">${esc(label)}</button>`).join('')}
+    </div>`, trigger);
+}
+
+// Switches are buttons, not checkboxes: onAction prevents default on click,
+// which would silently undo a native checkbox toggle.
+function switchRow(action, label, note, on) {
+  return `<button type="button" class="setrow press" role="switch" aria-checked="${!!on}" data-action="${action}">
+    <span><strong>${esc(label)}</strong><span class="small">${esc(note)}</span></span>
+    <span class="switch" aria-hidden="true"><i></i></span>
+  </button>`;
+}
+const flip = (btn) => { const on = btn.getAttribute('aria-checked') !== 'true'; btn.setAttribute('aria-checked', String(on)); return on; };
+
+function settingsSheet(trigger) {
+  const st = getState();
+  openSheetRouted(`
+    <h2 id="sheet-title">Settings</h2>
+    <div class="setlist">
+      ${switchRow('set-line', 'Line mode words', 'Talk like a transit system: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
+      ${switchRow('set-families', 'Course families', 'Show course groups and their subject asks on each destination page.', st.families)}
+      ${switchRow('set-theme', 'Dark colours', 'Night in the same city.', themeNow() === 'dark')}
+      ${switchRow('set-sound', 'Sound', 'Five small cues in the game.', st.soundOn)}
+    </div>
+    <p class="caps" style="margin-top:20px">Also here</p>
+    <div class="morerow">
+      <button type="button" class="chip press" data-action="go" data-s="work">The work itself</button>
+      <button type="button" class="chip press" data-action="go" data-s="money">Costs and help</button>
+      <button type="button" class="chip press" data-action="go" data-s="schools">My kind of school</button>
+      <button type="button" class="chip press" data-action="go" data-s="adults">For parents and teachers</button>
+      <button type="button" class="chip press" data-action="words">Words, explained</button>
+      <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
+    </div>
+    <p class="small" style="margin-top:16px">Everything stays on this device. No account, no server, nothing collected.</p>`, trigger);
+}
+
+function yearSheet(trigger) {
+  openSheetRouted(`
+    <h2 id="sheet-title">${esc(copy('chrome.yearHead', 'Which year are you in?'))}</h2>
+    <p class="small">${esc(copy('chrome.yearNote', 'This sets which subjects you see and where the game starts. Change it any time.'))}</p>
+    <div class="yeargrid">
+      ${YEARS.map((y) => `<button type="button" class="btn ${getState().year === y.id ? '' : 'ghost'}" data-action="pick-year" data-id="${y.id}">${esc(y.label)}</button>`).join('')}
+    </div>`, trigger);
+}
+
+onAction(document.body, {
+  go: (btn) => {
+    const q = {};
+    if (btn.dataset.y) q.y = btn.dataset.y;
+    if (btn.dataset.id) q.id = btn.dataset.id;
+    if (btn.dataset.tab) q.tab = btn.dataset.tab;
+    nav(btn.dataset.s, q);
+  },
+  role: (btn) => roleSheet(btn),
+  // Tickets live on several screens; their two actions live here.
+  'tk-copy': async (btn) => {
+    try { await navigator.clipboard.writeText(btn.dataset.text); btn.innerHTML = `${icon('check')} Copied`; } catch { btn.textContent = 'Select the line above to copy'; }
+  },
+  'tk-keep': (btn) => {
+    toggleAction(btn.dataset.text);
+    const on = getState().actions.includes(btn.dataset.text);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.innerHTML = on ? `${icon('check')} ${t('kept')}` : `${icon('ticket')} ${t('keep')}`;
+    const tk = btn.closest('.ticket');
+    if (tk) tk.classList.toggle('kept', on);
+    announce(on ? `${t('kept')} on ${t('plan')}.` : `Taken off ${t('plan')}.`);
+  },
+  'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
+  settings: (btn) => settingsSheet(btn),
+  'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },
+  'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
+  'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },
+  'replay-start': () => { markStart(false); nav('start', {}); },
+  'set-theme': (btn) => {
+    const on = flip(btn);
+    document.documentElement.dataset.theme = on ? 'dark' : 'light';
+    try { localStorage.setItem(THEME_KEY, on ? 'dark' : 'light'); } catch { /* fine */ }
+  },
+  'set-sound': (btn) => { const on = flip(btn); setSound(on); if (on) cue('lived'); },
+  retry: () => paint({ scrollTo: null }),
+  year: (btn) => yearSheet(btn),
+  words: (btn) => openFullList(btn),
+  sound: (btn) => {
+    const on = !getState().soundOn;
+    setSound(on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', on ? 'Sound is on. Turn it off.' : 'Sound is off. Turn it on.');
+    btn.innerHTML = icon(on ? 'sound_on' : 'sound_off');
+    if (on) cue('lived');
+  },
+  theme: () => {
+    const next = themeNow() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* fine */ }
+  },
+  'pick-year': (btn) => { setYear(btn.dataset.id); closeSheet(); refresh(); },
+});
+
+subscribe((st, evt) => {
+  if (evt.kind === 'plans') syncEffective();
+  if (evt.kind === 'role' || evt.kind === 'year') renderChrome();
+});
+
+// ---- boot ----------------------------------------------------------------------
+
+async function boot() {
   try {
     data = await loadAll();
   } catch (e) {
-    console.error(e);
-    app.innerHTML = `
-      <div class="wrap"><div class="section"><div class="notice">
-        <strong>This did not load.</strong>
-        <p style="margin:8px 0 0">Check the connection and refresh the page. Nothing you did caused this.</p>
-      </div></div></div>`;
+    app.innerHTML = `<div class="wrap-narrow section"><h1>Paths could not load</h1>
+      <p>The connection dropped the files this tool is made of. Reload to try again; nothing you saved is lost.</p>
+      <p><button class="btn" type="button" onclick="location.reload()">Reload</button></p></div>`;
     return;
   }
-
+  reconcile(data);
+  syncEffective();
   initGlossary(data.glossary);
 
-  // Stored state was written by whatever revision ran last. Reconcile it with
-  // today's data before anything paints from it: a plan keyed by renamed
-  // subjects miscounts, and a saved run from an older engine kills the paint.
-  reconcile(data);
+  const parsed = parseRoute();
+  route = { s: parsed.s || defaultScreen(), q: parsed.q };
+  if (MODES[route.s]) setMode(route.s);
+  try { history.replaceState({ v3: route, scrollY: 0 }, '', routeUrl(route.s, route.q)); } catch { /* fine */ }
+  await paint({ scrollTo: 0 });
 
-  ctx = {
-    subjects: data.subjects.subjects,
-    destinations: data.pathways.destinations,
-    routesById: Object.fromEntries(data.progressions.routes.map((r) => [r.id, r])),
-    pathwaysMeta: data.pathways._meta,
-    yearId: getState().year,
-  };
+  const build = document.getElementById('foot-build');
+  if (build) {
+    const f = data._freshness;
+    build.textContent = `Paths ${BUILD}${f && f.known ? ` · figures checked ${f.days} day${f.days === 1 ? '' : 's'} ago` : ''}`;
+  }
 
-  mountRibbon(document.body, data.lifelong);
-  mountDoors();
-  renderHead();
-  paint();
+  topUp(() => refresh());
 
-  subscribe((_st, evt) => {
-    ctx.yearId = getState().year;
-    // The plan path updates itself in place, so a repaint here would undo it.
-    if (evt && evt.kind === 'plan') return;
-    updateRibbon();
-    renderHead();
-    paint();
-  });
-
-  showVersionNote();
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register(`./sw.js?v=${encodeURIComponent(BUILD)}`).catch(() => { /* optional */ });
+  }
 
   if (params.get('dev') === '1') {
-    runInvariantSweep(ctx);
-    projectionSweep(ctx);
+    const [{ runInvariantSweep }, { projectionSweep }, { runJourneySweep }, { runCopyLint }, { possibilitySweep }, { domLint }] = await Promise.all([
+      import(`./engine/reach.js?v=${BUILD}`), import(`./engine/project.js?v=${BUILD}`),
+      import(`./engine/journey4.js?v=${BUILD}`), import(`./engine/copy-lint.js?v=${BUILD}`),
+      import(`./engine/possible.js?v=${BUILD}`), import(`./engine/dom-lint.js?v=${BUILD}`),
+    ]);
+    await ensureData(['journey', 'chances', 'moves', 'possibilities', 'dispositions', 'futures']);
+    runInvariantSweep(ctx());
+    projectionSweep(ctx());
     runJourneySweep(data);
-    runCopyBudget(data);
+    possibilitySweep(data);
+    runCopyLint(data);
+    console.log('[dom-lint]', domLint(app));
   }
 }
 
-/**
- * What changed since this device last looked.
- *
- * The app ships from a branch into a browser that caches hard, so a class can
- * be sitting on three different builds and nobody knows. The version is baked
- * into the data and compared against what this device saw. Once, on the first
- * paint after an update, in the student's own words and never in the
- * developer's. A device that has never seen the app is marked silently: a list
- * of changes means nothing to somebody who has seen none of what changed.
- */
-function showVersionNote() {
-  const v = data.version;
-  if (!v || !v.version) return;
-  const seen = getState().seenVersion;
-  if (seen === v.version) return;
-  if (!seen) { markVersionSeen(v.version); return; }
-  const rel = (v.releases || []).find((r) => r.version === v.version);
-  markVersionSeen(v.version);
-  if (!rel || !(rel.changes || []).length) return;
-  openSheet(`
-    <h2 id="sheet-title">${esc(rel.head || 'What is new')}</h2>
-    <p class="small mute">Version ${esc(rel.version)}</p>
-    <ul class="small" style="margin-top:var(--s-3);padding-left:1.1em">
-      ${rel.changes.map((c) => `<li style="margin-bottom:var(--s-2)">${esc(c)}</li>`).join('')}
-    </ul>
-    <div class="btn-row" style="margin-top:var(--s-4)">
-      <button class="btn accent" type="button" data-action="vok">Got it</button>
-    </div>`);
-  onSheetAction({ vok: () => closeSheet() });
-}
-
-function renderHead() {
-  const st = getState();
-  const y = currentYear();
-  head.innerHTML = `
-    <div class="wrap">
-      <div class="brand">${esc(data.copy.chrome.brand)}</div>
-      <label class="yearsel">
-        <span class="sr-only">Which year are you in</span>
-        <select data-action-change="year">
-          ${YEARS.map((v) => `<option value="${v.id}"${v.id === y.id ? ' selected' : ''}>${esc(v.label)}</option>`).join('')}
-        </select>
-      </label>
-      <nav class="modebar" aria-label="Modes">
-        ${Object.values(MODES).map((m) => `
-          <button type="button" data-action="mode" data-mode="${m.id}"
-                  aria-current="${!extraMode && st.mode === m.id}">${esc(m.label)}</button>`).join('')}
-      </nav>
-      <!-- Last in the row, and after the modes rather than before them. It sat
-           beside the year selector reading "Aa", which is the universal phone
-           idiom for a text size control, so a reference list looked like a
-           formatting toggle in the one place a student would look for one. It
-           says what it is now, and it stands apart from the three modes. -->
-      <button type="button" class="glossbtn" data-action="glossary"
-              aria-label="${esc(data.copy.chrome.glossaryAria)}">${icon('glossary')}${esc(data.copy.chrome.glossaryBtn)}</button>
-    </div>`;
-
-  onAction(head, {
-    mode: (btn) => {
-      extraMode = null;
-      if (btn.dataset.mode !== 'journey') resetJourney();
-      setMode(btn.dataset.mode);
-    },
-    glossary: () => openFullList(),
-  });
-
-  const sel = head.querySelector('select');
-  if (sel) sel.addEventListener('change', (e) => setYear(e.target.value));
-}
-
-// measureHead() used to live here, writing the header's height to --head-h so
-// every other pinned element could offset from it. The header is no longer
-// pinned, so nothing offsets from it, and the measurement, its
-// requestAnimationFrame and its resize listener all went with it.
-
-function paint() {
-  const st = getState();
-  try {
-    if (extraMode === 'teacher') { renderTeacher(app, data, ctx, paint); return; }
-    if (extraMode === 'parent') { renderParent(app, data, ctx); return; }
-    switch (st.mode) {
-      case 'journey': renderJourney(app, data, ctx, paint); break;
-      case 'aim':     renderAim(app, data, ctx, paint); break;
-      default:        renderNow(app, data, ctx); break;
-    }
-  } catch (e) {
-    // A paint that throws must never leave the last screen up with dead
-    // buttons. That is what a swallowed exception looks like from a phone:
-    // the app simply stops answering, and the person taps harder. Show what
-    // happened, offer the one repair that always works, and touch nothing
-    // the student typed in: the plan survives, only the stuck screen resets.
-    console.error('paint failed', e);
-    app.innerHTML = `
-      <div class="wrap"><div class="section" style="margin-top:var(--s-6)"><div class="notice">
-        <strong>This screen hit a snag.</strong>
-        <p style="margin:8px 0 0">Your subjects are safe. Start this screen fresh.</p>
-        <div class="btn-row" style="margin-top:var(--s-3)">
-          <button class="btn accent" type="button" data-action="recover">Start fresh</button>
-        </div>
-      </div></div></div>`;
-    onAction(app, { recover: () => { setLiveRun(null); resetJourney(); paint(); } });
-  }
-}
-
-
-// The three doors, at the top. They were in the footer, but a parent handed
-// their child's phone decides in the first screenful whether this page is for
-// them, and footer discovery asked them to scroll the whole subject list
-// first. The strip is quiet on purpose: the header is not pinned, so it
-// scrolls away after one look, and it hides during a Journey run with the
-// rest of the chrome. The old worry about students finding a Teacher button
-// was about a button styled like a mode; three muted words are not that.
-function mountDoors() {
-  const f = data.copy.footerDoors;
-  if (!f) return;
-  const who = extraMode || 'student';
-  const roles = [
-    { id: 'student', href: './', label: f.roleStudent },
-    { id: 'parent', href: './?mode=parent', label: f.roleParent },
-    { id: 'teacher', href: './?mode=teacher', label: f.roleTeacher },
-  ];
-  const div = document.createElement('div');
-  div.className = 'audstrip';
-  div.innerHTML = `<div class="wrap">
-    <label class="iam">
-      <span>${esc(f.iAm)}</span>
-      <select aria-label="${esc(f.head)}">
-        ${roles.map((r) => `<option value="${r.href}"${r.id === who ? ' selected' : ''}>${esc(r.label)}</option>`).join('')}
-      </select>
-    </label></div>`;
-  const sel = div.querySelector('select');
-  sel.addEventListener('change', () => { location.href = sel.value; });
-  document.body.insertBefore(div, head);
-}
+boot();

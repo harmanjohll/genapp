@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paths, for Singapore secondary students</title>
+<meta name="description" content="A thinking tool for Singapore secondary students under Full Subject Based Banding. Plan a combination, play a life forward from it, and leave with things to do this term. Nothing here tells you what you cannot do.">
+<meta name="app-version" content="3.0.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F7F5F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#13161C" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23F7F5F0'/%3E%3Cpath d='M6 24 C12 24 10 8 16 8 M16 8 C22 8 20 24 26 24' fill='none' stroke='%23C25E3A' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='6' cy='24' r='2.6' fill='%231E9463'/%3E%3Ccircle cx='26' cy='24' r='2.6' fill='%233B7FC4'/%3E%3C/svg%3E">
+
+<link rel="preload" href="./assets/fonts/literata-var-latin.woff2?v=3.0.0" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./assets/css/tokens3.css?v=3.0.0">
+<link rel="stylesheet" href="./assets/css/base.css?v=3.0.0">
+<link rel="stylesheet" href="./assets/css/app.css?v=3.0.0">
+<link rel="stylesheet" href="./assets/css/play.css?v=3.0.0">
+
+<!-- The module graph is three levels deep; without these hints a school
+     connection walks it one round trip at a time. -->
+<link rel="modulepreload" href="./assets/js/main.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/state.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/data-loader.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/sound.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/ui/dom.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/ui/sheet.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/ui/icons.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/ui/glossary.js?v=3.0.0">
+<link rel="modulepreload" href="./assets/js/ui/map.js?v=3.0.0">
+<link rel="preload" href="./data/subjects.json?v=3.0.0" as="fetch" crossorigin>
+<link rel="preload" href="./data/pathways.json?v=3.0.0" as="fetch" crossorigin>
+<link rel="preload" href="./data/progressions.json?v=3.0.0" as="fetch" crossorigin>
+<link rel="preload" href="./data/copy.json?v=3.0.0" as="fetch" crossorigin>
+<link rel="preload" href="./data/glossary.json?v=3.0.0" as="fetch" crossorigin>
+</head>
+<body data-era="school">
+<a class="skip-link" href="#app">Skip to the tool</a>
+
+<header class="site-head" id="site-head" hidden></header>
+
+<noscript>
+  <div class="wrap"><div class="section">
+    <strong>This tool needs JavaScript.</strong>
+    <p style="margin:8px 0 0">Everything runs in your browser. Nothing you type is sent anywhere, and there is no account.</p>
+  </div></div>
+</noscript>
+
+<main id="app" tabindex="-1"></main>
+
+<nav class="tabbar" id="tabbar" hidden></nav>
+
+<footer class="site-foot" id="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <p class="caps">What this is</p>
+        <p><strong>A thinking tool, not official advice.</strong> It helps you see what is possible and what you could do next. It does not know your grades, it does not predict them, and it will never tell you that something is closed to you.</p>
+      </div>
+      <div class="foot-col">
+        <p class="caps">Check with a person</p>
+        <p>Confirm anything that matters with your school's Education and Career Guidance counsellor, and at <a href="https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways">moe.gov.sg</a>.</p>
+        <p class="small"><a href="./?s=adults&tab=counsellor">If you are that counsellor, start here.</a></p>
+      </div>
+      <div class="foot-col">
+        <p class="caps">Your data</p>
+        <p>Everything stays on your device. No account, no server, nothing collected. Clear it by clearing your browser data.</p>
+      </div>
+      <div class="foot-col">
+        <p class="caps">The rest of this tool</p>
+        <ul class="foot-links">
+          <li><a href="./?s=work">What the work actually is</a></li>
+          <li><a href="./?s=money">What it costs, and the help</a></li>
+          <li><a href="./?s=schools">The school I am actually in</a></li>
+          <li><a href="./?s=adults&tab=parent">For parents</a></li>
+          <li><a href="./?s=adults&tab=teacher">For teachers</a></li>
+          <li><a href="./?s=adults&tab=evidence">What this is built on</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot-build" id="foot-build"></p>
+  </div>
+</footer>
+
+<script type="module" src="./assets/js/main.js?v=3.0.0"></script>
+</body>
+</html>
