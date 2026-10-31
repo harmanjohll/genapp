@@ -119,31 +119,52 @@ export function stepArt(name) {
 }
 
 /**
- * The wordless intro. Three switches feed one hub; every road out of it is
- * drawn (none missing); three lamps are lit; one switch slides up a level and
- * two more lamps light; none goes dark. Every element's resting style is its
- * final frame, and the animation only plays the way there, so reduced motion
- * (animation: none) shows the finished picture rather than an empty one.
+ * The intro, labelled. An example student's five subject levels feed one
+ * hub ("You"); a wire runs from it to each of the eight destinations, by
+ * name; the open ones light; then Maths slides up one level and the places
+ * that move opens light too; none goes dark. The example is computed by the
+ * real rules engine in start.js, so every lit lamp is true for that plan.
+ *
+ * Every element's resting style is its final frame, and the animation only
+ * plays the way there, so reduced motion shows the finished, labelled
+ * picture rather than an empty one.
+ *
+ * @param {Object} ex { subjects: [{ name, from, to? }], dests: [{ name, before, after }] }
+ *   before/after are true when that destination is open.
  */
-export function introArt() {
-  const lampY = (i) => 22 + i * 31;
-  const lit0 = [0, 2, 5];
-  const lit1 = [6, 7];
-  const lamps = Array.from({ length: 8 }, (_, i) => {
-    const cls = lit0.includes(i) ? 'lit0' : lit1.includes(i) ? 'lit1' : 'ring';
+export function introArt(ex) {
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const POS = { G1: 13, G2: 40, G3: 67 };
+  const subjY = (i) => 34 + i * 54;
+  const hubX = 168; const hubY = 140;
+  const lampX = 250;
+  const lampY = (i) => 20 + i * 34.5;
+  const subs = ex.subjects.map((sb, i) => {
+    const y = subjY(i);
+    const moving = sb.to && sb.to !== sb.from;
+    const thumb = (lv, cls) => `<g transform="translate(${POS[lv]} ${y + 2})"><g class="in-th ${cls}"><rect width="26" height="20" rx="10"/><text x="13" y="14" text-anchor="middle">${lv}</text></g></g>`;
     return `
-      <path class="in-wire w-${cls}" d="M172 130 C 222 130, 226 ${lampY(i)}, 290 ${lampY(i)}" pathLength="100" style="--i:${i}"/>
-      <circle class="in-lamp l-${cls}" cx="302" cy="${lampY(i)}" r="10" style="--i:${i}"/>`;
+      <g class="in-sw${moving ? ' sw-move' : ''}" style="--i:${i}">
+        <text class="in-sname" x="10" y="${y - 6}">${esc(sb.name)}</text>
+        <rect class="in-track" x="10" y="${y}" width="86" height="24" rx="12"/>
+        ${moving ? `${thumb(sb.from, 'th-from')}${thumb(sb.to, 'th-to')}` : thumb(sb.from, '')}
+      </g>
+      <path class="in-feed" d="M96 ${y + 12} C 140 ${y + 12}, 140 ${hubY}, ${hubX - 18} ${hubY}" pathLength="100" style="--i:${i}"/>`;
+  }).join('');
+  const lamps = ex.dests.map((d, i) => {
+    const cls = d.before ? 'lit0' : d.after ? 'lit1' : 'ring';
+    const y = lampY(i);
+    const d2 = `M${hubX + 18} ${hubY} C ${hubX + 46} ${hubY}, ${lampX - 44} ${y}, ${lampX - 11} ${y}`;
+    return `
+      ${cls === 'lit1' ? `<path class="in-wire w-ring" d="${d2}" pathLength="100" style="--i:${i}"/>` : ''}
+      <path class="in-wire w-${cls}" d="${d2}" pathLength="100" style="--i:${i}"/>
+      <circle class="in-lamp l-${cls}" cx="${lampX}" cy="${y}" r="10" style="--i:${i}"/>
+      <text class="in-dname n-${cls}" x="${lampX + 16}" y="${y + 4.5}" style="--i:${i}">${esc(d.name)}</text>`;
   }).join('');
   return `
-  <svg class="intro-art" viewBox="0 0 340 260" aria-hidden="true" fill="none" stroke-linecap="round">
-    <g class="in-sw" style="--i:0"><rect x="14" y="52" width="78" height="28" rx="14"/><circle class="in-th" cx="78" cy="66" r="10"/></g>
-    <g class="in-sw sw-move" style="--i:1"><rect x="14" y="116" width="78" height="28" rx="14"/><circle class="in-th" cx="78" cy="130" r="10"/></g>
-    <g class="in-sw" style="--i:2"><rect x="14" y="180" width="78" height="28" rx="14"/><circle class="in-th" cx="53" cy="194" r="10"/></g>
-    <path class="in-feed" d="M92 66 C 120 66, 120 130, 148 130" pathLength="100"/>
-    <path class="in-feed" d="M92 130 H 148" pathLength="100"/>
-    <path class="in-feed" d="M92 194 C 120 194, 120 130, 148 130" pathLength="100"/>
-    <circle class="in-hub" cx="160" cy="130" r="14"/>
+  <svg class="intro-art" viewBox="0 0 400 296" role="img" aria-label="An example: five subject levels lead to eight places after secondary school. ${ex.dests.filter((d) => d.before).length} are open. Moving Maths up one level opens ${ex.dests.filter((d) => !d.before && d.after).map((d) => d.name).join(' and ')}. None closes." fill="none" stroke-linecap="round">
+    ${subs}
+    <g class="in-hub"><circle cx="${hubX}" cy="${hubY}" r="18"/><text x="${hubX}" y="${hubY + 4}" text-anchor="middle">You</text></g>
     ${lamps}
   </svg>`;
 }

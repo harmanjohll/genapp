@@ -778,34 +778,56 @@ body[data-screen="start"] main { padding-bottom: 32px; }
 .rolebar.on-paper .rolebar-b { color: var(--ink-soft); }
 .rolebar.on-paper .rolebar-b[aria-checked="true"] { background: var(--night); color: var(--night-ink); }
 
-/* the wordless intro */
-.st-intro { position: relative; background: var(--night); color: var(--night-ink); justify-content: center; padding: 48px var(--gutter) 32px; }
+/* the intro, labelled. Timeline (seconds): switches 0.3, feeds 1.4, hub 2,
+   roads and names 2.8 to 3.9, open lamps 5, Maths slides 6.9, two more light
+   7.4, last caption 8.6, Start 9. Resting styles are the final frame. */
+.st-intro { position: relative; background: var(--night); color: var(--night-ink); justify-content: center; padding: 52px var(--gutter) 32px; }
 .st-introbar { position: absolute; top: 10px; right: var(--gutter); }
 .st-intro .st-skip { color: var(--night-mute); }
-.st-stage { max-width: 520px; width: 100%; margin: 8px auto 0; }
-.intro-art { width: 100%; height: auto; display: block; }
-.st-introcopy { max-width: 520px; width: 100%; margin: 8px auto 0; animation: arrive 600ms var(--ease) both; animation-delay: 8.2s; }
-.st-introcopy h1 { color: #fff; font-size: clamp(2rem, 8vw, 3rem); line-height: 1; letter-spacing: -0.035em; margin: 0 0 18px; }
+.st-caps { position: relative; max-width: 560px; width: 100%; margin: 0 auto 6px; min-height: 3.2em; font-weight: 750; font-size: clamp(1.02rem, 3.6vw, 1.2rem); line-height: 1.35; color: #fff; }
+.st-caps span { position: absolute; inset: 0 0 auto 0; opacity: 0; }
+.st-caps span.last { opacity: 1; animation: fadein 500ms var(--ease) both; animation-delay: 8.6s; }
+.st-caps span:not(.last) { animation: capshow 2.2s var(--ease); animation-delay: calc(0.3s + var(--i, 0) * 2.1s); }
+@keyframes capshow { 0% { opacity: 0; transform: translateY(6px); } 12% { opacity: 1; transform: none; } 88% { opacity: 1; } 100% { opacity: 0; } }
+.st-stage { max-width: 560px; width: 100%; margin: 0 auto; }
+.intro-art { width: 100%; height: auto; display: block; overflow: visible; }
+.st-legend { max-width: 560px; width: 100%; margin: 4px auto 0; display: flex; gap: 18px; font-size: 0.84rem; font-weight: 650; color: var(--night-mute); animation: fadein 500ms var(--ease) both; animation-delay: 5s; }
+.st-legend span::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; background: var(--line-open); border: 2px solid #fff; box-sizing: border-box; }
+.st-legend span[data-k="ring"]::before { background: transparent; border: 2.5px solid var(--night-mute); }
+.st-introcopy { max-width: 560px; width: 100%; margin: 14px auto 0; animation: arrive 600ms var(--ease) both; animation-delay: 9s; }
+.st-introcopy h1 { color: #fff; font-size: clamp(2rem, 8vw, 3rem); line-height: 1; letter-spacing: -0.035em; margin: 0 0 16px; }
 .st-promise { color: var(--night-mute); margin: 14px 0 0; font-size: 0.92rem; }
 .st-promise .ic { color: var(--accent); }
-.in-sw rect { stroke: #fff; stroke-width: 3; fill: var(--night-2); }
-.in-th { fill: var(--accent); stroke: var(--night); stroke-width: 2; }
-.in-sw { animation: arrive 500ms var(--ease) both; animation-delay: calc(200ms + var(--i, 0) * 200ms); }
-.sw-move .in-th { animation: slideup 700ms var(--spring) both; animation-delay: 6.2s; }
-@keyframes slideup { from { transform: translateX(-25px); fill: #fff; } to { transform: none; } }
-.in-feed { stroke: #fff; stroke-width: 3; stroke-dasharray: 100; animation: draw-line 600ms var(--ease) both; animation-delay: 1.3s; --draw-len: 100; }
-.in-hub { fill: var(--accent); stroke: #fff; stroke-width: 3; animation: pop 400ms var(--spring) both; animation-delay: 2s; transform-origin: 160px 130px; }
+.in-sw { animation: arrive 500ms var(--ease) both; animation-delay: calc(300ms + var(--i, 0) * 150ms); }
+.in-sname { font: 700 11.5px var(--body); fill: var(--night-mute); stroke: none; }
+.in-track { stroke: #fff; stroke-width: 2.5; fill: var(--night-2); }
+.in-th rect { fill: var(--accent); stroke: var(--night); stroke-width: 2; }
+.in-th text { font: 800 10px var(--mono); fill: var(--night); stroke: none; }
+.sw-move .in-sname { fill: #fff; }
+.th-from { opacity: 0; animation: fadeout 300ms var(--ease) both; animation-delay: 6.9s; }
+@keyframes fadeout { from { opacity: 1; } to { opacity: 0; } }
+.th-to { animation: thslide 600ms var(--spring) both; animation-delay: 6.9s; }
+@keyframes thslide { from { transform: translateX(-27px); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
+.in-feed { stroke: #fff; stroke-width: 2.5; opacity: 0.85; stroke-dasharray: 100; animation: draw-line 600ms var(--ease) both; animation-delay: calc(1.4s + var(--i, 0) * 60ms); --draw-len: 100; }
+.in-hub circle { fill: var(--accent); stroke: #fff; stroke-width: 3; }
+.in-hub text { font: 800 11px var(--body); fill: var(--night); stroke: none; }
+.in-hub { animation: pop 400ms var(--spring) both; animation-delay: 2s; transform-box: fill-box; transform-origin: center; }
 @keyframes pop { from { transform: scale(0); } to { transform: none; } }
-.in-wire { stroke-width: 3; stroke-dasharray: 100; animation: draw-line 500ms var(--ease) both; animation-delay: calc(2.4s + var(--i, 0) * 110ms); --draw-len: 100; }
-.in-wire.w-ring { stroke: var(--night-mute); stroke-dasharray: 3 6; opacity: 0.7; animation-name: fadein; }
-.in-wire.w-lit0 { stroke: var(--line-open); stroke-width: 4; }
-.in-wire.w-lit1 { stroke: var(--line-open); stroke-width: 4; animation-delay: 6.8s; }
+.in-wire { stroke-width: 3; }
+.in-wire.w-ring { stroke: var(--night-mute); stroke-dasharray: 3 6; opacity: 0.7; animation: fadein 500ms var(--ease) both; animation-delay: calc(2.8s + var(--i, 0) * 100ms); }
+.in-wire.w-lit0 { stroke: var(--line-open); stroke-width: 4; stroke-dasharray: 100; animation: draw-line 600ms var(--ease) both; animation-delay: calc(5s + var(--i, 0) * 100ms); --draw-len: 100; }
+.in-wire.w-lit1 { stroke: var(--line-open); stroke-width: 4; stroke-dasharray: 100; animation: draw-line 600ms var(--ease) both; animation-delay: 7.4s; --draw-len: 100; }
 @keyframes fadein { from { opacity: 0; } }
 .in-lamp { stroke-width: 3; transform-box: fill-box; transform-origin: center; }
-.in-lamp.l-ring { fill: var(--night); stroke: var(--night-mute); animation: pop 360ms var(--spring) both; animation-delay: calc(3.6s + var(--i, 0) * 80ms); }
-.in-lamp.l-lit0 { fill: var(--line-open); stroke: #fff; animation: litup 500ms var(--spring) both; animation-delay: calc(4.6s + var(--i, 0) * 120ms); }
-.in-lamp.l-lit1 { fill: var(--line-open); stroke: #fff; animation: litup 500ms var(--spring) both; animation-delay: calc(7.2s + (var(--i, 0) - 6) * 220ms); }
-@keyframes litup { 0% { transform: scale(0.4); fill: var(--night); stroke: var(--night-mute); } 60% { transform: scale(1.35); } 100% { transform: none; } }
+.in-lamp.l-ring { fill: var(--night); stroke: var(--night-mute); animation: pop 360ms var(--spring) both; animation-delay: calc(3.2s + var(--i, 0) * 80ms); }
+.in-lamp.l-lit0 { fill: var(--line-open); stroke: #fff; animation: pop 360ms var(--spring) both, lampon 520ms var(--spring) both; animation-delay: calc(3.2s + var(--i, 0) * 80ms), calc(5.1s + var(--i, 0) * 100ms); }
+.in-lamp.l-lit1 { fill: var(--line-open); stroke: #fff; animation: pop 360ms var(--spring) both, lampon 520ms var(--spring) both; animation-delay: calc(3.2s + var(--i, 0) * 80ms), 7.7s; }
+@keyframes lampon { 0% { fill: var(--night); stroke: var(--night-mute); } 50% { transform: scale(1.35); fill: var(--line-open); stroke: #fff; } 100% { transform: none; } }
+@keyframes litup { 0% { transform: scale(0.5); fill: var(--night); stroke: var(--night-mute); } 60% { transform: scale(1.35); } 100% { transform: none; } }
+.in-dname { font: 700 12px var(--body); stroke: none; fill: #fff; animation: fadein 400ms var(--ease) both; animation-delay: calc(3.3s + var(--i, 0) * 80ms); }
+.in-dname.n-ring { fill: var(--night-mute); font-weight: 600; }
+.in-dname.n-lit1 { animation: fadein 400ms var(--ease) both, namelit 400ms var(--ease) both; animation-delay: calc(3.3s + var(--i, 0) * 80ms), 7.7s; }
+@keyframes namelit { from { fill: var(--night-mute); } to { fill: #fff; } }
 
 /* the live signal */
 .signal { margin: 0; background: var(--night); color: var(--night-ink); border-radius: var(--r-md); padding: 14px 14px 10px; box-shadow: var(--shadow); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -901,7 +923,7 @@ body[data-screen="start"] main { padding-bottom: 32px; }
 .lv-instr .ic { color: var(--accent-dk); margin-top: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .in-sw, .sw-move .in-th, .in-feed, .in-hub, .in-wire, .in-lamp, .st-introcopy, .sg-lamp.changed .sg-dot, .sg-lamp.changed .sg-glow, .sg-wire.changed, .signal.intro .sg-wire, .signal.intro .sg-lamp .sg-dot { animation: none !important; }
+  .in-sw, .th-from, .th-to, .in-feed, .in-hub, .in-wire, .in-lamp, .in-dname, .st-introcopy, .st-legend, .st-caps span, .sg-lamp.changed .sg-dot, .sg-lamp.changed .sg-glow, .sg-wire.changed, .signal.intro .sg-wire, .signal.intro .sg-lamp .sg-dot { animation: none !important; }
   .in-feed, .in-wire, .sg-wire.changed { stroke-dasharray: none; }
   .in-wire.w-ring { stroke-dasharray: 3 6; }
 }

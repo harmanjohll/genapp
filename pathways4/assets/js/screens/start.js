@@ -161,14 +161,44 @@ export default {
   },
 };
 
+// The intro's example, run through the real engine so every lit lamp is
+// true for it: Maths from G1 to G2 is the move.
+const EXAMPLE = { el: 'G2', mtl: 'G2', maths: 'G1', sci_pc: 'G2', hum_ss_geog: 'G2' };
+
+function introExample(api) {
+  const c = api.ctx();
+  const run = (plan) => c.destinations.map((d) => reach(plan, d, { ...c, plan }));
+  const before = run(EXAMPLE);
+  const after = run({ ...EXAMPLE, maths: 'G2' });
+  const opened = after.filter((r, i) => r.state === 'open' && before[i].state !== 'open').map((r) => r.railName);
+  return {
+    opened,
+    subjects: [
+      { name: 'English', from: 'G2' }, { name: 'Mother Tongue', from: 'G2' },
+      { name: 'Maths', from: 'G1', to: 'G2' }, { name: 'Science', from: 'G2' }, { name: 'Humanities', from: 'G2' },
+    ],
+    dests: before.map((r, i) => ({ name: r.railName, before: r.state === 'open', after: after[i].state === 'open' })),
+  };
+}
+
 function renderIntro(root, api) {
+  const ex = introExample(api);
+  const caps = [
+    'Here is an example student. These are their subject levels.',
+    'Their levels lead to the 8 places you can go after secondary school.',
+    'Green means open now. Rings are a move or more away.',
+    `Move Maths up one level, from G1 to G2, and ${ex.opened.length === 1 ? 'one more opens' : `${ex.opened.length} more open`}.`,
+    'None ever closes. Every place keeps a way in.',
+  ];
   root.innerHTML = `
   <section class="st st-intro">
     <div class="st-introbar"><button type="button" class="st-skip press" data-action="st-go" data-step="year">Skip</button></div>
-    <div class="st-stage">${introArt()}</div>
+    <p class="st-caps" aria-live="polite">${caps.map((c, i) => `<span style="--i:${i}"${i === caps.length - 1 ? ' class="last"' : ''}>${esc(c)}</span>`).join('')}</p>
+    <div class="st-stage">${introArt(ex)}</div>
+    <p class="st-legend"><span data-k="open">Open now</span><span data-k="ring">A move or more away</span></p>
     <div class="st-introcopy">
       <h1>See what your levels open.</h1>
-      <button type="button" class="btn big press" data-action="st-go" data-step="year">Start ${icon('arrow')}</button>
+      <button type="button" class="btn big press" data-action="st-go" data-step="year">Try it with my levels ${icon('arrow')}</button>
       <p class="st-promise">${icon('check')} No account. Nothing leaves this device.</p>
     </div>
   </section>`;
