@@ -10,8 +10,8 @@
 // stylesheets, the entry module, every relative import inside the module graph,
 // and every data file at fetch time.
 //
-//   node pathways4/tools/release.mjs 3.0.1   set a new version everywhere
-//   node pathways4/tools/release.mjs         re-stamp the current one
+//   node pathways/tools/release.mjs 3.0.1   set a new version everywhere
+//   node pathways/tools/release.mjs         re-stamp the current one
 //
 // Then write the release notes into data/version.json. The version sweep fails
 // if the two disagree, or if a release has no notes, so neither can be skipped.

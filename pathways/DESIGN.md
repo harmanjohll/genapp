@@ -20,7 +20,7 @@ no ranking of destinations, no red, nothing leaves the device).
 
 ## Decisions
 
-1. `pathways4/` is a new folder; v3 is frozen.
+1. Built as `pathways4/`; since 2026-10-31 it is served from `pathways/` (see `PATHWAYS_VERSIONS.md` at the repo root). v1 to v3 are frozen in `legacy/`.
 2. One plan per year (`state.plans`), and one derived effective plan
    (`state.plan`, the latest year with entries) that the game and the adults'
    hub read unchanged.

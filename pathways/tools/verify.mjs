@@ -1,7 +1,7 @@
 // Node harness for the v3 sweeps: the same checks ?dev=1 runs in the
 // browser, runnable against data/ in a terminal.
 //
-//   node tools/verify.mjs            from pathways4/
+//   node tools/verify.mjs            from pathways/
 //
 // Exits nonzero on any failure. v3 adds three gates the v2 audit found
 // missing: undefined var() references in the stylesheets (v2 shipped a

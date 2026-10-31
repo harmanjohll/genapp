@@ -197,7 +197,7 @@ function teacherTab(api) {
       <button type="button" class="btn ghost press" data-action="ad-evidence">What this is built on</button>
     </p>
     <p class="small" style="max-width:65ch;margin-top:var(--s-4)">For group play, two to six students arguing over one device,
-      <a href="../pathways2/?mode=table">the tabletop variant lives in v2</a>.
+      <a href="../pathways-v2/?mode=table">the tabletop variant lives in v2</a>.
       It was not rebuilt for this version; the game there is complete and still works, so v3 simply points at it.</p>
   </section>`;
 }

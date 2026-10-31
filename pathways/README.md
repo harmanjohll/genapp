@@ -1,9 +1,15 @@
-# Paths v4
+# Paths (latest: v4)
+
+This folder is always the latest Paths, and the one to build on. Share it as
+**genapp/pathways.html**, which forwards here. Every version, what is
+critical in it and why it was superseded is logged in
+[`../PATHWAYS_VERSIONS.md`](../PATHWAYS_VERSIONS.md). v1, v2 and v3 are
+frozen in [`../legacy/`](../legacy/).
 
 A planning and conversation tool for Singapore students, parents and teachers
 under Full Subject Based Banding, first SEC cohort. Version 4 reorganises the
 app year by year: a page each for P6, Sec 1, Sec 2, Sec 3, Sec 4 and Sec 5,
-then After Sec. **v1, v2 and v3 are frozen** and stay as controls.
+then After Sec.
 
 Read `DESIGN.md` for the audit, the decisions and the verification gates.
 Research notes, with every source, are in `research/`.
@@ -34,7 +40,7 @@ Research notes, with every source, are in `research/`.
 ```bash
 # from the repository root
 python3 -m http.server 8000
-# then open http://localhost:8000/pathways4/
+# then open http://localhost:8000/pathways/
 ```
 
 | URL | What it does |
@@ -50,7 +56,7 @@ python3 -m http.server 8000
 Terminal sweeps, no browser needed:
 
 ```bash
-cd pathways4 && node tools/verify.mjs
+cd pathways && node tools/verify.mjs
 ```
 
 ## Before students see it
