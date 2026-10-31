@@ -78,3 +78,72 @@ export function envelopeArt(open) {
     ${open ? '' : '<circle cx="170" cy="160" r="4" fill="currentColor" stroke="none"/>'}
   </svg>`;
 }
+
+/* ---- v4: the guided start ---------------------------------------------------
+   Step illustrations: one small drawing per step, same single weight line,
+   one yellow accent. They say what the step is for before the words do. */
+
+const step = (inner) => `<svg class="step-art" viewBox="0 0 240 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+
+const STEPS = {
+  year: step(`
+    <path d="M20 70h200" stroke="var(--accent)" stroke-width="8"/>
+    <circle cx="36" cy="70" r="9" fill="var(--surface)"/><circle cx="84" cy="70" r="9" fill="var(--surface)"/>
+    <circle cx="156" cy="70" r="9" fill="var(--surface)"/><circle cx="204" cy="70" r="9" fill="var(--surface)"/>
+    <rect x="102" y="54" width="36" height="32" rx="12" fill="var(--accent)" stroke="var(--night)"/>
+    <path d="M112 66h16M112 74h16" stroke="var(--night)"/>
+    <path d="M120 40v-14M114 32l6-6 6 6"/>`),
+  levels: step(`
+    <rect x="30" y="22" width="120" height="30" rx="15"/><circle cx="135" cy="37" r="11" fill="var(--accent)" stroke="var(--night)"/>
+    <rect x="30" y="68" width="120" height="30" rx="15"/><circle cx="90" cy="83" r="11" fill="var(--surface)"/>
+    <path d="M170 37h40M170 83h24"/><circle cx="214" cy="37" r="6" fill="var(--line-open)" stroke="none"/>`),
+  reveal: step(`
+    <circle cx="40" cy="60" r="16" fill="var(--surface)"/>
+    <path d="M56 60c40 0 44-36 120-36" stroke="var(--line-open)" stroke-width="4"/>
+    <path d="M56 60h120" stroke="var(--line-open)" stroke-width="4"/>
+    <path d="M56 60c40 0 44 36 120 36" stroke-dasharray="6 7"/>
+    <circle cx="190" cy="24" r="10" fill="var(--line-open)" stroke="none"/><circle cx="190" cy="60" r="10" fill="var(--line-open)" stroke="none"/>
+    <circle cx="190" cy="96" r="10" fill="var(--surface)"/>`),
+  move: step(`
+    <rect x="24" y="28" width="132" height="64" rx="10" fill="var(--surface)"/>
+    <path d="M70 28v64" stroke-dasharray="5 6"/><path d="M36 52h22M36 66h14"/><path d="M84 50h56M84 64h40"/>
+    <path d="M172 34h44a10 10 0 0 1 10 10v22a10 10 0 0 1-10 10h-22l-14 12V76h-8a10 10 0 0 1-10-10V44a10 10 0 0 1 10-10z" fill="var(--accent)" stroke="var(--night)"/>`),
+  done: step(`
+    <circle cx="120" cy="60" r="36" fill="var(--accent)" stroke="var(--night)"/>
+    <path d="M102 60l12 12 24-26" stroke="var(--night)" stroke-width="5"/>
+    <path d="M30 60h40M170 60h40" stroke-dasharray="2 8"/>`),
+};
+
+export function stepArt(name) {
+  return STEPS[name] || '';
+}
+
+/**
+ * The wordless intro. Three switches feed one hub; every road out of it is
+ * drawn (none missing); three lamps are lit; one switch slides up a level and
+ * two more lamps light; none goes dark. Every element's resting style is its
+ * final frame, and the animation only plays the way there, so reduced motion
+ * (animation: none) shows the finished picture rather than an empty one.
+ */
+export function introArt() {
+  const lampY = (i) => 22 + i * 31;
+  const lit0 = [0, 2, 5];
+  const lit1 = [6, 7];
+  const lamps = Array.from({ length: 8 }, (_, i) => {
+    const cls = lit0.includes(i) ? 'lit0' : lit1.includes(i) ? 'lit1' : 'ring';
+    return `
+      <path class="in-wire w-${cls}" d="M172 130 C 222 130, 226 ${lampY(i)}, 290 ${lampY(i)}" pathLength="100" style="--i:${i}"/>
+      <circle class="in-lamp l-${cls}" cx="302" cy="${lampY(i)}" r="10" style="--i:${i}"/>`;
+  }).join('');
+  return `
+  <svg class="intro-art" viewBox="0 0 340 260" aria-hidden="true" fill="none" stroke-linecap="round">
+    <g class="in-sw" style="--i:0"><rect x="14" y="52" width="78" height="28" rx="14"/><circle class="in-th" cx="78" cy="66" r="10"/></g>
+    <g class="in-sw sw-move" style="--i:1"><rect x="14" y="116" width="78" height="28" rx="14"/><circle class="in-th" cx="78" cy="130" r="10"/></g>
+    <g class="in-sw" style="--i:2"><rect x="14" y="180" width="78" height="28" rx="14"/><circle class="in-th" cx="53" cy="194" r="10"/></g>
+    <path class="in-feed" d="M92 66 C 120 66, 120 130, 148 130" pathLength="100"/>
+    <path class="in-feed" d="M92 130 H 148" pathLength="100"/>
+    <path class="in-feed" d="M92 194 C 120 194, 120 130, 148 130" pathLength="100"/>
+    <circle class="in-hub" cx="160" cy="130" r="14"/>
+    ${lamps}
+  </svg>`;
+}

@@ -20,12 +20,12 @@ import { yearStrip } from '../ui/yearstrip.js?v=4.0.0';
 import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
 import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
 import { BOARD_WORD } from '../ui/board.js?v=4.0.0';
+import { DEST_CODE } from '../ui/signal.js?v=4.0.0';
 import { decorate } from '../ui/glossary.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
-export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
 const LINE = { 'open': 'var(--line-open)', 'within-reach': 'var(--line-within)', 'longer-route': 'var(--line-longer)', 'other-route': 'var(--line-other)' };
 

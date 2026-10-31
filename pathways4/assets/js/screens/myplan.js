@@ -17,6 +17,8 @@ import { openCount, mapPips } from '../ui/map.js?v=4.0.0';
 import { sayMove, roleWords } from '../ui/talk.js?v=4.0.0';
 import { ticketHtml } from '../ui/ticket.js?v=4.0.0';
 import { boardHtml } from '../ui/board.js?v=4.0.0';
+import { signalHtml } from '../ui/signal.js?v=4.0.0';
+import { t, lineMode } from '../ui/labels.js?v=4.0.0';
 import { STRIP } from '../ui/yearstrip.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
@@ -53,7 +55,7 @@ export default {
         <div class="pass-top">
           <div>
             <p class="pass-k">${st.yearSet ? `Now in ${esc(LABEL[st.year])}` : 'Year not set'} · for the next conversation</p>
-            <h1 id="pass-h">${esc(rw.plan)}</h1>
+            <h1 id="pass-h">${esc(st.role === 'student' ? t('plan') : rw.plan)}</h1>
           </div>
           <p class="pass-open"><b>${open}</b><span>of ${rows.length} open</span></p>
         </div>
@@ -80,14 +82,16 @@ export default {
 
       <div class="plangrid">
         <section class="destsec">
-          ${boardHtml(rows, { key: 'plan', title: e.yearId ? `From the ${LABEL[e.yearId]} levels` : 'Where it points' })}
+          ${lineMode()
+            ? boardHtml(rows, { key: 'plan', title: e.yearId ? t('answerFrom', LABEL[e.yearId]) : t('answer') })
+            : signalHtml(rows, { key: 'plan', caption: e.yearId ? t('answerFrom', LABEL[e.yearId]) : t('answer') })}
         </section>
 
         <section class="destsec">
-          <h2 class="advh">${st.role === 'student' ? 'Tickets I kept' : 'Tickets kept'}</h2>
+          <h2 class="advh">${esc(t('keptList'))}</h2>
           ${want ? `<p class="small">Want: <strong>${esc(want.want || want.id)}</strong></p>` : ''}
           ${st.actions.length ? `<ul class="keptlist">${st.actions.map((a, i) => `<li>${icon('ticket')}<span>${esc(a)}</span><button type="button" class="linkbtn small no-print" data-action="mp-drop" data-i="${i}">Remove</button></li>`).join('')}</ul>`
-            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">No tickets kept yet.</p><p class="small">Every piece of advice is a ticket with the words to say. Tap Keep and it lands here.</p></div>`}
+            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">Each move comes with the words to say to the right person.</p></div>`}
           <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="act">Pick three moves for this term</button></p>
         </section>
       </div>

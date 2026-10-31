@@ -168,7 +168,7 @@ export function advise({ yearId, plan, ctx, offer }) {
   out.pairs = [...pg.values()].slice(0, 3).map((g) => {
     const pool = [...g.pool.values()];
     const opens = g.opens.map((r) => r.railName);
-    const verbOpen = opens.length === 1 ? 'opens' : 'open';
+    const verbOpen = pluralName(opens) ? 'open' : 'opens';
     const line = g.n === 1
       ? `If ${sayName(g.first.a.s)} moves to ${g.first.a.to} and ${sayName(g.first.b.s)} moves to ${g.first.b.to}, ${listNames(opens)} ${verbOpen}. Neither move does that alone.`
       : `If any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level, ${listNames(opens)} ${verbOpen}. One alone does not.`;
@@ -243,9 +243,9 @@ function finish(group, timing, afterRows) {
       : `If you add ${names[0]} at ${m.to}`;
   }
   let result;
-  if (opens.length && nearer.length) result = `${listNames(opens)} ${opens.length === 1 ? 'opens' : 'open'}, and ${listNames(nearer)} ${nearer.length === 1 ? 'comes' : 'come'} closer.`;
-  else if (opens.length) result = `${listNames(opens)} ${opens.length === 1 ? 'opens' : 'open'}.`;
-  else result = `${listNames(nearer)} ${nearer.length === 1 ? 'comes' : 'come'} closer.`;
+  if (opens.length && nearer.length) result = `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}, and ${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer.`;
+  else if (opens.length) result = `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}.`;
+  else result = `${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer.`;
 
   // What each nearer destination still wants after this move, so "closer"
   // is never a dead end of a sentence.
@@ -270,8 +270,8 @@ function finish(group, timing, afterRows) {
     line: `${verb}, ${result}`,
     // Result first, condition second: the ticket leads with what opens.
     result: opens.length
-      ? `${listNames(opens)} ${opens.length === 1 ? 'opens' : 'open'}`
-      : `${listNames(nearer)} ${nearer.length === 1 ? 'comes' : 'come'} closer`,
+      ? `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}`
+      : `${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer`,
     alsoNearer: opens.length ? nearer : [],
     cond: verb.replace(/^If /, 'if '),
     // Only the reasons every subject in the group shares: Geography to G3
@@ -300,6 +300,11 @@ function shortLine(m, names, opens, nearer) {
     ? `opens ${opens.length > 2 ? `${opens.length} places` : listNames(opens)}`
     : `brings ${nearer.length > 2 ? `${nearer.length} places` : listNames(nearer)} closer`;
   return `${who} ${verb} ${what}.`;
+}
+
+/** A name that reads as plural on its own ("Arts institutions"). */
+function pluralName(names) {
+  return names.length > 1 || (names.length === 1 && /institutions$/.test(names[0]));
 }
 
 export function listNames(names, joiner = 'and') {

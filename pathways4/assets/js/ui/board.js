@@ -9,13 +9,10 @@
 // OTHER ROAD, and it is true: every destination keeps a road in.
 
 import { esc } from './dom.js?v=4.0.0';
+import { stateWord, t } from './labels.js?v=4.0.0';
 
-export const BOARD_WORD = {
-  'open': 'Open',
-  'within-reach': 'Nearly',
-  'longer-route': 'Longer',
-  'other-route': 'Other road',
-};
+// Board words follow the reader's vocabulary (plain by default).
+export const BOARD_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
 export const LINE = {
   'open': 'var(--line-open)',
   'within-reach': 'var(--line-within)',
@@ -37,9 +34,9 @@ export function boardHtml(rows, o = {}) {
   const next = {};
   const open = rows.filter((r) => r.state === 'open').length;
   const html = `
-  <div class="board${o.compact ? ' compact' : ''}" role="group" aria-label="${esc(o.title || 'Where these levels reach')}">
+  <div class="board${o.compact ? ' compact' : ''}" role="group" aria-label="${esc(o.title || t('answer'))}">
     <div class="board-top">
-      <span class="board-title">${esc(o.title || 'Departures')}</span>
+      <span class="board-title">${esc(o.title || t('answer'))}</span>
       <span class="board-count"><b>${open}</b>/${rows.length} open</span>
     </div>
     <ol class="board-rows">

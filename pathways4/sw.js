@@ -34,6 +34,8 @@ const SHELL = [
   v('./assets/js/ui/yearstrip.js'), v('./assets/js/ui/talk.js'),
   v('./assets/js/ui/pslepanel.js'), v('./assets/js/ui/targets.js'),
   v('./assets/js/ui/board.js'), v('./assets/js/ui/ticket.js'),
+  v('./assets/js/ui/signal.js'), v('./assets/js/ui/labels.js'),
+  v('./assets/js/screens/start.js'), v('./assets/js/screens/explore.js'),
   v('./assets/js/screens/home.js'), v('./assets/js/screens/year.js'),
   v('./assets/js/screens/after.js'), v('./assets/js/screens/myplan.js'),
   v('./assets/js/screens/play.js'), v('./assets/js/screens/act.js'),

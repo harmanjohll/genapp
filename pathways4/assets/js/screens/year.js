@@ -26,6 +26,16 @@ import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.0.0';
 import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.0.0';
 import { esc, onAction } from '../ui/dom.js?v=4.0.0';
 import { icon } from '../ui/icons.js?v=4.0.0';
+import { signalHtml } from '../ui/signal.js?v=4.0.0';
+import { t, lineMode } from '../ui/labels.js?v=4.0.0';
+
+// The answer, in the reader's chosen form: the live signal by default, the
+// departures board in Line mode. Same data, same order, same states.
+function answerHtml(rows, key, y) {
+  return lineMode()
+    ? boardHtml(rows, { key, title: t('answerFrom', LABEL[y]) })
+    : signalHtml(rows, { key, caption: t('answerFrom', LABEL[y]) });
+}
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
@@ -41,10 +51,10 @@ function yearId(api) {
 
 function tabsFor(y) {
   if (y === 'p6') return [['psle', 'PSLE'], ['year', 'This year']];
-  const t = [['levels', 'Levels'], ['advice', 'Advice']];
-  if (!isLower(y)) t.push(['targets', 'Targets']);
-  t.push(['year', 'This year']);
-  return t;
+  const tabs = [['levels', 'Levels'], ['advice', t('movesTab')]];
+  if (!isLower(y)) tabs.push(['targets', 'Targets']);
+  tabs.push(['year', 'This year']);
+  return tabs;
 }
 
 function meta(api, y) {
@@ -91,7 +101,7 @@ export default {
         <div class="sign-body">
           <p class="sign-meta">${esc(m.phase || '')} <span>Age ${age}</span>${stance ? ` <b data-here="${here}">${esc(stance)}</b>` : ''}</p>
           <h1><span class="sr-only">${esc(LABEL[y])}: </span>${esc(m.headline || LABEL[y])}</h1>
-          ${m.lede ? `<p class="sign-lede">${esc(m.lede)}</p>` : ''}
+          ${m.lede && (tab === 'year' || !Object.keys(plan).length) ? `<p class="sign-lede">${esc(m.lede)}</p>` : ''}
           ${!st.yearSet ? `<button type="button" class="btn ghost small press" data-action="yr-mine">This is my year</button>` : ''}
         </div>
       </header>
@@ -177,6 +187,7 @@ function levelsHtml(api, y, plan) {
         <button type="button" class="btn press" data-action="yr-psle">Use them</button>
       </div>` : ''}
 
+    <p class="lv-instr">${icon('spark')} Slide each subject to its level. ${lineMode() ? 'The board' : 'The lamps'} below show what opens.</p>
     <div class="lvkey">
       ${['G1', 'G2', 'G3'].map((l) => `<span class="lvkey-i" style="--lvc:var(--${l.toLowerCase()})"><b>${l}</b>${esc((li[l] && li[l].plain) || '')}</span>`).join('')}
     </div>
@@ -285,12 +296,12 @@ function adviceHtml(api, y, rows, adv) {
   }
 
   return `
-    <div class="mobile-board">${boardHtml(rows, { key: `adv-${y}`, title: `From these ${LABEL[y]} levels` })}</div>
+    <div class="mobile-board">${answerHtml(rows, `adv-${y}`, y)}</div>
     ${isLower(y) ? '<p class="small inferline">Read through the Sec 3 combination these levels usually lead to. An inference, not a promise: your school sets the real one.</p>' : ''}
     ${adv.start && adv.start.missing ? `<p class="callout small">${esc(adv.start.line)} <button type="button" class="linkbtn" data-action="yr-tab" data-tab="levels">Add them</button></p>` : ''}
 
     ${top ? `
-      <h2 class="advh">Your best move</h2>
+      <h2 class="advh">${esc(t('nextMove'))}</h2>
       ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
       <div class="allopen">
         <p class="allopen-n">8/8</p>
@@ -300,11 +311,11 @@ function adviceHtml(api, y, rows, adv) {
       </div>` : '')}
 
     ${rest.length ? `
-      <h2 class="advh">More moves</h2>
+      <h2 class="advh">${esc(t('moreMoves'))}</h2>
       <div class="ticketlist">${rest.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.pairs.length ? `
-      <h2 class="advh">Two moves together</h2>
+      <h2 class="advh">${esc(t('pairMoves'))}</h2>
       <p class="small advsub">These open something no single move does.</p>
       <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
@@ -341,7 +352,7 @@ function yearHtml(api, y) {
 function dockHtml(rows, adv) {
   const open = openCount(rows);
   const top = adv && adv.singles[0];
-  const k = lastLine || 'Open now';
+  const k = lastLine || t('answer');
   const line = top ? top.short : (open === rows.length ? 'Every destination is open.' : 'Slide a level and this answers.');
   return `
     <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} open. ${esc(lastLine)} ${esc(line)} Open the advice.">
@@ -354,7 +365,7 @@ function dockHtml(rows, adv) {
 function asideHtml(api, y, rows, adv) {
   const top = adv.singles[0];
   return `
-    ${boardHtml(rows, { key: `aside-${y}`, title: `From these ${LABEL[y]} levels` })}
+    ${answerHtml(rows, `aside-${y}`, y)}
     ${lastLine ? `<p class="aside-last">${esc(lastLine)}</p>` : ''}
     ${top ? `<div class="aside-ticket">${ticketHtml(top, { compact: true })}
       <button type="button" class="btn ghost small press" data-action="yr-tab" data-tab="advice">All advice ${icon('arrow')}</button></div>` : ''}`;
