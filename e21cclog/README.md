@@ -11,7 +11,15 @@ The E21CC Log lives at `genapp/e21cclog/` for students and `genapp/e21cclog/teac
 | `e21cclog/school/beatty.json` | Beatty's offering: subjects for Lower and Upper Sec with the levels of demand each is offered at, CCAs, NEXUS@BTY modules, and the year's fixed experiences. See **Changing the school offering** |
 | `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
 
-The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). The first time it opens, it copies in the newest older log once (v3, then v2, then the first version) and never writes back. Later versions change the data in place.
+The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). Later versions change the data in place. Nothing is copied from the older versions.
+
+**The fresh start (1 November 2026).** Before any students, the Log cleared every log made while testing, once per browser: the Log's store, the older v1, v2 and v3 logs, and the console's items. Only the Log's own keys are removed; other pages on the site keep theirs. `FRESH_START` in `assets/store.js` marks it. Changing that value would clear every student's log again, so it stays as it is.
+
+## Getting back in
+- **A refresh keeps the student in.** A log with a PIN stays open in its tab through a refresh. Closing the tab, or **Switch to another log** in Settings, locks it again.
+- **Welcome back.** When the device remembers a log with a PIN, the student sees "Welcome back" with their name and only the PIN to type. Other logs and starting a new one are quiet links below.
+- **One log per name.** Starting a log with a name already on the device offers to open that log instead. A second log with the same name takes a deliberate extra click ("This is someone else with the same name"), and the two are told apart by when each was started.
+- **An open log never shows the welcome page**, so it cannot be mistaken for signing in.
 
 ## Keeping the log safe
 Until Phase 2 puts each log in the student's OneDrive, the log lives in one browser, and a cleared history, a new device or Safari's tracking prevention can lose it. So the Log:
@@ -35,6 +43,7 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 | t11 | Version 3: Home, levels in the look's words, GROW wording, the (i), the aim, the settings alert |
 | t12 | The new home: forwarding, legacy mode, the lasting store, backups, installing, the offline copy, console backup |
 | t13 | Accessibility: axe, the keyboard, 200% zoom, forced colours |
+| t15 | Getting back in: the fresh start, a refresh with a PIN, the welcome back card, one log per name, switching logs |
 | t14 | Beatty's offering: subjects by Sec level with their levels of demand, CCAs and NEXUS@BTY, renaming older logs, the coach's level, the console |
 | `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
 

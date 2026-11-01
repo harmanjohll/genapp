@@ -137,7 +137,7 @@ function writeReport(out, head){
 }
 module.exports = {install, forced, note, report, writeReport};
 if (require.main === module) (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const started = Date.now(); let pages = 0;
   for (const look of LOOKS) for (const theme of THEMES) for (const colour of COLOURS) for (const [w, h] of VIEWS){
     const seed = JSON.parse(JSON.stringify(seed0)); const P = seed.profiles[seed.current]; Object.assign(P.prefs, {look, theme, colour}); P.drafts = {};

@@ -2,10 +2,9 @@
    Storage and transport seam for the E21CC Log.
 
    The Log lives at e21cclog/, an address that stays the same from version
-   to version, under one lasting key. On first open it copies the newest
-   earlier log in once (v3, then v2, then the first version) and never
-   writes back; the older versions are kept read only in e21cclog/legacy/.
-   Later versions change the data in place, through migrateDb on open.
+   to version, under one lasting key. Later versions change the data in
+   place, through migrateDb on open. The older versions are kept read only
+   in e21cclog/legacy/; nothing is copied from them.
 
    Phase 1 (now): LocalStore keeps the log in this browser; FormsTransport
    sends chosen items to an adult's Microsoft or Google Form; share and note
@@ -18,8 +17,19 @@
 'use strict';
 
 const DB_KEY = 'e21cclog';
-const DB_KEY_EARLIER = [['v3', 'cdl.logsv3'], ['v2', 'cdl.logsv2'], ['first', 'cdl.v2']];  // earlier versions' logs: copied in once, never written
-const DB_KEY_V1 = 'logs.v1';   // the Learning Log's key: read once, never written, kept as a rollback copy
+/* A fresh start, once per browser: before any students, every log made while testing goes, with the
+   older versions' logs and the teacher console's items. Only the Log's own keys are removed: other
+   pages on this site keep theirs. Changing FRESH_START would clear every log again, so it stays. */
+const FRESH_START = '2026-11-01';
+const FRESH_KEYS = ['e21cclog', 'e21cclog.teacher', 'cdl.logsv3', 'cdl.logsv2', 'cdl.v2', 'logs.v1', 'logs.teacher.logsv3', 'logs.teacher.logsv2', 'logs.teacher.v2', 'logs.teacher.v1'];
+(function freshStart(){
+  try{
+    if (localStorage.getItem('e21cclog.fresh') === FRESH_START) return;
+    for (const k of FRESH_KEYS) localStorage.removeItem(k);
+    localStorage.setItem('e21cclog.fresh', FRESH_START);
+    try{ sessionStorage.removeItem('e21cclog.open'); }catch{}
+  }catch{}
+})();
 
 const LocalStore = {
   guest:false,
@@ -28,18 +38,10 @@ const LocalStore = {
     try{
       const cur = localStorage.getItem(DB_KEY);
       if (cur) return migrateDb(JSON.parse(cur));
-      for (const [from, key] of DB_KEY_EARLIER){
-        const old = localStorage.getItem(key);
-        if (old){ const d = migrateDb(JSON.parse(old)); delete d.copiedFromFirst; delete d.copiedNoticed; d.copiedFrom = from; d.copiedAt = Date.now(); this.save(d); return d; }
-      }
-      const v1 = localStorage.getItem(DB_KEY_V1);
-      if (v1){ const d = migrateDb(JSON.parse(v1)); d.migratedFrom = DB_KEY_V1; d.migratedAt = Date.now(); this.save(d); return d; }
     }catch{}
     return migrateDb({});
   },
   save(db){ if (this.guest) return true; try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }catch{ return false; } },
-  hasV1(){ try{ return !!localStorage.getItem(DB_KEY_V1); }catch{ return false; } },
-  dropV1(){ try{ localStorage.removeItem(DB_KEY_V1); }catch{} },
   exportProfile(p){ return JSON.stringify({app:'cdl', schemaVersion:2, exported:new Date().toISOString(), profile:p}, null, 2); },
   /* Reads a v2 export, a Learning Log v1 export, or a bare profile. */
   parseImport(text){ const d = JSON.parse(text); const p = d && (d.profile || d); if (!p || !Array.isArray(p.entries)) throw new Error('not a log'); return migrateProfile(JSON.parse(JSON.stringify(p))); }

@@ -70,7 +70,7 @@ function probe(){
 }
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const report = new Map(); // kind -> Map(detail -> Set(where))
   const note = (where, list) => { for (const {kind, detail} of list){ if (!report.has(kind)) report.set(kind, new Map()); const m = report.get(kind); if (!m.has(detail)) m.set(detail, new Set()); m.get(detail).add(where); } };
   const seed = JSON.parse(SEED); const prof = seed.profiles[seed.current]; const ids = prof.entries.map(e => e.id);

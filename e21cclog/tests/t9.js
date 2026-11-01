@@ -14,7 +14,7 @@ const mk = (id, days, name) => ({id, kind:'grow', created:now - days * D, update
   links:['ct1.u1', 'ct1.u2', 'ct2.u1', 'ct2.u2'].map(sid => ({sid, quote:Q, at:now - days * D})), e21cc:{source:'builtin', stance:'competency', evidence:[{id:'critical', strength:'strong', quote:Q, why:''}], statements:[], suggested:[], tagged_not_shown:[]}});
 P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error' && !/400/.test(m.text())) errors.push(m.text()); });

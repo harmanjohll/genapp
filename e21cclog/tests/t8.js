@@ -11,7 +11,7 @@ const g2 = JSON.parse(JSON.stringify(g1)); g2.id = 'g2test'; g2.created = g1.cre
 P.entries.push(g2); P.drafts = {}; P.level = P.level || 2; P.experiences = P.experiences || {subjects:[], cca:'', others:[]}; if (!P.experiences.subjects.length && !P.experiences.cca) P.experiences.cca = 'Football';
 const SEED = JSON.stringify(seed);
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

@@ -9,7 +9,7 @@ const seed = JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf
 P.email = 'wei_ling_tan@students.edu.sg'; P.prefs.look = 'b';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   // a share link from the student: entries and a domain
   const sp = await (await browser.newContext()).newPage();
   await sp.goto(BASE + 'index.html#/'); await sp.evaluate(s => localStorage.setItem('e21cclog', s), JSON.stringify(seed)); await sp.reload(); await sleep(400); await sp.evaluate(() => location.hash = '#/'); await sleep(400);

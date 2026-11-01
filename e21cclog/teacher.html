@@ -446,14 +446,12 @@ $('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeDialo
 const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teacher', other:'Teacher'};
 
 /* ---------- store: this browser only ---------- */
-/* The console keeps one lasting store; the newest older console's (v3, v2, then the first) is copied in once and never written */
-const KEY = 'e21cclog.teacher', FIRST_KEYS = ['logs.teacher.logsv3', 'logs.teacher.logsv2', 'logs.teacher.v2'], OLD_KEY = 'logs.teacher.v1';
+/* The console keeps one lasting store in this browser; nothing is copied from older consoles */
+const KEY = 'e21cclog.teacher';
 function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}, confirms:{}}; }
 function load(){
   try{
-    const v3 = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v3) return Object.assign(blankStore(), v3);
-    for (const k of FIRST_KEYS){ const first = JSON.parse(localStorage.getItem(k) || 'null'); if (first){ const s = Object.assign(blankStore(), first); localStorage.setItem(KEY, JSON.stringify(s)); return s; } }
-    const v1 = JSON.parse(localStorage.getItem(OLD_KEY) || 'null'); const s = blankStore(); if (v1){ s.classes = v1.classes || {}; s.current = v1.current || null; } return s;
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); return saved ? Object.assign(blankStore(), saved) : blankStore();
   }catch{ return blankStore(); }
 }
 let store = load(); let cur = null; let openKey = null; let studentSel = null;
