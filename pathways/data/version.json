@@ -3,8 +3,20 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "4.3.0",
+  "version": "4.4.0",
   "releases": [
+    {
+      "version": "4.4.0",
+      "date": "2026-11-01",
+      "head": "Shorter, plainer words",
+      "changes": [
+        "Every planning screen is rewritten in plain words that speak to you directly.",
+        "Short is the new default. Each move leads with what changes, and the reasons and dates are one tap away.",
+        "Switch to Detailed in Settings, or on the last setup step, to see everything in full.",
+        "About 4,300 words of old text that never showed on screen are gone.",
+        "The P6 page no longer shows an internal research note."
+      ]
+    },
     {
       "version": "4.3.0",
       "date": "2026-11-01",

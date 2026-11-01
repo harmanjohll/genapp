@@ -194,9 +194,9 @@ export function moveTiming(yearId) {
     // review at "appropriate junctures", on results and a holistic look at
     // how the student copes. The student can ask; the school decides.
     case 'sec1':
-      return { when: 'at your school\'s review, often at the end of Sec 1', who: 'your subject teacher, then your form teacher', how: 'You can ask; the school decides, from your results and how you cope with the workload.' };
+      return { when: 'at your school\'s review, often at the end of Sec 1', who: 'your subject teacher, then your form teacher', how: 'You can ask. The school decides, based on your results and workload.' };
     case 'sec2':
-      return { when: 'at your school\'s review, before your Sec 3 subjects are set', who: 'your subject teacher first, then your form teacher or ECG counsellor', how: 'You can ask; the school decides, from your results and how you cope with the workload.' };
+      return { when: 'at your school\'s review, before your Sec 3 subjects are set', who: 'your subject teacher, then your form teacher or ECG counsellor', how: 'You can ask. The school decides, based on your results and workload.' };
     case 'sec3':
       return { when: 'at the end of Sec 3, and for some subjects during the year', who: 'your subject teacher and your year head' };
     case 'sec4':

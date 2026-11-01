@@ -11,23 +11,23 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.3.0';
-import { reach } from '../engine/reach.js?v=4.3.0';
-import { pulse } from '../engine/pulse.js?v=4.3.0';
-import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=4.3.0';
-import { advise } from '../engine/advice.js?v=4.3.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.3.0';
-import { openCount } from '../ui/map.js?v=4.3.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.3.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.3.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.3.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.3.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.3.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.3.0';
-import { esc, onAction } from '../ui/dom.js?v=4.3.0';
-import { icon } from '../ui/icons.js?v=4.3.0';
-import { signalHtml } from '../ui/signal.js?v=4.3.0';
-import { t, lineMode, openWord } from '../ui/labels.js?v=4.3.0';
+} from '../state.js?v=4.4.0';
+import { reach } from '../engine/reach.js?v=4.4.0';
+import { pulse } from '../engine/pulse.js?v=4.4.0';
+import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=4.4.0';
+import { advise } from '../engine/advice.js?v=4.4.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.4.0';
+import { openCount } from '../ui/map.js?v=4.4.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=4.4.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.4.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.4.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.4.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.4.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.4.0';
+import { esc, onAction } from '../ui/dom.js?v=4.4.0';
+import { icon } from '../ui/icons.js?v=4.4.0';
+import { signalHtml } from '../ui/signal.js?v=4.4.0';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=4.4.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
@@ -163,7 +163,7 @@ function moreHtml(api, y, plan) {
   return `
     <details class="moresubj"${held ? ' open' : ''}>
       <summary>More subjects (other schools) <span class="small">${rest.length} not offered at ${esc(offer.short || 'this school')}${held ? `, ${held} set` : ''}</span></summary>
-      <p class="small">For a transfer, or a subject taken at another school. National levels.</p>
+      <p class="small">For a transfer or another school. These show national levels.</p>
       <div class="subjgrid">${rest.map((s) => subjTile(s, plan)).join('')}</div>
     </details>`;
 }
@@ -197,8 +197,8 @@ function levelsHtml(api, y, plan) {
         <div>
           <p class="carry-h">Start from your ${esc(LABEL[carry.from])} levels?</p>
           <p class="small">${esc(isLower(carry.from) && !isLower(y)
-            ? 'Science becomes one science option, and your strongest Humanities becomes the pair. Change anything after.'
-            : 'Everything comes across as it was. Change anything after.')}</p>
+            ? 'Science becomes one Sec 3 science. Your strongest Humanities becomes the Humanities pair. You can change anything after.'
+            : 'Every level copies across. You can change anything after.')}</p>
         </div>
         <button type="button" class="btn press" data-action="yr-carry">Copy ${esc(LABEL[carry.from])} levels into ${esc(LABEL[y])}</button>
       </div>` : ''}
@@ -209,7 +209,7 @@ function levelsHtml(api, y, plan) {
         <button type="button" class="btn press" data-action="yr-psle">Use them</button>
       </div>` : ''}
 
-    <p class="lv-instr">${icon('spark')} Slide each subject to its level. ${lineMode() ? 'The board' : 'The lamps'} below show what opens.</p>
+    <p class="lv-instr">${icon('spark')} Slide each subject to its level. ${lineMode() ? 'The board' : 'The chart'} shows what opens.</p>
     <div class="lvkey">
       ${['G1', 'G2', 'G3'].map((l) => `<span class="lvkey-i" style="--lvc:var(--${l.toLowerCase()})"><b>${l}</b>${esc((li[l] && li[l].plain) || '')}</span>`).join('')}
     </div>
@@ -241,7 +241,7 @@ function levelsHtml(api, y, plan) {
     <div class="notes">
       ${j.up ? `<p>${icon('calendar')} ${esc(j.up)}</p>` : ''}
       ${j.note ? `<p>${esc(j.note)}</p>` : ''}
-      <p>${offer ? `Showing the subjects and levels ${esc(offer.school)} offers. Every other school's subjects are under More subjects, or in Settings.` : esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
+      <p>${offer ? `These are ${esc(offer.school)}'s subjects and levels. Other schools' subjects are under More subjects.` : esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
     </div>`;
 }
 
@@ -256,7 +256,7 @@ function nextGroupBtn(groups, active) {
 
 function loadNote(api, n, g3) {
   const l = (api.data.copy && api.data.copy.load) || {};
-  if (n === 0) return 'Slide in the subjects you take, or plan to.';
+  if (n === 0) return 'Add the subjects you take, or plan to take.';
   if (n < 5) return l.early || '';
   if (n >= 9) return l.heavy || '';
   if (g3 >= 5) return l.solid || '';
@@ -324,7 +324,7 @@ function adviceHtml(api, y, rows, adv) {
 
   return `
     <div class="mobile-board">${answerHtml(rows, `adv-${y}`, y)}</div>
-    ${isLower(y) ? '<p class="small inferline">Admission in 2028 reads your SEC results, not your Sec 1 and 2 levels. These levels matter because they shape the subjects and levels you take in Sec 3. On track means your levels now fit what each place will ask.</p>' : ''}
+    ${isLower(y) ? '<p class="small inferline">Admission reads your SEC results. Your Sec 1 and 2 levels shape the subjects you take in Sec 3.</p>' : ''}
     ${adv.start && adv.start.missing ? `<p class="callout small">${esc(adv.start.line)} <button type="button" class="linkbtn" data-action="yr-tab" data-tab="levels">Add them</button></p>` : ''}
 
     ${top ? `
@@ -332,23 +332,23 @@ function adviceHtml(api, y, rows, adv) {
       ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
       <div class="allopen">
         <p class="allopen-n">8/8</p>
-        <div><p class="allopen-h">${isLower(y) ? 'Every place is on track from here.' : 'Every destination is open from here.'}</p>
-        <p class="small">The question now is not which door but which two years you want. Play one forward to test it.</p>
+        <div><p class="allopen-h">${isLower(y) ? 'All 8 places are on track.' : 'All 8 places are open.'}</p>
+        <p class="small">Next, decide which one you want. You can try one in Play.</p>
         <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>
       </div>` : '')}
 
     ${rest.length ? `
       <h2 class="advh">${esc(t('moreMoves'))}</h2>
-      <div class="ticketlist">${rest.map((m) => ticketHtml(m)).join('')}</div>` : ''}
+      <div class="ticketlist">${(isShort() ? rest.slice(0, 3) : rest).map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.pairs.length ? `
       <h2 class="advh">${esc(t('pairMoves'))}</h2>
-      <p class="small advsub">${isLower(y) ? 'These put a place on track that no single move does.' : 'These open something no single move does.'}</p>
-      <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
+      <p class="small advsub">${isLower(y) ? 'Together, these put more places on track.' : 'Together, these open more places.'}</p>
+      <div class="ticketlist">${(isShort() ? adv.pairs.slice(0, 1) : adv.pairs).map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.holds.length ? `
       <h2 class="advh">Levels to keep</h2>
-      <p class="small advsub">These levels are what keep places ${isLower(y) ? 'on track' : 'open'}. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
+      ${isShort() ? '' : `<p class="small advsub">These levels keep places ${isLower(y) ? 'on track' : 'open'}. If someone suggests moving one down, ask what it changes first.</p>`}
       <div class="holdlist">${adv.holds.map((h) => holdHtml(h)).join('')}</div>` : ''}`;
 }
 
@@ -364,14 +364,19 @@ function yearHtml(api, y) {
       <ol class="timeline">
         ${m.happens.map((h) => `<li><span class="tl-when">${esc(h.when || '')}</span><span class="tl-what">${esc(h.what)}${h.status === 'provisional' ? ' <span class="src-chip provisional">varies by school</span>' : ''}</span></li>`).join('')}
       </ol>` : ''}
-    ${(m.decisions || []).length ? `
-      <h2 class="advh">Decisions in ${esc(LABEL[y])}</h2>
-      <div class="decgrid">${m.decisions.map((d, i) => `<div class="dec"><span class="dec-n">${i + 1}</span><p>${esc(d.text || d)}</p></div>`).join('')}</div>` : ''}
-    ${talk.length ? `
-      <h2 class="advh">${st.role === 'parent' ? 'Ask at home' : st.role === 'teacher' ? 'Ask in the conversation' : 'Worth asking'}</h2>
+    ${(m.decisions || []).length ? foldOr(`Decisions in ${LABEL[y]}`, `
+      <div class="decgrid">${m.decisions.map((d, i) => `<div class="dec"><span class="dec-n">${i + 1}</span><p>${esc(d.text || d)}</p></div>`).join('')}</div>`) : ''}
+    ${talk.length ? foldOr(st.role === 'parent' ? 'Questions to ask at home' : st.role === 'teacher' ? 'Questions for the conversation' : 'Questions to ask yourself', `
       <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
-      <p class="small">The ${esc(st.role)} version. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>` : ''}
+      <p class="small">Written for a ${esc(st.role)}. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>`) : ''}
     ${m.source ? `<p class="srcline">${esc(m.source)}</p>` : ''}`;
+}
+
+/** A section: a heading and its body in Detailed wording, a fold in Short. */
+export function foldOr(title, body) {
+  return isShort()
+    ? `<details class="fold"><summary>${esc(title)}</summary>${body}</details>`
+    : `<h2 class="advh">${esc(title)}</h2>${body}`;
 }
 
 /* ---- the answer, kept in view ----------------------------------------------- */
@@ -381,7 +386,7 @@ function dockHtml(rows, adv) {
   const top = adv && adv.singles[0];
   const k = lastLine || t('answer');
   const lower = openWord(rows) === 'on track';
-  const line = top ? top.short : (open === rows.length ? (lower ? 'Every place is on track.' : 'Every destination is open.') : 'Slide a level and this answers.');
+  const line = top ? top.short : (open === rows.length ? (lower ? 'All 8 places are on track.' : 'All 8 places are open.') : 'Set a level to see what changes.');
   return `
     <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(lastLine)} ${esc(line)} Open the advice.">
       <span class="dock-num"><b>${open}</b>/${rows.length}</span>

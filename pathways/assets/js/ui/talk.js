@@ -24,7 +24,7 @@ export function sayMove(m, role) {
   if (m.kind === 'pair') {
     const names = m.moves.map((x) => x.name).join(' and ');
     if (role === 'parent') return `Ask your child: "Of ${names}, which one feels closest to the next level? What would help?"`;
-    if (role === 'teacher') return `Ask the student: "Two moves together open more here. Which of ${names} would you try first?"`;
+    if (role === 'teacher') return `Ask the student: "Which of ${names} would you try first?"`;
     return `Ask your form teacher: "If I worked on ${names}, which one is more realistic to move first?"`;
   }
   if (m.kind === 'hold') {

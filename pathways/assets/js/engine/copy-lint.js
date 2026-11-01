@@ -324,6 +324,10 @@ const ADDRESSES_READER = [
   'parent.', 'copy.parentLive.', 'copy.teacher.', 'copy.table.', 'copy.chrome.',
   'copy.footerDoors.', 'copy.landing.', 'glossary.', 'evidence.', 'work.', 'money.',
   'schools.', 'stories.', 'lifelong.ribbon.', 'possibilities.',
+  // The planning screens (v4.4) speak to the student as "you", as the screens
+  // around them do. The game keeps its first person story voice.
+  'copy.pulse.', 'copy.load.', 'copy.ask.', 'subjects.', 'pathways.', 'progressions.',
+  'offer.', 'years.', 'psle.', 'grades.',
   // Release notes are the app reporting on itself, and the older ones quote copy
   // that has since been rewritten. Holding them to the student's voice would mean
   // editing the history of the app to match its present.

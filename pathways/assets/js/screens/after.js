@@ -10,24 +10,24 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=4.3.0';
-import { reach } from '../engine/reach.js?v=4.3.0';
-import { effective } from '../engine/years.js?v=4.3.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=4.3.0';
-import { report } from '../engine/grades.js?v=4.3.0';
-import { openCount } from '../ui/map.js?v=4.3.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.3.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.3.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.3.0';
-import { boardWord } from '../ui/board.js?v=4.3.0';
-import { DEST_CODE } from '../ui/signal.js?v=4.3.0';
-import { t } from '../ui/labels.js?v=4.3.0';
-import { decorate } from '../ui/glossary.js?v=4.3.0';
-import { esc, onAction } from '../ui/dom.js?v=4.3.0';
-import { icon } from '../ui/icons.js?v=4.3.0';
+import { getState, setFamilies } from '../state.js?v=4.4.0';
+import { reach } from '../engine/reach.js?v=4.4.0';
+import { effective } from '../engine/years.js?v=4.4.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=4.4.0';
+import { report } from '../engine/grades.js?v=4.4.0';
+import { openCount } from '../ui/map.js?v=4.4.0';
+import { yearStrip } from '../ui/yearstrip.js?v=4.4.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.4.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.4.0';
+import { boardWord } from '../ui/board.js?v=4.4.0';
+import { DEST_CODE } from '../ui/signal.js?v=4.4.0';
+import { t, isShort, stateWord } from '../ui/labels.js?v=4.4.0';
+import { decorate } from '../ui/glossary.js?v=4.4.0';
+import { esc, onAction } from '../ui/dom.js?v=4.4.0';
+import { icon } from '../ui/icons.js?v=4.4.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
-const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
+const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
 const LINE = { 'open': 'var(--line-open)', 'within-reach': 'var(--line-within)', 'longer-route': 'var(--line-longer)', 'other-route': 'var(--line-other)' };
 
 function rowsNow(api) {
@@ -37,9 +37,16 @@ function rowsNow(api) {
 
 function basisLine(api) {
   const e = effective(getState().plans, api.ctx().subjects);
-  if (!e.yearId) return 'No levels set yet, so every destination shows what it asks from scratch. Set your year\'s levels to make this yours.';
-  if (e.yearId === 'sec1' || e.yearId === 'sec2') return `Read from your ${YEAR_LABEL[e.yearId]} levels. Admission in 2028 reads your SEC results; these levels shape the subjects you take in Sec 3.`;
-  return `Read from your ${YEAR_LABEL[e.yearId]} levels.`;
+  if (!e.yearId) return 'No levels set yet. Set your levels to see where you stand.';
+  if (e.yearId === 'sec1' || e.yearId === 'sec2') return `From your ${YEAR_LABEL[e.yearId]} levels. Admission reads your SEC results; these levels shape your Sec 3 subjects.`;
+  return `From your ${YEAR_LABEL[e.yearId]} levels.`;
+}
+
+/** A destination section: open in Detailed wording, one tap away in Short. */
+function destSec(title, body) {
+  return isShort()
+    ? `<details class="fold destsec"><summary>${esc(title)}</summary>${body}</details>`
+    : `<section class="destsec"><h2 class="advh">${esc(title)}</h2>${body}</section>`;
 }
 
 function perfHtml(r) {
@@ -73,7 +80,7 @@ export const after = {
         <div class="sign-body">
           <p class="sign-meta">After Sec <span>Age 16 to 17</span></p>
           <h1>${esc(t('afterTitle'))}</h1>
-          <p class="sign-lede">Every one keeps a road in, whatever your subjects. Levels change how direct the road is, never whether one exists.</p>
+          <p class="sign-lede">Your levels decide how many moves each place needs.</p>
         </div>
       </header>
       <p class="basis">${icon('train')} ${esc(basisLine(api))} <b>${open} of ${rows.length}</b> open on that plan.</p>
@@ -90,7 +97,7 @@ export const after = {
             </span>
           </button>`).join('')}
       </div>
-      <p class="srcline">Listed alphabetically by short name, so the order means nothing. Figures checked ${esc(niceDate((api.data.pathways._meta || {}).accessed))}.</p>
+      <p class="srcline">Listed in alphabetical order. Figures checked ${esc(niceDate((api.data.pathways._meta || {}).accessed))}.</p>
     </div>`;
   },
 };
@@ -117,6 +124,8 @@ export const dest = {
       moves = a.singles.filter((m) => m.opens.includes(r.railName) || m.nearer.includes(r.railName)).slice(0, 3);
       const pairs = a.pairs.filter((p) => p.opens.includes(r.railName)).slice(0, 1);
       moves = moves.concat(pairs);
+      // Short wording: the one move that helps most; Detailed lists them all.
+      if (isShort()) moves = moves.slice(0, 1);
     }
 
     // Scores, if targets are set.
@@ -147,25 +156,22 @@ export const dest = {
 
       ${moves.length ? `
       <section class="destsec">
-        <h2 class="advh">${r.state === 'open' ? (r.lens === 'lower' ? 'Already on track. These would help too' : 'Already open. These would help too') : 'The moves that bring it closer'}</h2>
+        <h2 class="advh">${r.state === 'open' ? (r.lens === 'lower' ? 'Already on track. These moves also help' : 'Already open. These moves also help') : 'Moves that bring it closer'}</h2>
         <div class="ticketlist">${moves.map((m, i) => ticketHtml(m, { hero: i === 0 && r.state !== 'open' })).join('')}</div>
-      </section>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on your year page and this shows the exact moves that bring ${esc(r.railName)} closer.</p>` : '')}
+      </section>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on the Subjects page to see the moves that bring ${esc(r.railName)} closer.</p>` : '')}
 
       <section class="destsec">
         <h2 class="advh">${r.lens === 'lower' ? `What it asks of your ${esc(YEAR_LABEL[e.yearId] || 'Sec 1 and 2')} levels` : 'What it asks'}</h2>
         <ul class="asklist">
           ${(r.met || []).concat(r.gap || []).map((x) => `<li data-met="${x.satisfied}">${x.satisfied ? icon('check') : '<i class="dotq" aria-hidden="true"></i>'}<span>${decorate(esc(x.label))}${x.soft ? ' <span class="small">(usually)</span>' : ''}${x.status === 'provisional' ? ' <span class="src-chip provisional">to confirm</span>' : ''}</span><span class="small">${x.satisfied ? 'you have this' : 'not yet'}</span></li>`).join('')}
         </ul>
-        ${r.lens === 'lower' ? (r.horizon ? `<p class="small">${decorate(esc(r.horizon))}</p>` : '') : perfHtml(r)}
+        ${r.lens === 'lower' ? (r.horizon ? `<p class="small">${decorate(esc(r.horizon))}</p>` : '') : (isShort() ? '' : perfHtml(r))}
       </section>
-      ${r.lens === 'lower' ? `
-      <section class="destsec">
-        <h2 class="advh">In the SEC, at the end of Sec 4</h2>
+      ${r.lens === 'lower' ? destSec('In the SEC, at the end of Sec 4', `
         <ul class="asklist">
           ${(d.structural || []).map((x) => `<li data-met="false"><i class="dotq" aria-hidden="true"></i><span>${decorate(esc(x.label))}${x.soft ? ' <span class="small">(usually)</span>' : ''}${x.status === 'provisional' ? ' <span class="src-chip provisional">to confirm</span>' : ''}</span></li>`).join('')}
         </ul>
-        ${perfHtml(r)}
-      </section>` : ''}
+        ${perfHtml(r)}`) : (isShort() && (r.performance || []).length ? destSec('Scores it reads', perfHtml(r)) : '')}
 
       ${scores.length ? `
       <section class="destsec">
@@ -178,40 +184,30 @@ export const dest = {
         <p class="small"><button type="button" class="linkbtn" data-action="go" data-s="year" data-y="${esc(e.yearId && e.yearId !== 'sec1' && e.yearId !== 'sec2' ? e.yearId : 'sec3')}" data-tab="targets">Change targets</button></p>
       </section>` : ''}
 
-      ${fams.length ? `
-      <section class="destsec">
-        <h2 class="advh">Course families</h2>
-        ${st.families ? `
-          <p class="small">What different groups of courses ask, and whether your levels already carry it. Provisional: 2028 lists arrive mid 2027.</p>
+      ${fams.length ? destSec('Course families', st.families ? `
+          <p class="small">What each group of courses asks for, and whether your levels meet it. To be confirmed: the 2028 lists arrive in mid 2027.</p>
           <div class="famlist">${fams.map((f) => famHtml(f, c)).join('')}</div>
           <p class="small"><button type="button" class="linkbtn" data-action="dt-fam" data-on="0">Hide course families</button></p>` : `
-          <p class="small">Each group of courses asks for different subjects. Off by default, because most students do not need this until Sec 3.</p>
-          <button type="button" class="btn ghost small press" data-action="dt-fam" data-on="1">Show course families</button>`}
-      </section>` : ''}
+          <p class="small">Each group of courses asks for different subjects. Most students need this from Sec 3.</p>
+          <button type="button" class="btn ghost small press" data-action="dt-fam" data-on="1">Show course families</button>`) : ''}
 
-      ${routes.length ? `
-      <section class="destsec">
-        <h2 class="advh">Other roads to it</h2>
-        <ul class="dest-plain">${routes.map((x) => `<li><strong>${esc(x.label)}</strong>${x.years ? ` · ${esc(String(x.years))} years` : ''}${x.honest ? `. ${esc(x.honest)}` : ''}</li>`).join('')}</ul>
-      </section>` : ''}
+      ${routes.length ? destSec('Other routes in', `
+        <ul class="dest-plain">${routes.map((x) => `<li><strong>${esc(x.label)}</strong>${x.years ? ` · ${esc(String(x.years))} years` : ''}${x.honest ? `. ${esc(x.honest)}` : ''}</li>`).join('')}</ul>`) : ''}
 
-      ${costs.length ? `
-      <section class="destsec">
-        <h2 class="advh">What it costs</h2>
+      ${costs.length ? destSec('What it costs', `
         ${costs.map((m) => `<p><strong>${esc(m.fee)}</strong> <span class="small">${esc(m.label)}. ${esc(m.misc || '')}</span></p>`).join('')}
-        <p class="small"><button type="button" class="linkbtn" data-action="go" data-s="money">Costs and the help that exists</button></p>
-      </section>` : ''}
+        <p class="small"><button type="button" class="linkbtn" data-action="go" data-s="money">Fees and financial help</button></p>`) : ''}
 
       <section class="destsec">
         <div class="saybox">
           <p class="caps">${icon('talk')} ${esc(rw.say)}</p>
           <p class="sayline">${esc(st.role === 'parent'
-            ? `Ask your child: "What do you imagine a normal day at ${r.railName} looks like?"`
+            ? `Ask your child: "What do you think a normal day at ${r.railName} is like?"`
             : st.role === 'teacher'
               ? `Ask the student: "Have you seen ${r.railName} in person, at an open house or a course preview?"`
-              : `Ask your ECG counsellor: "What is ${r.railName} actually like, day to day?"`)}</p>
+              : `Ask your ECG counsellor: "What is a normal day at ${r.railName} like?"`)}</p>
         </div>
-        <p class="small srcline">${r.dataStatus === 'provisional' ? 'Some figures are provisional. ' : ''}Checked ${esc(niceDate(r.asOf))}. Confirm anything that matters with your ECG counsellor and at moe.gov.sg.</p>
+        <p class="small srcline">${r.dataStatus === 'provisional' ? 'Some figures are provisional. ' : ''}Checked ${esc(niceDate(r.asOf))}. Check important details with your ECG counsellor and at moe.gov.sg.</p>
       </section>
     </div>`;
 

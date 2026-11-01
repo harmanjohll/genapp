@@ -7,7 +7,7 @@
 //
 // Focus is trapped while open and returned to whatever opened it.
 
-import { el, onAction } from './dom.js?v=4.3.0';
+import { el, onAction } from './dom.js?v=4.4.0';
 
 let dlg = null;
 let body = null;

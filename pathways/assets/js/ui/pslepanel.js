@@ -5,11 +5,12 @@
 // one obvious next step is the last thing on the panel: carry these levels
 // into Sec 1.
 
-import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.3.0';
-import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=4.3.0';
-import { esc, onAction } from './dom.js?v=4.3.0';
-import { icon } from './icons.js?v=4.3.0';
-import { listNames } from '../engine/advice.js?v=4.3.0';
+import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.4.0';
+import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=4.4.0';
+import { esc, onAction } from './dom.js?v=4.4.0';
+import { icon } from './icons.js?v=4.4.0';
+import { listNames } from '../engine/advice.js?v=4.4.0';
+import { isShort } from './labels.js?v=4.4.0';
 
 const SUBJ_PLAN_ID = { el: 'el', mtl: 'mtl', maths: 'maths', science: 'ls_science' };
 
@@ -19,7 +20,7 @@ export function psleHtml(api) {
   const psle = st.psle || {};
   const subs = rules.subjects || [];
   return `
-    <p class="small">Enter the Achievement Levels you expect, hope for, or got. This is for planning: nothing here is a prediction, and nothing leaves this device.</p>
+    <p class="small">Enter the Achievement Levels you expect or got.</p>
     <div class="alrows">
       ${subs.map((s) => alRow(s, psle[s.id] || {})).join('')}
       ${hmtlRow(psle.hmtl || {})}
@@ -31,7 +32,7 @@ export function psleHtml(api) {
         ${(rules.standardBands || []).map((b) => `<tr><td>${b.al}</td><td>${esc(b.marks)}</td></tr>`).join('')}
       </tbody></table>
       <p class="small">Foundation subjects: ${(rules.foundationBands || []).map((b) => `${b.grade} (${esc(b.marks)}) counts as AL ${b.al}`).join('; ')}.</p>
-      <p class="small">${esc((rules._meta && rules._meta.notes) || '')}</p>
+      <p class="small">Based on MOE information, October 2026. Check moe.gov.sg for changes.</p>
     </details>`;
 }
 
@@ -70,7 +71,7 @@ function choicesHtml(api, psle, rules, names) {
   if (!ch) return '';
   const said = (list, one, many) => `${listNames(list)} ${list.length > 1 ? many : one}`;
   const effect = (pk) => {
-    if (!pk.up) return 'A steadier start. Levels can move up at the school\'s reviews.';
+    if (!pk.up) return 'A steadier start. Levels can move up at school reviews.';
     if (pk.opens.length) return `${said(pk.opens, 'is on track', 'are on track')}${pk.nearer.length ? `, and ${said(pk.nearer, 'comes closer', 'come closer')}` : ''}.`;
     if (pk.nearer.length) return `${said(pk.nearer, 'comes closer', 'come closer')}.`;
     return 'No place changes yet.';
@@ -82,7 +83,7 @@ function choicesHtml(api, psle, rules, names) {
   };
   return `
     <h2 class="advh">What these choices put on track</h2>
-    <p class="small">Read the same way as your Sec 1 page: on track means these levels fit what each place will ask in the SEC.</p>
+    ${isShort() ? '' : '<p class="small">On track means these levels fit what each place asks in the SEC.</p>'}
     <p class="p6-now"><b>${ch.onTrack}</b> of ${ch.total} on track with the levels above.</p>
     ${ch.groups.length ? `
     <ul class="p6c">
@@ -113,7 +114,7 @@ function resultHtml(api) {
   return `
     <div class="psle-result arrive">
       <div class="scorepass">
-        <div class="sp-score"><span class="sp-k">PSLE Score</span><b>${sc.score}</b><span class="sp-scale">4 strongest, 30 widest</span></div>
+        <div class="sp-score"><span class="sp-k">PSLE Score</span><b>${sc.score}</b><span class="sp-scale">From 4 (best) to 30</span></div>
         <div class="sp-group">${post.groups.length
           ? `<span class="sp-k">Posting Group</span><b>${post.groups.join(' or ')}</b><span class="sp-scale">${post.groups.length > 1 ? 'You choose one' : `Most subjects start at ${esc(start.base)}`}</span>`
           : '<span class="sp-k">Posting Group</span><b>·</b><span class="sp-scale">See below</span>'}</div>
@@ -140,15 +141,15 @@ function resultHtml(api) {
         </div>
         ${choicesHtml(api, psle, rules, names)}
         ${hmtlEligible(psle) ? `<p class="callout small">${icon('spark')} ${esc((rules.hmtl && rules.hmtl.text) || '')}</p>` : ''}
-        <p class="small">${esc((rules.upgrades && rules.upgrades.note) || '')}</p>
+        ${isShort() ? '' : `<p class="small">${esc((rules.upgrades && rules.upgrades.note) || '')}</p>`}
         ${school ? `
           <div class="schoolrange">
             <p class="sr-h">${esc(school.name)} in the ${esc(String(school.year))} posting</p>
             <div class="sr-cells">${school.ranges.map((r) => `<span><small>Group ${r.group}</small><b>${esc(r.range.replace(' to ', '\u2009to\u2009'))}</b></span>`).join('')}</div>
-            <p class="small">${esc(school.note)}</p>
+            ${isShort() ? '' : `<p class="small">${esc(school.note)}</p>`}
           </div>` : ''}
         <div class="nextcard">
-          <p><strong>Use these as your Sec 1 levels.</strong> Your Sec 1 page then shows what they keep on track and your best moves.</p>
+          <p><strong>Use these as your Sec 1 levels.</strong> Your Sec 1 page then shows your best moves.</p>
           <button type="button" class="btn press" data-action="ps-use">Use as my Sec 1 levels ${icon('arrow')}</button>
         </div>` : `
         <p class="callout">${esc(post.note)}</p>`}

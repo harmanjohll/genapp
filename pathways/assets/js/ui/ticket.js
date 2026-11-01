@@ -5,11 +5,11 @@
 // say to a real person. "Keep" puts the words on My plan, and the ticket is
 // punched: a small, honest acknowledgement that the student did something.
 
-import { getState } from '../state.js?v=4.3.0';
-import { sayMove, roleWords } from './talk.js?v=4.3.0';
-import { esc } from './dom.js?v=4.3.0';
-import { icon } from './icons.js?v=4.3.0';
-import { t } from './labels.js?v=4.3.0';
+import { getState } from '../state.js?v=4.4.0';
+import { sayMove, roleWords } from './talk.js?v=4.4.0';
+import { esc } from './dom.js?v=4.4.0';
+import { icon } from './icons.js?v=4.4.0';
+import { t, isShort } from './labels.js?v=4.4.0';
 
 const LV_COLOR = { G1: 'var(--g1)', G2: 'var(--g2)', G3: 'var(--g3)' };
 
@@ -26,6 +26,14 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
   const opts = m.kind === 'pair' ? m.moves.map((x) => x.name) : (m.any ? m.names : []);
   const opened = m.opens || [];
   const nearer = m.kind === 'pair' ? [] : (m.alsoNearer && m.alsoNearer.length ? m.alsoNearer : (opened.length ? [] : m.nearer || []));
+  const sayHtml = `
+      <div class="say">
+        <span class="say-who">${icon('talk')} ${esc(rw.say)}</span>
+        <p class="say-line">${esc(say)}</p>
+      </div>`;
+  // Short wording: only the lead card shows its words to say up front; the
+  // others keep them with the why and when, one tap away.
+  const sayInFold = isShort() && !hero && !simple && !compact;
 
   return `
   <article class="ticket${hero ? ' tk-hero' : ''}${compact ? ' compact' : ''}${kept ? ' kept' : ''}" style="--tc:${LV_COLOR[to] || 'var(--accent)'}">
@@ -41,15 +49,9 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
       ${!compact && nearer.length && opened.length ? `<p class="tk-dests">
         ${nearer.map((d) => `<span class="dchip" data-state="near">${esc(d)} closer</span>`).join('')}
       </p>` : ''}
-      ${!compact && !simple && m.because && m.because.length ? `<p class="tk-why">Because ${m.because.map((b) => esc(b)).join('; ')}.</p>` : ''}
-      ${!compact && !simple && m.still && m.still.length ? `<p class="tk-why">Then: ${m.still.slice(0, 2).map((s) => `${esc(s.dest)} next asks ${esc(/^(A|An|One|Two|Three|Four|Five)\b/.test(s.next) ? s.next.charAt(0).toLowerCase() + s.next.slice(1) : s.next)}`).join('; ')}.</p>` : ''}
-      ${!compact && !simple && m.sec3 ? `<p class="tk-why">In Sec 3: ${esc(m.sec3)}</p>` : ''}
-      ${!compact && !simple && m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when.charAt(0).toUpperCase() + m.when.slice(1))}. Ask ${esc(m.who)}.${m.how ? ` ${esc(m.how)}` : ''}</p>` : ''}
+      ${!compact && !simple ? moreHtml(m, sayInFold ? sayHtml : '') : ''}
       ${compact ? '' : `
-      <div class="say">
-        <span class="say-who">${icon('talk')} ${esc(rw.say)}</span>
-        <p class="say-line">${esc(say)}</p>
-      </div>
+      ${sayInFold ? '' : sayHtml}
       <p class="tk-actions">
         <button type="button" class="btn ghost small press" data-action="tk-copy" data-text="${esc(say)}">${icon('copy')} Copy words</button>
         <button type="button" class="btn small press tk-keep" data-action="tk-keep" data-text="${esc(say)}" aria-pressed="${kept}">${kept ? `${icon('check')} ${t('kept')}` : `${icon('ticket')} ${t('keep')}`}</button>
@@ -57,6 +59,20 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
     </div>
     <span class="tk-punch" aria-hidden="true">${esc(t('kept'))}</span>
   </article>`;
+}
+
+// The why and when of a move. Detailed shows them inline; Short folds them
+// under one tap, so the card leads with the result and the words to say.
+function moreHtml(m, sayHtml = '') {
+  const lc = (x) => (/^(A|An|One|Two|Three|Four|Five)\b/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x);
+  const parts = [
+    m.because && m.because.length ? `<p class="tk-why">Why: ${m.because.map((b) => esc(b)).join('; ')}.</p>` : '',
+    m.still && m.still.length ? `<p class="tk-why">After that: ${m.still.slice(0, 2).map((s) => `${esc(s.dest)} needs ${esc(lc(s.next))}`).join('; ')}.</p>` : '',
+    m.sec3 ? `<p class="tk-why">In Sec 3: ${esc(m.sec3)}</p>` : '',
+    m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when.charAt(0).toUpperCase() + m.when.slice(1))}. Ask ${esc(m.who)}.${m.how ? ` ${esc(m.how)}` : ''}</p>` : '',
+  ].filter(Boolean).join('') + sayHtml;
+  if (!parts) return '';
+  return isShort() ? `<details class="tk-more"><summary>${sayHtml ? 'Why, when and what to say' : 'Why and when'}</summary>${parts}</details>` : parts;
 }
 
 export function holdHtml(h) {

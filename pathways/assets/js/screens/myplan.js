@@ -7,21 +7,21 @@
 // moves, the targets, the student's own list, and the questions to ask, in
 // the voice of whoever is reading.
 
-import { getState, toggleAction, carryUrl, carrySummary, YEARS } from '../state.js?v=4.3.0';
-import { reach } from '../engine/reach.js?v=4.3.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=4.3.0';
-import { advise, sayName } from '../engine/advice.js?v=4.3.0';
-import { report } from '../engine/grades.js?v=4.3.0';
-import { psleScore } from '../engine/psle.js?v=4.3.0';
-import { openCount, mapPips } from '../ui/map.js?v=4.3.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.3.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.3.0';
-import { boardHtml } from '../ui/board.js?v=4.3.0';
-import { signalHtml } from '../ui/signal.js?v=4.3.0';
-import { t, lineMode, openWord } from '../ui/labels.js?v=4.3.0';
-import { STRIP } from '../ui/yearstrip.js?v=4.3.0';
-import { esc, onAction } from '../ui/dom.js?v=4.3.0';
-import { icon } from '../ui/icons.js?v=4.3.0';
+import { getState, toggleAction, carryUrl, carrySummary, YEARS } from '../state.js?v=4.4.0';
+import { reach } from '../engine/reach.js?v=4.4.0';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=4.4.0';
+import { advise, sayName } from '../engine/advice.js?v=4.4.0';
+import { report } from '../engine/grades.js?v=4.4.0';
+import { psleScore } from '../engine/psle.js?v=4.4.0';
+import { openCount, mapPips } from '../ui/map.js?v=4.4.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.4.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.4.0';
+import { boardHtml } from '../ui/board.js?v=4.4.0';
+import { signalHtml } from '../ui/signal.js?v=4.4.0';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=4.4.0';
+import { STRIP } from '../ui/yearstrip.js?v=4.4.0';
+import { esc, onAction } from '../ui/dom.js?v=4.4.0';
+import { icon } from '../ui/icons.js?v=4.4.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -60,11 +60,11 @@ export default {
           <p class="pass-open"><b>${open}</b><span>of ${rows.length} ${openWord(rows)}</span></p>
         </div>
         <ol class="pass-line">
-          <li data-filled="${sc.complete}" data-now="${st.yearSet && st.year === 'p6'}">
+          ${isShort() && !sc.complete && !(st.yearSet && st.year === 'p6') ? '' : `<li data-filled="${sc.complete}" data-now="${st.yearSet && st.year === 'p6'}">
             <button type="button" class="pl-stn press no-print-btn" data-action="go" data-s="year" data-y="p6"><i></i><b>P6</b></button>
             <span class="pl-body">${sc.complete ? `<span class="pl-chip">PSLE ${sc.score}</span>` : '<span class="pl-none">not set</span>'}</span>
-          </li>
-          ${PLAN_YEARS.map((y) => {
+          </li>`}
+          ${PLAN_YEARS.filter((y) => !isShort() || Object.keys(st.plans[y] || {}).length || (st.yearSet && st.year === y)).map((y) => {
             const p = st.plans[y] || {};
             const ids = Object.keys(p);
             return `<li data-filled="${ids.length > 0}" data-now="${st.yearSet && st.year === y}">
@@ -91,7 +91,7 @@ export default {
           <h2 class="advh">${esc(t('keptList'))}</h2>
           ${want ? `<p class="small">Want: <strong>${esc(want.want || want.id)}</strong></p>` : ''}
           ${st.actions.length ? `<ul class="keptlist">${st.actions.map((a, i) => `<li>${icon('ticket')}<span>${esc(a)}</span><button type="button" class="linkbtn small no-print" data-action="mp-drop" data-i="${i}">Remove</button></li>`).join('')}</ul>`
-            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">Each move comes with the words to say to the right person.</p></div>`}
+            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">Each move comes with words to say to a teacher or parent.</p></div>`}
           <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="act">Pick three moves for this term</button></p>
         </section>
       </div>
@@ -99,7 +99,7 @@ export default {
       ${top.length ? `
       <section class="destsec">
         <h2 class="advh">Best next moves</h2>
-        <div class="ticketlist">${top.map((m) => ticketHtml(m)).join('')}</div>
+        <div class="ticketlist">${(isShort() ? top.slice(0, 1) : top).map((m) => ticketHtml(m)).join('')}</div>
       </section>` : ''}
 
       ${rep.length ? `
@@ -113,13 +113,13 @@ export default {
       </section>` : ''}
 
       ${talk.length ? `
-      <section class="destsec">
-        <h2 class="advh">Talk it through</h2>
+      <${isShort() ? 'details class="fold destsec"' : 'section class="destsec"'}>
+        ${isShort() ? '<summary>Questions to talk through</summary>' : '<h2 class="advh">Questions to talk through</h2>'}
         <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
-        <p class="small no-print">The ${esc(st.role)} version. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>
-      </section>` : ''}
+        <p class="small no-print">Written for a ${esc(st.role)}. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>
+      </${isShort() ? 'details' : 'section'}>` : ''}
 
-      <p class="small srcline">A thinking tool, not official advice. It never says a road is closed. Confirm anything that matters with the school's ECG counsellor and at moe.gov.sg.</p>
+      <p class="small srcline">A planning tool. Check important details with your ECG counsellor and at moe.gov.sg.</p>
     </div>`;
 
     onAction(root, {
