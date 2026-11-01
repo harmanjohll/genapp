@@ -4,7 +4,8 @@ const fs = require('fs'); const path = require('path');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/'); const SHOTS = require('./shots.js')('v2-');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
-const seed3 = JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf8'));
+// the fixture's dates move with today, so its entries keep their age
+const seed3 = require('./fixtures/rebase.js')(JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf8')));
 // seed4: Upper Sec met in both Critical Thinking strands, so Leading waits for a teacher
 const seed4 = JSON.parse(JSON.stringify(seed3)); const P4 = seed4.profiles[seed4.current];
 P4.email = 'wei_ling_tan@students.edu.sg'; P4.level = 4; const D = 864e5; const now = Date.now();
