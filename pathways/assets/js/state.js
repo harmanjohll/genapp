@@ -50,7 +50,7 @@ const initial = () => ({
   liveRun: null,
   looked: [],
   guesses: {},
-  offer: null,
+  allSubjects: false,   // false: the school's offering first (data/offer.json); true: every school's subjects
   seenIntro: false,
   seenWelcome: false,   // the first-run conversation, had once, never a toll gate
   landingGuess: null,   // what they guessed, quoted only in the session it was made
@@ -342,8 +342,8 @@ export function toggleActivity(id) {
   persist(); notify({ kind: 'activities' });
 }
 
-export function setOffer(ids) {
-  state.offer = ids && ids.length ? ids : null;
+export function setAllSubjects(on) {
+  state.allSubjects = !!on;
   persist(); notify({ kind: 'offer' });
 }
 
@@ -445,10 +445,6 @@ export function reconcile(data) {
   Object.values(state.plans).forEach(prunePlan);
   state.looked = state.looked.filter((id) => levelsById[id]);
   Object.keys(state.guesses).forEach((id) => { if (!levelsById[id]) delete state.guesses[id]; });
-  if (state.offer) {
-    state.offer = state.offer.filter((id) => levelsById[id]);
-    if (!state.offer.length) state.offer = null;
-  }
 
   const actIds = new Set(((data.activities && data.activities.activities) || []).map((a) => a.id));
   if (actIds.size) state.activities = state.activities.filter((id) => actIds.has(id));

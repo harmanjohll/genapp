@@ -11,8 +11,8 @@
 
 import {
   getState, setAim, toggleAction, carryUrl, carrySummary,
-} from '../state.js?v=4.1.0';
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
+} from '../state.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
 
 function fill(tpl, vars) {
   return String(tpl).replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));

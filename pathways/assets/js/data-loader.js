@@ -16,7 +16,7 @@ const FILES = [
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories', 'moves', 'version',
   'activities', 'possibilities', 'work', 'money', 'evidence', 'schools',
-  'years', 'psle', 'grades', 'families',
+  'years', 'psle', 'grades', 'families', 'offer',
 ];
 
 /**
@@ -42,7 +42,7 @@ const FILES = [
  */
 const EAGER = [
   'subjects', 'pathways', 'progressions', 'copy', 'glossary',
-  'activities', 'lifelong', 'version', 'years', 'psle', 'grades',
+  'activities', 'lifelong', 'version', 'years', 'psle', 'grades', 'offer',
 ];
 const DEFERRED = FILES.filter((f) => !EAGER.includes(f));
 

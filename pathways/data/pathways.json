@@ -88,7 +88,51 @@
       "routesIfNotHere": [
         "nitec_to_hnitec"
       ],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "English at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G2"
+          },
+          "status": "provisional",
+          "note": "In the SEC, English counts at G2 or above."
+        },
+        {
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "status": "provisional",
+          "note": "In the SEC, Mathematics counts at G2 or above."
+        },
+        {
+          "label": "Two of Science, Mother Tongue or a Humanities at G2 or above",
+          "short": "More at G2",
+          "move": "Take two of Science, Mother Tongue or a Humanities at G2 or above",
+          "pool": "Science, Mother Tongue or a Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "ls_science",
+              "mtl",
+              "hmtl",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit"
+            ],
+            "min": "G2",
+            "count": 2
+          },
+          "status": "provisional",
+          "note": "In the SEC, the best three other subjects count, at G2 or above. The strongest Humanities counts once; the third subject often comes from Sec 3."
+        }
+      ],
+      "lowerHorizon": "In the SEC, the 2 year Higher Nitec reads English, Maths and my best three other subjects, at G2 or above. The fifth often comes from my Sec 3 subjects."
     },
     {
       "id": "nitec",
@@ -107,7 +151,9 @@
             "subject": "el",
             "min": "G1"
           },
-          "status": "provisional"
+          "status": "provisional",
+          "soft": true,
+          "note": "Not required on every course: the B4 aggregate has no required subject."
         },
         {
           "id": "n_count",
@@ -132,7 +178,18 @@
         "One course now, not two stacked ones. Leaving after Year 2 with a Nitec and returning later is a real road."
       ],
       "routesIfNotHere": [],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "Any levels in Sec 1 and 2",
+          "test": {
+            "type": "always"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, four subjects at G1 or above. Every Sec 1 and 2 student takes four levelled subjects or more."
+        }
+      ],
+      "lowerHorizon": "In the SEC, the 3 year Higher Nitec reads four subjects at G1 or above."
     },
     {
       "id": "jc",
@@ -193,6 +250,39 @@
           "note": "R1 is a Humanities subject. Which arts subjects count is read from older JAE lists."
         },
         {
+          "label": "Three G3s in Humanities, Maths, Science",
+          "short": "Science or Humanities to G3",
+          "move": "Take a third Humanities, Maths or Science subject at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "geography",
+              "history",
+              "literature",
+              "art",
+              "higher_art",
+              "music",
+              "higher_music",
+              "economics",
+              "maths",
+              "amaths",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "biology"
+            ],
+            "min": "G3",
+            "count": 3
+          },
+          "status": "confirmed",
+          "note": "R1, R2 and R3 of L1R4: a Humanities, a Maths or Science, and one more of either, all at G3. Only R4 can be any subject."
+        },
+        {
           "label": "Five subjects at G3",
           "test": {
             "type": "countAtLevel",
@@ -206,7 +296,7 @@
       "performance": [
         {
           "label": "L1R4 of 16 or better, all at G3",
-          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points take off up to 3.",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points (up to 3) affect posting only, not the 16.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
@@ -225,7 +315,49 @@
         "ite_to_poly_to_uni",
         "sec5_then_jc"
       ],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, English at G3 is L1, and it must reach C6."
+        },
+        {
+          "label": "Mathematics at G3",
+          "short": "Maths to G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, Mathematics or Additional Mathematics at G3. Additional Mathematics starts in Sec 3."
+        },
+        {
+          "label": "Science and a Humanities at G3, or two Humanities",
+          "short": "Science or Humanities to G3",
+          "move": "Take Science and a Humanities at G3, or two Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "ls_science",
+              "ls_geography",
+              "ls_history",
+              "ls_literature"
+            ],
+            "min": "G3",
+            "count": 2
+          },
+          "status": "confirmed",
+          "note": "In the SEC, a Humanities (R1) and one more Humanities, Maths or Science (R3), all at G3. Science is one subject in Sec 1 and 2, so one of the two is always a Humanities. Mother Tongue need not be G3."
+        }
+      ],
+      "lowerHorizon": "In the SEC, Junior College counts five subjects, all at G3: English, a Humanities, Maths or a Science, one more of those, and one of any. Mother Tongue need not be G3. The fifth often comes from my Sec 3 subjects."
     },
     {
       "id": "mi",
@@ -286,6 +418,39 @@
           "note": "R1 is a Humanities subject. Which arts subjects count is read from older JAE lists."
         },
         {
+          "label": "Three G3s in Humanities, Maths, Science",
+          "short": "Science or Humanities to G3",
+          "move": "Take a third Humanities, Maths or Science subject at G3",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "geography",
+              "history",
+              "literature",
+              "art",
+              "higher_art",
+              "music",
+              "higher_music",
+              "economics",
+              "maths",
+              "amaths",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "biology"
+            ],
+            "min": "G3",
+            "count": 3
+          },
+          "status": "confirmed",
+          "note": "R1, R2 and R3 of L1R4: a Humanities, a Maths or Science, and one more of either, all at G3. Only R4 can be any subject."
+        },
+        {
           "label": "Five subjects at G3",
           "test": {
             "type": "countAtLevel",
@@ -299,7 +464,7 @@
       "performance": [
         {
           "label": "L1R4 of 20 or better, all at G3",
-          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points take off up to 3.",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points (up to 3) affect posting only, not the 20.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
@@ -318,7 +483,49 @@
         "ite_to_poly_to_uni",
         "sec5_then_jc"
       ],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, English at G3 is L1, and it must reach C6."
+        },
+        {
+          "label": "Mathematics at G3",
+          "short": "Maths to G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, Mathematics or Additional Mathematics at G3. Additional Mathematics starts in Sec 3."
+        },
+        {
+          "label": "Science and a Humanities at G3, or two Humanities",
+          "short": "Science or Humanities to G3",
+          "move": "Take Science and a Humanities at G3, or two Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "ls_science",
+              "ls_geography",
+              "ls_history",
+              "ls_literature"
+            ],
+            "min": "G3",
+            "count": 2
+          },
+          "status": "confirmed",
+          "note": "In the SEC, a Humanities (R1) and one more Humanities, Maths or Science (R3), all at G3. Science is one subject in Sec 1 and 2, so one of the two is always a Humanities. Mother Tongue need not be G3."
+        }
+      ],
+      "lowerHorizon": "In the SEC, Millennia Institute counts five subjects, all at G3: English, a Humanities, Maths or a Science, one more of those, and one of any. Mother Tongue need not be G3. The fifth often comes from my Sec 3 subjects."
     },
     {
       "id": "arts",
@@ -339,6 +546,16 @@
           },
           "status": "provisional",
           "note": "LASALLE and NAFA, 2028 intake: G3 English at C6 or better."
+        },
+        {
+          "label": "Four subjects at G3, English included",
+          "test": {
+            "type": "countAtLevel",
+            "level": "G3",
+            "min": 4
+          },
+          "status": "provisional",
+          "note": "Four other subjects count besides English, at most one of them at G2. With English at G3, that is four at G3."
         },
         {
           "label": "Five subjects at G2 or above",
@@ -363,7 +580,43 @@
         "Start a portfolio now. It does not depend on my levels."
       ],
       "routesIfNotHere": [],
-      "status": "provisional"
+      "status": "provisional",
+      "lower": [
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "provisional",
+          "note": "LASALLE asks English at G3, C6 or better; NAFA's ask varies by programme."
+        },
+        {
+          "label": "Three of Maths, Science, Mother Tongue or a Humanities at G3",
+          "short": "More at G3",
+          "move": "Take three of Maths, Science, Mother Tongue or a Humanities at G3",
+          "pool": "Maths, Science, Mother Tongue or a Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "maths",
+              "ls_science",
+              "mtl",
+              "hmtl",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit"
+            ],
+            "min": "G3",
+            "count": 3
+          },
+          "status": "provisional",
+          "note": "In the SEC, four more subjects besides English count, at least three of them at G3. The strongest Humanities counts once."
+        }
+      ],
+      "lowerHorizon": "In the SEC, NAFA and LASALLE read English at G3 and four more subjects, at least three of them at G3, with a portfolio or audition. The fourth often comes from my Sec 3 subjects.",
+      "lowerOpenLabel": "On track, with a portfolio"
     },
     {
       "id": "pfp",
@@ -419,7 +672,51 @@
       "routesIfNotHere": [
         "ite_to_poly"
       ],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "English at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G2"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, English counts at G2 or above."
+        },
+        {
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, Mathematics counts at G2 or above."
+        },
+        {
+          "label": "Two of Science, Mother Tongue or a Humanities at G2 or above",
+          "short": "More at G2",
+          "move": "Take two of Science, Mother Tongue or a Humanities at G2 or above",
+          "pool": "Science, Mother Tongue or a Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "ls_science",
+              "mtl",
+              "hmtl",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit"
+            ],
+            "min": "G2",
+            "count": 2
+          },
+          "status": "confirmed",
+          "note": "In the SEC, the best three other subjects count, at G2 or above. The strongest Humanities counts once; the third subject often comes from Sec 3."
+        }
+      ],
+      "lowerHorizon": "In the SEC, the Polytechnic Foundation Programme reads English, Maths and my best three other subjects, at G2 or above. The fifth often comes from my Sec 3 subjects."
     },
     {
       "id": "poly",
@@ -493,7 +790,53 @@
         "ite_to_poly",
         "sec5_then_poly"
       ],
-      "status": "confirmed"
+      "status": "confirmed",
+      "lower": [
+        {
+          "label": "English at G3",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "el",
+            "min": "G3"
+          },
+          "status": "confirmed",
+          "note": "In the SEC, English at G3 is the E in ELR2B2."
+        },
+        {
+          "label": "Three of Maths, Science, Mother Tongue or a Humanities at G3",
+          "short": "More at G3",
+          "move": "Take three of Maths, Science, Mother Tongue or a Humanities at G3",
+          "pool": "Maths, Science, Mother Tongue or a Humanities",
+          "test": {
+            "type": "anyAtLevel",
+            "subjects": [
+              "maths",
+              "ls_science",
+              "mtl",
+              "hmtl",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit"
+            ],
+            "min": "G3",
+            "count": 3
+          },
+          "status": "confirmed",
+          "note": "In the SEC, English and three more subjects at G3, and a fifth at G2 or G3. The strongest Humanities counts once, as it will in Sec 3."
+        },
+        {
+          "label": "Mathematics at G2 or above",
+          "test": {
+            "type": "subjectAtLevel",
+            "subject": "maths",
+            "min": "G2"
+          },
+          "soft": true,
+          "status": "provisional",
+          "note": "Many courses ask for Mathematics; the 2028 course list arrives in mid 2027."
+        }
+      ],
+      "lowerHorizon": "In the SEC, polytechnic counts five subjects: English and three more at G3, and a fifth at G2 or G3. The fifth often comes from my Sec 3 subjects."
     },
     {
       "id": "sec5",
@@ -532,7 +875,19 @@
         "It exists so one year does not decide everything."
       ],
       "routesIfNotHere": [],
-      "status": "provisional"
+      "status": "provisional",
+      "lower": [
+        {
+          "label": "Decided on SEC results, not on Sec 1 and 2 levels",
+          "test": {
+            "type": "always"
+          },
+          "status": "confirmed",
+          "note": "Sec 5 is decided by SEC results."
+        }
+      ],
+      "lowerHorizon": "Sec 5 is decided by SEC results, at the end of Sec 4.",
+      "lowerOpenLabel": "Decided by my SEC results"
     }
   ]
 }

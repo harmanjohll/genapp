@@ -127,8 +127,11 @@ function bestAssignAll(slots, pool, value) {
   return out;
 }
 
-function elmab3(es, g) {
-  const v = (e) => { const gg = asG2(e.level, e.grade, g); return gg ? pts('G2', gg, g) : null; };
+// opts.exclude: G2 value grades this destination will not count (PFP drops
+// 5 and 6, which also catches a G3 9; Sec 5 drops 6; Higher Nitec drops none).
+function elmab3(es, g, opts = {}) {
+  const ex = opts.exclude || [];
+  const v = (e) => { const gg = asG2(e.level, e.grade, g); return gg && !ex.includes(gg) ? pts('G2', gg, g) : null; };
   const best = bestAssign([
     (e) => e.sid === 'el',
     (e) => e.sid === 'maths' || e.sid === 'amaths',
@@ -175,27 +178,70 @@ export function stepsToClose(counted, gap, g) {
 }
 
 /**
- * @returns Array<{ id, name, plain, now, target, dests: [{ id, name, cutoff, nowMeets, targetMeets, gap, steps }] }>
+ * Grade floors (JC and MI): a score can be inside the cut off and still miss
+ * a floor, such as English below C6. Returns the labels of unmet floors.
+ * A floor on a subject not taken (ifTaken) is not a floor.
+ */
+function unmetFloors(floors, es, g) {
+  return (floors || []).filter((f) => {
+    const held = es.filter((e) => (f.subjects || []).includes(e.sid));
+    if (!held.length) return !f.ifTaken;
+    return !held.some((e) => f[e.level] != null && pts(e.level, e.grade, g) != null && pts(e.level, e.grade, g) <= f[e.level]);
+  }).map((f) => f.label);
+}
+
+/** G3 passes (E8 or better), for Sec 5's first route. */
+function g3Passes(es, g) {
+  return es.filter((e) => e.level === 'G3' && pts('G3', e.grade, g) != null && pts('G3', e.grade, g) <= 8).length;
+}
+
+/**
+ * One destination's verdict on one set of grades: its own value (a
+ * destination can exclude grades the aggregate allows), the floors, and any
+ * route that does not need the score at all.
+ */
+function judge(a, d, es, g) {
+  const calc = CALC[a.id];
+  const r = d.exclude ? calc(es, g, { exclude: d.exclude }) : calc(es, g);
+  if (d.g3Passes && g3Passes(es, g) >= d.g3Passes) {
+    return { r, meets: true, gap: null, via: `${g3Passes(es, g)} G3 passes: this route does not read the score` };
+  }
+  if (r.value == null) return { r, meets: null, gap: null, via: null };
+  const floors = r.value <= d.cutoff ? unmetFloors(a.floors, es, g) : [];
+  return { r, meets: r.value <= d.cutoff && !floors.length, gap: r.value - d.cutoff, via: floors.length ? `Also needs ${floors.join('; ')}` : null };
+}
+
+/**
+ * @returns Array<{ id, name, plain, now, target, dests: [{ id, name, cutoff, value, meets, nowMeets, targetMeets, gap, steps, via }] }>
  */
 export function report({ plan, grades, g, names, destNames }) {
   return (g.aggregates || []).map((a) => {
     const calc = CALC[a.id];
-    const now = calc(entries(plan, grades.now, g, names), g);
-    const target = calc(entries(plan, grades.target, g, names), g);
-    const ref = target.value != null ? target : now;
+    const esNow = entries(plan, grades.now, g, names);
+    const esTarget = entries(plan, grades.target, g, names);
+    const now = calc(esNow, g);
+    const target = calc(esTarget, g);
+    const basis = target.value != null ? 'target' : 'now';
     const dests = a.dests.map((d) => {
-      const gap = ref.value != null ? ref.value - d.cutoff : null;
+      const jn = judge(a, d, esNow, g);
+      const jt = judge(a, d, esTarget, g);
+      const j = basis === 'target' ? jt : jn;
       return {
         id: d.id,
         name: (destNames && destNames[d.id]) || d.id,
         cutoff: d.cutoff,
-        nowMeets: now.value != null ? now.value <= d.cutoff : null,
-        targetMeets: target.value != null ? target.value <= d.cutoff : null,
-        gap,
-        steps: gap != null && gap > 0 ? stepsToClose(ref.counted, gap, g) : null,
+        value: j.r.value,
+        why: j.r.value == null ? j.r.why : null,
+        meets: j.meets,
+        nowMeets: jn.meets,
+        targetMeets: jt.meets,
+        gap: j.gap,
+        via: j.via,
+        note: d.note || null,
+        steps: j.gap != null && j.gap > 0 ? stepsToClose(j.r.counted, j.gap, g) : null,
       };
     });
-    return { id: a.id, name: a.name, plain: a.plain, bonus: a.bonus, now, target, dests, basis: target.value != null ? 'target' : 'now' };
+    return { id: a.id, name: a.name, plain: a.plain, bonus: a.bonus, now, target, dests, basis };
   });
 }
 

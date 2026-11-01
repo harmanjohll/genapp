@@ -8,11 +8,13 @@
 // Ethics carried: no row ever says closed. The weakest word on the board is
 // OTHER ROAD, and it is true: every destination keeps a road in.
 
-import { esc } from './dom.js?v=4.1.0';
-import { stateWord, t } from './labels.js?v=4.1.0';
+import { esc } from './dom.js?v=4.3.0';
+import { stateWord, openWord, t } from './labels.js?v=4.3.0';
 
-// Board words follow the reader's vocabulary (plain by default).
+// Board words follow the reader's vocabulary (plain by default), and a lower
+// secondary row reads "On track" where an upper one reads "Open now".
 export const BOARD_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
+export function boardWord(r) { return stateWord(r.state, r.lens); }
 export const LINE = {
   'open': 'var(--line-open)',
   'within-reach': 'var(--line-within)',
@@ -37,7 +39,7 @@ export function boardHtml(rows, o = {}) {
   <div class="board${o.compact ? ' compact' : ''}" role="group" aria-label="${esc(o.title || t('answer'))}">
     <div class="board-top">
       <span class="board-title">${esc(o.title || t('answer'))}</span>
-      <span class="board-count"><b>${open}</b>/${rows.length} open</span>
+      <span class="board-count"><b>${open}</b>/${rows.length} ${openWord(rows)}</span>
     </div>
     <ol class="board-rows">
       ${rows.map((r) => {
@@ -46,7 +48,7 @@ export function boardHtml(rows, o = {}) {
         return `<li><button type="button" class="brow${flip ? ' flip' : ''}" data-action="dest" data-id="${esc(r.id)}" data-state="${esc(r.state)}">
           <i class="brow-line" style="--c:${LINE[r.state]}" aria-hidden="true"></i>
           <span class="brow-name">${esc(r.railName)}</span>
-          <span class="brow-status"><span>${esc(BOARD_WORD[r.state])}</span></span>
+          <span class="brow-status"><span>${esc(boardWord(r))}</span></span>
           ${o.compact ? '' : `<span class="brow-next">${esc(r.status.text)}</span>`}
         </button></li>`;
       }).join('')}

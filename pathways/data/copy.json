@@ -107,13 +107,16 @@
   },
   "pulse": {
     "opened": "{dest} is open now.",
+    "openedLower": "{dest} is on track now.",
     "nearer": "{dest} is closer now.",
     "firstPick": "{subject} at {level}. {open} open now.",
+    "firstPickLower": "{subject} at {level}. {open} on track now.",
     "removed": "{subject} off the list. {dest} still has a road in.",
     "noChange": "{subject} at {level}. Nothing shifted, and that is normal.",
     "lever": "{move} would move {n}.",
     "leverOne": "{move} would move {n}.",
     "allOpen": "All eight open. Which two years do I actually want?",
+    "allOpenLower": "All eight on track. Which way do I actually want to go?",
     "rest": "Two are open before I pick anything."
   },
   "load": {
@@ -130,7 +133,7 @@
     "open": "Ask my form teacher: which of these would suit how I learn?"
   },
   "thisYear": {
-    "sec1": "Four subjects can move up at the end of this year. Asking is the whole mechanism.",
+    "sec1": "Four subjects can move up at the school's review, often at the end of this year. I can ask; the school decides.",
     "sec2": "The big one. Where my levels land this year is what I carry into Sec 3.",
     "sec3": "My levels are largely set. What I build with them this year is not.",
     "sec4": "Early Admissions opens before results. What I have made and done counts now.",

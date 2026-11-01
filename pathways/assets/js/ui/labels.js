@@ -5,7 +5,7 @@
 // transit vocabulary (departures, tickets, a pass) for students who enjoy
 // it; the visuals are the same in both. The choice is stored on the device.
 
-import { getState } from '../state.js?v=4.1.0';
+import { getState } from '../state.js?v=4.3.0';
 
 const WORDS = {
   plain: {
@@ -14,6 +14,10 @@ const WORDS = {
     // State words match the engine's distance bands (reach.js): open, within
     // 2 level moves, within 5, further. Counted, so nothing is left to guess.
     state_open: 'Open now',
+    // Sec 1 and 2: nothing is open before the SEC, so an open state reads as
+    // on track for what the SEC will ask.
+    state_open_lower: 'On track',
+    answerFromLower: (y) => `What your ${y} levels keep on track`,
     'state_within-reach': '1 to 2 moves away',
     'state_longer-route': '3 to 5 moves away',
     'state_other-route': 'Another route in',
@@ -39,6 +43,8 @@ const WORDS = {
     answer: 'Departures',
     answerFrom: (y) => `Departures from ${y}`,
     state_open: 'Open',
+    state_open_lower: 'On track',
+    answerFromLower: (y) => `Departures from ${y}`,
     'state_within-reach': 'Nearly',
     'state_longer-route': 'Longer',
     'state_other-route': 'Other road',
@@ -74,6 +80,13 @@ export function t(key, ...args) {
   return v == null ? key : v;
 }
 
-export function stateWord(state) {
+/** The state word. Rows from reach() carry `lens`; lower years read "On track". */
+export function stateWord(state, lens) {
+  if (state === 'open' && lens === 'lower') return t('state_open_lower');
   return t(`state_${state}`);
+}
+
+/** "open" or "on track", for counts like "5 of 8 open". */
+export function openWord(rows) {
+  return rows && rows.length && rows[0].lens === 'lower' ? 'on track' : 'open';
 }

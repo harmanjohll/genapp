@@ -11,8 +11,8 @@
 // The tab arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
 // printed handout always reproduces the exact page.
 
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
-import { decorate } from '../ui/glossary.js?v=4.1.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { decorate } from '../ui/glossary.js?v=4.3.0';
 
 const TABS = [
   { id: 'parent', label: 'For parents' },

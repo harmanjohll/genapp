@@ -136,8 +136,30 @@ export function moveFor(rule, res, ctx) {
   if (t.type === 'totalSubjects') {
     return `Take ${res.shortfall} more subject${res.shortfall === 1 ? '' : 's'}.`;
   }
-  if (t.type === 'anyAtLevel') return `${rule.move || rule.label}.`;
+  if (t.type === 'anyAtLevel') {
+    const n = res.shortfall || 1;
+    const orAbove = t.min === 'G3' ? '' : ' or above';
+    // A pool rule ("three of Maths, Science, Mother Tongue or a Humanities")
+    // says how many more, from which pool.
+    if (rule.pool && (t.count || 1) > 1) {
+      const w = ['', 'one', 'two', 'three', 'four', 'five'][n] || String(n);
+      return `Bring ${w} more of ${rule.pool} up to ${t.min}${orAbove}.`;
+    }
+    // One short: name the subjects the student holds that could be it.
+    if (n === 1 && (t.count || 1) > 1) {
+      const names = (t.subjects || [])
+        .filter((id) => ctx.plan && ctx.plan[id] && !meets(ctx.plan[id], t.min))
+        .map((id) => { const s = ctx.subjects.find((x) => x.id === id); return s ? (s.shortName || s.name) : id; });
+      if (names.length) return `Move ${orList(names)} up to ${t.min}${orAbove}.`;
+    }
+    return `${rule.move || rule.label}.`;
+  }
   return rule.label;
+}
+
+function orList(names) {
+  if (names.length <= 1) return names[0] || '';
+  return `${names.slice(0, -1).join(', ')} or ${names[names.length - 1]}`;
 }
 
 /**
@@ -158,17 +180,23 @@ export function moveShortFor(rule, res, ctx) {
   }
   if (t.type === 'groupAtLevel') return `A ${t.group} at ${t.min}`;
   if (t.type === 'totalSubjects') return `${res.shortfall} more subjects`;
-  if (t.type === 'anyAtLevel') return rule.short || rule.label;
+  if (t.type === 'anyAtLevel') {
+    if (rule.pool && (t.count || 1) > 1) return `${res.shortfall} more at ${t.min}`;
+    return rule.short || rule.label;
+  }
   return rule.label;
 }
 
 /** When and with whom a move actually happens, given the student's year. */
 export function moveTiming(yearId) {
   switch (yearId) {
+    // MOE sets no national dates for lower secondary level changes: schools
+    // review at "appropriate junctures", on results and a holistic look at
+    // how the student copes. The student can ask; the school decides.
     case 'sec1':
-      return { when: 'at the end of Sec 1, and again at the end of Sec 2', who: 'your subject teacher, then your form teacher' };
+      return { when: 'at your school\'s review, often at the end of Sec 1', who: 'your subject teacher, then your form teacher', how: 'You can ask; the school decides, from your results and how you cope with the workload.' };
     case 'sec2':
-      return { when: 'in the subject combination exercise this year', who: 'your subject teacher first, then your form teacher or ECG counsellor' };
+      return { when: 'at your school\'s review, before your Sec 3 subjects are set', who: 'your subject teacher first, then your form teacher or ECG counsellor', how: 'You can ask; the school decides, from your results and how you cope with the workload.' };
     case 'sec3':
       return { when: 'at the end of Sec 3, and for some subjects during the year', who: 'your subject teacher and your year head' };
     case 'sec4':

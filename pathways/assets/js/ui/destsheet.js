@@ -12,8 +12,8 @@
 // carries the cost line for this destination when the money file is in hand,
 // and degrades to nothing when it is not.
 
-import { esc } from './dom.js?v=4.1.0';
-import { decorate } from './glossary.js?v=4.1.0';
+import { esc } from './dom.js?v=4.3.0';
+import { decorate } from './glossary.js?v=4.3.0';
 
 const STATE_WORD = {
   'open': 'Open to me',
@@ -35,7 +35,7 @@ export function destSheetHtml(row, data) {
     <h2 id="sheet-title">${esc(row.name)}</h2>
 
     <p class="dest-l0">
-      <span class="pill" data-tone="${esc(row.state)}">${esc(STATE_WORD[row.state] || row.state)}</span>
+      <span class="pill" data-tone="${esc(row.state)}">${esc(open && row.lens === 'lower' ? 'On track' : (STATE_WORD[row.state] || row.state))}</span>
       <span class="small">${esc(row.duration || '')}${row.leadsTo ? ` · leads to ${esc(row.leadsTo)}` : ''}</span>
     </p>
 
@@ -67,6 +67,7 @@ export function destSheetHtml(row, data) {
             <span class="pill" data-tone="${r.satisfied ? 'open' : 'quiet'}">${r.satisfied ? 'met' : 'not yet'}</span>
           </div>
         </div>`).join('')}
+      ${row.lens === 'lower' && row.horizon ? `<p class="rulerow-note">${decorate(esc(row.horizon))}</p><p class="caps" style="margin-top:12px">In the SEC</p>` : ''}
       ${(row.performance || []).map((p) => `
         <div class="rulerow">
           <div class="rulerow-head"><span class="rulerow-label">${decorate(esc(p.label))}</span></div>

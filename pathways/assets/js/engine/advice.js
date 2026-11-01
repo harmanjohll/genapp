@@ -24,9 +24,9 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.1.0';
-import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.1.0';
-import { moveTiming } from './rules.js?v=4.1.0';
+import { reach } from './reach.js?v=4.3.0';
+import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.3.0';
+import { moveTiming } from './rules.js?v=4.3.0';
 
 const LV = ['G1', 'G2', 'G3'];
 
@@ -42,6 +42,31 @@ export function sayName(s) {
   return s.name;
 }
 const up = (lv) => LV[LV.indexOf(lv) + 1] || null;
+
+// In Sec 1 and 2 nothing is open yet: admission reads the SEC. A lower
+// secondary move puts a place on track for what the SEC will ask.
+function opensWord(names, lower) {
+  if (lower) return pluralName(names) ? 'are on track' : 'is on track';
+  return pluralName(names) ? 'open' : 'opens';
+}
+
+// When a lower secondary move can happen for this subject. Humanities levels
+// move from Sec 2, on interest and work in Sec 1 (MOE, Full SBB); the rest
+// at the school's review.
+function timingFor(yearId, subs, timing) {
+  if (yearId === 'sec1' && subs.length && subs.every((s) => s.raisableFrom === 'sec2')) {
+    return { ...timing, when: 'from Sec 2, if your school sees the interest and the work in Sec 1' };
+  }
+  return timing;
+}
+
+// What a lower secondary level leads to in Sec 3, if the data names it.
+// School set, so the note says so.
+function sec3For(yearId, subs, to) {
+  if (!isLower(yearId)) return null;
+  const notes = subs.map((s) => s.sec3 && s.sec3[to]).filter(Boolean);
+  return notes.length === subs.length && new Set(notes).size === 1 ? notes[0] : null;
+}
 const down = (lv) => LV[LV.indexOf(lv) - 1] || null;
 
 function reachAll(yearId, plan, c) {
@@ -73,13 +98,17 @@ function score(d) {
  * @param {string} o.yearId  the page being looked at
  * @param {Object} o.plan    that year's raw plan
  * @param {Object} o.ctx     { subjects, destinations, routesById, pathwaysMeta }
- * @param {Array}  [o.offer] the school's subject list, if trimmed
+ * @param {Object} [o.offer] the school's offering (data/offer.json); defaults to ctx.offer
  */
 export function advise({ yearId, plan, ctx, offer }) {
   const c = ctx;
-  const rows = subjectsForYear(yearId, c.subjects, offer).filter((s) => (s.levels || []).length);
+  // The school's offering rides on the context unless a caller overrides it,
+  // so every screen's advice follows the same list.
+  const off = offer === undefined ? (c.offer || null) : offer;
+  const rows = subjectsForYear(yearId, c.subjects, off).filter((s) => (s.levels || []).length);
   const base = reachAll(yearId, plan, c);
   const timing = moveTiming(yearId);
+  const lower = isLower(yearId);
   const held = rows.filter((s) => plan[s.id]);
   const out = { base, singles: [], pairs: [], holds: [], start: null, timing };
 
@@ -136,7 +165,7 @@ export function advise({ yearId, plan, ctx, offer }) {
   // Raises before adds within equal effect: a level you hold is a smaller
   // move than a subject you do not take.
   out.singles = grouped
-    .map((g) => finish(g, timing, after(g[0], c, yearId, plan)))
+    .map((g) => finish(g, timingFor(yearId, g.map((x) => x.s), timing), after(g[0], c, yearId, plan), lower, sec3For(yearId, g.map((x) => x.s), g[0].to)))
     .filter((m, i, all) => m.kind === 'raise' || all.filter((x) => x.kind === 'add').indexOf(m) < 2)
     .slice(0, 6);
 
@@ -168,7 +197,8 @@ export function advise({ yearId, plan, ctx, offer }) {
   out.pairs = [...pg.values()].slice(0, 3).map((g) => {
     const pool = [...g.pool.values()];
     const opens = g.opens.map((r) => r.railName);
-    const verbOpen = pluralName(opens) ? 'open' : 'opens';
+    const verbOpen = opensWord(opens, lower);
+    const pt = timingFor(yearId, pool.map((m) => m.s), timing);
     const line = g.n === 1
       ? `If ${sayName(g.first.a.s)} moves to ${g.first.a.to} and ${sayName(g.first.b.s)} moves to ${g.first.b.to}, ${listNames(opens)} ${verbOpen}. Neither move does that alone.`
       : `If any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level, ${listNames(opens)} ${verbOpen}. One alone does not.`;
@@ -182,8 +212,9 @@ export function advise({ yearId, plan, ctx, offer }) {
       any: g.n > 1,
       opens,
       line,
-      when: timing.when,
-      who: timing.who,
+      when: pt.when,
+      who: pt.who,
+      how: pt.how,
     };
   });
 
@@ -210,7 +241,7 @@ export function advise({ yearId, plan, ctx, offer }) {
     const many = g.length > 1;
     return {
       kind: 'hold', sid: g[0].s.id, sids: g.map((h) => h.s.id), name: listNames(names), names, level: have, lower, keeps,
-      line: `${listNames(names)} at ${have} ${many ? 'are' : 'is'} holding ${listNames(keeps)} open. ${many ? 'If any one eased' : 'Eased'} to ${lower}, ${keeps.length === 1 ? 'it would be' : 'they would be'} a move away again.`,
+      line: `${listNames(names)} at ${have} ${many ? 'are' : 'is'} ${isLower(yearId) ? `keeping ${listNames(keeps)} on track` : `holding ${listNames(keeps)} open`}. ${many ? 'If any one eased' : 'Eased'} to ${lower}, ${keeps.length === 1 ? 'it would be' : 'they would be'} a move away again.`,
     };
   });
 
@@ -221,7 +252,7 @@ function after(m, c, yearId, plan) {
   return reachAll(yearId, { ...plan, [m.s.id]: m.to }, c);
 }
 
-function finish(group, timing, afterRows) {
+function finish(group, timing, afterRows, lower, sec3) {
   const m = group[0];
   const opens = m.opens.map((r) => r.railName);
   const nearer = m.nearer.map((n) => n.row.railName);
@@ -243,8 +274,8 @@ function finish(group, timing, afterRows) {
       : `If you add ${names[0]} at ${m.to}`;
   }
   let result;
-  if (opens.length && nearer.length) result = `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}, and ${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer.`;
-  else if (opens.length) result = `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}.`;
+  if (opens.length && nearer.length) result = `${listNames(opens)} ${opensWord(opens, lower)}, and ${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer.`;
+  else if (opens.length) result = `${listNames(opens)} ${opensWord(opens, lower)}.`;
   else result = `${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer.`;
 
   // What each nearer destination still wants after this move, so "closer"
@@ -270,16 +301,18 @@ function finish(group, timing, afterRows) {
     line: `${verb}, ${result}`,
     // Result first, condition second: the ticket leads with what opens.
     result: opens.length
-      ? `${listNames(opens)} ${pluralName(opens) ? 'open' : 'opens'}`
+      ? `${listNames(opens)} ${opensWord(opens, lower)}`
       : `${listNames(nearer)} ${pluralName(nearer) ? 'come' : 'comes'} closer`,
     alsoNearer: opens.length ? nearer : [],
     cond: verb.replace(/^If /, 'if '),
     // Only the reasons every subject in the group shares: Geography to G3
     // answers JC's Humanities rule, Maths to G3 does not.
     because: becauseLines(m.rules.filter((r) => group.every((x) => x.rules.some((y) => y.label === r.label && y.dest === r.dest)))),
-    short: shortLine(m, names, opens, nearer),
+    short: shortLine(m, names, opens, nearer, lower),
+    sec3,
     when: timing.when,
     who: timing.who,
+    how: timing.how,
   };
 }
 
@@ -293,11 +326,12 @@ function becauseLines(rules) {
 }
 
 // The dock's version: under fifty characters where it can be.
-function shortLine(m, names, opens, nearer) {
-  const who = names.length > 1 ? `One of ${names.length} subjects` : names[0];
+function shortLine(m, names, opens, nearer, lower) {
+  // "One of 5 subjects" reads like an SEC count; name one and count the rest.
+  const who = names.length > 1 ? `${names[0]} or ${names.length - 1} more` : names[0];
   const verb = m.kind === 'add' ? `added at ${m.to}` : `to ${m.to}`;
   const what = opens.length
-    ? `opens ${opens.length > 2 ? `${opens.length} places` : listNames(opens)}`
+    ? `${lower ? 'puts' : 'opens'} ${opens.length > 2 ? `${opens.length} places` : listNames(opens)}${lower ? ' on track' : ''}`
     : `brings ${nearer.length > 2 ? `${nearer.length} places` : listNames(nearer)} closer`;
   return `${who} ${verb} ${what}.`;
 }

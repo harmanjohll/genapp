@@ -11,30 +11,30 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.1.0';
-import { reach } from '../engine/reach.js?v=4.1.0';
-import { pulse } from '../engine/pulse.js?v=4.1.0';
-import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.1.0';
-import { advise } from '../engine/advice.js?v=4.1.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.1.0';
-import { openCount } from '../ui/map.js?v=4.1.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.1.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.1.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.1.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.1.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.1.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.1.0';
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
-import { icon } from '../ui/icons.js?v=4.1.0';
-import { signalHtml } from '../ui/signal.js?v=4.1.0';
-import { t, lineMode } from '../ui/labels.js?v=4.1.0';
+} from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { pulse } from '../engine/pulse.js?v=4.3.0';
+import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=4.3.0';
+import { advise } from '../engine/advice.js?v=4.3.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.3.0';
+import { openCount } from '../ui/map.js?v=4.3.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=4.3.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.3.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.3.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.3.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.3.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
+import { signalHtml } from '../ui/signal.js?v=4.3.0';
+import { t, lineMode, openWord } from '../ui/labels.js?v=4.3.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
 function answerHtml(rows, key, y) {
   return lineMode()
-    ? boardHtml(rows, { key, title: t('answerFrom', LABEL[y]) })
-    : signalHtml(rows, { key, caption: t('answerFrom', LABEL[y]) });
+    ? boardHtml(rows, { key, title: t(isLower(y) ? 'answerFromLower' : 'answerFrom', LABEL[y]) })
+    : signalHtml(rows, { key, caption: t(isLower(y) ? 'answerFromLower' : 'answerFrom', LABEL[y]) });
 }
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -90,7 +90,7 @@ export default {
     const plan = (st.plans && st.plans[y]) || {};
     const showResult = y !== 'p6';
     const rows = showResult ? reachFor(api, y, plan) : [];
-    const adv = showResult ? advise({ yearId: y, plan, ctx: api.ctx(), offer: st.offer }) : null;
+    const adv = showResult ? advise({ yearId: y, plan, ctx: api.ctx() }) : null;
     const advCount = adv ? adv.singles.length + adv.pairs.length : 0;
 
     root.innerHTML = `
@@ -139,18 +139,37 @@ function panel(tab, api, y, plan, rows, adv) {
 }
 
 function groupsFor(api, y) {
-  const st = getState();
-  const subjects = subjectsForYear(y, api.ctx().subjects, st.offer);
+  const offer = api.ctx().offer;
+  const subjects = subjectsForYear(y, api.ctx().subjects, offer);
+  // The school's own note for a group (Beatty's pure sciences, Humanities at
+  // G1) rides beside the national one.
+  const notes = (offer && offer.groupNotes && offer.groupNotes[isLower(y) ? 'lower' : 'upper']) || {};
   const groups = (api.data.subjects.groups || []).map((g) => ({
     ...g,
+    note: [isLower(y) && g.lowerNote ? g.lowerNote : g.note, notes[g.id]].filter(Boolean).join(' '),
     rows: subjects.filter((s) => s.group === g.id && (s.levels || []).length),
     flat: subjects.filter((s) => s.group === g.id && !(s.levels || []).length),
   })).filter((g) => g.rows.length || g.flat.length);
   return { subjects, groups };
 }
 
+/* Every other school's subjects, for a transfer or another school. Opens by
+   itself when the student already holds one of them. */
+function moreHtml(api, y, plan) {
+  const offer = api.ctx().offer;
+  const rest = moreSubjects(y, api.ctx().subjects, offer).filter((s) => (s.levels || []).length);
+  if (!rest.length) return '';
+  const held = rest.filter((s) => plan[s.id]).length;
+  return `
+    <details class="moresubj"${held ? ' open' : ''}>
+      <summary>More subjects (other schools) <span class="small">${rest.length} not offered at ${esc(offer.short || 'this school')}${held ? `, ${held} set` : ''}</span></summary>
+      <p class="small">For a transfer, or a subject taken at another school. National levels.</p>
+      <div class="subjgrid">${rest.map((s) => subjTile(s, plan)).join('')}</div>
+    </details>`;
+}
+
 function shortGroup(g) {
-  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common' }[g.id] || g.label;
+  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common Curriculum' }[g.id] || g.label;
 }
 
 function levelsHtml(api, y, plan) {
@@ -167,6 +186,9 @@ function levelsHtml(api, y, plan) {
   const count = Object.keys(plan).length;
   const g3 = Object.values(plan).filter((l) => l === 'G3').length;
   const flat = groups.flatMap((g) => g.flat);
+  const offer = api.ctx().offer;
+  const also = (offer && offer.alsoTimetable && offer.alsoTimetable[isLower(y) ? 'lower' : 'upper']) || [];
+  const flatNames = [...flat.map((s) => s.name), ...also];
 
   return `
     ${carry ? `
@@ -210,14 +232,16 @@ function levelsHtml(api, y, plan) {
         <div class="subjgrid">${g.rows.map((s) => subjTile(s, plan)).join('')}</div>
       </section>`).join('')}
 
-    ${flat.length && !chunked ? `<p class="small flatline">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${flat.map((s) => esc(s.name)).join(', ')}.</p>` : ''}
+    ${moreHtml(api, y, plan)}
+
+    ${flatNames.length ? `<p class="small flatline">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${flatNames.map((n) => esc(n)).join(', ')}.</p>` : ''}
 
     ${chunked ? nextGroupBtn(groups, active) : `<p class="nextgroup"><button type="button" class="btn press" data-action="yr-tab" data-tab="advice">See the advice ${icon('arrow')}</button></p>`}
 
     <div class="notes">
       ${j.up ? `<p>${icon('calendar')} ${esc(j.up)}</p>` : ''}
       ${j.note ? `<p>${esc(j.note)}</p>` : ''}
-      <p>${esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
+      <p>${offer ? `Showing the subjects and levels ${esc(offer.school)} offers. Every other school's subjects are under More subjects, or in Settings.` : esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
     </div>`;
 }
 
@@ -248,13 +272,16 @@ export function subjTile(s, plan, action = 'yr-lvl') {
   <div class="subj" data-sid="${esc(s.id)}" data-held="${held}">
     <span class="subj-name">${esc(s.name)}
       ${s.compulsory ? '<small>Everyone takes this</small>' : ''}
-      ${s.status === 'provisional' && !s.compulsory ? '<small>Selected schools</small>' : ''}
+      ${s.status === 'provisional' && !s.compulsory && !s.offered ? '<small>Selected schools</small>' : ''}
+      ${s.levelNote ? `<small>${esc(s.levelNote)}</small>` : ''}
+      ${s.offerNote ? `<small>${esc(s.offerNote)}</small>` : ''}
+      ${(s.elsewhere || []).length && !s.offerNote ? `<small>${esc(s.elsewhere.join(', '))} at another school or centre</small>` : ''}
     </span>
     <span class="lvsw" role="group" aria-label="${esc(s.name)} level" data-level="${held}" style="--i:${held ? LVI[held] : 0}">
       <i class="lvsw-thumb" aria-hidden="true"></i>
       ${['G1', 'G2', 'G3'].map((l) => (s.levels || []).includes(l)
         ? `<button type="button" class="lvsw-b" data-action="${action}" data-sid="${esc(s.id)}" data-level="${l}"
-            aria-pressed="${held === l}" aria-label="${esc(s.name)} at ${l}${held === l ? ', picked. Tap to clear.' : ''}">${l}</button>`
+            aria-pressed="${held === l}" aria-label="${esc(s.name)} at ${l}${(s.elsewhere || []).includes(l) ? ', at another school or centre' : ''}${held === l ? ', picked. Tap to clear.' : ''}">${l}</button>`
         : '<span class="lvsw-b off" aria-hidden="true"></span>').join('')}
     </span>
   </div>`;
@@ -297,7 +324,7 @@ function adviceHtml(api, y, rows, adv) {
 
   return `
     <div class="mobile-board">${answerHtml(rows, `adv-${y}`, y)}</div>
-    ${isLower(y) ? '<p class="small inferline">Read through the Sec 3 combination these levels usually lead to. An inference, not a promise: your school sets the real one.</p>' : ''}
+    ${isLower(y) ? '<p class="small inferline">Admission in 2028 reads your SEC results, not your Sec 1 and 2 levels. These levels matter because they shape the subjects and levels you take in Sec 3. On track means your levels now fit what each place will ask.</p>' : ''}
     ${adv.start && adv.start.missing ? `<p class="callout small">${esc(adv.start.line)} <button type="button" class="linkbtn" data-action="yr-tab" data-tab="levels">Add them</button></p>` : ''}
 
     ${top ? `
@@ -305,7 +332,7 @@ function adviceHtml(api, y, rows, adv) {
       ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
       <div class="allopen">
         <p class="allopen-n">8/8</p>
-        <div><p class="allopen-h">Every destination is open from here.</p>
+        <div><p class="allopen-h">${isLower(y) ? 'Every place is on track from here.' : 'Every destination is open from here.'}</p>
         <p class="small">The question now is not which door but which two years you want. Play one forward to test it.</p>
         <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>
       </div>` : '')}
@@ -316,12 +343,12 @@ function adviceHtml(api, y, rows, adv) {
 
     ${adv.pairs.length ? `
       <h2 class="advh">${esc(t('pairMoves'))}</h2>
-      <p class="small advsub">These open something no single move does.</p>
+      <p class="small advsub">${isLower(y) ? 'These put a place on track that no single move does.' : 'These open something no single move does.'}</p>
       <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.holds.length ? `
       <h2 class="advh">Levels to keep</h2>
-      <p class="small advsub">These levels are what keep places open. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
+      <p class="small advsub">These levels are what keep places ${isLower(y) ? 'on track' : 'open'}. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
       <div class="holdlist">${adv.holds.map((h) => holdHtml(h)).join('')}</div>` : ''}`;
 }
 
@@ -353,9 +380,10 @@ function dockHtml(rows, adv) {
   const open = openCount(rows);
   const top = adv && adv.singles[0];
   const k = lastLine || t('answer');
-  const line = top ? top.short : (open === rows.length ? 'Every destination is open.' : 'Slide a level and this answers.');
+  const lower = openWord(rows) === 'on track';
+  const line = top ? top.short : (open === rows.length ? (lower ? 'Every place is on track.' : 'Every destination is open.') : 'Slide a level and this answers.');
   return `
-    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} open. ${esc(lastLine)} ${esc(line)} Open the advice.">
+    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(lastLine)} ${esc(line)} Open the advice.">
       <span class="dock-num"><b>${open}</b>/${rows.length}</span>
       <span class="dock-words"><span class="dock-k">${esc(k)}</span><span class="dock-line">${top ? `${icon('ticket')} ` : ''}${esc(line)}</span></span>
       ${lampsHtml(rows)}
@@ -409,7 +437,7 @@ function bind(root, api, y) {
         level,
       }, api.data.copy);
       lastLine = p.line || '';
-      const adv = advise({ yearId: y, plan: now, ctx: api.ctx(), offer: getState().offer });
+      const adv = advise({ yearId: y, plan: now, ctx: api.ctx() });
       const dock = root.querySelector('#dock');
       if (dock) { dock.innerHTML = dockHtml(nextRows, adv); dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump'); }
       const aside = root.querySelector('#yaside');
@@ -433,7 +461,7 @@ function bind(root, api, y) {
         const cnt = subjectsForYear(y, api.ctx().subjects).filter((s) => s.group === grp.id && now[s.id]).length;
         g.innerHTML = `${esc(shortGroup(grp))}${cnt ? `<i>${cnt}</i>` : ''}`;
       });
-      api.announce(`${p.openNow} of ${nextRows.length} open. ${lastLine}`);
+      api.announce(`${p.openNow} of ${nextRows.length} ${openWord(nextRows)}. ${lastLine}`);
       if (p.justOpened.length) api.cue('door');
     },
 

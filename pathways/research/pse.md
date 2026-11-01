@@ -78,3 +78,22 @@
 ## Changes since 2026-08-05
 
 No new MOE press release, Parliamentary reply or SEAB notice was found. MOE pages still say 2028 course details will be published mid-2027. Explainers from October 2026 (edukatesg) restate the same rules.
+
+## Re-check 2026-11-01 (v4.2.0)
+
+How: search engine extracts of moe.gov.sg, seab.gov.sg, lasalle.edu.sg and nafa.edu.sg. moe.gov.sg and seab.gov.sg are not on this environment's allowed network list, so no page was opened in full.
+
+Held, unchanged: L1R4 16 and 20 (gross), all five at G3, English C6, G3 Maths or A Maths D7, Mother Tongue floors; ELR2B2 net 22 (Nursing 24) with B2 at its G2 value; PFP ELMAB3 12; Higher Nitec (2 yrs) ELMAB3 19; Higher Nitec (3 yrs) set at G1; Sec 5 routes. No 2026 announcement changes these (COS 2026, 3 Mar 2026, confirms one PSE from 2028).
+
+Corrected in the app:
+- JC and MI: R3 must be a Humanities, Maths or Science at G3, so three of those at G3 is now a rule (MOE JAE changes from 2028; Infosheet 1, 6 Mar 2025).
+- NAFA and LASALLE: four other subjects count, at most one at G2, so four at G3 with English (LASALLE diploma admissions; NAFA Art and Design).
+- Grade targets: each destination applies its own exclusions. PFP drops G3 9 and G2 5 and 6; Sec 5 drops G2 6; Higher Nitec (2 yrs) counts every grade.
+- Sec 5 target: the ELMAB3 21 test applies only with 2 or fewer G3 passes; 3 or more qualify without it.
+- JC and MI targets: the grade floors are now checked, not only shown.
+- Bonus points: the cut offs are gross; bonus points change only the posting.
+- Higher Nitec (3 yrs): English is soft, since B4 has no required subject.
+
+No rule sets a minimum of five subjects on its own. Five follows from how each score is built, and the SEC certificate itself needs one subject at E8, grade 5 or grade D.
+
+Sources: moe.gov.sg/post-secondary/admissions/jae/changes-from-2028; moe.gov.sg/news/press-releases/20250306-infosheet-1-revised-jc-admission-criteria; moe.gov.sg/post-secondary/admissions/pse/ (jc-and-mi, polytechnic-diploma-course, pfp, ite-2-year-higher-nitec, ite-3-year-higher-nitec, explore-pathways); seab.gov.sg/secondary-education-certificate-sec/; lasalle.edu.sg/study/admissions/diploma-eae-admissions/; nafa.edu.sg/admissions/diploma-admissions/faculty-of-art-design; moe.gov.sg/news/speeches/20260303 (COS 2026).

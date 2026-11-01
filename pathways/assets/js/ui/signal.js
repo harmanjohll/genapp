@@ -10,8 +10,8 @@
 // Data order always (never ranked). SVG is decoration; the list of names and
 // states is in the accessible label and in the text beside it.
 
-import { esc } from './dom.js?v=4.1.0';
-import { stateWord } from './labels.js?v=4.1.0';
+import { esc } from './dom.js?v=4.3.0';
+import { stateWord, openWord } from './labels.js?v=4.3.0';
 
 export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 
@@ -25,7 +25,7 @@ function changedSet(key, rows) {
 }
 
 function summary(rows) {
-  return rows.map((r) => `${r.railName}: ${stateWord(r.state)}`).join('. ');
+  return rows.map((r) => `${r.railName}: ${stateWord(r.state, r.lens)}`).join('. ');
 }
 
 /**
@@ -54,9 +54,9 @@ export function signalHtml(rows, o = {}) {
     </g>`;
   }).join('');
   return `
-  <figure class="signal${o.intro ? ' intro' : ''}" role="img" aria-label="${open} of ${rows.length} open. ${esc(summary(rows))}.">
+  <figure class="signal${o.intro ? ' intro' : ''}" role="img" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(summary(rows))}.">
     <figcaption class="sg-head">
-      <span class="sg-count"><b>${open}</b> of ${rows.length} open</span>
+      <span class="sg-count"><b>${open}</b> of ${rows.length} ${openWord(rows)}</span>
       ${o.caption ? `<span class="sg-cap">${esc(o.caption)}</span>` : ''}
     </figcaption>
     <svg class="sg-art" viewBox="0 0 340 ${H}" aria-hidden="true">
@@ -65,7 +65,7 @@ export function signalHtml(rows, o = {}) {
       ${lamps}
     </svg>
     <p class="sg-key" aria-hidden="true">
-      <span data-k="open">Open now</span><span data-k="near">1 to 2 moves away</span><span data-k="far">3 to 5 moves away</span><span data-k="other">Another route in</span>
+      <span data-k="open">${esc(stateWord('open', rows[0] && rows[0].lens))}</span><span data-k="near">1 to 2 moves away</span><span data-k="far">3 to 5 moves away</span><span data-k="other">Another route in</span>
     </p>
   </figure>`;
 }
@@ -89,9 +89,9 @@ function miniHtml(rows, o) {
       </g>`;
   }).join('');
   return `
-  <figure class="signal mini" role="img" aria-label="${open} of ${rows.length} open. ${esc(summary(rows))}.">
+  <figure class="signal mini" role="img" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(summary(rows))}.">
     <svg class="sg-art" viewBox="0 0 320 ${H}" aria-hidden="true">
-      <g class="sg-hubtext"><text class="sg-big" x="8" y="${hubY + 12}">${open}</text><text class="sg-small" x="${open > 9 ? 48 : 30}" y="${hubY + 12}">/${rows.length}</text><text class="sg-small" x="8" y="${hubY + 30}">open</text></g>
+      <g class="sg-hubtext"><text class="sg-big" x="8" y="${hubY + 12}">${open}</text><text class="sg-small" x="${open > 9 ? 48 : 30}" y="${hubY + 12}">/${rows.length}</text><text class="sg-small" x="8" y="${hubY + 30}">${openWord(rows)}</text></g>
       <circle class="sg-hubdot" cx="100" cy="${hubY}" r="9"/>
       ${parts}
     </svg>

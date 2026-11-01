@@ -8,11 +8,11 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=4.1.0';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.1.0';
-import { esc, onAction } from './dom.js?v=4.1.0';
-import { icon } from './icons.js?v=4.1.0';
-import { listNames, sayName } from '../engine/advice.js?v=4.1.0';
+import { getState, setGrade } from '../state.js?v=4.3.0';
+import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.3.0';
+import { esc, onAction } from './dom.js?v=4.3.0';
+import { icon } from './icons.js?v=4.3.0';
+import { listNames, sayName } from '../engine/advice.js?v=4.3.0';
 
 const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };
@@ -96,13 +96,19 @@ function outHtml(api, y) {
     const nv = a.now.value; const tv = a.target.value;
     const ref = a.basis === 'target' ? a.target : a.now;
     const lines = ref.value == null ? `<p class="small">${esc(ref.why || '')}</p>` : `<ul class="meets">${a.dests.map((d) => {
-      const meets = ref.value <= d.cutoff;
-      const say = meets
-        ? `${a.basis === 'target' ? 'Target reaches it' : 'Reached now'}${d.gap < 0 ? `, ${-d.gap} to spare` : ''}`
-        : (d.steps && d.steps.length
-          ? `${d.gap} to go: ${listNames(d.steps.map((s) => `${s.name} ${s.from} to ${s.to}`))}`
-          : `${d.gap} to go, more than these subjects can move. A stronger subject counted, or another road in.`);
-      return `<li data-meets="${meets}"><b>${esc(SHORT[d.id] || d.name)}</b><span>${meets ? icon('check') : ''}${esc(say)}</span></li>`;
+      // Each destination judges its own value: PFP drops some grades the
+      // aggregate allows, Sec 5 has a route that needs no score, JC and MI
+      // have grade floors on top of the cut off.
+      const meets = !!d.meets;
+      const own = d.value != null && d.value !== ref.value ? `Reads ${d.value} here. ` : '';
+      const say = d.value == null && !meets
+        ? (d.why || d.note || 'Not enough grades it can count yet.')
+        : meets
+          ? (d.via || `${a.basis === 'target' ? 'Target reaches it' : 'Reached now'}${d.gap < 0 ? `, ${-d.gap} to spare` : ''}`)
+          : (d.via ? d.via : (d.steps && d.steps.length
+            ? `${d.gap} to go: ${listNames(d.steps.map((s) => `${s.name} ${s.from} to ${s.to}`))}`
+            : `${d.gap} to go, more than these subjects can move. A stronger subject counted, or another road in.`));
+      return `<li data-meets="${meets}"><b>${esc(SHORT[d.id] || d.name)}</b><span>${meets ? icon('check') : ''}${esc(own + say)}</span></li>`;
     }).join('')}</ul>`;
     const counted = (ref.counted || []).map((e) => `${esc(e.name)} ${esc(e.grade)}${e.read === 'G2 value' && e.level === 'G3' ? ' (as G2)' : ''}`).join(', ');
     return `<article class="scorecard">

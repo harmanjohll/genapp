@@ -3,8 +3,33 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "4.1.0",
+  "version": "4.3.0",
   "releases": [
+    {
+      "version": "4.3.0",
+      "date": "2026-11-01",
+      "head": "Beatty's subjects first",
+      "changes": [
+        "Set levels shows the subjects Beatty offers, at the levels Beatty runs them: Additional Mathematics and Principles of Accounts at G3, Design and Technology at G2, and so on.",
+        "Every other school's subjects are under More subjects, for a transfer or another school. A switch in Settings shows the full list.",
+        "Advice only suggests a subject and level Beatty runs. Music and Computing at G3 are marked as taken at another school or centre.",
+        "In Sec 1 and 2, G1 Humanities is named for what it is: the Humanities Exposure Modules.",
+        "Subject names are spelt out in full, such as Humanities (Social Studies, Geography) and Science (Physics, Chemistry)."
+      ]
+    },
+    {
+      "version": "4.2.0",
+      "date": "2026-11-01",
+      "head": "Advice that fits the year",
+      "changes": [
+        "Sec 1 and Sec 2 are judged by their own rules, in the subjects I take now. The five subject counts belong to the SEC, so they no longer show up as moves in lower secondary.",
+        "In Sec 1 and Sec 2, places read On track instead of Open: nothing opens before the SEC. Each place says once what the SEC will count.",
+        "Mother Tongue no longer has to be G3 for Junior College or Millennia Institute in lower secondary advice, matching the 2028 rules.",
+        "Moves say what they lead to in Sec 3, such as G3 Maths and Additional Maths, and that the school sets the mark and decides.",
+        "P6: a list of the choices my PSLE gives me and what each puts on track, a place for a Higher Mother Tongue result, and the Foundation option for Posting Group 3.",
+        "SEC rules re-checked: a third Humanities, Maths or Science at G3 for JC and MI, four at G3 for NAFA and LASALLE, and grade targets that apply each place's own rules."
+      ]
+    },
     {
       "version": "4.1.0",
       "date": "2026-10-31",

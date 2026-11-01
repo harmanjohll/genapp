@@ -5,11 +5,11 @@
 // say to a real person. "Keep" puts the words on My plan, and the ticket is
 // punched: a small, honest acknowledgement that the student did something.
 
-import { getState } from '../state.js?v=4.1.0';
-import { sayMove, roleWords } from './talk.js?v=4.1.0';
-import { esc } from './dom.js?v=4.1.0';
-import { icon } from './icons.js?v=4.1.0';
-import { t } from './labels.js?v=4.1.0';
+import { getState } from '../state.js?v=4.3.0';
+import { sayMove, roleWords } from './talk.js?v=4.3.0';
+import { esc } from './dom.js?v=4.3.0';
+import { icon } from './icons.js?v=4.3.0';
+import { t } from './labels.js?v=4.3.0';
 
 const LV_COLOR = { G1: 'var(--g1)', G2: 'var(--g2)', G3: 'var(--g3)' };
 
@@ -43,7 +43,8 @@ export function ticketHtml(m, { hero = false, compact = false, simple = false } 
       </p>` : ''}
       ${!compact && !simple && m.because && m.because.length ? `<p class="tk-why">Because ${m.because.map((b) => esc(b)).join('; ')}.</p>` : ''}
       ${!compact && !simple && m.still && m.still.length ? `<p class="tk-why">Then: ${m.still.slice(0, 2).map((s) => `${esc(s.dest)} next asks ${esc(/^(A|An|One|Two|Three|Four|Five)\b/.test(s.next) ? s.next.charAt(0).toLowerCase() + s.next.slice(1) : s.next)}`).join('; ')}.</p>` : ''}
-      ${!compact && !simple && m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when)}. ${esc(m.who)}.</p>` : ''}
+      ${!compact && !simple && m.sec3 ? `<p class="tk-why">In Sec 3: ${esc(m.sec3)}</p>` : ''}
+      ${!compact && !simple && m.when ? `<p class="tk-when">${icon('calendar')} ${esc(m.when.charAt(0).toUpperCase() + m.when.slice(1))}. Ask ${esc(m.who)}.${m.how ? ` ${esc(m.how)}` : ''}</p>` : ''}
       ${compact ? '' : `
       <div class="say">
         <span class="say-who">${icon('talk')} ${esc(rw.say)}</span>

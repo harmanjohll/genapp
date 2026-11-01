@@ -16,7 +16,7 @@
 // frightened. A padlock is a claim about a person's future that no aggregate
 // entitles anyone to make.
 
-import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=4.1.0';
+import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=4.3.0';
 
 export const STATES = {
   'open':         { label: 'Open now',        order: 0 },
@@ -55,9 +55,31 @@ export function upperPlan(plan, subjects) {
   return out;
 }
 
+// Lower secondary years. Kept here rather than imported from years.js,
+// which imports this file through project.js.
+const LOWER_YEARS = new Set(['sec1', 'sec2']);
+
+/**
+ * Which rule set judges this plan.
+ *
+ * The SEC rules count subjects ("five at G3"), and the SEC is sat at the end
+ * of upper secondary. Read against a Sec 1 or Sec 2 plan, a count of five
+ * means every levelled subject, Mother Tongue included, which no admission
+ * rule says. So a lower secondary plan is judged by the destination's
+ * `lower` set: the same rules, written in the subjects a Sec 1 or Sec 2
+ * student takes, with the last subject each place counts left to Sec 3
+ * (upper secondary adds exam subjects, 5 to 9 in all). Lower rules read the
+ * raw Sec 1 and 2 rows, which evalPlan keeps next to the projected ones.
+ */
+export function lensFor(yearId, destination) {
+  return LOWER_YEARS.has(yearId) && Array.isArray(destination && destination.lower) ? 'lower' : 'sec';
+}
+
 export function reach(rawPlan, destination, ctx) {
-  const plan = upperPlan(rawPlan, ctx.subjects);
-  const ruleResults = (destination.structural || []).map((rule) => {
+  const lens = lensFor(ctx.yearId, destination);
+  const plan = lens === 'lower' ? { ...(rawPlan || {}) } : upperPlan(rawPlan, ctx.subjects);
+  const rules = lens === 'lower' ? destination.lower : destination.structural;
+  const ruleResults = (rules || []).map((rule) => {
     const res = evaluate(rule.test, plan, ctx);
     return { rule, res };
   });
@@ -110,7 +132,11 @@ export function reach(rawPlan, destination, ctx) {
     // a ranking, which is the one thing this app must never draw.
     order: destination.order || 0,
     state,
-    status: statusLine(destination, state, moves),
+    lens,
+    // Lower years only: what the SEC will count, in one sentence, so the
+    // count is named once as a horizon instead of as a move.
+    horizon: lens === 'lower' ? (destination.lowerHorizon || null) : null,
+    status: statusLine(destination, state, moves, lens),
     distance,
     met,
     gap,
@@ -137,10 +163,12 @@ export function reach(rawPlan, destination, ctx) {
  *         that rule is soft and OPEN_QUESTIONS flags it as an unverified guess
  * A row with no room for the qualifier prints a verdict the data does not support.
  */
-function statusLine(destination, state, moves) {
+function statusLine(destination, state, moves, lens) {
   if (state === 'open') {
+    const lower = lens === 'lower';
     const softGap = moves.find((m) => m.soft);
-    if (softGap) return { text: `Open, ${softGap.short} usually needed`, tone: 'open' };
+    if (softGap) return { text: `${lower ? 'On track' : 'Open'}, ${softGap.short} usually needed`, tone: 'open' };
+    if (lower) return { text: destination.lowerOpenLabel || 'On track', tone: 'open' };
     return { text: destination.openLabel || 'Open now', tone: 'open' };
   }
   const hard = moves.filter((m) => m.hard);

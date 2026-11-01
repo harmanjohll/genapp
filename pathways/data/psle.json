@@ -36,7 +36,17 @@
       { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: can start this subject at G3." },
       { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: can start this subject at G2." }
     ],
-    "note": "Schools offer these, and families decide. Starting higher is a choice, not an instruction."
+    "note": "Schools offer these, and families decide. Starting higher is a choice, not an instruction, and it does not fix the level for Sec 3: every level is reviewed with everyone else."
+  },
+  "downgrades": {
+    "status": "confirmed",
+    "groups": [3],
+    "rules": [
+      { "subjects": ["el", "maths", "science"], "foundation": ["A", "B", "C"], "levels": ["G2"], "text": "Taken at Foundation: the school can offer this subject at G2." },
+      { "subjects": ["mtl"], "foundation": ["A"], "levels": ["G2"], "text": "Foundation A: the school can offer Mother Tongue at G2." },
+      { "subjects": ["mtl"], "foundation": ["B", "C"], "levels": ["G1", "G2"], "text": "Foundation B or C: the school can offer Mother Tongue at G2 or G1." }
+    ],
+    "note": "Posting Group 3 with a Foundation subject: a less demanding start in that subject is an option, decided with the school."
   },
   "hmtl": {
     "text": "Higher Mother Tongue in Sec 1 is open to AL 1 or 2 in Mother Tongue, or Distinction or Merit in Higher Mother Tongue, whatever the overall score (2026 Sec 1 intake onwards). Schools can offer it to others too.",

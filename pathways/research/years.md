@@ -89,3 +89,19 @@ See `open_questions` in years.json. The main ones:
 - PSE results date conflict.
 - National rules for moving down a level.
 - Beatty's G-level offerings, full CCA list and AMath criteria.
+
+## Re-check 2026-11-01 (v4.2.0)
+
+How: search engine extracts of moe.gov.sg pages; no page opened in full (not on this environment's allowed network list).
+
+Held, unchanged: Posting Groups by PSLE Score; upgrades at entry (Standard AL 5 or better gives G3 for PG1 and PG2; AL 6 or Foundation A gives G2 for PG1); humanities move from Sec 2 on interest and aptitude in Sec 1; upper secondary 5 to 9 examinable subjects (school slides; one source says 5 to 7).
+
+Corrected in the app:
+- Higher Mother Tongue for the 2026 Sec 1 intake onwards: MTL AL 1 or 2, or Distinction or Merit in PSLE Higher MTL; the PSLE Score no longer counts. The P6 page now takes the HMTL result (MOE press release, 14 Sep 2024).
+- Posting Group 3 with a Foundation subject: English, Maths or Science can be taken at G2; Foundation MTL A at G2, B or C at G2 or G1. An option with the school (MOE Full SBB FAQ).
+- Timing: MOE sets no national dates for lower secondary level changes. Schools review at "appropriate junctures", on results and a holistic look at workload; students can ask and the school decides. The app now says "at your school's review, often at the end of Sec 1".
+- Lower secondary is judged by its own rules: admission in 2028 reads only the SEC, and upper secondary adds exam subjects, so the last subject each place counts can come from Sec 3. Mother Tongue need not be G3 for JC or MI.
+
+Still open: placement for scores 26 to 30 without AL 7 in English and Maths, and 31 to 32; HMTL entry after Sec 1; whether DSA JC or early admissions read lower secondary results.
+
+Sources: moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups; moe.gov.sg/news/press-releases/20251125-release-of-2025-psle-results; moe.gov.sg/microsites/psle-fsbb/full-subject-based-banding/faq.html; moe.gov.sg/news/press-releases/20240914 (Mother Tongue); moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience; moe.gov.sg/news/press-releases/20230301 (Learn for Life).

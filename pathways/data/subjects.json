@@ -52,12 +52,14 @@
   {
    "id": "science",
    "label": "Science",
-   "note": "At G2, science comes as a pair. Single sciences are G3."
+   "note": "At G2, science comes as a pair. Single sciences are G3.",
+   "lowerNote": "One Science in Sec 1 and 2. In Sec 3 it becomes a pair, or single sciences."
   },
   {
    "id": "humanities",
    "label": "Humanities",
-   "note": "At G2 and G3, one Humanities pair is part of the package. Single subjects can come on top."
+   "note": "At G2 and G3, one Humanities pair is part of the package. Single subjects can come on top.",
+   "lowerNote": "In Sec 1 and 2, each Humanities subject has its own level."
   },
   {
    "id": "elective",
@@ -117,7 +119,7 @@
   {
    "id": "hmtl",
    "name": "Higher Mother Tongue",
-   "shortName": "Higher MTL",
+   "shortName": "Higher Mother Tongue",
    "group": "core",
    "levels": [
     "G3"
@@ -154,12 +156,13 @@
    ],
    "status": "confirmed",
    "phase": "both",
-   "raisableFrom": "sec1"
+   "raisableFrom": "sec1",
+   "sec3": { "G2": "Maths at G2 is the usual way into Additional Maths at G2. The school sets the mark.", "G3": "Maths at G3 is the usual way into Additional Maths at G3. The school sets the mark." }
   },
   {
    "id": "amaths",
    "name": "Additional Mathematics",
-   "shortName": "A Maths",
+   "shortName": "Additional Mathematics",
    "group": "maths_extra",
    "levels": [
     "G2",
@@ -199,7 +202,7 @@
   {
    "id": "sci_pc",
    "name": "Science (Physics, Chemistry)",
-   "shortName": "Sci (Phy, Chem)",
+   "shortName": "Science (Physics, Chemistry)",
    "group": "science",
    "levels": [
     "G2",
@@ -220,7 +223,7 @@
   {
    "id": "sci_pb",
    "name": "Science (Physics, Biology)",
-   "shortName": "Sci (Phy, Bio)",
+   "shortName": "Science (Physics, Biology)",
    "group": "science",
    "levels": [
     "G2",
@@ -241,7 +244,7 @@
   {
    "id": "sci_cb",
    "name": "Science (Chemistry, Biology)",
-   "shortName": "Sci (Chem, Bio)",
+   "shortName": "Science (Chemistry, Biology)",
    "group": "science",
    "levels": [
     "G2",
@@ -317,7 +320,7 @@
   {
    "id": "hum_ss_geog",
    "name": "Humanities (Social Studies, Geography)",
-   "shortName": "Hum (SS, Geog)",
+   "shortName": "Humanities (Social Studies, Geography)",
    "group": "humanities",
    "levels": [
     "G2",
@@ -338,7 +341,7 @@
   {
    "id": "hum_ss_hist",
    "name": "Humanities (Social Studies, History)",
-   "shortName": "Hum (SS, Hist)",
+   "shortName": "Humanities (Social Studies, History)",
    "group": "humanities",
    "levels": [
     "G2",
@@ -359,7 +362,7 @@
   {
    "id": "hum_ss_lit",
    "name": "Humanities (Social Studies, Literature in English)",
-   "shortName": "Hum (SS, Lit)",
+   "shortName": "Humanities (Social Studies, Literature in English)",
    "group": "humanities",
    "levels": [
     "G2",
@@ -420,7 +423,7 @@
   {
    "id": "literature",
    "name": "Literature in English",
-   "shortName": "Literature",
+   "shortName": "Literature in English",
    "group": "humanities",
    "levels": [
     "G2",
@@ -480,7 +483,7 @@
   {
    "id": "dt",
    "name": "Design and Technology",
-   "shortName": "Design and Tech",
+   "shortName": "Design and Technology",
    "group": "elective",
    "levels": [
     "G1",
@@ -501,7 +504,7 @@
   {
    "id": "nfs",
    "name": "Nutrition and Food Science",
-   "shortName": "Food Science",
+   "shortName": "Nutrition and Food Science",
    "group": "elective",
    "levels": [
     "G1",
@@ -561,7 +564,7 @@
   {
    "id": "poa",
    "name": "Principles of Accounts",
-   "shortName": "Accounts",
+   "shortName": "Principles of Accounts",
    "group": "elective",
    "levels": [
     "G2",
@@ -623,7 +626,7 @@
   {
    "id": "ebs",
    "name": "Elements of Business Skills",
-   "shortName": "Business Skills",
+   "shortName": "Elements of Business Skills",
    "group": "elective",
    "levels": [
     "G1"
@@ -642,7 +645,7 @@
   {
    "id": "ess",
    "name": "Exercise and Sports Science",
-   "shortName": "Sports Science",
+   "shortName": "Exercise and Sports Science",
    "group": "elective",
    "levels": [
     "G3"
@@ -711,6 +714,7 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec1",
+   "sec3": { "G2": "Science at G2 is the usual way into a Science pair at G2.", "G3": "Science at G3 is the usual way into the pure sciences at G3. The school sets the mark." },
    "doing": "One subject covering physics, chemistry and biology together.",
    "likeIf": "I want to know why things behave that way",
    "showsUp": [
@@ -734,6 +738,8 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
+   "levelNote": "G1 is the Humanities Exposure Modules",
    "doing": "How places work, and why people live where they do.",
    "likeIf": "maps and the shape of cities pull at me",
    "showsUp": [
@@ -756,6 +762,8 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
+   "levelNote": "G1 is the Humanities Exposure Modules",
    "doing": "What happened, and how anyone knows that it did.",
    "likeIf": "I argue with the version I was handed",
    "showsUp": [
@@ -768,7 +776,7 @@
   {
    "id": "ls_literature",
    "name": "Literature in English",
-   "shortName": "Literature",
+   "shortName": "Literature in English",
    "group": "humanities",
    "phase": "lower",
    "levels": [
@@ -778,6 +786,8 @@
    ],
    "compulsory": false,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
+   "levelNote": "G1 is the Humanities Exposure Modules",
    "doing": "Read closely, then say what the writer is actually doing.",
    "likeIf": "I notice how it is written, not just what",
    "showsUp": [
@@ -827,7 +837,7 @@
   {
    "id": "ls_dt",
    "name": "Design and Technology",
-   "shortName": "Design",
+   "shortName": "Design and Technology",
    "group": "common",
    "phase": "lower",
    "levels": [],
@@ -845,7 +855,7 @@
   {
    "id": "ls_fce",
    "name": "Food and Consumer Education",
-   "shortName": "Food",
+   "shortName": "Food and Consumer Education",
    "group": "common",
    "phase": "lower",
    "levels": [],
@@ -866,7 +876,7 @@
   "schoolNote": "Schools set their own criteria and their own review points. My school's are the real ones.",
   "years": {
    "sec1": {
-    "up": "English, Mother Tongue, Maths and Science can move up at the end of Sec 1.",
+    "up": "English, Mother Tongue, Maths and Science move up at school reviews, often end of Sec 1.",
     "note": "Humanities levels start moving from Sec 2, not yet."
    },
    "sec2": {

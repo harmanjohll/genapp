@@ -40,7 +40,7 @@ export function pulse(prev, next, evt, copy) {
     openDelta: openNow - openWas,
     moved,
     justOpened,
-    line: line({ openNow, moved, justOpened, evt, copy, total: next.length }),
+    line: line({ openNow, moved, justOpened, evt, copy, total: next.length, lower: !!(next[0] && next[0].lens === 'lower') }),
   };
 }
 
@@ -48,8 +48,10 @@ function fill(tpl, vars) {
   return String(tpl || '').replace(/\{(\w+)\}/g, (_, k) => (vars[k] == null ? '' : vars[k]));
 }
 
-function line({ openNow, moved, justOpened, evt, copy, total }) {
-  const p = (copy && copy.pulse) || {};
+function line({ openNow, moved, justOpened, evt, copy, total, lower }) {
+  const base = (copy && copy.pulse) || {};
+  // Sec 1 and 2 read "on track": the Lower variant of a line wins when it exists.
+  const p = lower ? new Proxy(base, { get: (o, k) => o[`${String(k)}Lower`] || o[k] }) : base;
 
   if (openNow === total && p.allOpen) return p.allOpen;
 
