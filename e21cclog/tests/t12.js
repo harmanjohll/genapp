@@ -46,7 +46,7 @@ const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.jso
     const titles = [await p.title(), await p.evaluate(async () => (await (await fetch('manifest.webmanifest')).json()).name)];
     check('no version in the title or the app name; the version shows in the app', titles.every(t => !/v\d/.test(t)) && await p.evaluate(() => !!document.querySelector('.vmark') || true), JSON.stringify(titles));
     await p.evaluate(() => location.hash = '#/settings?s=about'); await sleep(400);
-    check('Settings, About names the version and says the address stays the same', /Version 3 · October 2026/.test(await p.textContent('#about')) && /address stays the same/.test(await p.textContent('#about')));
+    check('Settings, About names the version and says the address stays the same', (await p.textContent('#about')).includes(await p.evaluate(() => APP_VERSION.label + ' · ' + APP_VERSION.date)) && /address stays the same/.test(await p.textContent('#about')));
     await ctx.close(); }
 
   // 3. legacy: read only, with a way back and a way across

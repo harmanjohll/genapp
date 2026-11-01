@@ -26,19 +26,23 @@ const check = (name, ok, info='') => console.log((ok ? 'PASS ' : 'FAIL ') + name
   await page.screenshot({path:SHOTS + '70-welcome.png', fullPage:true});
   await page.fill('[name=name]', 'Wei Ling Tan'); await page.click('#newForm button[type=submit]'); await sleep(600);
   check('new profile lands on setup', (await page.evaluate(() => location.hash)) === '#/setup');
-  for (const s of ['Chemistry', 'English', 'History']) await page.click(`[data-subj="${s}"]`);
-  await page.fill('#ccaIn', 'Football'); await page.fill('#addOther [name=n]', 'Sec 2 camp'); await page.selectOption('#addOther [name=t]', 'camp'); await page.click('#addOther button'); await sleep(300);
-  await page.click('[data-lv="2"]'); await page.click('[data-col=teal]'); await page.click('[data-av=owl]');
+  // the subjects follow the Sec level, so the level comes first
+  await page.click('[data-lv="2"]'); await sleep(200);
+  // Chemistry is not on the Sec 2 list, so it is added as the student's own
+  await page.fill('#addSubj [name=s]', 'Chemistry'); await page.click('#addSubj button'); await sleep(200);
+  for (const s of ['English Language', 'History']) await page.click(`[data-subj="${s}"]`);
+  await page.click('[data-cca="Football"]'); await page.fill('#addOther [name=n]', 'Sec 2 camp'); await page.selectOption('#addOther [name=t]', 'camp'); await page.click('#addOther button'); await sleep(300);
+  await page.click('[data-col=teal]'); await page.click('[data-av=owl]');
   await page.screenshot({path:SHOTS + '71-setup.png', fullPage:true});
   await page.click('text=Open my log'); await sleep(500);
   const prof = await page.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); return d.profiles[d.current]; });
-  check('setup saved subjects, CCA, camp, cover', prof.experiences.subjects.join() === 'Chemistry,English,History' && prof.experiences.cca === 'Football' && prof.experiences.others[0].name === 'Sec 2 camp' && prof.prefs.colour === 'teal', JSON.stringify(prof.experiences));
+  check('setup saved subjects, CCA, camp, cover', prof.experiences.subjects.join() === 'Chemistry,English Language,History' && prof.experiences.cca === 'Football' && prof.experiences.others[0].name === 'Sec 2 camp' && prof.prefs.colour === 'teal', JSON.stringify(prof.experiences));
   check('no group, no preset subject', prof.groups.length === 0);
   await page.screenshot({path:SHOTS + '72-home-empty.png', fullPage:true});
   // journal bookmarks: CCA first, then subjects, then camp, all empty
   await page.evaluate(() => location.hash = '#/journal/grow'); await sleep(400);
   const marks = await page.$$eval('.bm', l => l.map(x => x.textContent.trim().replace(/\s+/g, ' ')));
-  check('bookmarks: All, CCA, subjects, camp', marks.join('|') === 'All 0|Football 0|Chemistry 0|English 0|History 0|Sec 2 camp 0', marks.join('|'));
+  check('bookmarks: All, CCA, subjects, camp', marks.join('|') === 'All 0|Football 0|Chemistry 0|English Language 0|History 0|Sec 2 camp 0', marks.join('|'));
   // Gemini settings
   await page.evaluate(() => location.hash = '#/settings'); await sleep(400);
   await page.click('#coachMode input[value=gemini]'); await page.fill('#sGKey', 'TESTKEY123'); await page.click('#sGLoad'); await sleep(500);

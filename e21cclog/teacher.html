@@ -251,7 +251,7 @@ ol.steps li{margin-bottom:8px}
             <label class="f"><span>Level</span><input class="in" id="level" placeholder="e.g. Sec 2 Express"></label>
             <label class="f"><span>Your name (as students say it)</span><input class="in" id="teacherName" placeholder="e.g. Mr Tan"></label>
             <label class="f"><span>Your school email</span><input class="in" id="teacherEmail" type="email" inputmode="email" placeholder="name@moe.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false"><small>Used to filter your students in the drop box sheet.</small></label>
-            <label class="f"><span>Subject or activity</span><input class="in" id="subject" placeholder="e.g. Mathematics, or Football"></label>
+            <label class="f"><span>Subject or activity</span><input class="in" id="subject" list="subjList" placeholder="e.g. Mathematics, or Football" autocomplete="off"><datalist id="subjList"></datalist><small>Use the school's full name, as students see it, such as English Language or Humanities (Social Studies, History).</small></label>
             <label class="f"><span>Other subjects you teach this group</span><input class="in" id="subjects" placeholder="comma separated, optional"></label>
           </div>
         </div>
@@ -435,6 +435,8 @@ function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', 
 function toast(m, ms = 2800){ const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, ms); }
 function plural(n, one, many){ return `${n} ${n === 1 ? one : (many || one + 's')}`; }
 if (typeof APP_VERSION !== 'undefined') $('#ver').textContent = APP_VERSION.label;
+// the school's subjects, CCAs and NEXUS@BTY modules, for the group form
+if (typeof SUBJECTS !== 'undefined') $('#subjList').innerHTML = [...SUBJECTS, ...ccaNames(), ...nexusFor(null).flatMap(t => t.modules.map(m => m.label))].map(n => `<option value="${esc(n)}">`).join('');
 function fmtDay(t){ return new Date(t).toLocaleDateString('en-SG', {weekday:'short', day:'numeric', month:'short'}); }
 function fmtDate(t){ return new Date(t).toLocaleDateString('en-SG', {day:'numeric', month:'short', year:'numeric'}); }
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }

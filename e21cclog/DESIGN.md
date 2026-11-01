@@ -2,6 +2,25 @@
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, and v3 makes Home simpler and help more specific. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
 
+## Beatty's own subjects, CCAs and NEXUS@BTY (1 November 2026)
+
+Harman found the subject list imprecise: one flat list for every level, G1 to G3 offered for every subject (even PE), Social Studies missing, Computing and Music listed as if taught at Beatty. The school site could not be reached from the build environment, so he gave the offering directly, and checked each round.
+
+**Decided with Harman.**
+- **The subjects follow the Sec level.** Sec 1 and 2 see the Lower Sec list; Sec 3 to 5 see Upper Sec. A student chooses a level first, then their subjects.
+- **Only the levels each subject is offered at.** Lower Sec Humanities at G2 or G3 (G1 students take the Humanities Exposure Modules). Upper Sec Additional Mathematics at G3 only. Common Curriculum subjects (Art, Design and Technology, Food and Consumer Education, Music) and PE and CCE have no level.
+- **Full official names.** English Language, Literature in English, Humanities (Social Studies, History), Science (Chemistry, Physics), Nutrition and Food Science, Principles of Accounts, Physical Education, Character and Citizenship Education.
+- **Upper Sec as the school runs it.** Humanities (Social Studies, Geography) and Humanities (Social Studies, History) at G3 and G2; pure Geography and Literature in English at G3; no pure History, no Social Studies with Literature; Social Studies at G1, not examined. Pure Sciences pair Chemistry with Physics or Biology; Science (Chemistry, Physics) at G3 and G2; Science (Chemistry, Biology) at G3; Science at G1. Computing at G1 at Beatty; Computing and Music at G3 at another school or centre, shown and marked so.
+- **CCAs and NEXUS@BTY from the school's lists**, alphabetical, with the student's own still possible. NX101 for Sec 1, NX201 for Sec 2, NX301 exchanges and NX302 industry attachments from Sec 3 for selected students. The school's " - " in module names is written as a colon.
+
+**How it works.**
+- The offering lives in `school/beatty.json`, with a copy embedded in `core.js` (`DEFAULT_SCHOOL`) so the Log works offline, the same way as the statements. t14 checks the two match.
+- Helpers in `core.js`: `subjectsFor(level)`, `levelsFor(name, level)`, `subjectGroups(level)`, `ccaList()`, `nexusFor(level)`, `schoolExperiences(type, level)`. `SUBJECTS` remains, as every name the school uses.
+- Older logs are renamed on open (English to English Language, PE to Physical Education, NEXUS to its own kind) in subjects, levels, entries and drafts. Nothing is dropped: a subject no longer on the student's list stays as their own. A teacher's group file written with an old name still matches.
+- The coach is told a level only if the school offers it; a subject offered at one level has that level; Social Studies at G1 is marked not examined.
+
+**Still to come from Harman.** The Applied Learning and Learning for Life Programmes, and the camps, VIA and learning journeys by level. They go into `experiences` in the same file; the composer offers them by name with no code change.
+
 ## One home, legacy mode, a safe log, and tests in the repo (31 October 2026)
 
 Harman asked, before any building, for an audit of every part of the Log and for next steps. He then chose:

@@ -72,7 +72,7 @@ function icon(n){
     back:'<path d="M15 18l-6-6 6-6"/>', close:'<path d="M18 6L6 18M6 6l12 12"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
     send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>', copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
     down:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>', up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
-    trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>', check:'<path d="M20 6L9 17l-5-5"/>', spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+    trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>', nexus:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="10" cy="18" r="2.5"/><path d="M8.4 6.4l7.2 1.2M16.4 10l-4.8 6M6.8 8.4l2.4 7.2"/>', check:'<path d="M20 6L9 17l-5-5"/>', spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
     edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>', plus:'<path d="M12 5v14M5 12h14"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
     link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
@@ -810,7 +810,7 @@ function renderSetup(){
     <section class="card"><h2>Your view</h2>${lookPicker()}<span class="flabel" style="margin-top:14px">Your icon</span>${iconPicker()}</section>
     <div class="row" style="justify-content:space-between;margin-top:6px"><a class="btn ghost" href="#/">Skip for now</a><a class="btn acc" href="#/">${icon('check')} Open my log</a></div>
   `, 'minmax(0,1fr) minmax(0,1fr)'), 'settings', {wide:true});
-  wireExperiences(renderSetup); wireLook(); wireIconPicker(); wireLevel();
+  wireExperiences(renderSetup); wireLook(); wireIconPicker(); wireLevel(expRefresh(renderSetup));
 }
 
 /* Before a first entry: the two settings an entry needs. Without a Sec level the entry counts
@@ -822,14 +822,14 @@ function settingsGate(kind){
   dialog(`<h2>Two things before you write</h2>
     <p class="muted">Your Sec level decides which I can statements your entries count towards. Your subjects and CCA are where your entries are filed. You can change both later in Settings.</p>
     ${levelPicker()}
-    <span class="flabel" id="gsLbl">My subjects</span><div class="chips" role="group" aria-labelledby="gsLbl">${SUBJECTS.map(sb => `<button type="button" class="chip ${x.subjects.includes(sb) ? 'on' : ''}" data-gsubj="${esc(sb)}" aria-pressed="${x.subjects.includes(sb)}">${esc(sb)}</button>`).join('')}</div>
-    <label class="f" style="margin-top:12px"><span>My CCA</span><input class="in" id="gateCca" value="${esc(x.cca)}" maxlength="80" placeholder="e.g. Football, or Choir, Robotics" autocapitalize="words"></label>
+    <span class="flabel">My subjects</span><div id="gateSubj">${subjectPicker('gsubj', false)}</div>
+    ${ccaSelect('gateCca')}
     <p class="tiny" id="gateMsg" aria-live="polite"></p>
     <div class="row"><button type="button" class="btn" id="gateGo">${icon('arrow')} Continue to my entry</button><button type="button" class="btn ghost" id="gateLater">Not now</button></div>`);
   const update = () => { const m = missing(); const go = $('#gateGo'); if (!go) return; go.disabled = m.length > 0; $('#gateMsg').textContent = m.length ? `Still needed: ${m.join(' and ')}.` : 'All set.'; };
-  wireLevel(update);
-  $$('[data-gsubj]').forEach(b => b.onclick = () => { const sb = b.dataset.gsubj; const i = x.subjects.indexOf(sb); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(sb); const on = i < 0; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); saveDb(); update(); });
-  $('#gateCca').oninput = e => { x.cca = e.target.value; saveDb(); update(); };
+  const wireSubj = () => $$('[data-gsubj]').forEach(b => b.onclick = () => { const sb = b.dataset.gsubj; const i = x.subjects.indexOf(sb); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(sb); const on = i < 0; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); saveDb(); update(); });
+  wireLevel(() => { $('#gateSubj').innerHTML = subjectPicker('gsubj', false); wireSubj(); update(); }); wireSubj();
+  $('#gateCca').onchange = e => { setCcas([e.target.value, ...ccasOf().slice(1)]); saveDb(); update(); };
   $('#gateGo').onclick = () => { if (!setupDone()) return; going = true; closeDialog(); openComposer(kind); };
   $('#gateLater').onclick = () => { closeDialog(); location.hash = '#/'; };
   const d = $('#dlg'); if (d && d.open) d.addEventListener('close', () => { if (!going && (location.hash || '').startsWith('#/write/')) location.hash = '#/'; }, {once:true});
@@ -1273,7 +1273,7 @@ function guideHtml(fw, steps, i){
 }
 function draftReturn(){ return !draft ? '#/' : draft.kind === 'across' ? '#/' : '#/journal/' + draft.kind; }
 /* If a teacher's group teaches the chosen subject or CCA, link it; never pick a subject from the group. */
-function matchGroup(){ if (!draft || draft.groupCode) return; const n = (draft.context.name || '').toLowerCase(); const g = myGroups().find(x => x.cfg && [x.cfg.subject, ...(x.cfg.subjects || [])].some(s => String(s || '').toLowerCase() === n)); if (g) draft.groupCode = g.code; }
+function matchGroup(){ if (!draft || draft.groupCode) return; const n = (draft.context.name || '').toLowerCase(); const g = myGroups().find(x => x.cfg && [x.cfg.subject, ...(x.cfg.subjects || [])].some(s => s && sameSubject(s, n))); if (g) draft.groupCode = g.code; }
 let saveT = null; function debounceSave(){ clearTimeout(saveT); saveT = setTimeout(() => { if (!draft) return; collect(); saveDraft(); }, 400); }
 function autosize(t){ t.style.height = 'auto'; t.style.height = Math.max(96, t.scrollHeight + 4) + 'px'; }
 function stepHead(s, kicker, title){
@@ -1305,8 +1305,8 @@ function rememberExperience(ctx){
     saveDb();
   };
 }
-const PICK_TYPES = [['subject', 'Subject', 'book'], ['cca', 'CCA', 'users'], ['camp', 'Camp or trip', 'tent'], ['competition', 'Competition', 'trophy'], ['service', 'Service', 'heart'], ['other', 'Something else', 'spark']];
-function typeIcon(t){ return (PICK_TYPES.find(p => p[0] === t) || PICK_TYPES[5])[2]; }
+const PICK_TYPES = [['subject', 'Subject', 'book'], ['cca', 'CCA', 'users'], ['nexus', 'NEXUS@BTY', 'nexus'], ['camp', 'Camp or trip', 'tent'], ['competition', 'Competition', 'trophy'], ['service', 'Service', 'heart'], ['other', 'Something else', 'spark']];
+function typeIcon(t){ return (PICK_TYPES.find(p => p[0] === t) || ['', '', 'spark'])[2]; }
 function groupLine(){
   const gs = myGroups(); if (!gs.length) return '';
   const g = gs.find(x => x.code === draft.groupCode);
@@ -1323,16 +1323,26 @@ function contextStep(fw){
   const chip = (x, withIcon = true) => { const on = x.name.toLowerCase() === curL; return `<button type="button" class="chip ${on ? 'on' : ''}" data-exp="${esc(x.type)}|${esc(x.name)}" aria-pressed="${on}">${withIcon ? icon(typeIcon(x.type)) : ''}${esc(x.name)}${withIcon && x.type === 'cca' ? ' <em>CCA</em>' : ''}</button>`; };
   let panel = '';
   if (ptype === 'subject'){
-    const list = [...new Set([...SUBJECTS, ...(me.experiences.subjects || [])])];
-    const typed = cur.type === 'subject' && cur.name && !list.some(x => x.toLowerCase() === curL);
-    panel = `<span class="mini" id="pkSubj">Which subject?</span><div class="chips" role="group" aria-labelledby="pkSubj">${list.map(x => chip({type:'subject', name:x}, false)).join('')}</div>
-      <label class="f" style="margin:12px 0 0"><span>Another subject</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="e.g. Additional Mathematics" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
+    const offered = subjectsFor(me.level).map(x => x.name);
+    const own = (me.experiences.subjects || []).filter(s => !offered.some(o => sameSubject(o, s)));
+    const typed = cur.type === 'subject' && cur.name && ![...offered, ...own].some(x => x.toLowerCase() === curL);
+    const groups = [...subjectGroups(me.level).map(g => ({head:g.group, names:g.subjects.map(x => x.name)})), ...(own.length ? [{head:'Your own', names:own}] : [])];
+    panel = `${groups.map((g, i) => `<span class="mini" id="pkSubj${i}">${esc(g.head)}</span><div class="chips" role="group" aria-labelledby="pkSubj${i}">${g.names.map(x => chip({type:'subject', name:x}, false)).join('')}</div>`).join('')}
+      <label class="f" style="margin:12px 0 0"><span>Another subject</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="If yours is not listed" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
   } else if (ptype){
     const ct = contextTypeOf(ptype); const known = usual.filter(x => x.type === ptype);
-    const typed = cur.type === ptype && cur.name && !known.some(x => x.name.toLowerCase() === curL);
+    const isKnown = n => known.some(k => k.name.toLowerCase() === n.toLowerCase());
+    // the school's own lists: its CCAs, the NEXUS@BTY modules for this level, the year's camps and service
+    const school = ptype === 'cca' ? ccaList().map(g => ({head:g.group, names:g.names}))
+      : ptype === 'nexus' ? nexusFor(me.level).map(t => ({head:`${t.id} ${t.name}`, names:t.modules.map(m => m.label)}))
+      : [{head:'At Beatty this year', names:schoolExperiences(ptype, me.level)}];
+    const offered = school.map(g => ({head:g.head, names:g.names.filter(n => !isKnown(n))})).filter(g => g.names.length);
+    const typed = cur.type === ptype && cur.name && ![...known.map(k => k.name), ...school.flatMap(g => g.names)].some(n => n.toLowerCase() === curL);
     const label = ptype === 'cca' ? 'Your CCA' : ptype === 'other' ? 'Where did the learning happen?' : `Name of the ${ct.label.toLowerCase()}`;
+    const any = known.length || offered.length;
     panel = `${known.length ? `<span class="mini" id="pkKnown">Yours so far</span><div class="chips" role="group" aria-labelledby="pkKnown">${known.map(x => chip(x, false)).join('')}</div>` : ''}
-      <label class="f" style="margin:${known.length ? '12px' : '0'} 0 0"><span>${known.length ? (ptype === 'cca' ? 'Another CCA' : 'Another one') : label}</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
+      ${offered.map((g, i) => `<span class="mini" id="pkSch${i}">${esc(g.head)}</span><div class="chips" role="group" aria-labelledby="pkSch${i}">${g.names.map(n => chip({type:ptype, name:n}, false)).join('')}</div>`).join('')}
+      <label class="f" style="margin:${any ? '12px' : '0'} 0 0"><span>${any ? (ptype === 'cca' ? 'Another CCA' : 'Another one') : label}</span><input class="in" name="ctxName" value="${typed ? esc(cur.name) : ''}" placeholder="${esc(ct.ph)}" autocapitalize="words" autocomplete="off" maxlength="60"></label>`;
   }
   const willAdd = cur.name && !exps.some(x => x.name.toLowerCase() === curL);
   const where = cur.type === 'subject' ? 'subjects' : cur.type === 'cca' ? 'CCA list' : 'experiences';
@@ -1341,7 +1351,7 @@ function contextStep(fw){
     <p class="muted">${fw.id === 'grow' ? 'Write this soon after the learning experience. Two or three sentences for each question is enough.' : 'Write this when you get feedback: a marked piece of work, a comment from your coach, or a note from a friend.'}</p>
     ${usual.length ? `<span class="mini" id="pkUsual">Your usual</span><div class="chips xchips" role="group" aria-labelledby="pkUsual">${usual.map(x => chip(x)).join('')}</div>` : ''}
     <span class="mini" id="pkType">${usual.length ? 'Or choose a type' : 'Choose a type'}</span>
-    <div class="tiles" role="group" aria-labelledby="pkType">${PICK_TYPES.map(([id, l, ic]) => `<button type="button" class="tile ${ptype === id ? 'on' : ''}" data-ptype="${id}" aria-expanded="${ptype === id}">${icon(ic)}${l}</button>`).join('')}</div>
+    <div class="tiles" role="group" aria-labelledby="pkType">${PICK_TYPES.map(([id, l, ic]) => `<button type="button" class="tile ${ptype === id ? 'on' : ''}" data-ptype="${id}" aria-expanded="${ptype === id}">${icon(ic)}${esc(l).replace('@', '<wbr>@')}</button>`).join('')}</div>
     ${ptype ? `<div class="typepanel">${panel}${willAdd && cur.type === ptype ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}</div>` : willAdd ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}
     ${!usual.length ? `<p class="tiny" style="margin:10px 0 0">Tip: add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a>, and they will appear at the top.</p>` : ''}
     <label class="f" style="margin-top:16px"><span>${fw.id === 'grow' ? ct.topic : 'What was the feedback on?'} <small style="display:inline">(optional)</small></span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}" maxlength="80"></label>
@@ -1881,29 +1891,68 @@ function renderSharing(){
 }
 
 /* ---------- pieces shared by setup and settings ---------- */
+// the student's CCAs, kept as one line ("Football, Choir")
+function ccasOf(){ return String((me.experiences || {}).cca || '').split(/\s*,\s*/).filter(Boolean); }
+function setCcas(list){ const seen = new Set(); me.experiences.cca = list.map(n => String(n || '').trim()).filter(n => n && !seen.has(n.toLowerCase()) && seen.add(n.toLowerCase())).join(', '); }
+const outsideAll = s => !!(s.outside && s.levels && s.outside.length === s.levels.length);
+/* The subjects Beatty offers at the student's Sec level, by group, with any of the student's own
+   subjects that are not on the list (kept from an earlier year, or taken elsewhere). */
+function subjectPicker(attr, check){
+  const x = me.experiences;
+  if (!me.level) return `<p class="tiny" style="margin:0 0 8px">Choose your Sec level first: your subjects depend on it.${(location.hash || '').startsWith('#/settings') ? ' <a href="#/settings?s=me">Choose it in Me</a>' : ''}</p>`;
+  const offered = subjectsFor(me.level); const has = n => x.subjects.includes(n);
+  const own = x.subjects.filter(n => !offered.some(o => sameSubject(o.name, n)));
+  const chip = (n, note) => `<button type="button" class="chip ${has(n) ? 'on' : ''}" data-${attr}="${esc(n)}" aria-pressed="${has(n)}">${check && has(n) ? icon('check') : ''}<span>${esc(n)}${note ? ` <em>${note}</em>` : ''}</span></button>`;
+  return subjectGroups(me.level).map((g, i) => `<span class="mini" id="sg${attr}${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="sg${attr}${i}">${g.subjects.map(s => chip(s.name, outsideAll(s) ? 'outside school' : '')).join('')}</div>${g.note ? `<p class="tiny gnote">${esc(g.note)}</p>` : ''}`).join('')
+    + (own.length ? `<span class="mini" id="sg${attr}own">Your own</span><div class="chips" role="group" aria-labelledby="sg${attr}own">${own.map(n => chip(n)).join('')}</div><p class="tiny gnote">Not on Beatty's list for Sec ${me.level}. Tap one to remove it.</p>` : '');
+}
+// one CCA, chosen from the school's list (the gate before a first entry)
+function ccaSelect(id){
+  const cur = ccasOf()[0] || ''; const k = n => n.toLowerCase() === cur.toLowerCase(); const listed = ccaNames().some(k);
+  return `<label class="f" style="margin-top:12px"><span>My CCA</span><select class="in" id="${id}"><option value="">None yet</option>${cur && !listed ? `<option selected>${esc(cur)}</option>` : ''}${ccaList().map(g => `<optgroup label="${esc(g.group)}">${g.names.map(n => `<option ${k(n) ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select></label>`;
+}
 function experiencesEditor(){
-  const x = me.experiences; const custom = x.subjects.filter(s => !SUBJECTS.includes(s));
+  const x = me.experiences; const mine = ccasOf(); const names = ccaNames();
+  const ownCca = mine.filter(n => !names.some(m => m.toLowerCase() === n.toLowerCase()));
+  const onCca = n => mine.some(m => m.toLowerCase() === n.toLowerCase());
+  const ccaChip = n => `<button type="button" class="chip ${onCca(n) ? 'on' : ''}" data-cca="${esc(n)}" aria-pressed="${onCca(n)}">${onCca(n) ? icon('check') : ''}${esc(n)}</button>`;
+  const tiers = nexusFor(me.level); const nxMine = x.others.filter(o => o.type === 'nexus').map(o => o.name);
+  const nxLabels = tiers.flatMap(t => t.modules.map(m => m.label));
+  const nxChip = m => { const on = nxMine.includes(m.label); return `<button type="button" class="chip ${on ? 'on' : ''}" data-nx="${esc(m.label)}" aria-pressed="${on}">${on ? icon('check') : ''}${esc(m.label)}</button>`; };
+  const lv = x.subjects.map(sb => ({sb, offer:subjectOffer(sb, me.level)})).filter(r => r.offer && r.offer.levels && r.offer.levels.length);
+  const others = x.others.map((o, i) => ({o, i})).filter(({o}) => !(o.type === 'nexus' && nxLabels.includes(o.name)));
   return `<section class="card" id="expCard"><h2>My experiences</h2>
     <p class="tiny" style="margin-top:0">These become bookmarks in your GROW and ACT journals, and the first choices when you write. Pick only what you take.</p>
-    <span class="flabel">My subjects</span>
-    <div class="chips" id="subjChips">${[...SUBJECTS, ...custom].map(s => `<button type="button" class="chip ${x.subjects.includes(s) ? 'on' : ''}" data-subj="${esc(s)}" aria-pressed="${x.subjects.includes(s)}">${x.subjects.includes(s) ? icon('check') : ''}${esc(s)}</button>`).join('')}</div>
-    ${x.subjects.length ? `<span class="flabel" style="margin-top:12px">Subject levels <small style="display:inline;font-weight:400">(optional)</small></span><div class="slevels">${x.subjects.map(sb => `<label class="slv"><span>${esc(sb)}</span><select class="in" data-slv="${esc(sb)}" aria-label="Level for ${esc(sb)}"><option value="">Not set</option>${['G1', 'G2', 'G3'].map(g => `<option ${(x.levels || {})[sb] === g ? 'selected' : ''}>${g}</option>`).join('')}</select></label>`).join('')}</div><p class="tiny" style="margin:4px 0 0">The coach pitches its questions to the level you take each subject at.</p>` : ''}
-    <form class="row" id="addSubj" style="margin-top:8px"><input class="in grow" name="s" maxlength="40" aria-label="Another subject" placeholder="Another subject, e.g. Additional Mathematics"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
-    <label class="f" style="margin-top:14px"><span>My CCA</span><input class="in" id="ccaIn" value="${esc(x.cca)}" maxlength="80" placeholder="e.g. Football, or Choir, Robotics" autocapitalize="words"><small>It becomes your first experience bookmark. Separate two with a comma.</small></label>
-    <span class="flabel">Other experiences</span>
-    ${x.others.length ? `<ul class="groups">${x.others.map((o, i) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
-    <form class="row" id="addOther"><select class="in" name="t" style="width:auto" aria-label="Type of experience">${CONTEXT_TYPES.filter(c => c.id !== 'subject' && c.id !== 'cca').map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" aria-label="Name of the experience" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    <span class="flabel">My subjects${me.level ? ` <small style="display:inline;font-weight:400">(Sec ${me.level}, ${me.level >= 3 ? 'Upper' : 'Lower'} Sec)</small>` : ''}</span>
+    ${subjectPicker('subj', true)}
+    ${lv.length ? `<span class="flabel" style="margin-top:12px">Level of demand <small style="display:inline;font-weight:400">(optional)</small></span><div class="slevels">${lv.map(({sb, offer}) => offer.levels.length === 1
+      ? `<div class="slv"><span>${esc(sb)}</span><span class="lvonly">${offer.levels[0]} only</span></div>`
+      : `<label class="slv"><span>${esc(sb)}</span><select class="in" data-slv="${esc(sb)}" aria-label="Level of demand for ${esc(sb)}"><option value="">Not set</option>${offer.levels.map(g => `<option value="${g}" ${(x.levels || {})[sb] === g ? 'selected' : ''}>${g}${(offer.outside || []).includes(g) ? ', outside school' : ''}</option>`).join('')}</select></label>`).join('')}</div><p class="tiny" style="margin:4px 0 0">The coach pitches its questions to the level you take each subject at.</p>` : ''}
+    <form class="row" id="addSubj" style="margin-top:8px"><input class="in grow" name="s" maxlength="60" aria-label="Another subject" placeholder="Another subject, if yours is not listed"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    <span class="flabel" style="margin-top:16px">My CCA</span>
+    ${ccaList().map((g, i) => `<span class="mini" id="cg${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="cg${i}">${g.names.map(ccaChip).join('')}</div>`).join('')}
+    ${ownCca.length ? `<span class="mini" id="cgown">Your own</span><div class="chips" role="group" aria-labelledby="cgown">${ownCca.map(ccaChip).join('')}</div>` : ''}
+    <form class="row" id="addCca" style="margin-top:8px"><input class="in grow" name="c" maxlength="60" aria-label="Another CCA" placeholder="Another CCA, if yours is not listed" autocapitalize="words"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    ${tiers.length ? `<span class="flabel" style="margin-top:16px">NEXUS@BTY</span>${tiers.map((t, i) => `<span class="mini" id="ng${i}">${esc(t.id + ' ' + t.name)} · ${esc(t.who)}</span><div class="chips" role="group" aria-labelledby="ng${i}">${t.modules.map(nxChip).join('')}</div>`).join('')}` : ''}
+    <span class="flabel" style="margin-top:16px">Other experiences</span>
+    ${others.length ? `<ul class="groups">${others.map(({o, i}) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
+    <form class="row" id="addOther"><select class="in" name="t" style="width:auto" aria-label="Type of experience">${CONTEXT_TYPES.filter(c => !['subject', 'cca', 'nexus'].includes(c.id)).map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" aria-label="Name of the experience" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
   </section>`;
 }
 function wireExperiences(rerender){
   const x = me.experiences;
-  $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); const y = window.scrollY; rerender(); window.scrollTo(0, y); const nb = $(`[data-subj="${CSS.escape(s)}"]`); if (nb) nb.focus(); });
-  $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = String(new FormData(ev.target).get('s') || '').trim(); if (!v) return; if (!x.subjects.some(s => s.toLowerCase() === v.toLowerCase())) x.subjects.push(v); saveDb(); rerender(); };
-  $('#ccaIn').oninput = e => { x.cca = e.target.value; saveDb(); };
+  const again = sel => { const y = window.scrollY; rerender(); window.scrollTo(0, y); const nb = sel && $(sel); if (nb) nb.focus(); };
+  $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); again(`[data-subj="${CSS.escape(s)}"]`); });
+  $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = canonSubject(String(new FormData(ev.target).get('s') || '')); if (!v) return; if (!x.subjects.some(s => sameSubject(s, v))) x.subjects.push(v); saveDb(); rerender(); };
+  $$('[data-cca]').forEach(b => b.onclick = () => { const n = b.dataset.cca; const mine = ccasOf(); setCcas(mine.some(m => m.toLowerCase() === n.toLowerCase()) ? mine.filter(m => m.toLowerCase() !== n.toLowerCase()) : [...mine, n]); saveDb(); again(`[data-cca="${CSS.escape(n)}"]`); });
+  $('#addCca').onsubmit = ev => { ev.preventDefault(); const v = String(new FormData(ev.target).get('c') || '').trim(); if (!v) return; const known = ccaNames().find(n => n.toLowerCase() === v.toLowerCase()); setCcas([...ccasOf(), known || v]); saveDb(); rerender(); };
+  $$('[data-nx]').forEach(b => b.onclick = () => { const n = b.dataset.nx; const i = x.others.findIndex(o => o.type === 'nexus' && o.name === n); if (i >= 0) x.others.splice(i, 1); else x.others.push({type:'nexus', name:n}); saveDb(); again(`[data-nx="${CSS.escape(n)}"]`); });
   $$('[data-slv]').forEach(sel => sel.onchange = () => { x.levels = x.levels || {}; if (sel.value) x.levels[sel.dataset.slv] = sel.value; else delete x.levels[sel.dataset.slv]; saveDb(); });
   $$('[data-dropx]').forEach(b => b.onclick = () => { x.others.splice(+b.dataset.dropx, 1); saveDb(); rerender(); });
   $('#addOther').onsubmit = ev => { ev.preventDefault(); const f = new FormData(ev.target); const n = String(f.get('n') || '').trim(); if (!n) return; x.others.push({type:String(f.get('t') || 'other'), name:n}); saveDb(); rerender(); };
 }
+// a new Sec level redraws the experiences card: its subjects and NEXUS modules follow the level
+function expRefresh(rerender){ return () => { const c = $('#expCard'); if (!c) return; c.outerHTML = experiencesEditor(); wireExperiences(rerender); }; }
 /* The view (four looks), its colour, and light or dark. Nothing on the page changes but its look. */
 function lookPicker(){
   const p = me.prefs;
@@ -2002,7 +2051,7 @@ function renderSettings(){
   $('#sTitle').oninput = e => { me.prefs.title = e.target.value; sv(); const w = $('.topbar .word'); if (w) w.textContent = logTitle(); };
   $('#sEmail').oninput = e => { me.email = e.target.value.trim().toLowerCase(); sv(); };
   $('#sMotto').oninput = e => { me.prefs.motto = e.target.value; sv(); };
-  wireIconPicker(); wireLook(); wireLevel();
+  wireIconPicker(); wireLook(); wireLevel(expRefresh(renderSettings));
   $$('button[data-accent]').forEach(b => b.onclick = () => { me.prefs.accent = b.dataset.accent; sv(); $$('button[data-accent]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('button[data-size]').forEach(b => b.onclick = () => { me.prefs.size = b.dataset.size; sv(); $$('button[data-size]').forEach(x => x.classList.toggle('on', x === b)); });
   $$('[data-tone]').forEach(b => b.onclick = () => { me.prefs.tone = b.dataset.tone; saveDb(); $$('[data-tone]').forEach(x => x.classList.toggle('on', x === b)); });
