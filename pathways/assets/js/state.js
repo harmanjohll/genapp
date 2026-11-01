@@ -43,6 +43,7 @@ const initial = () => ({
   families: false,      // course families on destination pages: opt in
   seenStart: false,     // the wordless intro and the guided start, had once
   labelMode: 'plain',   // 'plain' words by default; 'line' turns on the transit vocabulary
+  wordStyle: 'short',   // 'short' by default: the fact and the move, the rest folded; 'detailed' shows it all
   activities: [],
   aim: null,
   actions: [],
@@ -96,6 +97,7 @@ function load() {
   if (!base.psle || typeof base.psle !== 'object' || Array.isArray(base.psle)) base.psle = {};
   if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
   if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
+  if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
   ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
@@ -263,6 +265,12 @@ export function markStart(done = true) {
 export function setLabelMode(mode) {
   if (!['plain', 'line'].includes(mode)) return;
   state.labelMode = mode;
+  persist(); notify({ kind: 'labels' });
+}
+
+export function setWordStyle(style) {
+  if (!['short', 'detailed'].includes(style)) return;
+  state.wordStyle = style;
   persist(); notify({ kind: 'labels' });
 }
 

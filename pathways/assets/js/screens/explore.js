@@ -4,13 +4,13 @@
 // with the planning path for a first-time student's attention. Here they sit
 // together as things to wander through once the plan has a shape.
 
-import { getState } from '../state.js?v=4.3.0';
-import { reach } from '../engine/reach.js?v=4.3.0';
-import { signalStrip } from '../ui/signal.js?v=4.3.0';
-import { openWord } from '../ui/labels.js?v=4.3.0';
-import { skyline } from '../ui/scenes.js?v=4.3.0';
-import { onAction } from '../ui/dom.js?v=4.3.0';
-import { icon } from '../ui/icons.js?v=4.3.0';
+import { getState } from '../state.js?v=4.4.0';
+import { reach } from '../engine/reach.js?v=4.4.0';
+import { signalStrip } from '../ui/signal.js?v=4.4.0';
+import { openWord } from '../ui/labels.js?v=4.4.0';
+import { skyline } from '../ui/scenes.js?v=4.4.0';
+import { onAction } from '../ui/dom.js?v=4.4.0';
+import { icon } from '../ui/icons.js?v=4.4.0';
 
 export default {
   id: 'explore',
@@ -28,14 +28,14 @@ export default {
       <div class="ex-grid">
         <button type="button" class="ex-card ex-after press arrive" data-action="go" data-s="after">
           <span class="ex-t">Where can I go after Sec?</span>
-          <span class="ex-p">Eight places, what each asks, what it costs, and the other ways in.</span>
+          <span class="ex-p">The 8 places, what each asks for, and what each costs.</span>
           <span class="ex-sig">${signalStrip(rows, { key: 'explore' })}<span class="ex-n"><b>${open}</b>/8 ${openWord(rows)}</span></span>
           <span class="ex-go">${icon('arrow')}</span>
         </button>
         <button type="button" class="ex-card ex-play press arrive d1" data-action="go" data-s="play">
           <span class="ex-art" aria-hidden="true">${skyline('school')}</span>
           <span class="ex-t">Play a life forward</span>
-          <span class="ex-p">${st.liveRun ? 'Your story is mid chapter.' : 'From your subjects to age 35. No choice ends the story.'}</span>
+          <span class="ex-p">${st.liveRun ? 'Your story is part way through.' : 'Play from your subjects to age 35.'}</span>
           <span class="ex-go">${icon('play')}</span>
         </button>
         <button type="button" class="ex-card ex-small press arrive d2" data-action="go" data-s="work">${icon('d_portfolio')}<span class="ex-t">Jobs and sectors</span></button>

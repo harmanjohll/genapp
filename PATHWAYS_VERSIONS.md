@@ -1,6 +1,6 @@
 # Paths: version log
 
-## Latest: v4.3.0, in `pathways/`. Build here.
+## Latest: v4.4.0, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
@@ -23,7 +23,7 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 
 | Version | Folder | Status | Dates | Built for |
 | --- | --- | --- | --- | --- |
-| v4.3.0 | `pathways/` | **Latest** | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |
+| v4.4.0 | `pathways/` | **Latest** | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |
 | v3.0.0 | `legacy/pathways-v3/` | Legacy, frozen | 2026-08-22 to 2026-08-23 | A new interface on v2's engine: the map as the product |
 | v2.15.0 | `legacy/pathways-v2/` | Legacy, frozen | 2026-08-07 to 2026-08-20 | A full rebuild of interface, game and content on v1's engine |
 | v1 | `legacy/pathways-v1/` | Legacy, frozen | 2026-08-07 | The first build: engine, ethics, three modes |
@@ -35,7 +35,8 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 - Storage key `pathways4.state.v1`. Renaming it loses every saved plan; write a migration if it must change.
 - Lower secondary plans reach the destination rules through the Sec 3 projection (`assets/js/engine/years.js`). Without it, Sec 1 and Sec 2 levels change nothing.
 - The 2028 admission rules were checked on 2026-10-27, from search engine extracts of the MOE, SEAB and institution pages (`research/`). Check the confirmed rows on moe.gov.sg before a class uses this. Course families stay provisional until the 2028 lists arrive in mid 2027.
-- `tools/verify.mjs` runs 25 checks, including advice, grades, PSLE, the lower lens, policy fixtures, the school offer, dashes, syntax and white on fills.
+- `tools/verify.mjs` runs 26 checks, including advice, grades, PSLE, the lower lens, policy fixtures, the school offer, house style, dashes, syntax and white on fills.
+- Words follow `pathways/STYLE.md`: speak to the student as "you"; no "X, not Y" turns, morals, rhetorical questions, app commentary or plain word metaphors; 22 words per sentence at most. `engine/style-lint.js` checks the planning data, the screen code and the built advice. Short (default) or Detailed is `wordStyle`; Short folds the why and when (`ui/ticket.js`, `foldOr` in `screens/year.js`, `destSec` in `screens/after.js`).
 - Beatty's offering lives in `data/offer.json` (subjects, levels, levels taught elsewhere, notes). It mirrors `e21cclog/school/beatty.json` in the E21CC Log: change both together. `subjectsForYear` narrows subjects and levels to it; `ctx.offer` carries it to advice; Settings can switch it off (`allSubjects`).
 - Sec 1 and 2 are judged by each destination's `lower` rules (`data/pathways.json`), not the SEC rules. `reach()` picks the set from the year (`lensFor`); `evalPlan` keeps raw Sec 1 and 2 rows next to the projection. Never put a subject count (`countAtLevel`) in a `lower` set: the lower lens check fails it. The SEC count is named once, in `lowerHorizon`.
 - `engine/policy.js` pins verdicts MOE's rules decide (JC with Mother Tongue at G2 in Sec 2, R3, NAFA, PFP and Sec 5 grades, JC floors, HMTL, PG3 Foundation). If a rule changes, change the fixture with its source.
@@ -51,6 +52,14 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 - Student, parent and teacher voices; My plan prints.
 - The "night line" look: navy and yellow, Bricolage Grotesque and JetBrains Mono, Phosphor icons, all bundled.
 - A guided start with a labelled intro; a live signal (you wired to the eight destinations); Home shows one next step; four nav items; a plain words or Line mode switch.
+
+**What changed in 4.4.0 (2026-11-01): shorter, plainer words**
+- Planning screens rewritten to the house style (`STYLE.md`). On the main screens, the audit had counted 73 antitheses, 57 moral closers, 32 rhetorical questions and 64 lines of app commentary.
+- Short or Detailed wording; Short by default. Short mode visible words: Moves tab about 205 (was about 395), JC page 177 (was 567), Saved 144 (was 483), Year guide 159 (was 276).
+- One set of state words across the app; planning data speaks in "you" (allowed in `copy-lint.js` `ADDRESSES_READER`).
+- Deleted unread copy: `copy.json` landing, thisYear, table, parentLive, footerDoors and unread chrome, aim and teacher keys; `subjects.json` availabilityNote, movement, junctures.schoolNote and down, and per subject doing, likeIf, showsUp, keepsOpen and caution.
+- The P6 page no longer prints `psle.json` `_meta.notes`.
+- Next round: info pages, the adults hub and the game, under the same check.
 
 **What changed in 4.3.0 (2026-11-01): Beatty's subjects first**
 - Set levels lists Beatty's subjects at Beatty's levels (from the Principal, 1 November 2026); the rest sit under More subjects (other schools). Settings: "Every school's subjects".

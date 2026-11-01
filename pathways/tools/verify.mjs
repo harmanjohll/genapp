@@ -265,6 +265,33 @@ const { gradesSweep } = await import(join(root, 'assets/js/engine/grades.js'));
 const { psleScore, postingFor, startLevels } = await import(join(root, 'assets/js/engine/psle.js'));
 const readData = (n) => JSON.parse(readFileSync(join(root, 'data', `${n}.json`), 'utf8'));
 const { lowerLensSweep, policySweep, offerSweep } = await import(join(root, 'assets/js/engine/policy.js'));
+const { styleSweep, CODE_FILES } = await import(join(root, 'assets/js/engine/style-lint.js'));
+const { advise: adviseFn } = await import(join(root, 'assets/js/engine/advice.js'));
+const { subjectsForYear: forYear, isLower: lowerYear } = await import(join(root, 'assets/js/engine/years.js'));
+
+/** House style on the planning screens: data, screen code and built advice. */
+function v4StyleSweep() {
+  const all = { ...data, years: readData('years'), psle: readData('psle'), grades: readData('grades') };
+  const files = Object.fromEntries(CODE_FILES.map((f) => [f, readFileSync(join(root, f), 'utf8')]));
+  const built = () => {
+    const out = [];
+    [null, data.offer].forEach((offer) => ['sec1', 'sec2', 'sec3', 'sec4'].forEach((y) => ['G1', 'G2', 'G3'].forEach((lv) => {
+      const rows = forYear(y, ctx.subjects, offer).filter((x) => (x.levels || []).length);
+      const plan = {};
+      rows.forEach((x, i) => { if (x.group === 'science' && !lowerYear(y) && i % 3) return; if (x.levels.includes(lv)) plan[x.id] = lv; else if (i % 2) plan[x.id] = x.levels[0]; });
+      const a = adviseFn({ yearId: y, plan, ctx: { ...ctx, offer } });
+      if (a.start) out.push(a.start.line);
+      a.singles.forEach((m) => out.push(m.line, m.result, m.short, m.sec3, m.when, m.how, ...(m.because || [])));
+      a.pairs.forEach((m) => out.push(m.line));
+      a.holds.forEach((h) => out.push(h.line));
+    })));
+    return out.filter(Boolean);
+  };
+  const r = styleSweep(all, files, built);
+  pass('Style', r.ok, `${r.checks} strings: no antithesis, morals, meta commentary, metaphor or long sentences on the planning screens`);
+  if (!r.ok) console.table(r.faults.slice(0, 40));
+  return r;
+}
 
 /** Beatty's offering: Set levels and advice show only what the school runs. */
 function v4OfferSweep() {
@@ -400,6 +427,7 @@ const results = [
   ['lower-lens', v4LowerSweep()],
   ['policy', v4PolicySweep()],
   ['offer', v4OfferSweep()],
+  ['style', v4StyleSweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
   ['white-on-fill', whiteOnFillSweep()],

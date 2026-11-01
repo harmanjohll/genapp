@@ -24,9 +24,9 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.3.0';
-import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.3.0';
-import { moveTiming } from './rules.js?v=4.3.0';
+import { reach } from './reach.js?v=4.4.0';
+import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.4.0';
+import { moveTiming } from './rules.js?v=4.4.0';
 
 const LV = ['G1', 'G2', 'G3'];
 
@@ -55,7 +55,7 @@ function opensWord(names, lower) {
 // at the school's review.
 function timingFor(yearId, subs, timing) {
   if (yearId === 'sec1' && subs.length && subs.every((s) => s.raisableFrom === 'sec2')) {
-    return { ...timing, when: 'from Sec 2, if your school sees the interest and the work in Sec 1' };
+    return { ...timing, when: 'from Sec 2, based on your interest and work in Sec 1' };
   }
   return timing;
 }
@@ -113,14 +113,14 @@ export function advise({ yearId, plan, ctx, offer }) {
   const out = { base, singles: [], pairs: [], holds: [], start: null, timing };
 
   if (!held.length) {
-    out.start = { kind: 'start', line: 'Set your levels first. Advice appears as soon as one is in.' };
+    out.start = { kind: 'start', line: 'Set your levels to see advice.' };
     return out;
   }
   const compulsoryMissing = rows.filter((s) => s.compulsory && !plan[s.id]);
   if (compulsoryMissing.length) {
     out.start = {
       kind: 'start',
-      line: `Add your ${listNames(compulsoryMissing.map((s) => sayName(s)))} ${compulsoryMissing.length === 1 ? 'level' : 'levels'} for sharper advice.`,
+      line: `Add your ${listNames(compulsoryMissing.map((s) => sayName(s)))} ${compulsoryMissing.length === 1 ? 'level' : 'levels'} for better advice.`,
       missing: compulsoryMissing.map((s) => s.id),
     };
   }
@@ -200,8 +200,8 @@ export function advise({ yearId, plan, ctx, offer }) {
     const verbOpen = opensWord(opens, lower);
     const pt = timingFor(yearId, pool.map((m) => m.s), timing);
     const line = g.n === 1
-      ? `If ${sayName(g.first.a.s)} moves to ${g.first.a.to} and ${sayName(g.first.b.s)} moves to ${g.first.b.to}, ${listNames(opens)} ${verbOpen}. Neither move does that alone.`
-      : `If any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level, ${listNames(opens)} ${verbOpen}. One alone does not.`;
+      ? `If ${sayName(g.first.a.s)} moves to ${g.first.a.to} and ${sayName(g.first.b.s)} moves to ${g.first.b.to}, ${listNames(opens)} ${verbOpen}.`
+      : `If any two of ${listNames(pool.map((m) => sayName(m.s)), 'or')} move up a level, ${listNames(opens)} ${verbOpen}.`;
     return {
       kind: 'pair',
       result: `${listNames(opens)} ${verbOpen}`,
@@ -241,7 +241,7 @@ export function advise({ yearId, plan, ctx, offer }) {
     const many = g.length > 1;
     return {
       kind: 'hold', sid: g[0].s.id, sids: g.map((h) => h.s.id), name: listNames(names), names, level: have, lower, keeps,
-      line: `${listNames(names)} at ${have} ${many ? 'are' : 'is'} ${isLower(yearId) ? `keeping ${listNames(keeps)} on track` : `holding ${listNames(keeps)} open`}. ${many ? 'If any one eased' : 'Eased'} to ${lower}, ${keeps.length === 1 ? 'it would be' : 'they would be'} a move away again.`,
+      line: `${listNames(names)} at ${have} ${many ? 'keep' : 'keeps'} ${listNames(keeps)} ${isLower(yearId) ? 'on track' : 'open'}. If ${many ? 'any one drops' : 'it drops'} to ${lower}, ${keeps.length === 1 ? 'that place needs' : 'those places need'} one more move.`,
     };
   });
 
@@ -260,8 +260,8 @@ function finish(group, timing, afterRows, lower, sec3) {
   const any = group.length > 1;
   // Nine names in a sentence is a list, not advice. Past four, name three
   // and count the rest; the card shows them all as chips.
-  const spoken = names.length > 4
-    ? [...names.slice(0, 3), `${names.length - 3} others`]
+  const spoken = names.length > 3
+    ? [...names.slice(0, 2), `${names.length - 2} others`]
     : names;
   let verb;
   if (m.kind === 'raise') {

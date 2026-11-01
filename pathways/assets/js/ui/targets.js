@@ -8,11 +8,11 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=4.3.0';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.3.0';
-import { esc, onAction } from './dom.js?v=4.3.0';
-import { icon } from './icons.js?v=4.3.0';
-import { listNames, sayName } from '../engine/advice.js?v=4.3.0';
+import { getState, setGrade } from '../state.js?v=4.4.0';
+import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.4.0';
+import { esc, onAction } from './dom.js?v=4.4.0';
+import { icon } from './icons.js?v=4.4.0';
+import { listNames, sayName } from '../engine/advice.js?v=4.4.0';
 
 const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };
@@ -40,11 +40,11 @@ export function targetsHtml(api, y) {
   if (!subj.length) {
     return `<div class="emptystate"><span class="es-ic">${icon('target')}</span>
       <p class="es-h">Set your ${esc(y.replace('sec', 'Sec '))} subjects first.</p>
-      <p class="small">Then set a grade target for each, and watch what it reaches.</p>
+      <p class="small">Then set a grade target for each one.</p>
       <button type="button" class="btn press" data-action="yr-tab" data-tab="levels">Set subjects</button></div>`;
   }
   return `
-    <p class="small tg-intro">The grade you would expect today, and the one you are aiming for. Goal setting: the numbers are yours, nothing here predicts them, nothing leaves this device.</p>
+    <p class="small tg-intro">The grade you expect today, and the grade you are aiming for.</p>
     <div class="gradetable" role="table" aria-label="Grades">
       <div class="gt-row gt-head" role="row"><span role="columnheader">Subject</span><span role="columnheader">Now</span><span role="columnheader">Target</span></div>
       ${subj.map((s) => {
@@ -107,7 +107,7 @@ function outHtml(api, y) {
           ? (d.via || `${a.basis === 'target' ? 'Target reaches it' : 'Reached now'}${d.gap < 0 ? `, ${-d.gap} to spare` : ''}`)
           : (d.via ? d.via : (d.steps && d.steps.length
             ? `${d.gap} to go: ${listNames(d.steps.map((s) => `${s.name} ${s.from} to ${s.to}`))}`
-            : `${d.gap} to go, more than these subjects can move. A stronger subject counted, or another road in.`));
+            : `${d.gap} to go. These subjects cannot close it alone. Count a stronger subject, or look at other routes in.`));
       return `<li data-meets="${meets}"><b>${esc(SHORT[d.id] || d.name)}</b><span>${meets ? icon('check') : ''}${esc(own + say)}</span></li>`;
     }).join('')}</ul>`;
     const counted = (ref.counted || []).map((e) => `${esc(e.name)} ${esc(e.grade)}${e.read === 'G2 value' && e.level === 'G3' ? ' (as G2)' : ''}`).join(', ');

@@ -27,16 +27,16 @@
     { "min": 25, "max": 25, "groups": [2, 1], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
     { "min": 26, "max": 30, "groups": [1], "needs": "AL 7 or better in both English and Mathematics", "status": "confirmed" }
   ],
-  "noGroup": "This score does not map to a Posting Group. That is a conversation with the primary school about the routes that exist, including specialised schools and repeating P6. It is not the end of a road.",
+  "noGroup": "This score does not map to a Posting Group. Talk to your primary school about the options, including specialised schools and repeating P6.",
   "upgrades": {
     "status": "confirmed",
     "groups": [1, 2],
     "subjects": ["el", "mtl", "maths", "science"],
     "rules": [
-      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: can start this subject at G3." },
-      { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: can start this subject at G2." }
+      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: you can start this subject at G3." },
+      { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: you can start this subject at G2." }
     ],
-    "note": "Schools offer these, and families decide. Starting higher is a choice, not an instruction, and it does not fix the level for Sec 3: every level is reviewed with everyone else."
+    "note": "Your school offers these and your family decides. You do not have to start higher. Levels are reviewed again before Sec 3."
   },
   "downgrades": {
     "status": "confirmed",
@@ -46,10 +46,10 @@
       { "subjects": ["mtl"], "foundation": ["A"], "levels": ["G2"], "text": "Foundation A: the school can offer Mother Tongue at G2." },
       { "subjects": ["mtl"], "foundation": ["B", "C"], "levels": ["G1", "G2"], "text": "Foundation B or C: the school can offer Mother Tongue at G2 or G1." }
     ],
-    "note": "Posting Group 3 with a Foundation subject: a less demanding start in that subject is an option, decided with the school."
+    "note": "Posting Group 3 with a Foundation subject: you can start that subject at a lower level, with the school."
   },
   "hmtl": {
-    "text": "Higher Mother Tongue in Sec 1 is open to AL 1 or 2 in Mother Tongue, or Distinction or Merit in Higher Mother Tongue, whatever the overall score (2026 Sec 1 intake onwards). Schools can offer it to others too.",
+    "text": "You can take Higher Mother Tongue in Sec 1 with AL 1 or 2 in Mother Tongue. A Distinction or Merit in PSLE Higher Mother Tongue also qualifies. Schools can offer it to others too.",
     "status": "confirmed"
   },
   "school": {
@@ -60,7 +60,7 @@
       { "group": 2, "range": "21 to 25" },
       { "group": 1, "range": "25 to 28" }
     ],
-    "note": "The score of the last student admitted in the 2025 posting, from MOE SchoolFinder. Ranges move every year and are not a promise either way.",
+    "note": "The score of the last student admitted in 2025, from MOE SchoolFinder. Ranges change every year.",
     "url": "https://www.moe.gov.sg/schoolfinder/schooldetail/beatty-secondary-school",
     "status": "confirmed"
   }

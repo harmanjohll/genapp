@@ -16,13 +16,13 @@
 // frightened. A padlock is a claim about a person's future that no aggregate
 // entitles anyone to make.
 
-import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=4.3.0';
+import { evaluate, moveFor, moveShortFor, moveTiming } from './rules.js?v=4.4.0';
 
 export const STATES = {
   'open':         { label: 'Open now',        order: 0 },
-  'within-reach': { label: 'Within reach',    order: 1 },
-  'longer-route': { label: 'A longer road',   order: 2 },
-  'other-route':  { label: 'Another road in', order: 3 },
+  'within-reach': { label: '1 to 2 moves away', order: 1 },
+  'longer-route': { label: '3 to 5 moves away', order: 2 },
+  'other-route':  { label: 'Another route in',  order: 3 },
 };
 
 // Routes that exist for essentially anyone, at any point, regardless of what
@@ -173,7 +173,7 @@ function statusLine(destination, state, moves, lens) {
   }
   const hard = moves.filter((m) => m.hard);
   const top = hard[0] || moves[0];
-  return { text: top ? `Next, ${top.short}` : 'A road in', tone: state };
+  return { text: top ? `Next, ${top.short}` : 'A route in', tone: state };
 }
 
 /**

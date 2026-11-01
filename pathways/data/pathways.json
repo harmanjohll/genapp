@@ -40,7 +40,7 @@
       "name": "ITE, Higher Nitec, straight into Year 2",
       "order": 10,
       "duration": "2 more years",
-      "feels": "Hands on from week one, on the equipment the industry uses.",
+      "feels": "Hands on from the first week, on the equipment the industry uses.",
       "leadsTo": "Higher Nitec, then work or poly.",
       "structural": [
         {
@@ -77,13 +77,13 @@
       "performance": [
         {
           "label": "ELMAB3 19 or better, at G2 grades",
-          "note": "From AY2028, this skips Year 1 of the same 3 year course. It replaced the DPP.",
+          "note": "From 2028, this skips Year 1 of the 3 year course. It replaces the DPP.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "Early Admissions looks at interest, before results."
+        "Early admissions looks at interest, before results."
       ],
       "routesIfNotHere": [
         "nitec_to_hnitec"
@@ -132,7 +132,7 @@
           "note": "In the SEC, the best three other subjects count, at G2 or above. The strongest Humanities counts once; the third subject often comes from Sec 3."
         }
       ],
-      "lowerHorizon": "In the SEC, the 2 year Higher Nitec reads English, Maths and my best three other subjects, at G2 or above. The fifth often comes from my Sec 3 subjects."
+      "lowerHorizon": "In the SEC: English, Maths and your best three other subjects, at G2 or above. The fifth can come from Sec 3."
     },
     {
       "id": "nitec",
@@ -141,7 +141,7 @@
       "order": 20,
       "duration": "3 years, or leave with a Nitec after 2",
       "feels": "Learn a trade by doing it, in a workshop, kitchen or studio.",
-      "leadsTo": "Higher Nitec, then poly or work. Nitec marks the exit stop.",
+      "leadsTo": "Higher Nitec, then poly or work.",
       "structural": [
         {
           "id": "n_el",
@@ -168,14 +168,14 @@
       ],
       "performance": [
         {
-          "label": "Built to take the whole range of the cohort",
-          "note": "Counted at G1 equivalent grades on one of five aggregate types. No cut off is published; popular courses are competitive.",
+          "label": "Open to all students",
+          "note": "Counted at G1 grades on one of five score types. No cut off is published. Popular courses are competitive.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "One course now, not two stacked ones. Leaving after Year 2 with a Nitec and returning later is a real road."
+        "One course, not two. You can leave after Year 2 with a Nitec and return later."
       ],
       "routesIfNotHere": [],
       "status": "confirmed",
@@ -197,7 +197,7 @@
       "name": "Junior College",
       "order": 30,
       "duration": "2 years",
-      "feels": "Fast and essay heavy. I narrow to a few subjects and go deep.",
+      "feels": "Fast pace and many essays. You narrow to a few subjects and study them in depth.",
       "leadsTo": "A Levels, then university.",
       "structural": [
         {
@@ -296,13 +296,13 @@
       "performance": [
         {
           "label": "L1R4 of 16 or better, all at G3",
-          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points (up to 3) affect posting only, not the 16.",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and your best other subject. Bonus points (up to 3) affect posting only.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
         {
           "label": "Grade floors",
-          "note": "English C6 and a G3 Maths D7. Mother Tongue need not be G3: D7 at G3, 5 at G2 or D at G1 all count.",
+          "note": "English C6 and G3 Maths D7. Mother Tongue counts at D7 (G3), 5 (G2) or D (G1).",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
@@ -357,7 +357,7 @@
           "note": "In the SEC, a Humanities (R1) and one more Humanities, Maths or Science (R3), all at G3. Science is one subject in Sec 1 and 2, so one of the two is always a Humanities. Mother Tongue need not be G3."
         }
       ],
-      "lowerHorizon": "In the SEC, Junior College counts five subjects, all at G3: English, a Humanities, Maths or a Science, one more of those, and one of any. Mother Tongue need not be G3. The fifth often comes from my Sec 3 subjects."
+      "lowerHorizon": "In the SEC: five subjects at G3, including English, a Humanities, and Maths or a Science. Mother Tongue need not be G3."
     },
     {
       "id": "mi",
@@ -464,19 +464,19 @@
       "performance": [
         {
           "label": "L1R4 of 20 or better, all at G3",
-          "note": "English, a Humanities, a Maths or Science, one more of either, and one best other. Bonus points (up to 3) affect posting only, not the 20.",
+          "note": "English, a Humanities, a Maths or Science, one more of either, and your best other subject. Bonus points (up to 3) affect posting only.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
         {
           "label": "Grade floors",
-          "note": "English C6 and a G3 Maths D7. Mother Tongue need not be G3: D7 at G3, 5 at G2 or D at G1 all count.",
+          "note": "English C6 and G3 Maths D7. Mother Tongue counts at D7 (G3), 5 (G2) or D (G1).",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "Some students choose the extra year on purpose."
+        "Some students choose the extra year."
       ],
       "routesIfNotHere": [
         "poly_to_uni",
@@ -525,7 +525,7 @@
           "note": "In the SEC, a Humanities (R1) and one more Humanities, Maths or Science (R3), all at G3. Science is one subject in Sec 1 and 2, so one of the two is always a Humanities. Mother Tongue need not be G3."
         }
       ],
-      "lowerHorizon": "In the SEC, Millennia Institute counts five subjects, all at G3: English, a Humanities, Maths or a Science, one more of those, and one of any. Mother Tongue need not be G3. The fifth often comes from my Sec 3 subjects."
+      "lowerHorizon": "In the SEC: five subjects at G3, including English, a Humanities, and Maths or a Science. Mother Tongue need not be G3."
     },
     {
       "id": "arts",
@@ -534,7 +534,7 @@
       "order": 50,
       "openLabel": "Open, with a portfolio",
       "duration": "3 years",
-      "feels": "I audition or show a portfolio. The work is the entry.",
+      "feels": "You apply with a portfolio or an audition.",
       "leadsTo": "A diploma, then a degree or practice.",
       "structural": [
         {
@@ -570,14 +570,14 @@
       ],
       "performance": [
         {
-          "label": "Portfolio or audition carries the most weight",
-          "note": "Results set the floor and the work decides: 21 points or better across four subjects besides English.",
+          "label": "Portfolio or audition counts most",
+          "note": "You need 21 points or better across four subjects besides English. Then the portfolio decides.",
           "status": "provisional",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "Start a portfolio now. It does not depend on my levels."
+        "Start a portfolio now. It does not depend on your levels."
       ],
       "routesIfNotHere": [],
       "status": "provisional",
@@ -615,7 +615,7 @@
           "note": "In the SEC, four more subjects besides English count, at least three of them at G3. The strongest Humanities counts once."
         }
       ],
-      "lowerHorizon": "In the SEC, NAFA and LASALLE read English at G3 and four more subjects, at least three of them at G3, with a portfolio or audition. The fourth often comes from my Sec 3 subjects.",
+      "lowerHorizon": "In the SEC: English at G3, plus four subjects with at least three at G3. Then a portfolio or audition.",
       "lowerOpenLabel": "On track, with a portfolio"
     },
     {
@@ -624,7 +624,7 @@
       "name": "Polytechnic Foundation Programme",
       "order": 60,
       "duration": "1 year, then the diploma",
-      "feels": "A year inside the polytechnic, building the foundation my diploma needs.",
+      "feels": "A year at the polytechnic to build what your diploma needs.",
       "leadsTo": "Straight into Year 1 of a diploma.",
       "structural": [
         {
@@ -661,13 +661,13 @@
       "performance": [
         {
           "label": "ELMAB3 12 or better",
-          "note": "English, Mathematics and three best, all counted at G2 equivalent grades. G3 grades map down, so any mix of levels can apply from the 2028 intake.",
+          "note": "English, Maths and your best three, all counted at G2 grades. G3 grades map down, so any mix of levels can apply.",
           "status": "confirmed",
           "sourceRef": "moe_pfp"
         }
       ],
       "alsoIn": [
-        "I apply into a cluster of related courses, and the diploma at the end is the same as everyone else's."
+        "You apply to a group of related courses. The diploma at the end is the same."
       ],
       "routesIfNotHere": [
         "ite_to_poly"
@@ -716,7 +716,7 @@
           "note": "In the SEC, the best three other subjects count, at G2 or above. The strongest Humanities counts once; the third subject often comes from Sec 3."
         }
       ],
-      "lowerHorizon": "In the SEC, the Polytechnic Foundation Programme reads English, Maths and my best three other subjects, at G2 or above. The fifth often comes from my Sec 3 subjects."
+      "lowerHorizon": "In the SEC: English, Maths and your best three other subjects, at G2 or above. The fifth can come from Sec 3."
     },
     {
       "id": "poly",
@@ -724,7 +724,7 @@
       "name": "Polytechnic",
       "order": 70,
       "duration": "3 years",
-      "feels": "I pick a field on day one and work in it. Labs, studios, an internship.",
+      "feels": "You pick a field from the first day. Labs, studios and an internship.",
       "leadsTo": "A diploma, then work or university.",
       "structural": [
         {
@@ -771,19 +771,19 @@
       "performance": [
         {
           "label": "ELR2B2 of 22 or better, after CCA points",
-          "note": "English, two relevant subjects and the best other at G3, plus a fifth at G2 value. Nursing reads 24.",
+          "note": "English, two relevant subjects and your best other at G3, plus a fifth at its G2 value. Nursing reads 24.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
         {
           "label": "Grades that cannot count",
-          "note": "G3 grade 9, and G2 grades 5 and 6, cannot be used in the score. CCA can take off 2 points.",
+          "note": "G3 grade 9, and G2 grades 5 and 6, cannot count. CCA can take off 2 points.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "Early Admissions can give me a place before results."
+        "Early admissions can give you a place before results."
       ],
       "routesIfNotHere": [
         "pfp_to_poly",
@@ -836,16 +836,16 @@
           "note": "Many courses ask for Mathematics; the 2028 course list arrives in mid 2027."
         }
       ],
-      "lowerHorizon": "In the SEC, polytechnic counts five subjects: English and three more at G3, and a fifth at G2 or G3. The fifth often comes from my Sec 3 subjects."
+      "lowerHorizon": "In the SEC: English and three more subjects at G3, plus a fifth at G2 or G3."
     },
     {
       "id": "sec5",
       "railName": "Sec 5",
       "name": "A fifth year at school",
       "order": 80,
-      "openLabel": "Decided by my results",
+      "openLabel": "Decided by results",
       "duration": "1 more year",
-      "feels": "Same school, one more year, subjects at a harder level.",
+      "feels": "Same school, one more year, with subjects at a higher level.",
       "leadsTo": "The SEC again, then any route.",
       "structural": [
         {
@@ -860,19 +860,19 @@
       "performance": [
         {
           "label": "Three or more G3 passes",
-          "note": "And not qualifying for JC, MI or Polytechnic Year 1.",
+          "note": "And you do not qualify for JC, MI or Polytechnic Year 1.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         },
         {
           "label": "Or ELMAB3 21, ELB3 14, or MAB3 14 at G2",
-          "note": "With two or fewer G3 passes, and Grade 5 at G2 in every subject counted. Taking every fifth year subject at G3 needs ELMAB3 19.",
+          "note": "With two or fewer G3 passes and Grade 5 or better in each subject. Every subject at G3 needs ELMAB3 19.",
           "status": "confirmed",
           "sourceRef": "moe_pse"
         }
       ],
       "alsoIn": [
-        "It exists so one year does not decide everything."
+        "It gives you another year before the next choice."
       ],
       "routesIfNotHere": [],
       "status": "provisional",
@@ -887,7 +887,7 @@
         }
       ],
       "lowerHorizon": "Sec 5 is decided by SEC results, at the end of Sec 4.",
-      "lowerOpenLabel": "Decided by my SEC results"
+      "lowerOpenLabel": "Decided by SEC results"
     }
   ]
 }

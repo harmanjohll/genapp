@@ -8,12 +8,12 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.3.0';
-import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=4.3.0';
-import { project } from './project.js?v=4.3.0';
-import { advise } from './advice.js?v=4.3.0';
-import { report } from './grades.js?v=4.3.0';
-import { startLevels, hmtlEligible } from './psle.js?v=4.3.0';
+import { reach } from './reach.js?v=4.4.0';
+import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=4.4.0';
+import { project } from './project.js?v=4.4.0';
+import { advise } from './advice.js?v=4.4.0';
+import { report } from './grades.js?v=4.4.0';
+import { startLevels, hmtlEligible } from './psle.js?v=4.4.0';
 
 const LV = ['G1', 'G2', 'G3'];
 // SEC language that has no place in Sec 1 and 2 advice. The horizon line is

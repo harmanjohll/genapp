@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.3.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.4.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
-  setLabelMode, markStart, setAllSubjects,
-} from './state.js?v=4.3.0';
-import { effective } from './engine/years.js?v=4.3.0';
-import { runStrip } from './ui/yearstrip.js?v=4.3.0';
-import { t } from './ui/labels.js?v=4.3.0';
-import { esc, onAction } from './ui/dom.js?v=4.3.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.3.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.3.0';
-import { icon } from './ui/icons.js?v=4.3.0';
-import { cue, setMutePredicate } from './sound.js?v=4.3.0';
+  setLabelMode, markStart, setAllSubjects, setWordStyle,
+} from './state.js?v=4.4.0';
+import { effective } from './engine/years.js?v=4.4.0';
+import { runStrip } from './ui/yearstrip.js?v=4.4.0';
+import { t } from './ui/labels.js?v=4.4.0';
+import { esc, onAction } from './ui/dom.js?v=4.4.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.4.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.4.0';
+import { icon } from './ui/icons.js?v=4.4.0';
+import { cue, setMutePredicate } from './sound.js?v=4.4.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -358,7 +358,7 @@ function roleSheet(trigger) {
   const st = getState();
   openSheetRouted(`
     <h2 id="sheet-title">Who is reading?</h2>
-    <p class="small">The facts never change. The questions and the voice do: a parent gets questions to ask their child, a teacher gets questions to ask a student.</p>
+    <p class="small">The facts stay the same. Parents get questions to ask their child. Teachers get questions to ask a student.</p>
     <div class="rolegrid">
       ${Object.entries(ROLE_LABEL).map(([id, label]) => `<button type="button" class="btn ${st.role === id ? '' : 'ghost'} press" data-action="pick-role" data-id="${id}" aria-pressed="${st.role === id}">${esc(label)}</button>`).join('')}
     </div>`, trigger);
@@ -379,11 +379,12 @@ function settingsSheet(trigger) {
   openSheetRouted(`
     <h2 id="sheet-title">Settings</h2>
     <div class="setlist">
-      ${switchRow('set-line', 'Transit words (Line mode)', 'Use transit words: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
-      ${data.offer ? switchRow('set-allsubj', 'Every school\'s subjects', `Off: ${data.offer.school}'s subjects and levels. On: the full national list, for a transfer or another school.`, !!st.allSubjects) : ''}
-      ${switchRow('set-families', 'Course families', 'Show course groups and their subject asks on each destination page.', st.families)}
-      ${switchRow('set-theme', 'Dark colours', 'Night in the same city.', themeNow() === 'dark')}
-      ${switchRow('set-sound', 'Sound', 'Five small cues in the game.', st.soundOn)}
+      ${switchRow('set-detail', 'Detailed wording', 'Off: short lines, with reasons a tap away. On: everything shown in full.', st.wordStyle === 'detailed')}
+      ${switchRow('set-line', 'Transit words (Line mode)', 'Departures, tickets and a pass instead of plain words.', st.labelMode === 'line')}
+      ${data.offer ? switchRow('set-allsubj', 'Every school\'s subjects', `Off: ${data.offer.school}'s subjects. On: every school's subjects, for a transfer.`, !!st.allSubjects) : ''}
+      ${switchRow('set-families', 'Course families', 'Show course groups and the subjects each asks for.', st.families)}
+      ${switchRow('set-theme', 'Dark colours', 'Dark background.', themeNow() === 'dark')}
+      ${switchRow('set-sound', 'Sound', 'Small sounds in the game.', st.soundOn)}
     </div>
     <p class="caps" style="margin-top:20px">Also here</p>
     <div class="morerow">
@@ -394,7 +395,7 @@ function settingsSheet(trigger) {
       <button type="button" class="chip press" data-action="words">Glossary</button>
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
-    <p class="small" style="margin-top:16px">Everything stays on this device. No account, no server, nothing collected.</p>`, trigger);
+    <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
 }
 
 function yearSheet(trigger) {
@@ -432,6 +433,7 @@ onAction(document.body, {
   settings: (btn) => settingsSheet(btn),
   'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
+  'set-detail': (btn) => { setWordStyle(flip(btn) ? 'detailed' : 'short'); refresh(); },
   'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },
   'set-allsubj': (btn) => { setAllSubjects(flip(btn)); refresh(); },
   'replay-start': () => { markStart(false); nav('start', {}); },

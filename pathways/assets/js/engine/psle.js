@@ -9,8 +9,8 @@
 //
 // Pure: no DOM, no storage. Rules come from data/psle.json.
 
-import { reach } from './reach.js?v=4.3.0';
-import { evalPlan } from './years.js?v=4.3.0';
+import { reach } from './reach.js?v=4.4.0';
+import { evalPlan } from './years.js?v=4.4.0';
 
 export function alOf(entry, rules) {
   if (!entry) return null;

@@ -12,15 +12,12 @@
 // carries the cost line for this destination when the money file is in hand,
 // and degrades to nothing when it is not.
 
-import { esc } from './dom.js?v=4.3.0';
-import { decorate } from './glossary.js?v=4.3.0';
+import { esc } from './dom.js?v=4.4.0';
+import { decorate } from './glossary.js?v=4.4.0';
+import { stateWord } from './labels.js?v=4.4.0';
 
-const STATE_WORD = {
-  'open': 'Open to me',
-  'within-reach': 'A move away',
-  'longer-route': 'A longer road',
-  'other-route': 'Another road in',
-};
+// One set of state words for the whole app (ui/labels.js).
+const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
 
 export function destSheetHtml(row, data) {
   const open = row.state === 'open';
@@ -44,7 +41,7 @@ export function destSheetHtml(row, data) {
     ${open ? `
       <p class="notegood">${esc(row.status.text)}.</p>
     ` : `
-      <p class="caps">What moves this</p>
+      <p class="caps">Moves that help</p>
       <ul class="dest-plain">
         ${(row.moves || []).slice(0, 3).map((m) => `<li>${esc(m.label)}</li>`).join('')}
       </ul>
@@ -52,7 +49,7 @@ export function destSheetHtml(row, data) {
     `}
 
     ${routes.length ? `
-      <p class="caps">Other roads to it</p>
+      <p class="caps">Other routes in</p>
       <ul class="dest-plain">
         ${routes.map((r) => `<li><strong>${esc(r.label)}</strong>${r.years ? ` · ${esc(String(r.years))} years` : ''}${r.honest ? `. ${esc(r.honest)}` : ''}</li>`).join('')}
       </ul>
@@ -74,8 +71,8 @@ export function destSheetHtml(row, data) {
           ${p.note ? `<p class="rulerow-note">${decorate(esc(p.note))}</p>` : ''}
         </div>`).join('')}
       <p class="small" style="margin-top:12px">
-        ${row.dataStatus === 'provisional' ? 'Some of these figures are provisional: read from summaries, not yet re-checked against the primary page. ' : ''}
-        ${row.asOf ? `Checked ${esc(row.asOf)}. ` : ''}Confirm anything that matters with your ECG counsellor and at moe.gov.sg.
+        ${row.dataStatus === 'provisional' ? 'Some figures are still to be confirmed. ' : ''}
+        ${row.asOf ? `Checked ${esc(row.asOf)}. ` : ''}Check important details with your ECG counsellor and at moe.gov.sg.
       </p>
     </details>
   `;

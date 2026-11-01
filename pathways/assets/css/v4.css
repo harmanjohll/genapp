@@ -971,3 +971,11 @@ body[data-screen="start"] main { padding-bottom: 32px; }
 .moresubj[open] > summary { margin-bottom: 8px; }
 .moresubj .subjgrid { margin-top: 10px; }
 .subjchip { max-width: 100%; }
+
+/* Short wording: the why and when of a move, one tap away. */
+.tk-more { margin: 4px 0 8px; }
+.tk-more > summary { cursor: pointer; font-size: 0.84rem; font-weight: 750; color: var(--ink-soft); min-height: 32px; display: inline-flex; align-items: center; }
+.tk-more[open] > summary { margin-bottom: 4px; }
+.fold { margin: 10px 0; }
+.fold > summary { cursor: pointer; font-weight: 750; color: var(--ink-soft); min-height: 36px; display: flex; align-items: center; }
+.fold[open] > summary { margin-bottom: 6px; }
