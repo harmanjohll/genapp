@@ -24,9 +24,9 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.2.0';
-import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.2.0';
-import { moveTiming } from './rules.js?v=4.2.0';
+import { reach } from './reach.js?v=4.3.0';
+import { evalPlan, subjectsForYear, isLower } from './years.js?v=4.3.0';
+import { moveTiming } from './rules.js?v=4.3.0';
 
 const LV = ['G1', 'G2', 'G3'];
 
@@ -98,11 +98,14 @@ function score(d) {
  * @param {string} o.yearId  the page being looked at
  * @param {Object} o.plan    that year's raw plan
  * @param {Object} o.ctx     { subjects, destinations, routesById, pathwaysMeta }
- * @param {Array}  [o.offer] the school's subject list, if trimmed
+ * @param {Object} [o.offer] the school's offering (data/offer.json); defaults to ctx.offer
  */
 export function advise({ yearId, plan, ctx, offer }) {
   const c = ctx;
-  const rows = subjectsForYear(yearId, c.subjects, offer).filter((s) => (s.levels || []).length);
+  // The school's offering rides on the context unless a caller overrides it,
+  // so every screen's advice follows the same list.
+  const off = offer === undefined ? (c.offer || null) : offer;
+  const rows = subjectsForYear(yearId, c.subjects, off).filter((s) => (s.levels || []).length);
   const base = reachAll(yearId, plan, c);
   const timing = moveTiming(yearId);
   const lower = isLower(yearId);

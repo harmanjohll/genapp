@@ -8,11 +8,12 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.2.0';
-import { evalPlan, subjectsForYear } from './years.js?v=4.2.0';
-import { advise } from './advice.js?v=4.2.0';
-import { report } from './grades.js?v=4.2.0';
-import { startLevels, hmtlEligible } from './psle.js?v=4.2.0';
+import { reach } from './reach.js?v=4.3.0';
+import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=4.3.0';
+import { project } from './project.js?v=4.3.0';
+import { advise } from './advice.js?v=4.3.0';
+import { report } from './grades.js?v=4.3.0';
+import { startLevels, hmtlEligible } from './psle.js?v=4.3.0';
 
 const LV = ['G1', 'G2', 'G3'];
 // SEC language that has no place in Sec 1 and 2 advice. The horizon line is
@@ -95,6 +96,51 @@ export function lowerLensSweep(ctx) {
     });
   });
   return { ok: !failures.length, checks, failures };
+}
+
+/**
+ * The school's offering (data/offer.json, as the Principal gave it on
+ * 1 November 2026): what Set levels shows first, and what advice may suggest.
+ */
+export function offerSweep(ctx, offer) {
+  const fails = [];
+  if (!offer || !offer.subjects) return { ok: false, fails: ['no offer file'] };
+  const byId = new Map(ctx.subjects.map((s) => [s.id, s]));
+  Object.entries(offer.subjects).forEach(([id, o]) => {
+    const s = byId.get(id);
+    if (!s) { fails.push(`offer names unknown subject ${id}`); return; }
+    (o.levels || []).forEach((l) => { if (!(s.levels || []).includes(l)) fails.push(`${id} offered at ${l}, which the subject does not have`); });
+    (o.elsewhere || []).forEach((l) => { if (!(o.levels || []).includes(l)) fails.push(`${id} marks ${l} elsewhere but does not offer it`); });
+  });
+  const up = Object.fromEntries(subjectsForYear('sec3', ctx.subjects, offer).map((s) => [s.id, s]));
+  ['sci_pb', 'hum_ss_lit', 'history', 'economics', 'ebs', 'higher_art', 'higher_music', 'drama', 'electronics', 'ess'].forEach((id) => {
+    if (up[id]) fails.push(`Sec 3 lists ${id}, which Beatty does not offer`);
+  });
+  const lv = (id) => (up[id] ? up[id].levels.join(' ') : 'missing');
+  [['amaths', 'G3'], ['poa', 'G3'], ['geography', 'G3'], ['literature', 'G3'], ['sci_cb', 'G3'], ['dt', 'G2'], ['sci_pc', 'G2 G3'], ['art', 'G2 G3'], ['nfs', 'G2 G3'], ['computing', 'G1 G3'], ['music', 'G3']].forEach(([id, want]) => {
+    if (lv(id) !== want) fails.push(`${id} at Beatty should be ${want}, got ${lv(id)}`);
+  });
+  if (!up.computing || up.computing.elsewhere.join() !== 'G3') fails.push('Computing G3 should be marked as taught elsewhere');
+  if (!up.music || up.music.elsewhere.join() !== 'G3') fails.push('Music G3 should be marked as taught elsewhere');
+  if (!moreSubjects('sec3', ctx.subjects, offer).some((s) => s.id === 'economics')) fails.push('More subjects should still hold every other school\'s subjects');
+  // Advice on a Beatty plan suggests only what Beatty runs.
+  const octx = { ...ctx, offer };
+  [{ el: 'G2', mtl: 'G2', maths: 'G2', sci_pc: 'G2', hum_ss_geog: 'G2' },
+    { el: 'G3', mtl: 'G2', maths: 'G3', chemistry: 'G3', physics: 'G3', hum_ss_hist: 'G3' },
+    { el: 'G1', mtl: 'G1', maths: 'G1', science_g1: 'G1', computing: 'G1' }].forEach((plan) => {
+    ['sec3', 'sec4'].forEach((y) => {
+      const a = advise({ yearId: y, plan, ctx: octx });
+      const moves = [...a.singles.flatMap((m) => m.sids.map((sid) => [sid, m.to])), ...a.pairs.flatMap((p) => p.moves.map((m) => [m.sid, m.to]))];
+      moves.forEach(([sid, to]) => {
+        if (!up[sid]) fails.push(`${y} advice suggests ${sid}, not offered at Beatty`);
+        else if (!up[sid].levels.includes(to)) fails.push(`${y} advice suggests ${sid} at ${to}, not a level Beatty runs`);
+      });
+    });
+  });
+  // G1 Humanities in lower sec (the Exposure Modules) projects to no Sec 3 row.
+  const pj = project({ el: 'G1', ls_geography: 'G1', ls_history: 'G1' }, ctx.subjects).plan;
+  if (Object.keys(pj).some((id) => id.startsWith('hum_'))) fails.push('G1 Humanities projected to an examinable Sec 3 Humanities');
+  return { ok: !fails.length, fails };
 }
 
 export function policySweep(ctx, g, psleRules) {

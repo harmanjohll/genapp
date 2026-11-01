@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.2.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.3.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
-  setLabelMode, markStart,
-} from './state.js?v=4.2.0';
-import { effective } from './engine/years.js?v=4.2.0';
-import { runStrip } from './ui/yearstrip.js?v=4.2.0';
-import { t } from './ui/labels.js?v=4.2.0';
-import { esc, onAction } from './ui/dom.js?v=4.2.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.2.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.2.0';
-import { icon } from './ui/icons.js?v=4.2.0';
-import { cue, setMutePredicate } from './sound.js?v=4.2.0';
+  setLabelMode, markStart, setAllSubjects,
+} from './state.js?v=4.3.0';
+import { effective } from './engine/years.js?v=4.3.0';
+import { runStrip } from './ui/yearstrip.js?v=4.3.0';
+import { t } from './ui/labels.js?v=4.3.0';
+import { esc, onAction } from './ui/dom.js?v=4.3.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.3.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.3.0';
+import { icon } from './ui/icons.js?v=4.3.0';
+import { cue, setMutePredicate } from './sound.js?v=4.3.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -272,6 +272,8 @@ function ctx() {
     pathwaysMeta: data.pathways._meta,
     yearId: e.yearId || st.year,
     plan: e.yearId ? e.lens : st.plan,
+    // The school's offering, unless the reader asked for every school's subjects.
+    offer: st.allSubjects ? null : (data.offer || null),
   };
 }
 
@@ -378,6 +380,7 @@ function settingsSheet(trigger) {
     <h2 id="sheet-title">Settings</h2>
     <div class="setlist">
       ${switchRow('set-line', 'Transit words (Line mode)', 'Use transit words: departures, tickets, a pass. The look stays the same.', st.labelMode === 'line')}
+      ${data.offer ? switchRow('set-allsubj', 'Every school\'s subjects', `Off: ${data.offer.school}'s subjects and levels. On: the full national list, for a transfer or another school.`, !!st.allSubjects) : ''}
       ${switchRow('set-families', 'Course families', 'Show course groups and their subject asks on each destination page.', st.families)}
       ${switchRow('set-theme', 'Dark colours', 'Night in the same city.', themeNow() === 'dark')}
       ${switchRow('set-sound', 'Sound', 'Five small cues in the game.', st.soundOn)}
@@ -430,6 +433,7 @@ onAction(document.body, {
   'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
   'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },
+  'set-allsubj': (btn) => { setAllSubjects(flip(btn)); refresh(); },
   'replay-start': () => { markStart(false); nav('start', {}); },
   'set-theme': (btn) => {
     const on = flip(btn);

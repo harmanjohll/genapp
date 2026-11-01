@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode,
-} from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { evalPlan, isLower } from '../engine/years.js?v=4.2.0';
-import { advise } from '../engine/advice.js?v=4.2.0';
-import { signalHtml } from '../ui/signal.js?v=4.2.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=4.2.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.2.0';
-import { subjTile, patchTile } from './year.js?v=4.2.0';
-import { esc, onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
-import { t, openWord } from '../ui/labels.js?v=4.2.0';
+} from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { evalPlan, isLower } from '../engine/years.js?v=4.3.0';
+import { advise } from '../engine/advice.js?v=4.3.0';
+import { signalHtml } from '../ui/signal.js?v=4.3.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=4.3.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.3.0';
+import { subjTile, patchTile } from './year.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
+import { t, openWord } from '../ui/labels.js?v=4.3.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -270,7 +270,7 @@ function renderReveal(root, api, y) {
 
 function renderMove(root, api, y) {
   const st = getState();
-  const a = advise({ yearId: y, plan: st.plans[y] || {}, ctx: api.ctx(), offer: st.offer });
+  const a = advise({ yearId: y, plan: st.plans[y] || {}, ctx: api.ctx() });
   const top = a.singles[0] || a.pairs[0];
   root.innerHTML = `
   <section class="st">

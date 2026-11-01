@@ -7,21 +7,21 @@
 // moves, the targets, the student's own list, and the questions to ask, in
 // the voice of whoever is reading.
 
-import { getState, toggleAction, carryUrl, carrySummary, YEARS } from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=4.2.0';
-import { advise, sayName } from '../engine/advice.js?v=4.2.0';
-import { report } from '../engine/grades.js?v=4.2.0';
-import { psleScore } from '../engine/psle.js?v=4.2.0';
-import { openCount, mapPips } from '../ui/map.js?v=4.2.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.2.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.2.0';
-import { boardHtml } from '../ui/board.js?v=4.2.0';
-import { signalHtml } from '../ui/signal.js?v=4.2.0';
-import { t, lineMode, openWord } from '../ui/labels.js?v=4.2.0';
-import { STRIP } from '../ui/yearstrip.js?v=4.2.0';
-import { esc, onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
+import { getState, toggleAction, carryUrl, carrySummary, YEARS } from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=4.3.0';
+import { advise, sayName } from '../engine/advice.js?v=4.3.0';
+import { report } from '../engine/grades.js?v=4.3.0';
+import { psleScore } from '../engine/psle.js?v=4.3.0';
+import { openCount, mapPips } from '../ui/map.js?v=4.3.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.3.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.3.0';
+import { boardHtml } from '../ui/board.js?v=4.3.0';
+import { signalHtml } from '../ui/signal.js?v=4.3.0';
+import { t, lineMode, openWord } from '../ui/labels.js?v=4.3.0';
+import { STRIP } from '../ui/yearstrip.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -37,7 +37,7 @@ export default {
     const e = effective(st.plans, c.subjects);
     const rows = c.destinations.map((d) => reach(c.plan, d, c));
     const open = openCount(rows);
-    const adv = e.yearId ? advise({ yearId: e.yearId, plan: st.plans[e.yearId], ctx: c, offer: st.offer }) : null;
+    const adv = e.yearId ? advise({ yearId: e.yearId, plan: st.plans[e.yearId], ctx: c }) : null;
     const top = adv ? adv.singles.slice(0, 3).concat(adv.pairs.slice(0, 1)) : [];
     const sc = api.data.psle ? psleScore(st.psle || {}, api.data.psle) : { complete: false };
     const g = api.data.grades;

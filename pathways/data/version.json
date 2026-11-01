@@ -3,8 +3,20 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "4.2.0",
+  "version": "4.3.0",
   "releases": [
+    {
+      "version": "4.3.0",
+      "date": "2026-11-01",
+      "head": "Beatty's subjects first",
+      "changes": [
+        "Set levels shows the subjects Beatty offers, at the levels Beatty runs them: Additional Mathematics and Principles of Accounts at G3, Design and Technology at G2, and so on.",
+        "Every other school's subjects are under More subjects, for a transfer or another school. A switch in Settings shows the full list.",
+        "Advice only suggests a subject and level Beatty runs. Music and Computing at G3 are marked as taken at another school or centre.",
+        "In Sec 1 and 2, G1 Humanities is named for what it is: the Humanities Exposure Modules.",
+        "Subject names are spelt out in full, such as Humanities (Social Studies, Geography) and Science (Physics, Chemistry)."
+      ]
+    },
     {
       "version": "4.2.0",
       "date": "2026-11-01",

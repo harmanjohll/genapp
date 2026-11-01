@@ -4,13 +4,13 @@
 // with the planning path for a first-time student's attention. Here they sit
 // together as things to wander through once the plan has a shape.
 
-import { getState } from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { signalStrip } from '../ui/signal.js?v=4.2.0';
-import { openWord } from '../ui/labels.js?v=4.2.0';
-import { skyline } from '../ui/scenes.js?v=4.2.0';
-import { onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
+import { getState } from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { signalStrip } from '../ui/signal.js?v=4.3.0';
+import { openWord } from '../ui/labels.js?v=4.3.0';
+import { skyline } from '../ui/scenes.js?v=4.3.0';
+import { onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
 
 export default {
   id: 'explore',

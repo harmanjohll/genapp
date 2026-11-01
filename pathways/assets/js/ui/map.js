@@ -15,7 +15,7 @@
 // - The SVG is decoration; the list is the surface. Screen readers get the
 //   real names and status lines as buttons, not a drawing.
 
-import { esc } from './dom.js?v=4.2.0';
+import { esc } from './dom.js?v=4.3.0';
 
 const LINE_HUE = {
   'open':         'var(--line-open)',

@@ -25,7 +25,7 @@
 //    single cruellest thing this app could do and it is why projectionSweep
 //    tests additions as well as raises.
 
-import { reach } from './reach.js?v=4.2.0';
+import { reach } from './reach.js?v=4.3.0';
 
 const LV = { G1: 1, G2: 2, G3: 3 };
 
@@ -71,7 +71,10 @@ export function project(plan, subjects) {
     if (!lv) return;
     if (!best || LV[lv] > LV[best.level]) best = { from: lowId, to: upId, level: lv };
   });
-  if (best) {
+  // G1 Humanities in Sec 1 and 2 is the Humanities Exposure Modules, and
+  // upper secondary has no examinable G1 Humanities (Social Studies at G1
+  // has no exam). So a G1 best projects to no row; G2 or G3 becomes the pair.
+  if (best && best.level !== 'G1') {
     out[best.to] = best.level;
     rows.push(best);
   }

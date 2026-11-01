@@ -8,11 +8,11 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=4.2.0';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.2.0';
-import { esc, onAction } from './dom.js?v=4.2.0';
-import { icon } from './icons.js?v=4.2.0';
-import { listNames, sayName } from '../engine/advice.js?v=4.2.0';
+import { getState, setGrade } from '../state.js?v=4.3.0';
+import { report, gradesFor, polyByType } from '../engine/grades.js?v=4.3.0';
+import { esc, onAction } from './dom.js?v=4.3.0';
+import { icon } from './icons.js?v=4.3.0';
+import { listNames, sayName } from '../engine/advice.js?v=4.3.0';
 
 const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };

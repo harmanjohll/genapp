@@ -1,0 +1,56 @@
+{
+  "_meta": {
+    "purpose": "The subjects Beatty Secondary offers, and at which levels, keyed by Paths subject ids. Set levels shows these first; every other school's subjects sit behind More subjects.",
+    "source": "Supplied by the Principal, 1 November 2026",
+    "accessed": "2026-11-01",
+    "parity": "Mirrors e21cclog/school/beatty.json (id beatty-2027) in the E21CC Log, built from the same message. Keep the two in step: a subject or level changed here changes there.",
+    "notes": "Levels are the levels Beatty runs. `elsewhere` marks levels taught at another school or centre. Subjects not listed here are not offered at Beatty; they stay available under More subjects for transfers and other schools."
+  },
+  "id": "beatty-2027",
+  "school": "Beatty Secondary School",
+  "short": "Beatty",
+  "subjects": {
+    "el": { "levels": ["G1", "G2", "G3"] },
+    "mtl": { "levels": ["G1", "G2", "G3"], "note": "Chinese, Malay or Tamil Language at Beatty. Other Mother Tongue Languages are taught outside school, at G2 or G3." },
+    "hmtl": { "levels": ["G3"], "note": "Higher Chinese, Higher Malay or Higher Tamil Language." },
+    "maths": { "levels": ["G1", "G2", "G3"] },
+    "ls_science": { "levels": ["G1", "G2", "G3"] },
+    "ls_geography": { "levels": ["G1", "G2", "G3"] },
+    "ls_history": { "levels": ["G1", "G2", "G3"] },
+    "ls_literature": { "levels": ["G1", "G2", "G3"] },
+    "ls_art": {},
+    "ls_music": {},
+    "ls_dt": {},
+    "ls_fce": {},
+    "amaths": { "levels": ["G3"] },
+    "physics": { "levels": ["G3"], "note": "Taken with Chemistry." },
+    "chemistry": { "levels": ["G3"], "note": "Taken with Physics or with Biology." },
+    "biology": { "levels": ["G3"], "note": "Taken with Chemistry." },
+    "sci_pc": { "levels": ["G2", "G3"] },
+    "sci_cb": { "levels": ["G3"] },
+    "science_g1": { "levels": ["G1"] },
+    "hum_ss_geog": { "levels": ["G2", "G3"] },
+    "hum_ss_hist": { "levels": ["G2", "G3"] },
+    "geography": { "levels": ["G3"] },
+    "literature": { "levels": ["G3"] },
+    "art": { "levels": ["G2", "G3"] },
+    "computing": { "levels": ["G1", "G3"], "elsewhere": ["G3"], "note": "G1 at Beatty, first for students without a fifth subject. G3 at another school or centre." },
+    "dt": { "levels": ["G2"] },
+    "music": { "levels": ["G3"], "elsewhere": ["G3"], "note": "At another school or centre." },
+    "nfs": { "levels": ["G2", "G3"] },
+    "poa": { "levels": ["G3"] }
+  },
+  "groupNotes": {
+    "lower": {
+      "humanities": "At G1, Geography, History and Literature in English are taught as the Humanities Exposure Modules. A move to G2 is made one subject at a time."
+    },
+    "upper": {
+      "science": "Pure Sciences: Chemistry with Physics, or Chemistry with Biology. Combined Sciences: Science (Physics, Chemistry) at G2 or G3, or Science (Chemistry, Biology) at G3.",
+      "humanities": "Social Studies at G1 is taken without an exam."
+    }
+  },
+  "alsoTimetable": {
+    "lower": ["Physical Education", "Character and Citizenship Education", "NEXUS@BTY"],
+    "upper": ["Social Studies at G1, not examined", "Physical Education", "Character and Citizenship Education"]
+  }
+}

@@ -19,7 +19,7 @@ const load = (name) => JSON.parse(readFileSync(join(root, 'data', `${name}.json`
 const data = Object.fromEntries([
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
-  'moves', 'version', 'activities', 'possibilities', 'work', 'money', 'evidence', 'schools',
+  'moves', 'version', 'activities', 'possibilities', 'work', 'money', 'evidence', 'schools', 'offer',
 ].map((n) => [n, load(n)]));
 
 const { runInvariantSweep } = await import(join(root, 'assets/js/engine/reach.js'));
@@ -264,7 +264,15 @@ const { adviceSweep } = await import(join(root, 'assets/js/engine/advice.js'));
 const { gradesSweep } = await import(join(root, 'assets/js/engine/grades.js'));
 const { psleScore, postingFor, startLevels } = await import(join(root, 'assets/js/engine/psle.js'));
 const readData = (n) => JSON.parse(readFileSync(join(root, 'data', `${n}.json`), 'utf8'));
-const { lowerLensSweep, policySweep } = await import(join(root, 'assets/js/engine/policy.js'));
+const { lowerLensSweep, policySweep, offerSweep } = await import(join(root, 'assets/js/engine/policy.js'));
+
+/** Beatty's offering: Set levels and advice show only what the school runs. */
+function v4OfferSweep() {
+  const r = offerSweep(ctx, data.offer);
+  pass('School offer', r.ok, 'Beatty subjects and levels, elsewhere marks, advice inside the offer, G1 Humanities');
+  if (!r.ok) console.table(r.fails);
+  return r;
+}
 
 /** Sec 1 and 2 are judged by their own rules: no dead end, never further, no SEC counts in what they read. */
 function v4LowerSweep() {
@@ -320,10 +328,10 @@ function v4PsleSweep() {
 /** House style for the v4 data: no dashes in anything a reader sees. */
 function v4DashSweep() {
   const fails = [];
-  ['years', 'psle', 'grades', 'families'].forEach((n) => {
+  ['years', 'psle', 'grades', 'families', 'offer'].forEach((n) => {
     const walk = (v, path) => {
       if (typeof v === 'string') {
-        if (path.includes('url') || path.includes('_meta')) return;
+        if (path.includes('url') || path.includes('_meta') || /\.id$/.test(path)) return;
         if (/[\u2013\u2014]|\w-\w| - /.test(v)) fails.push({ path: `${n}${path}`, text: v.slice(0, 60) });
       } else if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${path}[${i}]`));
       else if (v && typeof v === 'object') Object.entries(v).forEach(([k, x]) => walk(x, `${path}.${k}`));
@@ -391,6 +399,7 @@ const results = [
   ['psle', v4PsleSweep()],
   ['lower-lens', v4LowerSweep()],
   ['policy', v4PolicySweep()],
+  ['offer', v4OfferSweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
   ['white-on-fill', whiteOnFillSweep()],

@@ -11,23 +11,23 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { pulse } from '../engine/pulse.js?v=4.2.0';
-import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.2.0';
-import { advise } from '../engine/advice.js?v=4.2.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.2.0';
-import { openCount } from '../ui/map.js?v=4.2.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.2.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.2.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.2.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.2.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.2.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.2.0';
-import { esc, onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
-import { signalHtml } from '../ui/signal.js?v=4.2.0';
-import { t, lineMode, openWord } from '../ui/labels.js?v=4.2.0';
+} from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { pulse } from '../engine/pulse.js?v=4.3.0';
+import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=4.3.0';
+import { advise } from '../engine/advice.js?v=4.3.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.3.0';
+import { openCount } from '../ui/map.js?v=4.3.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=4.3.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.3.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.3.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.3.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.3.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
+import { signalHtml } from '../ui/signal.js?v=4.3.0';
+import { t, lineMode, openWord } from '../ui/labels.js?v=4.3.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
@@ -90,7 +90,7 @@ export default {
     const plan = (st.plans && st.plans[y]) || {};
     const showResult = y !== 'p6';
     const rows = showResult ? reachFor(api, y, plan) : [];
-    const adv = showResult ? advise({ yearId: y, plan, ctx: api.ctx(), offer: st.offer }) : null;
+    const adv = showResult ? advise({ yearId: y, plan, ctx: api.ctx() }) : null;
     const advCount = adv ? adv.singles.length + adv.pairs.length : 0;
 
     root.innerHTML = `
@@ -139,18 +139,37 @@ function panel(tab, api, y, plan, rows, adv) {
 }
 
 function groupsFor(api, y) {
-  const st = getState();
-  const subjects = subjectsForYear(y, api.ctx().subjects, st.offer);
+  const offer = api.ctx().offer;
+  const subjects = subjectsForYear(y, api.ctx().subjects, offer);
+  // The school's own note for a group (Beatty's pure sciences, Humanities at
+  // G1) rides beside the national one.
+  const notes = (offer && offer.groupNotes && offer.groupNotes[isLower(y) ? 'lower' : 'upper']) || {};
   const groups = (api.data.subjects.groups || []).map((g) => ({
     ...g,
+    note: [isLower(y) && g.lowerNote ? g.lowerNote : g.note, notes[g.id]].filter(Boolean).join(' '),
     rows: subjects.filter((s) => s.group === g.id && (s.levels || []).length),
     flat: subjects.filter((s) => s.group === g.id && !(s.levels || []).length),
   })).filter((g) => g.rows.length || g.flat.length);
   return { subjects, groups };
 }
 
+/* Every other school's subjects, for a transfer or another school. Opens by
+   itself when the student already holds one of them. */
+function moreHtml(api, y, plan) {
+  const offer = api.ctx().offer;
+  const rest = moreSubjects(y, api.ctx().subjects, offer).filter((s) => (s.levels || []).length);
+  if (!rest.length) return '';
+  const held = rest.filter((s) => plan[s.id]).length;
+  return `
+    <details class="moresubj"${held ? ' open' : ''}>
+      <summary>More subjects (other schools) <span class="small">${rest.length} not offered at ${esc(offer.short || 'this school')}${held ? `, ${held} set` : ''}</span></summary>
+      <p class="small">For a transfer, or a subject taken at another school. National levels.</p>
+      <div class="subjgrid">${rest.map((s) => subjTile(s, plan)).join('')}</div>
+    </details>`;
+}
+
 function shortGroup(g) {
-  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common' }[g.id] || g.label;
+  return { core: 'Core', maths_extra: 'More Maths', science: 'Science', humanities: 'Humanities', elective: 'Electives', common: 'Common Curriculum' }[g.id] || g.label;
 }
 
 function levelsHtml(api, y, plan) {
@@ -167,6 +186,9 @@ function levelsHtml(api, y, plan) {
   const count = Object.keys(plan).length;
   const g3 = Object.values(plan).filter((l) => l === 'G3').length;
   const flat = groups.flatMap((g) => g.flat);
+  const offer = api.ctx().offer;
+  const also = (offer && offer.alsoTimetable && offer.alsoTimetable[isLower(y) ? 'lower' : 'upper']) || [];
+  const flatNames = [...flat.map((s) => s.name), ...also];
 
   return `
     ${carry ? `
@@ -210,14 +232,16 @@ function levelsHtml(api, y, plan) {
         <div class="subjgrid">${g.rows.map((s) => subjTile(s, plan)).join('')}</div>
       </section>`).join('')}
 
-    ${flat.length && !chunked ? `<p class="small flatline">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${flat.map((s) => esc(s.name)).join(', ')}.</p>` : ''}
+    ${moreHtml(api, y, plan)}
+
+    ${flatNames.length ? `<p class="small flatline">${esc(api.copy('chrome.alsoTimetable', 'Also on the timetable, no level to pick:'))} ${flatNames.map((n) => esc(n)).join(', ')}.</p>` : ''}
 
     ${chunked ? nextGroupBtn(groups, active) : `<p class="nextgroup"><button type="button" class="btn press" data-action="yr-tab" data-tab="advice">See the advice ${icon('arrow')}</button></p>`}
 
     <div class="notes">
       ${j.up ? `<p>${icon('calendar')} ${esc(j.up)}</p>` : ''}
       ${j.note ? `<p>${esc(j.note)}</p>` : ''}
-      <p>${esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
+      <p>${offer ? `Showing the subjects and levels ${esc(offer.school)} offers. Every other school's subjects are under More subjects, or in Settings.` : esc(api.copy('chrome.availability', 'Schools offer different subsets of this list. Your school decides what runs; this decides nothing.'))}</p>
     </div>`;
 }
 
@@ -248,13 +272,16 @@ export function subjTile(s, plan, action = 'yr-lvl') {
   <div class="subj" data-sid="${esc(s.id)}" data-held="${held}">
     <span class="subj-name">${esc(s.name)}
       ${s.compulsory ? '<small>Everyone takes this</small>' : ''}
-      ${s.status === 'provisional' && !s.compulsory ? '<small>Selected schools</small>' : ''}
+      ${s.status === 'provisional' && !s.compulsory && !s.offered ? '<small>Selected schools</small>' : ''}
+      ${s.levelNote ? `<small>${esc(s.levelNote)}</small>` : ''}
+      ${s.offerNote ? `<small>${esc(s.offerNote)}</small>` : ''}
+      ${(s.elsewhere || []).length && !s.offerNote ? `<small>${esc(s.elsewhere.join(', '))} at another school or centre</small>` : ''}
     </span>
     <span class="lvsw" role="group" aria-label="${esc(s.name)} level" data-level="${held}" style="--i:${held ? LVI[held] : 0}">
       <i class="lvsw-thumb" aria-hidden="true"></i>
       ${['G1', 'G2', 'G3'].map((l) => (s.levels || []).includes(l)
         ? `<button type="button" class="lvsw-b" data-action="${action}" data-sid="${esc(s.id)}" data-level="${l}"
-            aria-pressed="${held === l}" aria-label="${esc(s.name)} at ${l}${held === l ? ', picked. Tap to clear.' : ''}">${l}</button>`
+            aria-pressed="${held === l}" aria-label="${esc(s.name)} at ${l}${(s.elsewhere || []).includes(l) ? ', at another school or centre' : ''}${held === l ? ', picked. Tap to clear.' : ''}">${l}</button>`
         : '<span class="lvsw-b off" aria-hidden="true"></span>').join('')}
     </span>
   </div>`;
@@ -410,7 +437,7 @@ function bind(root, api, y) {
         level,
       }, api.data.copy);
       lastLine = p.line || '';
-      const adv = advise({ yearId: y, plan: now, ctx: api.ctx(), offer: getState().offer });
+      const adv = advise({ yearId: y, plan: now, ctx: api.ctx() });
       const dock = root.querySelector('#dock');
       if (dock) { dock.innerHTML = dockHtml(nextRows, adv); dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump'); }
       const aside = root.querySelector('#yaside');

@@ -10,7 +10,7 @@
 // loads. A new build (new VERSION below, stamped by tools/release.mjs) makes
 // a new cache and the old one is deleted on activate.
 
-const VERSION = '4.2.0';
+const VERSION = '4.3.0';
 const CACHE = `paths4-${VERSION}`;
 const v = (p) => `${p}?v=${VERSION}`;
 

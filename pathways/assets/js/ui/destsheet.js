@@ -12,8 +12,8 @@
 // carries the cost line for this destination when the money file is in hand,
 // and degrades to nothing when it is not.
 
-import { esc } from './dom.js?v=4.2.0';
-import { decorate } from './glossary.js?v=4.2.0';
+import { esc } from './dom.js?v=4.3.0';
+import { decorate } from './glossary.js?v=4.3.0';
 
 const STATE_WORD = {
   'open': 'Open to me',

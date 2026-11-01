@@ -15,17 +15,17 @@
 // Under it, the live signal for this year, then three quiet doors. A first
 // visit never lands here: the router sends it to the start.
 
-import { getState, setYear, YEARS } from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { evalPlan, isLower, prevYear } from '../engine/years.js?v=4.2.0';
-import { advise } from '../engine/advice.js?v=4.2.0';
-import { psleScore } from '../engine/psle.js?v=4.2.0';
-import { signalHtml } from '../ui/signal.js?v=4.2.0';
-import { stepArt } from '../ui/scenes.js?v=4.2.0';
-import { sayMove } from '../ui/talk.js?v=4.2.0';
-import { esc, onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
-import { t } from '../ui/labels.js?v=4.2.0';
+import { getState, setYear, YEARS } from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { evalPlan, isLower, prevYear } from '../engine/years.js?v=4.3.0';
+import { advise } from '../engine/advice.js?v=4.3.0';
+import { psleScore } from '../engine/psle.js?v=4.3.0';
+import { signalHtml } from '../ui/signal.js?v=4.3.0';
+import { stepArt } from '../ui/scenes.js?v=4.3.0';
+import { sayMove } from '../ui/talk.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
+import { t } from '../ui/labels.js?v=4.3.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -64,7 +64,7 @@ function nextStep(api) {
       cta: 'Set levels', s: 'year', y, tab: 'levels',
     };
   }
-  const a = advise({ yearId: y, plan, ctx: c, offer: st.offer });
+  const a = advise({ yearId: y, plan, ctx: c });
   const top = a.singles[0] || a.pairs[0];
   if (top && !st.actions.includes(sayMove(top, st.role))) {
     return { art: 'move', k: t('nextMove'), title: top.result, body: `${top.cond.charAt(0).toUpperCase()}${top.cond.slice(1)}.`, cta: 'See this move', s: 'year', y, tab: 'advice' };

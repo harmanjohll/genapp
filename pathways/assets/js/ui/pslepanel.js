@@ -5,11 +5,11 @@
 // one obvious next step is the last thing on the panel: carry these levels
 // into Sec 1.
 
-import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.2.0';
-import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=4.2.0';
-import { esc, onAction } from './dom.js?v=4.2.0';
-import { icon } from './icons.js?v=4.2.0';
-import { listNames } from '../engine/advice.js?v=4.2.0';
+import { getState, setPsle, replaceYearPlan } from '../state.js?v=4.3.0';
+import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=4.3.0';
+import { esc, onAction } from './dom.js?v=4.3.0';
+import { icon } from './icons.js?v=4.3.0';
+import { listNames } from '../engine/advice.js?v=4.3.0';
 
 const SUBJ_PLAN_ID = { el: 'el', mtl: 'mtl', maths: 'maths', science: 'ls_science' };
 
@@ -135,7 +135,7 @@ function resultHtml(api) {
                 ? `<button type="button" class="lvsw-b" data-action="ps-pick" data-sid="${esc(s.id)}" data-level="${l}" aria-pressed="${cur === l}" aria-label="${esc(names[s.id])} at ${l}" ${opts.length < 2 ? 'disabled' : ''}>${l}</button>`
                 : '<span class="lvsw-b off" aria-hidden="true"></span>').join('')}</span></div>`;
           }).join('')}
-          <div class="subj" data-held="${start.base}"><span class="subj-name">Geography, History<small>Can move up from Sec 2</small></span>
+          <div class="subj" data-held="${start.base}"><span class="subj-name">Geography, History${start.base === 'G1' ? '<small>At G1, the Humanities Exposure Modules. Each can move to G2 from Sec 2</small>' : '<small>Can move up from Sec 2</small>'}</span>
             <span class="lvsw" data-level="${start.base}" style="--i:${LVI[start.base]}"><i class="lvsw-thumb" aria-hidden="true"></i>${['G1', 'G2', 'G3'].map((l) => `<span class="lvsw-b${l === start.base ? '' : ' off'}" aria-hidden="true">${l === start.base ? l : ''}</span>`).join('')}</span></div>
         </div>
         ${choicesHtml(api, psle, rules, names)}

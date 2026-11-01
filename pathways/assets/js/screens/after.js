@@ -10,21 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=4.2.0';
-import { reach } from '../engine/reach.js?v=4.2.0';
-import { effective } from '../engine/years.js?v=4.2.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=4.2.0';
-import { report } from '../engine/grades.js?v=4.2.0';
-import { openCount } from '../ui/map.js?v=4.2.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.2.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.2.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.2.0';
-import { boardWord } from '../ui/board.js?v=4.2.0';
-import { DEST_CODE } from '../ui/signal.js?v=4.2.0';
-import { t } from '../ui/labels.js?v=4.2.0';
-import { decorate } from '../ui/glossary.js?v=4.2.0';
-import { esc, onAction } from '../ui/dom.js?v=4.2.0';
-import { icon } from '../ui/icons.js?v=4.2.0';
+import { getState, setFamilies } from '../state.js?v=4.3.0';
+import { reach } from '../engine/reach.js?v=4.3.0';
+import { effective } from '../engine/years.js?v=4.3.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=4.3.0';
+import { report } from '../engine/grades.js?v=4.3.0';
+import { openCount } from '../ui/map.js?v=4.3.0';
+import { yearStrip } from '../ui/yearstrip.js?v=4.3.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.3.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.3.0';
+import { boardWord } from '../ui/board.js?v=4.3.0';
+import { DEST_CODE } from '../ui/signal.js?v=4.3.0';
+import { t } from '../ui/labels.js?v=4.3.0';
+import { decorate } from '../ui/glossary.js?v=4.3.0';
+import { esc, onAction } from '../ui/dom.js?v=4.3.0';
+import { icon } from '../ui/icons.js?v=4.3.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
@@ -113,7 +113,7 @@ export const dest = {
     // Personal moves: the advice engine, filtered to this destination.
     let moves = [];
     if (e.yearId) {
-      const a = advise({ yearId: e.yearId, plan: st.plans[e.yearId], ctx: c, offer: st.offer });
+      const a = advise({ yearId: e.yearId, plan: st.plans[e.yearId], ctx: c });
       moves = a.singles.filter((m) => m.opens.includes(r.railName) || m.nearer.includes(r.railName)).slice(0, 3);
       const pairs = a.pairs.filter((p) => p.opens.includes(r.railName)).slice(0, 1);
       moves = moves.concat(pairs);

@@ -691,7 +691,7 @@ table.mini td, table.mini th { padding: 4px 14px 4px 0; text-align: left; border
 .pass-line li[data-now="true"] .pl-stn i { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255, 194, 26, 0.3); }
 .pl-stn b { font-family: var(--mono); font-size: 0.72rem; background: var(--night); padding: 0 3px; border-radius: 4px; }
 .pl-body { display: flex; flex-wrap: wrap; gap: 5px; }
-.pl-chip { font-size: 0.8rem; font-weight: 650; background: var(--night-2); border-radius: 8px; padding: 3px 4px 3px 8px; display: inline-flex; align-items: center; gap: 5px; }
+.pl-chip { max-width: 100%; line-height: 1.25; font-size: 0.8rem; font-weight: 650; background: var(--night-2); border-radius: 8px; padding: 3px 4px 3px 8px; display: inline-flex; align-items: center; gap: 5px; }
 .pl-chip b { font-family: var(--mono); font-size: 0.68rem; padding: 1px 5px; border-radius: 5px; color: var(--on-lv); background: var(--night-rule); }
 .pl-chip[data-level="G1"] b { background: var(--g1); }
 .pl-chip[data-level="G2"] b { background: var(--g2); }
@@ -963,3 +963,11 @@ body[data-screen="start"] main { padding-bottom: 32px; }
 }
 
 } /* @layer v4 */
+
+/* More subjects (other schools): the national list behind one tap. */
+.moresubj { margin: 18px 0 8px; border: 1.5px dashed var(--rule); border-radius: var(--r-md); padding: 12px 14px; background: var(--surface); }
+.moresubj > summary { cursor: pointer; font-weight: 800; color: var(--ink); min-height: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.moresubj > summary .small { font-weight: 600; color: var(--ink-mute); }
+.moresubj[open] > summary { margin-bottom: 8px; }
+.moresubj .subjgrid { margin-top: 10px; }
+.subjchip { max-width: 100%; }

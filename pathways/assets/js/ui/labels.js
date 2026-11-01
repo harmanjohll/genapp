@@ -5,7 +5,7 @@
 // transit vocabulary (departures, tickets, a pass) for students who enjoy
 // it; the visuals are the same in both. The choice is stored on the device.
 
-import { getState } from '../state.js?v=4.2.0';
+import { getState } from '../state.js?v=4.3.0';
 
 const WORDS = {
   plain: {
