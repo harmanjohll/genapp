@@ -10,7 +10,7 @@ const b64 = o => Buffer.from(JSON.stringify(o), 'utf8').toString('base64').repla
 const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
 (async () => {
   await fetch('http://localhost:8124/reset');
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}, deviceScaleFactor:2});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

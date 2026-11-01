@@ -9,7 +9,7 @@ const VERBATIM = /real-life|teach\/explain/g;
 const STRIP = () => { let t = document.body.innerText.replace(/gemini[\w.-]*/gi, ''); const S = normaliseStatementSet(DEFAULT_STATEMENTS); const q = [...S.list.map(x => x.text), ...S.strands.map(x => x.name), ...S.strands.flatMap(x => [x.milestone.lower, x.milestone.upper])].filter(Boolean).sort((a, b) => b.length - a.length); for (const x of q) t = t.split(x).join(''); return t; };
 const BANNED = ['whole trick', ' beats ', 'not a verdict', 'most people never', 'only a wish', 'a wish, not', 'doing a lot of work', 'competencies live', 'Base camp', 'Ridge view', 'On the climb', 'honest sentences', 'still warm', 'The circle', 'held against', 'Task talk', 'delve', 'tapestry', 'journey'];
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}, deviceScaleFactor:2});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

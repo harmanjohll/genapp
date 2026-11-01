@@ -10,7 +10,7 @@ let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; consol
 const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'));
 const SCHOOL = JSON.parse(fs.readFileSync(path.join(__dirname, '../school/beatty.json'), 'utf8'));
 (async () => {
-  const browser = await chromium.launch(); const errors = [];
+  const browser = await require('./fixtures/launch.js')(); const errors = [];
   const open = async (edit, vp = {width:1280, height:900}) => {
     const ctx = await browser.newContext({viewport:vp}); const p = await ctx.newPage(); p.on('pageerror', e => errors.push(e.message));
     const s = JSON.parse(JSON.stringify(seed)); if (edit) edit(s.profiles[s.current], s);

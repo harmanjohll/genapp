@@ -10,7 +10,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
 const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8')); const P = seed.profiles[seed.current];
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const errors = [];
   const fresh = async (opts = {}) => { const ctx = await browser.newContext(opts); const p = await ctx.newPage(); p.on('pageerror', e => errors.push(p.url() + ' ' + e.message)); await p.goto(BASE + 'index.html'); await p.evaluate(() => localStorage.clear()); return {ctx, p}; };
 
@@ -33,16 +33,12 @@ const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.jso
     check('old addresses forward: pages to their legacy copy; notes, group links, class codes and share links to the Log', got.every(([, ok]) => ok), JSON.stringify(got.filter(([, ok]) => !ok)));
     await ctx.close(); }
 
-  // 2. the lasting key: copied once from the newest older log
+  // 2. the lasting key: the Log reads its own key, and nothing from older versions
   { const {ctx, p} = await fresh();
-    await p.evaluate(s => { localStorage.setItem('cdl.v2', s); localStorage.setItem('cdl.logsv3', s.replace('"Wei Ling Tan"', '"Wei Ling Tan (v3)"')); }, JSON.stringify(seed));
+    await p.evaluate(s => { localStorage.setItem('cdl.logsv3', s); }, JSON.stringify(seed));
     await p.goto(BASE + 'index.html'); await sleep(900);
-    const k = await p.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog') || 'null'); return d && {from:d.copiedFrom, name:Object.values(d.profiles)[0].name, v3:!!localStorage.getItem('cdl.logsv3'), first:!!localStorage.getItem('cdl.v2')}; });
-    const toast = await p.textContent('#toast');
-    check('the Log copies the newest older log (v3) into its lasting key, once, and says so', k && k.from === 'v3' && k.name === 'Wei Ling Tan (v3)' && k.v3 && k.first && /moved to its permanent home/.test(toast), JSON.stringify({k, toast}));
-    await p.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); d.profiles[d.current].name = 'Changed in the Log'; localStorage.setItem('e21cclog', JSON.stringify(d)); });
-    await p.reload(); await sleep(600);
-    check('after that, the Log reads its own key, not the older ones', await p.evaluate(() => Object.values(JSON.parse(localStorage.getItem('e21cclog')).profiles)[0].name) === 'Changed in the Log');
+    check('an older version’s log is not copied in', await p.evaluate(() => !localStorage.getItem('e21cclog') || !Object.keys(JSON.parse(localStorage.getItem('e21cclog')).profiles).length));
+    await p.evaluate(s => localStorage.setItem('e21cclog', s), JSON.stringify(seed)); await p.reload(); await sleep(700);
     const titles = [await p.title(), await p.evaluate(async () => (await (await fetch('manifest.webmanifest')).json()).name)];
     check('no version in the title or the app name; the version shows in the app', titles.every(t => !/v\d/.test(t)) && await p.evaluate(() => !!document.querySelector('.vmark') || true), JSON.stringify(titles));
     await p.evaluate(() => location.hash = '#/settings?s=about'); await sleep(400);

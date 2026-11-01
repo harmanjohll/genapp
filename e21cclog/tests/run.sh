@@ -14,7 +14,7 @@ trap 'kill $SERVER $RELAY 2>/dev/null' EXIT
 for i in $(seq 1 30); do curl -sf "$BASE/index.html" >/dev/null && curl -sf localhost:8124/reset >/dev/null && break; sleep 0.5; done
 fails=0
 run(){ local name=$1; shift; curl -sf localhost:8124/reset >/dev/null; if "$@" > "$OUT/$name.txt" 2>&1 && grep -q "^PASS\|^findings 0 " "$OUT/$name.txt" && ! grep -q "^FAIL\|^findings [1-9]\|PAGEERROR" "$OUT/$name.txt"; then echo "pass  $name  $(grep -c '^PASS' "$OUT/$name.txt") checks"; else echo "FAIL  $name  (see $OUT/$name.txt)"; grep "^FAIL" "$OUT/$name.txt" | head -5; fails=$((fails+1)); fi; }
-for t in t2 t4 t6 t7 t8 t9 t10 t11 t12 t13 t14; do [ -f "$t.js" ] && run "$t" node "$t.js"; done
+for t in t2 t4 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15; do [ -f "$t.js" ] && run "$t" node "$t.js"; done
 run console-sweep node tsweep.js "$OUT/tsweep.md"
 if [ "${FULL:-}" = 1 ]; then
   run colour-sweep node sweep.js "$OUT/sweep.md"

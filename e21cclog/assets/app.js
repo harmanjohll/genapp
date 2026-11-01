@@ -27,6 +27,10 @@ async function initRuntime(){
 let db = STORE.open();
 let me = null;               // current profile
 let unlocked = false;        // PIN passed this session
+/* A log opened in this tab stays open through a refresh; closing the tab or switching logs locks it again. */
+const OPEN_KEY = 'e21cclog.open';
+function rememberOpen(id){ try{ if (id) sessionStorage.setItem(OPEN_KEY, id); else sessionStorage.removeItem(OPEN_KEY); }catch{} }
+function openInTab(id){ try{ return !!id && sessionStorage.getItem(OPEN_KEY) === id; }catch{ return false; } }
 let draft = null;            // composer state
 let toastTimer = null;
 function saveDb(){ if (!STORE.save(db)) toast('Could not save on this device. Export your log to keep it.'); }
@@ -623,7 +627,7 @@ async function boot(){
   const typing = el => el && el.matches && el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select');
   document.addEventListener('focusin', ev => { if (typing(ev.target)) document.body.classList.add('typing'); });
   document.addEventListener('focusout', () => setTimeout(() => { if (!typing(document.activeElement)) document.body.classList.remove('typing'); }, 60));
-  if (db.current && db.profiles[db.current]) me = db.profiles[db.current];
+  if (db.current && db.profiles[db.current]){ me = db.profiles[db.current]; if (me.pin && openInTab(me.id)) unlocked = true; }
   applyPrefs();
   const link = stashLink();
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
@@ -631,8 +635,6 @@ async function boot(){
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
   processStashedLink(link || null);
-  // the first time the Log opens at its permanent home, it brings in the newest older log; say so once
-  if (db.copiedFrom && !db.copiedNoticed){ db.copiedNoticed = true; saveDb(); const msg = db.copiedFrom === 'v3' ? 'Your log has moved to its permanent home. Nothing was lost.' : `Your log from ${db.copiedFrom === 'v2' ? 'v2' : 'the first version'} was copied in. The older version is kept, read only.`; setTimeout(() => toast(msg, 5200), 600); }
   if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
   keepSafe();
 }
@@ -667,7 +669,8 @@ function route(){
   if (h.startsWith('#/setup')) return renderSetup();
   if (h.startsWith('#/sharing')) return renderSharing();
   if (h.startsWith('#/settings')) return renderSettings();
-  if (h.startsWith('#/welcome')) return renderWelcome();
+  // a log already open never shows the welcome page: it would invite a second log
+  if (h.startsWith('#/welcome')){ location.hash = '#/'; return; }
   return renderHome();
 }
 /* ---------- keeping the log safe ----------
@@ -738,10 +741,51 @@ function leaves(html, split){ const [left, right] = html.split('<!--leaf-->'); r
 function scrollTop(){ window.scrollTo(0, 0); if (EMBED){ try{ document.documentElement.scrollIntoView({block:'start'}); }catch{} } }
 
 /* ---------- welcome, then a first page that makes it yours ---------- */
-function renderWelcome(){
+const sameName = (a, b) => String(a || '').trim().replace(/\s+/g, ' ').toLowerCase() === String(b || '').trim().replace(/\s+/g, ' ').toLowerCase();
+function lastWritten(p){ return (p.entries || []).reduce((m, e) => Math.max(m, e.updated || e.created || 0), 0); }
+// what tells two logs apart on one device: how many entries, and when it was last written in
+// two logs with one name are also told apart by when each was started
+function logLine(p, twin){
+  const started = new Date(p.created || Date.now()).toLocaleString('en-SG', {day:'numeric', month:'short', hour:'numeric', minute:'2-digit'});
+  return (p.entries.length ? `${plural(p.entries.length, 'entry', 'entries')} · last written ${fmtDate(lastWritten(p))}${twin ? ` · started ${started}` : ''}` : `Started ${twin ? started : fmtDate(p.created || Date.now())}`)
+    + (twin && p.email ? ' · ' + p.email : '') + (p.pin ? ' · PIN' : '');
+}
+/* Three ways in. A log this device remembers, with a PIN: welcome back, and only the PIN to type.
+   Logs but none remembered: choose yours. No logs, or asked for: start one. Starting a log never sits
+   beside the logs already here, so it cannot be mistaken for signing in. */
+function renderWelcome(view){
   document.body.classList.remove('wide'); document.body.classList.add('atwelcome');
-  const profiles = Object.values(db.profiles).sort((a, b) => b.created - a.created);
+  const profiles = Object.values(db.profiles).sort((a, b) => (lastWritten(b) || b.created) - (lastWritten(a) || a.created));
+  const known = db.current && db.profiles[db.current];
+  view = view || (!profiles.length ? 'new' : known && known.pin ? 'pin' : 'choose');
+  if (view === 'pin' && !known) view = 'choose';
+  if (!profiles.length) view = 'new';
   const pre = db._preClass || '';
+  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
+  const panel = view === 'pin' ? `
+    <section class="card fade" id="wPin"><div class="wback"><span class="avatar" aria-hidden="true">${avatarSvg(known.prefs.avatar)}</span><div><h2>Welcome back, ${esc(known.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(logLine(known))}</p></div></div>
+      <form id="pinForm" class="row" style="margin-top:14px"><label class="f grow" style="margin:0"><span>Your PIN</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autocomplete="off" enterkeyhint="done" aria-describedby="pinMsg"></label><button class="btn" type="submit" style="margin-top:22px">${icon('arrow')} Open my log</button></form>
+      <p class="tiny" id="pinMsg" role="alert"></p>
+      <div class="wlinks"><button type="button" class="linkbtn" id="wChoose">Not ${esc(known.name)}? Choose another log</button><button type="button" class="linkbtn" id="wNew">Start a new log</button></div>
+    </section>`
+  : view === 'choose' ? `
+    <section class="card fade" id="wChooseCard"><h2>Choose your log</h2><div class="profiles">${profiles.map(p => `
+      <button class="pcard" data-id="${p.id}"><span class="avatar" aria-hidden="true">${avatarSvg(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${esc(logLine(p, profiles.some(q => q !== p && sameName(q.name, p.name))))}</small></span></button>`).join('')}</div>
+      <button type="button" class="btn ghost" id="wNew" style="margin-top:14px">${icon('plus')} Start a new log</button>
+    </section>`
+  : `
+    <section class="card fade" id="wNewCard">
+      <h2>${profiles.length ? 'Start a new log' : 'Start your log'}</h2>
+      ${profiles.length ? `<p class="tiny" style="margin-top:0">Only for someone without a log on this device. <button type="button" class="linkbtn" id="wChoose">Back to the logs here</button></p>` : ''}
+      <form id="newForm" autocomplete="on">
+        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teachers call you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
+        <div id="sameBox"></div>
+        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only needed if you share with a teacher. It is never sent to the AI coach.</small></label>
+        ${pre ? `<label class="f"><span>Group code</span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>From your teacher.</small></label>` : ''}
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop. You will need it when this tab is closed and opened again.</small></label>
+        <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
+      </form>
+    </section>`;
   $('#app').innerHTML = `
   <div class="welcome">
     <section class="cover-big fade">
@@ -751,31 +795,34 @@ function renderWelcome(){
       <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
-    <div class="wcol">
-    ${profiles.length ? `<section class="card fade"><h2>Welcome back</h2><div class="profiles">${profiles.map(p => `
-      <button class="pcard" data-id="${p.id}"><span class="avatar">${avatarSvg(p.prefs.avatar)}</span><span><b>${esc(p.name)}</b><small>${plural(p.entries.length, 'entry', 'entries')}${p.pin ? ' · PIN' : ''}</small></span></button>`).join('')}</div>
-      <div id="pinBox" hidden style="margin-top:12px"></div>
-      </section>` : ''}
-    <section class="card fade">
-      <h2>${profiles.length ? 'Someone new?' : 'Start your log'}</h2>
-      <form id="newForm" autocomplete="on">
-        <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teachers call you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
-        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only needed if you share with a teacher. It is never sent to the AI coach.</small></label>
-        ${pre ? `<label class="f"><span>Group code</span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>From your teacher.</small></label>` : ''}
-        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop.</small></label>
-        <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
-      </form>
-      <p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>
-    </section>
-    </div>
+    <div class="wcol">${panel}${guest}</div>
   </div>`;
+  const w = $('#wChoose'); if (w) w.onclick = () => { if (view === 'pin'){ db.current = null; saveDb(); } renderWelcome('choose'); };
+  const n = $('#wNew'); if (n) n.onclick = () => { renderWelcome('new'); const f = $('#newForm [name=name]'); if (f) f.focus(); };
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
-  $('#newForm').onsubmit = async (e) => {
-    e.preventDefault(); const f = new FormData(e.target);
+  if (view === 'pin'){
+    const inp = $('#pinForm input'); if (inp) inp.focus();
+    $('#pinForm').onsubmit = async (e) => {
+      e.preventDefault(); const pin = new FormData(e.target).get('pin');
+      if (await pinMatches(known, pin)) return openProfile(known.id);
+      $('#pinMsg').textContent = 'That PIN did not match. Try again. Forgotten it? Your teacher can help you start again from an exported log.';
+      inp.value = ''; inp.focus();
+    };
+  }
+  if (view === 'new') $('#newForm').onsubmit = async (e) => {
+    e.preventDefault(); const form = e.target; const f = new FormData(form);
     const name = String(f.get('name') || '').trim(); if (!name) return;
+    // a name already here opens that log; a second log with the same name takes a deliberate step
+    const same = profiles.find(p => sameName(p.name, name));
+    if (same && form.dataset.anyway !== '1'){
+      $('#sameBox').innerHTML = `<div class="notice" role="alert"><p><b>There is already a log for ${esc(same.name)} on this device.</b> ${esc(logLine(same))}.</p><div class="row" style="margin-top:8px"><button type="button" class="btn" id="sameOpen">${icon('arrow')} Open that log</button><button type="button" class="linkbtn" id="sameAnyway">This is someone else with the same name</button></div></div>`;
+      $('#sameOpen').onclick = () => pickProfile(same.id);
+      $('#sameAnyway').onclick = () => { form.dataset.anyway = '1'; form.requestSubmit(); };
+      $('#sameOpen').focus(); return;
+    }
     const p = newProfile(name, f.get('email'), String(f.get('classCode') || ''));
     const pin = String(f.get('pin') || '').trim(); if (/^\d{4}$/.test(pin)) p.pin = await hashPin(p.email || p.id, pin);
-    db.profiles[p.id] = p; db.current = p.id; delete db._preClass; me = p; unlocked = true;
+    db.profiles[p.id] = p; db.current = p.id; delete db._preClass; me = p; unlocked = true; rememberOpen(p.id);
     for (const g of me.groups) if (db.groups[g.code]) adoptGroup(db.groups[g.code]);
     saveDb(); applyPrefs();
     Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements);
@@ -783,21 +830,15 @@ function renderWelcome(){
   };
 }
 async function openProfile(id){
-  const p = db.profiles[id]; db.current = id; me = p; unlocked = true; saveDb(); applyPrefs();
+  const p = db.profiles[id]; db.current = id; me = p; unlocked = true; rememberOpen(id); saveDb(); applyPrefs();
   Promise.all(p.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { if ((location.hash || '#/') === '#/') route(); });
   location.hash = '#/'; route(); processStashedLink();
 }
-async function pickProfile(id){
+// a log with a PIN asks for it on its own welcome back card
+function pickProfile(id){
   const p = db.profiles[id]; if (!p) return;
   if (!p.pin) return openProfile(id);
-  const box = $('#pinBox'); box.hidden = false;
-  box.innerHTML = `<form id="pinForm" class="row"><label class="f grow" style="margin:0"><span>PIN for ${esc(p.name)}</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autofocus autocomplete="off" enterkeyhint="done"></label><button class="btn" type="submit" style="margin-top:22px">Open</button></form><p class="tiny" id="pinMsg"></p>`;
-  $('#pinForm').onsubmit = async (e) => {
-    e.preventDefault(); const pin = new FormData(e.target).get('pin');
-    if (await pinMatches(p, pin)) openProfile(id);
-    else $('#pinMsg').textContent = 'That PIN did not match. Forgotten it? A new profile can import an exported log.';
-  };
-  $('#pinForm input').focus();
+  db.current = id; saveDb(); renderWelcome('pin');
 }
 /* First page after the name: Sec level, subjects and CCA, a view and an icon. All of it can wait. */
 function levelPicker(){ return `<div class="f"><span class="flabel" id="lvLbl">Your level</span><div class="seg wrap" role="group" aria-labelledby="lvLbl">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-lv="${n}" class="${me.level === n ? 'on' : ''}" aria-pressed="${me.level === n}">Sec ${n}</button>`).join('')}</div><small class="help">Sec 1 and 2 work towards the Lower Sec statements, and Sec 3 to 5 towards Upper Sec. You can claim the others too.</small></div>`; }
@@ -2032,11 +2073,10 @@ function renderSettings(){
         <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
         <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
       </div>
-      ${STORE.hasV1() && db.migratedFrom ? `<details style="margin-top:14px"><summary>The old Learning Log copy</summary><p class="tiny" style="margin-top:6px">Your old entries moved into this log on ${fmtDate(db.migratedAt || Date.now())}. A copy of the old log is still kept in this browser as a safety net. Once you have exported, you can remove it.</p><button class="btn small danger" id="sDropV1">Remove the old copy</button></details>` : ''}
       <details style="margin-top:14px"><summary>Change or remove PIN</summary>
         <form id="pinChange" class="row" style="margin-top:8px"><input class="in grow" name="pin" inputmode="numeric" maxlength="4" aria-label="New 4 digit PIN" placeholder="New 4 digit PIN, or blank to remove"><button class="btn small" type="submit">Set</button></form></details>
       <div class="row" style="margin-top:14px">
-        <button class="btn ghost" id="sOut">${icon('user')} Switch person</button>
+        <button class="btn ghost" id="sOut">${icon('user')} Switch to another log</button>
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
@@ -2104,8 +2144,7 @@ function renderSettings(){
     ev.target.value = '';
   };
   $('#sCopyAll').onclick = () => copyText(me.entries.slice().sort((a, b) => a.created - b.created).map(e => entryText(e, true)).join('\n\n' + '─'.repeat(24) + '\n\n'));
-  const dv1 = $('#sDropV1'); if (dv1) dv1.onclick = () => { STORE.dropV1(); toast('The old copy is gone.'); renderSettings(); };
   $('#pinChange').onsubmit = async e => { e.preventDefault(); const pin = new FormData(e.target).get('pin').trim(); if (!pin){ me.pin = null; saveDb(); toast('PIN removed.'); return; } if (!/^\d{4}$/.test(pin)){ toast('Four digits.'); return; } me.pin = await hashPin(me.email || me.id, pin); saveDb(); toast('PIN set.'); e.target.reset(); };
-  $('#sOut').onclick = () => { db.current = null; saveDb(); me = null; unlocked = false; applyPrefs(); location.hash = '#/welcome'; };
-  $('#sDelete').onclick = () => { dialog(`<h2>Delete ${esc(me.name)}’s log from this device?</h2><p>${plural(me.entries.length, 'entry', 'entries')}. Export first if you want to keep them. This cannot be undone.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { delete db.profiles[me.id]; db.current = null; me = null; unlocked = false; saveDb(); closeDialog(); applyPrefs(); location.hash = '#/welcome'; }; $('#dNo').onclick = closeDialog; };
+  $('#sOut').onclick = () => { db.current = null; saveDb(); me = null; unlocked = false; rememberOpen(null); applyPrefs(); location.hash = '#/welcome'; };
+  $('#sDelete').onclick = () => { dialog(`<h2>Delete ${esc(me.name)}’s log from this device?</h2><p>${plural(me.entries.length, 'entry', 'entries')}. Export first if you want to keep them. This cannot be undone.</p><div class="row"><button class="btn danger" id="dYes">Delete</button><button class="btn sec" id="dNo">Keep it</button></div>`); $('#dYes').onclick = () => { delete db.profiles[me.id]; db.current = null; me = null; unlocked = false; rememberOpen(null); saveDb(); closeDialog(); applyPrefs(); location.hash = '#/welcome'; }; $('#dNo').onclick = closeDialog; };
 }

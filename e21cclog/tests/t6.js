@@ -3,7 +3,7 @@ const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/') + 'index.ht
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const check = (name, ok, info='') => console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : ''));
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}, deviceScaleFactor:2});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });

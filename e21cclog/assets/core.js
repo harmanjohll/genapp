@@ -781,6 +781,7 @@ function stuckUser(entry, qid, level, profile){
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'v3';   // the version, shown in the app only: the address (e21cclog/) never changes
 const APP_VERSION = {label:'Version 3', date:'November 2026', notes:[
+  'A refresh keeps you in your log, and one log per name on each device',
   'Beatty’s own subjects for your Sec level, in full, with the levels of demand each is offered at',
   'Your CCA and NEXUS@BTY module, picked from the school’s lists',
   'Home in two parts: Where am I now? and What next?',
@@ -1303,8 +1304,8 @@ function migrateProfile(p){
 function migrateDb(d){
   d = d && typeof d === 'object' ? d : {};
   const out = {schemaVersion:2, profiles:d.profiles || {}, current:d.current || null, groups:d.groups || {}, statementSets:d.statementSets || {}};
-  // kept as they are: whether the browser agreed to keep the log, entries brought across from an older version, and where the log was copied from
-  for (const k of ['persist', 'broughtAcross', 'copiedFrom', 'copiedAt', 'copiedNoticed']) if (d[k] !== undefined) out[k] = d[k];
+  // kept as they are: whether the browser agreed to keep the log, and entries brought across from an older version
+  for (const k of ['persist', 'broughtAcross']) if (d[k] !== undefined) out[k] = d[k];
   if (d.classes) for (const [code, cfg] of Object.entries(d.classes)) if (!out.groups[code]) out.groups[code] = cfg;
   for (const p of Object.values(out.profiles)) migrateProfile(p);
   return out;

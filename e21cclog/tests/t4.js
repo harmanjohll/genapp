@@ -4,11 +4,11 @@ const APP = (process.env.BASE || 'http://localhost:8123/e21cclog/') + 'index.htm
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const check = (name, ok, info='') => console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : ''));
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}, deviceScaleFactor:2}); const errors = [];
   const watch = p => { p.on('console', m => { if (m.type() === 'error') errors.push(m.text()); }); p.on('pageerror', e => errors.push('PAGEERROR ' + e.stack.split('\n').slice(0,3).join(' / '))); };
   const stu = await ctx.newPage(); watch(stu);
-  await stu.goto(APP + '#/welcome'); await stu.evaluate(d => { localStorage.clear(); d.current = 'p1'; localStorage.setItem('logs.v1', JSON.stringify(d)); }, v1); await stu.goto(APP + '#/'); await stu.reload(); await sleep(900);
+  await stu.goto(APP + '#/welcome'); await stu.evaluate(([d, FRESH]) => { localStorage.clear(); localStorage.setItem('e21cclog.fresh', FRESH); d.current = 'p1'; localStorage.setItem('e21cclog', JSON.stringify(d)); }, [v1, require('./fixtures/launch.js').FRESH]); await stu.goto(APP + '#/'); await stu.reload(); await sleep(900);
   // share e3 with Mr Tan (no drop box): Teams link
   await stu.evaluate(() => location.hash = '#/entry/e3'); await sleep(400);
   await stu.click('#eShare'); await sleep(200); await stu.click('#dGo'); await sleep(700);

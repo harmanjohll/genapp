@@ -10,7 +10,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
 const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'));
 (async () => {
-  const browser = await chromium.launch(); const errors = [];
+  const browser = await require('./fixtures/launch.js')(); const errors = [];
   const open = async (opts = {}, look) => { const ctx = await browser.newContext(opts); const p = await ctx.newPage(); p.on('pageerror', e => errors.push(e.message));
     const s = JSON.parse(JSON.stringify(seed)); if (look) s.profiles[s.current].prefs.look = look;
     await p.goto(BASE + 'index.html'); await p.evaluate(x => { localStorage.clear(); localStorage.setItem('e21cclog', x); }, JSON.stringify(s)); await p.reload(); await sleep(600); await p.evaluate(() => location.hash = '#/'); await sleep(400); return {ctx, p}; };

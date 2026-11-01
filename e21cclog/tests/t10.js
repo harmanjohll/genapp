@@ -9,7 +9,7 @@ const seed = JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf
 P.email = 'wei_ling_tan@students.edu.sg'; P.coach.mode = 'gemini'; P.coach.geminiKey = 'TESTKEY'; P.coach.geminiModel = 'gemini-3.5-flash'; P.coach.auto = false; P.drafts = {};
 P.experiences.levels = {Chemistry:'G1', Geography:'G3'};
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:390, height:844}});
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('PAGEERROR ' + e.message));
@@ -113,10 +113,6 @@ P.experiences.levels = {Chemistry:'G1', Geography:'G3'};
   const rd = await tp.textContent('.reader');
   check('the teacher sees how the coach met the student: statuses, help level, follow through, the content question, the KSVD ids', rd.includes('How the coach met this student') && rd.includes('help given at level 1') && rd.includes('Content question sent to you') && rd.includes('ct1.s2'), '');
   await tp.screenshot({path:SHOTS + 'v2-t10-teacher.png', fullPage:true});
-  // the first site's log is copied in once, and never written
-  const fresh = await ctx.newPage(); await fresh.goto(BASE + 'index.html#/'); await fresh.evaluate(s => { localStorage.removeItem('e21cclog'); localStorage.setItem('cdl.v2', s); }, JSON.stringify(seed)); await fresh.reload(); await sleep(1300);
-  const cp = await fresh.evaluate(() => ({v2:!!localStorage.getItem('e21cclog'), first:JSON.parse(localStorage.getItem('cdl.v2')).profiles[JSON.parse(localStorage.getItem('cdl.v2')).current].entries.length, toast:(document.getElementById('toast') || {}).textContent || ''}));
-  check('the Log copies the first version’s log in once, says so, and leaves it unchanged', cp.v2 && cp.first === P.entries.length && cp.toast.includes('copied in'), JSON.stringify(cp));
   console.log('ERRORS', errors.length ? errors : 'none');
   console.log(fails ? `${fails} FAILED` : 'ALL PASS');
   await browser.close();

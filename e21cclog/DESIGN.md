@@ -2,6 +2,19 @@
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, and v3 makes Home simpler and help more specific. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
 
+## Getting back in, and a fresh start (1 November 2026)
+
+Harman found that after a hard refresh, getting back in was confusing; he had three logs with the same name from testing, and a student refreshing again and again could do the same. He called it critical, and said there are no users yet.
+
+**Why it happened.** A PIN was unlocked only in memory, so every refresh locked the log and showed the welcome page. That page put the log cards beside an open "Someone new?" form with Name and PIN fields, which read like signing in; filling it in made another log with the same name. An open log visiting the welcome address also showed that form.
+
+**Decided with Harman.**
+- **A fresh start, everything, once.** Student logs, the older v1, v2 and v3 logs, and the console's items, cleared once per browser (`FRESH_START` in `store.js`). Only the Log's own keys, since other genapp pages share the site's storage. The copy in from older versions is gone: there is nothing to bring across.
+- **A PIN stays open in its tab** (`sessionStorage`), through any number of refreshes; closing the tab or switching logs locks it.
+- **Same name: offer to open it.** A second log with the same name only by a deliberate click.
+
+**How it works.** Three welcome states: welcome back with the PIN (a log this device remembers), choose your log (several, none remembered), start your log (none, or asked for). Starting a log is never shown beside the logs already here. Cards say how many entries and when last written; logs sharing a name also say when each was started. Tests use a launcher (`tests/fixtures/launch.js`) that marks the fresh start as done, so suites that seed their own logs are not cleared; t15 tests the fresh start itself.
+
 ## Beatty's own subjects, CCAs and NEXUS@BTY (1 November 2026)
 
 Harman found the subject list imprecise: one flat list for every level, G1 to G3 offered for every subject (even PE), Social Studies missing, Computing and Music listed as if taught at Beatty. The school site could not be reached from the build environment, so he gave the offering directly, and checked each round.

@@ -17,7 +17,7 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
 // a log with no Sec level and no subjects or CCA
 const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.current]; delete PB.level; PB.experiences = {subjects:[], cca:'', others:[], levels:{}};
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await require('./fixtures/launch.js')();
   const ctx = await browser.newContext({viewport:{width:1440, height:900}});
   const page = await ctx.newPage(); const errors = [];
   page.on('console', m => { if (m.type() === 'error' && !/400/.test(m.text())) errors.push(m.text()); });
@@ -209,13 +209,6 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   check('a v2 Leading snapshot reads as Proficient', /Communication ?Proficient/.test(tc.b) && !/Leading/.test(tc.b), tc.b.slice(0, 200));
   check('the console shows Version 3 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 3/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
 
-  // 11. one copy from v2, never written back
-  const fresh = await browser.newContext(); const fp = await fresh.newPage();
-  await fp.goto(BASE + 'index.html#/'); await fp.evaluate(s => { localStorage.clear(); localStorage.setItem('cdl.logsv2', s); localStorage.setItem('cdl.v2', '{"profiles":{},"current":null}'); }, JSON.stringify(Object.assign({}, seed3, {copiedFromFirst:1, copiedNoticed:true})));
-  await fp.reload(); await sleep(1500);
-  const cp = await fp.evaluate(() => ({v3:JSON.parse(localStorage.getItem('e21cclog') || 'null'), v2:localStorage.getItem('cdl.logsv2'), toast:(document.getElementById('toast') || {}).textContent || ''}));
-  check('the Log copies the v2 log once into its lasting key, says so, and leaves v2 as it was', cp.v3 && cp.v3.copiedFrom === 'v2' && /from v2 was copied in\. The older version is kept, read only/.test(cp.toast) && JSON.parse(cp.v2).copiedNoticed === true && Object.keys(cp.v3.profiles).length === Object.keys(seed3.profiles).length, cp.toast);
-  await fresh.close();
 
   // 12. no dashes in what students read
   await load(seed3); const txt = (await page.textContent('#main')) + (await page.evaluate(() => JSON.stringify(QHELP) + JSON.stringify(LEVEL_WORDS)));
