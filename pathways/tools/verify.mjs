@@ -264,6 +264,23 @@ const { adviceSweep } = await import(join(root, 'assets/js/engine/advice.js'));
 const { gradesSweep } = await import(join(root, 'assets/js/engine/grades.js'));
 const { psleScore, postingFor, startLevels } = await import(join(root, 'assets/js/engine/psle.js'));
 const readData = (n) => JSON.parse(readFileSync(join(root, 'data', `${n}.json`), 'utf8'));
+const { lowerLensSweep, policySweep } = await import(join(root, 'assets/js/engine/policy.js'));
+
+/** Sec 1 and 2 are judged by their own rules: no dead end, never further, no SEC counts in what they read. */
+function v4LowerSweep() {
+  const r = lowerLensSweep(ctx);
+  pass('Lower lens', r.ok, `${r.checks} checks: Sec 1 and 2 rules, monotone, no SEC counts in their advice`);
+  if (!r.ok) console.table(r.failures.slice(0, 20));
+  return r;
+}
+
+/** Verdicts MOE's published rules decide, pinned. */
+function v4PolicySweep() {
+  const r = policySweep(ctx, readData('grades'), readData('psle'));
+  pass('Policy', r.ok, 'JC and MI with Mother Tongue at G2, R3, NAFA, PFP and Sec 5 grades, JC floors, HMTL, PG3 Foundation');
+  if (!r.ok) console.table(r.fails);
+  return r;
+}
 
 function v4AdviceSweep() {
   const r = adviceSweep(ctx);
@@ -372,6 +389,8 @@ const results = [
   ['advice', v4AdviceSweep()],
   ['grades', v4GradesSweep()],
   ['psle', v4PsleSweep()],
+  ['lower-lens', v4LowerSweep()],
+  ['policy', v4PolicySweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
   ['white-on-fill', whiteOnFillSweep()],

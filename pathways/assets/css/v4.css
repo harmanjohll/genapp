@@ -473,6 +473,16 @@ body[data-dock="on"] main { padding-bottom: 210px; }
 }
 .alb:hover { border-color: var(--ink-mute); }
 .alb[aria-pressed="true"] { background: var(--night); color: var(--accent); border-color: var(--night); transform: translateY(-2px); box-shadow: 0 3px 0 var(--accent); }
+/* Higher Mother Tongue result: three worded choices, not eight numbers. */
+.alrow[data-sid="hmtl"] .alpick { grid-template-columns: repeat(3, minmax(0, 120px)); }
+.alb-wide { font-size: 0.82rem; }
+.alname small { font-weight: 600; color: var(--ink-mute); }
+/* P6 choices: what each starting choice puts on track. */
+.p6-now { margin: 4px 0 10px; }
+.p6-now b { font-size: 1.5rem; font-weight: 800; color: var(--ink); margin-right: 4px; }
+.p6c { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; }
+.p6c li { background: var(--surface); border: 1.5px solid var(--rule-soft); border-radius: var(--r-md); padding: 12px 14px; line-height: 1.5; }
+.p6c li .small { display: block; margin-top: 6px; color: var(--ink-mute); }
 .scorepass {
   display: grid; grid-template-columns: 1fr 1fr; background: var(--night); color: var(--night-ink);
   border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 14px; border-top: 7px solid var(--accent);

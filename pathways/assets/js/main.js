@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.1.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.2.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
   setLabelMode, markStart,
-} from './state.js?v=4.1.0';
-import { effective } from './engine/years.js?v=4.1.0';
-import { runStrip } from './ui/yearstrip.js?v=4.1.0';
-import { t } from './ui/labels.js?v=4.1.0';
-import { esc, onAction } from './ui/dom.js?v=4.1.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.1.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.1.0';
-import { icon } from './ui/icons.js?v=4.1.0';
-import { cue, setMutePredicate } from './sound.js?v=4.1.0';
+} from './state.js?v=4.2.0';
+import { effective } from './engine/years.js?v=4.2.0';
+import { runStrip } from './ui/yearstrip.js?v=4.2.0';
+import { t } from './ui/labels.js?v=4.2.0';
+import { esc, onAction } from './ui/dom.js?v=4.2.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.2.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.2.0';
+import { icon } from './ui/icons.js?v=4.2.0';
+import { cue, setMutePredicate } from './sound.js?v=4.2.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -260,13 +260,18 @@ function copy(path, fallback) {
 
 function ctx() {
   const st = getState();
+  const subjects = data.subjects.subjects || [];
+  // The screens that read "my combination" (Pathways, After, Saved) judge it
+  // in the year it comes from, so a Sec 2 plan is read by the Sec 1 and 2
+  // rules there too, not only on its own year page.
+  const e = effective(st.plans, subjects);
   return {
-    subjects: data.subjects.subjects || [],
+    subjects,
     destinations: data.pathways.destinations || [],
     routesById: Object.fromEntries(((data.progressions || {}).routes || []).map((r) => [r.id, r])),
     pathwaysMeta: data.pathways._meta,
-    yearId: st.year,
-    plan: st.plan,
+    yearId: e.yearId || st.year,
+    plan: e.yearId ? e.lens : st.plan,
   };
 }
 

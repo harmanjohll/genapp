@@ -10,21 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=4.1.0';
-import { reach } from '../engine/reach.js?v=4.1.0';
-import { effective } from '../engine/years.js?v=4.1.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=4.1.0';
-import { report } from '../engine/grades.js?v=4.1.0';
-import { openCount } from '../ui/map.js?v=4.1.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.1.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.1.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.1.0';
-import { BOARD_WORD } from '../ui/board.js?v=4.1.0';
-import { DEST_CODE } from '../ui/signal.js?v=4.1.0';
-import { t } from '../ui/labels.js?v=4.1.0';
-import { decorate } from '../ui/glossary.js?v=4.1.0';
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
-import { icon } from '../ui/icons.js?v=4.1.0';
+import { getState, setFamilies } from '../state.js?v=4.2.0';
+import { reach } from '../engine/reach.js?v=4.2.0';
+import { effective } from '../engine/years.js?v=4.2.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=4.2.0';
+import { report } from '../engine/grades.js?v=4.2.0';
+import { openCount } from '../ui/map.js?v=4.2.0';
+import { yearStrip } from '../ui/yearstrip.js?v=4.2.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=4.2.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.2.0';
+import { boardWord } from '../ui/board.js?v=4.2.0';
+import { DEST_CODE } from '../ui/signal.js?v=4.2.0';
+import { t } from '../ui/labels.js?v=4.2.0';
+import { decorate } from '../ui/glossary.js?v=4.2.0';
+import { esc, onAction } from '../ui/dom.js?v=4.2.0';
+import { icon } from '../ui/icons.js?v=4.2.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = { 'open': 'Open now', 'within-reach': 'A move away', 'longer-route': 'A longer road', 'other-route': 'Another road in' };
@@ -38,7 +38,12 @@ function rowsNow(api) {
 function basisLine(api) {
   const e = effective(getState().plans, api.ctx().subjects);
   if (!e.yearId) return 'No levels set yet, so every destination shows what it asks from scratch. Set your year\'s levels to make this yours.';
-  return `Read from your ${YEAR_LABEL[e.yearId]} levels${e.yearId === 'sec1' || e.yearId === 'sec2' ? ', through the Sec 3 combination they usually lead to' : ''}.`;
+  if (e.yearId === 'sec1' || e.yearId === 'sec2') return `Read from your ${YEAR_LABEL[e.yearId]} levels. Admission in 2028 reads your SEC results; these levels shape the subjects you take in Sec 3.`;
+  return `Read from your ${YEAR_LABEL[e.yearId]} levels.`;
+}
+
+function perfHtml(r) {
+  return (r.performance || []).map((p) => `<div class="rulerow"><p class="rulerow-label">${decorate(esc(p.label))}</p>${p.note ? `<p class="rulerow-note">${decorate(esc(p.note))}</p>` : ''}</div>`).join('');
 }
 
 export function niceDate(iso) {
@@ -77,7 +82,7 @@ export const after = {
           <button type="button" class="linecard press arrive" style="--lc:${LINE[r.state]};animation-delay:${Math.min(i, 7) * 40}ms" data-action="go" data-s="dest" data-id="${esc(r.id)}">
             <span class="lc-band" aria-hidden="true"><span class="lc-code">${esc(DEST_CODE[r.id] || '')}</span></span>
             <span class="lc-body">
-              <span class="lc-status" data-state="${esc(r.state)}">${esc(BOARD_WORD[r.state])}</span>
+              <span class="lc-status" data-state="${esc(r.state)}">${esc(boardWord(r))}</span>
               <span class="lc-name">${esc(r.name)}</span>
               <span class="lc-feels">${esc(r.feels || '')}</span>
               <span class="lc-meta">${esc(r.duration || '')}${r.leadsTo ? `<br>${esc(r.leadsTo)}` : ''}</span>
@@ -136,23 +141,31 @@ export const dest = {
           <h1>${esc(d.name)}</h1>
           ${r.feels ? `<p class="ls-feels">${esc(r.feels)}</p>` : ''}
         </div>
-        <span class="ls-status" data-state="${esc(r.state)}">${esc(BOARD_WORD[r.state])}</span>
+        <span class="ls-status" data-state="${esc(r.state)}">${esc(boardWord(r))}</span>
       </header>
-      <p class="basis">${icon('train')} ${r.status.text !== STATE_WORD[r.state] ? `${esc(r.status.text)}. ` : ''}${esc(basisLine(api))}</p>
+      <p class="basis">${icon('train')} ${r.status.text !== STATE_WORD[r.state] && r.status.text !== boardWord(r) ? `${esc(r.status.text)}. ` : ''}${esc(basisLine(api))}</p>
 
       ${moves.length ? `
       <section class="destsec">
-        <h2 class="advh">${r.state === 'open' ? 'Already open. These would help too' : 'The moves that bring it closer'}</h2>
+        <h2 class="advh">${r.state === 'open' ? (r.lens === 'lower' ? 'Already on track. These would help too' : 'Already open. These would help too') : 'The moves that bring it closer'}</h2>
         <div class="ticketlist">${moves.map((m, i) => ticketHtml(m, { hero: i === 0 && r.state !== 'open' })).join('')}</div>
       </section>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on your year page and this shows the exact moves that bring ${esc(r.railName)} closer.</p>` : '')}
 
       <section class="destsec">
-        <h2 class="advh">What it asks</h2>
+        <h2 class="advh">${r.lens === 'lower' ? `What it asks of your ${esc(YEAR_LABEL[e.yearId] || 'Sec 1 and 2')} levels` : 'What it asks'}</h2>
         <ul class="asklist">
           ${(r.met || []).concat(r.gap || []).map((x) => `<li data-met="${x.satisfied}">${x.satisfied ? icon('check') : '<i class="dotq" aria-hidden="true"></i>'}<span>${decorate(esc(x.label))}${x.soft ? ' <span class="small">(usually)</span>' : ''}${x.status === 'provisional' ? ' <span class="src-chip provisional">to confirm</span>' : ''}</span><span class="small">${x.satisfied ? 'you have this' : 'not yet'}</span></li>`).join('')}
         </ul>
-        ${(r.performance || []).map((p) => `<div class="rulerow"><p class="rulerow-label">${decorate(esc(p.label))}</p>${p.note ? `<p class="rulerow-note">${decorate(esc(p.note))}</p>` : ''}</div>`).join('')}
+        ${r.lens === 'lower' ? (r.horizon ? `<p class="small">${decorate(esc(r.horizon))}</p>` : '') : perfHtml(r)}
       </section>
+      ${r.lens === 'lower' ? `
+      <section class="destsec">
+        <h2 class="advh">In the SEC, at the end of Sec 4</h2>
+        <ul class="asklist">
+          ${(d.structural || []).map((x) => `<li data-met="false"><i class="dotq" aria-hidden="true"></i><span>${decorate(esc(x.label))}${x.soft ? ' <span class="small">(usually)</span>' : ''}${x.status === 'provisional' ? ' <span class="src-chip provisional">to confirm</span>' : ''}</span></li>`).join('')}
+        </ul>
+        ${perfHtml(r)}
+      </section>` : ''}
 
       ${scores.length ? `
       <section class="destsec">
@@ -160,7 +173,7 @@ export const dest = {
         ${scores.map(({ a, d: x }) => {
           const ref = a.basis === 'target' ? a.target : a.now;
           return `<p><strong>${esc(a.name)}: ${ref.value == null ? 'not enough grades yet' : `${ref.value} (${a.basis})`}</strong> <span class="small">asks ${x.cutoff} or better.</span></p>
-          ${ref.value != null ? `<p class="small">${ref.value <= x.cutoff ? `${icon('check')} Reached${x.gap < 0 ? `, with ${-x.gap} to spare` : ''}.` : (x.steps ? `${x.gap} to go: ${esc(listNames(x.steps.map((s) => `${s.name} ${s.from} to ${s.to}`)))} would do it.` : `${x.gap} to go.`)}</p>` : `<p class="small">${esc(ref.why || '')}</p>`}`;
+          ${ref.value != null ? `<p class="small">${x.value != null && x.value !== ref.value ? `Reads ${x.value} here. ` : ''}${x.meets ? `${icon('check')} ${x.via ? esc(x.via) : `Reached${x.gap < 0 ? `, with ${-x.gap} to spare` : ''}`}.` : (x.via ? `${esc(x.via)}.` : (x.steps ? `${x.gap} to go: ${esc(listNames(x.steps.map((s) => `${s.name} ${s.from} to ${s.to}`)))} would do it.` : (x.gap != null ? `${x.gap} to go.` : esc(x.why || x.note || ''))))}</p>` : `<p class="small">${esc(ref.why || '')}</p>`}`;
         }).join('')}
         <p class="small"><button type="button" class="linkbtn" data-action="go" data-s="year" data-y="${esc(e.yearId && e.yearId !== 'sec1' && e.yearId !== 'sec2' ? e.yearId : 'sec3')}" data-tab="targets">Change targets</button></p>
       </section>` : ''}

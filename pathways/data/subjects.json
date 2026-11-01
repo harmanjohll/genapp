@@ -154,7 +154,8 @@
    ],
    "status": "confirmed",
    "phase": "both",
-   "raisableFrom": "sec1"
+   "raisableFrom": "sec1",
+   "sec3": { "G2": "Maths at G2 is the usual way into Additional Maths at G2. The school sets the mark.", "G3": "Maths at G3 is the usual way into Additional Maths at G3. The school sets the mark." }
   },
   {
    "id": "amaths",
@@ -711,6 +712,7 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec1",
+   "sec3": { "G2": "Science at G2 is the usual way into a Science pair at G2.", "G3": "Science at G3 is the usual way into the pure sciences at G3. The school sets the mark." },
    "doing": "One subject covering physics, chemistry and biology together.",
    "likeIf": "I want to know why things behave that way",
    "showsUp": [
@@ -734,6 +736,7 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
    "doing": "How places work, and why people live where they do.",
    "likeIf": "maps and the shape of cities pull at me",
    "showsUp": [
@@ -756,6 +759,7 @@
    ],
    "compulsory": true,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
    "doing": "What happened, and how anyone knows that it did.",
    "likeIf": "I argue with the version I was handed",
    "showsUp": [
@@ -778,6 +782,7 @@
    ],
    "compulsory": false,
    "raisableFrom": "sec2",
+   "sec3": { "G2": "A Humanities at G2 leads to the Social Studies pair at G2.", "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark." },
    "doing": "Read closely, then say what the writer is actually doing.",
    "likeIf": "I notice how it is written, not just what",
    "showsUp": [
@@ -866,7 +871,7 @@
   "schoolNote": "Schools set their own criteria and their own review points. My school's are the real ones.",
   "years": {
    "sec1": {
-    "up": "English, Mother Tongue, Maths and Science can move up at the end of Sec 1.",
+    "up": "English, Mother Tongue, Maths and Science move up at school reviews, often end of Sec 1.",
     "note": "Humanities levels start moving from Sec 2, not yet."
    },
    "sec2": {

@@ -11,30 +11,30 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.1.0';
-import { reach } from '../engine/reach.js?v=4.1.0';
-import { pulse } from '../engine/pulse.js?v=4.1.0';
-import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.1.0';
-import { advise } from '../engine/advice.js?v=4.1.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.1.0';
-import { openCount } from '../ui/map.js?v=4.1.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.1.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.1.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.1.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.1.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.1.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.1.0';
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
-import { icon } from '../ui/icons.js?v=4.1.0';
-import { signalHtml } from '../ui/signal.js?v=4.1.0';
-import { t, lineMode } from '../ui/labels.js?v=4.1.0';
+} from '../state.js?v=4.2.0';
+import { reach } from '../engine/reach.js?v=4.2.0';
+import { pulse } from '../engine/pulse.js?v=4.2.0';
+import { evalPlan, subjectsForYear, carryForward, isLower } from '../engine/years.js?v=4.2.0';
+import { advise } from '../engine/advice.js?v=4.2.0';
+import { psleSec1Plan } from '../engine/psle.js?v=4.2.0';
+import { openCount } from '../ui/map.js?v=4.2.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=4.2.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.2.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=4.2.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.2.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.2.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.2.0';
+import { esc, onAction } from '../ui/dom.js?v=4.2.0';
+import { icon } from '../ui/icons.js?v=4.2.0';
+import { signalHtml } from '../ui/signal.js?v=4.2.0';
+import { t, lineMode, openWord } from '../ui/labels.js?v=4.2.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
 function answerHtml(rows, key, y) {
   return lineMode()
-    ? boardHtml(rows, { key, title: t('answerFrom', LABEL[y]) })
-    : signalHtml(rows, { key, caption: t('answerFrom', LABEL[y]) });
+    ? boardHtml(rows, { key, title: t(isLower(y) ? 'answerFromLower' : 'answerFrom', LABEL[y]) })
+    : signalHtml(rows, { key, caption: t(isLower(y) ? 'answerFromLower' : 'answerFrom', LABEL[y]) });
 }
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -297,7 +297,7 @@ function adviceHtml(api, y, rows, adv) {
 
   return `
     <div class="mobile-board">${answerHtml(rows, `adv-${y}`, y)}</div>
-    ${isLower(y) ? '<p class="small inferline">Read through the Sec 3 combination these levels usually lead to. An inference, not a promise: your school sets the real one.</p>' : ''}
+    ${isLower(y) ? '<p class="small inferline">Admission in 2028 reads your SEC results, not your Sec 1 and 2 levels. These levels matter because they shape the subjects and levels you take in Sec 3. On track means your levels now fit what each place will ask.</p>' : ''}
     ${adv.start && adv.start.missing ? `<p class="callout small">${esc(adv.start.line)} <button type="button" class="linkbtn" data-action="yr-tab" data-tab="levels">Add them</button></p>` : ''}
 
     ${top ? `
@@ -305,7 +305,7 @@ function adviceHtml(api, y, rows, adv) {
       ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
       <div class="allopen">
         <p class="allopen-n">8/8</p>
-        <div><p class="allopen-h">Every destination is open from here.</p>
+        <div><p class="allopen-h">${isLower(y) ? 'Every place is on track from here.' : 'Every destination is open from here.'}</p>
         <p class="small">The question now is not which door but which two years you want. Play one forward to test it.</p>
         <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>
       </div>` : '')}
@@ -316,12 +316,12 @@ function adviceHtml(api, y, rows, adv) {
 
     ${adv.pairs.length ? `
       <h2 class="advh">${esc(t('pairMoves'))}</h2>
-      <p class="small advsub">These open something no single move does.</p>
+      <p class="small advsub">${isLower(y) ? 'These put a place on track that no single move does.' : 'These open something no single move does.'}</p>
       <div class="ticketlist">${adv.pairs.map((m) => ticketHtml(m)).join('')}</div>` : ''}
 
     ${adv.holds.length ? `
       <h2 class="advh">Levels to keep</h2>
-      <p class="small advsub">These levels are what keep places open. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
+      <p class="small advsub">These levels are what keep places ${isLower(y) ? 'on track' : 'open'}. Worth knowing before anyone suggests easing a subject down: sometimes that is right, but it should be a decision, not a surprise.</p>
       <div class="holdlist">${adv.holds.map((h) => holdHtml(h)).join('')}</div>` : ''}`;
 }
 
@@ -353,9 +353,10 @@ function dockHtml(rows, adv) {
   const open = openCount(rows);
   const top = adv && adv.singles[0];
   const k = lastLine || t('answer');
-  const line = top ? top.short : (open === rows.length ? 'Every destination is open.' : 'Slide a level and this answers.');
+  const lower = openWord(rows) === 'on track';
+  const line = top ? top.short : (open === rows.length ? (lower ? 'Every place is on track.' : 'Every destination is open.') : 'Slide a level and this answers.');
   return `
-    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} open. ${esc(lastLine)} ${esc(line)} Open the advice.">
+    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(lastLine)} ${esc(line)} Open the advice.">
       <span class="dock-num"><b>${open}</b>/${rows.length}</span>
       <span class="dock-words"><span class="dock-k">${esc(k)}</span><span class="dock-line">${top ? `${icon('ticket')} ` : ''}${esc(line)}</span></span>
       ${lampsHtml(rows)}
@@ -433,7 +434,7 @@ function bind(root, api, y) {
         const cnt = subjectsForYear(y, api.ctx().subjects).filter((s) => s.group === grp.id && now[s.id]).length;
         g.innerHTML = `${esc(shortGroup(grp))}${cnt ? `<i>${cnt}</i>` : ''}`;
       });
-      api.announce(`${p.openNow} of ${nextRows.length} open. ${lastLine}`);
+      api.announce(`${p.openNow} of ${nextRows.length} ${openWord(nextRows)}. ${lastLine}`);
       if (p.justOpened.length) api.cue('door');
     },
 

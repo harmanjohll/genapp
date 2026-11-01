@@ -32,12 +32,12 @@
     "sec1": {
       "phase": "Lower Sec",
       "headline": "Settling in, and the first review",
-      "lede": "English, Mother Tongue, Maths and Science each sit at G1, G2 or G3. At the end of the year, any of them can move up.",
+      "lede": "English, Mother Tongue, Maths and Science each sit at G1, G2 or G3. At the school's review, often at the end of the year, any of them can move up.",
       "happens": [
         { "when": "All year", "what": "A mixed form class for about a third of the week: Art, Music, Design and Technology, Food and Consumer Education, PE and CCE. None of these is levelled.", "status": "confirmed" },
         { "when": "All year", "what": "Levelled subjects are taken with students from other classes at the same level.", "status": "confirmed" },
-        { "when": "End of year", "what": "The school reviews each levelled subject. English, Mother Tongue, Maths and Science can move up for Sec 2.", "status": "confirmed" },
-        { "when": "End of year", "what": "Interest and aptitude in Geography, History and Literature this year decide whether they can move up in Sec 2.", "status": "confirmed" }
+        { "when": "School review", "what": "Often at the end of the year. The school looks at results and how the student copes with the load. English, Mother Tongue, Maths and Science can move up for Sec 2, or ease down.", "status": "provisional" },
+        { "when": "For Sec 2", "what": "Interest and aptitude in Geography, History and Literature this year decide whether they can move up in Sec 2.", "status": "confirmed" }
       ],
       "decisions": [
         { "text": "Whether to take a subject at a more demanding level next year, if the school offers it. Schools set their own criteria; one common example is 75 percent in the subject at the end of the year." },

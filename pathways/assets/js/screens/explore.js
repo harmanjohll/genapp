@@ -4,12 +4,13 @@
 // with the planning path for a first-time student's attention. Here they sit
 // together as things to wander through once the plan has a shape.
 
-import { getState } from '../state.js?v=4.1.0';
-import { reach } from '../engine/reach.js?v=4.1.0';
-import { signalStrip } from '../ui/signal.js?v=4.1.0';
-import { skyline } from '../ui/scenes.js?v=4.1.0';
-import { onAction } from '../ui/dom.js?v=4.1.0';
-import { icon } from '../ui/icons.js?v=4.1.0';
+import { getState } from '../state.js?v=4.2.0';
+import { reach } from '../engine/reach.js?v=4.2.0';
+import { signalStrip } from '../ui/signal.js?v=4.2.0';
+import { openWord } from '../ui/labels.js?v=4.2.0';
+import { skyline } from '../ui/scenes.js?v=4.2.0';
+import { onAction } from '../ui/dom.js?v=4.2.0';
+import { icon } from '../ui/icons.js?v=4.2.0';
 
 export default {
   id: 'explore',
@@ -28,7 +29,7 @@ export default {
         <button type="button" class="ex-card ex-after press arrive" data-action="go" data-s="after">
           <span class="ex-t">Where can I go after Sec?</span>
           <span class="ex-p">Eight places, what each asks, what it costs, and the other ways in.</span>
-          <span class="ex-sig">${signalStrip(rows, { key: 'explore' })}<span class="ex-n"><b>${open}</b>/8 open</span></span>
+          <span class="ex-sig">${signalStrip(rows, { key: 'explore' })}<span class="ex-n"><b>${open}</b>/8 ${openWord(rows)}</span></span>
           <span class="ex-go">${icon('arrow')}</span>
         </button>
         <button type="button" class="ex-card ex-play press arrive d1" data-action="go" data-s="play">

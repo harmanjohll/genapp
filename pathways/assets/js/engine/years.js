@@ -12,7 +12,7 @@
 //
 // Pure: no DOM, no storage.
 
-import { project } from './project.js?v=4.1.0';
+import { project } from './project.js?v=4.2.0';
 
 export const YEAR_IDS = ['p6', 'sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
 export const PLAN_YEARS = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
@@ -34,13 +34,21 @@ export function subjectsForYear(yearId, subjects, offer) {
 }
 
 /**
- * The plan as destinations should read it. Lower secondary plans go through
- * the projection (the Sec 3 combination that usually follows); upper plans
- * are already in destination terms.
+ * The plan as destinations should read it. Upper plans are already in
+ * destination terms. A lower secondary plan carries two readings side by
+ * side: the projection (one Science row, the strongest Humanities as the
+ * pair) and the raw Sec 1 and 2 rows. reach() judges a lower year by the
+ * destination's `lower` rules, which name Sec 1 and 2 subjects and read the
+ * raw rows; the SEC rules strip those rows (upperPlan) and see only the
+ * projection. One plan object, so every caller stays the same.
  */
 export function evalPlan(yearId, plan, subjects) {
-  if (isLower(yearId)) return project(plan || {}, subjects).plan;
-  return { ...(plan || {}) };
+  if (!isLower(yearId)) return { ...(plan || {}) };
+  const raw = plan || {};
+  const lowerIds = new Set((subjects || []).filter((s) => s.phase === 'lower').map((s) => s.id));
+  const out = { ...project(raw, subjects).plan };
+  Object.keys(raw).forEach((id) => { if (lowerIds.has(id)) out[id] = raw[id]; });
+  return out;
 }
 
 /**
@@ -51,9 +59,11 @@ export function effective(plans, subjects) {
   for (let i = PLAN_YEARS.length - 1; i >= 0; i -= 1) {
     const y = PLAN_YEARS[i];
     const p = (plans && plans[y]) || {};
-    if (Object.keys(p).length) return { yearId: y, plan: evalPlan(y, p, subjects) };
+    // `plan` stays in Sec 3 terms (the game and share links read it);
+    // `lens` is what reach() should read for that year.
+    if (Object.keys(p).length) return { yearId: y, plan: isLower(y) ? project(p, subjects).plan : { ...p }, lens: evalPlan(y, p, subjects) };
   }
-  return { yearId: null, plan: {} };
+  return { yearId: null, plan: {}, lens: {} };
 }
 
 /**

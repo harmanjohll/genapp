@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode,
-} from '../state.js?v=4.1.0';
-import { reach } from '../engine/reach.js?v=4.1.0';
-import { evalPlan, isLower } from '../engine/years.js?v=4.1.0';
-import { advise } from '../engine/advice.js?v=4.1.0';
-import { signalHtml } from '../ui/signal.js?v=4.1.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=4.1.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.1.0';
-import { subjTile, patchTile } from './year.js?v=4.1.0';
-import { esc, onAction } from '../ui/dom.js?v=4.1.0';
-import { icon } from '../ui/icons.js?v=4.1.0';
-import { t } from '../ui/labels.js?v=4.1.0';
+} from '../state.js?v=4.2.0';
+import { reach } from '../engine/reach.js?v=4.2.0';
+import { evalPlan, isLower } from '../engine/years.js?v=4.2.0';
+import { advise } from '../engine/advice.js?v=4.2.0';
+import { signalHtml } from '../ui/signal.js?v=4.2.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=4.2.0';
+import { ticketHtml } from '../ui/ticket.js?v=4.2.0';
+import { subjTile, patchTile } from './year.js?v=4.2.0';
+import { esc, onAction } from '../ui/dom.js?v=4.2.0';
+import { icon } from '../ui/icons.js?v=4.2.0';
+import { t, openWord } from '../ui/labels.js?v=4.2.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -149,7 +149,7 @@ export default {
         const n = Object.keys(getState().plans[yy] || {}).length;
         const nb = root.querySelector('#st-next');
         if (nb) nb.dataset.ready = String(n >= 3);
-        api.announce(`${rowsFor(api, yy).filter((r) => r.state === 'open').length} of 8 open.`);
+        { const rr = rowsFor(api, yy); api.announce(`${rr.filter((r) => r.state === 'open').length} of 8 ${openWord(rr)}.`); }
       },
       'st-finish': () => { markStart(true); api.nav('home'); },
       'st-words': (btn) => {
@@ -167,7 +167,9 @@ const EXAMPLE = { el: 'G2', mtl: 'G2', maths: 'G1', sci_pc: 'G2', hum_ss_geog: '
 
 function introExample(api) {
   const c = api.ctx();
-  const run = (plan) => c.destinations.map((d) => reach(plan, d, { ...c, plan }));
+  // The example is a Sec 3 combination, so it is read by the SEC rules
+  // whatever year the reader is in.
+  const run = (plan) => c.destinations.map((d) => reach(plan, d, { ...c, plan, yearId: 'sec3' }));
   const before = run(EXAMPLE);
   const after = run({ ...EXAMPLE, maths: 'G2' });
   const opened = after.filter((r, i) => r.state === 'open' && before[i].state !== 'open').map((r) => r.railName);
@@ -256,8 +258,8 @@ function renderReveal(root, api, y) {
   <section class="st">
     ${bar('reveal')}
     <div class="wrap-narrow st-body">
-      <h1>${open} of ${rows.length} are open now.</h1>
-      <p class="st-sub">The rest are a move or more away. None is ever closed.</p>
+      <h1>${open} of ${rows.length} ${openWord(rows) === 'on track' ? 'are on track.' : 'are open now.'}</h1>
+      <p class="st-sub">${openWord(rows) === 'on track' ? 'On track means your levels now fit what each place will ask in the SEC. The rest are a move or more away. None is ever closed.' : 'The rest are a move or more away. None is ever closed.'}</p>
       <div class="st-reveal">${signalHtml(rows, { key: 'start-reveal', intro: true })}</div>
       <div class="st-foot">
         <button type="button" class="btn big press" data-action="st-go" data-step="move">Show my next move ${icon('arrow')}</button>
