@@ -8,6 +8,7 @@ The E21CC Log lives at `genapp/e21cclog/` for students and `genapp/e21cclog/teac
 | `e21cclog/` | The Log: the student app, the teacher console, the statements, the tests |
 | `e21cclog/legacy/v1/`, `e21cclog/legacy/v2/` | The first version and v2, kept read only so nothing is lost. A banner sends students to the Log, and **Bring newer entries across** adds anything written there after the move (the newer copy of an entry wins) |
 | `logs/`, `logsv2/`, `logsv3/` | Short pages left at the old addresses. Teacher note links, group links, class codes and share links go to the Log; other pages go to their legacy copy |
+| `e21cclog/school/beatty.json` | Beatty's offering: subjects for Lower and Upper Sec with the levels of demand each is offered at, CCAs, NEXUS@BTY modules, and the year's fixed experiences. See **Changing the school offering** |
 | `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
 
 The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). The first time it opens, it copies in the newest older log once (v3, then v2, then the first version) and never writes back. Later versions change the data in place.
@@ -34,6 +35,7 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 | t11 | Version 3: Home, levels in the look's words, GROW wording, the (i), the aim, the settings alert |
 | t12 | The new home: forwarding, legacy mode, the lasting store, backups, installing, the offline copy, console backup |
 | t13 | Accessibility: axe, the keyboard, 200% zoom, forced colours |
+| t14 | Beatty's offering: subjects by Sec level with their levels of demand, CCAs and NEXUS@BTY, renaming older logs, the coach's level, the console |
 | `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
 
 A screen reader still needs a person. The **VoiceOver check for an iPad** (about 10 minutes):
@@ -177,6 +179,17 @@ python3 -m http.server 8000
 ## Changing the statements
 
 Edit `statements/beatty-v1.json`, then paste it into `DEFAULT_STATEMENTS` in `assets/core.js` (the header on one line, one strand per line) so the log works offline. Keep statement ids stable once students link to them: an id is the strand id plus its band and rung (`ct1.l1`, `ct1.u3`). A new set can also live in its own file and be named in the form class's group file.
+
+## Changing the school offering
+
+Each year, edit `school/beatty.json`, then copy it into `DEFAULT_SCHOOL` in `assets/core.js` so the Log works offline (t14 fails until the two match).
+- **Subjects** sit under `subjects.lower` (Sec 1 and 2) and `subjects.upper` (Sec 3 to 5), in the order students see them. Each has a `name` in full, a `group`, and `levels`: the levels of demand it is offered at, or `null` for one common level. `outside` lists levels taken at another school or centre; `examinable: false` marks a subject that is not examined.
+- **`notes`** add a line under a group, by level.
+- **`aliases`** map short or old names to full ones, so older logs and group files still match.
+- **`cca`** and **`nexus`** are listed alphabetically in the app, whatever their order in the file. A NEXUS tier's `levels` says which Sec levels see it.
+- **`experiences`** holds the year's fixed experiences: `{"name", "type": "camp" | "service" | "competition" | "other", "levels": [1, 2]}`. ALP and LLP activities go here too. The composer offers them by name under their type.
+
+Keep names stable within a year: entries are filed under the name a student chose.
 
 ## Testing with a Gemini key
 

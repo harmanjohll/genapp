@@ -93,7 +93,7 @@ const QHELP = {
     strong:['Who you would explain it to', 'What you would say or show first', 'An example, a drawing or a step they could try'],
     ex:[['Science', 'I would ask my friend to rub a balloon on their hair and hold it near bits of paper, then explain that the charges pull the paper up.'],
       ['Choir', 'I would show my friend where to breathe by marking a tick on the score after every second line.'],
-      ['English', 'I would give my friend two openings for a story, ask which one makes them want to read on, then explain why.']]},
+      ['English Language', 'I would give my friend two openings for a story, ask which one makes them want to read on, then explain why.']]},
   r1:{asks:'Point to the exact place where it stops making sense.',
     strong:['One specific thing, not “everything”', 'Where it goes wrong: which step, word or kind of question', 'The word yet: you will get there'],
     ex:[['Mathematics', 'I do not yet understand when to use the sine rule instead of the cosine rule. I mix them up when the angle is not between the two sides.'],
@@ -113,7 +113,7 @@ const QHELP = {
     strong:['Who you shared it with', 'What you said or showed', 'What they asked or said back'],
     ex:[['Biology', 'I told my younger brother why he should finish his antibiotics, and he asked why the bacteria come back.'],
       ['Robotics', 'I showed a teammate how to fix the sensor reading, and they asked me to write the steps down for the juniors.'],
-      ['Literature', 'I read a poem to my grandmother and explained the metaphor. She told me a pantun with the same idea.']]},
+      ['Literature in English', 'I read a poem to my grandmother and explained the metaphor. She told me a pantun with the same idea.']]},
   w2:{asks:'Name what is coming next, as exactly as you can.',
     strong:['The real title, topic or event, not “the next chapter”', 'When it is, if you know', 'Where you found out: timetable, scheme of work or teacher'],
     ex:[['Geography', 'Next Tuesday we start the topic on tectonic plates. I saw it on the scheme of work.'],
@@ -128,7 +128,7 @@ const QHELP = {
     strong:['A feeling word: proud, annoyed, confused, relieved', 'What in the feedback made you feel it', 'Feeling bad is fine; say it, then look at what the feedback points to'],
     ex:[['Mathematics', 'I felt frustrated, because I lost marks for the same careless mistake as last time.'],
       ['Dance', 'I felt proud when my instructor said my timing was clean, because I had practised the counts at home.'],
-      ['English', 'I felt confused, because the comment said “develop your ideas” and I was not sure what that meant.']]},
+      ['English Language', 'I felt confused, because the comment said “develop your ideas” and I was not sure what that meant.']]},
   a2:{asks:'Say what the feedback could change in how you learn or work.',
     strong:['The part of the feedback that matters most', 'What it could help you do better', 'Where you will use it next'],
     ex:[['Science', 'The comment about labelling axes will help me in every graph question, not just this practical.'],
@@ -136,9 +136,9 @@ const QHELP = {
       ['Art', 'The note about tone will make my drawings look less flat, because I will add darker shadows on one side.']]},
   c1:{asks:'Link the feedback to what good work looks like, or to a goal you set.',
     strong:['The criterion or goal, quoted if you can', 'How the feedback fits it', 'Whether you are closer to it, or not yet'],
-    ex:[['Literature', 'The criterion says “explain the effect on the reader”. The comment shows I only explained what the quote means.'],
+    ex:[['Literature in English', 'The criterion says “explain the effect on the reader”. The comment shows I only explained what the quote means.'],
       ['Track and field', 'My goal is to run 2.4 km in under 12 minutes. My coach said I start too fast, which is why I slow down in the last lap.'],
-      ['Mother Tongue', 'The rubric asks for a clear opening. The feedback said my opening had no topic sentence, so I have not met it yet.']]},
+      ['Chinese Language', 'The rubric asks for a clear opening. The feedback said my opening had no topic sentence, so I have not met it yet.']]},
   c2:{asks:'Compare this feedback with what you were told before.',
     strong:['What you were told before, and when', 'Whether this is the same point, a new one, or progress', 'If it keeps coming back, what gets in the way'],
     ex:[['Mathematics', 'Last term I was told to show my working. This time I did, and the comment was about units instead, so that is progress.'],
@@ -153,7 +153,7 @@ const QHELP = {
     strong:['Something you can see or count', 'When you will check', 'What would count as better'],
     ex:[['Mathematics', 'In two weeks I will count the careless mistakes in my next worksheet and compare them with this one.'],
       ['Swimming', 'At the end of the month I will time my 50 m and see if it drops below 40 seconds.'],
-      ['English', 'I will ask a friend to read my next composition and point to the sentence they found clearest.']]},
+      ['English Language', 'I will ask a friend to read my next composition and point to the sentence they found clearest.']]},
   x1:{asks:'Look back at this term’s entries and name what you can now do.',
     strong:['Something you can do now that you could not before', 'An entry you can point to, with your own words', 'Where you did it'],
     ex:[['Across subjects', 'In my Science and Geography entries I explained graphs in my own words. In Term 1 I only copied the numbers.'],
@@ -357,20 +357,20 @@ const FRAMES = {
 /* Models from other subjects, so there is nothing to copy. Two per question; the one whose subject differs from the entry's is used. */
 const MODELS = {
   g1:[['Geography','I understood that a flood happens when rain falls faster than the drains can carry it away, because the ground is already full of water.'],['Music','I understood that a chord sounds sad when the middle note is lowered, because the gap between the notes gets smaller.']],
-  g2:[['History','I would show my friend two newspaper headlines from the same day and ask which one is more likely to be true.'],['PE','I would ask my friend to try the pass first, then show them where to place their standing foot.']],
-  r1:[['Art','I am not sure yet how to show distance in a drawing. It goes wrong when I draw the far trees the same size as the near ones.'],['Literature','I am not sure yet how to explain a quote. It goes wrong when I only say what it means, without the effect on the reader.']],
-  r2:[['Mother Tongue','On Wednesday, at the library after school, I will write five new words in sentences for 15 minutes.'],['Physics','On Thursday, at my desk after dinner, I will redo two motion graph questions for 20 minutes.']],
+  g2:[['History','I would show my friend two newspaper headlines from the same day and ask which one is more likely to be true.'],['Physical Education','I would ask my friend to try the pass first, then show them where to place their standing foot.']],
+  r1:[['Art','I am not sure yet how to show distance in a drawing. It goes wrong when I draw the far trees the same size as the near ones.'],['Literature in English','I am not sure yet how to explain a quote. It goes wrong when I only say what it means, without the effect on the reader.']],
+  r2:[['Malay Language','On Wednesday, at the library after school, I will write five new words in sentences for 15 minutes.'],['Physics','On Thursday, at my desk after dinner, I will redo two motion graph questions for 20 minutes.']],
   o1:[['Science','I saw this at the hawker centre when the uncle stirred the soup to cool it faster, because moving it spreads the heat.'],['Mathematics','I saw this in a bus timetable, because the buses come every 12 minutes, which is a pattern I can predict.']],
   o2:[['Geography','I told my grandmother about rising sea levels, and she asked whether East Coast Park would be safe.'],['Art','I told my brother about warm and cool colours, and he asked why his room feels cold.']],
-  w1:[['Chemistry','I already know particles move faster when heated, so I expect the next topic to explain why reactions speed up.'],['English','I already know how to give reasons and examples, so I expect the debate to ask me to answer the other side too.']],
+  w1:[['Chemistry','I already know particles move faster when heated, so I expect the next topic to explain why reactions speed up.'],['English Language','I already know how to give reasons and examples, so I expect the debate to ask me to answer the other side too.']],
   w2:[['History','Coming up next is the merger. I will look out for the reasons each side gave.'],['Biology','Coming up next is enzymes. I will look out for why temperature matters.']],
   a1:[['Art','When I got the feedback I felt annoyed, because I had spent a long time on the shading.'],['Mathematics','When I got the feedback I felt relieved, because now I know why I keep losing marks on units.']],
-  a2:[['Literature','This feedback could help me write fuller paragraphs next time, by adding the effect on the reader after each quote.'],['Science','This feedback could help me score my practical next time, by labelling every axis with units.']],
+  a2:[['Literature in English','This feedback could help me write fuller paragraphs next time, by adding the effect on the reader after each quote.'],['Science','This feedback could help me score my practical next time, by labelling every axis with units.']],
   c1:[['Geography','This feedback is about the success criterion "use data to support a point", because I did not quote any numbers.'],['Music','This feedback is about the success criterion "keep a steady beat", because I sped up in the chorus.']],
-  c2:[['English','Last time I was told my paragraphs were too long. This time the feedback was about weak topic sentences.'],['Physics','Last time I was told to show my working. This time I showed it, but I forgot the units.']],
-  t1:[['Mother Tongue','I will change reading only the first line to reading the whole question. I will start on Monday, at my desk.'],['History','I will change copying the source to explaining it in my own words. I will start on Tuesday, in class.']],
-  t2:[['English','In two weeks I will check my next two essays to see whether each paragraph has a clear topic sentence.'],['Mathematics','In two weeks I will check my quiz corrections to see whether the same kind of mistake comes back.']],
-  x1:[['Science','This term I could plan a fair test on my own in Science, which I could not do before.'],['PE','This term I could call for the ball early in games, which I could not do before.']],
+  c2:[['English Language','Last time I was told my paragraphs were too long. This time the feedback was about weak topic sentences.'],['Physics','Last time I was told to show my working. This time I showed it, but I forgot the units.']],
+  t1:[['Tamil Language','I will change reading only the first line to reading the whole question. I will start on Monday, at my desk.'],['History','I will change copying the source to explaining it in my own words. I will start on Tuesday, in class.']],
+  t2:[['English Language','In two weeks I will check my next two essays to see whether each paragraph has a clear topic sentence.'],['Mathematics','In two weeks I will check my quiz corrections to see whether the same kind of mistake comes back.']],
+  x1:[['Science','This term I could plan a fair test on my own in Science, which I could not do before.'],['Physical Education','This term I could call for the ball early in games, which I could not do before.']],
   x2:[['Mathematics','I got stuck when word problems had two steps, because I rushed to the first number I saw.'],['Art','I got stuck when the colours turned muddy, because I mixed too many at once.']],
   x3:[['Geography','Next term, in fieldwork, I will try writing my observations as I go, and I will know it worked if my report has real numbers.'],['Music','Next term, in band practice, I will try counting the rests aloud, and I will know it worked if I come in on time.']]
 };
@@ -642,8 +642,11 @@ function learnerProfile(p, set, entries, forEntry, opts = {}){
   const past = entries.filter(e => e.id !== fid && e.kind !== 'across' && e.created <= now).sort((a, b) => b.created - a.created);
   const band = bandFor(set, p || {});
   const subj = String((forEntry && forEntry.context && forEntry.context.name) || '').trim(); const levels = (p && p.experiences && p.experiences.levels) || {};
-  const lk = Object.keys(levels).find(k => k.toLowerCase() === subj.toLowerCase());
-  const subjectLevel = lk ? String(levels[lk]) : '';
+  const lk = Object.keys(levels).find(k => sameSubject(k, subj));
+  const offer = subj ? subjectOffer(subj, p && p.level) : null; const offered = offer ? offer.levels : null;
+  let subjectLevel = lk && (!offer || (offered || []).includes(String(levels[lk]))) ? String(levels[lk]) : '';
+  if (!subjectLevel && offered && offered.length === 1) subjectLevel = offered[0];
+  if (subjectLevel && offer && offer.examinable === false) subjectLevel += ', not examined';
   // writing stage per guiding question, from the last six entries of that journal
   const stage = {};
   for (const fw of [GROW, ACT]) for (const s of fw.steps) for (const q of s.qs){
@@ -777,7 +780,9 @@ function stuckUser(entry, qid, level, profile){
    ================================================================== */
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'v3';   // the version, shown in the app only: the address (e21cclog/) never changes
-const APP_VERSION = {label:'Version 3', date:'October 2026', notes:[
+const APP_VERSION = {label:'Version 3', date:'November 2026', notes:[
+  'Beatty’s own subjects for your Sec level, in full, with the levels of demand each is offered at',
+  'Your CCA and NEXUS@BTY module, picked from the school’s lists',
   'Home in two parts: Where am I now? and What next?',
   'Three levels, named in the words of your look',
   'Help beside every question, from its (i)',
@@ -812,17 +817,137 @@ function termLabel(key){ const m = /^(\d{4})-T(\d)$/.exec(key || ''); return m ?
 /* ---------- where the learning happened ---------- */
 const CONTEXT_TYPES = [
   {id:'subject', label:'Subject', ph:'Which subject?', topic:'Topic', topicPh:'e.g. Simultaneous equations'},
-  {id:'cca', label:'CCA', ph:'e.g. Football, Choir, Robotics', topic:'Session or moment', topicPh:'e.g. Friday training, set pieces'},
+  {id:'cca', label:'CCA', ph:'e.g. Football, Choir, Scouts', topic:'Session or moment', topicPh:'e.g. Friday training, set pieces'},
+  {id:'nexus', label:'NEXUS@BTY', ph:'Which module?', topic:'Session or task', topicPh:'e.g. Week 3, testing our prototype'},
   {id:'camp', label:'Camp or trip', ph:'e.g. Sec 2 camp', topic:'Day or activity', topicPh:'e.g. Day 2, raft building'},
   {id:'competition', label:'Competition', ph:'e.g. National Science Challenge', topic:'Round or moment', topicPh:'e.g. Zonal semi final'},
   {id:'service', label:'Service', ph:'e.g. VIA at the void deck', topic:'What you did', topicPh:'e.g. Reading with P2 pupils'},
   {id:'other', label:'Other', ph:'Where did the learning happen?', topic:'What it was', topicPh:'e.g. Leading a class meeting'}
 ];
-const SUBJECTS = ['English','Mathematics','Science','Chemistry','Physics','Biology','Geography','History','Literature','Mother Tongue','Design and Technology','Art','Music','Food and Consumer Education','Computing','PE','CCE','NEXUS'];
+/* ---------- Beatty's offering: subjects by level with their levels of demand, CCAs and NEXUS@BTY ----------
+   The source is school/beatty.json; this copy keeps the log working offline, the same way as the
+   statements. Update both each year. Subjects keep the school's order; CCAs, NEXUS modules and the
+   year's fixed experiences are listed alphabetically. */
+const DEFAULT_SCHOOL = {
+  "id":"beatty-2027",
+  "school":"Beatty Secondary School",
+  "year":2027,
+  "source":"Supplied by the Principal, 1 November 2026",
+  "groups":["Languages","Mathematics","Sciences","Humanities","Common Curriculum","Electives","Others"],
+  "subjects":{
+   "lower":[
+    {"name":"English Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Chinese Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Malay Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Tamil Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Higher Chinese Language","group":"Languages","levels":null},
+    {"name":"Higher Malay Language","group":"Languages","levels":null},
+    {"name":"Higher Tamil Language","group":"Languages","levels":null},
+    {"name":"Other Mother Tongue Language","group":"Languages","levels":["G2","G3"],"outside":["G2","G3"]},
+    {"name":"Mathematics","group":"Mathematics","levels":["G1","G2","G3"]},
+    {"name":"Science","group":"Sciences","levels":["G1","G2","G3"]},
+    {"name":"Geography","group":"Humanities","levels":["G2","G3"]},
+    {"name":"History","group":"Humanities","levels":["G2","G3"]},
+    {"name":"Literature in English","group":"Humanities","levels":["G2","G3"]},
+    {"name":"Humanities Exposure Modules","group":"Humanities","levels":["G1"]},
+    {"name":"Art","group":"Common Curriculum","levels":null},
+    {"name":"Design and Technology","group":"Common Curriculum","levels":null},
+    {"name":"Food and Consumer Education","group":"Common Curriculum","levels":null},
+    {"name":"Music","group":"Common Curriculum","levels":null},
+    {"name":"Physical Education","group":"Others","levels":null},
+    {"name":"Character and Citizenship Education","group":"Others","levels":null}
+   ],
+   "upper":[
+    {"name":"English Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Chinese Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Malay Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Tamil Language","group":"Languages","levels":["G1","G2","G3"]},
+    {"name":"Higher Chinese Language","group":"Languages","levels":null},
+    {"name":"Higher Malay Language","group":"Languages","levels":null},
+    {"name":"Higher Tamil Language","group":"Languages","levels":null},
+    {"name":"Other Mother Tongue Language","group":"Languages","levels":["G2","G3"],"outside":["G2","G3"]},
+    {"name":"Mathematics","group":"Mathematics","levels":["G1","G2","G3"]},
+    {"name":"Additional Mathematics","group":"Mathematics","levels":["G3"]},
+    {"name":"Chemistry","group":"Sciences","levels":["G3"]},
+    {"name":"Physics","group":"Sciences","levels":["G3"]},
+    {"name":"Biology","group":"Sciences","levels":["G3"]},
+    {"name":"Science (Chemistry, Physics)","group":"Sciences","levels":["G2","G3"]},
+    {"name":"Science (Chemistry, Biology)","group":"Sciences","levels":["G3"]},
+    {"name":"Science","group":"Sciences","levels":["G1"]},
+    {"name":"Humanities (Social Studies, Geography)","group":"Humanities","levels":["G2","G3"]},
+    {"name":"Humanities (Social Studies, History)","group":"Humanities","levels":["G2","G3"]},
+    {"name":"Geography","group":"Humanities","levels":["G3"]},
+    {"name":"Literature in English","group":"Humanities","levels":["G3"]},
+    {"name":"Social Studies","group":"Humanities","levels":["G1"],"examinable":false},
+    {"name":"Art","group":"Electives","levels":["G2","G3"]},
+    {"name":"Computing","group":"Electives","levels":["G1","G3"],"outside":["G3"]},
+    {"name":"Design and Technology","group":"Electives","levels":["G2"]},
+    {"name":"Music","group":"Electives","levels":["G3"],"outside":["G3"]},
+    {"name":"Nutrition and Food Science","group":"Electives","levels":["G2","G3"]},
+    {"name":"Principles of Accounts","group":"Electives","levels":["G3"]},
+    {"name":"Physical Education","group":"Others","levels":null},
+    {"name":"Character and Citizenship Education","group":"Others","levels":null}
+   ]
+  },
+  "notes":{"lower":{"Humanities":"G1 students take the Humanities Exposure Modules, and can move to G2 in a single subject. G2 can move to G3.","Common Curriculum":"Everyone takes these at one common level in Sec 1 and 2."},"upper":{"Sciences":"Pure Sciences: Chemistry with Physics, or Chemistry with Biology. Combined Sciences: Science (Chemistry, Physics) or Science (Chemistry, Biology).","Humanities":"Social Studies at G1 is not examined.","Electives":"Computing at G1 is for students without a fifth subject."}},
+  "aliases":{"English":"English Language","Literature":"Literature in English","PE":"Physical Education","CCE":"Character and Citizenship Education","Additional Maths":"Additional Mathematics","A Maths":"Additional Mathematics","Maths":"Mathematics","POA":"Principles of Accounts","D&T":"Design and Technology","FCE":"Food and Consumer Education","NFS":"Nutrition and Food Science"},
+  "cca":[{"group":"Clubs","names":["Infocomm Club"]},{"group":"Performing Arts","names":["Chinese Orchestra","Choir","Concert Band","Drama","Malay Dance","Modern Dance"]},{"group":"Sports","names":["Badminton","Canoeing","Football","Volleyball","Wushu"]},{"group":"Uniformed Groups","names":["Boys' Brigade","National Cadet Corps (Land)","National Civil Defence Cadet Corps","National Police Cadet Corps","Scouts"]}],
+  "nexus":{"tiers":[{"id":"NX101","name":"Critical Cornerstones","who":"Every Sec 1 student","levels":[1]},{"id":"NX201","name":"Constructive Curiosities","who":"Every Sec 2 student","levels":[2]},{"id":"NX301","name":"Creative Connections: exchanges","who":"Selected students","levels":[3,4,5]},{"id":"NX302","name":"Creative Connections: industry attachments","who":"Selected students","levels":[3,4,5]}],"modules":[
+    {"code":"NX101","tier":"NX101","name":"Critical Cornerstones: The Critical Inquiry Project"},
+    {"code":"NX201","tier":"NX201","name":"Constructive Curiosities: STEM Playgrounds"},
+    {"code":"NX3011","tier":"NX301","name":"Mihara City, Japan: BTY Exchange"},
+    {"code":"NX3012","tier":"NX301","name":"Mutsuzawa High School, Japan: BTY Exchange"},
+    {"code":"NX3013","tier":"NX301","name":"Aorere College, New Zealand: BTY Exchange"},
+    {"code":"NX3014","tier":"NX301","name":"Seoul, South Korea"},
+    {"code":"NX3015","tier":"NX301","name":"Geographical Investigation @ Bali"},
+    {"code":"NX3016","tier":"NX301","name":"Saue High School, Estonia: BTY e-Exchange"},
+    {"code":"NX3017","tier":"NX301","name":"Literary Adventures @ Bali"},
+    {"code":"NX3018","tier":"NX301","name":"Hanoi, Vietnam"},
+    {"code":"NX3021","tier":"NX302","name":"Rockwell Automation Industry Attachment"},
+    {"code":"NX3022","tier":"NX302","name":"Pacific International Lines Industry Attachment"},
+    {"code":"NX3023","tier":"NX302","name":"A*STAR"},
+    {"code":"NX3024","tier":"NX302","name":"Berita Harian"},
+    {"code":"NX3025","tier":"NX302","name":"Tamil Murasu"},
+    {"code":"NX3026","tier":"NX302","name":"ITE College Central Electrical Engineering"}
+  ]},
+  "experiences":[]
+};
+let SCHOOL = DEFAULT_SCHOOL;
+const byName = (a, b) => a.localeCompare(b, 'en', {sensitivity:'base'});
+function stageOf(level){ return level ? (+level >= 3 ? 'upper' : 'lower') : null; }
+// a subject's full name: "English" is English Language, "PE" is Physical Education
+function canonSubject(name){ const n = String(name || '').trim(); const a = Object.entries(SCHOOL.aliases || {}).find(([k]) => k.toLowerCase() === n.toLowerCase()); return a ? a[1] : n; }
+function sameSubject(a, b){ return canonSubject(a).toLowerCase() === canonSubject(b).toLowerCase(); }
+// the subjects offered at a Sec level (Sec 1 and 2: Lower Sec; Sec 3 to 5: Upper Sec); with no level, both lists
+function subjectsFor(level){
+  const st = stageOf(level), s = SCHOOL.subjects || {}; if (st) return s[st] || [];
+  const seen = new Set(); return [...(s.lower || []), ...(s.upper || [])].filter(x => !seen.has(x.name) && seen.add(x.name));
+}
+function subjectOffer(name, level){ return subjectsFor(level).find(x => sameSubject(x.name, name)) || null; }
+// the levels of demand a subject is offered at; null when it has one common level or is not banded
+function levelsFor(name, level){ const o = subjectOffer(name, level); return o ? o.levels : null; }
+function subjectGroups(level){
+  const list = subjectsFor(level), st = stageOf(level), notes = (st && SCHOOL.notes && SCHOOL.notes[st]) || {};
+  return (SCHOOL.groups || []).map(g => ({group:g, subjects:list.filter(x => x.group === g), note:notes[g] || ''})).filter(g => g.subjects.length);
+}
+function ccaList(){ return (SCHOOL.cca || []).map(g => ({group:g.group, names:g.names.slice().sort(byName)})).sort((a, b) => byName(a.group, b.group)); }
+function ccaNames(){ return ccaList().flatMap(g => g.names); }
+// NEXUS@BTY modules for a Sec level, by tier; with no level, every tier
+function nexusFor(level){
+  const nx = SCHOOL.nexus || {tiers:[], modules:[]};
+  return nx.tiers.filter(t => !level || t.levels.includes(+level))
+    .map(t => ({...t, modules:nx.modules.filter(m => m.tier === t.id).map(m => ({...m, label:m.code + ' ' + m.name})).sort((a, b) => byName(a.name, b.name))}))
+    .filter(t => t.modules.length);
+}
+// the year's fixed experiences of one kind (camps, service, ALP and LLP activities), for a Sec level
+function schoolExperiences(type, level){ return (SCHOOL.experiences || []).filter(x => x.type === type && (!level || !x.levels || x.levels.includes(+level))).map(x => x.name).sort(byName); }
+// every subject name the school uses, Lower Sec then Upper Sec
+const SUBJECTS = subjectsFor(null).map(x => x.name);
 function contextTypeOf(id){ return CONTEXT_TYPES.find(c => c.id === id) || (id === 'across' ? {id:'across', label:'Look across'} : CONTEXT_TYPES[0]); }
 function inferContextType(name){
   const n = String(name || '').toLowerCase(); if (!n) return 'subject';
-  if (/\bcca\b|training|choir|band|football|basketball|netball|volleyball|badminton|scouts|guides|\bncc\b|npcc|ncdcc|sjab|robotics|drama|dance|wushu/.test(n)) return 'cca';
+  if (/\bnexus\b|\bnx\d{3}/.test(n)) return 'nexus';
+  if (/\bcca\b|training|choir|band|football|basketball|netball|volleyball|badminton|canoeing|orchestra|infocomm|brigade|cadet|scouts|guides|\bncc\b|npcc|ncdcc|sjab|robotics|drama|dance|wushu/.test(n)) return 'cca';
   if (/camp|trip|\bobs\b|learning journey|immersion/.test(n)) return 'camp';
   if (/competition|challenge|olympiad|tournament|championship/.test(n)) return 'competition';
   if (/\bvia\b|service|volunteer/.test(n)) return 'service';
@@ -1116,11 +1241,28 @@ function migrateEntry(e, primary){
   if (!e.answers) e.answers = {};
   if (!e.context){ const name = e.kind === 'across' ? '' : (e.subject || ''); e.context = {type: e.kind === 'across' ? 'across' : inferContextType(name), name}; }
   if (e.kind !== 'across' && e.subject === undefined) e.subject = e.context.name;
+  renameContext(e);
   if (e.groupCode === undefined) e.groupCode = e.kind !== 'across' && primary ? primary : '';
   e.links = Array.isArray(e.links) ? e.links : [];
   e.notes = Array.isArray(e.notes) ? e.notes : [];
   if (!e.sent){ e.sent = {}; if (e.pushed && e.pushed.at && primary) e.sent['g:' + primary] = e.pushed.at; }
   return e;
+}
+/* Subject names in full ("English" becomes English Language), and NEXUS as its own kind of experience.
+   Safe to run on every open: a name already in full is left as it is. */
+const isNexusName = n => /^nexus(@bty)?$/i.test(String(n || '').trim());
+function renameContext(e){
+  if (!e || !e.context || e.context.type !== 'subject') return;
+  if (isNexusName(e.context.name)) e.context = {type:'nexus', name:'NEXUS@BTY'};
+  else e.context.name = canonSubject(e.context.name);
+  if (e.subject !== undefined && e.kind !== 'across') e.subject = e.context.name;
+}
+function renameSubjects(p){
+  const x = p.experiences;
+  if (x.subjects.some(isNexusName) && !x.others.some(o => o.type === 'nexus')) x.others.push({type:'nexus', name:'NEXUS@BTY'});
+  x.subjects = [...new Set(x.subjects.filter(s => !isNexusName(s)).map(canonSubject))];
+  const lv = {}; for (const [k, v] of Object.entries(x.levels)) lv[canonSubject(k)] = v; x.levels = lv;
+  for (const d of Object.values(p.drafts || {})) renameContext(d);
 }
 function migrateProfile(p){
   if (!p || typeof p !== 'object') return p;
@@ -1151,6 +1293,9 @@ function migrateProfile(p){
   p.experiences = Object.assign({subjects:[], cca:'', others:[], levels:{}}, p.experiences || {});
   if (!p.experiences.levels || typeof p.experiences.levels !== 'object') p.experiences.levels = {};
   p.entries = Array.isArray(p.entries) ? p.entries : []; p.drafts = p.drafts || {}; p.done = p.done || {};
+  if (!Array.isArray(p.experiences.subjects)) p.experiences.subjects = [];
+  if (!Array.isArray(p.experiences.others)) p.experiences.others = [];
+  renameSubjects(p);
   const primary = p.groups[0] ? p.groups[0].code : '';
   for (const e of p.entries) migrateEntry(e, primary);
   return p;

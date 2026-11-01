@@ -49,18 +49,18 @@ const BANNED = ['whole trick', ' beats ', 'not a verdict', 'most people never', 
 
   // 2. a student with only a CCA: two taps to a subject, and it is remembered
   await go('#/write/grow');
-  check('the usual row holds only the CCA; six type tiles', (await page.$$eval('.xchips .chip', l => l.map(x => x.textContent.trim()))).join() === 'Football CCA' && (await page.$$('.tile')).length === 6, JSON.stringify({chips:await page.$$eval('.xchips .chip', l => l.map(x => x.textContent.trim())), tiles:(await page.$$('.tile')).length, hash:await page.evaluate(() => location.hash), dlg:await page.evaluate(() => document.getElementById('dlg').open), sheet:(await page.textContent('#sheet')).slice(0, 120)}));
+  check('the usual row holds only the CCA; seven type tiles, NEXUS@BTY among them', (await page.$$eval('.xchips .chip', l => l.map(x => x.textContent.trim()))).join() === 'Football CCA' && (await page.$$('.tile')).length === 7 && !!(await page.$('[data-ptype=nexus]')), JSON.stringify({chips:await page.$$eval('.xchips .chip', l => l.map(x => x.textContent.trim())), tiles:(await page.$$('.tile')).length, hash:await page.evaluate(() => location.hash), dlg:await page.evaluate(() => document.getElementById('dlg').open), sheet:(await page.textContent('#sheet')).slice(0, 120)}));
   await page.click('[data-ptype=subject]'); await sleep(200);
   const subjChips = await page.$$eval('.typepanel .chip', l => l.length);
-  await page.click('.typepanel [data-exp="subject|Chemistry"]'); await sleep(200);
-  check('Subject, then Chemistry: chosen in two taps', subjChips >= 18 && (await page.$$eval('.typepanel .chip.on', l => l.map(x => x.textContent.trim()))).join() === 'Chemistry' && (await page.textContent('.addhint')).includes('Chemistry will be added to your subjects'));
+  await page.click('.typepanel [data-exp="subject|Science"]'); await sleep(200);
+  check('Subject, then Science: chosen in two taps', subjChips >= 18 && (await page.$$eval('.typepanel .chip.on', l => l.map(x => x.textContent.trim()))).join() === 'Science' && (await page.textContent('.addhint')).includes('Science will be added to your subjects'));
   await page.screenshot({path:SHOTS + '91-picker.png', fullPage:true});
   await page.click('#cNext'); await sleep(300);
-  check('Chemistry is saved to the student’s subjects, with Undo offered', (await prof()).experiences.subjects.includes('Chemistry') && (await page.textContent('#toast')).includes('Undo'));
+  check('Science is saved to the student’s subjects, with Undo offered', (await prof()).experiences.subjects.includes('Science') && (await page.textContent('#toast')).includes('Undo'));
   await page.click('#toast button'); await sleep(200);
-  check('Undo takes it off the list', !(await prof()).experiences.subjects.includes('Chemistry'));
+  check('Undo takes it off the list', !(await prof()).experiences.subjects.includes('Science'));
   await page.click('#cBack'); await sleep(200); await page.click('#cNext'); await sleep(200);
-  check('it is added again when the student moves on', (await prof()).experiences.subjects.includes('Chemistry'));
+  check('it is added again when the student moves on', (await prof()).experiences.subjects.includes('Science'));
   // a typed experience of another type
   await page.click('#cBack'); await sleep(200); await page.click('[data-ptype=camp]'); await sleep(200);
   await page.fill('[name=ctxName]', 'Sec 2 camp'); await page.click('#cNext'); await sleep(300);
