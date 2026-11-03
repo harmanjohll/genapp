@@ -1,0 +1,119 @@
+{
+  "id": "beatty-2027",
+  "school": "Beatty Secondary School",
+  "year": 2027,
+  "source": "Supplied by the Principal, 1 November 2026",
+  "groups": ["Languages", "Mathematics", "Sciences", "Humanities", "Common Curriculum", "Electives", "Others"],
+  "subjects": {
+    "lower": [
+      {"name": "English Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Chinese Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Malay Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Tamil Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Higher Chinese Language", "group": "Languages", "levels": null},
+      {"name": "Higher Malay Language", "group": "Languages", "levels": null},
+      {"name": "Higher Tamil Language", "group": "Languages", "levels": null},
+      {"name": "Other Mother Tongue Language", "group": "Languages", "levels": ["G2", "G3"], "outside": ["G2", "G3"]},
+      {"name": "Mathematics", "group": "Mathematics", "levels": ["G1", "G2", "G3"]},
+      {"name": "Science", "group": "Sciences", "levels": ["G1", "G2", "G3"]},
+      {"name": "Geography", "group": "Humanities", "levels": ["G2", "G3"]},
+      {"name": "History", "group": "Humanities", "levels": ["G2", "G3"]},
+      {"name": "Literature in English", "group": "Humanities", "levels": ["G2", "G3"]},
+      {"name": "Humanities Exposure Modules", "group": "Humanities", "levels": ["G1"]},
+      {"name": "Art", "group": "Common Curriculum", "levels": null},
+      {"name": "Design and Technology", "group": "Common Curriculum", "levels": null},
+      {"name": "Food and Consumer Education", "group": "Common Curriculum", "levels": null},
+      {"name": "Music", "group": "Common Curriculum", "levels": null},
+      {"name": "Physical Education", "group": "Others", "levels": null},
+      {"name": "Character and Citizenship Education", "group": "Others", "levels": null}
+    ],
+    "upper": [
+      {"name": "English Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Chinese Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Malay Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Tamil Language", "group": "Languages", "levels": ["G1", "G2", "G3"]},
+      {"name": "Higher Chinese Language", "group": "Languages", "levels": null},
+      {"name": "Higher Malay Language", "group": "Languages", "levels": null},
+      {"name": "Higher Tamil Language", "group": "Languages", "levels": null},
+      {"name": "Other Mother Tongue Language", "group": "Languages", "levels": ["G2", "G3"], "outside": ["G2", "G3"]},
+      {"name": "Mathematics", "group": "Mathematics", "levels": ["G1", "G2", "G3"]},
+      {"name": "Additional Mathematics", "group": "Mathematics", "levels": ["G3"]},
+      {"name": "Chemistry", "group": "Sciences", "levels": ["G3"]},
+      {"name": "Physics", "group": "Sciences", "levels": ["G3"]},
+      {"name": "Biology", "group": "Sciences", "levels": ["G3"]},
+      {"name": "Science (Chemistry, Physics)", "group": "Sciences", "levels": ["G2", "G3"]},
+      {"name": "Science (Chemistry, Biology)", "group": "Sciences", "levels": ["G3"]},
+      {"name": "Science", "group": "Sciences", "levels": ["G1"]},
+      {"name": "Humanities (Social Studies, Geography)", "group": "Humanities", "levels": ["G2", "G3"]},
+      {"name": "Humanities (Social Studies, History)", "group": "Humanities", "levels": ["G2", "G3"]},
+      {"name": "Geography", "group": "Humanities", "levels": ["G3"]},
+      {"name": "Literature in English", "group": "Humanities", "levels": ["G3"]},
+      {"name": "Social Studies", "group": "Humanities", "levels": ["G1"], "examinable": false},
+      {"name": "Art", "group": "Electives", "levels": ["G2", "G3"]},
+      {"name": "Computing", "group": "Electives", "levels": ["G1", "G3"], "outside": ["G3"]},
+      {"name": "Design and Technology", "group": "Electives", "levels": ["G2"]},
+      {"name": "Music", "group": "Electives", "levels": ["G3"], "outside": ["G3"]},
+      {"name": "Nutrition and Food Science", "group": "Electives", "levels": ["G2", "G3"]},
+      {"name": "Principles of Accounts", "group": "Electives", "levels": ["G3"]},
+      {"name": "Physical Education", "group": "Others", "levels": null},
+      {"name": "Character and Citizenship Education", "group": "Others", "levels": null}
+    ]
+  },
+  "notes": {
+    "lower": {
+      "Humanities": "G1 students take the Humanities Exposure Modules, and can move to G2 in a single subject. G2 can move to G3.",
+      "Common Curriculum": "Everyone takes these at one common level in Sec 1 and 2."
+    },
+    "upper": {
+      "Sciences": "Pure Sciences: Chemistry with Physics, or Chemistry with Biology. Combined Sciences: Science (Chemistry, Physics) or Science (Chemistry, Biology).",
+      "Humanities": "Social Studies at G1 is not examined.",
+      "Electives": "Computing at G1 is for students without a fifth subject."
+    }
+  },
+  "aliases": {
+    "English": "English Language",
+    "Literature": "Literature in English",
+    "PE": "Physical Education",
+    "CCE": "Character and Citizenship Education",
+    "Additional Maths": "Additional Mathematics",
+    "A Maths": "Additional Mathematics",
+    "Maths": "Mathematics",
+    "POA": "Principles of Accounts",
+    "D&T": "Design and Technology",
+    "FCE": "Food and Consumer Education",
+    "NFS": "Nutrition and Food Science"
+  },
+  "cca": [
+    {"group": "Clubs", "names": ["Infocomm Club"]},
+    {"group": "Performing Arts", "names": ["Chinese Orchestra", "Choir", "Concert Band", "Drama", "Malay Dance", "Modern Dance"]},
+    {"group": "Sports", "names": ["Badminton", "Canoeing", "Football", "Volleyball", "Wushu"]},
+    {"group": "Uniformed Groups", "names": ["Boys' Brigade", "National Cadet Corps (Land)", "National Civil Defence Cadet Corps", "National Police Cadet Corps", "Scouts"]}
+  ],
+  "nexus": {
+    "tiers": [
+      {"id": "NX101", "name": "Critical Cornerstones", "who": "Every Sec 1 student", "levels": [1]},
+      {"id": "NX201", "name": "Constructive Curiosities", "who": "Every Sec 2 student", "levels": [2]},
+      {"id": "NX301", "name": "Creative Connections: exchanges", "who": "Selected students", "levels": [3, 4, 5]},
+      {"id": "NX302", "name": "Creative Connections: industry attachments", "who": "Selected students", "levels": [3, 4, 5]}
+    ],
+    "modules": [
+      {"code": "NX101", "tier": "NX101", "name": "Critical Cornerstones: The Critical Inquiry Project"},
+      {"code": "NX201", "tier": "NX201", "name": "Constructive Curiosities: STEM Playgrounds"},
+      {"code": "NX3011", "tier": "NX301", "name": "Mihara City, Japan: BTY Exchange"},
+      {"code": "NX3012", "tier": "NX301", "name": "Mutsuzawa High School, Japan: BTY Exchange"},
+      {"code": "NX3013", "tier": "NX301", "name": "Aorere College, New Zealand: BTY Exchange"},
+      {"code": "NX3014", "tier": "NX301", "name": "Seoul, South Korea"},
+      {"code": "NX3015", "tier": "NX301", "name": "Geographical Investigation @ Bali"},
+      {"code": "NX3016", "tier": "NX301", "name": "Saue High School, Estonia: BTY e-Exchange"},
+      {"code": "NX3017", "tier": "NX301", "name": "Literary Adventures @ Bali"},
+      {"code": "NX3018", "tier": "NX301", "name": "Hanoi, Vietnam"},
+      {"code": "NX3021", "tier": "NX302", "name": "Rockwell Automation Industry Attachment"},
+      {"code": "NX3022", "tier": "NX302", "name": "Pacific International Lines Industry Attachment"},
+      {"code": "NX3023", "tier": "NX302", "name": "A*STAR"},
+      {"code": "NX3024", "tier": "NX302", "name": "Berita Harian"},
+      {"code": "NX3025", "tier": "NX302", "name": "Tamil Murasu"},
+      {"code": "NX3026", "tier": "NX302", "name": "ITE College Central Electrical Engineering"}
+    ]
+  },
+  "experiences": []
+}

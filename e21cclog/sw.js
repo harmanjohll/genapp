@@ -21,7 +21,7 @@ const lasting = url => /\.(woff2|png|jpg|svg)$/.test(url.pathname);
 self.addEventListener('fetch', e => {
   const req = e.request; const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-  if (url.pathname.includes('/legacy/')) return;
+  if (url.pathname.includes('/legacy/') || url.pathname.includes('/next/')) return;   // older and next versions keep their own copies
   if (lasting(url)){
     e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => { if (res.ok){ const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); } return res; })));
     return;

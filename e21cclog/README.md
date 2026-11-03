@@ -10,6 +10,7 @@ The E21CC Log lives at `genapp/e21cclog/` for students and `genapp/e21cclog/teac
 | `logs/`, `logsv2/`, `logsv3/` | Short pages left at the old addresses. Teacher note links, group links, class codes and share links go to the Log; other pages go to their legacy copy |
 | `e21cclog/school/beatty.json` | Beatty's offering: subjects for Lower and Upper Sec with the levels of demand each is offered at, CCAs, NEXUS@BTY modules, and the year's fixed experiences. See **Changing the school offering** |
 | `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
+| `e21cclog/next/` | The next version, built beside the pilot with its own storage and offline copy, so the pilot stays as it is. Its backlog and the rules for the scheduled build runs are in `next/BACKLOG.md` and `next/LOOP.md`; see `next/README.md` |
 
 The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). Later versions change the data in place. Nothing is copied from the older versions.
 
