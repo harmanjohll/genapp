@@ -25,9 +25,19 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run the tests
         run: e21cclog/tests/run.sh
+      - name: Install the test tools for the next version
+        working-directory: e21cclog/next/tests
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+      - name: Run the tests for the next version
+        if: always()
+        run: e21cclog/next/tests/run.sh
       - name: Keep the reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e21cclog-test-reports
-          path: e21cclog/tests/out
+          path: |
+            e21cclog/tests/out
+            e21cclog/next/tests/out

@@ -1,0 +1,3269 @@
+{
+ "id": "beatty-v1",
+ "version": 1,
+ "draft": "V1",
+ "title": "Beatty Secondary School: contextualised E21CC framework",
+ "about": "Beatty's I can statements, taken from E21CC_Statements_for_BTYSS_V1.docx. Where the draft held an original and a proposed rewrite, the rewrite is used; deleted text is dropped. Statements are quoted word for word. Each strand is a ladder: Lower Sec (Sec 1 and 2) then Upper Sec (Sec 3 to 5). Statement ids are the strand id plus l1, l2 or u1, u2 and so on; keep them stable once students link entries to them. The notes on each strand list what the draft left open for the school to settle.",
+ "bands": [
+  {
+   "id": "lower",
+   "label": "Lower Sec",
+   "levels": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "upper",
+   "label": "Upper Sec",
+   "levels": [
+    3,
+    4,
+    5
+   ]
+  }
+ ],
+ "mvvKey": {
+  "m": "Mission: Adaptive Thinkers, Agile Learners, Active Contributors",
+  "vi": "Vision: Purpose Driven Steward",
+  "va": "DREAM values: Discipline, Resilience, Empathy, Adaptability, Mindfulness"
+ },
+ "strands": [
+  {
+   "id": "ct1",
+   "comp": "critical",
+   "n": 1,
+   "name": "Exercises sound reasoning and decision-making",
+   "milestone": {
+    "lower": "At Lower Sec, students use evidence to explain reasoning (Level 3.1).",
+    "upper": "At Upper Sec, students use evidence and adopt different viewpoints to explain their reasoning and decisions, having considered the implications of the relationship among different viewpoints."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers"
+    ],
+    "vi": [],
+    "va": [
+     "Mindfulness",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can explain my thinking and decisions using evidence.",
+    "I can consider viewpoints different from my own and use them, alongside evidence, to explain my reasoning more fully."
+   ],
+   "upper": [
+    "I can work out how different viewpoints relate to each other, including where they conflict.",
+    "I can explain what those conflicts mean for my conclusion and make decisions I can defend.",
+    "I can weigh evidence and different viewpoints independently and make decisions I can defend on principle rather than preference."
+   ],
+   "notes": [
+    "Reviewer comment on the milestone: \"Need to have this?\" (Level 3.1)."
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "ct1.k1",
+      "label": "What counts as evidence",
+      "plain": "You know the difference between a fact you can check and an opinion.",
+      "cues": [
+       "evidence",
+       "data",
+       "fact",
+       "proof",
+       "results",
+       "source"
+      ]
+     },
+     {
+      "id": "ct1.k2",
+      "label": "Viewpoints and assumptions",
+      "plain": "You know that people can see the same thing differently, and why.",
+      "cues": [
+       "viewpoint",
+       "perspective",
+       "point of view",
+       "assume",
+       "assumption",
+       "opinion"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "ct1.s1",
+      "label": "Giving reasons with evidence",
+      "plain": "You explain a decision with a reason you can point to.",
+      "cues": [
+       "because",
+       "therefore",
+       "which means",
+       "this shows",
+       "so i decided"
+      ]
+     },
+     {
+      "id": "ct1.s2",
+      "label": "Weighing two sides",
+      "plain": "You compare options or views before you decide.",
+      "cues": [
+       "compared",
+       "weighed",
+       "on the other hand",
+       "both",
+       "whereas",
+       "pros and cons"
+      ]
+     },
+     {
+      "id": "ct1.s3",
+      "label": "Checking a conclusion",
+      "plain": "You test an answer before you trust it.",
+      "cues": [
+       "checked",
+       "double checked",
+       "verified",
+       "tested",
+       "made sure",
+       "repeat"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "ct1.v1",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "ct1.v2",
+      "label": "Discipline",
+      "plain": "You did what needed doing, carefully and on time.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     },
+     {
+      "id": "ct1.v3",
+      "label": "Integrity",
+      "plain": "You reported what you really found, even when it was not what you hoped.",
+      "cues": [
+       "honest",
+       "admitted",
+       "the truth",
+       "i was wrong",
+       "owned up"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "ct1.d1",
+      "label": "Open mindedness",
+      "plain": "You are willing to change your mind when the evidence says so.",
+      "cues": [
+       "changed my mind",
+       "realised",
+       "realized",
+       "maybe",
+       "the other view"
+      ]
+     },
+     {
+      "id": "ct1.d2",
+      "label": "Healthy doubt",
+      "plain": "You do not accept an answer just because it is given.",
+      "cues": [
+       "doubt",
+       "unsure",
+       "did not seem right",
+       "looked wrong",
+       "questioned",
+       "not convinced"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ct2",
+   "comp": "critical",
+   "n": 2,
+   "name": "Uses metacognition to enhance, monitor and regulate thinking",
+   "milestone": {
+    "lower": "At Lower Sec, students can reflect on their thoughts, attitudes, behaviour and actions during their learning experiences, and determine the modifications (changes) required.",
+    "upper": "At Upper Sec, students can plan, organise and evaluate their thinking strategies to monitor their learning, suspend judgement, reassess conclusions and consider alternatives to refine their thoughts, attitudes, behaviour and actions."
+   },
+   "mvv": {
+    "m": [
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Mindfulness",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can reflect on how I think and learn, and identify changes I can make to improve.",
+    "I can adjust my attitudes, behaviours and strategies to make a difference to my learning."
+   ],
+   "upper": [
+    "I can plan and monitor my own thinking strategies, and evaluate the effectiveness for my learning.",
+    "I can reassess my conclusions and consider alternatives before refining my attitudes and actions.",
+    "I can take ownership of my growth as a learner by consistently reflecting on and improving how I think, learn and act."
+   ],
+   "notes": [
+    "Reviewer comment: metacognition is called Adaptive Learning in Beatty's own VMV. School leaders to decide which name to use.",
+    "Upper Sec 1 asks \"effectiveness of what?\"; the wording is unresolved."
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "ct2.k1",
+      "label": "How I learn best",
+      "plain": "You know which ways of studying work for you.",
+      "cues": [
+       "works for me",
+       "learn best",
+       "method",
+       "strategy",
+       "the way i"
+      ]
+     },
+     {
+      "id": "ct2.k2",
+      "label": "My own patterns",
+      "plain": "You know your habits, strengths and usual mistakes.",
+      "cues": [
+       "usually",
+       "tend to",
+       "habit",
+       "careless",
+       "always make",
+       "often"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "ct2.s1",
+      "label": "Noticing my thinking",
+      "plain": "You notice what you were thinking while you worked.",
+      "cues": [
+       "i realised",
+       "i realized",
+       "i noticed",
+       "i was thinking",
+       "i thought"
+      ]
+     },
+     {
+      "id": "ct2.s2",
+      "label": "Changing a strategy",
+      "plain": "You try a different way when one is not working.",
+      "cues": [
+       "instead",
+       "changed",
+       "switched",
+       "different way",
+       "new method",
+       "tried another"
+      ]
+     },
+     {
+      "id": "ct2.s3",
+      "label": "Monitoring progress",
+      "plain": "You check how you are doing against a goal.",
+      "cues": [
+       "progress",
+       "improving",
+       "track",
+       "compared to last",
+       "goal",
+       "target"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "ct2.v1",
+      "label": "Mindfulness",
+      "plain": "You paid attention to how you learn, not only to what you learn.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "ct2.v2",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     },
+     {
+      "id": "ct2.v3",
+      "label": "Discipline",
+      "plain": "You followed through on what you planned to change.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "ct2.d1",
+      "label": "Ownership",
+      "plain": "You take charge of your learning instead of waiting to be told.",
+      "cues": [
+       "i decided",
+       "on my own",
+       "myself",
+       "i chose",
+       "took charge"
+      ]
+     },
+     {
+      "id": "ct2.d2",
+      "label": "Belief that you can improve",
+      "plain": "You treat a mistake as a step towards doing better.",
+      "cues": [
+       "learn from my",
+       "better next time",
+       "learnt from",
+       "learned from"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "at3",
+   "comp": "adaptive",
+   "n": 3,
+   "name": "Assesses different contexts and situations to make connections and draw new insights",
+   "milestone": {
+    "lower": "At Lower Sec, students can understand the similarities and differences between different contexts or situations and how this might affect their perspective or approach.",
+    "upper": "At Upper Sec, students can draw on the similarities and differences between different contexts or situations to extract new insights to inform their perspective or approach."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Adaptability",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can identify similarities and differences between different situations, and use these connections to understand things in a new way.",
+    "I can use the connections made and apply what I have learnt in another context."
+   ],
+   "upper": [
+    "I can identify what is similar and what is different between two situations.",
+    "I can use the insights drawn from different contexts to sharpen my perspective, challenge my assumptions and approach problems in more creative and effective ways."
+   ],
+   "notes": [
+    "Upper Sec 1 (the proposed rewrite) reads easier than Lower Sec 1. The ladder needs checking.",
+    "Reviewer comment on Upper Sec 2: would \"creative\" be needed, or \"approach situations differently\"?"
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "at3.k1",
+      "label": "Similarities and differences",
+      "plain": "You know what is alike and what is different between two situations.",
+      "cues": [
+       "similar",
+       "same as",
+       "unlike",
+       "like when"
+      ]
+     },
+     {
+      "id": "at3.k2",
+      "label": "Where an idea applies",
+      "plain": "You know when an idea from one place fits another.",
+      "cues": [
+       "applies",
+       "also works",
+       "same idea",
+       "used it in"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "at3.s1",
+      "label": "Making connections",
+      "plain": "You link what you learnt to another subject or to life.",
+      "cues": [
+       "reminded me",
+       "connected",
+       "link",
+       "like in",
+       "similar to"
+      ]
+     },
+     {
+      "id": "at3.s2",
+      "label": "Transferring learning",
+      "plain": "You use something learnt in one place to solve a problem in another.",
+      "cues": [
+       "used what",
+       "applied",
+       "same method",
+       "from science",
+       "from maths",
+       "from math"
+      ]
+     },
+     {
+      "id": "at3.s3",
+      "label": "Drawing a new insight",
+      "plain": "You notice something new because you compared two situations.",
+      "cues": [
+       "now i see",
+       "new way",
+       "realised that",
+       "realized that",
+       "understood better"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "at3.v1",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "at3.v2",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "at3.d1",
+      "label": "Curiosity",
+      "plain": "You look for links between things on your own.",
+      "cues": [
+       "wondered",
+       "curious",
+       "what if",
+       "i wonder"
+      ]
+     },
+     {
+      "id": "at3.d2",
+      "label": "Flexible thinking",
+      "plain": "You are willing to see a familiar thing in a new way.",
+      "cues": [
+       "new way",
+       "different angle",
+       "looked at it again",
+       "another way"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "at4",
+   "comp": "adaptive",
+   "n": 4,
+   "name": "Manages complexities and ambiguities by adjusting one's perspective and strategies",
+   "milestone": {
+    "lower": "At Lower Sec, students can draw on different perspectives and strategies to adjust their approach when required, applying learnt knowledge and skills in unfamiliar contexts.",
+    "upper": "At Upper Sec, students can draw on different perspectives and strategies to adjust their approach when required, adapting learnt knowledge and skills in new and unexpected contexts to solve complex and unexpected problems."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Adaptability",
+     "Resilience"
+    ]
+   },
+   "lower": [
+    "I can engage with different perspectives and adjust my approach when I face unfamiliar situations.",
+    "I can adjust my approach when things do not go as expected, and stay open to trying new strategies."
+   ],
+   "upper": [
+    "I can adapt my strategies and mindset when facing complex, ambiguous or unexpected challenges.",
+    "I can draw on diverse perspectives to help me solve new problems.",
+    "I can adapt both my strategies and my mindset in complex, real-world contexts to respond with confidence and integrity."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "at4.k1",
+      "label": "Unfamiliar situations",
+      "plain": "You know a new or messy situation needs a different approach.",
+      "cues": [
+       "new situation",
+       "unfamiliar",
+       "never done",
+       "first time",
+       "unexpected"
+      ]
+     },
+     {
+      "id": "at4.k2",
+      "label": "More than one route",
+      "plain": "You know a problem can be solved in more than one way.",
+      "cues": [
+       "another way",
+       "other ways",
+       "options",
+       "more than one"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "at4.s1",
+      "label": "Adjusting the approach",
+      "plain": "You change your plan when things do not go as expected.",
+      "cues": [
+       "adjusted",
+       "changed plan",
+       "changed the plan",
+       "plan b",
+       "adapted",
+       "switched"
+      ]
+     },
+     {
+      "id": "at4.s2",
+      "label": "Using other perspectives",
+      "plain": "You use other people's ideas to solve something new.",
+      "cues": [
+       "suggested",
+       "idea from",
+       "teammate said",
+       "my friend said",
+       "asked my"
+      ]
+     },
+     {
+      "id": "at4.s3",
+      "label": "Acting with uncertainty",
+      "plain": "You make a sensible move even when you are not sure.",
+      "cues": [
+       "not sure",
+       "still tried",
+       "took a chance",
+       "guessed"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "at4.v1",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "at4.v2",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     },
+     {
+      "id": "at4.v3",
+      "label": "Integrity",
+      "plain": "You were honest, even when it was hard.",
+      "cues": [
+       "honest",
+       "admitted",
+       "the truth",
+       "i was wrong",
+       "owned up"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "at4.d1",
+      "label": "Composure",
+      "plain": "You stay calm when things are uncertain.",
+      "cues": [
+       "calm",
+       "did not panic",
+       "didn't panic",
+       "relaxed",
+       "steady"
+      ]
+     },
+     {
+      "id": "at4.d2",
+      "label": "Openness to new strategies",
+      "plain": "You are willing to try something you have not tried before.",
+      "cues": [
+       "tried something new",
+       "new strategy",
+       "experiment",
+       "never tried"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "it5",
+   "comp": "inventive",
+   "n": 5,
+   "name": "Explores possibilities and generates novel and useful ideas",
+   "milestone": {
+    "lower": "At Lower Sec, students can generate ideas that may involve modifying existing ones and explore different pathways that are appropriate to respond to an issue or challenge.",
+    "upper": "At Upper Sec, students can generate ideas that are unique or modified substantially from existing ones and explore different pathways that lead to solutions."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [],
+    "va": [
+     "Adaptability",
+     "Resilience",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can explore different possibilities and generate ideas in response to issues or challenges, including by building on or modifying existing ones.",
+    "I can develop and refine my ideas by testing them against the issue or challenge at hand."
+   ],
+   "upper": [
+    "I can generate new ideas by exploring multiple pathways.",
+    "I can take creative risks and use feedback to develop them into solutions that are genuinely useful.",
+    "I can generate and develop original ideas to make a difference to the challenges I encounter."
+   ],
+   "notes": [
+    "Reviewer comment on \"creative risks\": unconventional or uncertain?"
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "it5.k1",
+      "label": "What makes an idea useful",
+      "plain": "You know an idea must work for the problem, not only be new.",
+      "cues": [
+       "useful",
+       "practical"
+      ]
+     },
+     {
+      "id": "it5.k2",
+      "label": "Building on ideas",
+      "plain": "You know good ideas often grow from existing ones.",
+      "cues": [
+       "built on",
+       "modified",
+       "improved on",
+       "based on"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "it5.s1",
+      "label": "Generating ideas",
+      "plain": "You come up with more than one idea.",
+      "cues": [
+       "ideas",
+       "brainstorm",
+       "came up with",
+       "another idea"
+      ]
+     },
+     {
+      "id": "it5.s2",
+      "label": "Testing an idea",
+      "plain": "You try an idea out to see if it works.",
+      "cues": [
+       "tested",
+       "tried it",
+       "prototype",
+       "experiment",
+       "trial"
+      ]
+     },
+     {
+      "id": "it5.s3",
+      "label": "Developing ideas from feedback",
+      "plain": "You improve an idea after hearing what others think.",
+      "cues": [
+       "changed it after",
+       "improved it",
+       "improved my idea"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "it5.v1",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "it5.v2",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     },
+     {
+      "id": "it5.v3",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "it5.d1",
+      "label": "Curiosity",
+      "plain": "You ask what if, and want to find out.",
+      "cues": [
+       "what if",
+       "wonder",
+       "curious",
+       "imagine"
+      ]
+     },
+     {
+      "id": "it5.d2",
+      "label": "Creative courage",
+      "plain": "You try an idea that might not work.",
+      "cues": [
+       "risk",
+       "took a chance",
+       "tried anyway",
+       "bold"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "it6",
+   "comp": "inventive",
+   "n": 6,
+   "name": "Evaluates and refines ideas to formulate novel and useful solutions",
+   "milestone": {
+    "lower": "At Lower Sec, students can evaluate and refine their ideas using relevant strategies and based on a set of criteria that is appropriate for the task or context.",
+    "upper": "At Upper Sec, students can evaluate and refine their ideas iteratively, using relevant strategies and based on a set of criteria that is appropriate for the task or context."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Discipline",
+     "Resilience",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can evaluate my ideas using relevant criteria to identify what is working and what is not.",
+    "I can refine my thinking and make deliberate improvements to arrive at a better solution."
+   ],
+   "upper": [
+    "I can evaluate and refine my ideas using relevant criteria to identify what is working and what is not.",
+    "I can challenge my own ideas and use this to push my thinking towards creative and robust solutions.",
+    "I can develop creative and useful solutions through evaluation, creative risk-taking and a deep awareness of the needs of the issue."
+   ],
+   "notes": [
+    "Upper Sec 1 nearly repeats Lower Sec 1.",
+    "Reviewer comment on Upper Sec 2: keep \"useful solutions\" rather than \"robust\"?"
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "it6.k1",
+      "label": "Criteria for success",
+      "plain": "You know what a good solution has to do.",
+      "cues": [
+       "rubric",
+       "requirement",
+       "has to work"
+      ]
+     },
+     {
+      "id": "it6.k2",
+      "label": "Strengths and limits of an idea",
+      "plain": "You know an idea can work in some ways and not in others.",
+      "cues": [
+       "strength",
+       "weakness",
+       "worked",
+       "did not work",
+       "didn't work"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "it6.s1",
+      "label": "Evaluating against criteria",
+      "plain": "You judge your work against clear criteria.",
+      "cues": [
+       "against the criteria",
+       "checked against",
+       "rubric",
+       "met the"
+      ]
+     },
+     {
+      "id": "it6.s2",
+      "label": "Refining",
+      "plain": "You make deliberate changes to improve your work.",
+      "cues": [
+       "improved my",
+       "refined",
+       "edited",
+       "revised",
+       "second draft",
+       "made it better"
+      ]
+     },
+     {
+      "id": "it6.s3",
+      "label": "Challenging my own idea",
+      "plain": "You look for what could go wrong with your own idea.",
+      "cues": [
+       "what could go wrong",
+       "flaw",
+       "problem with my",
+       "questioned my"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "it6.v1",
+      "label": "Discipline",
+      "plain": "You did what needed doing, carefully and on time.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     },
+     {
+      "id": "it6.v2",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     },
+     {
+      "id": "it6.v3",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "it6.d1",
+      "label": "Perseverance",
+      "plain": "You keep improving instead of stopping at the first version.",
+      "cues": [
+       "another try",
+       "kept improving",
+       "second version",
+       "tried again"
+      ]
+     },
+     {
+      "id": "it6.d2",
+      "label": "High standards",
+      "plain": "You aim for work that is good, not only finished.",
+      "cues": [
+       "proud",
+       "quality",
+       "my best"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "co1",
+   "comp": "communication",
+   "n": 1,
+   "name": "Effectively communicates information and co-constructs meaning",
+   "milestone": {
+    "lower": "At Lower Sec, students can convey and evaluate knowledge to co-construct new understandings and ideas coherently, while considering the specific purpose and context of communication.",
+    "upper": "At Upper Sec, students can convey and critically evaluate knowledge to co-construct new understandings and complex ideas persuasively and with impact, while considering the specific purpose and context of communication."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [],
+    "va": [
+     "Empathy",
+     "Discipline",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can express my ideas clearly and confidently, using appropriate language and tone to suit the purpose, audience and context.",
+    "I can check whether my message is understood and build on others’ ideas to learn together.",
+    "I can process information shared with me and consider how it connects with the information I already have."
+   ],
+   "upper": [
+    "I can present complex ideas persuasively, using appropriate language and tone to suit the purpose, audience and context.",
+    "I can critically evaluate what I share and how I share it to ensure my communication is honest, accurate and responsible.",
+    "I can build on what others contribute to work towards shared insight rather than just conveying my own views.",
+    "I can gather feedback from my audience and synthesise different viewpoints to achieve a deeper understanding."
+   ],
+   "notes": [
+    "Lower Sec 3 and Upper Sec 4 were proposed additions in the draft.",
+    "Reviewer comments on Upper Sec 2: overlap with adjusting, and \"where did these come from?\""
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "co1.k1",
+      "label": "Purpose, audience and context",
+      "plain": "You know your words must suit who you are talking to, and why.",
+      "cues": [
+       "audience",
+       "purpose",
+       "explain to",
+       "younger",
+       "for my friend"
+      ]
+     },
+     {
+      "id": "co1.k2",
+      "label": "Accurate and responsible sharing",
+      "plain": "You know what you share should be true and fair.",
+      "cues": [
+       "accurate",
+       "honest about"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "co1.s1",
+      "label": "Explaining clearly",
+      "plain": "You explain an idea so someone else can follow it.",
+      "cues": [
+       "explained",
+       "explain it",
+       "would explain",
+       "taught",
+       "in my own words",
+       "diagram"
+      ]
+     },
+     {
+      "id": "co1.s2",
+      "label": "Checking understanding",
+      "plain": "You check that the other person understood.",
+      "cues": [
+       "asked if",
+       "understood",
+       "checked if",
+       "did they get"
+      ]
+     },
+     {
+      "id": "co1.s3",
+      "label": "Building on others' ideas",
+      "plain": "You add to what someone else said.",
+      "cues": [
+       "added to",
+       "built on",
+       "her idea",
+       "his idea",
+       "agreed and"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "co1.v1",
+      "label": "Empathy",
+      "plain": "You thought about what your listener needed.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "co1.v2",
+      "label": "Discipline",
+      "plain": "You did what needed doing, carefully and on time.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     },
+     {
+      "id": "co1.v3",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "co1.d1",
+      "label": "Confidence to speak",
+      "plain": "You speak up and share your thinking.",
+      "cues": [
+       "spoke up",
+       "presented",
+       "shared",
+       "volunteered"
+      ]
+     },
+     {
+      "id": "co1.d2",
+      "label": "Openness to feedback",
+      "plain": "You welcome questions and corrections.",
+      "cues": [
+       "feedback",
+       "corrected",
+       "asked me",
+       "pointed out"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "co2",
+   "comp": "communication",
+   "n": 2,
+   "name": "Engages empathetically with diverse perspectives",
+   "milestone": {
+    "lower": "At Lower Sec, students respond with respect and empathy, and are sensitive to the diverse backgrounds that influence different perspectives while interacting with others.",
+    "upper": "At Upper Sec, students respond with respect and empathy, and are sensitive to the diverse backgrounds that influence the context of communication with others."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [],
+    "va": [
+     "Empathy",
+     "Mindfulness",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can listen actively and acknowledge others' feelings and viewpoints.",
+    "I can ask thoughtful questions with empathy to better understand others’ perspectives."
+   ],
+   "upper": [
+    "I can validate others’ feelings and viewpoints, helping everyone feel heard, respected and valued.",
+    "I can adjust how I communicate to build trust, resolve misunderstandings, and encourage open dialogue."
+   ],
+   "notes": [
+    "The Upper Sec rewrites merge four earlier statements into two."
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "co2.k1",
+      "label": "Others' feelings and views",
+      "plain": "You know others may feel or see things differently.",
+      "cues": [
+       "upset",
+       "their view",
+       "perspective",
+       "how they felt"
+      ]
+     },
+     {
+      "id": "co2.k2",
+      "label": "What listening is",
+      "plain": "You know listening means understanding, not waiting to talk.",
+      "cues": [
+       "listened",
+       "heard",
+       "listen"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "co2.s1",
+      "label": "Active listening",
+      "plain": "You listen and show you understood.",
+      "cues": [
+       "listened",
+       "nodded",
+       "repeated back",
+       "heard her",
+       "heard him"
+      ]
+     },
+     {
+      "id": "co2.s2",
+      "label": "Asking caring questions",
+      "plain": "You ask questions to understand someone.",
+      "cues": [
+       "asked her",
+       "asked him",
+       "asked how",
+       "asked why",
+       "asked them"
+      ]
+     },
+     {
+      "id": "co2.s3",
+      "label": "Adjusting how I speak",
+      "plain": "You change how you speak to build trust.",
+      "cues": [
+       "calmly",
+       "gently",
+       "softer",
+       "changed how i said"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "co2.v1",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "co2.v2",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "co2.v3",
+      "label": "Respect",
+      "plain": "You treated others and their views with respect.",
+      "cues": [
+       "respect",
+       "listened",
+       "polite",
+       "their view",
+       "valued"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "co2.d1",
+      "label": "Patience",
+      "plain": "You give others time to speak and think.",
+      "cues": [
+       "waited",
+       "patient",
+       "let them",
+       "let her",
+       "let him"
+      ]
+     },
+     {
+      "id": "co2.d2",
+      "label": "Wanting to understand",
+      "plain": "You want to understand people, not only reply.",
+      "cues": [
+       "wanted to understand",
+       "why they",
+       "why she",
+       "why he"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cl3",
+   "comp": "collaboration",
+   "n": 3,
+   "name": "Interacts and works effectively in group settings to contribute to shared goals",
+   "milestone": {
+    "lower": "At Lower Sec, students can manage disagreements with group members and take in suggestions, while contributing to the completion of a task to meet the shared goals.",
+    "upper": "At Upper Sec, students can mediate conflict and disagreement, reaching compromises or consensus for collective decisions to meet shared goals."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can contribute meaningfully to group work, doing my fair share and supporting my teammates to help the group succeed.",
+    "I can manage disagreements and help the group find a way forward to achieve our shared goals."
+   ],
+   "upper": [
+    "I can build consensus and lead my team towards shared goals.",
+    "I can help teammates understand each other's perspectives, de-escalate tension and work through disagreements to strengthen relationships."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cl3.k1",
+      "label": "Shared goals",
+      "plain": "You know what your group is trying to achieve together.",
+      "cues": [
+       "our goal",
+       "together",
+       "team",
+       "group"
+      ]
+     },
+     {
+      "id": "cl3.k2",
+      "label": "Settling disagreements",
+      "plain": "You know fair ways to settle a disagreement.",
+      "cues": [
+       "disagree",
+       "argument",
+       "vote",
+       "compromise"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cl3.s1",
+      "label": "Doing my share",
+      "plain": "You contribute your part to the group's work.",
+      "cues": [
+       "my part",
+       "my share",
+       "contributed",
+       "i did my"
+      ]
+     },
+     {
+      "id": "cl3.s2",
+      "label": "Supporting teammates",
+      "plain": "You help a teammate who is struggling.",
+      "cues": [
+       "helped",
+       "supported",
+       "encouraged",
+       "cheered"
+      ]
+     },
+     {
+      "id": "cl3.s3",
+      "label": "Finding a way forward",
+      "plain": "You help the group move past a disagreement.",
+      "cues": [
+       "compromise",
+       "agreed",
+       "settled",
+       "way forward",
+       "agreed together"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cl3.v1",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "cl3.v2",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     },
+     {
+      "id": "cl3.v3",
+      "label": "Responsibility",
+      "plain": "You owned your part and what came of it.",
+      "cues": [
+       "responsible",
+       "my part",
+       "my fault",
+       "owned up",
+       "my job"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cl3.d1",
+      "label": "Team spirit",
+      "plain": "You care about the group's success, not only your own.",
+      "cues": [
+       "our team",
+       "together",
+       "as a team",
+       "for the team"
+      ]
+     },
+     {
+      "id": "cl3.d2",
+      "label": "Fairness",
+      "plain": "You make sure everyone gets a fair say.",
+      "cues": [
+       "fair",
+       "everyone",
+       "turns",
+       "each person"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cl4",
+   "comp": "collaboration",
+   "n": 4,
+   "name": "Collectively defines and negotiates roles and tasks to achieve group goals",
+   "milestone": {
+    "lower": "At Lower Sec, students can determine and effectively assume the role they will play by considering the dynamics of the group.",
+    "upper": "At Upper Sec, students can reflect on their working relationships with the group and adapt to contribute to the shared goals, as determined collectively by its members."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Discipline",
+     "Adaptability",
+     "Empathy"
+    ]
+   },
+   "lower": [
+    "I can take on a clear role in my group, communicate my responsibilities to my teammates and contribute to a shared work plan.",
+    "I can follow through on my responsibilities and check in with my team to make sure our shared plan is on track."
+   ],
+   "upper": [
+    "I can reflect on how I work with others and use this to improve how the group works.",
+    "I can adapt my role to serve the group's needs when the situation calls for it.",
+    "I can help my team define responsibilities collectively and ensure that every member is set up to contribute meaningfully."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cl4.k1",
+      "label": "Roles and responsibilities",
+      "plain": "You know what each person in the group is responsible for.",
+      "cues": [
+       "role",
+       "in charge of",
+       "responsible for"
+      ]
+     },
+     {
+      "id": "cl4.k2",
+      "label": "A shared plan",
+      "plain": "You know the steps and deadlines the group agreed on.",
+      "cues": [
+       "deadline",
+       "timeline",
+       "group plan",
+       "our plan"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cl4.s1",
+      "label": "Taking on a role",
+      "plain": "You take a clear role and tell the group what you will do.",
+      "cues": [
+       "my role",
+       "i was in charge",
+       "i took on",
+       "i volunteered to"
+      ]
+     },
+     {
+      "id": "cl4.s2",
+      "label": "Following through for the team",
+      "plain": "You do what you said you would, on time.",
+      "cues": [
+       "finished my",
+       "on time",
+       "completed",
+       "delivered"
+      ]
+     },
+     {
+      "id": "cl4.s3",
+      "label": "Checking in",
+      "plain": "You check that the group's plan is on track.",
+      "cues": [
+       "checked in",
+       "updated",
+       "reminded",
+       "asked the group"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cl4.v1",
+      "label": "Discipline",
+      "plain": "You did what needed doing, carefully and on time.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     },
+     {
+      "id": "cl4.v2",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "cl4.v3",
+      "label": "Responsibility",
+      "plain": "You owned your part and what came of it.",
+      "cues": [
+       "responsible",
+       "my part",
+       "my fault",
+       "owned up",
+       "my job"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cl4.d1",
+      "label": "Reliability",
+      "plain": "Your team can count on you.",
+      "cues": [
+       "on time",
+       "as promised",
+       "did my part"
+      ]
+     },
+     {
+      "id": "cl4.d2",
+      "label": "Flexibility in roles",
+      "plain": "You step into a different role when the group needs it.",
+      "cues": [
+       "took over",
+       "filled in",
+       "switched roles",
+       "stepped in"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in5",
+   "comp": "information",
+   "n": 5,
+   "name": "Employs effective strategies to locate information and exercises discernment",
+   "milestone": {
+    "lower": "At Lower Sec, students can select, organise and synthesise information from multiple sources and verify the accuracy, credibility and currency of information by cross-referencing multiple sources.",
+    "upper": "At Upper Sec, students can refine search results, organise information systematically and manage information sensitively, and evaluate the accuracy, credibility and relevance of information."
+   },
+   "mvv": {
+    "m": [
+     "Agile Learners",
+     "Adaptive Thinkers"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can search for information from multiple sources and check whether it is accurate and credible.",
+    "I can organise the information I find in a way that supports my learning and helps me make better decisions."
+   ],
+   "upper": [
+    "I can refine and organise information from diverse sources, assessing its accuracy, credibility and relevance with rigour.",
+    "I can evaluate information by interrogating its assumptions, biases and limitations.",
+    "I can manage information with discernment and sensitivity, and take responsibility for how I apply it in my learning and decision-making."
+   ],
+   "notes": [
+    "Reviewer comments: is \"with rigour\" needed; is \"interrogating\" too strong (\"questioning\")?"
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "in5.k1",
+      "label": "Credible sources",
+      "plain": "You know how to tell if a source can be trusted.",
+      "cues": [
+       "reliable",
+       "credible",
+       "trust",
+       "official",
+       "source"
+      ]
+     },
+     {
+      "id": "in5.k2",
+      "label": "Bias and limits",
+      "plain": "You know a source can be one sided or incomplete.",
+      "cues": [
+       "bias",
+       "biased",
+       "one sided",
+       "opinion",
+       "missing"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "in5.s1",
+      "label": "Searching widely",
+      "plain": "You look in more than one place.",
+      "cues": [
+       "searched",
+       "looked up",
+       "several",
+       "multiple",
+       "different websites"
+      ]
+     },
+     {
+      "id": "in5.s2",
+      "label": "Checking accuracy",
+      "plain": "You check information against another source.",
+      "cues": [
+       "cross checked",
+       "compared sources",
+       "checked if true",
+       "verified",
+       "fact check"
+      ]
+     },
+     {
+      "id": "in5.s3",
+      "label": "Organising information",
+      "plain": "You sort information so it helps you decide.",
+      "cues": [
+       "organised",
+       "organized",
+       "sorted",
+       "summary",
+       "mind map"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "in5.v1",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "in5.v2",
+      "label": "Discipline",
+      "plain": "You did what needed doing, carefully and on time.",
+      "cues": [
+       "carefully",
+       "on time",
+       "routine",
+       "every day",
+       "checked again",
+       "stuck to",
+       "step by step"
+      ]
+     },
+     {
+      "id": "in5.v3",
+      "label": "Integrity",
+      "plain": "You were honest, even when it was hard.",
+      "cues": [
+       "honest",
+       "admitted",
+       "the truth",
+       "i was wrong",
+       "owned up"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "in5.d1",
+      "label": "Discernment",
+      "plain": "You think before you believe or share.",
+      "cues": [
+       "not sure if",
+       "doubted",
+       "checked first"
+      ]
+     },
+     {
+      "id": "in5.d2",
+      "label": "Thoroughness",
+      "plain": "You do not stop at the first answer you find.",
+      "cues": [
+       "more sources",
+       "kept looking",
+       "another source"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in6",
+   "comp": "information",
+   "n": 6,
+   "name": "Creates and shares information ethically and maintains a positive online presence",
+   "milestone": {
+    "lower": "At Lower Sec, students can consider the impact of what they share and create, maintain positive relationships with others, and acknowledge sources of information.",
+    "upper": "At Upper Sec, students can contribute to information and perspectives shared in constructive and ethical ways, and manage their online reputation and relationships responsibly."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Discipline",
+     "Empathy"
+    ]
+   },
+   "lower": [
+    "I can share information responsibly by considering its impact on others, whether online or offline.",
+    "I can exercise self-control in how I behave online and offline, making deliberate choices about what I post, share and say."
+   ],
+   "upper": [
+    "I can contribute to conversations and platforms in constructive and ethical ways, and hold myself to a high standard of honesty and care in what I share.",
+    "I can manage a positive online presence by being aware that my digital footprint shapes how others see me and what I stand for, now and in the future."
+   ],
+   "notes": [
+    "Reviewer comments: Lower Sec 2 overlaps with Lower Sec 1; \"where did this come from?\" on Upper Sec 1."
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "in6.k1",
+      "label": "Digital footprint",
+      "plain": "You know what you post stays, and shapes how others see you.",
+      "cues": [
+       "post",
+       "online",
+       "footprint",
+       "social media"
+      ]
+     },
+     {
+      "id": "in6.k2",
+      "label": "Credit and honesty",
+      "plain": "You know to credit others' work and share only what is true.",
+      "cues": [
+       "credit",
+       "cite",
+       "reference",
+       "copied",
+       "plagiarism"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "in6.s1",
+      "label": "Thinking before sharing",
+      "plain": "You consider the impact before you post or say something.",
+      "cues": [
+       "before posting",
+       "decided not to",
+       "deleted",
+       "thought about how"
+      ]
+     },
+     {
+      "id": "in6.s2",
+      "label": "Self control online",
+      "plain": "You choose carefully what to post, share and say.",
+      "cues": [
+       "did not reply",
+       "didn't reply",
+       "ignored",
+       "chose not"
+      ]
+     },
+     {
+      "id": "in6.s3",
+      "label": "Contributing constructively",
+      "plain": "You add something helpful to a conversation.",
+      "cues": [
+       "helpful comment",
+       "constructive",
+       "kind comment"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "in6.v1",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "in6.v2",
+      "label": "Integrity",
+      "plain": "You were honest, even when it was hard.",
+      "cues": [
+       "honest",
+       "admitted",
+       "the truth",
+       "i was wrong",
+       "owned up"
+      ]
+     },
+     {
+      "id": "in6.v3",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "in6.d1",
+      "label": "Self restraint",
+      "plain": "You pause before reacting.",
+      "cues": [
+       "paused",
+       "calmed down",
+       "waited"
+      ]
+     },
+     {
+      "id": "in6.d2",
+      "label": "Care for others",
+      "plain": "You think about how your words land on others.",
+      "cues": [
+       "hurt",
+       "feelings",
+       "kind",
+       "respectful"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cv1",
+   "comp": "civic",
+   "n": 1,
+   "name": "Demonstrates understanding of values, ideals and issues of personal, community and national significance",
+   "milestone": {
+    "lower": "At Lower Sec, students can describe and explain issues that affect the culture, social and economic development, governance, future and identity of Singapore, and understand multiple perspectives on them.",
+    "upper": "At Upper Sec, students can explain, analyse, evaluate, and construct new understandings of issues that affect Singapore, and manage tensions among multiple perspectives to work towards a common good."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Empathy",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can explain issues that affect Singapore's society, culture and future.",
+    "I can understand why people hold different views based on their values and life experiences."
+   ],
+   "upper": [
+    "I can analyse issues from multiple perspectives to understand the reasons and values behind each viewpoint.",
+    "I can share thoughtful views on societal issues to contribute positively as a responsible citizen."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cv1.k1",
+      "label": "Issues facing Singapore",
+      "plain": "You know about issues that affect Singapore's society and future.",
+      "cues": [
+       "singapore",
+       "ageing",
+       "aging",
+       "housing",
+       "policy",
+       "national",
+       "government"
+      ]
+     },
+     {
+      "id": "cv1.k2",
+      "label": "Why views differ",
+      "plain": "You know people's values and lives shape their views.",
+      "cues": [
+       "values",
+       "background",
+       "experience",
+       "because they"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cv1.s1",
+      "label": "Explaining an issue",
+      "plain": "You explain a Singapore issue in your own words.",
+      "cues": [
+       "issue",
+       "affects people"
+      ]
+     },
+     {
+      "id": "cv1.s2",
+      "label": "Seeing several sides",
+      "plain": "You look at an issue from more than one group's view.",
+      "cues": [
+       "other side",
+       "elderly",
+       "workers",
+       "residents",
+       "perspective"
+      ]
+     },
+     {
+      "id": "cv1.s3",
+      "label": "Sharing a reasoned view",
+      "plain": "You give your own view with a reason.",
+      "cues": [
+       "i believe",
+       "in my view",
+       "my opinion is"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cv1.v1",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "cv1.v2",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "cv1.v3",
+      "label": "Harmony",
+      "plain": "You helped people get along across differences.",
+      "cues": [
+       "get along",
+       "united",
+       "harmony",
+       "included everyone"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cv1.d1",
+      "label": "Civic curiosity",
+      "plain": "You want to understand what is happening around you.",
+      "cues": [
+       "news",
+       "current affairs"
+      ]
+     },
+     {
+      "id": "cv1.d2",
+      "label": "Respect for difference",
+      "plain": "You accept that others may hold different views.",
+      "cues": [
+       "different view",
+       "why they believe"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cv2",
+   "comp": "civic",
+   "n": 2,
+   "name": "Plays active and constructive roles to improve the school, community and nation",
+   "milestone": {
+    "lower": "At Lower Sec, students can plan and organise programmes with others that contribute to school and community, with support, and can differentiate the civic roles played by individuals, groups and organisations in contributing to the community and nation.",
+    "upper": "At Upper Sec, students can independently identify appropriate and constructive steps to address issues, and initiate, plan and organise programmes with others that contribute to school, community and/or nation, and evaluate the complementary civic roles played by individuals, groups, organisations and government."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Resilience",
+     "Discipline"
+    ]
+   },
+   "lower": [
+    "I can work with others to plan and carry out projects that help my school and community.",
+    "I can take steps to make a positive difference on the people around me.",
+    "I can explain how different people and organisations each play a role in making our community better."
+   ],
+   "upper": [
+    "I can identify issues that matter and plan constructive ways to address them.",
+    "I can lead group efforts around a common goal to improve my school and community.",
+    "I can evaluate how individuals, groups and organisations work together to build a better society."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cv2.k1",
+      "label": "Who makes the community work",
+      "plain": "You know how people and organisations each play a part.",
+      "cues": [
+       "community",
+       "organisation",
+       "organization",
+       "volunteers",
+       "town council",
+       "grassroots"
+      ]
+     },
+     {
+      "id": "cv2.k2",
+      "label": "Needs around me",
+      "plain": "You know what people in your school or community need.",
+      "cues": [
+       "elderly",
+       "residents",
+       "needy"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cv2.s1",
+      "label": "Planning a project",
+      "plain": "You plan steps to help your school or community.",
+      "cues": [
+       "planned",
+       "project",
+       "organised",
+       "organized",
+       "event"
+      ]
+     },
+     {
+      "id": "cv2.s2",
+      "label": "Taking action",
+      "plain": "You carry out something that helps others.",
+      "cues": [
+       "volunteered",
+       "helped",
+       "cleaned",
+       "collected",
+       "donated"
+      ]
+     },
+     {
+      "id": "cv2.s3",
+      "label": "Leading others",
+      "plain": "You lead a group effort towards a common goal.",
+      "cues": [
+       "led",
+       "leader",
+       "in charge",
+       "coordinated"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cv2.v1",
+      "label": "Responsibility",
+      "plain": "You owned your part and what came of it.",
+      "cues": [
+       "responsible",
+       "my part",
+       "my fault",
+       "owned up",
+       "my job"
+      ]
+     },
+     {
+      "id": "cv2.v2",
+      "label": "Care",
+      "plain": "You acted to help others.",
+      "cues": [
+       "helped",
+       "cared",
+       "supported",
+       "looked out for",
+       "kind to"
+      ]
+     },
+     {
+      "id": "cv2.v3",
+      "label": "Resilience",
+      "plain": "You kept going after a setback.",
+      "cues": [
+       "tried again",
+       "kept going",
+       "did not give up",
+       "didn't give up",
+       "failed",
+       "setback",
+       "try again"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cv2.d1",
+      "label": "Initiative",
+      "plain": "You act without waiting to be asked.",
+      "cues": [
+       "on my own",
+       "i suggested",
+       "i started",
+       "took the initiative"
+      ]
+     },
+     {
+      "id": "cv2.d2",
+      "label": "Service",
+      "plain": "You want to make a difference for others.",
+      "cues": [
+       "help others",
+       "make a difference",
+       "give back"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "gl3",
+   "comp": "global",
+   "n": 3,
+   "name": "Aware of global issues, interconnections and trends, and forms informed perspectives",
+   "milestone": {
+    "lower": "At Lower Sec, students can demonstrate awareness of global issues, explain their impact and describe Singapore's role in addressing issues in the global community.",
+    "upper": "At Upper Sec, students can actively find out about global issues, analyse them and discern their implications for individuals, Singapore and other countries."
+   },
+   "mvv": {
+    "m": [
+     "Adaptive Thinkers",
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Mindfulness",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can identify global issues and explain how they affect Singapore and my everyday life.",
+    "I can form my own views on what global events and trends mean for me and my school."
+   ],
+   "upper": [
+    "I can research global issues and analyse how these issues impact Singapore and other countries.",
+    "I can develop well-reasoned and responsible views on global events and trends."
+   ],
+   "notes": [
+    "The draft notes that another school frames this as considering global issues and trends from multiple perspectives and their relevance to Singapore."
+   ],
+   "ksvd": {
+    "k": [
+     {
+      "id": "gl3.k1",
+      "label": "Global issues",
+      "plain": "You know about issues beyond Singapore, such as climate or trade.",
+      "cues": [
+       "climate",
+       "global",
+       "world",
+       "war",
+       "trade",
+       "pandemic"
+      ]
+     },
+     {
+      "id": "gl3.k2",
+      "label": "Interconnections",
+      "plain": "You know how events elsewhere affect Singapore and you.",
+      "cues": [
+       "affects singapore",
+       "import",
+       "prices",
+       "connected"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "gl3.s1",
+      "label": "Linking global to local",
+      "plain": "You explain how a world issue affects life here.",
+      "cues": [
+       "in singapore",
+       "affects us",
+       "my family",
+       "prices"
+      ]
+     },
+     {
+      "id": "gl3.s2",
+      "label": "Researching a world issue",
+      "plain": "You look into a world issue using reliable sources.",
+      "cues": [
+       "researched",
+       "news",
+       "article",
+       "read about"
+      ]
+     },
+     {
+      "id": "gl3.s3",
+      "label": "Forming a reasoned view",
+      "plain": "You give a view on a world event, with a reason.",
+      "cues": [
+       "i believe",
+       "in my view",
+       "singapore should"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "gl3.v1",
+      "label": "Mindfulness",
+      "plain": "You paused to notice and think before acting.",
+      "cues": [
+       "noticed",
+       "paused",
+       "aware",
+       "realised",
+       "realized",
+       "thought carefully",
+       "reflected"
+      ]
+     },
+     {
+      "id": "gl3.v2",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "gl3.v3",
+      "label": "Responsibility",
+      "plain": "You owned your part and what came of it.",
+      "cues": [
+       "responsible",
+       "my part",
+       "my fault",
+       "owned up",
+       "my job"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "gl3.d1",
+      "label": "Global curiosity",
+      "plain": "You want to know what is happening in the world.",
+      "cues": [
+       "news",
+       "curious",
+       "read about"
+      ]
+     },
+     {
+      "id": "gl3.d2",
+      "label": "Open mindedness",
+      "plain": "You consider views from other countries.",
+      "cues": [
+       "other countries",
+       "their view",
+       "another country"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "gl4",
+   "comp": "global",
+   "n": 4,
+   "name": "Interacts confidently with people from Singapore and beyond on global issues",
+   "milestone": {
+    "lower": "At Lower Sec, students can interact respectfully with people from Singapore and other countries to understand each other better and/or discuss global issues and reach relevant conclusions.",
+    "upper": "At Upper Sec, students can interact respectfully and confidently with people from Singapore and other countries on various platforms to discuss global issues and recommend appropriate actions to address them."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors",
+     "Agile Learners"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Adaptability"
+    ]
+   },
+   "lower": [
+    "I can interact respectfully with people from different backgrounds and countries.",
+    "I can share my thoughts on global issues with others, listen openly to theirs, and build a common understanding."
+   ],
+   "upper": [
+    "I can connect confidently and respectfully with people locally and globally to discuss world issues.",
+    "I can propose realistic, well-informed solutions to global issues while staying sensitive to different needs and perspectives."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "gl4.k1",
+      "label": "People of different countries",
+      "plain": "You know people from other countries may see things differently.",
+      "cues": [
+       "country",
+       "overseas",
+       "foreign",
+       "exchange",
+       "international"
+      ]
+     },
+     {
+      "id": "gl4.k2",
+      "label": "Respectful discussion",
+      "plain": "You know how to discuss an issue respectfully.",
+      "cues": [
+       "respect",
+       "polite",
+       "discussion"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "gl4.s1",
+      "label": "Interacting respectfully",
+      "plain": "You talk with people from other backgrounds with respect.",
+      "cues": [
+       "talked with",
+       "exchange student",
+       "visitors",
+       "overseas students"
+      ]
+     },
+     {
+      "id": "gl4.s2",
+      "label": "Listening and sharing views",
+      "plain": "You share your view and listen openly to theirs.",
+      "cues": [
+       "shared",
+       "listened",
+       "discussed"
+      ]
+     },
+     {
+      "id": "gl4.s3",
+      "label": "Proposing solutions",
+      "plain": "You suggest a realistic solution to a global problem.",
+      "cues": [
+       "global solution",
+       "countries could"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "gl4.v1",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "gl4.v2",
+      "label": "Adaptability",
+      "plain": "You changed your approach when things changed.",
+      "cues": [
+       "adapted",
+       "adjusted",
+       "changed my",
+       "switched",
+       "new way",
+       "instead"
+      ]
+     },
+     {
+      "id": "gl4.v3",
+      "label": "Respect",
+      "plain": "You treated others and their views with respect.",
+      "cues": [
+       "respect",
+       "listened",
+       "polite",
+       "their view",
+       "valued"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "gl4.d1",
+      "label": "Confidence with others",
+      "plain": "You reach out to people you do not know yet.",
+      "cues": [
+       "introduced",
+       "reached out",
+       "made friends"
+      ]
+     },
+     {
+      "id": "gl4.d2",
+      "label": "Openness",
+      "plain": "You are open to ideas from other places.",
+      "cues": [
+       "learnt from them",
+       "learned from them",
+       "new to me"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cc5",
+   "comp": "crosscultural",
+   "n": 5,
+   "name": "Aware of and appreciates the cultural background and identity of self and others",
+   "milestone": {
+    "lower": "At Lower Sec, students can appreciate the value of a diversity of cultural and religious communities' heritage, customs, and perspectives, and their contributions to Singapore and the world.",
+    "upper": "At Upper Sec, students can appreciate the value of a diversity of cultural and religious communities' heritage, customs, perspectives, and contributions, and identify commonalities between one's own and other cultures."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can respect and value the traditions, cultures, and beliefs of different communities in Singapore and around the world.",
+    "I can reflect on how my own culture and background shape how I view the world."
+   ],
+   "upper": [
+    "I can understand how different cultural histories and life experiences shape the way people see themselves and society.",
+    "I can find common ground and shared values across different cultural and religious backgrounds.",
+    "I can use my understanding of cultural diversity to build meaningful relationships based on mutual respect."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cc5.k1",
+      "label": "Cultures and traditions",
+      "plain": "You know about the traditions and beliefs of different communities.",
+      "cues": [
+       "culture",
+       "tradition",
+       "festival",
+       "religion",
+       "custom",
+       "race"
+      ]
+     },
+     {
+      "id": "cc5.k2",
+      "label": "How my background shapes me",
+      "plain": "You know your own culture shapes how you see things.",
+      "cues": [
+       "my culture",
+       "my family",
+       "my background",
+       "at home we"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cc5.s1",
+      "label": "Learning about other cultures",
+      "plain": "You find out about a culture different from yours.",
+      "cues": [
+       "learnt about their",
+       "learned about their",
+       "asked about their",
+       "their culture"
+      ]
+     },
+     {
+      "id": "cc5.s2",
+      "label": "Reflecting on my own view",
+      "plain": "You notice how your background shapes your view.",
+      "cues": [
+       "because of my",
+       "i grew up",
+       "my own view"
+      ]
+     },
+     {
+      "id": "cc5.s3",
+      "label": "Finding common ground",
+      "plain": "You find shared values across differences.",
+      "cues": [
+       "in common",
+       "common ground",
+       "shared values",
+       "both of us"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cc5.v1",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "cc5.v2",
+      "label": "Respect",
+      "plain": "You treated others and their views with respect.",
+      "cues": [
+       "respect",
+       "listened",
+       "polite",
+       "their view",
+       "valued"
+      ]
+     },
+     {
+      "id": "cc5.v3",
+      "label": "Harmony",
+      "plain": "You helped people get along across differences.",
+      "cues": [
+       "get along",
+       "united",
+       "harmony",
+       "included everyone"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cc5.d1",
+      "label": "Appreciation",
+      "plain": "You value differences instead of judging them.",
+      "cues": [
+       "appreciate",
+       "respect their"
+      ]
+     },
+     {
+      "id": "cc5.d2",
+      "label": "Curiosity about cultures",
+      "plain": "You want to learn about other ways of life.",
+      "cues": [
+       "curious about their",
+       "wondered about their"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "cc6",
+   "comp": "crosscultural",
+   "n": 6,
+   "name": "Shows sensitivity and openness in interactions with diverse communities to promote social cohesion",
+   "milestone": {
+    "lower": "At Lower Sec, students can demonstrate empathy, awareness of their own biases, and appropriate behaviour towards the lived experiences of people from different social, cultural and religious backgrounds within and beyond Singapore.",
+    "upper": "At Upper Sec, students can demonstrate appropriate skills and behaviour to work together with people from a diverse range of social, cultural and religious backgrounds within and beyond Singapore, and contribute to promoting social cohesion."
+   },
+   "mvv": {
+    "m": [
+     "Active Contributors"
+    ],
+    "vi": [
+     "Purpose Driven Steward"
+    ],
+    "va": [
+     "Empathy",
+     "Adaptability",
+     "Mindfulness"
+    ]
+   },
+   "lower": [
+    "I can identify my own assumptions and biases and see how they affect how I treat others.",
+    "I can show empathy and respect to people from all backgrounds to help build a united school and community."
+   ],
+   "upper": [
+    "I can collaborate effectively with diverse teams by respecting differences and bringing out the best in everyone.",
+    "I can bridge differences and promote social harmony in my school, community, and nation."
+   ],
+   "notes": [],
+   "ksvd": {
+    "k": [
+     {
+      "id": "cc6.k1",
+      "label": "Assumptions and bias",
+      "plain": "You know everyone has assumptions that can affect how they treat others.",
+      "cues": [
+       "assumed",
+       "assumption",
+       "stereotype",
+       "bias",
+       "judged"
+      ]
+     },
+     {
+      "id": "cc6.k2",
+      "label": "What holds a community together",
+      "plain": "You know what helps people of different backgrounds live well together.",
+      "cues": [
+       "harmony",
+       "united",
+       "cohesion"
+      ]
+     }
+    ],
+    "s": [
+     {
+      "id": "cc6.s1",
+      "label": "Checking my assumptions",
+      "plain": "You notice an assumption you made, and question it.",
+      "cues": [
+       "i assumed",
+       "i was wrong about",
+       "i judged",
+       "turned out"
+      ]
+     },
+     {
+      "id": "cc6.s2",
+      "label": "Including others",
+      "plain": "You make sure people of all backgrounds are included.",
+      "cues": [
+       "included",
+       "invited",
+       "welcomed",
+       "made sure everyone"
+      ]
+     },
+     {
+      "id": "cc6.s3",
+      "label": "Bridging differences",
+      "plain": "You help people who differ to work together.",
+      "cues": [
+       "brought together",
+       "helped them understand",
+       "bridge"
+      ]
+     }
+    ],
+    "v": [
+     {
+      "id": "cc6.v1",
+      "label": "Empathy",
+      "plain": "You thought about how others feel.",
+      "cues": [
+       "feelings",
+       "how they felt",
+       "how she felt",
+       "how he felt",
+       "put myself",
+       "upset",
+       "for them"
+      ]
+     },
+     {
+      "id": "cc6.v2",
+      "label": "Harmony",
+      "plain": "You helped people get along across differences.",
+      "cues": [
+       "get along",
+       "united",
+       "harmony",
+       "included everyone"
+      ]
+     },
+     {
+      "id": "cc6.v3",
+      "label": "Respect",
+      "plain": "You treated others and their views with respect.",
+      "cues": [
+       "respect",
+       "listened",
+       "polite",
+       "their view",
+       "valued"
+      ]
+     }
+    ],
+    "d": [
+     {
+      "id": "cc6.d1",
+      "label": "Humility",
+      "plain": "You accept that your first view may be wrong.",
+      "cues": [
+       "i was wrong",
+       "i misjudged"
+      ]
+     },
+     {
+      "id": "cc6.d2",
+      "label": "Inclusiveness",
+      "plain": "You look out for those who are left out.",
+      "cues": [
+       "left out",
+       "included them",
+       "made sure everyone"
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "secKsvd": {
+  "selfaware": {
+   "k": [
+    {
+     "id": "sec.selfaware.k1",
+     "label": "My strengths and limits",
+     "plain": "You know what you are good at and not yet good at.",
+     "cues": [
+      "strength",
+      "weakness",
+      "good at",
+      "not good at",
+      "not yet good"
+     ]
+    }
+   ],
+   "s": [
+    {
+     "id": "sec.selfaware.s1",
+     "label": "Naming what I feel and why",
+     "plain": "You name a feeling and what caused it.",
+     "cues": [
+      "i felt",
+      "i feel",
+      "nervous",
+      "proud",
+      "frustrated",
+      "anxious",
+      "worried"
+     ]
+    }
+   ],
+   "v": [
+    {
+     "id": "sec.selfaware.v1",
+     "label": "Integrity",
+     "plain": "You were honest with yourself about how you did.",
+     "cues": [
+      "honest",
+      "admitted",
+      "the truth",
+      "i was wrong",
+      "owned up"
+     ]
+    }
+   ],
+   "d": [
+    {
+     "id": "sec.selfaware.d1",
+     "label": "Self reflection",
+     "plain": "You look honestly at yourself.",
+     "cues": [
+      "about myself",
+      "i realised i",
+      "i realized i",
+      "i tend to"
+     ]
+    }
+   ]
+  },
+  "selfmanage": {
+   "k": [
+    {
+     "id": "sec.selfmanage.k1",
+     "label": "What helps me focus",
+     "plain": "You know what helps and what distracts you.",
+     "cues": [
+      "focus",
+      "distract",
+      "phone",
+      "quiet"
+     ]
+    }
+   ],
+   "s": [
+    {
+     "id": "sec.selfmanage.s1",
+     "label": "Managing my time",
+     "plain": "You plan your time to finish what you start.",
+     "cues": [
+      "schedule",
+      "timetable",
+      "minutes",
+      "plan my time"
+     ]
+    },
+    {
+     "id": "sec.selfmanage.s2",
+     "label": "Calming myself",
+     "plain": "You manage a strong feeling so you can carry on.",
+     "cues": [
+      "calm",
+      "breathe",
+      "relax",
+      "calmed down"
+     ]
+    }
+   ],
+   "v": [
+    {
+     "id": "sec.selfmanage.v1",
+     "label": "Discipline",
+     "plain": "You did what needed doing, carefully and on time.",
+     "cues": [
+      "carefully",
+      "on time",
+      "routine",
+      "every day",
+      "checked again",
+      "stuck to",
+      "step by step"
+     ]
+    },
+    {
+     "id": "sec.selfmanage.v2",
+     "label": "Resilience",
+     "plain": "You kept going after a setback.",
+     "cues": [
+      "tried again",
+      "kept going",
+      "did not give up",
+      "didn't give up",
+      "failed",
+      "setback",
+      "try again"
+     ]
+    }
+   ],
+   "d": [
+    {
+     "id": "sec.selfmanage.d1",
+     "label": "Self control",
+     "plain": "You hold back from what pulls you off track.",
+     "cues": [
+      "resisted",
+      "stopped myself",
+      "put away"
+     ]
+    }
+   ]
+  },
+  "socialaware": {
+   "k": [
+    {
+     "id": "sec.socialaware.k1",
+     "label": "Others' feelings",
+     "plain": "You know others may be feeling something you cannot see.",
+     "cues": [
+      "they felt",
+      "was upset",
+      "my friend was"
+     ]
+    }
+   ],
+   "s": [
+    {
+     "id": "sec.socialaware.s1",
+     "label": "Noticing how others feel",
+     "plain": "You notice how someone else is finding things.",
+     "cues": [
+      "noticed",
+      "saw that",
+      "looked sad",
+      "looked worried"
+     ]
+    }
+   ],
+   "v": [
+    {
+     "id": "sec.socialaware.v1",
+     "label": "Empathy",
+     "plain": "You thought about how others feel.",
+     "cues": [
+      "feelings",
+      "how they felt",
+      "how she felt",
+      "how he felt",
+      "put myself",
+      "upset",
+      "for them"
+     ]
+    },
+    {
+     "id": "sec.socialaware.v2",
+     "label": "Respect",
+     "plain": "You treated others and their views with respect.",
+     "cues": [
+      "respect",
+      "listened",
+      "polite",
+      "their view",
+      "valued"
+     ]
+    }
+   ],
+   "d": [
+    {
+     "id": "sec.socialaware.d1",
+     "label": "Consideration",
+     "plain": "You think about others, not only yourself.",
+     "cues": [
+      "thought about others",
+      "for them",
+      "for my friend"
+     ]
+    }
+   ]
+  },
+  "relationship": {
+   "k": [
+    {
+     "id": "sec.relationship.k1",
+     "label": "What healthy relationships need",
+     "plain": "You know trust is built by small actions.",
+     "cues": [
+      "trust",
+      "friendship"
+     ]
+    }
+   ],
+   "s": [
+    {
+     "id": "sec.relationship.s1",
+     "label": "Asking for help",
+     "plain": "You ask someone for help when you need it.",
+     "cues": [
+      "asked for help",
+      "asked my teacher",
+      "asked my friend"
+     ]
+    },
+    {
+     "id": "sec.relationship.s2",
+     "label": "Repairing a relationship",
+     "plain": "You make things right after a falling out.",
+     "cues": [
+      "apologised",
+      "apologized",
+      "sorry",
+      "made up"
+     ]
+    }
+   ],
+   "v": [
+    {
+     "id": "sec.relationship.v1",
+     "label": "Care",
+     "plain": "You acted to help others.",
+     "cues": [
+      "helped",
+      "cared",
+      "supported",
+      "looked out for",
+      "kind to"
+     ]
+    },
+    {
+     "id": "sec.relationship.v2",
+     "label": "Respect",
+     "plain": "You treated others and their views with respect.",
+     "cues": [
+      "respect",
+      "listened",
+      "polite",
+      "their view",
+      "valued"
+     ]
+    }
+   ],
+   "d": [
+    {
+     "id": "sec.relationship.d1",
+     "label": "Openness",
+     "plain": "You share how you are doing with people you trust.",
+     "cues": [
+      "talked to",
+      "told my",
+      "opened up"
+     ]
+    }
+   ]
+  },
+  "decisions": {
+   "k": [
+    {
+     "id": "sec.decisions.k1",
+     "label": "Consequences",
+     "plain": "You know choices have effects on you and others.",
+     "cues": [
+      "consequence",
+      "consequences"
+     ]
+    }
+   ],
+   "s": [
+    {
+     "id": "sec.decisions.s1",
+     "label": "Thinking of who is affected",
+     "plain": "You consider others before you choose.",
+     "cues": [
+      "affect others",
+      "who would",
+      "for everyone"
+     ]
+    }
+   ],
+   "v": [
+    {
+     "id": "sec.decisions.v1",
+     "label": "Responsibility",
+     "plain": "You owned your part and what came of it.",
+     "cues": [
+      "responsible",
+      "my part",
+      "my fault",
+      "owned up",
+      "my job"
+     ]
+    },
+    {
+     "id": "sec.decisions.v2",
+     "label": "Integrity",
+     "plain": "You were honest, even when it was hard.",
+     "cues": [
+      "honest",
+      "admitted",
+      "the truth",
+      "i was wrong",
+      "owned up"
+     ]
+    }
+   ],
+   "d": [
+    {
+     "id": "sec.decisions.d1",
+     "label": "Fairness",
+     "plain": "You choose what is fair, not only what is easy.",
+     "cues": [
+      "fair",
+      "right thing"
+     ]
+    }
+   ]
+  }
+ },
+ "ksvdAbout": "Draft by the log for the school to review: each strand broken into knowledge (what the student understands), skills (what they do), values (what an action shows they care about, from DREAM and MOE’s core values) and dispositions (habits of mind). Cues are words the offline coach looks for; the AI coach reads for meaning. Keep ids stable once entries carry them."
+}

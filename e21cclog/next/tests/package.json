@@ -1,0 +1,8 @@
+{
+  "name": "e21cclog-tests",
+  "private": true,
+  "description": "Browser tests for the E21CC Log. Run ./run.sh.",
+  "devDependencies": {
+    "axe-core": "4.10.2"
+  }
+}
