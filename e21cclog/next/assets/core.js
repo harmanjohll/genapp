@@ -781,6 +781,7 @@ function stuckUser(entry, qid, level, profile){
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'Next';   // the next version, built beside the pilot at e21cclog/next/
 const APP_VERSION = {label:'Next', date:'November 2026', notes:[
+  'Your school’s staff list arrives by one link from your teacher, and stays on this device',
   'The next version of the Log, built beside the pilot so the pilot stays as it is',
   'Its own logs: nothing here touches a log kept in the pilot'
 ]};
@@ -995,6 +996,71 @@ async function unpackCDL(text){
 }
 /* Split a payload into pieces of at most n characters for form answers. */
 function splitCDL(payload, n){ const out = [payload.slice(0, n)]; let i = n, k = 2; while (i < payload.length){ const room = n - (String(k).length + 2); out.push(`~${k}.` + payload.slice(i, i + room)); i += room; k++; } return out; }
+
+/* ---------- the school staff list (A1) ----------
+   The pilot lead pastes the timetable's staff list into the console once a term; the console makes one link
+   (kind s), and opening it keeps the list on the student's device. Nothing about staff is published.
+   Columns are found by their heading: Name, Email, Subjects ("Mathematics: Sec 1, Sec 2; Science: Sec 1"),
+   CCAs ("Band; Choir") and Form class. A subject with no Sec levels is taught at every level. */
+function parseTable(text){
+  const src = String(text || '').replace(/^﻿/, '');
+  const first = src.split(/\r?\n/).find(l => l.trim()) || '';
+  const sep = first.split('\t').length > first.split(',').length ? '\t' : ',';
+  const rows = []; let row = [], cell = '', quoted = false;
+  for (let i = 0; i < src.length; i++){
+    const c = src[i];
+    if (quoted){ if (c === '"'){ if (src[i + 1] === '"'){ cell += '"'; i++; } else quoted = false; } else cell += c; continue; }
+    if (c === '"' && !cell.trim()){ cell = ''; quoted = true; continue; }
+    if (c === sep){ row.push(cell); cell = ''; continue; }
+    if (c === '\n' || c === '\r'){ if (c === '\r' && src[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; continue; }
+    cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows.map(r => r.map(x => x.trim())).filter(r => r.some(Boolean));
+}
+function tableToCsv(rows){ return rows.map(r => r.map(x => /[",\n\r]/.test(x) ? `"${String(x).replace(/"/g, '""')}"` : String(x)).join(',')).join('\n'); }
+const STAFF_HEADS = {name:/^(name|teacher|staff)/i, email:/mail/i, subjects:/^subject/i, ccas:/^cca/i, form:/^form/i};
+function secLevels(text){
+  const t = String(text || '').toLowerCase(); if (!t.trim() || /\ball\b/.test(t)) return [];
+  const out = new Set(); if (/lower/.test(t)) [1, 2].forEach(n => out.add(n)); if (/upper/.test(t)) [3, 4, 5].forEach(n => out.add(n));
+  for (const m of t.matchAll(/([1-5])\s*to\s*([1-5])/g)) for (let n = +m[1]; n <= +m[2]; n++) out.add(n);
+  for (const m of t.matchAll(/[1-5]/g)) out.add(+m[0]);
+  return [...out].sort((a, b) => a - b);
+}
+/* Rows (headings first) into teachers, each with what needs fixing: errors block the link, warnings do not. */
+function staffFromTable(rows){
+  const out = {staff:[], problem:''};
+  if (!rows.length){ out.problem = 'Paste the staff list first.'; return out; }
+  const col = {}; for (const [k, re] of Object.entries(STAFF_HEADS)) col[k] = rows[0].findIndex(h => re.test(String(h).trim()));
+  if (col.name < 0 || col.email < 0){ out.problem = 'The first row needs the headings, with at least Name and Email.'; return out; }
+  const offered = subjectsFor(null).map(x => x.name), ccas = ccaNames(), seen = {};
+  rows.slice(1).forEach((r, i) => {
+    const get = k => col[k] >= 0 ? String(r[col[k]] || '').trim() : '';
+    const t = {row:i + 1, name:get('name'), email:get('email').toLowerCase(), subjects:[], ccas:[], form:get('form').toUpperCase(), errors:[], warnings:[]};
+    for (const part of get('subjects').split(';').map(x => x.trim()).filter(Boolean)){
+      const at = part.indexOf(':'); const raw = (at < 0 ? part : part.slice(0, at)).trim();
+      const match = offered.find(n => sameSubject(n, raw));
+      if (!match) t.errors.push(`${raw} is not a subject in the school offering`);
+      t.subjects.push({name:match || raw, levels:secLevels(at < 0 ? '' : part.slice(at + 1))});
+    }
+    t.ccas = get('ccas').split(';').map(x => x.trim()).filter(Boolean).map(c => ccas.find(k => k.toLowerCase() === c.toLowerCase()) || c);
+    t.ccas.filter(c => !ccas.includes(c)).forEach(c => t.warnings.push(`${c} is not on the school’s CCA list`));
+    if (!t.name) t.errors.push('no name');
+    if (!t.email) t.errors.push('no email');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t.email)) t.errors.push('the email does not look right');
+    else if (seen[t.email]) t.errors.push(`the same email as row ${seen[t.email]}`);
+    else seen[t.email] = t.row;
+    out.staff.push(t);
+  });
+  return out;
+}
+/* The short form that travels in the link, and back. */
+function staffCompact(list){ return list.map(t => { const o = {n:t.name, e:t.email, s:t.subjects.map(x => x.levels.length ? [x.name, x.levels] : [x.name])}; if (t.ccas.length) o.c = t.ccas; if (t.form) o.f = t.form; return o; }); }
+function staffExpand(list){
+  return (Array.isArray(list) ? list : []).filter(t => t && t.n && t.e).map(t => ({name:String(t.n), email:String(t.e).toLowerCase(),
+    subjects:(Array.isArray(t.s) ? t.s : []).filter(Array.isArray).map(([name, levels]) => ({name:String(name), levels:Array.isArray(levels) ? levels.map(Number).filter(n => n >= 1 && n <= 5) : []})),
+    ccas:(Array.isArray(t.c) ? t.c : []).map(String), form:t.f ? String(t.f) : ''}));
+}
 
 /* ---------- I can statements ----------
    The school's set is JSON with strands: {id, title, draft?, bands:[{id,label,levels}],
@@ -1299,8 +1365,8 @@ function migrateProfile(p){
 function migrateDb(d){
   d = d && typeof d === 'object' ? d : {};
   const out = {schemaVersion:2, profiles:d.profiles || {}, current:d.current || null, groups:d.groups || {}, statementSets:d.statementSets || {}};
-  // kept as they are: whether the browser agreed to keep the log, and entries brought across from an older version
-  for (const k of ['persist', 'broughtAcross']) if (d[k] !== undefined) out[k] = d[k];
+  // kept as they are: whether the browser agreed to keep the log, entries brought across from an older version, and the school staff list
+  for (const k of ['persist', 'broughtAcross', 'staff']) if (d[k] !== undefined) out[k] = d[k];
   if (d.classes) for (const [code, cfg] of Object.entries(d.classes)) if (!out.groups[code]) out.groups[code] = cfg;
   for (const p of Object.values(out.profiles)) migrateProfile(p);
   return out;

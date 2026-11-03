@@ -22,7 +22,7 @@ The decisions behind these items were made with Harman in November 2026:
 ## A. Teacher access and sharing
 
 ### A1 Staff list
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
   - **Import.** In the console's Set up tab, a new card "School staff list" lets the pilot lead paste or upload a CSV with these columns:

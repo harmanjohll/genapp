@@ -159,6 +159,7 @@ ol.steps li{margin-bottom:8px}
 .kitem code{font-size:.78em}
 .flags{background:var(--card-2);border-radius:var(--radius-s);padding:8px 12px;margin:8px 0 4px}
 .flags li{font-size:.9em;color:var(--text-2)}
+.stafftable td{vertical-align:top} .stafftable td.fix{border-left:3px solid var(--red)} .stafftable .fixnote{display:block;font-weight:600}
 .dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
 .dlg .box{background:#fff;border-radius:var(--radius);padding:20px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
 </style>
@@ -235,6 +236,13 @@ ol.steps li{margin-bottom:8px}
 
   <!-- ============ SET UP ============ -->
   <section id="tab-setup" data-tab="setup" hidden>
+    <div class="card" id="staffCard">
+      <h2>School staff list</h2>
+      <p class="muted">For the pilot lead, once a term. Paste the staff list from the timetable, check it, then share one school link with students in Teams or SLS. A student who opens the link keeps the list on their device, so they can pick their teachers. Nothing about staff is put on the website.</p>
+      <label class="f"><span>Staff list: a CSV, or rows pasted from Excel</span><textarea class="in" id="staffCsv" rows="6" spellcheck="false" autocapitalize="none" autocorrect="off" placeholder="Name,Email,Subjects,CCAs,Form class&#10;Mr Tan,tan_ah_kow@moe.edu.sg,&quot;Mathematics: Sec 1, Sec 2; Science: Sec 1&quot;,Concert Band,2E1"></textarea><small>The first row holds the headings: Name, Email, Subjects, CCAs, Form class. Write subjects as Mathematics: Sec 1, Sec 2, with a semicolon between subjects; a subject with no Sec levels counts for every level. Separate CCAs with a semicolon.</small></label>
+      <div class="row"><button class="btn small" id="staffCheck">Check the list</button><label class="btn small sec" for="staffFile">Upload a CSV<input type="file" id="staffFile" accept=".csv,text/csv,.txt,text/plain" hidden></label><button class="btn small sec" id="staffAdd">Add a teacher</button></div>
+      <div id="staffOut" aria-live="polite"></div>
+    </div>
     <div class="card">
       <h1>A group file is a small JSON document.</h1>
       <p class="muted">One per class or CCA you teach. It carries your name and email, the subject or activity, your coach voice, your success criteria, and where students’ shared entries should go. Students load it by typing the code (if the file is published in <code>logs/classes/</code>) or by opening the share link you give them. A student can belong to several groups. Nothing here is sent anywhere by this page.</p>
@@ -867,6 +875,48 @@ $('#loadClass').onchange = async ev => { const f = ev.target.files[0]; if (!f) r
 $('#dlJson').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); download(`${cur.code}.json`, JSON.stringify(cleanClass(), null, 2)); };
 $('#copyLink').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); const l = shareLink(); $('#linkLen').textContent = `Link length ${l.length} characters${l.length > 6000 ? ': long for some chat tools; shorten the knowledge text or publish the file instead' : ''}.`; copy(l); };
 $('#copyNote').onclick = () => { collect(); if (!cur.code) return toast('Give the group a code first.'); copy(`E21CC Log: ${cur.subject || 'our group'} (${cur.code})\n\n1. Open ${appUrl()}\n2. New here? Enter your name, your students.edu.sg email, and the code ${cur.code}. Already have a log? Settings, Groups, add ${cur.code}. Add a 4 digit PIN if you share a laptop.\n3. Sharing: turn on ${cur.type === 'form' ? 'the sections your form teacher asks for' : 'GROW and ACT'} for ${cur.teacherName || 'me'}.\n4. After a lesson${cur.type === 'cca' ? ' or training' : ''}: GROW. When feedback comes back: ACT. Answer honestly; three sentences each is enough. Choose the I can statement your entry shows and point to the sentence that shows it.\n5. Press Send when you are done, and Export your log at the end of each term.\n\n${cur.teacherName || ''}`.trim()); };
+
+/* ---------- the school staff list (A1): the timetable's list in, one school link out ---------- */
+const STAFF_HEADINGS = 'Name,Email,Subjects,CCAs,Form class';
+let staffChecked = null;
+function staffRows(){ return parseTable($('#staffCsv').value); }
+function keepStaffText(){ store.staff = Object.assign(store.staff || {}, {csv:$('#staffCsv').value}); save(); }
+function renderStaff(){
+  const box = $('#staffOut'); const res = staffFromTable(staffRows()); staffChecked = res;
+  if (res.problem){ box.innerHTML = `<p class="notice warn">${esc(res.problem)}</p>`; return; }
+  const bad = res.staff.filter(t => t.errors.length).length;
+  box.innerHTML = `<p style="margin:12px 0 6px"><b>${plural(res.staff.length, 'teacher')}.</b> ${bad ? `${plural(bad, 'row needs', 'rows need')} fixing before the link can be made.` : 'Ready for the school link.'}</p>
+    <div class="scroll"><table class="stafftable"><thead><tr><th>Row</th><th>Name</th><th>Email</th><th>Subjects</th><th>CCAs</th><th>Form class</th><th>Check</th><th>Remove</th></tr></thead><tbody>
+    ${res.staff.map(t => `<tr><td>${t.row}</td><td>${esc(t.name)}</td><td>${esc(t.email)}</td><td>${t.subjects.map(x => esc(x.name) + (x.levels.length ? ` <span class="tiny">Sec ${x.levels.join(', ')}</span>` : '')).join('<br>')}</td><td>${esc(t.ccas.join(', '))}</td><td>${esc(t.form)}</td>
+      <td class="${t.errors.length ? 'fix' : ''}">${t.errors.length || t.warnings.length ? [...t.errors.map(x => `<span class="fixnote">Fix: ${esc(x)}</span>`), ...t.warnings.map(x => `<span class="tiny">Check: ${esc(x)}</span>`)].join('') : '<span class="tiny">Fine</span>'}</td>
+      <td><button class="btn small sec" data-staffrm="${t.row}" aria-label="Remove ${esc(t.name || 'row ' + t.row)}">Remove</button></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="row" style="margin-top:10px"><button class="btn small" id="staffLink" ${bad || !res.staff.length ? 'disabled' : ''}>Make the school link</button><span class="tiny" id="staffMsg">${bad ? `Fix the ${plural(bad, 'flagged row')} first.` : ''}</span></div>
+    <div id="staffLinkBox"></div>`;
+  $$('[data-staffrm]', box).forEach(b => b.onclick = () => { const rows = staffRows(); rows.splice(+b.dataset.staffrm, 1); $('#staffCsv').value = tableToCsv(rows); keepStaffText(); renderStaff(); });
+  $('#staffLink').onclick = makeStaffLink;
+  showStaffLink();
+}
+async function makeStaffLink(){
+  const res = staffChecked; if (!res || res.problem || !res.staff.length || res.staff.some(t => t.errors.length)) return;
+  const at = Date.now(); const link = appUrl() + '#/staff?s=' + await packCDL('s', {v:1, at, staff:staffCompact(res.staff)});
+  store.staff = {csv:$('#staffCsv').value, link, linkCsv:$('#staffCsv').value, at, count:res.staff.length}; save();
+  showStaffLink(); const c = $('#staffCopy'); if (c) c.focus();
+}
+// the last link shows only while the list is the one it was made from
+function showStaffLink(){
+  const s = store.staff, box = $('#staffLinkBox'); if (!box) return;
+  if (!s || !s.link || s.linkCsv !== $('#staffCsv').value){ box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="notice ok"><b>The school link for ${plural(s.count, 'teacher')}</b>, made ${esc(fmtDay(s.at))}. Share it once in Teams or SLS. A student who opens it keeps the list on their device; a newer link replaces an older list.</div>
+    <label class="f"><span>School link</span><input class="in" id="staffLinkOut" readonly value="${esc(s.link)}"></label>
+    <div class="row"><button class="btn small" id="staffCopy">Copy school link</button></div>`;
+  $('#staffCopy').onclick = () => copy(s.link);
+}
+$('#staffCheck').onclick = () => { keepStaffText(); renderStaff(); };
+$('#staffAdd').onclick = () => { const v = $('#staffCsv').value.trim(); $('#staffCsv').value = (v || STAFF_HEADINGS) + '\nNew teacher,,,,'; keepStaffText(); renderStaff(); $('#staffCsv').focus(); };
+$('#staffFile').onchange = async ev => { const f = ev.target.files[0]; if (!f) return; $('#staffCsv').value = await f.text(); ev.target.value = ''; keepStaffText(); renderStaff(); };
+$('#staffCsv').oninput = () => { clearTimeout(keepStaffText.t); keepStaffText.t = setTimeout(keepStaffText, 400); };
+if (store.staff && store.staff.csv){ $('#staffCsv').value = store.staff.csv; renderStaff(); }
 
 /* ---------- drop box mapping ---------- */
 const FIELDS = FORM_FIELDS;

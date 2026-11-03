@@ -631,6 +631,7 @@ async function boot(){
   applyPrefs();
   const link = stashLink();
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
+  if ((location.hash || '').startsWith('#/staff')) await importStaffFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
@@ -647,11 +648,26 @@ async function importConfigFromHash(){
   saveDb(); toast(`Group ${cfg.code} added${cfg.teacherName ? ' (' + cfg.teacherName + ')' : ''}.`);
   location.hash = me ? '#/settings' : '#/welcome';
 }
+/* The school staff list arrives by link (index.html#/staff?s=CDL1.s.…) from the pilot lead, through Teams or SLS.
+   It is kept on this device, for every log here, before any log is open or unlocked; a newer list replaces an older one. */
+async function importStaffFromHash(){
+  const q = new URLSearchParams((location.hash.split('?')[1]) || '');
+  let got = null; try{ got = await unpackCDL(q.get('s') || ''); }catch{}
+  const list = got && got.kind === 's' && got.data ? staffExpand(got.data.staff) : [];
+  const dest = me && (!me.pin || unlocked) ? '#/' : '#/welcome';
+  if (!list.length){ toast('That staff list link did not work. Ask your teacher for a fresh one.'); location.hash = dest; return; }
+  const at = Number(got.data.at) || Date.now();
+  if (db.staff && db.staff.at > at){ toast('This device already has a newer staff list.'); location.hash = dest; return; }
+  db.staff = {at, loaded:Date.now(), list}; saveDb();
+  toast(`Your school’s staff list is here (${plural(list.length, 'teacher')}).`, 4200);
+  location.hash = dest;
+}
 function hashParts(){ const h = location.hash || '#/'; const [path, q] = h.split('?'); return {parts:path.split('/'), q:new URLSearchParams(q || '')}; }
 function route(){
   const h = location.hash || '#/';
   if (h.startsWith('#/note')){ const l = stashLink(); processStashedLink(l); return; }
   if (h.startsWith('#/config')){ importConfigFromHash(); return; }
+  if (h.startsWith('#/staff')){ importStaffFromHash(); return; }
   if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome'){ location.hash = '#/welcome'; return; } return renderWelcome(); }
   const {parts} = hashParts();
   if (h.startsWith('#/write/')){ const kind = parts[2]; if (kind === 'grow' || kind === 'act'){ if (!parts[3] && !setupDone() && !GUEST) return settingsGate(kind); return openComposer(kind, parts[3]); } }
@@ -2059,6 +2075,7 @@ function renderSettings(){
       ${gs.length ? `<ul class="groups">${gs.map(g => `<li><div class="grow"><b>${esc(g.cfg ? (g.cfg.subject || g.code) : g.code)}</b> <span class="tag">${groupType(g) === 'cca' ? 'CCA' : groupType(g) === 'form' ? 'Form class' : groupType(g) === 'subject' ? 'Subject' : 'Group'}</span><small>${esc(g.code)}${g.cfg ? ' · ' + esc(g.cfg.teacherName || 'teacher') + ' · ' + sinkLabel(g.cfg) : ' · not loaded yet'}</small></div><button class="btn small ghost" data-drop="${esc(g.code)}" aria-label="Remove ${esc(g.code)}">${icon('trash')}</button></li>`).join('')}</ul>` : ''}
       <div class="row"><label class="f grow" style="margin:0"><span>Add a group code</span><input class="in" id="sClass" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Add</button></div>
       <p class="tiny" id="clsMsg" style="margin-top:8px"></p>
+      <p class="tiny" id="staffLine" style="margin-top:4px">${db.staff && db.staff.list ? `School staff list: ${plural(db.staff.list.length, 'teacher')}, from ${esc(fmtDate(db.staff.at))}.` : 'No school staff list on this device yet. Your teacher will share a link to it.'}</p>
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
     <section class="card" id="data"><h2>Your data</h2>
