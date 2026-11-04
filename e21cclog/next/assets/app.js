@@ -810,16 +810,57 @@ function keepSafe(){
   }
 }
 /* A backup is due after five new entries, or after three weeks with anything new, since the last one. */
+/* A backup is due after five entries written or changed since the last one, or after three weeks with anything new.
+   Once a backup is newer than the last entry, nothing is due. */
+function sinceBackup(){ const b = me.backup; return b ? me.entries.filter(e => version(e) > b.at).length : me.entries.length; }
 function backupDue(){
   if (!me || GUEST || !me.entries.length) return false;
-  const b = me.backup || {at:Math.min(...me.entries.map(e => e.created)), count:0}; const fresh = me.entries.length - b.count;
-  return fresh >= 5 || (fresh >= 1 && Date.now() - b.at >= 21 * 864e5);
+  const fresh = sinceBackup(); const since = me.backup ? me.backup.at : Math.min(...me.entries.map(e => e.created));
+  return fresh >= 5 || (fresh >= 1 && Date.now() - since >= 21 * 864e5);
 }
-function backupNow(){ download(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me)); me.backup = {at:Date.now(), count:me.entries.length}; saveDb(); }
+/* ---------- B2: backups that travel, and come back without doubling anything ---------- */
+/* A file goes out through the share sheet where the device allows (an iPad saves to Files or OneDrive),
+   otherwise it downloads. A cancelled share changes nothing. */
+async function shareFile(name, text, type, title){
+  try{ const f = new File([text], name, {type}); if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:title || name}); return 'shared'; } }
+  catch(err){ if (err && err.name === 'AbortError') return 'cancelled'; }
+  download(name, text, type); return 'downloaded';
+}
+/* One merge for every restore: entries by id (the newer copy wins, notes from both), drafts by the newer save,
+   plans followed through and answers kept, milestones at their earliest. A second restore of the same file
+   finds nothing new. */
+function mergeBackup(t, pr){
+  let added = 0, updated = 0, drafts = 0, other = 0;
+  for (const e of pr.entries){
+    const i = t.entries.findIndex(x => x.id === e.id);
+    if (i < 0){ t.entries.push(e); added++; continue; }
+    const cur = t.entries[i];
+    if (version(e) > version(cur)){ const keep = cur.notes || []; e.notes = [...keep, ...(e.notes || []).filter(n => !keep.some(k => k.id === n.id))]; t.entries[i] = e; updated++; }
+    else for (const n of (e.notes || [])) if (!(cur.notes = cur.notes || []).some(k => k.id === n.id)){ cur.notes.push(n); other++; }
+  }
+  t.drafts = t.drafts || {};
+  for (const [k, d] of Object.entries(pr.drafts || {})){ const cur = t.drafts[k]; if (draftHasWork(d) && (!cur || (d.saved || 0) > (cur.saved || 0))){ t.drafts[k] = d; drafts++; } }
+  t.done = t.done || {}; for (const [id, v] of Object.entries(pr.done || {})) if (v && !t.done[id]){ t.done[id] = true; other++; }
+  t.planChecks = t.planChecks || {}; for (const [id, c] of Object.entries(pr.planChecks || {})) if (!t.planChecks[id] || (c.at || 0) > (t.planChecks[id].at || 0)){ t.planChecks[id] = c; other++; }
+  if (pr.milestones){ t.milestones = t.milestones || {}; for (const [id, m] of Object.entries(pr.milestones)) if (!t.milestones[id] || m.at < t.milestones[id].at){ t.milestones[id] = m; other++; } }
+  if (!t.email && pr.email){ t.email = pr.email; other++; }
+  for (const g of (pr.groups || [])) if (!t.groups.some(x => x.code === g.code)){ t.groups.push(g); other++; }
+  const xs = pr.experiences || {}; t.experiences = t.experiences || {subjects:[], cca:'', others:[]};
+  for (const s of (xs.subjects || [])) if (!t.experiences.subjects.includes(s)){ t.experiences.subjects.push(s); other++; }
+  if (!t.experiences.cca && xs.cca){ t.experiences.cca = xs.cca; other++; }
+  if (!t.level && pr.level){ t.level = pr.level; other++; }
+  return {added, updated, drafts, other, any:added + updated + drafts + other > 0};
+}
+function mergeWords(r){
+  if (!r.any) return 'Nothing new in that backup.';
+  const bits = [r.added ? plural(r.added, 'entry', 'entries') + ' brought back' : '', r.updated ? plural(r.updated, 'entry', 'entries') + ' updated' : '', r.drafts ? plural(r.drafts, 'unfinished entry', 'unfinished entries') : ''].filter(Boolean);
+  return bits.length ? bits.join(', ') + '.' : 'Your log is up to date with that backup.';
+}
+async function backupNow(){ const how = await shareFile(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me), 'application/json', 'My E21CC Log backup'); if (how === 'cancelled') return false; me.backup = {at:Date.now(), count:me.entries.length}; saveDb(); return true; }
 function installHow(){ return installEvt ? `<button type="button" class="btn small" id="doInstall">${icon('down')} Install the Log</button>` : `<span class="tiny" style="flex-basis:100%">On an iPad or iPhone: tap <b>Share</b>, then <b>Add to Home Screen</b>. Open the Log from its new icon from then on.</span>`; }
 function wireSafe(){
   const ib = $('#doInstall'); if (ib) ib.onclick = async () => { if (!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch{} installEvt = null; route(); };
-  const bb = $('#nxBackup'); if (bb) bb.onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); setTimeout(route, 300); };
+  const bb = $('#nxBackup'); if (bb) bb.onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); setTimeout(route, 300); } };
   const ih = $('#nxInstallLater'); if (ih) ih.onclick = () => { me.installLater = Date.now(); saveDb(); route(); };
 }
 
@@ -845,7 +886,7 @@ function frame(inner, active, opts = {}){
     <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
       <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
     <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Back it up in Settings now and then.</footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
@@ -866,6 +907,33 @@ function logLine(p, twin){
 /* Three ways in. A log this device remembers, with a PIN: welcome back, and only the PIN to type.
    Logs but none remembered: choose yours. No logs, or asked for: start one. Starting a log never sits
    beside the logs already here, so it cannot be mistaken for signing in. */
+/* Bring a log from a backup: on a new device it becomes the log here; where a log with that name is already here,
+   it offers to add what is new to it (behind that log's PIN, if it has one), or to keep it separate. */
+function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">Bring your log back from a backup file, from Files or OneDrive.</p>
+  <label class="btn sec" for="wRestore">${icon('up')} Bring my log from a backup<input type="file" id="wRestore" accept="application/json,.json" hidden></label><div id="wRestoreOut" aria-live="polite"></div></section>`; }
+function restoreAsNew(pr){
+  const p = JSON.parse(JSON.stringify(pr)); if (db.profiles[p.id]) p.id = uid();
+  p.backup = {at:Date.now(), count:p.entries.length}; db.profiles[p.id] = p; saveDb();
+  toast(`${plural(p.entries.length, 'entry', 'entries')} brought back${Object.keys(p.drafts || {}).length ? ', with your unfinished entry' : ''}.`, 4200); openProfile(p.id);
+}
+function wireRestore(){
+  const inp = $('#wRestore'); if (!inp) return; const out = $('#wRestoreOut');
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return; let pr; inp.value = '';
+    try{ pr = STORE.parseImport(await f.text()); }catch{ out.innerHTML = '<p class="tiny" role="alert">That file is not a log backup. Look for a file named like e21cc-log-your-name.json.</p>'; return; }
+    const same = Object.values(db.profiles).find(p => sameName(p.name, pr.name));
+    if (!same) return restoreAsNew(pr);
+    out.innerHTML = `<div class="notice" role="alert"><p><b>${esc(same.name)} already has a log on this device.</b> ${esc(logLine(same))}.</p>
+      ${same.pin ? '<label class="f"><span>That log’s PIN</span><input class="in" id="wMergePin" inputmode="numeric" maxlength="4" autocomplete="off"></label>' : ''}
+      <div class="row" style="margin-top:8px"><button type="button" class="btn" id="wMerge">${icon('arrow')} Add what is new to that log</button><button type="button" class="linkbtn" id="wSeparate">Keep it as a separate log</button></div><p class="tiny" id="wMergeMsg"></p></div>`;
+    $('#wSeparate').onclick = () => restoreAsNew(pr);
+    $('#wMerge').onclick = async () => {
+      if (same.pin && !(await pinMatches(same, ($('#wMergePin') || {}).value || ''))){ $('#wMergeMsg').textContent = 'That PIN did not match. Try again.'; return; }
+      const r = mergeBackup(same, pr); same.backup = {at:Date.now(), count:same.entries.length}; saveDb(); toast(mergeWords(r), 4200); openProfile(same.id);
+    };
+    ($('#wMergePin') || $('#wMerge')).focus();
+  };
+}
 function renderWelcome(view){
   document.body.classList.remove('wide'); document.body.classList.add('atwelcome');
   const profiles = Object.values(db.profiles).sort((a, b) => (lastWritten(b) || b.created) - (lastWritten(a) || a.created));
@@ -874,7 +942,7 @@ function renderWelcome(view){
   if (view === 'pin' && !known) view = 'choose';
   if (!profiles.length) view = 'new';
   const pre = db._preClass || '';
-  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
+  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so back it up from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
   const panel = view === 'pin' ? `
     <section class="card fade" id="wPin"><div class="wback"><span class="avatar" aria-hidden="true">${avatarSvg(known.prefs.avatar)}</span><div><h2>Welcome back, ${esc(known.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(logLine(known))}</p></div></div>
       <form id="pinForm" class="row" style="margin-top:14px"><label class="f grow" style="margin:0"><span>Your PIN</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autocomplete="off" enterkeyhint="done" aria-describedby="pinMsg"></label><button class="btn" type="submit" style="margin-top:22px">${icon('arrow')} Open my log</button></form>
@@ -908,11 +976,12 @@ function renderWelcome(view){
       <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
-    <div class="wcol">${panel}${guest}</div>
+    <div class="wcol">${panel}${restoreCard()}${guest}</div>
   </div>`;
   const w = $('#wChoose'); if (w) w.onclick = () => { if (view === 'pin'){ db.current = null; saveDb(); } renderWelcome('choose'); };
   const n = $('#wNew'); if (n) n.onclick = () => { renderWelcome('new'); const f = $('#newForm [name=name]'); if (f) f.focus(); };
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
+  wireRestore();
   if (view === 'pin'){
     const inp = $('#pinForm input'); if (inp) inp.focus();
     $('#pinForm').onsubmit = async (e) => {
@@ -1212,7 +1281,7 @@ function renderHome(){
     ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
     : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
   const nFirst = now.length;
-  if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
+  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
   if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
@@ -2335,8 +2404,8 @@ function renderSettings(){
         <li>${icon(installed() ? 'check' : 'home')}<span>${installed() ? 'The Log is installed on this device.' : 'The Log is not installed on this device.'}</span>${!installed() && canInstall() ? `<span class="safe-how">${installHow()}</span>` : ''}</li>
       </ul>
       <div class="row">
-        <button class="btn sec" id="sExport">${icon('down')} Back up (export)</button>
-        <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
+        <button class="btn sec" id="sExport">${icon('down')} Back up my log</button>
+        <label class="btn sec" for="sImport">${icon('up')} Bring my log from a backup<input type="file" id="sImport" accept="application/json,.json" hidden></label>
         <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
       </div>
       <details style="margin-top:14px"><summary>Change or remove PIN</summary>
@@ -2397,25 +2466,19 @@ function renderSettings(){
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
   $('#rAdd').onclick = async () => {
     const day = +$('#rDay').value, time = $('#rTime').value || '15:30'; const text = icsWeekly({day, time, url:appUrl()}); const name = 'E21CC Log reminder.ics';
-    let shared = false;
-    try{ const f = new File([text], name, {type:'text/calendar'}); if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'E21CC Log reminder'}); shared = true; } }
-    catch(err){ if (err && err.name === 'AbortError') return; }
-    if (!shared) download(name, text, 'text/calendar');
+    if (await shareFile(name, text, 'text/calendar', 'E21CC Log reminder') === 'cancelled') return;
     me.reminder = {day, time, at:Date.now()}; saveDb(); toast('Open the file to add the weekly event to your calendar.', 4200); renderSettings();
   };
-  $('#sExport').onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); }; wireSafe();
+  $('#sExport').onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); } }; wireSafe();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
     try{
-      const pr = STORE.parseImport(await f.text()); let added = 0, updated = 0;
-      for (const e of pr.entries){ const i = me.entries.findIndex(x => x.id === e.id); if (i < 0){ me.entries.push(e); added++; } else if (version(e) > version(me.entries[i])){ const keepNotes = me.entries[i].notes || []; e.notes = [...keepNotes, ...(e.notes || []).filter(n => !keepNotes.some(k => k.id === n.id))]; me.entries[i] = e; updated++; } else { const cur = me.entries[i]; for (const n of (e.notes || [])) if (!cur.notes.some(k => k.id === n.id)) cur.notes.push(n); } }
-      if (!me.email && pr.email) me.email = pr.email;
+      const pr = STORE.parseImport(await f.text()); const r = mergeBackup(me, pr);
       for (const g of pr.groups) addGroupToMe(g.code);
-      const xs = pr.experiences || {}; for (const s of (xs.subjects || [])) if (!me.experiences.subjects.includes(s)) me.experiences.subjects.push(s); if (!me.experiences.cca && xs.cca) me.experiences.cca = xs.cca;
       const landed = applyPendingNotes(); saveDb();
-      toast(`Imported ${plural(added, 'new entry', 'new entries')}${updated ? `, updated ${updated}` : ''}${landed ? `, and ${plural(landed, 'waiting note')} landed` : ''}.`, 3400);
+      toast(mergeWords(r) + (landed ? ` And ${plural(landed, 'waiting note')} landed.` : ''), 3800); renderSettings();
       Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements);
-    }catch{ toast('That file is not a log export.'); }
+    }catch{ toast('That file is not a log backup.'); }
     ev.target.value = '';
   };
   $('#sCopyAll').onclick = () => copyText(me.entries.slice().sort((a, b) => a.created - b.created).map(e => entryText(e, true)).join('\n\n' + '─'.repeat(24) + '\n\n'));
