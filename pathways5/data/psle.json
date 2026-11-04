@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "source": "MOE PSLE scoring and S1 posting pages; MOE Full SBB FAQ; MOE curriculum page on Higher Mother Tongue; MOE SchoolFinder (Beatty Secondary)",
+    "url": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups",
+    "accessed": "2026-10-27",
+    "units": "PSLE Achievement Levels (AL 1 best to AL 8), PSLE Score 4 to 32",
+    "notes": "Read from search engine extracts of the primary MOE pages on 2026-10-27; the pages themselves could not be opened end to end from the research session. Eyeball once against moe.gov.sg before a class uses this. Everything a student enters here is hypothetical and stays on the device."
+  },
+  "subjects": [
+    { "id": "el", "name": "English" },
+    { "id": "mtl", "name": "Mother Tongue" },
+    { "id": "maths", "name": "Mathematics" },
+    { "id": "science", "name": "Science" }
+  ],
+  "standardBands": [
+    { "al": 1, "marks": "90 and above" }, { "al": 2, "marks": "85 to 89" }, { "al": 3, "marks": "80 to 84" },
+    { "al": 4, "marks": "75 to 79" }, { "al": 5, "marks": "65 to 74" }, { "al": 6, "marks": "45 to 64" },
+    { "al": 7, "marks": "20 to 44" }, { "al": 8, "marks": "below 20" }
+  ],
+  "foundationBands": [
+    { "grade": "A", "al": 6, "marks": "75 to 100" }, { "grade": "B", "al": 7, "marks": "30 to 74" }, { "grade": "C", "al": 8, "marks": "below 30" }
+  ],
+  "postingGroups": [
+    { "min": 4, "max": 20, "groups": [3], "status": "confirmed" },
+    { "min": 21, "max": 22, "groups": [3, 2], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 23, "max": 24, "groups": [2], "status": "confirmed" },
+    { "min": 25, "max": 25, "groups": [2, 1], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 26, "max": 30, "groups": [1], "needs": "AL 7 or better in both English and Mathematics", "status": "confirmed" }
+  ],
+  "noGroup": "This score does not map to a Posting Group. Talk to your primary school about the options, including specialised schools and repeating P6.",
+  "upgrades": {
+    "status": "confirmed",
+    "groups": [1, 2],
+    "subjects": ["el", "mtl", "maths", "science"],
+    "rules": [
+      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: you can start this subject at G3." },
+      { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: you can start this subject at G2." }
+    ],
+    "note": "Your school offers these and your family decides. You do not have to start higher. Levels are reviewed again before Sec 3."
+  },
+  "downgrades": {
+    "status": "confirmed",
+    "groups": [3],
+    "rules": [
+      { "subjects": ["el", "maths", "science"], "foundation": ["A", "B", "C"], "levels": ["G2"], "text": "Taken at Foundation: the school can offer this subject at G2." },
+      { "subjects": ["mtl"], "foundation": ["A"], "levels": ["G2"], "text": "Foundation A: the school can offer Mother Tongue at G2." },
+      { "subjects": ["mtl"], "foundation": ["B", "C"], "levels": ["G1", "G2"], "text": "Foundation B or C: the school can offer Mother Tongue at G2 or G1." }
+    ],
+    "note": "Posting Group 3 with a Foundation subject: you can start that subject at a lower level, with the school."
+  },
+  "hmtl": {
+    "text": "You can take Higher Mother Tongue in Sec 1 with AL 1 or 2 in Mother Tongue. A Distinction or Merit in PSLE Higher Mother Tongue also qualifies. Schools can offer it to others too.",
+    "status": "confirmed"
+  },
+  "school": {
+    "name": "Beatty Secondary",
+    "year": 2025,
+    "ranges": [
+      { "group": 3, "range": "12 to 18" },
+      { "group": 2, "range": "21 to 25" },
+      { "group": 1, "range": "25 to 28" }
+    ],
+    "note": "The score of the last student admitted in 2025, from MOE SchoolFinder. Ranges change every year.",
+    "url": "https://www.moe.gov.sg/schoolfinder/schooldetail/beatty-secondary-school",
+    "status": "confirmed"
+  }
+}

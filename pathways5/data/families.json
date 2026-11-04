@@ -1,0 +1,556 @@
+{
+  "_meta": {
+    "source": "MOE PSE and JAE aggregate type tables, polytechnic aggregate type pages (SP, NP, TP 2027), NYP PFP cluster page, ITE and MOE CourseFinder examples, individual JC subject combination pages",
+    "url": "https://www.moe.gov.sg/coursefinder",
+    "accessed": "2026-10-27",
+    "units": "none",
+    "notes": "Every family here is provisional: the 2028 course lists and minimum entry requirements are due on MOE CourseFinder in mid 2027, and the 2026 cycle sources disagree in places. Shown only when a student turns course families on."
+  },
+  "destinations": {
+    "jc": [
+      {
+        "id": "jc_math_sci",
+        "name": "Science/Maths (H2 Mathematics)",
+        "needs": [
+          {
+            "text": "H2 Maths assumes Additional Mathematics; typical indicative cut off B3 B4 in A Maths (NJC also accepts A2 in Maths). Without A Maths, colleges advise H1 Maths or a readiness test.",
+            "subjects": [
+              "amaths",
+              "maths"
+            ],
+            "minLevel": "G3",
+            "minGrade": "B4",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "jc_physics",
+        "name": "H2 Physics",
+        "needs": [
+          {
+            "text": "Physics or Science (Physics, Chemistry/Biology); indicative B3 Physics or A2 combined science; some JCs require H2 Maths alongside",
+            "subjects": [
+              "physics",
+              "sci_pc",
+              "sci_pb"
+            ],
+            "minLevel": "G3",
+            "minGrade": "B3",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "jc_chemistry",
+        "name": "H2 Chemistry",
+        "needs": [
+          {
+            "text": "Chemistry or Science (Physics/Biology, Chemistry); grade cut off varies by JC",
+            "subjects": [
+              "chemistry",
+              "sci_pc",
+              "sci_cb"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "jc_biology",
+        "name": "H2 Biology",
+        "needs": [
+          {
+            "text": "Biology or Science (Physics/Chemistry, Biology); indicative B4 Biology or B3 combined science (CJC)",
+            "subjects": [
+              "biology",
+              "sci_pb",
+              "sci_cb"
+            ],
+            "minLevel": "G3",
+            "minGrade": "B4",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "jc_humanities",
+        "name": "Humanities/Arts (H2 Econs, History, Geography, Literature)",
+        "needs": [
+          {
+            "text": "No published common prerequisite found; colleges set their own. Prior Literature/History/Geography is generally helpful for the matching H2 subject.",
+            "subjects": [
+              "literature",
+              "history",
+              "geography",
+              "hum_ss_lit",
+              "hum_ss_hist",
+              "hum_ss_geog",
+              "economics"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "jc_art_music",
+        "name": "H2 Art / H2 Music",
+        "needs": [
+          {
+            "text": "Not researched in primary sources; colleges typically expect prior Art/Music or portfolio/audition. Unverified.",
+            "subjects": [
+              "art",
+              "higher_art",
+              "music",
+              "higher_music"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      }
+    ],
+    "poly": [
+      {
+        "id": "poly_A",
+        "name": "ELR2B2 A: business, humanities, media, early childhood type courses",
+        "needs": [
+          {
+            "text": "R1 from 1st group (arts/humanities/business list: Art, Business Studies, Combined Humanities, Economics, Geography, History, Literature, Music, etc.)",
+            "subjects": [
+              "art",
+              "higher_art",
+              "economics",
+              "geography",
+              "history",
+              "literature",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "music",
+              "higher_music",
+              "poa"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          },
+          {
+            "text": "R2 from 2nd group (wider list incl. Mathematics, MTL, D&T, F&N, sciences)",
+            "subjects": [
+              "maths",
+              "amaths",
+              "mtl",
+              "hmtl",
+              "dt",
+              "nfs",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "biology"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "poly_B",
+        "name": "ELR2B2 B: business with mathematics (e.g. Accountancy & Finance)",
+        "needs": [
+          {
+            "text": "R1 = Mathematics or Additional Mathematics",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          },
+          {
+            "text": "R2 from 2nd group (humanities/arts/commerce list per one source; sources disagree)",
+            "subjects": [
+              "poa",
+              "economics",
+              "geography",
+              "history",
+              "literature",
+              "art"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "poly_C",
+        "name": "ELR2B2 C: engineering, IT, applied & health sciences (Nursing uses C)",
+        "needs": [
+          {
+            "text": "R1 = Mathematics or Additional Mathematics",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          },
+          {
+            "text": "R2 = a science/technology subject (Biology, Chemistry, Physics, combined sciences, Computing, D&T, F&N, Electronics...)",
+            "subjects": [
+              "physics",
+              "chemistry",
+              "biology",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "computing",
+              "dt",
+              "nfs",
+              "electronics"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "poly_D",
+        "name": "ELR2B2 D: design and architecture",
+        "needs": [
+          {
+            "text": "R1 = Mathematics or Additional Mathematics (per SP table)",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          },
+          {
+            "text": "Must have sat one 2nd group subject (Art, D&T, Design Studies, sciences per one source)",
+            "subjects": [
+              "art",
+              "higher_art",
+              "dt",
+              "physics",
+              "chemistry",
+              "biology"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      }
+    ],
+    "pfp": [
+      {
+        "id": "pfp_sciences",
+        "name": "Sciences cluster",
+        "needs": [
+          {
+            "text": "Relevant science subject at G2 equivalent 3",
+            "subjects": [
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "biology",
+              "nfs"
+            ],
+            "minLevel": "G2",
+            "minGrade": "3",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "pfp_eng_tech",
+        "name": "Engineering & Technology cluster",
+        "needs": [
+          {
+            "text": "Relevant science/D&T subject at G2 equivalent 3",
+            "subjects": [
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "biology",
+              "dt",
+              "nfs"
+            ],
+            "minLevel": "G2",
+            "minGrade": "3",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "pfp_design",
+        "name": "Design cluster",
+        "needs": [
+          {
+            "text": "Same relevant subject list as sciences at some polys; design courses may add art/portfolio",
+            "subjects": [
+              "dt",
+              "art",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb"
+            ],
+            "minLevel": "G2",
+            "minGrade": "3",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "pfp_hamb",
+        "name": "Humanities, Arts, Media & Business cluster",
+        "needs": [
+          {
+            "text": "Relevant humanities/business subject at G2 equivalent 3 (PoA, Literature, History, Geography, Art...)",
+            "subjects": [
+              "poa",
+              "literature",
+              "history",
+              "geography",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "art"
+            ],
+            "minLevel": "G2",
+            "minGrade": "3",
+            "status": "provisional"
+          }
+        ]
+      }
+    ],
+    "hnitec": [
+      {
+        "id": "ite_engineering",
+        "name": "Engineering",
+        "needs": [
+          {
+            "text": "Example 2026 MER (Higher Nitec Electrical Engineering 2 yr, O Level grades): EL 1 to 8, Maths/A Maths 1 to 7, one science type subject 1 to 8",
+            "subjects": [
+              "el",
+              "maths",
+              "amaths",
+              "physics",
+              "chemistry",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "electronics"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite_infocomm",
+        "name": "Info comm Technology & Digital Media",
+        "needs": [
+          {
+            "text": "Example (Higher Nitec IT Systems & Networks): EL 1 to 8, Maths 1 to 7, approved science subject 1 to 8 (Biology, Chemistry, Combined Science, Physics, etc.)",
+            "subjects": [
+              "el",
+              "maths",
+              "amaths",
+              "physics",
+              "chemistry",
+              "biology",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "computing"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite_business_services",
+        "name": "Business & Services",
+        "needs": [
+          {
+            "text": "MERs not found for 2028; some services courses (accounting, hospitality, event mgmt) require Maths to have been sat",
+            "subjects": [
+              "el",
+              "maths"
+            ],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite_applied_health",
+        "name": "Applied & Health Sciences",
+        "needs": [
+          {
+            "text": "MERs not found",
+            "subjects": [],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite_design_media",
+        "name": "Design & Media",
+        "needs": [
+          {
+            "text": "MERs not found",
+            "subjects": [],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      }
+    ],
+    "nitec": [
+      {
+        "id": "ite3_engineering",
+        "name": "Engineering",
+        "needs": [
+          {
+            "text": "Example (Higher Nitec Electronics Engineering 3 yr): Maths or Science at A D or 1 to 5, plus any 2 other subjects A D or 1 to 5; some applied subjects may replace Science",
+            "subjects": [
+              "maths",
+              "science_g1",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb",
+              "physics",
+              "chemistry",
+              "electronics"
+            ],
+            "minLevel": "G1",
+            "minGrade": "D",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite3_infocomm",
+        "name": "Info comm Technology & Digital Media",
+        "needs": [
+          {
+            "text": "Example (IT Systems & Networks 3 yr): N Level route Maths or Science A D/1 to 5 plus two others; likely R1B3 B",
+            "subjects": [
+              "maths",
+              "science_g1",
+              "computing"
+            ],
+            "minLevel": "G1",
+            "minGrade": "D",
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite3_business_services",
+        "name": "Business & Services",
+        "needs": [
+          {
+            "text": "Aggregate type mapping not published; R1B3 C (English) or R2B2 plausible. Unverified.",
+            "subjects": [
+              "el"
+            ],
+            "minLevel": "G1",
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite3_applied_health",
+        "name": "Applied & Health Sciences",
+        "needs": [
+          {
+            "text": "Not found",
+            "subjects": [],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "ite3_design_media",
+        "name": "Design & Media",
+        "needs": [
+          {
+            "text": "Not found; B4 or R1B3 C plausible. Unverified.",
+            "subjects": [],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      }
+    ],
+    "arts": [
+      {
+        "id": "arts_visual_design",
+        "name": "Visual arts & design diplomas",
+        "needs": [
+          {
+            "text": "Portfolio required; no specific subject prerequisite found",
+            "subjects": [
+              "art",
+              "higher_art",
+              "dt"
+            ],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      },
+      {
+        "id": "arts_performing",
+        "name": "Performing arts (music, theatre, dance)",
+        "needs": [
+          {
+            "text": "Audition required; no specific subject prerequisite found",
+            "subjects": [
+              "music",
+              "higher_music",
+              "drama"
+            ],
+            "minLevel": null,
+            "minGrade": null,
+            "status": "provisional"
+          }
+        ]
+      }
+    ]
+  }
+}

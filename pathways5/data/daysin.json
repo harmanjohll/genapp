@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "purpose": "A day in each place, and one route there, for the destination pages and the counsellor session. They replace the Classic game in this site.",
+    "status": "composite",
+    "notes": "Composites written from how each place usually runs and from common routes. They describe no real student. Real stories from Beatty alumni can replace them: keep each body under about 90 words and follow STYLE.md.",
+    "accessed": "2026-11-04"
+  },
+  "label": "A composite: no single real student. Beatty alumni stories can replace these.",
+  "places": {
+    "jc": {
+      "day": "Lectures with your whole level in the morning, then tutorials in small classes. You write a General Paper essay this week and present a Chemistry practical. After lessons, your CCA runs until late afternoon. Most evenings go to tutorial work. The pace is fast, and the A Levels come at the end of the second year.",
+      "route": "Took English, Maths, Science and Geography at G3 by Sec 2. Added Additional Mathematics in Sec 3. Applied to JC through the admissions exercise after the SEC, then went on to university."
+    },
+    "mi": {
+      "day": "The same A Level subjects as JC, spread over three years. Classes are smaller, and the first year gives you time to settle. You have lectures, tutorials and a CCA, like JC. The extra year helps if some subjects need more time.",
+      "route": "Had two subjects at G2 in Sec 3 and moved them to G3 by Sec 4. Chose Millennia Institute for the extra year, then took the A Levels and went to university."
+    },
+    "poly": {
+      "day": "A lecture in the morning, then a lab or studio for the rest of the day. Much of the work is in teams, on projects for real clients. You manage your own time between classes. In the final year, you spend months on an internship at a company.",
+      "route": "Started most subjects at G2 and moved English and Maths to G3 by Sec 2. Applied through Early Admissions with a project portfolio. Took an engineering diploma, then worked before starting a degree."
+    },
+    "pfp": {
+      "day": "One year of modules at the polytechnic, taught by polytechnic lecturers. You study English, Maths and subjects for your course group. Classes are smaller than in Year 1. Pass the modules and you go straight into Year 1 of your diploma.",
+      "route": "Took most subjects at G2 in Sec 3 and 4. Joined the Polytechnic Foundation Programme for the sciences cluster, then went into Year 1 of a diploma in applied science."
+    },
+    "hnitec": {
+      "day": "Most of the day is hands on, in workshops and labs with the equipment the industry uses. Lecturers have worked in the trade. Part of the course is an industry attachment at a company. A good GPA can take you to a polytechnic diploma later.",
+      "route": "Took G2 subjects and liked practical work most. Studied a 2 year Higher Nitec in electrical engineering, then used a strong GPA to apply for a polytechnic diploma."
+    },
+    "nitec": {
+      "day": "You learn a trade by doing it: in a kitchen, a workshop or a studio. Theory comes in short lessons, close to the practice. There is an industry attachment before you finish. You can leave with a Nitec after two years, or finish the Higher Nitec in three.",
+      "route": "Took most subjects at G1. Studied a 3 year Higher Nitec in culinary skills, worked in a hotel kitchen, then came back later for more training."
+    },
+    "arts": {
+      "day": "Most of the week is in the studio or the rehearsal room. You make work, show it, and hear feedback from lecturers and classmates. Theory classes sit alongside practice. Your portfolio grows every term, and it counts more than marks.",
+      "route": "Took Art at G3 and kept a sketchbook from Sec 2. Built a portfolio with help from an art teacher, auditioned for a LASALLE diploma, and now works as a designer."
+    },
+    "sec5": {
+      "day": "Same school, same friends from your level, one more year. You take your subjects again, some at a higher level, and sit the SEC at the end. The year works best when you know which place you are aiming for.",
+      "route": "Had two subjects at G3 at the end of Sec 4. Took Sec 5, moved Maths to G3, and then applied to a polytechnic diploma in business."
+    }
+  }
+}

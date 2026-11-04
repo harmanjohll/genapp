@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "purpose": "Goal first planning: interests, then job sectors (work.json), then the places that lead there, then a course family (families.json). Plain names for the course families, and which families fit each sector.",
+    "notes": "Course family requirements are the 2026 lists; the 2028 lists arrive in mid 2027. Every family here is marked to confirm.",
+    "accessed": "2026-11-04"
+  },
+  "interests": [
+    { "code": "R", "label": "Fixing, building and making things work" },
+    { "code": "I", "label": "Finding out how things work" },
+    { "code": "A", "label": "Creating, designing or performing" },
+    { "code": "S", "label": "Helping, teaching or caring for people" },
+    { "code": "E", "label": "Leading, persuading or starting things" },
+    { "code": "C", "label": "Organising, planning and getting details right" }
+  ],
+  "levelDests": {
+    "uni": ["jc", "mi", "poly"],
+    "poly": ["poly", "pfp"],
+    "ite": ["hnitec", "nitec"],
+    "arts": ["arts"]
+  },
+  "familyNames": {
+    "jc_math_sci": "Science and Maths (H2 Mathematics)",
+    "jc_physics": "H2 Physics",
+    "jc_chemistry": "H2 Chemistry",
+    "jc_biology": "H2 Biology",
+    "jc_humanities": "Humanities and Arts (Economics, History, Geography, Literature)",
+    "jc_art_music": "H2 Art or H2 Music",
+    "poly_A": "Business, humanities, media and early childhood courses",
+    "poly_B": "Business courses with Mathematics, such as Accountancy",
+    "poly_C": "Engineering, IT, applied sciences and health, including Nursing",
+    "poly_D": "Design and architecture",
+    "pfp_sciences": "Sciences",
+    "pfp_eng_tech": "Engineering and Technology",
+    "pfp_design": "Design",
+    "pfp_hamb": "Humanities, Arts, Media and Business",
+    "ite_engineering": "Engineering",
+    "ite_infocomm": "Infocomm Technology and Digital Media",
+    "ite_business_services": "Business and Services",
+    "ite_applied_health": "Applied and Health Sciences",
+    "ite_design_media": "Design and Media",
+    "ite3_engineering": "Engineering",
+    "ite3_infocomm": "Infocomm Technology and Digital Media",
+    "ite3_business_services": "Business and Services",
+    "ite3_applied_health": "Applied and Health Sciences",
+    "ite3_design_media": "Design and Media",
+    "arts_visual_design": "Visual arts and design",
+    "arts_performing": "Performing arts: music, theatre and dance"
+  },
+  "sectorFamilies": {
+    "arts": ["jc_art_music", "jc_humanities", "poly_A", "arts_performing", "arts_visual_design", "ite_design_media", "ite3_design_media", "pfp_hamb"],
+    "beauty": ["poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "built": ["jc_physics", "jc_math_sci", "poly_C", "poly_D", "ite_engineering", "ite3_engineering", "pfp_eng_tech"],
+    "business": ["jc_humanities", "jc_math_sci", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "care": ["jc_biology", "jc_chemistry", "poly_C", "ite_applied_health", "ite3_applied_health", "pfp_sciences"],
+    "children": ["jc_humanities", "poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "computing": ["jc_math_sci", "jc_physics", "poly_C", "ite_infocomm", "ite3_infocomm", "pfp_eng_tech"],
+    "design": ["jc_art_music", "poly_D", "arts_visual_design", "ite_design_media", "ite3_design_media", "pfp_design"],
+    "engineering": ["jc_physics", "jc_math_sci", "poly_C", "ite_engineering", "ite3_engineering", "pfp_eng_tech"],
+    "food": ["jc_chemistry", "poly_C", "poly_A", "ite_applied_health", "ite3_applied_health", "ite_business_services", "ite3_business_services", "pfp_sciences"],
+    "hotels": ["poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "law": ["jc_humanities", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "moving": ["jc_math_sci", "poly_C", "poly_B", "ite_engineering", "ite3_engineering", "ite_business_services", "ite3_business_services", "pfp_eng_tech"],
+    "selling": ["jc_humanities", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "social": ["jc_humanities", "poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
+    "environment": ["jc_biology", "jc_chemistry", "jc_humanities", "poly_C", "ite_applied_health", "ite3_applied_health", "pfp_sciences"]
+  }
+}
