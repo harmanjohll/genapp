@@ -7,11 +7,39 @@
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
 - To release: `node pathways/tools/release.mjs x.y.z`, then add the notes to `pathways/data/version.json` and a line under the version below.
 
+## Two sites (from 2026-11-04)
+
+| Site | Folder | Version | Status |
+| --- | --- | --- | --- |
+| Classic Paths | `pathways/` | v4.4.0 | Live and stable. `pathways.html` still opens it. Keep it working; change it only when asked. |
+| The new site (working title "Paths 5", name to come) | `pathways5/` | v5.0.0 | In development. Build new features here. |
+
+- **Separate storage.** The new site stores plans under `paths5.state.v1`, so the two sites never write over each other. On a device that used Classic, the first visit copies its plans once, read only (`stored()` in `pathways5/assets/js/state.js`).
+- **Separate offline caches:** `paths4-` and `paths5-`.
+- **Each site has its own checks:** `node pathways/tools/verify.mjs` and `node pathways5/tools/verify.mjs`.
+
+### v5.0.0 (2026-11-04): one path, a goal, and the conversation
+- **One path.** `screens/path.js` is the home screen: P6 to after Sec on one line, each year opening in place. The menu is Path, Goal, Compare and Share.
+- **Goal first.** `screens/goal.js` and `engine/goal.js` run interests (RIASEC), then work sectors (`work.json`), then a role and place, then a course family (`families.json`, plain names in `goals.json`).
+  - Course family needs become rules only for JC, MI, polytechnic and PFP. They are marked to confirm until the 2028 lists arrive in mid 2027.
+  - What the goal asks, year by year, comes from `workBack`.
+- **Compare** (`screens/compare.js`): Plan B is a copy of the year's plan. It is changed freely and written back only on "Use Plan B".
+- **Share** (`screens/share.js`):
+  - a plan card as a 1080x1350 image, or as a link;
+  - the link (`engine/packet.js`) carries only the year, the levels and the goal;
+  - `?s=shared` is read only and saves nothing unless asked.
+- **Counsellor session** (`screens/session.js`): five steps over 15 minutes, in projector sized type.
+- **Day stories** (`data/daysin.json`): a day at each place and one route there, on destination pages.
+  - These are composites, labelled as such. Real Beatty alumni stories can replace them.
+  - They replace the Classic game, which is still in Classic Paths.
+- **New gate, Goal and share:** every interest and sector leads somewhere; families only add requirements; goal moves move the goal; links round trip and carry nothing else. The style check covers the new screens and stories.
+
 ## Addresses
 
 | Address | Opens |
 | --- | --- |
-| `genapp/pathways.html` | The latest (forwards to `pathways/`) |
+| `genapp/pathways5/` | The new site (v5, working title) |
+| `genapp/pathways.html` | Classic Paths (forwards to `pathways/`) |
 | `genapp/pathways/` | The latest. Until 2026-10-31 this address was v1 |
 | `genapp/pathways4/` | Forwards to the latest |
 | `genapp/pathways2/`, `genapp/pathways3/` | Forward to their legacy folders |

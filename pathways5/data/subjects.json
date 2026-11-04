@@ -1,0 +1,624 @@
+{
+ "_meta": {
+  "source": "SEAB SEC 2027 syllabus listings (G1/G2/G3 school candidates), MOE course and applied subject pages, school Sec 3 option booklets. K codes verified by syllabus PDF title where marked confirmed.; MOE Full SBB pages and school FSBB briefings for the lower secondary model",
+  "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
+  "accessed": "2026-08-05",
+  "units": "subject levels G1, G2, G3",
+  "notes": "The national picture, not a promise about any one school. Schools run subsets, and the subjects marked selected are offered only at schools approved to run them. Teachers can trim the list to their school in the teacher layer. No syllabus codes are shown to students: the Combined Science pair to code mapping is unverified and the app never needs it. Items marked provisional could not be verified against a primary SEAB PDF title. Third languages (MOELC, PSLE gated) and MTL B (performance triggered) are deliberately not planner rows; see the availability sheet."
+ },
+ "levelInfo": {
+  "G1": {
+   "label": "G1",
+   "name": "General 1",
+   "plain": "Key ideas, with more practical work.",
+   "grading": "Graded A to E.",
+   "status": "confirmed"
+  },
+  "G2": {
+   "label": "G2",
+   "name": "General 2",
+   "plain": "More depth, at a steady pace.",
+   "grading": "Graded 1 to 6.",
+   "status": "confirmed"
+  },
+  "G3": {
+   "label": "G3",
+   "name": "General 3",
+   "plain": "The most content, at the fastest pace.",
+   "grading": "Graded A1 to 9.",
+   "status": "confirmed"
+  }
+ },
+ "groups": [
+  {
+   "id": "core",
+   "label": "Main subjects"
+  },
+  {
+   "id": "maths_extra",
+   "label": "More Mathematics"
+  },
+  {
+   "id": "science",
+   "label": "Science",
+   "note": "At G2, science is taken as a pair. Pure sciences are G3.",
+   "lowerNote": "One Science in Sec 1 and 2. In Sec 3 it becomes a pair, or single sciences."
+  },
+  {
+   "id": "humanities",
+   "label": "Humanities",
+   "note": "At G2 and G3, you take one Humanities pair. Some schools add a pure Humanities subject.",
+   "lowerNote": "In Sec 1 and 2, each Humanities subject has its own level."
+  },
+  {
+   "id": "elective",
+   "label": "Electives"
+  },
+  {
+   "id": "common",
+   "label": "Common Curriculum",
+   "note": "No levels. About a third of your week."
+  }
+ ],
+ "subjects": [
+  {
+   "id": "el",
+   "name": "English Language",
+   "shortName": "English",
+   "group": "core",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "status": "confirmed",
+   "phase": "both",
+   "raisableFrom": "sec1"
+  },
+  {
+   "id": "mtl",
+   "name": "Mother Tongue Language",
+   "shortName": "Mother Tongue",
+   "group": "core",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "status": "confirmed",
+   "phase": "both",
+   "raisableFrom": "sec1"
+  },
+  {
+   "id": "hmtl",
+   "name": "Higher Mother Tongue",
+   "shortName": "Higher Mother Tongue",
+   "group": "core",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "note": "Offered to students strong in the language, usually alongside mostly G3 subjects. Ask your school.",
+   "status": "provisional",
+   "phase": "both"
+  },
+  {
+   "id": "maths",
+   "name": "Mathematics",
+   "shortName": "Maths",
+   "group": "core",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "status": "confirmed",
+   "phase": "both",
+   "raisableFrom": "sec1",
+   "sec3": {
+    "G2": "Maths at G2 is the usual way into Additional Maths at G2. The school sets the mark.",
+    "G3": "Maths at G3 is the usual way into Additional Maths at G3. The school sets the mark."
+   }
+  },
+  {
+   "id": "amaths",
+   "name": "Additional Mathematics",
+   "shortName": "Additional Mathematics",
+   "group": "maths_extra",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "science_g1",
+   "name": "Science",
+   "group": "science",
+   "levels": [
+    "G1"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "sci_pc",
+   "name": "Science (Physics, Chemistry)",
+   "shortName": "Science (Physics, Chemistry)",
+   "group": "science",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "sci_pb",
+   "name": "Science (Physics, Biology)",
+   "shortName": "Science (Physics, Biology)",
+   "group": "science",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "sci_cb",
+   "name": "Science (Chemistry, Biology)",
+   "shortName": "Science (Chemistry, Biology)",
+   "group": "science",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "physics",
+   "name": "Physics",
+   "group": "science",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "chemistry",
+   "name": "Chemistry",
+   "group": "science",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "biology",
+   "name": "Biology",
+   "group": "science",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "hum_ss_geog",
+   "name": "Humanities (Social Studies, Geography)",
+   "shortName": "Humanities (Social Studies, Geography)",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "coreHumanities": true,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "hum_ss_hist",
+   "name": "Humanities (Social Studies, History)",
+   "shortName": "Humanities (Social Studies, History)",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "coreHumanities": true,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "hum_ss_lit",
+   "name": "Humanities (Social Studies, Literature in English)",
+   "shortName": "Humanities (Social Studies, Literature in English)",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "coreHumanities": true,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "geography",
+   "name": "Geography",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "conflictsWith": "hum_ss_geog",
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "history",
+   "name": "History",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "conflictsWith": "hum_ss_hist",
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "literature",
+   "name": "Literature in English",
+   "shortName": "Literature in English",
+   "group": "humanities",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "conflictsWith": "hum_ss_lit",
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "art",
+   "name": "Art",
+   "group": "elective",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "higher_art",
+   "name": "Higher Art",
+   "group": "elective",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "dt",
+   "name": "Design and Technology",
+   "shortName": "Design and Technology",
+   "group": "elective",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "nfs",
+   "name": "Nutrition and Food Science",
+   "shortName": "Nutrition and Food Science",
+   "group": "elective",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "music",
+   "name": "Music",
+   "group": "elective",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "higher_music",
+   "name": "Higher Music",
+   "group": "elective",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "poa",
+   "name": "Principles of Accounts",
+   "shortName": "Principles of Accounts",
+   "group": "elective",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "economics",
+   "name": "Economics",
+   "group": "elective",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "note": "New at SEC, first exam 2027. Few schools offer it yet.",
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "computing",
+   "name": "Computing",
+   "group": "elective",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "note": "Part of the G1 package from 2026. At G2 and G3, selected schools.",
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "ebs",
+   "name": "Elements of Business Skills",
+   "shortName": "Elements of Business Skills",
+   "group": "elective",
+   "levels": [
+    "G1"
+   ],
+   "compulsory": false,
+   "status": "confirmed",
+   "phase": "upper"
+  },
+  {
+   "id": "ess",
+   "name": "Exercise and Sports Science",
+   "shortName": "Exercise and Sports Science",
+   "group": "elective",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "drama",
+   "name": "Drama",
+   "group": "elective",
+   "levels": [
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "electronics",
+   "name": "Electronics",
+   "group": "elective",
+   "levels": [
+    "G3"
+   ],
+   "compulsory": false,
+   "availability": "selected",
+   "status": "provisional",
+   "phase": "upper"
+  },
+  {
+   "id": "ls_science",
+   "name": "Science",
+   "shortName": "Science",
+   "group": "science",
+   "phase": "lower",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "raisableFrom": "sec1",
+   "sec3": {
+    "G2": "Science at G2 is the usual way into a Science pair at G2.",
+    "G3": "Science at G3 is the usual way into the pure sciences at G3. The school sets the mark."
+   },
+   "note": "In Sec 3 this becomes a Science pair, or pure sciences at G3.",
+   "status": "provisional"
+  },
+  {
+   "id": "ls_geography",
+   "name": "Geography",
+   "shortName": "Geography",
+   "group": "humanities",
+   "phase": "lower",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "raisableFrom": "sec2",
+   "sec3": {
+    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
+    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+   },
+   "levelNote": "G1 is the Humanities Exposure Modules",
+   "status": "provisional"
+  },
+  {
+   "id": "ls_history",
+   "name": "History",
+   "shortName": "History",
+   "group": "humanities",
+   "phase": "lower",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": true,
+   "raisableFrom": "sec2",
+   "sec3": {
+    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
+    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+   },
+   "levelNote": "G1 is the Humanities Exposure Modules",
+   "status": "provisional"
+  },
+  {
+   "id": "ls_literature",
+   "name": "Literature in English",
+   "shortName": "Literature in English",
+   "group": "humanities",
+   "phase": "lower",
+   "levels": [
+    "G1",
+    "G2",
+    "G3"
+   ],
+   "compulsory": false,
+   "raisableFrom": "sec2",
+   "sec3": {
+    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
+    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+   },
+   "levelNote": "G1 is the Humanities Exposure Modules",
+   "note": "Some schools offer this in Sec 1 and 2.",
+   "status": "provisional"
+  },
+  {
+   "id": "ls_art",
+   "name": "Art",
+   "shortName": "Art",
+   "group": "common",
+   "phase": "lower",
+   "levels": [],
+   "compulsory": true,
+   "commonCurriculum": true,
+   "status": "provisional"
+  },
+  {
+   "id": "ls_music",
+   "name": "Music",
+   "shortName": "Music",
+   "group": "common",
+   "phase": "lower",
+   "levels": [],
+   "compulsory": true,
+   "commonCurriculum": true,
+   "status": "provisional"
+  },
+  {
+   "id": "ls_dt",
+   "name": "Design and Technology",
+   "shortName": "Design and Technology",
+   "group": "common",
+   "phase": "lower",
+   "levels": [],
+   "compulsory": true,
+   "commonCurriculum": true,
+   "status": "provisional"
+  },
+  {
+   "id": "ls_fce",
+   "name": "Food and Consumer Education",
+   "shortName": "Food and Consumer Education",
+   "group": "common",
+   "phase": "lower",
+   "levels": [],
+   "compulsory": true,
+   "commonCurriculum": true,
+   "status": "provisional"
+  }
+ ],
+ "junctures": {
+  "status": "confirmed",
+  "years": {
+   "sec1": {
+    "up": "English, Mother Tongue, Maths and Science move up at school reviews, often end of Sec 1.",
+    "note": "Humanities levels can move from Sec 2."
+   },
+   "sec2": {
+    "up": "Every subject here can move now, Humanities included.",
+    "note": "The end of Sec 2 sets your Sec 3 subjects."
+   },
+   "sec3": {
+    "up": null,
+    "note": "Your levels are mostly set now. Grade targets matter more."
+   },
+   "sec4": {
+    "up": null,
+    "note": "This year is about your results."
+   },
+   "sec5": {
+    "up": null,
+    "note": "Sec 5 helps most when you aim it at one place."
+   }
+  }
+ }
+}

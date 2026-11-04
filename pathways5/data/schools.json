@@ -1,0 +1,151 @@
+{
+ "_meta": {
+  "source": "MOE pages on school types, specialised schools, special education and allied educators; SEAB on private candidates and access arrangements; SG Enable programmes",
+  "url": "https://www.moe.gov.sg/secondary/schools/types-of-schools",
+  "accessed": "2026-08-09",
+  "units": "none",
+  "status": "provisional",
+  "notes": "EVERY ROW NEEDS A HUMAN AGAINST THE NAMED PAGE. This page names what exists and deliberately does not advise. This build has no business giving guidance on special educational needs, and a page that tried would be worse than no page, so each row says what a thing is, who it is for and how to ask for it, and stops there. The appliesHere field is the honest part: where this app's own planner does not fit a road, it says so in the same breath as what to use instead."
+ },
+ "sources": {
+  "moe_schools": "MOE pages on secondary school types, the Integrated Programme and specialised independent schools",
+  "moe_specialised": "MOE pages on specialised schools and the ITE Skills Certificate",
+  "moe_sped": "MOE special education pages, including transition planning",
+  "seab_private": "SEAB private candidate registration pages",
+  "seab_access": "SEAB access arrangements for national examinations",
+  "moe_aed": "MOE pages on allied educators for learning and behavioural support",
+  "sgenable": "SG Enable programmes for students and school leavers",
+  "moe_ecg": "MOE Education and Career Guidance pages"
+ },
+ "kinds": [
+  {
+   "id": "govt",
+   "label": "A government or government aided secondary school",
+   "examples": "Most secondary schools in Singapore.",
+   "sits": "The Singapore Cambridge Secondary Education Certificate, with subjects at G1, G2 and G3.",
+   "leadsTo": "Every destination this app plans for, from ITE to junior college.",
+   "appliesHere": "fully",
+   "note": "This is the road the whole app assumes. Everything in Plan, Play and Act is built for it.",
+   "status": "provisional",
+   "sourceRef": "moe_schools"
+  },
+  {
+   "id": "indep",
+   "label": "An independent school",
+   "examples": "Schools that set their own fees and admit on their own terms.",
+   "sits": "The SEC, and some also run an Integrated Programme alongside it.",
+   "leadsTo": "The same destinations. The fee is the difference, and the Independent School Bursary exists for it.",
+   "appliesHere": "fully",
+   "note": "The subject planner applies exactly as written. The money page has the fee and the bursary.",
+   "status": "provisional",
+   "sourceRef": "moe_schools"
+  },
+  {
+   "id": "ip",
+   "label": "An Integrated Programme",
+   "examples": "Six years through to the A Levels or the International Baccalaureate.",
+   "sits": "No SEC. The final exam comes at eighteen instead of sixteen.",
+   "leadsTo": "University, mostly, and every other route stays open to somebody who leaves the programme.",
+   "appliesHere": "partly",
+   "note": "The subject planner assumes an exam at sixteen, so its arithmetic does not apply. Everything about work, money, wants and the years to twenty does.",
+   "status": "provisional",
+   "sourceRef": "moe_schools"
+  },
+  {
+   "id": "sis",
+   "label": "A specialised independent school",
+   "examples": "NUS High School of Mathematics and Science, School of the Arts, Singapore Sports School, School of Science and Technology.",
+   "sits": "Depends on the school. Its own diploma, the International Baccalaureate, or the SEC.",
+   "leadsTo": "Universities here and abroad, conservatoires, sport, and every route in this app.",
+   "appliesHere": "partly",
+   "note": "Where the school runs its own diploma there is no SEC to plan, so use the work, money and wants pages and ask the school about its own progression.",
+   "status": "provisional",
+   "sourceRef": "moe_schools"
+  },
+  {
+   "id": "specialised",
+   "label": "A specialised school",
+   "examples": "NorthLight School, Assumption Pathway School, Crest Secondary, Spectra Secondary.",
+   "sits": "The ITE Skills Certificate, with hands on learning through the whole programme.",
+   "leadsTo": "Nitec at ITE, then Higher Nitec, then everything the ITE road reaches, which is a lot.",
+   "appliesHere": "partly",
+   "note": "The ITE Skills Certificate is a real qualification and a real entry to Nitec, and this app's planner does not model it. The work page and the ITE road do apply, in full.",
+   "status": "provisional",
+   "sourceRef": "moe_specialised"
+  },
+  {
+   "id": "sped",
+   "label": "A special education school",
+   "examples": "Government funded schools run by social service agencies, for students up to eighteen.",
+   "sits": "A curriculum set for the student, which may include national exams or may not.",
+   "leadsTo": "Open or supported employment, further training including ITE for some students, and day activity centres.",
+   "appliesHere": "no",
+   "note": "This app does not model this road and should not pretend to. Transition planning inside the school is the real instrument, and SG Enable runs the school to work programmes.",
+   "status": "provisional",
+   "sourceRef": "moe_sped"
+  },
+  {
+   "id": "private",
+   "label": "Not in a mainstream school right now",
+   "examples": "Private candidates, home education, students returning after time away.",
+   "sits": "The SEC as a private candidate, or another qualification.",
+   "leadsTo": "The same destinations, on the same published criteria as anybody else.",
+   "appliesHere": "partly",
+   "note": "The admission arithmetic applies as published. Registration as a private candidate goes through SEAB rather than through a school.",
+   "status": "provisional",
+   "sourceRef": "seab_private"
+  }
+ ],
+ "support": [
+  {
+   "id": "access",
+   "label": "Access arrangements for exams",
+   "what": "Extra time, a reader, a scribe, a separate room, enlarged papers, and others, for national exams and school exams.",
+   "who": "Students with a diagnosed condition that affects how they can sit a paper.",
+   "howToGet": "Applied for through the school, well in advance. The school knows the evidence needed and the deadline.",
+   "note": "This is not an advantage and it is not a favour. It removes something that was measuring the wrong thing.",
+   "status": "provisional",
+   "sourceRef": "seab_access"
+  },
+  {
+   "id": "aed",
+   "label": "The Allied Educator for learning and behavioural support",
+   "what": "A trained member of staff in the school who works with students who need a different approach, and with their teachers.",
+   "who": "Anybody the school identifies, and anybody whose family asks.",
+   "howToGet": "Ask the form teacher who the school's Allied Educator is. Most schools have one.",
+   "note": "Often the person who knows most about how a particular student learns, and the least asked for by name.",
+   "status": "provisional",
+   "sourceRef": "moe_aed"
+  },
+  {
+   "id": "transition",
+   "label": "Transition planning",
+   "what": "Structured planning for what happens after school, started years before it happens, in special education schools.",
+   "who": "Students in special education schools, from around thirteen.",
+   "howToGet": "It is part of the school's programme. The family is meant to be in the room for it.",
+   "note": "The real version of what this app does, run by people who know the student.",
+   "status": "provisional",
+   "sourceRef": "moe_sped"
+  },
+  {
+   "id": "sgenable",
+   "label": "SG Enable",
+   "what": "The agency for disability in Singapore. School to work programmes, training, employment support and funding.",
+   "who": "Students and adults with disabilities, and their families.",
+   "howToGet": "Directly, and the school can make the introduction.",
+   "note": "Start earlier than feels necessary. The school to work programmes have intakes and places.",
+   "status": "provisional",
+   "sourceRef": "sgenable"
+  },
+  {
+   "id": "ecg_sen",
+   "label": "The ECG counsellor, for this in particular",
+   "what": "The person in the school whose job is exactly the join between a student's situation and what comes next.",
+   "who": "Every student in a mainstream secondary school has one.",
+   "howToGet": "Book a slot. The room is usually empty at lunch.",
+   "note": "Where this app stops, that conversation starts. Nothing on these pages replaces it.",
+   "status": "provisional",
+   "sourceRef": "moe_ecg"
+  }
+ ]
+}
