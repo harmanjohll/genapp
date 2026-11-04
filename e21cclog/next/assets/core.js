@@ -781,6 +781,7 @@ function stuckUser(entry, qid, level, profile){
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'Next';   // the next version, built beside the pilot at e21cclog/next/
 const APP_VERSION = {label:'Next', date:'November 2026', notes:[
+  'Share an entry and its own teacher comes first; Send sends a teacher all their new entries in one link',
   'Pick your teacher for each subject and CCA, and your form teacher, from the school’s staff list',
   'Your school’s staff list arrives by one link from your teacher, and stays on this device',
   'The next version of the Log, built beside the pilot so the pilot stays as it is',
