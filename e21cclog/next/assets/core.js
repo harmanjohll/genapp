@@ -843,6 +843,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Next', date:'November 2026', notes:[
+  'This term’s rhythm on Home, a dot for each week you write; milestones kept quietly in Settings',
   'A plan that names a day is asked about on that day: did you do it?',
   'A weekly reminder for your calendar, in Settings',
   'The Log opens where you left off, and an unfinished entry waits on Home, one tap away',

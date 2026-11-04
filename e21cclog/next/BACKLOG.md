@@ -217,7 +217,7 @@ The measure: students active each week who got at least one reply from a teacher
 - **Tests:** the rotation, the dismiss rule, the wording scan (no missed or have not), and no prompt when nothing is due.
 
 ### D4 Rhythm and milestones
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
   - **Rhythm.** On Home, one dot per week of this term, filled when the student wrote that week. There is no count of weeks in a row, nothing that resets, and no message about a missed week.

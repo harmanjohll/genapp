@@ -998,7 +998,6 @@ const WHEEL_LABEL = {critical:['Critical'], adaptive:['Adaptive'], inventive:['I
 const EV_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
 const LEVEL_SHADE = [0, .3, .62, .95];
 function weekKey(t){ const d = new Date(t); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
-function streak(entries){ const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now()); if (!weeks.has(w)) w -= 7 * 864e5; while (weeks.has(w)){ n++; w -= 7 * 864e5; } return n; }
 /* The strongest evidence of a competency in one entry: 3 strong, 2 clear, 1 glimpse or claim. */
 function compLevelOf(e, id){
   let lv = 0;
@@ -1081,7 +1080,7 @@ function compPanel(c, x, recent){
   return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll, n, weeks){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}${weeks ? `, ${weeks} week${weeks > 1 ? 's' : ''} running` : ''}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -1097,8 +1096,57 @@ function wireWheel(st, first){
   });
 }
 function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
+/* ---------- D4: this term's rhythm, and milestones ----------
+   Rhythm: one dot for each week of the term, Monday to Sunday from its start, filled when anything was written that
+   week. No count of weeks in a row, nothing that resets, and nothing said about a week without an entry. */
+function termRhythm(entries, now = Date.now()){
+  const tp = termPos(now); const T = termsFor(tp.year)[tp.term - 1]; const W = 7 * 864e5; const start = weekKey(T.start);
+  const weeks = Math.round((weekKey(T.end) - start) / W) + 1;
+  const wrote = new Set(entries.filter(e => e.created >= T.start && e.created <= T.end).map(e => Math.round((weekKey(e.created) - start) / W) + 1));
+  return {term:tp.term, year:tp.year, weeks, wrote, cur:tp.inTerm ? Math.round((weekKey(now) - start) / W) + 1 : null, ended:!tp.inTerm && now > T.end};
+}
+function rhythmRow(E){
+  const r = termRhythm(E); const w = [...r.wrote].sort((a, b) => a - b);
+  const say = w.length ? `Term ${r.term}${r.ended ? '' : ' so far'}: you wrote in ${w.length === 1 ? 'week ' + w[0] : 'weeks ' + w.slice(0, -1).join(', ') + ' and ' + w[w.length - 1]}.` : `Term ${r.term}: a dot fills for each week you write.`;
+  return `<div class="rhythm"><span class="rlab" aria-hidden="true">Term ${r.term}</span><span class="rdots" role="img" aria-label="${esc(say)}">${Array.from({length:r.weeks}, (_, i) => `<i class="${r.wrote.has(i + 1) ? 'on' : ''}${r.cur === i + 1 ? ' now' : ''}"></i>`).join('')}</span><span class="tiny rcap" aria-hidden="true">A dot for each week you write</span></div>`;
+}
+/* Milestones: private and unannounced, kept in Settings, never shared. Each is worked out from the log, with when it
+   was reached; the first time Home sees one it is kept (me.milestones), quietly. An older log is filled in silently. */
+const MILESTONES = {first:'Your first entry', secured:'Your first secured statement', twoplaces:'A competency shown in two places', followed:'A plan followed through', actchange:'An ACT that led to a change'};
+function milestonesNow(){
+  const E = me.entries.slice().sort((a, b) => a.created - b.created); const out = {};
+  if (E.length) out.first = {at:E[0].created, detail:entryTitle(E[0])};
+  const sec = STMT_SET.list.map(x => statementStatus(me.entries, x)).filter(x => x.secured).sort((a, b) => a.securedAt - b.securedAt)[0];
+  if (sec) out.secured = {at:sec.securedAt, detail:sec.stmt.text};
+  // the same competency, linked or read clearly, in entries from two different subjects or CCAs
+  const seen = {};
+  for (const e of E){
+    const comps = new Set([...(e.links || []).map(l => (statementById(l.sid) || {}).comp), ...((e.e21cc && e.e21cc.evidence) || []).filter(v => v.strength === 'clear' || v.strength === 'strong').map(v => v.id)].filter(c => c && compOf(c)));
+    for (const c of comps){ const m = seen[c] = seen[c] || {}; const k = contextKey(e); if (!k || m[k]) continue; m[k] = (e.context && e.context.name) || e.subject || '';
+      if (Object.keys(m).length === 2 && !out.twoplaces) out.twoplaces = {at:e.created, detail:`${compOf(c).label}: ${Object.values(m).join(' and ')}`}; }
+    if (out.twoplaces) break;
+  }
+  const checks = me.planChecks || {}; const at = id => (checks[id] && checks[id].answer === 'yes' && checks[id].at) || 0;
+  const done = E.filter(e => e.kind !== 'across' && me.done && me.done[e.id]).sort((a, b) => (at(a.id) || Infinity) - (at(b.id) || Infinity));
+  if (done.length) out.followed = {at:at(done[0].id), detail:nextStepOf(done[0]) || ''};
+  const act = done.find(e => e.kind === 'act'); if (act) out.actchange = {at:at(act.id), detail:nextStepOf(act) || ''};
+  return out;
+}
+function noteMilestones(){
+  if (!me) return [];
+  const now = milestonesNow(); const backfill = !me.milestones; const kept = me.milestones = me.milestones || {}; const fresh = [];
+  for (const [id, m] of Object.entries(now)) if (!kept[id]){ kept[id] = {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}; if (!backfill) fresh.push(id); }
+  if (backfill || fresh.length) saveDb();
+  return fresh;
+}
+const lowerFirst = t => t.charAt(0).toLowerCase() + t.slice(1);
+function milestoneToast(fresh){
+  if (!fresh.length) return;
+  const words = fresh.map(id => lowerFirst(MILESTONES[id]));
+  setTimeout(() => toast(fresh.length === 1 ? `A milestone: ${words[0]}. It is kept in Settings, My milestones.` : `${fresh.length} milestones: ${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}. They are kept in Settings, My milestones.`, 5600), 350);
+}
 function renderHome(){
-  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E); const W = levelWords();
+  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const W = levelWords(); const fresh = noteMilestones();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
   const pl = planToShow(E);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]) && FRAMEWORKS[k]);
@@ -1160,7 +1208,8 @@ function renderHome(){
         <div class="wheelwrap">${wheelSvg(st)}</div>
         <div class="cpanel is-default" id="cpanel">${compPanel(first, st[first.id], true)}</div>
       </div>
-      ${wheelHint(securedNow, securedAll, E.length, s)}
+      ${wheelHint(securedNow, securedAll, E.length)}
+      ${rhythmRow(E)}
       ${wheelLegend(st)}
     </section>
     <div class="acts">
@@ -1175,7 +1224,7 @@ function renderHome(){
       </div>
     </section>
   `, 'home', {wide:true, cls:'home'});
-  wireWheel(st, first.id); wireSafe();
+  wireWheel(st, first.id); wireSafe(); milestoneToast(fresh);
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
   $$('[data-plan]').forEach(b => b.onclick = () => {
@@ -2166,9 +2215,16 @@ function wireLook(){
 }
 
 /* ---------- settings ---------- */
+function milestonesCard(){
+  // what is kept, plus anything reached since Home last looked; nothing unreached is listed
+  const now = milestonesNow(); const all = Object.assign({}, Object.fromEntries(Object.entries(now).map(([k, m]) => [k, {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}])), me.milestones || {});
+  const list = Object.entries(all).filter(([id]) => MILESTONES[id]).sort((a, b) => a[1].at - b[1].at);
+  return `<section class="card" id="miles"><h2>My milestones</h2><p class="muted">Kept here quietly, for you. They are not shared with anyone, and there are no points.</p>
+    ${list.length ? `<ul class="miles">${list.map(([id, m]) => `<li>${icon('star')}<span><b>${MILESTONES[id]}</b><small>${esc(fmtDate(m.at))}${m.detail ? ' · ' + esc(m.detail) : ''}</small></span></li>`).join('')}</ul>` : '<p class="tiny">Your first one comes with your first entry.</p>'}</section>`;
+}
 const REMIND_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const clockWords = hm => { const [h, m] = String(hm || '').split(':').map(Number); return `${h % 12 || 12}.${String(m || 0).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
-const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
+const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['miles', 'Milestones', 'star'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
@@ -2248,6 +2304,7 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
+    ${milestonesCard()}
     <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
       <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. This is the next version, built beside the pilot. Its logs are its own: nothing here touches a log kept in the pilot.</p>
       <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
