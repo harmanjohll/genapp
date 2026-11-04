@@ -600,7 +600,7 @@ async function importNoteLink(text){
   const d = got.data || {};
   if (!me.email) throw new Error('Add your school email in Settings first. Notes find you by it.');
   if (d.to !== await emailTag(me.email)) throw new Error('This note is addressed to a different student email. Check the email in Settings, or ask your teacher to resend it.');
-  const by = d.by || {}; let added = 0, pending = 0, first = null; const confirmed = [];
+  const by = d.by || {}; let added = 0, pending = 0, first = null; const confirmed = [], landed = new Set();
   // a teacher's confirmation of the top level in a competency
   for (const c of (Array.isArray(d.confirms) ? d.confirms : [])){ if (!c || !compOf(c.comp) || compOf(c.comp).d === 'sec') continue; me.confirmed[c.comp] = {by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:Number(c.at) || Date.now()}; confirmed.push(c.comp); }
   for (const n of (Array.isArray(d.notes) ? d.notes : [])){
@@ -608,10 +608,10 @@ async function importNoteLink(text){
     const note = {id:String(n.id), by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:n.at || Date.now(), anchor:String(n.anchor || 'entry'), text:String(n.text).slice(0, 600), seen:false};
     const e = me.entries.find(x => x.id === n.eid);
     if (!e){ if (!me.pendingNotes.some(p => p.note.id === note.id)){ me.pendingNotes.push({eid:n.eid, note}); pending++; } continue; }
-    if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; }
+    if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; landed.add(e.id); }
   }
   saveDb();
-  return {added, pending, first, confirmed, by:by.name || 'Your teacher'};
+  return {added, pending, first, entries:landed.size, confirmed, by:by.name || 'Your teacher'};
 }
 function applyPendingNotes(){
   let n = 0; me.pendingNotes = (me.pendingNotes || []).filter(p => { const e = me.entries.find(x => x.id === p.eid); if (!e) return true; if (!e.notes.some(x => x.id === p.note.id)){ e.notes.push(p.note); n++; } return false; });
@@ -626,7 +626,8 @@ async function processStashedLink(h){
   try{
     const r = await importNoteLink(q.get('n') || '');
     if (r.confirmed.length){ const L = r.confirmed.map(c => compOf(c).label).join(', '); toast(`${r.by} confirmed ${levelWords()[2]} in ${L}.`, 4200); location.hash = '#/c/' + r.confirmed[0]; }
-    else if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); location.hash = '#/entry/' + r.first; }
+    // notes on one entry open it; notes on several open Home, where From your teachers lists them all
+    else if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); const to = r.entries > 1 ? '#/' : '#/entry/' + r.first; if (location.hash === to) route(); else location.hash = to; }
     else if (r.pending) dialog(`<h2>A note for an entry not on this device</h2><p>${esc(r.by)} wrote on ${plural(r.pending, 'entry', 'entries')} that this device does not have. Import your exported log (Settings, Your data) and the note will land in place.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`), $('#dClose').onclick = closeDialog;
     else toast('You already have these notes.');
   }catch(err){ dialog(`<h2>That note did not open</h2><p>${esc(err.message)}</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; }
@@ -1053,7 +1054,6 @@ function renderHome(){
   // immediate: what to do this week
   const now = [];
   if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
-  if (unread.length) now.push(nextItem('note', `<b>Read ${esc(unread[0].n.by)}’s note</b> on ${esc(entryTitle(unread[0].e))}${unread.length > 1 ? `, and ${plural(unread.length - 1, 'more note')}` : ''}.`, `#/entry/${unread[0].e.id}`, 'Read it'));
   const plan = nextEntry ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:4px 0 0">Your plan from your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p>${followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : ''}</div></li>` : '';
   const nFirst = now.length;
   if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
@@ -1061,6 +1061,7 @@ function renderHome(){
   for (const k of drafts) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k, 'Carry on'));
   if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
   if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
   // longer term: this term and beyond
   const later = [];
@@ -1074,7 +1075,11 @@ function renderHome(){
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
   if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
   const first = recentComp(st);
+  // replies from teachers come first (A5): who, on which entry, and the words
+  unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
+  const fromT = unread.length ? `<section class="card fromcard" aria-labelledby="fromH"><h2 id="fromH">From your teachers</h2><ul class="fromlist">${unread.slice(0, 3).map(({e, n}) => `<li>${noteHtml(n)}<p class="tiny">On your entry <a href="#/entry/${e.id}">${esc(entryTitle(e))}</a></p><div class="row"><a class="btn small" href="#/entry/${e.id}">Open the entry</a><button type="button" class="btn small ghost" data-readnote="${esc(e.id)}|${esc(n.id)}">Mark as read</button></div></li>`).join('')}</ul>${unread.length > 3 ? `<p class="tiny">${plural(unread.length - 3, 'more note')} in your entries.</p>` : ''}</section>` : '';
   frame(`
+    ${fromT}
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
@@ -1098,6 +1103,7 @@ function renderHome(){
     </section>
   `, 'home', {wide:true, cls:'home'});
   wireWheel(st, first.id); wireSafe();
+  $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
 
