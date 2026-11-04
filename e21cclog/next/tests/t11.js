@@ -59,7 +59,8 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   // a note and a draft come first
   await page.evaluate(() => { me.entries[0].notes = [{id:'n1', by:'Mr Lim', text:'Good start.', at:Date.now(), seen:false, field:'g1'}]; me.drafts.grow = {kind:'grow', key:'grow', step:1, context:{type:'subject', name:'Art'}, answers:{g1:'I learnt shading.'}, claims:[]}; saveDb(); route(); }); await sleep(400);
   const nx2 = await page.$$eval('.nxpart:first-of-type .nxlist>li', ls => ls.map(l => l.textContent.replace(/\s+/g, ' ').trim()));
-  check('Immediate also lists a teacher’s note to read and an entry to finish', nx2.some(t => /^Read Mr Lim’s note/.test(t)) && nx2.some(t => /^Finish your GROW entry/.test(t)), JSON.stringify(nx2));
+  const from = await page.$eval('#main', m => { const f = m.querySelector('.fromcard'); return f && f.compareDocumentPosition(m.querySelector('.wheelcard')) & Node.DOCUMENT_POSITION_FOLLOWING ? f.textContent : ''; });
+  check('a teacher’s note comes first on Home, in From your teachers, and Immediate lists the entry to finish', /Mr Lim/.test(from) && /Good start\./.test(from) && nx2.some(t => /^Finish your GROW entry/.test(t)), JSON.stringify(nx2));
   await page.evaluate(() => { me.entries[0].notes = []; delete me.drafts.grow; saveDb(); route(); }); await sleep(300);
 
   // 4. the wheel's panel: full width Home, the most recent competency first, then hover with a mouse, then a click opens

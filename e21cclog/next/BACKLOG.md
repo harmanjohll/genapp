@@ -17,6 +17,17 @@ The decisions behind these items were made with Harman in November 2026:
 - **Microsoft 365 for F:** can the school register an app in its Microsoft setup, or does MOE control that centrally? Ask ICT.
 - **Dilemma cards in E5b:** a content review of the twelve cards, in that item's pull request.
 
+## The order, agreed on 4 November
+What multiplies use is how often students log, whether anyone answers, and whether the record pays off later. So the loop comes first, and depth comes after reach.
+1. **A5 Reply in one tap.** A teacher answers a shared entry in one tap; the student sees it on Home.
+2. **B1 Resume where I left off.**
+3. **D nudges, with the timetable:** a gentle prompt after a lesson ends (to be specced once the timetable CSV arrives).
+4. **F Microsoft 365 sign in,** once ICT answers.
+5. **G1 My growth story:** evidence for each competency, ready for testimonials, DSA, ECG and PSG talks (to be specced).
+6. **C coaching,** then **E regulation and scenarios.**
+
+The measure: students active each week who got at least one reply from a teacher.
+
 ---
 
 ## A. Teacher access and sharing
@@ -80,6 +91,18 @@ The decisions behind these items were made with Harman in November 2026:
   - the idle lock (use a short test interval);
   - a share link while locked, and existing data migrated;
   - axe on the PIN screen.
+
+### A5 Reply in one tap
+- **Status:** done
+- **Needs:** nothing
+- **Spec:**
+  - **Quick replies.** In the console reader, each shared entry offers three replies in a teacher's voice ("Seen. Thank you for sharing this.", "Clear thinking here. Keep going.", "Let’s talk about this next lesson.") and a line of the teacher's own. One tap readies a note on the whole entry, using the existing margin notes.
+  - **Replies to send.** At the top of the Inbox, every student with replies waiting, each with one "Send in Teams" button: a Teams chat to the student with one link for all their replies. The tap marks them sent; sending again is harmless, since the student's log ignores a note it already has.
+  - **Waiting for a reply.** The Inbox can be ordered to show the entries no one has answered yet, oldest first.
+  - **The student's Home.** Unread notes come first, as a "From your teachers" card: who wrote, on which entry, and the words. Open the entry, or mark it read there.
+  - **Reuse.** The note link (`#/note?n=`), `sendNotes`, `pendingNotes` and the student's `importNoteLink`. Notes still go one student at a time, never a class bundle.
+- **Done when:** a teacher answers five students in under two minutes, and each student sees the reply on Home the moment the link opens.
+- **Tests:** a quick reply readied and removable, the own line, Replies to send with the right Teams address and link, sent after the tap, Waiting for a reply, the student's Home card and marking it read, and axe on both.
 
 ## B. Saved state
 
