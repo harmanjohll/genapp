@@ -30,6 +30,20 @@ The measure: students active each week who got at least one reply from a teacher
 
 ---
 
+## S. Showing what is possible
+
+### S1 The demo
+- **Status:** done
+- **Needs:** nothing
+- **Spec:**
+  - **Addresses.** `demo/` is a landing page for staff, students and parents. `demo/student/` and `demo/teacher/` go straight in.
+  - **People.** Sam Lee, a made up Sec 3 student with a term of entries across five subjects and Concert Band, notes from teachers and an entry half written. Mrs Goh, Sam's made up form teacher, with what eight students shared.
+  - **Nothing saved.** The student view runs as a guest. The console opens the sample store, never the real sealed one, and skips the PIN only for that. A reload starts again.
+  - **The tour.** A banner says it is a demo. An optional tour points at each feature and hands over to the other view.
+  - **Fresh data.** `demo/make-demo.js` builds `assets/demo-data.js` with the app's own code; dates move forward to today when the demo opens.
+- **Done when:** a teacher, a student or a parent can open one link and see what the Log does, without a log of their own.
+- **Tests:** a real log and a real console untouched by the demo, both views loaded, every tour step, the landing links, and axe.
+
 ## A. Teacher access and sharing
 
 ### A1 Staff list

@@ -20,6 +20,9 @@ The two never read or clear each other's data, and the pilot's offline copy igno
 ## Trying it
 Open `e21cclog/next/index.html` for the student app and `e21cclog/next/teacher.html` for the console. Everything else works as in the pilot; see `../README.md` for how the Log works.
 
+## The demo
+`e21cclog/next/demo/` shows the Log with made up people, for staff, students and parents: `demo/student/` opens Sam Lee's log (Sec 3, a term in), and `demo/teacher/` opens Mrs Goh's console with what her class shared. Nothing is saved, and a real log or console on the same device is never read or changed. A banner says it is a demo, and an optional tour points at each feature. To refresh the sample data, run `node demo/make-demo.js` with a local server (see the top of that file).
+
 ## Tests
 `e21cclog/next/tests/run.sh` runs every suite against `e21cclog/next/` (`FULL=1` adds the full colour sweep and the route audit). Install once with `npm ci` in `e21cclog/next/tests`. Before any push, also run `node pathways/tools/verify.mjs` from the repository root, as `CLAUDE.md` asks.
 

@@ -9,7 +9,9 @@
 
 /* ---------- runtime ---------- */
 const QS = new URLSearchParams(location.search);
-const GUEST = QS.get('guest') === '1';
+// the demo (index.html?demo=student) runs as a guest: a made up log from assets/demo-data.js, never saved
+const DEMO = QS.get('demo') === 'student';
+const GUEST = QS.get('guest') === '1' || DEMO;
 const EMBED = (() => { try{ return window.self !== window.top || QS.get('embed') === '1'; }catch{ return true; } })();
 if (EMBED) document.body.classList.add('embedded');
 LocalStore.guest = GUEST;
@@ -695,7 +697,9 @@ function applyScroll(r){ if (r && r.y) requestAnimationFrame(() => requestAnimat
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', boot);
 
+function loadScript(src){ return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 async function boot(){
+  if (DEMO){ try{ await loadScript('assets/demo-data.js'); await loadScript('assets/demo.js'); db = window.demoStudentDb(); }catch{} }
   initRuntime();
   const sk = $('.skip'); if (sk) sk.onclick = ev => { ev.preventDefault(); const m = $('#main'); if (m){ m.focus(); m.scrollIntoView(); } };
   // Escape closes an open entry, keeping the draft, unless it closed something smaller first
@@ -719,6 +723,7 @@ async function boot(){
   processStashedLink(link || null);
   if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
   keepSafe();
+  if (DEMO && window.demoStart) window.demoStart();
 }
 async function importConfigFromHash(){
   const q = new URLSearchParams((location.hash.split('?')[1]) || ''); const cfg = decodeConfig(q.get('c') || '');
@@ -829,7 +834,7 @@ function frame(inner, active, opts = {}){
     <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
       <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
     <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
