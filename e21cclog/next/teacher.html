@@ -731,7 +731,7 @@ $('#cRestore').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   try{ const d = JSON.parse(await f.text()); const st = d && (d.store || d); if (!st || typeof st.items !== 'object' || typeof st.classes !== 'object') throw new Error('not a console backup');
     if (!confirm(`Replace what is in this console with the backup from ${d.exported ? d.exported.slice(0, 10) : 'that file'}? It holds ${plural(Object.keys(st.items).length, 'item')}.`)) return;
-    store = Object.assign(blankStore(), st); save(); toast('Restored.'); location.reload(); }
+    store = Object.assign(blankStore(), st); await save(); toast('Restored.'); location.reload(); }
   catch{ toast('That file is not a console backup.'); }
 };
 async function keepConsole(){

@@ -3,7 +3,7 @@
    down. Fonts and images, which never change, come from the copy first. Nothing outside this
    site is touched: AI coach calls and group files from elsewhere always go to the network.
    Change VERSION when a release should replace every copy at once. */
-const VERSION = 'e21cclognext-1-2026-11-03';
+const VERSION = 'e21cclognext-2-2026-11-04';
 const SHELL = ['./', './index.html', './teacher.html', './manifest.webmanifest',
   './assets/core.js', './assets/store.js', './assets/app.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
   './assets/fonts/inter-regular-latin.woff2', './assets/fonts/inter-semibold-latin.woff2', './assets/fonts/inter-bold-latin.woff2',
