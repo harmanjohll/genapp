@@ -781,6 +781,7 @@ function stuckUser(entry, qid, level, profile){
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'Next';   // the next version, built beside the pilot at e21cclog/next/
 const APP_VERSION = {label:'Next', date:'November 2026', notes:[
+  'Pick your teacher for each subject and CCA, and your form teacher, from the school’s staff list',
   'Your school’s staff list arrives by one link from your teacher, and stays on this device',
   'The next version of the Log, built beside the pilot so the pilot stays as it is',
   'Its own logs: nothing here touches a log kept in the pilot'
@@ -1334,6 +1335,8 @@ function migrateProfile(p){
   p.shares = p.shares || {}; p.shares.adults = p.shares.adults || {}; p.shares.sections = p.shares.sections || {}; p.shares.scope = p.shares.scope || {};
   for (const k of ['grow','act',...BASKET_IDS]) if (!Array.isArray(p.shares.sections[k])) p.shares.sections[k] = [];
   p.sentBaskets = p.sentBaskets || {};
+  // the teachers a student picked from the school staff list (A2), each kept as {email, name}
+  p.teachers = Object.assign({subjects:{}, ccas:{}, form:null}, p.teachers || {}); p.teachers.subjects = p.teachers.subjects || {}; p.teachers.ccas = p.teachers.ccas || {};
   p.pendingNotes = Array.isArray(p.pendingNotes) ? p.pendingNotes : [];
   p.coach = Object.assign({mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'}, p.coach || {});
   p.coach.allowance = p.coach.allowance || {day:'', used:0};
