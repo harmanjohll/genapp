@@ -51,7 +51,7 @@ The decisions behind these items were made with Harman in November 2026:
 - **Tests:** the select filtering by subject and level, `teacherFor` across subjects and CCA, changing a teacher in Settings, no list present, and axe.
 
 ### A3 Share to the right teacher
-- **Status:** ready
+- **Status:** done
 - **Needs:** A2
 - **Spec:**
   - **The entry's Share.** Share on an entry defaults to that entry's teacher from A2. The student can still choose another adult.

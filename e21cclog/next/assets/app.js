@@ -506,13 +506,15 @@ function adults(){
   return out;
 }
 function adultById(id){ return adults().find(a => a.id === id) || null; }
-function scopeOf(a){ return me.shares.scope[a.id] || (a.group ? 'group' : 'all'); }
+function scopeOf(a){ return me.shares.scope[a.id] || (a.group ? 'group' : a.staff && a.teaches.length && !a.roles.includes('Form teacher') ? 'teaches' : 'all'); }
 function sectionsOf(a){ return Object.entries(me.shares.sections).filter(([, ids]) => ids.includes(a.id)).map(([k]) => k); }
 function sharesEntry(a, e){
   const secs = sectionsOf(a);
   if (e.kind === 'across') return secs.includes(e.basket);
   if (!secs.includes(e.kind)) return false;
-  return scopeOf(a) === 'all' || !a.groupCode || e.groupCode === a.groupCode;
+  const sc = scopeOf(a);
+  if (sc === 'teaches'){ const t = teacherFor(e); return !!t && t.id === a.id; }
+  return sc === 'all' || !a.groupCode || e.groupCode === a.groupCode;
 }
 function version(e){ return e.updated || e.created; }
 function isSent(a, e){ return !!(e.sent && e.sent[a.id] >= version(e)); }
@@ -1802,10 +1804,10 @@ function e21ccCard(e, opts = {}){
 }
 /* Share one entry: choose the adults; those whose sharing settings cover it come ticked. */
 function shareEntry(e){
-  const list = adults();
+  const own = teacherFor(e); const list = own ? [own, ...adults().filter(a => a.id !== own.id)] : adults();
   if (!list.length){ dialog(`<h2>No one to share with yet</h2><p>Add a group from your teacher (Settings, Groups), or invite a mentor in Sharing.</p><div class="row"><a class="btn" href="#/sharing" id="dGo">${icon('share')} Open Sharing</a><button class="btn sec" id="dClose">Close</button></div>`); $('#dClose').onclick = closeDialog; $('#dGo').onclick = closeDialog; return; }
   dialog(`<h2>Share this entry</h2><p class="tiny">${esc(entryTitle(e))}. Only the people you pick get it.</p>
-    <div class="stack" id="shareList">${list.map((a, i) => `<label class="pick-row"><input type="radio" name="who" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(a.name)}</b><small>${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''}${isSent(a, e) ? ' · already has this version' : ''}</small></span></label>`).join('')}</div>
+    <div class="stack" id="shareList">${list.map((a, i) => `<label class="pick-row"><input type="radio" name="who" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(a.name)}</b><small>${own && a.id === own.id ? `Your ${esc((e.context && e.context.name) || e.subject || '')} teacher${a.roles.includes('Form teacher') ? ' · Form teacher' : ''}` : esc(a.role) + (a.groupLabel ? ' · ' + esc(a.groupLabel) : '')}${isSent(a, e) ? ' · already has this version' : ''}</small></span></label>`).join('')}</div>
     <div class="row" style="margin-top:12px"><button class="btn" id="dGo">${icon('send')} Next</button><button class="btn sec" id="dClose">Cancel</button><a class="btn ghost" href="#/sharing" id="dSet">Sharing settings</a></div>`);
   $('#dClose').onclick = closeDialog; $('#dSet').onclick = closeDialog;
   $('#dGo').onclick = () => { const r = $$('#shareList input').find(x => x.checked); const a = list[+r.value]; deliver(a, [{t:'e', id:e.id, title:entryTitle(e), e}]); };
@@ -1949,10 +1951,10 @@ function renderSharing(){
   const card = a => {
     const secs = sectionsOf(a); const unsent = unsentFor(a); const sink = a.sink && a.sink.kind && a.sink.kind !== 'none' ? (a.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'a link in Teams';
     return `<section class="card adult" data-a="${esc(a.id)}">
-      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : `<button class="btn small ghost danger" data-remove="${esc(a.id)}">${icon('trash')} Remove</button>`}</div>
+      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : a.staff ? `<a class="btn small ghost" href="#/settings?s=expCard">Change</a>` : `<button class="btn small ghost danger" data-remove="${esc(a.id)}">${icon('trash')} Remove</button>`}</div>
       <span class="flabel" style="margin-top:12px">What ${esc(a.name)} can see</span>
       <div class="chips">${SECTIONS.map(([k, l]) => `<button type="button" class="chip ${secs.includes(k) ? 'on' : ''}" data-sec="${k}" aria-pressed="${secs.includes(k)}">${secs.includes(k) ? icon('eye') : icon('lock')}${esc(l)}</button>`).join('')}</div>
-      ${a.group ? `<span class="flabel" style="margin-top:12px">Which entries</span><div class="seg" role="group" aria-label="Which entries">${[['group', `Only ${a.groupLabel || 'this group'}`], ['all', 'All my entries']].map(([k, l]) => `<button type="button" data-scope="${k}" class="${scopeOf(a) === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>` : ''}
+      ${a.group || (a.staff && a.teaches.length) ? `<span class="flabel" style="margin-top:12px">Which entries</span><div class="seg" role="group" aria-label="Which entries">${(a.group ? [['group', `Only ${a.groupLabel || 'this group'}`], ['all', 'All my entries']] : [['teaches', `Only ${a.teaches.join(', ')}`], ['all', 'All my entries']]).map(([k, l]) => `<button type="button" data-scope="${k}" class="${scopeOf(a) === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>` : ''}
       <div class="row" style="margin-top:12px;justify-content:space-between"><span class="tiny">${secs.length ? (unsent.length ? `${plural(unsent.length, 'item')} not sent yet` : 'Up to date') : 'Nothing shared'}</span>${unsent.length ? `<button class="btn small" data-send="${esc(a.id)}">${icon('send')} Send ${unsent.length} new</button>` : ''}</div>
     </section>`;
   };
