@@ -183,22 +183,23 @@ The measure: students active each week who got at least one reply from a teacher
 ## D. Nudges (no pressure, no scoreboard)
 
 ### D1 Calendar reminder
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
-  - **Making it.** In Settings and on Home's What next, "Remind me each week" asks for a day and time. It then gives a weekly repeating calendar event as an `.ics` file, through the share sheet or a download.
+  - **Making it.** In Settings (Weekly reminder), reached from Home's What next by "Remind me each week", the student picks a day and time. It then gives a weekly repeating calendar event as an `.ics` file, through the share sheet or a download.
   - **The event.** It is titled "Write a GROW in your E21CC Log" and links to the Log.
   - **What the app does not do.** It cannot send notifications itself; say so plainly.
 - **Done when:** the file imports into iPad Calendar as a weekly event at the chosen time.
 - **Tests:** the `.ics` text (RRULE weekly, the time zone `Asia/Singapore`, the title and link) for several day and time choices.
 
 ### D2 If then plans, checked back
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
   - **Reading the plan.** When a plan names a day or time ("on Thursday", "tomorrow after CCA", "next Monday"), it is read into a check date.
   - **Checking back.** On or after that day, Home's What next asks "Did you do it?" with Yes, Partly and Not yet. This joins the follow through that exists.
-  - **Plans without a date.** They are checked after seven days, as now.
+  - **Plans without a date.** They are checked seven days after they were written. (Before D2, Home showed the plan to tick straight away.)
+  - **Not yet.** It asks again in three days. A plan is asked about for up to three weeks after its day, then left quietly.
 - **Done when:** a plan for Thursday written on Monday is asked about on Thursday, not before, and its answer counts in "Plans you followed through".
 - **Tests:** date reading for at least 10 phrasings (including none), the check day, and the answer recorded.
 

@@ -442,6 +442,17 @@ async function runAiFor(e){
 
 /* ---------- entry text ---------- */
 function nextStepOf(e){ return e.kind === 'grow' ? e.answers.r2 : e.kind === 'act' ? e.answers.t1 : e.answers.x3; }
+/* D2: one plan on Home. The newest plan that is due (the day it names, or a week after it was written) is asked
+   about, up to three weeks after; Not yet asks again in three days. Otherwise the next plan coming up is shown. */
+const PLAN_ASK_FOR = 21 * 864e5, PLAN_AGAIN = 3 * 864e5;
+function planToShow(E){
+  const now = Date.now(), today = dayStart(now), checks = me.planChecks || {};
+  const open = E.filter(e => e.kind !== 'across' && String(nextStepOf(e) || '').trim() && !me.done[e.id] && !(checks[e.id] && ['partly', 'no'].includes(checks[e.id].answer)));
+  const due = open.find(e => { const d = planCheckDay(nextStepOf(e), e.created); const c = checks[e.id]; return d <= today && today - d <= PLAN_ASK_FOR && !(c && c.answer === 'notyet' && c.again > now); });
+  if (due) return {e:due, due:planCheckDay(nextStepOf(due), due.created), named:!!planDue(nextStepOf(due), due.created), ask:true};
+  const up = open.filter(e => planCheckDay(nextStepOf(e), e.created) > today).sort((a, b) => planCheckDay(nextStepOf(a), a.created) - planCheckDay(nextStepOf(b), b.created))[0];
+  return up ? {e:up, due:planCheckDay(nextStepOf(up), up.created), named:!!planDue(nextStepOf(up), up.created), ask:false} : null;
+}
 function coachOf(e){ return e.coach && (e.coach.ai || e.coach.builtin); }
 function depthOf(e){ const c = coachOf(e); return c ? c.depth : ''; }
 function claimText(e){ const ls = (e.links || []).map(l => statementById(l.sid)).filter(Boolean).map(s => s.text); const t = (e.competencies || []).map(x => (compOf(x.id) || {}).label).filter(Boolean); return (ls.length ? 'I can statements: ' + ls.join('; ') + '. ' : '') + 'Claimed: ' + (t.length ? t.join('; ') : 'none') + (e.e21cc ? '. ' + e21ccSummary(e.e21cc) : ''); }
@@ -649,7 +660,7 @@ function dialog(html){
 function closeDialog(){ const p = $('#inlineDlg'); if (p) p.remove(); const d = $('#dlg'); if (d.open) d.close(); }
 function download(name, text, type = 'application/json'){
   if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(() => toast('Saved.')).catch(() => {}); return; }
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; a.hidden = true; a.textContent = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 
 /* ---------- resume where I left off (B1) ----------
@@ -1089,7 +1100,7 @@ function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden
 function renderHome(){
   const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E); const W = levelWords();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
-  const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
+  const pl = planToShow(E);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]) && FRAMEWORKS[k]);
   // the unfinished entry saved most recently waits at the top, unless the student put it aside (Not now) and has not saved it since
   const putAside = me.draftLater || {};
@@ -1108,7 +1119,11 @@ function renderHome(){
   // immediate: what to do this week
   const now = [];
   if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
-  const plan = nextEntry ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:4px 0 0">Your plan from your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p>${followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : ''}</div></li>` : '';
+  const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
+  const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
+  const plan = !pl ? '' : pl.ask
+    ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
+    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
   const nFirst = now.length;
   if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
@@ -1127,6 +1142,7 @@ function renderHome(){
   // nothing started yet: one way in, rather than a list of competencies that all say the same
   if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
+  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b> A weekly event in your calendar, at a time that suits you, with a link back here.`, '#/settings?s=remind', 'Set it up'));
   if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
   const first = recentComp(st);
   // replies from teachers come first (A5): who, on which entry, and the words
@@ -1162,7 +1178,13 @@ function renderHome(){
   wireWheel(st, first.id); wireSafe();
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
-  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
+  $$('[data-plan]').forEach(b => b.onclick = () => {
+    const a = b.dataset.plan, id = pl.e.id; me.planChecks = me.planChecks || {};
+    if (a === 'yes'){ me.done[id] = true; me.planChecks[id] = {answer:'yes', at:Date.now()}; toast('Well done for following through.'); }
+    else if (a === 'partly'){ me.planChecks[id] = {answer:'partly', at:Date.now()}; toast('Partly counts. Your next entry can say what got in the way.', 4200); }
+    else { me.planChecks[id] = {answer:'notyet', at:Date.now(), again:Date.now() + PLAN_AGAIN}; toast('That is fine. The Log will ask again in a few days.'); }
+    saveDb(); setTimeout(route, 400);
+  });
 }
 
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
@@ -1709,6 +1731,7 @@ function wireStep(){
   $$('[data-ft]', sh).forEach(b => b.onclick = () => {
     collect(); draft.followThrough = {eid:b.dataset.eid, answer:b.dataset.ft};
     if (b.dataset.ft === 'yes') me.done[b.dataset.eid] = true;
+    me.planChecks = Object.assign({}, me.planChecks, {[b.dataset.eid]:{answer:b.dataset.ft, at:Date.now()}});
     saveDraft(); keepScroll(renderComposer);
   });
   const ac = $('[name=aimComp]', sh); if (ac) ac.onchange = () => { collect(); draft._aimComp = ac.value; const t = draft.target && statementById(draft.target); if (t && t.comp !== ac.value) draft.target = ''; saveDraft(); keepScroll(renderComposer); const tg = $('#sheet [name=target]'); if (tg && ac.value) tg.focus(); };
@@ -2143,7 +2166,9 @@ function wireLook(){
 }
 
 /* ---------- settings ---------- */
-const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
+const REMIND_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const clockWords = hm => { const [h, m] = String(hm || '').split(':').map(Number); return `${h % 12 || 12}.${String(m || 0).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
@@ -2198,6 +2223,12 @@ function renderSettings(){
       <p class="tiny" id="staffLine" style="margin-top:4px">${db.staff && db.staff.list ? `School staff list: ${plural(db.staff.list.length, 'teacher')}, from ${esc(fmtDate(db.staff.at))}.` : 'No school staff list on this device yet. Your teacher will share a link to it.'}</p>
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
+    <section class="card" id="remind"><h2>Weekly reminder</h2>
+      <p class="muted">The Log cannot send notifications itself. This puts a weekly event in your calendar instead, with a link back here.</p>
+      ${me.reminder ? `<p class="tiny" id="rNow">Your reminder: ${REMIND_DAYS[me.reminder.day]}s at ${esc(clockWords(me.reminder.time))}. To change it, add a new one here, then delete the old event in your calendar.</p>` : ''}
+      <div class="row"><label class="f" style="margin:0"><span>Day</span><select class="in" id="rDay">${[1, 2, 3, 4, 5, 6, 0].map(d => `<option value="${d}" ${(me.reminder ? me.reminder.day : 5) === d ? 'selected' : ''}>${REMIND_DAYS[d]}</option>`).join('')}</select></label>
+        <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
       <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
       <ul class="safe">
@@ -2265,6 +2296,14 @@ function renderSettings(){
   $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
   $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
+  $('#rAdd').onclick = async () => {
+    const day = +$('#rDay').value, time = $('#rTime').value || '15:30'; const text = icsWeekly({day, time, url:appUrl()}); const name = 'E21CC Log reminder.ics';
+    let shared = false;
+    try{ const f = new File([text], name, {type:'text/calendar'}); if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'E21CC Log reminder'}); shared = true; } }
+    catch(err){ if (err && err.name === 'AbortError') return; }
+    if (!shared) download(name, text, 'text/calendar');
+    me.reminder = {day, time, at:Date.now()}; saveDb(); toast('Open the file to add the weekly event to your calendar.', 4200); renderSettings();
+  };
   $('#sExport').onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); }; wireSafe();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;

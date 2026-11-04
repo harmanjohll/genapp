@@ -780,7 +780,71 @@ function stuckUser(entry, qid, level, profile){
    ================================================================== */
 const APP_NAME = 'E21CC Log';
 const SITE_MARK = 'Next';   // the next version, built beside the pilot at e21cclog/next/
+/* ---------- D2: the day a plan names ----------
+   planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
+   names no day. A weekday is the next one after the day it was written (the same weekday means a week later);
+   "next Thursday" is Thursday of the following week; dates are day then month. */
+const PLAN_DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const PLAN_SHORT = {tues:2, wed:3, thur:4, thurs:4, fri:5};
+const PLAN_MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const PLAN_NUMS = {a:1, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, ten:10, fourteen:14};
+function dayStart(t){ const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function addDays(t, n){ const d = new Date(dayStart(t)); d.setDate(d.getDate() + n); return d.getTime(); }
+function planDue(text, created){
+  const s = ' ' + String(text || '').toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9/' ]+/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const base = dayStart(created || Date.now()); const wd = new Date(base).getDay();
+  const dayIdx = w => PLAN_DAYS.indexOf(w) >= 0 ? PLAN_DAYS.indexOf(w) : PLAN_SHORT[w];
+  const nextMonday = () => addDays(base, ((1 - wd + 7) % 7) || 7);
+  if (/ (today|tonight|this evening|this afternoon|later today) /.test(s)) return base;
+  if (/ tomorrow /.test(s)) return addDays(base, 1);
+  let m = s.match(/ in (\d+|a|one|two|three|four|five|six|seven|ten|fourteen) (days?|weeks?) /);
+  if (m){ const n = /^\d+$/.test(m[1]) ? +m[1] : PLAN_NUMS[m[1]]; return addDays(base, n * (/week/.test(m[2]) ? 7 : 1)); }
+  const dated = (day, month) => { if (!(day >= 1 && day <= 31 && month >= 0 && month <= 11)) return null; const y = new Date(base).getFullYear(); let t = new Date(y, month, day).getTime(); if (t < base) t = new Date(y + 1, month, day).getTime(); return t; };
+  m = s.match(/ (\d{1,2})(?:st|nd|rd|th)? (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]* /);
+  if (m){ const t = dated(+m[1], PLAN_MONTHS.indexOf(m[2])); if (t) return t; }
+  m = s.match(/ (\d{1,2})\/(\d{1,2}) /);
+  if (m){ const t = dated(+m[1], +m[2] - 1); if (t) return t; }
+  m = s.match(/ next (sunday|monday|tuesday|wednesday|thursday|friday|saturday|tues|wed|thurs?|fri)s? /);
+  if (m) return addDays(nextMonday(), (dayIdx(m[1]) + 6) % 7);
+  m = s.match(/ (sunday|monday|tuesday|wednesday|thursday|friday|saturday|tues|wed|thurs?|fri)(?:s|'s)? /);
+  if (m) return addDays(base, ((dayIdx(m[1]) - wd + 7) % 7) || 7);
+  if (/ next week /.test(s)) return nextMonday();
+  if (/ weekend /.test(s)) return addDays(base, (6 - wd + 7) % 7);
+  if (/ end of (the|this) week /.test(s)) return addDays(base, (5 - wd + 7) % 7);
+  return null;
+}
+/* When the Log asks about a plan: the day it names, or a week after it was written. */
+function planCheckDay(text, created){ return planDue(text, created) || addDays(created, 7); }
+
+/* ---------- D1: a weekly reminder as a calendar file ----------
+   icsWeekly({day:5, time:'15:30', url}) gives an iCalendar event every Friday at 3.30 pm, Singapore time, from the
+   next Friday at that time. CRLF line endings and lines folded at 75 octets, as RFC 5545 asks. */
+const ICS_DAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+function icsFold(line){
+  const enc = new TextEncoder(); const out = []; let cur = '';
+  for (const ch of line){ const next = cur + ch; if (enc.encode(next).length > (out.length ? 74 : 75)){ out.push(cur); cur = ch; } else cur = next; }
+  out.push(cur); return out.join('\r\n ');
+}
+function icsWeekly({day, time, url, now = Date.now(), uid}){
+  const [hh, mm] = String(time || '15:30').split(':').map(Number);
+  const SG = 8 * 3600e3; const wall = new Date(now + SG);   // Singapore has no daylight saving: UTC + 8 all year
+  let first = Date.UTC(wall.getUTCFullYear(), wall.getUTCMonth(), wall.getUTCDate(), hh || 0, mm || 0);
+  let diff = (day - wall.getUTCDay() + 7) % 7; if (diff === 0 && first <= wall.getTime()) diff = 7; first += diff * 864e5;
+  const p2 = n => String(n).padStart(2, '0');
+  const stamp = t => { const x = new Date(t); return `${x.getUTCFullYear()}${p2(x.getUTCMonth() + 1)}${p2(x.getUTCDate())}T${p2(x.getUTCHours())}${p2(x.getUTCMinutes())}00`; };
+  const text = t => String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Beatty Secondary School//E21CC Log//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE', 'TZID:Asia/Singapore', 'BEGIN:STANDARD', 'DTSTART:19820101T000000', 'TZOFFSETFROM:+0800', 'TZOFFSETTO:+0800', 'TZNAME:SGT', 'END:STANDARD', 'END:VTIMEZONE',
+    'BEGIN:VEVENT', `UID:${uid || (now.toString(36) + Math.random().toString(36).slice(2, 10))}@e21cclog`, `DTSTAMP:${stamp(now)}Z`,
+    `DTSTART;TZID=Asia/Singapore:${stamp(first)}`, `DTEND;TZID=Asia/Singapore:${stamp(first + 15 * 60e3)}`, `RRULE:FREQ=WEEKLY;BYDAY=${ICS_DAYS[day]}`,
+    'SUMMARY:Write a GROW in your E21CC Log', `DESCRIPTION:${text('Two or three sentences for each question is enough. Open the Log: ' + url)}`, `URL:${url}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:PT0M', 'DESCRIPTION:Write a GROW in your E21CC Log', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'];
+  return lines.map(icsFold).join('\r\n') + '\r\n';
+}
+
 const APP_VERSION = {label:'Next', date:'November 2026', notes:[
+  'A plan that names a day is asked about on that day: did you do it?',
+  'A weekly reminder for your calendar, in Settings',
   'The Log opens where you left off, and an unfinished entry waits on Home, one tap away',
   'Notes from your teachers come first on Home, with the words and the entry they are about',
   'Share an entry and its own teacher comes first; Send sends a teacher all their new entries in one link',
