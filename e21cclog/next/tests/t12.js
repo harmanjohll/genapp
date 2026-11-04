@@ -90,7 +90,7 @@ const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.jso
     check('Back up the console downloads its store and records it', /e21cc-console-.*\.json$/.test(dl.suggestedFilename()) && /Last backed up on/.test(await p.textContent('#cBackupLine')) && JSON.parse(fs.readFileSync(file, 'utf8')).store.items['s|x']);
     await p.evaluate(() => { localStorage.removeItem('e21cclog.next.teacher'); }); await p.reload(); await sleep(500);
     p.once('dialog', d => d.accept()); await p.setInputFiles('#cRestore', file); await sleep(1200);
-    check('Restore brings the console back from the file', await p.evaluate(() => !!JSON.parse(localStorage.getItem('e21cclog.next.teacher') || '{}').items?.['s|x']));
+    check('Restore brings the console back from the file', await p.evaluate(() => !!store.items?.['s|x']));
     await ctx.close(); }
 
   console.log('ERRORS', errors.length ? errors : 'none');

@@ -159,6 +159,9 @@ ol.steps li{margin-bottom:8px}
 .kitem code{font-size:.78em}
 .flags{background:var(--card-2);border-radius:var(--radius-s);padding:8px 12px;margin:8px 0 4px}
 .flags li{font-size:.9em;color:var(--text-2)}
+#pinGate{position:fixed;inset:0;z-index:60;background:var(--bg);display:grid;place-items:center;padding:16px;overflow:auto}
+.pincard{width:min(440px,100%);margin:0} .pincard h1{font-size:1.5em;margin:6px 0 8px} .pincard .tiny.bad{color:var(--red);font-weight:600}
+.pinbrand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy)} .pinbrand img{width:32px;height:32px}
 .stafftable td{vertical-align:top} .stafftable td.fix{border-left:3px solid var(--red)} .stafftable .fixnote{display:block;font-weight:600}
 .dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
 .dlg .box{background:#fff;border-radius:var(--radius);padding:20px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
@@ -435,7 +438,8 @@ ol.steps li{margin-bottom:8px}
 
 <script src="assets/core.js"></script>
 <script src="assets/store.js"></script>
-<script>
+<!-- the console waits here until its PIN opens the store (assets/console-lock.js) -->
+<script type="text/plain" id="consoleMain">
 'use strict';
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -454,16 +458,17 @@ $('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeDialo
 const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teacher', other:'Teacher'};
 
 /* ---------- store: this browser only ---------- */
-/* The console keeps one lasting store in this browser; nothing is copied from older consoles */
+/* The console keeps one lasting store in this browser, sealed with the teacher's PIN by console-lock.js */
 const KEY = 'e21cclog.next.teacher';
 function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}, confirms:{}}; }
 function load(){
   try{
-    const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); return saved ? Object.assign(blankStore(), saved) : blankStore();
+    const saved = window.__consoleData || null; return saved ? Object.assign(blankStore(), saved) : blankStore();
   }catch{ return blankStore(); }
 }
 let store = load(); let cur = null; let openKey = null; let studentSel = null;
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch{ toast('This browser is full. Download a CSV, then clear old items.'); } }
+function save(){ return window.__consoleSave(store); }
+window.addEventListener('consolefull', () => toast('This browser is full. Download a CSV, then clear old items.'));
 /* Beatty's statements, the same set the students' logs use */
 const TSET = normaliseStatementSet(DEFAULT_STATEMENTS);
 function stmtText(id){ const x = TSET.list.find(s => s.id === id); return x ? x.text : id; }
@@ -958,5 +963,6 @@ renderInbox(); backupLine(); keepConsole();
 ingestHash();
 window.addEventListener('hashchange', ingestHash);
 </script>
+<script src="assets/console-lock.js"></script>
 </body>
 </html>

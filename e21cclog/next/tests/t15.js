@@ -36,8 +36,8 @@ const seed = fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'
     const pv = await q.evaluate(() => ({title:document.title, hash:location.hash}));
     const after2 = await pilotLog();
     check('side by side: the pilot opens its own log, unchanged, and next keeps its one log', after2.name === before.name && after2.entries === before.entries && pv.hash !== '#/welcome' && !/Next/.test(pv.title) && (await count(p)) === 1, JSON.stringify({pv, after2}));
-    const t = await ctx.newPage(); await t.goto(BASE + 'teacher.html'); await sleep(600);
-    await t.evaluate(() => { store.items.k = {key:'k', sk:'s', kind:'e', data:{id:'k'}, received:Date.now()}; save(); }); await t.reload(); await sleep(500);
+    await ctx.addInitScript(launch.AUTOPIN); const t = await ctx.newPage(); await t.goto(BASE + 'teacher.html'); await sleep(900);
+    await t.evaluate(async () => { store.items.k = {key:'k', sk:'s', kind:'e', data:{id:'k'}, received:Date.now()}; await save(); }); await t.reload(); await sleep(900);
     check('the console keeps what it saves after the fresh start', await t.evaluate(() => !!store.items.k));
     await ctx.close(); }
 

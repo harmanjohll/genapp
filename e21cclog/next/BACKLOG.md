@@ -63,7 +63,7 @@ The decisions behind these items were made with Harman in November 2026:
 - **Tests:** the default adult per entry, the bundle contents per teacher, the form teacher's default, the Teams link's `users` and `message`, and the console opening the link with all items.
 
 ### A4 Console PIN
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
   - **Setting it.** On first open, the console asks the teacher to set a 4 to 6 digit PIN.

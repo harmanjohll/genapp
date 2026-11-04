@@ -5,7 +5,7 @@
    Change VERSION when a release should replace every copy at once. */
 const VERSION = 'e21cclognext-1-2026-11-03';
 const SHELL = ['./', './index.html', './teacher.html', './manifest.webmanifest',
-  './assets/core.js', './assets/store.js', './assets/app.js', './assets/crest.png', './assets/icon-192.png',
+  './assets/core.js', './assets/store.js', './assets/app.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
   './assets/fonts/inter-regular-latin.woff2', './assets/fonts/inter-semibold-latin.woff2', './assets/fonts/inter-bold-latin.woff2',
   './assets/fonts/inter-extrabold-latin.woff2', './assets/fonts/literata-var-latin.woff2', './statements/beatty-v1.json'];
 
