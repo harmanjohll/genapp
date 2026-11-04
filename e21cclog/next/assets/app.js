@@ -465,10 +465,43 @@ function entryText(e, forAdult){
 
 /* ---------- adults and sharing: nothing is shared until the student says so ---------- */
 const SECTIONS = [['grow', 'GROW'], ['act', 'ACT'], ...DOMAINS.map(d => [d.id, d.short])];
+/* ---------- your teachers, picked from the school staff list (A2) ---------- */
+function staffList(){ return (db.staff && Array.isArray(db.staff.list)) ? db.staff.list : []; }
+function staffByEmail(email){ const e = String(email || '').toLowerCase(); return staffList().find(t => t.email === e) || null; }
+const byStaffName = (a, b) => a.name.localeCompare(b.name);
+// who on the list teaches this subject at the student's Sec level (a subject with no levels: every level), or has this CCA
+function staffFor(kind, name){
+  const n = String(name || '').toLowerCase();
+  if (kind === 'cca') return staffList().filter(t => (t.ccas || []).some(c => c.toLowerCase() === n)).sort(byStaffName);
+  return staffList().filter(t => (t.subjects || []).some(x => sameSubject(x.name, name) && (!x.levels || !x.levels.length || !me.level || x.levels.includes(me.level)))).sort(byStaffName);
+}
+function pickedFor(kind, name){
+  const T = me.teachers || {}; if (kind === 'form') return T.form || null;
+  const map = kind === 'cca' ? T.ccas : T.subjects; if (!map) return null;
+  const k = Object.keys(map).find(x => kind === 'cca' ? x.toLowerCase() === String(name).toLowerCase() : sameSubject(x, name));
+  return k ? map[k] : null;
+}
+// the teacher an entry belongs with: its subject's or CCA's teacher, when the student picked one
+function teacherFor(e){
+  const ctx = (e && e.context) || {type:'subject', name:e && e.subject};
+  if (!ctx.name || !['subject', 'cca'].includes(ctx.type || 'subject')) return null;
+  const p = pickedFor(ctx.type === 'cca' ? 'cca' : 'subject', ctx.name); return p ? adultById('t:' + p.email) : null;
+}
+// each picked teacher once, with every role they hold for this student
+function staffAdults(){
+  const T = me.teachers || {}; const by = {};
+  const add = (p, role, what) => { if (!p || !p.email) return; const t = staffByEmail(p.email); const a = by[p.email] = by[p.email] || {id:'t:' + p.email, name:(t && t.name) || p.name || 'Teacher', email:p.email, roles:[], teaches:[], staff:true, onList:!!t, sink:null, group:false, groupCode:''};
+    if (!a.roles.includes(role)) a.roles.push(role); if (what && !a.teaches.includes(what)) a.teaches.push(what); };
+  for (const [what, p] of Object.entries(T.subjects || {})) add(p, 'Subject teacher', what);
+  for (const [what, p] of Object.entries(T.ccas || {})) add(p, 'CCA teacher', what);
+  add(T.form, 'Form teacher', '');
+  return Object.values(by).map(a => Object.assign(a, {role:a.roles.join(' · '), groupLabel:a.teaches.join(', ')}));
+}
 function adults(){
   const out = [];
   for (const g of myGroups()){ const c = g.cfg; if (!c || !(c.teacherName || c.teacherEmail)) continue;
     out.push({id:'g:' + g.code, name:c.teacherName || 'Teacher', email:c.teacherEmail || '', role:ROLE_OF[groupType(g)] || 'Teacher', groupCode:g.code, groupLabel:c.subject || g.code, sink:c.sink || null, group:true}); }
+  out.push(...staffAdults());
   for (const a of Object.values(me.shares.adults)) out.push(Object.assign({sink:null, group:false, groupCode:''}, a));
   return out;
 }
@@ -1990,14 +2023,35 @@ function experiencesEditor(){
     ${ccaList().map((g, i) => `<span class="mini" id="cg${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="cg${i}">${g.names.map(ccaChip).join('')}</div>`).join('')}
     ${ownCca.length ? `<span class="mini" id="cgown">Your own</span><div class="chips" role="group" aria-labelledby="cgown">${ownCca.map(ccaChip).join('')}</div>` : ''}
     <form class="row" id="addCca" style="margin-top:8px"><input class="in grow" name="c" maxlength="60" aria-label="Another CCA" placeholder="Another CCA, if yours is not listed" autocapitalize="words"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    ${teacherPicks()}
     ${tiers.length ? `<span class="flabel" style="margin-top:16px">NEXUS@BTY</span>${tiers.map((t, i) => `<span class="mini" id="ng${i}">${esc(t.id + ' ' + t.name)} · ${esc(t.who)}</span><div class="chips" role="group" aria-labelledby="ng${i}">${t.modules.map(nxChip).join('')}</div>`).join('')}` : ''}
     <span class="flabel" style="margin-top:16px">Other experiences</span>
     ${others.length ? `<ul class="groups">${others.map(({o, i}) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
     <form class="row" id="addOther"><select class="in" name="t" style="width:auto" aria-label="Type of experience">${CONTEXT_TYPES.filter(c => !['subject', 'cca', 'nexus'].includes(c.id)).map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" aria-label="Name of the experience" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
   </section>`;
 }
+function teacherPicks(){
+  const head = `<span class="flabel" style="margin-top:16px" id="tpHead">Who teaches you?</span>`;
+  if (!staffList().length) return head + `<p class="tiny" id="tpNone" style="margin:0">Ask your teacher for the school link to pick your teachers.</p>`;
+  const opts = (list, cur, label = t => t.name) => {
+    const gone = cur && !list.some(t => t.email === cur.email);
+    return `<option value="">Not chosen</option>${list.map(t => `<option value="${esc(t.email)}" ${cur && cur.email === t.email ? 'selected' : ''}>${esc(label(t))}</option>`).join('')}${gone ? `<option value="${esc(cur.email)}" selected>${esc(cur.name || cur.email)} (no longer on the school list)</option>` : ''}`; };
+  const row = (kind, name) => { const list = staffFor(kind, name), cur = pickedFor(kind, name);
+    if (!list.length && !cur) return `<div class="slv"><span>${esc(name)}</span><span class="lvonly">None on the school list</span></div>`;
+    return `<label class="slv"><span>${esc(name)}</span><select class="in" data-tpick="${kind}|${esc(name)}" aria-label="Your ${esc(name)} teacher">${opts(list, cur)}</select></label>`; };
+  const subs = me.experiences.subjects, ccas = ccasOf();
+  const all = staffList().slice().sort((a, b) => (b.form ? 1 : 0) - (a.form ? 1 : 0) || byStaffName(a, b));
+  return head + `<p class="tiny" style="margin:0 0 8px">From the school’s staff list (${esc(fmtDate(db.staff.at))}). Nothing is shared with a teacher until you choose to share.</p>
+    <div class="slevels" id="tpicks" role="group" aria-labelledby="tpHead">${subs.map(n => row('subject', n)).join('')}${ccas.map(n => row('cca', n)).join('')}
+    <label class="slv"><span>Form teacher</span><select class="in" data-tpick="form|" aria-label="Your form teacher">${opts(all, pickedFor('form'), t => t.form ? `${t.name} (${t.form})` : t.name)}</select></label></div>
+    ${!subs.length && !ccas.length ? `<p class="tiny" style="margin:6px 0 0">Choose your subjects and CCA above to pick their teachers.</p>` : ''}`;
+}
 function wireExperiences(rerender){
   const x = me.experiences;
+  $$('[data-tpick]').forEach(sel => sel.onchange = () => { const [kind, name] = sel.dataset.tpick.split('|'); const T = me.teachers; const t = staffByEmail(sel.value);
+    const val = sel.value ? {email:sel.value, name:t ? t.name : ((pickedFor(kind, name) || {}).name || '')} : null;
+    if (kind === 'form') T.form = val; else { const map = kind === 'cca' ? T.ccas : T.subjects; for (const k of Object.keys(map)) if (kind === 'cca' ? k.toLowerCase() === name.toLowerCase() : sameSubject(k, name)) delete map[k]; if (val) map[name] = val; }
+    saveDb(); toast(val ? `${val.name || 'Teacher'} is your ${kind === 'form' ? 'form teacher' : name + ' teacher'}.` : 'Choice cleared.'); });
   const again = sel => { const y = window.scrollY; rerender(); window.scrollTo(0, y); const nb = sel && $(sel); if (nb) nb.focus(); };
   $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); again(`[data-subj="${CSS.escape(s)}"]`); });
   $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = canonSubject(String(new FormData(ev.target).get('s') || '')); if (!v) return; if (!x.subjects.some(s => sameSubject(s, v))) x.subjects.push(v); saveDb(); rerender(); };

@@ -39,7 +39,7 @@ The decisions behind these items were made with Harman in November 2026:
 - **Tests:** CSV parsing (quotes, commas inside quotes, blank lines), the flagged rows, and the link's round trip. Also: the list survives a reload; a newer link replaces it; axe on the new console card.
 
 ### A2 Pick your teachers
-- **Status:** ready
+- **Status:** done
 - **Needs:** A1
 - **Spec:**
   - **At setup.** In `#/setup` ("My experiences") and in Settings, once a staff list is on the device, each chosen subject and the CCA gets a "Who teaches you?" select. It lists teachers from the list who teach that subject at the student's Sec level.
