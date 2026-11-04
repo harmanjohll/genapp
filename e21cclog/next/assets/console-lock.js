@@ -9,6 +9,7 @@
    Keys: e21cclog.next.teacher (the store, sealed with AES GCM), e21cclog.next.teacher.pin (the salt,
    the iteration count, and a sealed check word; never the PIN), e21cclog.next.teacher.pause (tries).
    A four to six digit PIN keeps out a curious borrower, not a determined attacker with the device.
+   teacher.html?demo=1 opens the demo's made up store instead (assets/demo.js); it never touches these keys.
    Needs core.js (b64urlFromBytes, bytesFromB64url).
    ================================================================== */
 (function(){
@@ -16,6 +17,8 @@
   const DATA = 'e21cclog.next.teacher', LOCK = 'e21cclog.next.teacher.pin', PAUSE = 'e21cclog.next.teacher.pause';
   const ITER = 150000, TRIES = 5, WAIT = 30000;
   const IDLE = Number(sessionStorage.getItem('e21cclog.next.idle')) || 10 * 60 * 1000;
+  // the demo (teacher.html?demo=1) opens made up sample data, never the real store, and saves nothing
+  const DEMO = new URLSearchParams(location.search).get('demo') === '1';
   const te = new TextEncoder(), td = new TextDecoder();
   let key = null, pending = Promise.resolve();
 
@@ -99,14 +102,21 @@
   }
 
   /* ---------- open: start the console, and lock again after ten minutes without use ---------- */
-  function open(data){
+  function open(data, demo){
     window.__consoleData = data; gate.remove(); lockPage(false);
     const s = document.createElement('script'); s.textContent = document.getElementById('consoleMain').textContent; document.body.appendChild(s);
+    if (demo) return;
     let last = Date.now(); const touch = () => { last = Date.now(); };
     for (const ev of ['pointerdown', 'keydown', 'wheel', 'touchstart', 'input']) window.addEventListener(ev, touch, {capture:true, passive:true});
     setInterval(async () => { if (Date.now() - last > IDLE){ await pending; location.reload(); } }, Math.min(15000, Math.max(250, IDLE / 4)));
   }
 
+  if (DEMO){
+    window.__consoleSave = () => Promise.resolve(); window.__consoleFlush = () => Promise.resolve();
+    const add = src => new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+    add('assets/demo-data.js').then(() => add('assets/demo.js')).then(() => { open(window.demoConsoleStore(), true); window.demoStart(); });
+    return;
+  }
   if (!window.crypto || !crypto.subtle){ document.body.insertAdjacentHTML('afterbegin', '<p class="notice warn" style="margin:16px">This browser cannot lock the console. Open it in a recent Chrome, Edge or Safari, at its https address.</p>'); return; }
   show(read(LOCK) ? 'ask' : 'set');
 })();
