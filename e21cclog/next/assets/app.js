@@ -1145,6 +1145,43 @@ function milestoneToast(fresh){
   const words = fresh.map(id => lowerFirst(MILESTONES[id]));
   setTimeout(() => toast(fresh.length === 1 ? `A milestone: ${words[0]}. It is kept in Settings, My milestones.` : `${fresh.length} milestones: ${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}. They are kept in Settings, My milestones.`, 5600), 350);
 }
+/* ---------- D3: one gentle prompt each time the Log is opened ----------
+   In turn: a plan that is due, a statement almost secured, a subject or CCA with no entry yet this term. Only what
+   applies now is offered, and not a kind put aside with Not now in the last week. One per open: the choice is kept
+   for the whole open, and once it is answered or put aside nothing takes its place until the next open. */
+const PROMPT_KINDS = ['plan', 'almost', 'subject'];
+function promptOptions(pl, almost){
+  const out = {}; const tp = termPos(Date.now()); const tk = termKey(Date.now());
+  if (pl && pl.ask) out.plan = {pl};
+  if (almost) out.almost = {almost};
+  if (tp.inTerm){
+    const nameOf = e => (e.context && e.context.name) || e.subject || '';
+    const quiet = myExperiences().filter(x => !me.entries.some(e => termKey(e.created) === tk && sameSubject(nameOf(e), x.name)))
+      .map(x => ({x, last:Math.max(0, ...me.entries.filter(e => sameSubject(nameOf(e), x.name)).map(e => e.created))})).sort((a, b) => a.last - b.last);
+    if (quiet.length) out.subject = {x:quiet[0].x};
+  }
+  return out;
+}
+function choosePrompt(opts){
+  const P = me.prompts = Object.assign({away:{}, last:null}, me.prompts || {}); const key = 'e21cclog.next.prompt.' + me.id;
+  const ok = k => !!opts[k] && !((P.away[k] || 0) > Date.now());
+  let kept = null; try{ kept = sessionStorage.getItem(key); }catch{}
+  if (kept !== null) return ok(kept) ? kept : null;   // this open already had its prompt
+  const from = PROMPT_KINDS.indexOf(P.last); let pick = null;
+  for (let i = 1; i <= PROMPT_KINDS.length && !pick; i++){ const k = PROMPT_KINDS[(from + i + PROMPT_KINDS.length) % PROMPT_KINDS.length]; if (ok(k)) pick = k; }
+  try{ sessionStorage.setItem(key, pick || ''); }catch{}
+  if (pick && P.last !== pick){ P.last = pick; saveDb(); }
+  return pick;
+}
+function promptCard(kind, o){
+  if (!kind) return '';
+  let body = '';
+  if (kind === 'plan') body = `<p><b id="nudgeH">${o.pl.named ? `Your plan for ${fmtDay(o.pl.due)} has come round.` : 'A plan from a week ago.'}</b> “${esc(nextStepOf(o.pl.e))}” Did it happen?</p>
+    <div class="seg" role="group" aria-labelledby="nudgeH">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>`;
+  else if (kind === 'almost') body = `<p><b id="nudgeH">Close to secured:</b> “${esc(o.almost.stmt.text.replace(/\.$/, ''))}”. ${esc(o.almost.missing)}</p><a class="btn small sec" href="#/c/${o.almost.stmt.comp}">See the statement</a>`;
+  else { const x = o.x; body = `<p><b id="nudgeH">Nothing in your log yet for ${esc(x.name)} this term.</b> Your next ${esc(x.name)} ${x.type === 'cca' ? 'session' : 'lesson'} could be the one.</p><a class="btn small" href="#/write/grow?x=${encodeURIComponent((x.type === 'cca' ? 'cca' : 'subject') + ':' + x.name)}">${icon('plus')} New GROW</a>`; }
+  return `<section class="card nudge" data-kind="${kind}" aria-labelledby="nudgeH">${body}<div class="nudgeend"><button type="button" class="linkbtn" id="nudgeLater">Not now</button></div></section>`;
+}
 function renderHome(){
   const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const W = levelWords(); const fresh = noteMilestones();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
@@ -1169,15 +1206,18 @@ function renderHome(){
   if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
   const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
   const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
-  const plan = !pl ? '' : pl.ask
+  // D3: one prompt for this open; what it shows is not listed again below
+  const popts = promptOptions(pl, almost); const promptKind = choosePrompt(popts);
+  const plan = !pl || promptKind === 'plan' ? '' : pl.ask
     ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
     : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
   const nFirst = now.length;
   if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
-  if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
+  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
   if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
   if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
   // longer term: this term and beyond
@@ -1216,6 +1256,7 @@ function renderHome(){
       <a class="btn big" href="#/write/grow">${icon('plus')}<span>New GROW</span></a>
       <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT</span></a>
     </div>
+    ${promptCard(promptKind, popts[promptKind])}
     <section class="card nextcard">
       <h2>What next?</h2>
       <div class="nxparts">
@@ -1225,6 +1266,7 @@ function renderHome(){
     </section>
   `, 'home', {wide:true, cls:'home'});
   wireWheel(st, first.id); wireSafe(); milestoneToast(fresh);
+  const nl = $('#nudgeLater'); if (nl) nl.onclick = () => { me.prompts.away[promptKind] = Date.now() + 7 * 864e5; saveDb(); route(); };
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
   $$('[data-plan]').forEach(b => b.onclick = () => {

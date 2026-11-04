@@ -204,7 +204,7 @@ The measure: students active each week who got at least one reply from a teacher
 - **Tests:** date reading for at least 10 phrasings (including none), the check day, and the answer recorded.
 
 ### D3 Gentle prompts when the app opens
-- **Status:** ready
+- **Status:** done
 - **Needs:** D2
 - **Spec:**
   - **One prompt per open.** At most one prompt each time the app opens, on Home, rotating among:
@@ -212,7 +212,8 @@ The measure: students active each week who got at least one reply from a teacher
     - a statement almost secured;
     - a subject or CCA not written about this term.
   - **Wording.** Plain and kind, never "you missed" or "you have not".
-  - **Dismissing.** Dismissed prompts stay away for a week.
+  - **Dismissing.** Not now puts that kind of prompt aside for a week. Once a prompt is answered or put aside, nothing takes its place until the next open.
+  - **No repeats.** While a prompt shows a plan or a statement, What next does not list it again.
 - **Done when:** a seeded log sees a different single prompt on each of three opens, and a dismissed prompt does not return within a week.
 - **Tests:** the rotation, the dismiss rule, the wording scan (no missed or have not), and no prompt when nothing is due.
 
