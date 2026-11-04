@@ -35,8 +35,12 @@ const SHELL = [
   v('./assets/js/ui/pslepanel.js'), v('./assets/js/ui/targets.js'),
   v('./assets/js/ui/board.js'), v('./assets/js/ui/ticket.js'),
   v('./assets/js/ui/signal.js'), v('./assets/js/ui/labels.js'),
+  v('./assets/js/engine/goal.js'), v('./assets/js/engine/packet.js'),
+  v('./assets/js/screens/path.js'), v('./assets/js/screens/goal.js'),
+  v('./assets/js/screens/compare.js'), v('./assets/js/screens/share.js'),
+  v('./assets/js/screens/session.js'),
   v('./assets/js/screens/start.js'), v('./assets/js/screens/explore.js'),
-  v('./assets/js/screens/home.js'), v('./assets/js/screens/year.js'),
+  v('./assets/js/screens/year.js'),
   v('./assets/js/screens/after.js'), v('./assets/js/screens/myplan.js'),
   v('./assets/js/screens/play.js'), v('./assets/js/screens/act.js'),
   v('./assets/js/screens/adults.js'), v('./assets/js/screens/info.js'),
@@ -46,6 +50,7 @@ const DATA = [
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
   'moves', 'version', 'activities', 'possibilities', 'work', 'money',
   'evidence', 'schools', 'years', 'psle', 'grades', 'families',
+  'offer', 'goals', 'daysin',
 ].map((n) => v(`./data/${n}.json`));
 
 self.addEventListener('install', (e) => {

@@ -394,6 +394,43 @@ async function syntaxSweep() {
   return { ok, fails };
 }
 
+/**
+ * The service worker must hold every module the app can load and every data
+ * file it can fetch. 5.0.0 shipped without the path screen in that list, so
+ * the home screen could not open with no signal. Walks the imports from
+ * main.js and each screen; the ?dev=1 lints are left out on purpose.
+ */
+async function offlineSweep() {
+  const { existsSync } = await import('node:fs');
+  const { normalize } = await import('node:path');
+  const sw = readFileSync(join(root, 'sw.js'), 'utf8');
+  const listed = new Set([...sw.matchAll(/v\('\.\/([^']+)'\)/g)].map((m) => m[1]));
+  const swData = new Set((sw.match(/const DATA = \[([\s\S]*?)\]/) || ['', ''])[1].match(/'([a-z0-9]+)'/g).map((x) => x.slice(1, -1)));
+  const main = readFileSync(join(root, 'assets/js/main.js'), 'utf8');
+  const devOnly = new Set(['assets/js/engine/copy-lint.js', 'assets/js/engine/dom-lint.js']);
+  const seen = new Set();
+  const queue = ['assets/js/main.js', ...[...main.matchAll(/mod: '(\.\/screens\/[^']+)'/g)].map((m) => normalize(`assets/js/${m[1]}`))];
+  while (queue.length) {
+    const f = queue.pop();
+    if (seen.has(f) || !existsSync(join(root, f))) continue;
+    seen.add(f);
+    for (const m of readFileSync(join(root, f), 'utf8').matchAll(/(?:from\s+|import\(\s*)['"`](\.{1,2}\/[^'"`?$]+)/g)) {
+      queue.push(normalize(join(dirname(f), m[1])));
+    }
+  }
+  const loader = readFileSync(join(root, 'assets/js/data-loader.js'), 'utf8');
+  const files = ((loader.match(/FILES = \[([\s\S]*?)\]/) || ['', ''])[1].match(/'([a-z0-9]+)'/g) || []).map((x) => x.slice(1, -1));
+  const fails = [
+    ...[...seen].filter((f) => !devOnly.has(f) && !listed.has(f)).map((f) => ({ missing: f })),
+    ...files.filter((n) => !swData.has(n)).map((n) => ({ missing: `data/${n}.json` })),
+    ...[...listed].filter((f) => !existsSync(join(root, f))).map((f) => ({ listedButAbsent: f })),
+  ];
+  const ok = !fails.length;
+  pass('Offline', ok, `${seen.size - devOnly.size} modules and ${files.length} data files held by the service worker`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
 /** No rule may put white text on a fill that gets lighter after dark. */
 function whiteOnFillSweep() {
   const fails = [];
@@ -439,6 +476,7 @@ const results = [
   ['goal-share', v5GoalSweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
+  ['offline', await offlineSweep()],
   ['white-on-fill', whiteOnFillSweep()],
 ];
 
