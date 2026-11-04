@@ -107,10 +107,10 @@ The measure: students active each week who got at least one reply from a teacher
 ## B. Saved state
 
 ### B1 Resume where I left off
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
-  - **Remembering.** The app remembers the last page and scroll position per log (in the log's own data).
+  - **Remembering.** The app remembers the last page and scroll position per log, under the log's own small key on this device, so remembering a place never rewrites the log.
   - **On open.** On open, or after the PIN, it returns there.
   - **A draft in progress.** When a draft exists, Home shows one card at the top: "Carry on with your Geography GROW", with Continue and Not now.
   - **What it never does.** It never jumps into the composer by itself.

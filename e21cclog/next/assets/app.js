@@ -650,6 +650,47 @@ function download(name, text, type = 'application/json'){
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 
+/* ---------- resume where I left off (B1) ----------
+   Each log keeps the last ordinary page and how far down it was, under its own small key on this device
+   (e21cclog.next.resume.<log id>), so remembering a place never rewrites the log itself. When the Log opens at
+   Home in a new tab, or a log with a PIN is opened, it goes back there, if that was in the last 12
+   hours. A link to somewhere else wins. It never opens the composer: a draft waits on Home instead. */
+const RESUMED = 'e21cclog.next.resumed', RESUME_FOR = 12 * 3600e3;
+let bootStart = '#/', resumeSaveAt = 0;
+const resumeKey = () => 'e21cclog.next.resume.' + me.id;
+function readResume(){ try{ return JSON.parse(localStorage.getItem(resumeKey()) || 'null'); }catch{ return null; } }
+function writeResume(r){ try{ localStorage.setItem(resumeKey(), JSON.stringify(r)); }catch{} }
+// only these pages are gone back to: never the composer, a link, or an older address that leads into one
+const ordinaryPage = h => h === '#/' || /^#\/(c|c\/[\w-]+|journal\/(grow|act|ask)|entry\/[\w-]+|settings|sharing|setup)(\?[^#]*)?$/.test(h);
+function rememberPage(h){
+  // writing goes back to Home, where the unfinished entry waits
+  if (/^#\/(write|across)\//.test(h)) h = '#/';
+  if (!me || GUEST || !ordinaryPage(h)) return;
+  const r = readResume(); if (r && r.hash === h) return;
+  writeResume({hash:h, y:0, at:Date.now()});
+}
+function rememberScroll(force){
+  if (!me || GUEST || document.body.classList.contains('composing')) return;
+  if (!force && Date.now() - resumeSaveAt < 500) return; resumeSaveAt = Date.now();
+  const r = readResume(); if (!r || r.hash !== (location.hash || '#/')) return;
+  r.y = Math.round(window.scrollY); r.at = Date.now(); writeResume(r);
+}
+let scrollIdle = 0; window.addEventListener('scroll', () => { clearTimeout(scrollIdle); scrollIdle = setTimeout(() => rememberScroll(true), 300); }, {passive:true});
+window.addEventListener('scroll', () => rememberScroll(false), {passive:true});
+window.addEventListener('pagehide', () => rememberScroll(true));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') rememberScroll(true); });
+// once per tab, and only when the Log opened at Home: where to go back to, or nothing
+function takeResume(){
+  if (!me || GUEST) return null; let seen = false;
+  try{ seen = !!sessionStorage.getItem(RESUMED); sessionStorage.setItem(RESUMED, '1'); }catch{ return null; }
+  if (seen || (bootStart !== '#/' && bootStart !== '#')) return null;
+  const r = readResume(); if (!r || !r.hash || !ordinaryPage(r.hash) || Date.now() - (r.at || 0) > RESUME_FOR) return null;
+  if (r.hash.startsWith('#/entry/') && !me.entries.some(e => e.id === r.hash.slice(8).split('?')[0])) return null;
+  if (r.hash === '#/' && !r.y) return null;
+  return {hash:r.hash, y:r.y || 0};
+}
+function applyScroll(r){ if (r && r.y) requestAnimationFrame(() => requestAnimationFrame(() => { window.scrollTo(0, r.y); rememberScroll(true); })); }
+
 /* ---------- routing ---------- */
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', boot);
@@ -665,12 +706,16 @@ async function boot(){
   document.addEventListener('focusout', () => setTimeout(() => { if (!typing(document.activeElement)) document.body.classList.remove('typing'); }, 60));
   if (db.current && db.profiles[db.current]){ me = db.profiles[db.current]; if (me.pin && openInTab(me.id)) unlocked = true; }
   applyPrefs();
+  bootStart = location.hash || '#/';
+  const back = me && (!me.pin || unlocked) ? takeResume() : null;
+  if (back && back.hash !== '#/') history.replaceState(null, '', location.pathname + location.search + back.hash);
   const link = stashLink();
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
   if ((location.hash || '').startsWith('#/staff')) await importStaffFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
+  applyScroll(back);
   processStashedLink(link || null);
   if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
   keepSafe();
@@ -705,7 +750,7 @@ function route(){
   if (h.startsWith('#/config')){ importConfigFromHash(); return; }
   if (h.startsWith('#/staff')){ importStaffFromHash(); return; }
   if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome'){ location.hash = '#/welcome'; return; } return renderWelcome(); }
-  const {parts} = hashParts();
+  const {parts} = hashParts(); rememberPage(h);
   if (h.startsWith('#/write/')){ const kind = parts[2]; if (kind === 'grow' || kind === 'act'){ if (!parts[3] && !setupDone() && !GUEST) return settingsGate(kind); return openComposer(kind, parts[3]); } }
   if (h.startsWith('#/across/')) return openComposer('across', parts[3], parts[2]);
   // addresses from earlier versions
@@ -883,8 +928,9 @@ function renderWelcome(view){
 }
 async function openProfile(id){
   const p = db.profiles[id]; db.current = id; me = p; unlocked = true; rememberOpen(id); saveDb(); applyPrefs();
-  Promise.all(p.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { if ((location.hash || '#/') === '#/') route(); });
-  location.hash = '#/'; route(); processStashedLink();
+  const back = takeResume(); const to = back ? back.hash : '#/';
+  Promise.all(p.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); applyScroll(back); });
+  history.replaceState(null, '', location.pathname + location.search + to); route(); processStashedLink();
 }
 // a log with a PIN asks for it on its own welcome back card
 function pickProfile(id){
@@ -1040,6 +1086,9 @@ function renderHome(){
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
   const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]) && FRAMEWORKS[k]);
+  // the unfinished entry saved most recently waits at the top, unless the student put it aside (Not now) and has not saved it since
+  const putAside = me.draftLater || {};
+  const carry = drafts.filter(k => !(putAside[k] && putAside[k] >= (me.drafts[k].saved || 0))).sort((a, b) => (me.drafts[b].saved || 0) - (me.drafts[a].saved || 0))[0] || null;
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
   const tk = termKey(Date.now()); const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === tk).map(e => e.basket));
   const all = STMT_SET.list.map(x => statementStatus(me.entries, x));
@@ -1058,7 +1107,7 @@ function renderHome(){
   const nFirst = now.length;
   if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
-  for (const k of drafts) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k, 'Carry on'));
+  for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
   if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
   if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
@@ -1078,8 +1127,11 @@ function renderHome(){
   // replies from teachers come first (A5): who, on which entry, and the words
   unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
   const fromT = unread.length ? `<section class="card fromcard" aria-labelledby="fromH"><h2 id="fromH">From your teachers</h2><ul class="fromlist">${unread.slice(0, 3).map(({e, n}) => `<li>${noteHtml(n)}<p class="tiny">On your entry <a href="#/entry/${e.id}">${esc(entryTitle(e))}</a></p><div class="row"><a class="btn small" href="#/entry/${e.id}">Open the entry</a><button type="button" class="btn small ghost" data-readnote="${esc(e.id)}|${esc(n.id)}">Mark as read</button></div></li>`).join('')}</ul>${unread.length > 3 ? `<p class="tiny">${plural(unread.length - 3, 'more note')} in your entries.</p>` : ''}</section>` : '';
+  let carryCard = '';
+  if (carry){ const d = me.drafts[carry], fw = FRAMEWORKS[carry]; const name = (d.context && d.context.name) || d.subject || ''; const qs = fw.steps.flatMap(x => x.qs); const done = qs.filter(q => String((d.answers || {})[q.id] || '').trim()).length;
+    carryCard = `<section class="card carrycard" aria-labelledby="carryH"><h2 id="carryH">${name ? `Carry on with your ${esc(name)} ${fw.name}` : `Carry on with your ${fw.name} entry`}</h2><p class="tiny">${d.saved ? 'Last saved ' + fmtDay(d.saved) + ' · ' : ''}${done} of ${qs.length} questions answered. Your words are saved.</p><div class="row"><a class="btn" href="#/write/${carry}?go=1">${icon('edit')} Continue</a><button type="button" class="btn ghost" id="carryLater">Not now</button></div></section>`; }
   frame(`
-    ${fromT}
+    ${carryCard}${fromT}
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
@@ -1103,6 +1155,7 @@ function renderHome(){
     </section>
   `, 'home', {wide:true, cls:'home'});
   wireWheel(st, first.id); wireSafe();
+  const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
   const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
 }
@@ -1249,7 +1302,7 @@ function openComposer(kind, editId, basket){
         if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements());
         // the statements it is linked to become the claim
         base.claims = (e.links || []).filter(l => statementById(l.sid)).map(l => ({sid:l.sid, quote:l.quote || ''})); }
-    } else if (base && kind !== 'across' && draftHasWork(base)) ask = true;
+    } else if (base && kind !== 'across' && draftHasWork(base)) ask = !hashParts().q.has('go');
     else if (base && kind !== 'across') base = null;
     draft = Object.assign(freshDraft(kind, key, basket), base || {});
     draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0; draft._ask = ask;
