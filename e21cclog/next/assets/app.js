@@ -442,6 +442,17 @@ async function runAiFor(e){
 
 /* ---------- entry text ---------- */
 function nextStepOf(e){ return e.kind === 'grow' ? e.answers.r2 : e.kind === 'act' ? e.answers.t1 : e.answers.x3; }
+/* D2: one plan on Home. The newest plan that is due (the day it names, or a week after it was written) is asked
+   about, up to three weeks after; Not yet asks again in three days. Otherwise the next plan coming up is shown. */
+const PLAN_ASK_FOR = 21 * 864e5, PLAN_AGAIN = 3 * 864e5;
+function planToShow(E){
+  const now = Date.now(), today = dayStart(now), checks = me.planChecks || {};
+  const open = E.filter(e => e.kind !== 'across' && String(nextStepOf(e) || '').trim() && !me.done[e.id] && !(checks[e.id] && ['partly', 'no'].includes(checks[e.id].answer)));
+  const due = open.find(e => { const d = planCheckDay(nextStepOf(e), e.created); const c = checks[e.id]; return d <= today && today - d <= PLAN_ASK_FOR && !(c && c.answer === 'notyet' && c.again > now); });
+  if (due) return {e:due, due:planCheckDay(nextStepOf(due), due.created), named:!!planDue(nextStepOf(due), due.created), ask:true};
+  const up = open.filter(e => planCheckDay(nextStepOf(e), e.created) > today).sort((a, b) => planCheckDay(nextStepOf(a), a.created) - planCheckDay(nextStepOf(b), b.created))[0];
+  return up ? {e:up, due:planCheckDay(nextStepOf(up), up.created), named:!!planDue(nextStepOf(up), up.created), ask:false} : null;
+}
 function coachOf(e){ return e.coach && (e.coach.ai || e.coach.builtin); }
 function depthOf(e){ const c = coachOf(e); return c ? c.depth : ''; }
 function claimText(e){ const ls = (e.links || []).map(l => statementById(l.sid)).filter(Boolean).map(s => s.text); const t = (e.competencies || []).map(x => (compOf(x.id) || {}).label).filter(Boolean); return (ls.length ? 'I can statements: ' + ls.join('; ') + '. ' : '') + 'Claimed: ' + (t.length ? t.join('; ') : 'none') + (e.e21cc ? '. ' + e21ccSummary(e.e21cc) : ''); }
@@ -649,7 +660,7 @@ function dialog(html){
 function closeDialog(){ const p = $('#inlineDlg'); if (p) p.remove(); const d = $('#dlg'); if (d.open) d.close(); }
 function download(name, text, type = 'application/json'){
   if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(() => toast('Saved.')).catch(() => {}); return; }
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; a.hidden = true; a.textContent = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 
 /* ---------- resume where I left off (B1) ----------
@@ -987,7 +998,6 @@ const WHEEL_LABEL = {critical:['Critical'], adaptive:['Adaptive'], inventive:['I
 const EV_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
 const LEVEL_SHADE = [0, .3, .62, .95];
 function weekKey(t){ const d = new Date(t); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
-function streak(entries){ const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now()); if (!weeks.has(w)) w -= 7 * 864e5; while (weeks.has(w)){ n++; w -= 7 * 864e5; } return n; }
 /* The strongest evidence of a competency in one entry: 3 strong, 2 clear, 1 glimpse or claim. */
 function compLevelOf(e, id){
   let lv = 0;
@@ -1070,7 +1080,7 @@ function compPanel(c, x, recent){
   return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll, n, weeks){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}${weeks ? `, ${weeks} week${weeks > 1 ? 's' : ''} running` : ''}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -1086,10 +1096,96 @@ function wireWheel(st, first){
   });
 }
 function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
+/* ---------- D4: this term's rhythm, and milestones ----------
+   Rhythm: one dot for each week of the term, Monday to Sunday from its start, filled when anything was written that
+   week. No count of weeks in a row, nothing that resets, and nothing said about a week without an entry. */
+function termRhythm(entries, now = Date.now()){
+  const tp = termPos(now); const T = termsFor(tp.year)[tp.term - 1]; const W = 7 * 864e5; const start = weekKey(T.start);
+  const weeks = Math.round((weekKey(T.end) - start) / W) + 1;
+  const wrote = new Set(entries.filter(e => e.created >= T.start && e.created <= T.end).map(e => Math.round((weekKey(e.created) - start) / W) + 1));
+  return {term:tp.term, year:tp.year, weeks, wrote, cur:tp.inTerm ? Math.round((weekKey(now) - start) / W) + 1 : null, ended:!tp.inTerm && now > T.end};
+}
+function rhythmRow(E){
+  const r = termRhythm(E); const w = [...r.wrote].sort((a, b) => a - b);
+  const say = w.length ? `Term ${r.term}${r.ended ? '' : ' so far'}: you wrote in ${w.length === 1 ? 'week ' + w[0] : 'weeks ' + w.slice(0, -1).join(', ') + ' and ' + w[w.length - 1]}.` : `Term ${r.term}: a dot fills for each week you write.`;
+  return `<div class="rhythm"><span class="rlab" aria-hidden="true">Term ${r.term}</span><span class="rdots" role="img" aria-label="${esc(say)}">${Array.from({length:r.weeks}, (_, i) => `<i class="${r.wrote.has(i + 1) ? 'on' : ''}${r.cur === i + 1 ? ' now' : ''}"></i>`).join('')}</span><span class="tiny rcap" aria-hidden="true">A dot for each week you write</span></div>`;
+}
+/* Milestones: private and unannounced, kept in Settings, never shared. Each is worked out from the log, with when it
+   was reached; the first time Home sees one it is kept (me.milestones), quietly. An older log is filled in silently. */
+const MILESTONES = {first:'Your first entry', secured:'Your first secured statement', twoplaces:'A competency shown in two places', followed:'A plan followed through', actchange:'An ACT that led to a change'};
+function milestonesNow(){
+  const E = me.entries.slice().sort((a, b) => a.created - b.created); const out = {};
+  if (E.length) out.first = {at:E[0].created, detail:entryTitle(E[0])};
+  const sec = STMT_SET.list.map(x => statementStatus(me.entries, x)).filter(x => x.secured).sort((a, b) => a.securedAt - b.securedAt)[0];
+  if (sec) out.secured = {at:sec.securedAt, detail:sec.stmt.text};
+  // the same competency, linked or read clearly, in entries from two different subjects or CCAs
+  const seen = {};
+  for (const e of E){
+    const comps = new Set([...(e.links || []).map(l => (statementById(l.sid) || {}).comp), ...((e.e21cc && e.e21cc.evidence) || []).filter(v => v.strength === 'clear' || v.strength === 'strong').map(v => v.id)].filter(c => c && compOf(c)));
+    for (const c of comps){ const m = seen[c] = seen[c] || {}; const k = contextKey(e); if (!k || m[k]) continue; m[k] = (e.context && e.context.name) || e.subject || '';
+      if (Object.keys(m).length === 2 && !out.twoplaces) out.twoplaces = {at:e.created, detail:`${compOf(c).label}: ${Object.values(m).join(' and ')}`}; }
+    if (out.twoplaces) break;
+  }
+  const checks = me.planChecks || {}; const at = id => (checks[id] && checks[id].answer === 'yes' && checks[id].at) || 0;
+  const done = E.filter(e => e.kind !== 'across' && me.done && me.done[e.id]).sort((a, b) => (at(a.id) || Infinity) - (at(b.id) || Infinity));
+  if (done.length) out.followed = {at:at(done[0].id), detail:nextStepOf(done[0]) || ''};
+  const act = done.find(e => e.kind === 'act'); if (act) out.actchange = {at:at(act.id), detail:nextStepOf(act) || ''};
+  return out;
+}
+function noteMilestones(){
+  if (!me) return [];
+  const now = milestonesNow(); const backfill = !me.milestones; const kept = me.milestones = me.milestones || {}; const fresh = [];
+  for (const [id, m] of Object.entries(now)) if (!kept[id]){ kept[id] = {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}; if (!backfill) fresh.push(id); }
+  if (backfill || fresh.length) saveDb();
+  return fresh;
+}
+const lowerFirst = t => t.charAt(0).toLowerCase() + t.slice(1);
+function milestoneToast(fresh){
+  if (!fresh.length) return;
+  const words = fresh.map(id => lowerFirst(MILESTONES[id]));
+  setTimeout(() => toast(fresh.length === 1 ? `A milestone: ${words[0]}. It is kept in Settings, My milestones.` : `${fresh.length} milestones: ${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}. They are kept in Settings, My milestones.`, 5600), 350);
+}
+/* ---------- D3: one gentle prompt each time the Log is opened ----------
+   In turn: a plan that is due, a statement almost secured, a subject or CCA with no entry yet this term. Only what
+   applies now is offered, and not a kind put aside with Not now in the last week. One per open: the choice is kept
+   for the whole open, and once it is answered or put aside nothing takes its place until the next open. */
+const PROMPT_KINDS = ['plan', 'almost', 'subject'];
+function promptOptions(pl, almost){
+  const out = {}; const tp = termPos(Date.now()); const tk = termKey(Date.now());
+  if (pl && pl.ask) out.plan = {pl};
+  if (almost) out.almost = {almost};
+  if (tp.inTerm){
+    const nameOf = e => (e.context && e.context.name) || e.subject || '';
+    const quiet = myExperiences().filter(x => !me.entries.some(e => termKey(e.created) === tk && sameSubject(nameOf(e), x.name)))
+      .map(x => ({x, last:Math.max(0, ...me.entries.filter(e => sameSubject(nameOf(e), x.name)).map(e => e.created))})).sort((a, b) => a.last - b.last);
+    if (quiet.length) out.subject = {x:quiet[0].x};
+  }
+  return out;
+}
+function choosePrompt(opts){
+  const P = me.prompts = Object.assign({away:{}, last:null}, me.prompts || {}); const key = 'e21cclog.next.prompt.' + me.id;
+  const ok = k => !!opts[k] && !((P.away[k] || 0) > Date.now());
+  let kept = null; try{ kept = sessionStorage.getItem(key); }catch{}
+  if (kept !== null) return ok(kept) ? kept : null;   // this open already had its prompt
+  const from = PROMPT_KINDS.indexOf(P.last); let pick = null;
+  for (let i = 1; i <= PROMPT_KINDS.length && !pick; i++){ const k = PROMPT_KINDS[(from + i + PROMPT_KINDS.length) % PROMPT_KINDS.length]; if (ok(k)) pick = k; }
+  try{ sessionStorage.setItem(key, pick || ''); }catch{}
+  if (pick && P.last !== pick){ P.last = pick; saveDb(); }
+  return pick;
+}
+function promptCard(kind, o){
+  if (!kind) return '';
+  let body = '';
+  if (kind === 'plan') body = `<p><b id="nudgeH">${o.pl.named ? `Your plan for ${fmtDay(o.pl.due)} has come round.` : 'A plan from a week ago.'}</b> “${esc(nextStepOf(o.pl.e))}” Did it happen?</p>
+    <div class="seg" role="group" aria-labelledby="nudgeH">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>`;
+  else if (kind === 'almost') body = `<p><b id="nudgeH">Close to secured:</b> “${esc(o.almost.stmt.text.replace(/\.$/, ''))}”. ${esc(o.almost.missing)}</p><a class="btn small sec" href="#/c/${o.almost.stmt.comp}">See the statement</a>`;
+  else { const x = o.x; body = `<p><b id="nudgeH">Nothing in your log yet for ${esc(x.name)} this term.</b> Your next ${esc(x.name)} ${x.type === 'cca' ? 'session' : 'lesson'} could be the one.</p><a class="btn small" href="#/write/grow?x=${encodeURIComponent((x.type === 'cca' ? 'cca' : 'subject') + ':' + x.name)}">${icon('plus')} New GROW</a>`; }
+  return `<section class="card nudge" data-kind="${kind}" aria-labelledby="nudgeH">${body}<div class="nudgeend"><button type="button" class="linkbtn" id="nudgeLater">Not now</button></div></section>`;
+}
 function renderHome(){
-  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E); const W = levelWords();
+  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const W = levelWords(); const fresh = noteMilestones();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
-  const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
+  const pl = planToShow(E);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]) && FRAMEWORKS[k]);
   // the unfinished entry saved most recently waits at the top, unless the student put it aside (Not now) and has not saved it since
   const putAside = me.draftLater || {};
@@ -1108,13 +1204,20 @@ function renderHome(){
   // immediate: what to do this week
   const now = [];
   if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
-  const plan = nextEntry ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:4px 0 0">Your plan from your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p>${followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : ''}</div></li>` : '';
+  const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
+  const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
+  // D3: one prompt for this open; what it shows is not listed again below
+  const popts = promptOptions(pl, almost); const promptKind = choosePrompt(popts);
+  const plan = !pl || promptKind === 'plan' ? '' : pl.ask
+    ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
+    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
   const nFirst = now.length;
   if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
-  if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
+  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
   if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
   if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
   // longer term: this term and beyond
@@ -1127,6 +1230,7 @@ function renderHome(){
   // nothing started yet: one way in, rather than a list of competencies that all say the same
   if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
+  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b> A weekly event in your calendar, at a time that suits you, with a link back here.`, '#/settings?s=remind', 'Set it up'));
   if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
   const first = recentComp(st);
   // replies from teachers come first (A5): who, on which entry, and the words
@@ -1144,13 +1248,15 @@ function renderHome(){
         <div class="wheelwrap">${wheelSvg(st)}</div>
         <div class="cpanel is-default" id="cpanel">${compPanel(first, st[first.id], true)}</div>
       </div>
-      ${wheelHint(securedNow, securedAll, E.length, s)}
+      ${wheelHint(securedNow, securedAll, E.length)}
+      ${rhythmRow(E)}
       ${wheelLegend(st)}
     </section>
     <div class="acts">
       <a class="btn big" href="#/write/grow">${icon('plus')}<span>New GROW</span></a>
       <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT</span></a>
     </div>
+    ${promptCard(promptKind, popts[promptKind])}
     <section class="card nextcard">
       <h2>What next?</h2>
       <div class="nxparts">
@@ -1159,10 +1265,17 @@ function renderHome(){
       </div>
     </section>
   `, 'home', {wide:true, cls:'home'});
-  wireWheel(st, first.id); wireSafe();
+  wireWheel(st, first.id); wireSafe(); milestoneToast(fresh);
+  const nl = $('#nudgeLater'); if (nl) nl.onclick = () => { me.prompts.away[promptKind] = Date.now() + 7 * 864e5; saveDb(); route(); };
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
-  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
+  $$('[data-plan]').forEach(b => b.onclick = () => {
+    const a = b.dataset.plan, id = pl.e.id; me.planChecks = me.planChecks || {};
+    if (a === 'yes'){ me.done[id] = true; me.planChecks[id] = {answer:'yes', at:Date.now()}; toast('Well done for following through.'); }
+    else if (a === 'partly'){ me.planChecks[id] = {answer:'partly', at:Date.now()}; toast('Partly counts. Your next entry can say what got in the way.', 4200); }
+    else { me.planChecks[id] = {answer:'notyet', at:Date.now(), again:Date.now() + PLAN_AGAIN}; toast('That is fine. The Log will ask again in a few days.'); }
+    saveDb(); setTimeout(route, 400);
+  });
 }
 
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
@@ -1709,6 +1822,7 @@ function wireStep(){
   $$('[data-ft]', sh).forEach(b => b.onclick = () => {
     collect(); draft.followThrough = {eid:b.dataset.eid, answer:b.dataset.ft};
     if (b.dataset.ft === 'yes') me.done[b.dataset.eid] = true;
+    me.planChecks = Object.assign({}, me.planChecks, {[b.dataset.eid]:{answer:b.dataset.ft, at:Date.now()}});
     saveDraft(); keepScroll(renderComposer);
   });
   const ac = $('[name=aimComp]', sh); if (ac) ac.onchange = () => { collect(); draft._aimComp = ac.value; const t = draft.target && statementById(draft.target); if (t && t.comp !== ac.value) draft.target = ''; saveDraft(); keepScroll(renderComposer); const tg = $('#sheet [name=target]'); if (tg && ac.value) tg.focus(); };
@@ -2143,7 +2257,16 @@ function wireLook(){
 }
 
 /* ---------- settings ---------- */
-const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
+function milestonesCard(){
+  // what is kept, plus anything reached since Home last looked; nothing unreached is listed
+  const now = milestonesNow(); const all = Object.assign({}, Object.fromEntries(Object.entries(now).map(([k, m]) => [k, {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}])), me.milestones || {});
+  const list = Object.entries(all).filter(([id]) => MILESTONES[id]).sort((a, b) => a[1].at - b[1].at);
+  return `<section class="card" id="miles"><h2>My milestones</h2><p class="muted">Kept here quietly, for you. They are not shared with anyone, and there are no points.</p>
+    ${list.length ? `<ul class="miles">${list.map(([id, m]) => `<li>${icon('star')}<span><b>${MILESTONES[id]}</b><small>${esc(fmtDate(m.at))}${m.detail ? ' · ' + esc(m.detail) : ''}</small></span></li>`).join('')}</ul>` : '<p class="tiny">Your first one comes with your first entry.</p>'}</section>`;
+}
+const REMIND_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const clockWords = hm => { const [h, m] = String(hm || '').split(':').map(Number); return `${h % 12 || 12}.${String(m || 0).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['miles', 'Milestones', 'star'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
@@ -2198,6 +2321,12 @@ function renderSettings(){
       <p class="tiny" id="staffLine" style="margin-top:4px">${db.staff && db.staff.list ? `School staff list: ${plural(db.staff.list.length, 'teacher')}, from ${esc(fmtDate(db.staff.at))}.` : 'No school staff list on this device yet. Your teacher will share a link to it.'}</p>
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
+    <section class="card" id="remind"><h2>Weekly reminder</h2>
+      <p class="muted">The Log cannot send notifications itself. This puts a weekly event in your calendar instead, with a link back here.</p>
+      ${me.reminder ? `<p class="tiny" id="rNow">Your reminder: ${REMIND_DAYS[me.reminder.day]}s at ${esc(clockWords(me.reminder.time))}. To change it, add a new one here, then delete the old event in your calendar.</p>` : ''}
+      <div class="row"><label class="f" style="margin:0"><span>Day</span><select class="in" id="rDay">${[1, 2, 3, 4, 5, 6, 0].map(d => `<option value="${d}" ${(me.reminder ? me.reminder.day : 5) === d ? 'selected' : ''}>${REMIND_DAYS[d]}</option>`).join('')}</select></label>
+        <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
       <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
       <ul class="safe">
@@ -2217,6 +2346,7 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
+    ${milestonesCard()}
     <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
       <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. This is the next version, built beside the pilot. Its logs are its own: nothing here touches a log kept in the pilot.</p>
       <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
@@ -2265,6 +2395,14 @@ function renderSettings(){
   $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
   $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
+  $('#rAdd').onclick = async () => {
+    const day = +$('#rDay').value, time = $('#rTime').value || '15:30'; const text = icsWeekly({day, time, url:appUrl()}); const name = 'E21CC Log reminder.ics';
+    let shared = false;
+    try{ const f = new File([text], name, {type:'text/calendar'}); if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:'E21CC Log reminder'}); shared = true; } }
+    catch(err){ if (err && err.name === 'AbortError') return; }
+    if (!shared) download(name, text, 'text/calendar');
+    me.reminder = {day, time, at:Date.now()}; saveDb(); toast('Open the file to add the weekly event to your calendar.', 4200); renderSettings();
+  };
   $('#sExport').onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); }; wireSafe();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
