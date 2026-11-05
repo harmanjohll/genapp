@@ -132,7 +132,7 @@ The measure: students active each week who got at least one reply from a teacher
 - **Tests:** last page restored, scroll restored on a long page, the draft card and both buttons, and no card without a draft.
 
 ### B2 Backup and restore
-- **Status:** ready
+- **Status:** done
 - **Needs:** nothing
 - **Spec:**
   - **One tap backup.** One tap "Back up my log" uses the share sheet where it exists (`navigator.share` with a file), so an iPad can save to Files or OneDrive. Otherwise it downloads the file.
