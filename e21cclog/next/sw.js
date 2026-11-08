@@ -1,32 +1,14 @@
-/* The E21CC Log's offline copy. Pages, scripts and data come from the network first, so a
-   student always gets the current version when online, with the copy kept for when the wifi is
-   down. Fonts and images, which never change, come from the copy first. Nothing outside this
-   site is touched: AI coach calls and group files from elsewhere always go to the network.
-   Change VERSION when a release should replace every copy at once. */
-const VERSION = 'e21cclognext-2-2026-11-04';
-const SHELL = ['./', './index.html', './teacher.html', './manifest.webmanifest',
-  './assets/core.js', './assets/store.js', './assets/app.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
-  './assets/fonts/inter-regular-latin.woff2', './assets/fonts/inter-semibold-latin.woff2', './assets/fonts/inter-bold-latin.woff2',
-  './assets/fonts/inter-extrabold-latin.woff2', './assets/fonts/literata-var-latin.woff2', './statements/beatty-v1.json'];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => Promise.all(SHELL.map(u => c.add(new Request(u, {cache:'reload'})).catch(() => {})))));
-});
+/* The test version at e21cclog/next/ was folded into the E21CC Log (Version 4) on 8 November 2026.
+   A device that opened it still has its offline copy, which would keep showing the old test version.
+   This worker replaces that copy: it clears its caches, removes itself, and reloads any open page,
+   which then forwards to the E21CC Log. Nothing in the log itself is touched. */
+self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('e21cclognext-') && k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim()));
-});
-self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
-
-const lasting = url => /\.(woff2|png|jpg|svg)$/.test(url.pathname);
-self.addEventListener('fetch', e => {
-  const req = e.request; const url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-  if (url.pathname.includes('/legacy/')) return;
-  if (lasting(url)){
-    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => { if (res.ok){ const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); } return res; })));
-    return;
-  }
-  // a page, a script, the statements, a group file: the network first, the copy if offline
-  e.respondWith(fetch(req).then(res => { if (res.ok){ const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); } return res; })
-    .catch(() => caches.match(req, {ignoreSearch:req.mode === 'navigate'}).then(hit => hit || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error()))));
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k.startsWith('e21cclognext-')).map(k => caches.delete(k)));
+    await self.registration.unregister();
+    const open = await self.clients.matchAll({type:'window'});
+    for (const c of open){ try{ await c.navigate(c.url); }catch{} }
+  })());
 });

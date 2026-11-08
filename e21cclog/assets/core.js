@@ -779,15 +779,81 @@ function stuckUser(entry, qid, level, profile){
    E21CC Log: shared helpers
    ================================================================== */
 const APP_NAME = 'E21CC Log';
-const SITE_MARK = 'v3';   // the version, shown in the app only: the address (e21cclog/) never changes
-const APP_VERSION = {label:'Version 3', date:'November 2026', notes:[
-  'A refresh keeps you in your log, and one log per name on each device',
-  'Beatty’s own subjects for your Sec level, in full, with the levels of demand each is offered at',
-  'Your CCA and NEXUS@BTY module, picked from the school’s lists',
-  'Home in two parts: Where am I now? and What next?',
-  'Three levels, named in the words of your look',
-  'Help beside every question, from its (i)',
-  'A permanent home at e21cclog/, which keeps your log safe from version to version'
+const SITE_MARK = 'v4';   // the version, shown in the app only: the address (e21cclog/) never changes
+/* ---------- D2: the day a plan names ----------
+   planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
+   names no day. A weekday is the next one after the day it was written (the same weekday means a week later);
+   "next Thursday" is Thursday of the following week; dates are day then month. */
+const PLAN_DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const PLAN_SHORT = {tues:2, wed:3, thur:4, thurs:4, fri:5};
+const PLAN_MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const PLAN_NUMS = {a:1, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, ten:10, fourteen:14};
+function dayStart(t){ const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function addDays(t, n){ const d = new Date(dayStart(t)); d.setDate(d.getDate() + n); return d.getTime(); }
+function planDue(text, created){
+  const s = ' ' + String(text || '').toLowerCase().replace(/[‘’]/g, "'").replace(/[^a-z0-9/' ]+/g, ' ').replace(/\s+/g, ' ') + ' ';
+  const base = dayStart(created || Date.now()); const wd = new Date(base).getDay();
+  const dayIdx = w => PLAN_DAYS.indexOf(w) >= 0 ? PLAN_DAYS.indexOf(w) : PLAN_SHORT[w];
+  const nextMonday = () => addDays(base, ((1 - wd + 7) % 7) || 7);
+  if (/ (today|tonight|this evening|this afternoon|later today) /.test(s)) return base;
+  if (/ tomorrow /.test(s)) return addDays(base, 1);
+  let m = s.match(/ in (\d+|a|one|two|three|four|five|six|seven|ten|fourteen) (days?|weeks?) /);
+  if (m){ const n = /^\d+$/.test(m[1]) ? +m[1] : PLAN_NUMS[m[1]]; return addDays(base, n * (/week/.test(m[2]) ? 7 : 1)); }
+  const dated = (day, month) => { if (!(day >= 1 && day <= 31 && month >= 0 && month <= 11)) return null; const y = new Date(base).getFullYear(); let t = new Date(y, month, day).getTime(); if (t < base) t = new Date(y + 1, month, day).getTime(); return t; };
+  m = s.match(/ (\d{1,2})(?:st|nd|rd|th)? (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]* /);
+  if (m){ const t = dated(+m[1], PLAN_MONTHS.indexOf(m[2])); if (t) return t; }
+  m = s.match(/ (\d{1,2})\/(\d{1,2}) /);
+  if (m){ const t = dated(+m[1], +m[2] - 1); if (t) return t; }
+  m = s.match(/ next (sunday|monday|tuesday|wednesday|thursday|friday|saturday|tues|wed|thurs?|fri)s? /);
+  if (m) return addDays(nextMonday(), (dayIdx(m[1]) + 6) % 7);
+  m = s.match(/ (sunday|monday|tuesday|wednesday|thursday|friday|saturday|tues|wed|thurs?|fri)(?:s|'s)? /);
+  if (m) return addDays(base, ((dayIdx(m[1]) - wd + 7) % 7) || 7);
+  if (/ next week /.test(s)) return nextMonday();
+  if (/ weekend /.test(s)) return addDays(base, (6 - wd + 7) % 7);
+  if (/ end of (the|this) week /.test(s)) return addDays(base, (5 - wd + 7) % 7);
+  return null;
+}
+/* When the Log asks about a plan: the day it names, or a week after it was written. */
+function planCheckDay(text, created){ return planDue(text, created) || addDays(created, 7); }
+
+/* ---------- D1: a weekly reminder as a calendar file ----------
+   icsWeekly({day:5, time:'15:30', url}) gives an iCalendar event every Friday at 3.30 pm, Singapore time, from the
+   next Friday at that time. CRLF line endings and lines folded at 75 octets, as RFC 5545 asks. */
+const ICS_DAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+function icsFold(line){
+  const enc = new TextEncoder(); const out = []; let cur = '';
+  for (const ch of line){ const next = cur + ch; if (enc.encode(next).length > (out.length ? 74 : 75)){ out.push(cur); cur = ch; } else cur = next; }
+  out.push(cur); return out.join('\r\n ');
+}
+function icsWeekly({day, time, url, now = Date.now(), uid}){
+  const [hh, mm] = String(time || '15:30').split(':').map(Number);
+  const SG = 8 * 3600e3; const wall = new Date(now + SG);   // Singapore has no daylight saving: UTC + 8 all year
+  let first = Date.UTC(wall.getUTCFullYear(), wall.getUTCMonth(), wall.getUTCDate(), hh || 0, mm || 0);
+  let diff = (day - wall.getUTCDay() + 7) % 7; if (diff === 0 && first <= wall.getTime()) diff = 7; first += diff * 864e5;
+  const p2 = n => String(n).padStart(2, '0');
+  const stamp = t => { const x = new Date(t); return `${x.getUTCFullYear()}${p2(x.getUTCMonth() + 1)}${p2(x.getUTCDate())}T${p2(x.getUTCHours())}${p2(x.getUTCMinutes())}00`; };
+  const text = t => String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Beatty Secondary School//E21CC Log//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE', 'TZID:Asia/Singapore', 'BEGIN:STANDARD', 'DTSTART:19820101T000000', 'TZOFFSETFROM:+0800', 'TZOFFSETTO:+0800', 'TZNAME:SGT', 'END:STANDARD', 'END:VTIMEZONE',
+    'BEGIN:VEVENT', `UID:${uid || (now.toString(36) + Math.random().toString(36).slice(2, 10))}@e21cclog`, `DTSTAMP:${stamp(now)}Z`,
+    `DTSTART;TZID=Asia/Singapore:${stamp(first)}`, `DTEND;TZID=Asia/Singapore:${stamp(first + 15 * 60e3)}`, `RRULE:FREQ=WEEKLY;BYDAY=${ICS_DAYS[day]}`,
+    'SUMMARY:Write a GROW in your E21CC Log', `DESCRIPTION:${text('Two or three sentences for each question is enough. Open the Log: ' + url)}`, `URL:${url}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:PT0M', 'DESCRIPTION:Write a GROW in your E21CC Log', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'];
+  return lines.map(icsFold).join('\r\n') + '\r\n';
+}
+
+const APP_VERSION = {label:'Version 4', date:'November 2026', notes:[
+  'One Log again: the test version is folded in, and a log kept there on this device can be brought across',
+  'Back up in one tap to Files or OneDrive, and bring your log back on a new device, with nothing doubled',
+  'One gentle prompt when the Log opens: a plan due, a statement close to secured, or a subject not written about this term',
+  'This term’s rhythm on Home, a dot for each week you write; milestones kept quietly in Settings',
+  'A plan that names a day is asked about on that day: did you do it?',
+  'A weekly reminder for your calendar, in Settings',
+  'The Log opens where you left off, and an unfinished entry waits on Home, one tap away',
+  'Notes from your teachers come first on Home, with the words and the entry they are about',
+  'Share an entry and its own teacher comes first; Send sends a teacher all their new entries in one link',
+  'Pick your teacher for each subject and CCA, and your form teacher, from the school’s staff list',
+  'Your school’s staff list arrives by one link from your teacher, and stays on this device'
 ]};
 const BASKET_IDS = DOMAINS.map(d => d.id);
 function basketOf(id){ return DOMAINS.find(d => d.id === id) || null; }
@@ -1000,6 +1066,71 @@ async function unpackCDL(text){
 }
 /* Split a payload into pieces of at most n characters for form answers. */
 function splitCDL(payload, n){ const out = [payload.slice(0, n)]; let i = n, k = 2; while (i < payload.length){ const room = n - (String(k).length + 2); out.push(`~${k}.` + payload.slice(i, i + room)); i += room; k++; } return out; }
+
+/* ---------- the school staff list (A1) ----------
+   The pilot lead pastes the timetable's staff list into the console once a term; the console makes one link
+   (kind s), and opening it keeps the list on the student's device. Nothing about staff is published.
+   Columns are found by their heading: Name, Email, Subjects ("Mathematics: Sec 1, Sec 2; Science: Sec 1"),
+   CCAs ("Band; Choir") and Form class. A subject with no Sec levels is taught at every level. */
+function parseTable(text){
+  const src = String(text || '').replace(/^﻿/, '');
+  const first = src.split(/\r?\n/).find(l => l.trim()) || '';
+  const sep = first.split('\t').length > first.split(',').length ? '\t' : ',';
+  const rows = []; let row = [], cell = '', quoted = false;
+  for (let i = 0; i < src.length; i++){
+    const c = src[i];
+    if (quoted){ if (c === '"'){ if (src[i + 1] === '"'){ cell += '"'; i++; } else quoted = false; } else cell += c; continue; }
+    if (c === '"' && !cell.trim()){ cell = ''; quoted = true; continue; }
+    if (c === sep){ row.push(cell); cell = ''; continue; }
+    if (c === '\n' || c === '\r'){ if (c === '\r' && src[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; continue; }
+    cell += c;
+  }
+  if (cell !== '' || row.length){ row.push(cell); rows.push(row); }
+  return rows.map(r => r.map(x => x.trim())).filter(r => r.some(Boolean));
+}
+function tableToCsv(rows){ return rows.map(r => r.map(x => /[",\n\r]/.test(x) ? `"${String(x).replace(/"/g, '""')}"` : String(x)).join(',')).join('\n'); }
+const STAFF_HEADS = {name:/^(name|teacher|staff)/i, email:/mail/i, subjects:/^subject/i, ccas:/^cca/i, form:/^form/i};
+function secLevels(text){
+  const t = String(text || '').toLowerCase(); if (!t.trim() || /\ball\b/.test(t)) return [];
+  const out = new Set(); if (/lower/.test(t)) [1, 2].forEach(n => out.add(n)); if (/upper/.test(t)) [3, 4, 5].forEach(n => out.add(n));
+  for (const m of t.matchAll(/([1-5])\s*to\s*([1-5])/g)) for (let n = +m[1]; n <= +m[2]; n++) out.add(n);
+  for (const m of t.matchAll(/[1-5]/g)) out.add(+m[0]);
+  return [...out].sort((a, b) => a - b);
+}
+/* Rows (headings first) into teachers, each with what needs fixing: errors block the link, warnings do not. */
+function staffFromTable(rows){
+  const out = {staff:[], problem:''};
+  if (!rows.length){ out.problem = 'Paste the staff list first.'; return out; }
+  const col = {}; for (const [k, re] of Object.entries(STAFF_HEADS)) col[k] = rows[0].findIndex(h => re.test(String(h).trim()));
+  if (col.name < 0 || col.email < 0){ out.problem = 'The first row needs the headings, with at least Name and Email.'; return out; }
+  const offered = subjectsFor(null).map(x => x.name), ccas = ccaNames(), seen = {};
+  rows.slice(1).forEach((r, i) => {
+    const get = k => col[k] >= 0 ? String(r[col[k]] || '').trim() : '';
+    const t = {row:i + 1, name:get('name'), email:get('email').toLowerCase(), subjects:[], ccas:[], form:get('form').toUpperCase(), errors:[], warnings:[]};
+    for (const part of get('subjects').split(';').map(x => x.trim()).filter(Boolean)){
+      const at = part.indexOf(':'); const raw = (at < 0 ? part : part.slice(0, at)).trim();
+      const match = offered.find(n => sameSubject(n, raw));
+      if (!match) t.errors.push(`${raw} is not a subject in the school offering`);
+      t.subjects.push({name:match || raw, levels:secLevels(at < 0 ? '' : part.slice(at + 1))});
+    }
+    t.ccas = get('ccas').split(';').map(x => x.trim()).filter(Boolean).map(c => ccas.find(k => k.toLowerCase() === c.toLowerCase()) || c);
+    t.ccas.filter(c => !ccas.includes(c)).forEach(c => t.warnings.push(`${c} is not on the school’s CCA list`));
+    if (!t.name) t.errors.push('no name');
+    if (!t.email) t.errors.push('no email');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t.email)) t.errors.push('the email does not look right');
+    else if (seen[t.email]) t.errors.push(`the same email as row ${seen[t.email]}`);
+    else seen[t.email] = t.row;
+    out.staff.push(t);
+  });
+  return out;
+}
+/* The short form that travels in the link, and back. */
+function staffCompact(list){ return list.map(t => { const o = {n:t.name, e:t.email, s:t.subjects.map(x => x.levels.length ? [x.name, x.levels] : [x.name])}; if (t.ccas.length) o.c = t.ccas; if (t.form) o.f = t.form; return o; }); }
+function staffExpand(list){
+  return (Array.isArray(list) ? list : []).filter(t => t && t.n && t.e).map(t => ({name:String(t.n), email:String(t.e).toLowerCase(),
+    subjects:(Array.isArray(t.s) ? t.s : []).filter(Array.isArray).map(([name, levels]) => ({name:String(name), levels:Array.isArray(levels) ? levels.map(Number).filter(n => n >= 1 && n <= 5) : []})),
+    ccas:(Array.isArray(t.c) ? t.c : []).map(String), form:t.f ? String(t.f) : ''}));
+}
 
 /* ---------- I can statements ----------
    The school's set is JSON with strands: {id, title, draft?, bands:[{id,label,levels}],
@@ -1273,6 +1404,8 @@ function migrateProfile(p){
   p.shares = p.shares || {}; p.shares.adults = p.shares.adults || {}; p.shares.sections = p.shares.sections || {}; p.shares.scope = p.shares.scope || {};
   for (const k of ['grow','act',...BASKET_IDS]) if (!Array.isArray(p.shares.sections[k])) p.shares.sections[k] = [];
   p.sentBaskets = p.sentBaskets || {};
+  // the teachers a student picked from the school staff list (A2), each kept as {email, name}
+  p.teachers = Object.assign({subjects:{}, ccas:{}, form:null}, p.teachers || {}); p.teachers.subjects = p.teachers.subjects || {}; p.teachers.ccas = p.teachers.ccas || {};
   p.pendingNotes = Array.isArray(p.pendingNotes) ? p.pendingNotes : [];
   p.coach = Object.assign({mode:'builtin', key:'', relayUrl:'', token:'', model:'claude-opus-5'}, p.coach || {});
   p.coach.allowance = p.coach.allowance || {day:'', used:0};
@@ -1304,8 +1437,8 @@ function migrateProfile(p){
 function migrateDb(d){
   d = d && typeof d === 'object' ? d : {};
   const out = {schemaVersion:2, profiles:d.profiles || {}, current:d.current || null, groups:d.groups || {}, statementSets:d.statementSets || {}};
-  // kept as they are: whether the browser agreed to keep the log, and entries brought across from an older version
-  for (const k of ['persist', 'broughtAcross']) if (d[k] !== undefined) out[k] = d[k];
+  // kept as they are: whether the browser agreed to keep the log, entries brought across from an older version, and the school staff list
+  for (const k of ['persist', 'broughtAcross', 'staff']) if (d[k] !== undefined) out[k] = d[k];
   if (d.classes) for (const [code, cfg] of Object.entries(d.classes)) if (!out.groups[code]) out.groups[code] = cfg;
   for (const p of Object.values(out.profiles)) migrateProfile(p);
   return out;

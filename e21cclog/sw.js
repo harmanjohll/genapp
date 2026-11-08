@@ -3,9 +3,9 @@
    down. Fonts and images, which never change, come from the copy first. Nothing outside this
    site is touched: AI coach calls and group files from elsewhere always go to the network.
    Change VERSION when a release should replace every copy at once. */
-const VERSION = 'e21cclog-3-2026-11-01';
+const VERSION = 'e21cclog-4-2026-11-08';
 const SHELL = ['./', './index.html', './teacher.html', './manifest.webmanifest',
-  './assets/core.js', './assets/store.js', './assets/app.js', './assets/crest.png', './assets/icon-192.png',
+  './assets/core.js', './assets/store.js', './assets/app.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
   './assets/fonts/inter-regular-latin.woff2', './assets/fonts/inter-semibold-latin.woff2', './assets/fonts/inter-bold-latin.woff2',
   './assets/fonts/inter-extrabold-latin.woff2', './assets/fonts/literata-var-latin.woff2', './statements/beatty-v1.json'];
 
@@ -21,7 +21,7 @@ const lasting = url => /\.(woff2|png|jpg|svg)$/.test(url.pathname);
 self.addEventListener('fetch', e => {
   const req = e.request; const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-  if (url.pathname.includes('/legacy/') || url.pathname.includes('/next/')) return;   // older and next versions keep their own copies
+  if (url.pathname.includes('/legacy/') || url.pathname.includes('/next/')) return;   // older versions and the old next/ address keep their own
   if (lasting(url)){
     e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => { if (res.ok){ const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); } return res; })));
     return;

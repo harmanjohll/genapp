@@ -25,8 +25,8 @@ const seed = fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'
     await p.fill('#newForm [name=name]', 'Ravi Kumar'); await p.click('#newForm button[type=submit]'); await sleep(500);
     await p.reload(); await sleep(700);
     check('it happens once: a log made afterwards is still there after a refresh', (await count(p)) === 1 && (await p.evaluate(() => location.hash)) !== '#/welcome');
-    const t = await ctx.newPage(); await t.goto(BASE + 'teacher.html'); await sleep(600);
-    await t.evaluate(() => { store.items.k = {key:'k', sk:'s', kind:'e', data:{id:'k'}, received:Date.now()}; save(); }); await t.reload(); await sleep(500);
+    await ctx.addInitScript(launch.AUTOPIN); const t = await ctx.newPage(); await t.goto(BASE + 'teacher.html'); await sleep(900);
+    await t.evaluate(async () => { store.items.k = {key:'k', sk:'s', kind:'e', data:{id:'k'}, received:Date.now()}; await save(); }); await t.reload(); await sleep(900);
     check('the console keeps what it saves after the fresh start', await t.evaluate(() => !!store.items.k));
     await ctx.close(); }
 
@@ -47,7 +47,7 @@ const seed = fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'
   await tab.fill('#pinForm input', '9999'); await tab.click('#pinForm button'); await sleep(300);
   check('a wrong PIN says so and keeps the card', /did not match/.test(await tab.textContent('#pinMsg')) && !!(await tab.$('#wPin')));
   await tab.fill('#pinForm input', '1234'); await tab.click('#pinForm button'); await sleep(600);
-  check('the right PIN opens the log', (await tab.evaluate(() => location.hash)) === '#/' && !(await tab.$('#wPin')));
+  check('the right PIN opens the log, where the student left off (Set up)', (await tab.evaluate(() => location.hash)) === '#/setup' && !(await tab.$('#wPin')));
 
   // 3. switching logs locks the tab; choosing a log shows the logs here, and starting one is a separate step
   await tab.evaluate(() => location.hash = '#/settings'); await sleep(400); await tab.click('#sOut'); await sleep(500);

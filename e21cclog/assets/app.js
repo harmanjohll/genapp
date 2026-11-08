@@ -9,7 +9,9 @@
 
 /* ---------- runtime ---------- */
 const QS = new URLSearchParams(location.search);
-const GUEST = QS.get('guest') === '1';
+// the demo (index.html?demo=student) runs as a guest: a made up log from assets/demo-data.js, never saved
+const DEMO = QS.get('demo') === 'student';
+const GUEST = QS.get('guest') === '1' || DEMO;
 const EMBED = (() => { try{ return window.self !== window.top || QS.get('embed') === '1'; }catch{ return true; } })();
 if (EMBED) document.body.classList.add('embedded');
 LocalStore.guest = GUEST;
@@ -440,6 +442,17 @@ async function runAiFor(e){
 
 /* ---------- entry text ---------- */
 function nextStepOf(e){ return e.kind === 'grow' ? e.answers.r2 : e.kind === 'act' ? e.answers.t1 : e.answers.x3; }
+/* D2: one plan on Home. The newest plan that is due (the day it names, or a week after it was written) is asked
+   about, up to three weeks after; Not yet asks again in three days. Otherwise the next plan coming up is shown. */
+const PLAN_ASK_FOR = 21 * 864e5, PLAN_AGAIN = 3 * 864e5;
+function planToShow(E){
+  const now = Date.now(), today = dayStart(now), checks = me.planChecks || {};
+  const open = E.filter(e => e.kind !== 'across' && String(nextStepOf(e) || '').trim() && !me.done[e.id] && !(checks[e.id] && ['partly', 'no'].includes(checks[e.id].answer)));
+  const due = open.find(e => { const d = planCheckDay(nextStepOf(e), e.created); const c = checks[e.id]; return d <= today && today - d <= PLAN_ASK_FOR && !(c && c.answer === 'notyet' && c.again > now); });
+  if (due) return {e:due, due:planCheckDay(nextStepOf(due), due.created), named:!!planDue(nextStepOf(due), due.created), ask:true};
+  const up = open.filter(e => planCheckDay(nextStepOf(e), e.created) > today).sort((a, b) => planCheckDay(nextStepOf(a), a.created) - planCheckDay(nextStepOf(b), b.created))[0];
+  return up ? {e:up, due:planCheckDay(nextStepOf(up), up.created), named:!!planDue(nextStepOf(up), up.created), ask:false} : null;
+}
 function coachOf(e){ return e.coach && (e.coach.ai || e.coach.builtin); }
 function depthOf(e){ const c = coachOf(e); return c ? c.depth : ''; }
 function claimText(e){ const ls = (e.links || []).map(l => statementById(l.sid)).filter(Boolean).map(s => s.text); const t = (e.competencies || []).map(x => (compOf(x.id) || {}).label).filter(Boolean); return (ls.length ? 'I can statements: ' + ls.join('; ') + '. ' : '') + 'Claimed: ' + (t.length ? t.join('; ') : 'none') + (e.e21cc ? '. ' + e21ccSummary(e.e21cc) : ''); }
@@ -465,21 +478,56 @@ function entryText(e, forAdult){
 
 /* ---------- adults and sharing: nothing is shared until the student says so ---------- */
 const SECTIONS = [['grow', 'GROW'], ['act', 'ACT'], ...DOMAINS.map(d => [d.id, d.short])];
+/* ---------- your teachers, picked from the school staff list (A2) ---------- */
+function staffList(){ return (db.staff && Array.isArray(db.staff.list)) ? db.staff.list : []; }
+function staffByEmail(email){ const e = String(email || '').toLowerCase(); return staffList().find(t => t.email === e) || null; }
+const byStaffName = (a, b) => a.name.localeCompare(b.name);
+// who on the list teaches this subject at the student's Sec level (a subject with no levels: every level), or has this CCA
+function staffFor(kind, name){
+  const n = String(name || '').toLowerCase();
+  if (kind === 'cca') return staffList().filter(t => (t.ccas || []).some(c => c.toLowerCase() === n)).sort(byStaffName);
+  return staffList().filter(t => (t.subjects || []).some(x => sameSubject(x.name, name) && (!x.levels || !x.levels.length || !me.level || x.levels.includes(me.level)))).sort(byStaffName);
+}
+function pickedFor(kind, name){
+  const T = me.teachers || {}; if (kind === 'form') return T.form || null;
+  const map = kind === 'cca' ? T.ccas : T.subjects; if (!map) return null;
+  const k = Object.keys(map).find(x => kind === 'cca' ? x.toLowerCase() === String(name).toLowerCase() : sameSubject(x, name));
+  return k ? map[k] : null;
+}
+// the teacher an entry belongs with: its subject's or CCA's teacher, when the student picked one
+function teacherFor(e){
+  const ctx = (e && e.context) || {type:'subject', name:e && e.subject};
+  if (!ctx.name || !['subject', 'cca'].includes(ctx.type || 'subject')) return null;
+  const p = pickedFor(ctx.type === 'cca' ? 'cca' : 'subject', ctx.name); return p ? adultById('t:' + p.email) : null;
+}
+// each picked teacher once, with every role they hold for this student
+function staffAdults(){
+  const T = me.teachers || {}; const by = {};
+  const add = (p, role, what) => { if (!p || !p.email) return; const t = staffByEmail(p.email); const a = by[p.email] = by[p.email] || {id:'t:' + p.email, name:(t && t.name) || p.name || 'Teacher', email:p.email, roles:[], teaches:[], staff:true, onList:!!t, sink:null, group:false, groupCode:''};
+    if (!a.roles.includes(role)) a.roles.push(role); if (what && !a.teaches.includes(what)) a.teaches.push(what); };
+  for (const [what, p] of Object.entries(T.subjects || {})) add(p, 'Subject teacher', what);
+  for (const [what, p] of Object.entries(T.ccas || {})) add(p, 'CCA teacher', what);
+  add(T.form, 'Form teacher', '');
+  return Object.values(by).map(a => Object.assign(a, {role:a.roles.join(' · '), groupLabel:a.teaches.join(', ')}));
+}
 function adults(){
   const out = [];
   for (const g of myGroups()){ const c = g.cfg; if (!c || !(c.teacherName || c.teacherEmail)) continue;
     out.push({id:'g:' + g.code, name:c.teacherName || 'Teacher', email:c.teacherEmail || '', role:ROLE_OF[groupType(g)] || 'Teacher', groupCode:g.code, groupLabel:c.subject || g.code, sink:c.sink || null, group:true}); }
+  out.push(...staffAdults());
   for (const a of Object.values(me.shares.adults)) out.push(Object.assign({sink:null, group:false, groupCode:''}, a));
   return out;
 }
 function adultById(id){ return adults().find(a => a.id === id) || null; }
-function scopeOf(a){ return me.shares.scope[a.id] || (a.group ? 'group' : 'all'); }
+function scopeOf(a){ return me.shares.scope[a.id] || (a.group ? 'group' : a.staff && a.teaches.length && !a.roles.includes('Form teacher') ? 'teaches' : 'all'); }
 function sectionsOf(a){ return Object.entries(me.shares.sections).filter(([, ids]) => ids.includes(a.id)).map(([k]) => k); }
 function sharesEntry(a, e){
   const secs = sectionsOf(a);
   if (e.kind === 'across') return secs.includes(e.basket);
   if (!secs.includes(e.kind)) return false;
-  return scopeOf(a) === 'all' || !a.groupCode || e.groupCode === a.groupCode;
+  const sc = scopeOf(a);
+  if (sc === 'teaches'){ const t = teacherFor(e); return !!t && t.id === a.id; }
+  return sc === 'all' || !a.groupCode || e.groupCode === a.groupCode;
 }
 function version(e){ return e.updated || e.created; }
 function isSent(a, e){ return !!(e.sent && e.sent[a.id] >= version(e)); }
@@ -565,7 +613,7 @@ async function importNoteLink(text){
   const d = got.data || {};
   if (!me.email) throw new Error('Add your school email in Settings first. Notes find you by it.');
   if (d.to !== await emailTag(me.email)) throw new Error('This note is addressed to a different student email. Check the email in Settings, or ask your teacher to resend it.');
-  const by = d.by || {}; let added = 0, pending = 0, first = null; const confirmed = [];
+  const by = d.by || {}; let added = 0, pending = 0, first = null; const confirmed = [], landed = new Set();
   // a teacher's confirmation of the top level in a competency
   for (const c of (Array.isArray(d.confirms) ? d.confirms : [])){ if (!c || !compOf(c.comp) || compOf(c.comp).d === 'sec') continue; me.confirmed[c.comp] = {by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:Number(c.at) || Date.now()}; confirmed.push(c.comp); }
   for (const n of (Array.isArray(d.notes) ? d.notes : [])){
@@ -573,10 +621,10 @@ async function importNoteLink(text){
     const note = {id:String(n.id), by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:n.at || Date.now(), anchor:String(n.anchor || 'entry'), text:String(n.text).slice(0, 600), seen:false};
     const e = me.entries.find(x => x.id === n.eid);
     if (!e){ if (!me.pendingNotes.some(p => p.note.id === note.id)){ me.pendingNotes.push({eid:n.eid, note}); pending++; } continue; }
-    if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; }
+    if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; landed.add(e.id); }
   }
   saveDb();
-  return {added, pending, first, confirmed, by:by.name || 'Your teacher'};
+  return {added, pending, first, entries:landed.size, confirmed, by:by.name || 'Your teacher'};
 }
 function applyPendingNotes(){
   let n = 0; me.pendingNotes = (me.pendingNotes || []).filter(p => { const e = me.entries.find(x => x.id === p.eid); if (!e) return true; if (!e.notes.some(x => x.id === p.note.id)){ e.notes.push(p.note); n++; } return false; });
@@ -591,7 +639,8 @@ async function processStashedLink(h){
   try{
     const r = await importNoteLink(q.get('n') || '');
     if (r.confirmed.length){ const L = r.confirmed.map(c => compOf(c).label).join(', '); toast(`${r.by} confirmed ${levelWords()[2]} in ${L}.`, 4200); location.hash = '#/c/' + r.confirmed[0]; }
-    else if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); location.hash = '#/entry/' + r.first; }
+    // notes on one entry open it; notes on several open Home, where From your teachers lists them all
+    else if (r.added){ toast(`${plural(r.added, 'note')} from ${r.by}.`, 3200); const to = r.entries > 1 ? '#/' : '#/entry/' + r.first; if (location.hash === to) route(); else location.hash = to; }
     else if (r.pending) dialog(`<h2>A note for an entry not on this device</h2><p>${esc(r.by)} wrote on ${plural(r.pending, 'entry', 'entries')} that this device does not have. Import your exported log (Settings, Your data) and the note will land in place.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`), $('#dClose').onclick = closeDialog;
     else toast('You already have these notes.');
   }catch(err){ dialog(`<h2>That note did not open</h2><p>${esc(err.message)}</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; }
@@ -611,14 +660,57 @@ function dialog(html){
 function closeDialog(){ const p = $('#inlineDlg'); if (p) p.remove(); const d = $('#dlg'); if (d.open) d.close(); }
 function download(name, text, type = 'application/json'){
   if (DOWNLOADS){ DOWNLOADS.save({filename:name, data:text}).then(() => toast('Saved.')).catch(() => {}); return; }
-  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; a.hidden = true; a.textContent = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
+
+/* ---------- resume where I left off (B1) ----------
+   Each log keeps the last ordinary page and how far down it was, under its own small key on this device
+   (e21cclog.resume.<log id>), so remembering a place never rewrites the log itself. When the Log opens at
+   Home in a new tab, or a log with a PIN is opened, it goes back there, if that was in the last 12
+   hours. A link to somewhere else wins. It never opens the composer: a draft waits on Home instead. */
+const RESUMED = 'e21cclog.resumed', RESUME_FOR = 12 * 3600e3;
+let bootStart = '#/', resumeSaveAt = 0;
+const resumeKey = () => 'e21cclog.resume.' + me.id;
+function readResume(){ try{ return JSON.parse(localStorage.getItem(resumeKey()) || 'null'); }catch{ return null; } }
+function writeResume(r){ try{ localStorage.setItem(resumeKey(), JSON.stringify(r)); }catch{} }
+// only these pages are gone back to: never the composer, a link, or an older address that leads into one
+const ordinaryPage = h => h === '#/' || /^#\/(c|c\/[\w-]+|journal\/(grow|act|ask)|entry\/[\w-]+|settings|sharing|setup)(\?[^#]*)?$/.test(h);
+function rememberPage(h){
+  // writing goes back to Home, where the unfinished entry waits
+  if (/^#\/(write|across)\//.test(h)) h = '#/';
+  if (!me || GUEST || !ordinaryPage(h)) return;
+  const r = readResume(); if (r && r.hash === h) return;
+  writeResume({hash:h, y:0, at:Date.now()});
+}
+function rememberScroll(force){
+  if (!me || GUEST || document.body.classList.contains('composing')) return;
+  if (!force && Date.now() - resumeSaveAt < 500) return; resumeSaveAt = Date.now();
+  const r = readResume(); if (!r || r.hash !== (location.hash || '#/')) return;
+  r.y = Math.round(window.scrollY); r.at = Date.now(); writeResume(r);
+}
+let scrollIdle = 0; window.addEventListener('scroll', () => { clearTimeout(scrollIdle); scrollIdle = setTimeout(() => rememberScroll(true), 300); }, {passive:true});
+window.addEventListener('scroll', () => rememberScroll(false), {passive:true});
+window.addEventListener('pagehide', () => rememberScroll(true));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') rememberScroll(true); });
+// once per tab, and only when the Log opened at Home: where to go back to, or nothing
+function takeResume(){
+  if (!me || GUEST) return null; let seen = false;
+  try{ seen = !!sessionStorage.getItem(RESUMED); sessionStorage.setItem(RESUMED, '1'); }catch{ return null; }
+  if (seen || (bootStart !== '#/' && bootStart !== '#')) return null;
+  const r = readResume(); if (!r || !r.hash || !ordinaryPage(r.hash) || Date.now() - (r.at || 0) > RESUME_FOR) return null;
+  if (r.hash.startsWith('#/entry/') && !me.entries.some(e => e.id === r.hash.slice(8).split('?')[0])) return null;
+  if (r.hash === '#/' && !r.y) return null;
+  return {hash:r.hash, y:r.y || 0};
+}
+function applyScroll(r){ if (r && r.y) requestAnimationFrame(() => requestAnimationFrame(() => { window.scrollTo(0, r.y); rememberScroll(true); })); }
 
 /* ---------- routing ---------- */
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', boot);
 
+function loadScript(src){ return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 async function boot(){
+  if (DEMO){ try{ await loadScript('assets/demo-data.js'); await loadScript('assets/demo.js'); db = window.demoStudentDb(); }catch{} }
   initRuntime();
   const sk = $('.skip'); if (sk) sk.onclick = ev => { ev.preventDefault(); const m = $('#main'); if (m){ m.focus(); m.scrollIntoView(); } };
   // Escape closes an open entry, keeping the draft, unless it closed something smaller first
@@ -629,14 +721,20 @@ async function boot(){
   document.addEventListener('focusout', () => setTimeout(() => { if (!typing(document.activeElement)) document.body.classList.remove('typing'); }, 60));
   if (db.current && db.profiles[db.current]){ me = db.profiles[db.current]; if (me.pin && openInTab(me.id)) unlocked = true; }
   applyPrefs();
+  bootStart = location.hash || '#/';
+  const back = me && (!me.pin || unlocked) ? takeResume() : null;
+  if (back && back.hash !== '#/') history.replaceState(null, '', location.pathname + location.search + back.hash);
   const link = stashLink();
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
+  if ((location.hash || '').startsWith('#/staff')) await importStaffFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
+  applyScroll(back);
   processStashedLink(link || null);
   if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
   keepSafe();
+  if (DEMO && window.demoStart) window.demoStart();
 }
 async function importConfigFromHash(){
   const q = new URLSearchParams((location.hash.split('?')[1]) || ''); const cfg = decodeConfig(q.get('c') || '');
@@ -647,13 +745,28 @@ async function importConfigFromHash(){
   saveDb(); toast(`Group ${cfg.code} added${cfg.teacherName ? ' (' + cfg.teacherName + ')' : ''}.`);
   location.hash = me ? '#/settings' : '#/welcome';
 }
+/* The school staff list arrives by link (index.html#/staff?s=CDL1.s.…) from the pilot lead, through Teams or SLS.
+   It is kept on this device, for every log here, before any log is open or unlocked; a newer list replaces an older one. */
+async function importStaffFromHash(){
+  const q = new URLSearchParams((location.hash.split('?')[1]) || '');
+  let got = null; try{ got = await unpackCDL(q.get('s') || ''); }catch{}
+  const list = got && got.kind === 's' && got.data ? staffExpand(got.data.staff) : [];
+  const dest = me && (!me.pin || unlocked) ? '#/' : '#/welcome';
+  if (!list.length){ toast('That staff list link did not work. Ask your teacher for a fresh one.'); location.hash = dest; return; }
+  const at = Number(got.data.at) || Date.now();
+  if (db.staff && db.staff.at > at){ toast('This device already has a newer staff list.'); location.hash = dest; return; }
+  db.staff = {at, loaded:Date.now(), list}; saveDb();
+  toast(`Your school’s staff list is here (${plural(list.length, 'teacher')}).`, 4200);
+  location.hash = dest;
+}
 function hashParts(){ const h = location.hash || '#/'; const [path, q] = h.split('?'); return {parts:path.split('/'), q:new URLSearchParams(q || '')}; }
 function route(){
   const h = location.hash || '#/';
   if (h.startsWith('#/note')){ const l = stashLink(); processStashedLink(l); return; }
   if (h.startsWith('#/config')){ importConfigFromHash(); return; }
+  if (h.startsWith('#/staff')){ importStaffFromHash(); return; }
   if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome'){ location.hash = '#/welcome'; return; } return renderWelcome(); }
-  const {parts} = hashParts();
+  const {parts} = hashParts(); rememberPage(h);
   if (h.startsWith('#/write/')){ const kind = parts[2]; if (kind === 'grow' || kind === 'act'){ if (!parts[3] && !setupDone() && !GUEST) return settingsGate(kind); return openComposer(kind, parts[3]); } }
   if (h.startsWith('#/across/')) return openComposer('across', parts[3], parts[2]);
   // addresses from earlier versions
@@ -697,16 +810,57 @@ function keepSafe(){
   }
 }
 /* A backup is due after five new entries, or after three weeks with anything new, since the last one. */
+/* A backup is due after five entries written or changed since the last one, or after three weeks with anything new.
+   Once a backup is newer than the last entry, nothing is due. */
+function sinceBackup(){ const b = me.backup; return b ? me.entries.filter(e => version(e) > b.at).length : me.entries.length; }
 function backupDue(){
   if (!me || GUEST || !me.entries.length) return false;
-  const b = me.backup || {at:Math.min(...me.entries.map(e => e.created)), count:0}; const fresh = me.entries.length - b.count;
-  return fresh >= 5 || (fresh >= 1 && Date.now() - b.at >= 21 * 864e5);
+  const fresh = sinceBackup(); const since = me.backup ? me.backup.at : Math.min(...me.entries.map(e => e.created));
+  return fresh >= 5 || (fresh >= 1 && Date.now() - since >= 21 * 864e5);
 }
-function backupNow(){ download(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me)); me.backup = {at:Date.now(), count:me.entries.length}; saveDb(); }
+/* ---------- B2: backups that travel, and come back without doubling anything ---------- */
+/* A file goes out through the share sheet where the device allows (an iPad saves to Files or OneDrive),
+   otherwise it downloads. A cancelled share changes nothing. */
+async function shareFile(name, text, type, title){
+  try{ const f = new File([text], name, {type}); if (navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:title || name}); return 'shared'; } }
+  catch(err){ if (err && err.name === 'AbortError') return 'cancelled'; }
+  download(name, text, type); return 'downloaded';
+}
+/* One merge for every restore: entries by id (the newer copy wins, notes from both), drafts by the newer save,
+   plans followed through and answers kept, milestones at their earliest. A second restore of the same file
+   finds nothing new. */
+function mergeBackup(t, pr){
+  let added = 0, updated = 0, drafts = 0, other = 0;
+  for (const e of pr.entries){
+    const i = t.entries.findIndex(x => x.id === e.id);
+    if (i < 0){ t.entries.push(e); added++; continue; }
+    const cur = t.entries[i];
+    if (version(e) > version(cur)){ const keep = cur.notes || []; e.notes = [...keep, ...(e.notes || []).filter(n => !keep.some(k => k.id === n.id))]; t.entries[i] = e; updated++; }
+    else for (const n of (e.notes || [])) if (!(cur.notes = cur.notes || []).some(k => k.id === n.id)){ cur.notes.push(n); other++; }
+  }
+  t.drafts = t.drafts || {};
+  for (const [k, d] of Object.entries(pr.drafts || {})){ const cur = t.drafts[k]; if (draftHasWork(d) && (!cur || (d.saved || 0) > (cur.saved || 0))){ t.drafts[k] = d; drafts++; } }
+  t.done = t.done || {}; for (const [id, v] of Object.entries(pr.done || {})) if (v && !t.done[id]){ t.done[id] = true; other++; }
+  t.planChecks = t.planChecks || {}; for (const [id, c] of Object.entries(pr.planChecks || {})) if (!t.planChecks[id] || (c.at || 0) > (t.planChecks[id].at || 0)){ t.planChecks[id] = c; other++; }
+  if (pr.milestones){ t.milestones = t.milestones || {}; for (const [id, m] of Object.entries(pr.milestones)) if (!t.milestones[id] || m.at < t.milestones[id].at){ t.milestones[id] = m; other++; } }
+  if (!t.email && pr.email){ t.email = pr.email; other++; }
+  for (const g of (pr.groups || [])) if (!t.groups.some(x => x.code === g.code)){ t.groups.push(g); other++; }
+  const xs = pr.experiences || {}; t.experiences = t.experiences || {subjects:[], cca:'', others:[]};
+  for (const s of (xs.subjects || [])) if (!t.experiences.subjects.includes(s)){ t.experiences.subjects.push(s); other++; }
+  if (!t.experiences.cca && xs.cca){ t.experiences.cca = xs.cca; other++; }
+  if (!t.level && pr.level){ t.level = pr.level; other++; }
+  return {added, updated, drafts, other, any:added + updated + drafts + other > 0};
+}
+function mergeWords(r, from = 'that backup', verb = 'brought back'){
+  if (!r.any) return `Nothing new in ${from}.`;
+  const bits = [r.added ? plural(r.added, 'entry', 'entries') + ' ' + verb : '', r.updated ? plural(r.updated, 'entry', 'entries') + ' updated' : '', r.drafts ? plural(r.drafts, 'unfinished entry', 'unfinished entries') : ''].filter(Boolean);
+  return bits.length ? bits.join(', ') + '.' : `Your log is up to date with ${from}.`;
+}
+async function backupNow(){ const how = await shareFile(`e21cc-log-${(me.name || 'me').replace(/\W+/g, '-').toLowerCase()}-${today()}.json`, STORE.exportProfile(me), 'application/json', 'My E21CC Log backup'); if (how === 'cancelled') return false; me.backup = {at:Date.now(), count:me.entries.length}; saveDb(); return true; }
 function installHow(){ return installEvt ? `<button type="button" class="btn small" id="doInstall">${icon('down')} Install the Log</button>` : `<span class="tiny" style="flex-basis:100%">On an iPad or iPhone: tap <b>Share</b>, then <b>Add to Home Screen</b>. Open the Log from its new icon from then on.</span>`; }
 function wireSafe(){
   const ib = $('#doInstall'); if (ib) ib.onclick = async () => { if (!installEvt) return; installEvt.prompt(); try{ await installEvt.userChoice; }catch{} installEvt = null; route(); };
-  const bb = $('#nxBackup'); if (bb) bb.onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); setTimeout(route, 300); };
+  const bb = $('#nxBackup'); if (bb) bb.onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); setTimeout(route, 300); } };
   const ih = $('#nxInstallLater'); if (ih) ih.onclick = () => { me.installLater = Date.now(); saveDb(); route(); };
 }
 
@@ -732,7 +886,7 @@ function frame(inner, active, opts = {}){
     <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
       <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
     <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${GUEST ? ' (guest: nothing is saved)' : ''}. Export a copy in Settings now and then.</footer>`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Back it up in Settings now and then.</footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
@@ -753,6 +907,70 @@ function logLine(p, twin){
 /* Three ways in. A log this device remembers, with a PIN: welcome back, and only the PIN to type.
    Logs but none remembered: choose yours. No logs, or asked for: start one. Starting a log never sits
    beside the logs already here, so it cannot be mistaken for signing in. */
+/* Bring a log from a backup: on a new device it becomes the log here; where a log with that name is already here,
+   it offers to add what is new to it (behind that log's PIN, if it has one), or to keep it separate. */
+function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">Bring your log back from a backup file, from Files or OneDrive.</p>
+  <label class="btn sec" for="wRestore">${icon('up')} Bring my log from a backup<input type="file" id="wRestore" accept="application/json,.json" hidden></label><div id="wRestoreOut" class="restoreout" aria-live="polite"></div></section>`; }
+function restoreAsNew(pr, opts = {}){
+  const p = JSON.parse(JSON.stringify(pr)); if (db.profiles[p.id]) p.id = uid();
+  if (opts.file !== false) p.backup = {at:Date.now(), count:p.entries.length}; else delete p.backup;
+  db.profiles[p.id] = p; saveDb(); if (opts.after) opts.after();
+  toast(`${plural(p.entries.length, 'entry', 'entries')} brought ${opts.file === false ? 'across' : 'back'}${Object.keys(p.drafts || {}).length ? ', with your unfinished entry' : ''}.`, 4200); openProfile(p.id);
+}
+/* A log to bring in, from a file or from the test version: it becomes a log here, or, where a log with that
+   name is here, what is new is added to it (behind that log's PIN), or it is kept as a separate log. */
+function restoreFlow(pr, out, opts = {}){
+  const same = Object.values(db.profiles).find(p => sameName(p.name, pr.name));
+  if (!same) return restoreAsNew(pr, opts);
+  $$('.restoreout').forEach(o => { if (o !== out) o.innerHTML = ''; });
+  out.innerHTML = `<div class="notice" role="alert"><p><b>${esc(same.name)} already has a log on this device.</b> ${esc(logLine(same))}.</p>
+    ${same.pin ? '<label class="f"><span>That log’s PIN</span><input class="in" id="wMergePin" inputmode="numeric" maxlength="4" autocomplete="off"></label>' : ''}
+    <div class="row" style="margin-top:8px"><button type="button" class="btn" id="wMerge">${icon('arrow')} Add what is new to that log</button><button type="button" class="linkbtn" id="wSeparate">Keep it as a separate log</button></div><p class="tiny" id="wMergeMsg"></p></div>`;
+  $('#wSeparate').onclick = () => restoreAsNew(pr, opts);
+  $('#wMerge').onclick = async () => {
+    if (same.pin && !(await pinMatches(same, ($('#wMergePin') || {}).value || ''))){ $('#wMergeMsg').textContent = 'That PIN did not match. Try again.'; return; }
+    const r = mergeBackup(same, pr); if (opts.file !== false) same.backup = {at:Date.now(), count:same.entries.length};
+    saveDb(); if (opts.after) opts.after(); toast(mergeWords(r, opts.from, opts.verb), 4200); openProfile(same.id);
+  };
+  ($('#wMergePin') || $('#wMerge')).focus();
+}
+function wireRestore(){
+  const inp = $('#wRestore'); if (!inp) return; const out = $('#wRestoreOut');
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return; let pr; inp.value = '';
+    try{ pr = STORE.parseImport(await f.text()); }catch{ out.innerHTML = '<p class="tiny" role="alert">That file is not a log backup. Look for a file named like e21cc-log-your-name.json.</p>'; return; }
+    restoreFlow(pr, out);
+  };
+}
+/* Version 4 folded in the test version that ran beside the pilot (e21cclog/next/). A log kept there on this device
+   is offered once: on Home when it has the open log's name, and on the welcome page otherwise. It is never deleted
+   from where it was; "Leave it" only stops the offer. */
+const FROMTEST_KEY = 'e21cclog.next', FROMTEST_DONE = 'e21cclog.fromtest';
+function testHandled(){ try{ return JSON.parse(localStorage.getItem(FROMTEST_DONE) || '[]'); }catch{ return []; } }
+function testHandle(id){ try{ const h = testHandled(); if (!h.includes(id)) h.push(id); localStorage.setItem(FROMTEST_DONE, JSON.stringify(h)); }catch{} }
+function testLogs(){
+  if (GUEST || DEMO) return [];
+  let d = null; try{ const raw = localStorage.getItem(FROMTEST_KEY); d = raw ? migrateDb(JSON.parse(raw)) : null; }catch{ return []; }
+  const done = testHandled();
+  return Object.values((d && d.profiles) || {}).filter(p => p && p.name && !done.includes(p.id) && ((p.entries || []).length || Object.keys(p.drafts || {}).length));
+}
+function testCard(where){
+  const logs = testLogs().filter(p => where === 'home' ? (me && sameName(p.name, me.name)) : true); if (!logs.length) return '';
+  return `<section class="card fromtest" aria-labelledby="ftH"><h2 id="ftH">From the test version</h2>
+    <p class="tiny" style="margin-top:0">This device also has ${logs.length > 1 ? 'logs' : 'a log'} from the test version of the Log, which is now part of this one. Bring ${logs.length > 1 ? 'each' : 'it'} across to keep one log; nothing is doubled.</p>
+    <ul class="ftlist">${logs.map(p => `<li><p><b>${esc(p.name)}</b> <span class="tiny">${esc(logLine(p))}</span></p><div class="row"><button type="button" class="btn small" data-fromtest="${esc(p.id)}">${icon('arrow')} Bring it across</button><button type="button" class="btn small ghost" data-fromtestleave="${esc(p.id)}">Leave it</button></div></li>`).join('')}</ul>
+    <div id="ftOut" class="restoreout" aria-live="polite"></div></section>`;
+}
+function wireFromTest(){
+  $$('[data-fromtestleave]').forEach(b => b.onclick = () => { testHandle(b.dataset.fromtestleave); toast('Left where it was. It stays on this device.'); route(); });
+  $$('[data-fromtest]').forEach(b => b.onclick = () => {
+    const pr = testLogs().find(p => p.id === b.dataset.fromtest); if (!pr) return route();
+    const opts = {file:false, from:'the test version’s log', verb:'brought across', after:() => testHandle(pr.id)};
+    // the open log is already unlocked: add what is new to it straight away
+    if (me && sameName(me.name, pr.name)){ const r = mergeBackup(me, pr); saveDb(); opts.after(); toast(mergeWords(r, opts.from, opts.verb), 4200); return route(); }
+    restoreFlow(pr, $('#ftOut'), opts);
+  });
+}
 function renderWelcome(view){
   document.body.classList.remove('wide'); document.body.classList.add('atwelcome');
   const profiles = Object.values(db.profiles).sort((a, b) => (lastWritten(b) || b.created) - (lastWritten(a) || a.created));
@@ -761,7 +979,7 @@ function renderWelcome(view){
   if (view === 'pin' && !known) view = 'choose';
   if (!profiles.length) view = 'new';
   const pre = db._preClass || '';
-  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so export it from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
+  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so back it up from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
   const panel = view === 'pin' ? `
     <section class="card fade" id="wPin"><div class="wback"><span class="avatar" aria-hidden="true">${avatarSvg(known.prefs.avatar)}</span><div><h2>Welcome back, ${esc(known.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(logLine(known))}</p></div></div>
       <form id="pinForm" class="row" style="margin-top:14px"><label class="f grow" style="margin:0"><span>Your PIN</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autocomplete="off" enterkeyhint="done" aria-describedby="pinMsg"></label><button class="btn" type="submit" style="margin-top:22px">${icon('arrow')} Open my log</button></form>
@@ -795,11 +1013,12 @@ function renderWelcome(view){
       <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
-    <div class="wcol">${panel}${guest}</div>
+    <div class="wcol">${panel}${testCard('welcome')}${restoreCard()}${guest}</div>
   </div>`;
   const w = $('#wChoose'); if (w) w.onclick = () => { if (view === 'pin'){ db.current = null; saveDb(); } renderWelcome('choose'); };
   const n = $('#wNew'); if (n) n.onclick = () => { renderWelcome('new'); const f = $('#newForm [name=name]'); if (f) f.focus(); };
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
+  wireRestore(); wireFromTest();
   if (view === 'pin'){
     const inp = $('#pinForm input'); if (inp) inp.focus();
     $('#pinForm').onsubmit = async (e) => {
@@ -831,8 +1050,9 @@ function renderWelcome(view){
 }
 async function openProfile(id){
   const p = db.profiles[id]; db.current = id; me = p; unlocked = true; rememberOpen(id); saveDb(); applyPrefs();
-  Promise.all(p.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { if ((location.hash || '#/') === '#/') route(); });
-  location.hash = '#/'; route(); processStashedLink();
+  const back = takeResume(); const to = back ? back.hash : '#/';
+  Promise.all(p.groups.map(g => loadGroup(g.code))).then(loadStatements).then(() => { const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); applyScroll(back); });
+  history.replaceState(null, '', location.pathname + location.search + to); route(); processStashedLink();
 }
 // a log with a PIN asks for it on its own welcome back card
 function pickProfile(id){
@@ -884,7 +1104,6 @@ const WHEEL_LABEL = {critical:['Critical'], adaptive:['Adaptive'], inventive:['I
 const EV_WORD = ['no evidence yet', 'a glimpse or a claim', 'clear evidence', 'strong evidence'];
 const LEVEL_SHADE = [0, .3, .62, .95];
 function weekKey(t){ const d = new Date(t); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); d.setHours(0, 0, 0, 0); return d.getTime(); }
-function streak(entries){ const weeks = new Set(entries.map(e => weekKey(e.created))); let n = 0; let w = weekKey(Date.now()); if (!weeks.has(w)) w -= 7 * 864e5; while (weeks.has(w)){ n++; w -= 7 * 864e5; } return n; }
 /* The strongest evidence of a competency in one entry: 3 strong, 2 clear, 1 glimpse or claim. */
 function compLevelOf(e, id){
   let lv = 0;
@@ -967,7 +1186,7 @@ function compPanel(c, x, recent){
   return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll, n, weeks){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}${weeks ? `, ${weeks} week${weeks > 1 ? 's' : ''} running` : ''}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -983,11 +1202,100 @@ function wireWheel(st, first){
   });
 }
 function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
+/* ---------- D4: this term's rhythm, and milestones ----------
+   Rhythm: one dot for each week of the term, Monday to Sunday from its start, filled when anything was written that
+   week. No count of weeks in a row, nothing that resets, and nothing said about a week without an entry. */
+function termRhythm(entries, now = Date.now()){
+  const tp = termPos(now); const T = termsFor(tp.year)[tp.term - 1]; const W = 7 * 864e5; const start = weekKey(T.start);
+  const weeks = Math.round((weekKey(T.end) - start) / W) + 1;
+  const wrote = new Set(entries.filter(e => e.created >= T.start && e.created <= T.end).map(e => Math.round((weekKey(e.created) - start) / W) + 1));
+  return {term:tp.term, year:tp.year, weeks, wrote, cur:tp.inTerm ? Math.round((weekKey(now) - start) / W) + 1 : null, ended:!tp.inTerm && now > T.end};
+}
+function rhythmRow(E){
+  const r = termRhythm(E); const w = [...r.wrote].sort((a, b) => a - b);
+  const say = w.length ? `Term ${r.term}${r.ended ? '' : ' so far'}: you wrote in ${w.length === 1 ? 'week ' + w[0] : 'weeks ' + w.slice(0, -1).join(', ') + ' and ' + w[w.length - 1]}.` : `Term ${r.term}: a dot fills for each week you write.`;
+  return `<div class="rhythm"><span class="rlab" aria-hidden="true">Term ${r.term}</span><span class="rdots" role="img" aria-label="${esc(say)}">${Array.from({length:r.weeks}, (_, i) => `<i class="${r.wrote.has(i + 1) ? 'on' : ''}${r.cur === i + 1 ? ' now' : ''}"></i>`).join('')}</span><span class="tiny rcap" aria-hidden="true">A dot for each week you write</span></div>`;
+}
+/* Milestones: private and unannounced, kept in Settings, never shared. Each is worked out from the log, with when it
+   was reached; the first time Home sees one it is kept (me.milestones), quietly. An older log is filled in silently. */
+const MILESTONES = {first:'Your first entry', secured:'Your first secured statement', twoplaces:'A competency shown in two places', followed:'A plan followed through', actchange:'An ACT that led to a change'};
+function milestonesNow(){
+  const E = me.entries.slice().sort((a, b) => a.created - b.created); const out = {};
+  if (E.length) out.first = {at:E[0].created, detail:entryTitle(E[0])};
+  const sec = STMT_SET.list.map(x => statementStatus(me.entries, x)).filter(x => x.secured).sort((a, b) => a.securedAt - b.securedAt)[0];
+  if (sec) out.secured = {at:sec.securedAt, detail:sec.stmt.text};
+  // the same competency, linked or read clearly, in entries from two different subjects or CCAs
+  const seen = {};
+  for (const e of E){
+    const comps = new Set([...(e.links || []).map(l => (statementById(l.sid) || {}).comp), ...((e.e21cc && e.e21cc.evidence) || []).filter(v => v.strength === 'clear' || v.strength === 'strong').map(v => v.id)].filter(c => c && compOf(c)));
+    for (const c of comps){ const m = seen[c] = seen[c] || {}; const k = contextKey(e); if (!k || m[k]) continue; m[k] = (e.context && e.context.name) || e.subject || '';
+      if (Object.keys(m).length === 2 && !out.twoplaces) out.twoplaces = {at:e.created, detail:`${compOf(c).label}: ${Object.values(m).join(' and ')}`}; }
+    if (out.twoplaces) break;
+  }
+  const checks = me.planChecks || {}; const at = id => (checks[id] && checks[id].answer === 'yes' && checks[id].at) || 0;
+  const done = E.filter(e => e.kind !== 'across' && me.done && me.done[e.id]).sort((a, b) => (at(a.id) || Infinity) - (at(b.id) || Infinity));
+  if (done.length) out.followed = {at:at(done[0].id), detail:nextStepOf(done[0]) || ''};
+  const act = done.find(e => e.kind === 'act'); if (act) out.actchange = {at:at(act.id), detail:nextStepOf(act) || ''};
+  return out;
+}
+function noteMilestones(){
+  if (!me) return [];
+  const now = milestonesNow(); const backfill = !me.milestones; const kept = me.milestones = me.milestones || {}; const fresh = [];
+  for (const [id, m] of Object.entries(now)) if (!kept[id]){ kept[id] = {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}; if (!backfill) fresh.push(id); }
+  if (backfill || fresh.length) saveDb();
+  return fresh;
+}
+const lowerFirst = t => t.charAt(0).toLowerCase() + t.slice(1);
+function milestoneToast(fresh){
+  if (!fresh.length) return;
+  const words = fresh.map(id => lowerFirst(MILESTONES[id]));
+  setTimeout(() => toast(fresh.length === 1 ? `A milestone: ${words[0]}. It is kept in Settings, My milestones.` : `${fresh.length} milestones: ${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}. They are kept in Settings, My milestones.`, 5600), 350);
+}
+/* ---------- D3: one gentle prompt each time the Log is opened ----------
+   In turn: a plan that is due, a statement almost secured, a subject or CCA with no entry yet this term. Only what
+   applies now is offered, and not a kind put aside with Not now in the last week. One per open: the choice is kept
+   for the whole open, and once it is answered or put aside nothing takes its place until the next open. */
+const PROMPT_KINDS = ['plan', 'almost', 'subject'];
+function promptOptions(pl, almost){
+  const out = {}; const tp = termPos(Date.now()); const tk = termKey(Date.now());
+  if (pl && pl.ask) out.plan = {pl};
+  if (almost) out.almost = {almost};
+  if (tp.inTerm){
+    const nameOf = e => (e.context && e.context.name) || e.subject || '';
+    const quiet = myExperiences().filter(x => !me.entries.some(e => termKey(e.created) === tk && sameSubject(nameOf(e), x.name)))
+      .map(x => ({x, last:Math.max(0, ...me.entries.filter(e => sameSubject(nameOf(e), x.name)).map(e => e.created))})).sort((a, b) => a.last - b.last);
+    if (quiet.length) out.subject = {x:quiet[0].x};
+  }
+  return out;
+}
+function choosePrompt(opts){
+  const P = me.prompts = Object.assign({away:{}, last:null}, me.prompts || {}); const key = 'e21cclog.prompt.' + me.id;
+  const ok = k => !!opts[k] && !((P.away[k] || 0) > Date.now());
+  let kept = null; try{ kept = sessionStorage.getItem(key); }catch{}
+  if (kept !== null) return ok(kept) ? kept : null;   // this open already had its prompt
+  const from = PROMPT_KINDS.indexOf(P.last); let pick = null;
+  for (let i = 1; i <= PROMPT_KINDS.length && !pick; i++){ const k = PROMPT_KINDS[(from + i + PROMPT_KINDS.length) % PROMPT_KINDS.length]; if (ok(k)) pick = k; }
+  try{ sessionStorage.setItem(key, pick || ''); }catch{}
+  if (pick && P.last !== pick){ P.last = pick; saveDb(); }
+  return pick;
+}
+function promptCard(kind, o){
+  if (!kind) return '';
+  let body = '';
+  if (kind === 'plan') body = `<p><b id="nudgeH">${o.pl.named ? `Your plan for ${fmtDay(o.pl.due)} has come round.` : 'A plan from a week ago.'}</b> “${esc(nextStepOf(o.pl.e))}” Did it happen?</p>
+    <div class="seg" role="group" aria-labelledby="nudgeH">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>`;
+  else if (kind === 'almost') body = `<p><b id="nudgeH">Close to secured:</b> “${esc(o.almost.stmt.text.replace(/\.$/, ''))}”. ${esc(o.almost.missing)}</p><a class="btn small sec" href="#/c/${o.almost.stmt.comp}">See the statement</a>`;
+  else { const x = o.x; body = `<p><b id="nudgeH">Nothing in your log yet for ${esc(x.name)} this term.</b> Your next ${esc(x.name)} ${x.type === 'cca' ? 'session' : 'lesson'} could be the one.</p><a class="btn small" href="#/write/grow?x=${encodeURIComponent((x.type === 'cca' ? 'cca' : 'subject') + ':' + x.name)}">${icon('plus')} New GROW</a>`; }
+  return `<section class="card nudge" data-kind="${kind}" aria-labelledby="nudgeH">${body}<div class="nudgeend"><button type="button" class="linkbtn" id="nudgeLater">Not now</button></div></section>`;
+}
 function renderHome(){
-  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const s = streak(E); const W = levelWords();
+  const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const W = levelWords(); const fresh = noteMilestones();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
-  const nextEntry = E.find(e => nextStepOf(e) && !me.done[e.id]);
+  const pl = planToShow(E);
   const drafts = Object.keys(me.drafts || {}).filter(k => draftHasWork(me.drafts[k]) && FRAMEWORKS[k]);
+  // the unfinished entry saved most recently waits at the top, unless the student put it aside (Not now) and has not saved it since
+  const putAside = me.draftLater || {};
+  const carry = drafts.filter(k => !(putAside[k] && putAside[k] >= (me.drafts[k].saved || 0))).sort((a, b) => (me.drafts[b].saved || 0) - (me.drafts[a].saved || 0))[0] || null;
   const termEnd = tp.inTerm ? termsFor(tp.year)[tp.term - 1].end : 0; const daysLeft = termEnd ? Math.ceil((termEnd - Date.now()) / 864e5) : 0;
   const tk = termKey(Date.now()); const acrossDone = new Set(me.entries.filter(e => e.kind === 'across' && e.term === tk).map(e => e.basket));
   const all = STMT_SET.list.map(x => statementStatus(me.entries, x));
@@ -1002,14 +1310,21 @@ function renderHome(){
   // immediate: what to do this week
   const now = [];
   if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
-  if (unread.length) now.push(nextItem('note', `<b>Read ${esc(unread[0].n.by)}’s note</b> on ${esc(entryTitle(unread[0].e))}${unread.length > 1 ? `, and ${plural(unread.length - 1, 'more note')}` : ''}.`, `#/entry/${unread[0].e.id}`, 'Read it'));
-  const plan = nextEntry ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><label class="next"><input type="checkbox" id="doneNext"><p>${esc(nextStepOf(nextEntry))}</p></label><p class="tiny" style="margin:4px 0 0">Your plan from your ${FRAMEWORKS[nextEntry.kind].name} entry on ${fmtDay(nextEntry.created)}. Tick it when you have done it.</p>${followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : ''}</div></li>` : '';
+  const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
+  const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
+  // D3: one prompt for this open; what it shows is not listed again below
+  const popts = promptOptions(pl, almost); const promptKind = choosePrompt(popts);
+  const plan = !pl || promptKind === 'plan' ? '' : pl.ask
+    ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
+    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
   const nFirst = now.length;
-  if (backupDue()){ const fresh = me.entries.length - ((me.backup || {}).count || 0); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
+  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
-  for (const k of drafts) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k, 'Carry on'));
-  if (almost) now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
+  for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
+  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
+  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
   if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
   // longer term: this term and beyond
   const later = [];
@@ -1021,9 +1336,17 @@ function renderHome(){
   // nothing started yet: one way in, rather than a list of competencies that all say the same
   if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
+  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b> A weekly event in your calendar, at a time that suits you, with a link back here.`, '#/settings?s=remind', 'Set it up'));
   if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
   const first = recentComp(st);
+  // replies from teachers come first (A5): who, on which entry, and the words
+  unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
+  const fromT = unread.length ? `<section class="card fromcard" aria-labelledby="fromH"><h2 id="fromH">From your teachers</h2><ul class="fromlist">${unread.slice(0, 3).map(({e, n}) => `<li>${noteHtml(n)}<p class="tiny">On your entry <a href="#/entry/${e.id}">${esc(entryTitle(e))}</a></p><div class="row"><a class="btn small" href="#/entry/${e.id}">Open the entry</a><button type="button" class="btn small ghost" data-readnote="${esc(e.id)}|${esc(n.id)}">Mark as read</button></div></li>`).join('')}</ul>${unread.length > 3 ? `<p class="tiny">${plural(unread.length - 3, 'more note')} in your entries.</p>` : ''}</section>` : '';
+  let carryCard = '';
+  if (carry){ const d = me.drafts[carry], fw = FRAMEWORKS[carry]; const name = (d.context && d.context.name) || d.subject || ''; const qs = fw.steps.flatMap(x => x.qs); const done = qs.filter(q => String((d.answers || {})[q.id] || '').trim()).length;
+    carryCard = `<section class="card carrycard" aria-labelledby="carryH"><h2 id="carryH">${name ? `Carry on with your ${esc(name)} ${fw.name}` : `Carry on with your ${fw.name} entry`}</h2><p class="tiny">${d.saved ? 'Last saved ' + fmtDay(d.saved) + ' · ' : ''}${done} of ${qs.length} questions answered. Your words are saved.</p><div class="row"><a class="btn" href="#/write/${carry}?go=1">${icon('edit')} Continue</a><button type="button" class="btn ghost" id="carryLater">Not now</button></div></section>`; }
   frame(`
+    ${testCard('home')}${carryCard}${fromT}
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
@@ -1031,13 +1354,15 @@ function renderHome(){
         <div class="wheelwrap">${wheelSvg(st)}</div>
         <div class="cpanel is-default" id="cpanel">${compPanel(first, st[first.id], true)}</div>
       </div>
-      ${wheelHint(securedNow, securedAll, E.length, s)}
+      ${wheelHint(securedNow, securedAll, E.length)}
+      ${rhythmRow(E)}
       ${wheelLegend(st)}
     </section>
     <div class="acts">
       <a class="btn big" href="#/write/grow">${icon('plus')}<span>New GROW</span></a>
       <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT</span></a>
     </div>
+    ${promptCard(promptKind, popts[promptKind])}
     <section class="card nextcard">
       <h2>What next?</h2>
       <div class="nxparts">
@@ -1046,8 +1371,18 @@ function renderHome(){
       </div>
     </section>
   `, 'home', {wide:true, cls:'home'});
-  wireWheel(st, first.id); wireSafe();
-  const cb = $('#doneNext'); if (cb) cb.onchange = () => { me.done[nextEntry.id] = true; saveDb(); toast('Done. Well done for following through.'); setTimeout(route, 400); };
+  wireWheel(st, first.id); wireSafe(); milestoneToast(fresh);
+  const nl = $('#nudgeLater'); if (nl) nl.onclick = () => { me.prompts.away[promptKind] = Date.now() + 7 * 864e5; saveDb(); route(); };
+  const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
+  wireFromTest();
+  $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
+  $$('[data-plan]').forEach(b => b.onclick = () => {
+    const a = b.dataset.plan, id = pl.e.id; me.planChecks = me.planChecks || {};
+    if (a === 'yes'){ me.done[id] = true; me.planChecks[id] = {answer:'yes', at:Date.now()}; toast('Well done for following through.'); }
+    else if (a === 'partly'){ me.planChecks[id] = {answer:'partly', at:Date.now()}; toast('Partly counts. Your next entry can say what got in the way.', 4200); }
+    else { me.planChecks[id] = {answer:'notyet', at:Date.now(), again:Date.now() + PLAN_AGAIN}; toast('That is fine. The Log will ask again in a few days.'); }
+    saveDb(); setTimeout(route, 400);
+  });
 }
 
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
@@ -1192,7 +1527,7 @@ function openComposer(kind, editId, basket){
         if (base.coachAi && !base.coachAi.inputHash) base.coachAi.inputHash = inputHash(e, myStatements());
         // the statements it is linked to become the claim
         base.claims = (e.links || []).filter(l => statementById(l.sid)).map(l => ({sid:l.sid, quote:l.quote || ''})); }
-    } else if (base && kind !== 'across' && draftHasWork(base)) ask = true;
+    } else if (base && kind !== 'across' && draftHasWork(base)) ask = !hashParts().q.has('go');
     else if (base && kind !== 'across') base = null;
     draft = Object.assign(freshDraft(kind, key, basket), base || {});
     draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0; draft._ask = ask;
@@ -1594,6 +1929,7 @@ function wireStep(){
   $$('[data-ft]', sh).forEach(b => b.onclick = () => {
     collect(); draft.followThrough = {eid:b.dataset.eid, answer:b.dataset.ft};
     if (b.dataset.ft === 'yes') me.done[b.dataset.eid] = true;
+    me.planChecks = Object.assign({}, me.planChecks, {[b.dataset.eid]:{answer:b.dataset.ft, at:Date.now()}});
     saveDraft(); keepScroll(renderComposer);
   });
   const ac = $('[name=aimComp]', sh); if (ac) ac.onchange = () => { collect(); draft._aimComp = ac.value; const t = draft.target && statementById(draft.target); if (t && t.comp !== ac.value) draft.target = ''; saveDraft(); keepScroll(renderComposer); const tg = $('#sheet [name=target]'); if (tg && ac.value) tg.focus(); };
@@ -1753,10 +2089,10 @@ function e21ccCard(e, opts = {}){
 }
 /* Share one entry: choose the adults; those whose sharing settings cover it come ticked. */
 function shareEntry(e){
-  const list = adults();
+  const own = teacherFor(e); const list = own ? [own, ...adults().filter(a => a.id !== own.id)] : adults();
   if (!list.length){ dialog(`<h2>No one to share with yet</h2><p>Add a group from your teacher (Settings, Groups), or invite a mentor in Sharing.</p><div class="row"><a class="btn" href="#/sharing" id="dGo">${icon('share')} Open Sharing</a><button class="btn sec" id="dClose">Close</button></div>`); $('#dClose').onclick = closeDialog; $('#dGo').onclick = closeDialog; return; }
   dialog(`<h2>Share this entry</h2><p class="tiny">${esc(entryTitle(e))}. Only the people you pick get it.</p>
-    <div class="stack" id="shareList">${list.map((a, i) => `<label class="pick-row"><input type="radio" name="who" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(a.name)}</b><small>${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''}${isSent(a, e) ? ' · already has this version' : ''}</small></span></label>`).join('')}</div>
+    <div class="stack" id="shareList">${list.map((a, i) => `<label class="pick-row"><input type="radio" name="who" value="${i}" ${i === 0 ? 'checked' : ''}><span><b>${esc(a.name)}</b><small>${own && a.id === own.id ? `Your ${esc((e.context && e.context.name) || e.subject || '')} teacher${a.roles.includes('Form teacher') ? ' · Form teacher' : ''}` : esc(a.role) + (a.groupLabel ? ' · ' + esc(a.groupLabel) : '')}${isSent(a, e) ? ' · already has this version' : ''}</small></span></label>`).join('')}</div>
     <div class="row" style="margin-top:12px"><button class="btn" id="dGo">${icon('send')} Next</button><button class="btn sec" id="dClose">Cancel</button><a class="btn ghost" href="#/sharing" id="dSet">Sharing settings</a></div>`);
   $('#dClose').onclick = closeDialog; $('#dSet').onclick = closeDialog;
   $('#dGo').onclick = () => { const r = $$('#shareList input').find(x => x.checked); const a = list[+r.value]; deliver(a, [{t:'e', id:e.id, title:entryTitle(e), e}]); };
@@ -1900,10 +2236,10 @@ function renderSharing(){
   const card = a => {
     const secs = sectionsOf(a); const unsent = unsentFor(a); const sink = a.sink && a.sink.kind && a.sink.kind !== 'none' ? (a.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'a link in Teams';
     return `<section class="card adult" data-a="${esc(a.id)}">
-      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : `<button class="btn small ghost danger" data-remove="${esc(a.id)}">${icon('trash')} Remove</button>`}</div>
+      <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="margin:0">${esc(a.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(a.role)}${a.groupLabel ? ' · ' + esc(a.groupLabel) : ''} · sends by ${sink}</p></div>${a.group ? '' : a.staff ? `<a class="btn small ghost" href="#/settings?s=expCard">Change</a>` : `<button class="btn small ghost danger" data-remove="${esc(a.id)}">${icon('trash')} Remove</button>`}</div>
       <span class="flabel" style="margin-top:12px">What ${esc(a.name)} can see</span>
       <div class="chips">${SECTIONS.map(([k, l]) => `<button type="button" class="chip ${secs.includes(k) ? 'on' : ''}" data-sec="${k}" aria-pressed="${secs.includes(k)}">${secs.includes(k) ? icon('eye') : icon('lock')}${esc(l)}</button>`).join('')}</div>
-      ${a.group ? `<span class="flabel" style="margin-top:12px">Which entries</span><div class="seg" role="group" aria-label="Which entries">${[['group', `Only ${a.groupLabel || 'this group'}`], ['all', 'All my entries']].map(([k, l]) => `<button type="button" data-scope="${k}" class="${scopeOf(a) === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>` : ''}
+      ${a.group || (a.staff && a.teaches.length) ? `<span class="flabel" style="margin-top:12px">Which entries</span><div class="seg" role="group" aria-label="Which entries">${(a.group ? [['group', `Only ${a.groupLabel || 'this group'}`], ['all', 'All my entries']] : [['teaches', `Only ${a.teaches.join(', ')}`], ['all', 'All my entries']]).map(([k, l]) => `<button type="button" data-scope="${k}" class="${scopeOf(a) === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>` : ''}
       <div class="row" style="margin-top:12px;justify-content:space-between"><span class="tiny">${secs.length ? (unsent.length ? `${plural(unsent.length, 'item')} not sent yet` : 'Up to date') : 'Nothing shared'}</span>${unsent.length ? `<button class="btn small" data-send="${esc(a.id)}">${icon('send')} Send ${unsent.length} new</button>` : ''}</div>
     </section>`;
   };
@@ -1974,14 +2310,35 @@ function experiencesEditor(){
     ${ccaList().map((g, i) => `<span class="mini" id="cg${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="cg${i}">${g.names.map(ccaChip).join('')}</div>`).join('')}
     ${ownCca.length ? `<span class="mini" id="cgown">Your own</span><div class="chips" role="group" aria-labelledby="cgown">${ownCca.map(ccaChip).join('')}</div>` : ''}
     <form class="row" id="addCca" style="margin-top:8px"><input class="in grow" name="c" maxlength="60" aria-label="Another CCA" placeholder="Another CCA, if yours is not listed" autocapitalize="words"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
+    ${teacherPicks()}
     ${tiers.length ? `<span class="flabel" style="margin-top:16px">NEXUS@BTY</span>${tiers.map((t, i) => `<span class="mini" id="ng${i}">${esc(t.id + ' ' + t.name)} · ${esc(t.who)}</span><div class="chips" role="group" aria-labelledby="ng${i}">${t.modules.map(nxChip).join('')}</div>`).join('')}` : ''}
     <span class="flabel" style="margin-top:16px">Other experiences</span>
     ${others.length ? `<ul class="groups">${others.map(({o, i}) => `<li><div class="grow"><b>${esc(o.name)}</b> <span class="tag">${esc(typeLabel(o.type))}</span></div><button class="btn small ghost" data-dropx="${i}" aria-label="Remove ${esc(o.name)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="tiny" style="margin:0 0 8px">Camps, competitions, service, leadership: add them as they happen, or straight from a new entry.</p>'}
     <form class="row" id="addOther"><select class="in" name="t" style="width:auto" aria-label="Type of experience">${CONTEXT_TYPES.filter(c => !['subject', 'cca', 'nexus'].includes(c.id)).map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select><input class="in grow" name="n" maxlength="60" aria-label="Name of the experience" placeholder="e.g. Sec 2 camp"><button class="btn sec small" type="submit">${icon('plus')} Add</button></form>
   </section>`;
 }
+function teacherPicks(){
+  const head = `<span class="flabel" style="margin-top:16px" id="tpHead">Who teaches you?</span>`;
+  if (!staffList().length) return head + `<p class="tiny" id="tpNone" style="margin:0">Ask your teacher for the school link to pick your teachers.</p>`;
+  const opts = (list, cur, label = t => t.name) => {
+    const gone = cur && !list.some(t => t.email === cur.email);
+    return `<option value="">Not chosen</option>${list.map(t => `<option value="${esc(t.email)}" ${cur && cur.email === t.email ? 'selected' : ''}>${esc(label(t))}</option>`).join('')}${gone ? `<option value="${esc(cur.email)}" selected>${esc(cur.name || cur.email)} (no longer on the school list)</option>` : ''}`; };
+  const row = (kind, name) => { const list = staffFor(kind, name), cur = pickedFor(kind, name);
+    if (!list.length && !cur) return `<div class="slv"><span>${esc(name)}</span><span class="lvonly">None on the school list</span></div>`;
+    return `<label class="slv"><span>${esc(name)}</span><select class="in" data-tpick="${kind}|${esc(name)}" aria-label="Your ${esc(name)} teacher">${opts(list, cur)}</select></label>`; };
+  const subs = me.experiences.subjects, ccas = ccasOf();
+  const all = staffList().slice().sort((a, b) => (b.form ? 1 : 0) - (a.form ? 1 : 0) || byStaffName(a, b));
+  return head + `<p class="tiny" style="margin:0 0 8px">From the school’s staff list (${esc(fmtDate(db.staff.at))}). Nothing is shared with a teacher until you choose to share.</p>
+    <div class="slevels" id="tpicks" role="group" aria-labelledby="tpHead">${subs.map(n => row('subject', n)).join('')}${ccas.map(n => row('cca', n)).join('')}
+    <label class="slv"><span>Form teacher</span><select class="in" data-tpick="form|" aria-label="Your form teacher">${opts(all, pickedFor('form'), t => t.form ? `${t.name} (${t.form})` : t.name)}</select></label></div>
+    ${!subs.length && !ccas.length ? `<p class="tiny" style="margin:6px 0 0">Choose your subjects and CCA above to pick their teachers.</p>` : ''}`;
+}
 function wireExperiences(rerender){
   const x = me.experiences;
+  $$('[data-tpick]').forEach(sel => sel.onchange = () => { const [kind, name] = sel.dataset.tpick.split('|'); const T = me.teachers; const t = staffByEmail(sel.value);
+    const val = sel.value ? {email:sel.value, name:t ? t.name : ((pickedFor(kind, name) || {}).name || '')} : null;
+    if (kind === 'form') T.form = val; else { const map = kind === 'cca' ? T.ccas : T.subjects; for (const k of Object.keys(map)) if (kind === 'cca' ? k.toLowerCase() === name.toLowerCase() : sameSubject(k, name)) delete map[k]; if (val) map[name] = val; }
+    saveDb(); toast(val ? `${val.name || 'Teacher'} is your ${kind === 'form' ? 'form teacher' : name + ' teacher'}.` : 'Choice cleared.'); });
   const again = sel => { const y = window.scrollY; rerender(); window.scrollTo(0, y); const nb = sel && $(sel); if (nb) nb.focus(); };
   $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); again(`[data-subj="${CSS.escape(s)}"]`); });
   $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = canonSubject(String(new FormData(ev.target).get('s') || '')); if (!v) return; if (!x.subjects.some(s => sameSubject(s, v))) x.subjects.push(v); saveDb(); rerender(); };
@@ -2007,7 +2364,16 @@ function wireLook(){
 }
 
 /* ---------- settings ---------- */
-const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['data', 'Your data', 'down'], ['about', 'About', 'note']];
+function milestonesCard(){
+  // what is kept, plus anything reached since Home last looked; nothing unreached is listed
+  const now = milestonesNow(); const all = Object.assign({}, Object.fromEntries(Object.entries(now).map(([k, m]) => [k, {at:m.at || Date.now(), detail:fragment(m.detail || '', 140)}])), me.milestones || {});
+  const list = Object.entries(all).filter(([id]) => MILESTONES[id]).sort((a, b) => a[1].at - b[1].at);
+  return `<section class="card" id="miles"><h2>My milestones</h2><p class="muted">Kept here quietly, for you. They are not shared with anyone, and there are no points.</p>
+    ${list.length ? `<ul class="miles">${list.map(([id, m]) => `<li>${icon('star')}<span><b>${MILESTONES[id]}</b><small>${esc(fmtDate(m.at))}${m.detail ? ' · ' + esc(m.detail) : ''}</small></span></li>`).join('')}</ul>` : '<p class="tiny">Your first one comes with your first entry.</p>'}</section>`;
+}
+const REMIND_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const clockWords = hm => { const [h, m] = String(hm || '').split(':').map(Number); return `${h % 12 || 12}.${String(m || 0).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['miles', 'Milestones', 'star'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
@@ -2059,8 +2425,15 @@ function renderSettings(){
       ${gs.length ? `<ul class="groups">${gs.map(g => `<li><div class="grow"><b>${esc(g.cfg ? (g.cfg.subject || g.code) : g.code)}</b> <span class="tag">${groupType(g) === 'cca' ? 'CCA' : groupType(g) === 'form' ? 'Form class' : groupType(g) === 'subject' ? 'Subject' : 'Group'}</span><small>${esc(g.code)}${g.cfg ? ' · ' + esc(g.cfg.teacherName || 'teacher') + ' · ' + sinkLabel(g.cfg) : ' · not loaded yet'}</small></div><button class="btn small ghost" data-drop="${esc(g.code)}" aria-label="Remove ${esc(g.code)}">${icon('trash')}</button></li>`).join('')}</ul>` : ''}
       <div class="row"><label class="f grow" style="margin:0"><span>Add a group code</span><input class="in" id="sClass" maxlength="16" style="text-transform:uppercase" placeholder="From your teacher" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"></label><button class="btn sec" id="sLoad" style="margin-top:22px">Add</button></div>
       <p class="tiny" id="clsMsg" style="margin-top:8px"></p>
+      <p class="tiny" id="staffLine" style="margin-top:4px">${db.staff && db.staff.list ? `School staff list: ${plural(db.staff.list.length, 'teacher')}, from ${esc(fmtDate(db.staff.at))}.` : 'No school staff list on this device yet. Your teacher will share a link to it.'}</p>
       <p style="margin:6px 0 0"><a class="btn sec small" href="#/sharing">${icon('share')} Sharing: who sees what</a></p>
     </section>
+    <section class="card" id="remind"><h2>Weekly reminder</h2>
+      <p class="muted">The Log cannot send notifications itself. This puts a weekly event in your calendar instead, with a link back here.</p>
+      ${me.reminder ? `<p class="tiny" id="rNow">Your reminder: ${REMIND_DAYS[me.reminder.day]}s at ${esc(clockWords(me.reminder.time))}. To change it, add a new one here, then delete the old event in your calendar.</p>` : ''}
+      <div class="row"><label class="f" style="margin:0"><span>Day</span><select class="in" id="rDay">${[1, 2, 3, 4, 5, 6, 0].map(d => `<option value="${d}" ${(me.reminder ? me.reminder.day : 5) === d ? 'selected' : ''}>${REMIND_DAYS[d]}</option>`).join('')}</select></label>
+        <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
       <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
       <ul class="safe">
@@ -2069,8 +2442,8 @@ function renderSettings(){
         <li>${icon(installed() ? 'check' : 'home')}<span>${installed() ? 'The Log is installed on this device.' : 'The Log is not installed on this device.'}</span>${!installed() && canInstall() ? `<span class="safe-how">${installHow()}</span>` : ''}</li>
       </ul>
       <div class="row">
-        <button class="btn sec" id="sExport">${icon('down')} Back up (export)</button>
-        <label class="btn sec" for="sImport">${icon('up')} Import<input type="file" id="sImport" accept="application/json,.json" hidden></label>
+        <button class="btn sec" id="sExport">${icon('down')} Back up my log</button>
+        <label class="btn sec" for="sImport">${icon('up')} Bring my log from a backup<input type="file" id="sImport" accept="application/json,.json" hidden></label>
         <button class="btn sec" id="sCopyAll">${icon('copy')} Copy all as text</button>
       </div>
       <details style="margin-top:14px"><summary>Change or remove PIN</summary>
@@ -2080,8 +2453,9 @@ function renderSettings(){
         <button class="btn danger small" id="sDelete">${icon('trash')} Delete this profile from this device</button>
       </div>
     </section>
+    ${milestonesCard()}
     <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
-      <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working.</p>
+      <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working. Older versions are kept read only, from <a href="legacy/">the archive</a>.</p>
       <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
   `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
   if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
@@ -2128,19 +2502,21 @@ function renderSettings(){
   $('#sKey').oninput = e => { me.coach.key = e.target.value.trim(); saveDb(); };
   $('#sModel').onchange = e => { me.coach.model = e.target.value; saveDb(); };
   $('#sTest').onclick = async () => { const m = $('#sTestMsg'); m.innerHTML = '<span class="spin"></span> Testing…'; try{ const r = await aiCoach({id:'test', kind:'grow', context:{type:'subject', name:'Mathematics'}, subject:'Mathematics', topic:'Test', answers:{g1:'I understand that simultaneous equations are two rules that must both be true at once, because the lines cross at one point.', r2:'Redo Q3 to Q5 tonight after dinner for 20 minutes.'}, competencies:[]}, {test:true, noStatements:true}); m.textContent = 'The coach answered: “' + r.question + '”'; }catch(e){ m.textContent = e.message; } };
-  $('#sExport').onclick = () => { backupNow(); toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); }; wireSafe();
+  $('#rAdd').onclick = async () => {
+    const day = +$('#rDay').value, time = $('#rTime').value || '15:30'; const text = icsWeekly({day, time, url:appUrl()}); const name = 'E21CC Log reminder.ics';
+    if (await shareFile(name, text, 'text/calendar', 'E21CC Log reminder') === 'cancelled') return;
+    me.reminder = {day, time, at:Date.now()}; saveDb(); toast('Open the file to add the weekly event to your calendar.', 4200); renderSettings();
+  };
+  $('#sExport').onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); } }; wireSafe();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
     try{
-      const pr = STORE.parseImport(await f.text()); let added = 0, updated = 0;
-      for (const e of pr.entries){ const i = me.entries.findIndex(x => x.id === e.id); if (i < 0){ me.entries.push(e); added++; } else if (version(e) > version(me.entries[i])){ const keepNotes = me.entries[i].notes || []; e.notes = [...keepNotes, ...(e.notes || []).filter(n => !keepNotes.some(k => k.id === n.id))]; me.entries[i] = e; updated++; } else { const cur = me.entries[i]; for (const n of (e.notes || [])) if (!cur.notes.some(k => k.id === n.id)) cur.notes.push(n); } }
-      if (!me.email && pr.email) me.email = pr.email;
+      const pr = STORE.parseImport(await f.text()); const r = mergeBackup(me, pr);
       for (const g of pr.groups) addGroupToMe(g.code);
-      const xs = pr.experiences || {}; for (const s of (xs.subjects || [])) if (!me.experiences.subjects.includes(s)) me.experiences.subjects.push(s); if (!me.experiences.cca && xs.cca) me.experiences.cca = xs.cca;
       const landed = applyPendingNotes(); saveDb();
-      toast(`Imported ${plural(added, 'new entry', 'new entries')}${updated ? `, updated ${updated}` : ''}${landed ? `, and ${plural(landed, 'waiting note')} landed` : ''}.`, 3400);
+      toast(mergeWords(r) + (landed ? ` And ${plural(landed, 'waiting note')} landed.` : ''), 3800); renderSettings();
       Promise.all(me.groups.map(g => loadGroup(g.code))).then(loadStatements);
-    }catch{ toast('That file is not a log export.'); }
+    }catch{ toast('That file is not a log backup.'); }
     ev.target.value = '';
   };
   $('#sCopyAll').onclick = () => copyText(me.entries.slice().sort((a, b) => a.created - b.created).map(e => entryText(e, true)).join('\n\n' + '─'.repeat(24) + '\n\n'));

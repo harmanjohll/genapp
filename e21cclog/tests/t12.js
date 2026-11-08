@@ -81,7 +81,7 @@ const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.jso
     check('Back up now downloads the log, records it, and the request goes away', /e21cc-log-.*\.json$/.test(dl.suggestedFilename()) && after && after.count === P.entries.length && left === 0, dl.suggestedFilename());
     await p.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); d.profiles[d.current].backup = {at:Date.now() - 22 * 864e5, count:d.profiles[d.current].entries.length - 1}; localStorage.setItem('e21cclog', JSON.stringify(d)); }); await p.reload(); await sleep(600); await p.evaluate(() => location.hash = '#/'); await sleep(300);
     check('three weeks on, with something new, Home asks again', await p.$$eval('.nxpart:first-of-type .nxlist>li', ls => ls.some(l => /^\s*Back up your log/.test(l.textContent))));
-    await p.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); d.profiles[d.current].backup = {at:Date.now() - 22 * 864e5, count:d.profiles[d.current].entries.length}; localStorage.setItem('e21cclog', JSON.stringify(d)); }); await p.reload(); await sleep(600); await p.evaluate(() => location.hash = '#/'); await sleep(300);
+    await p.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); const P0 = d.profiles[d.current]; P0.backup = {at:Date.now() - 22 * 864e5, count:P0.entries.length}; for (const e of P0.entries){ e.created = Math.min(e.created, P0.backup.at - 864e5); e.updated = Math.min(e.updated || e.created, P0.backup.at - 864e5); } localStorage.setItem('e21cclog', JSON.stringify(d)); }); await p.reload(); await sleep(600); await p.evaluate(() => location.hash = '#/'); await sleep(300);
     check('three weeks on with nothing new, it does not ask', await p.$$eval('.nxpart:first-of-type .nxlist>li', ls => !ls.some(l => /Back up your log/.test(l.textContent))));
     await p.evaluate(() => location.hash = '#/settings?s=data'); await sleep(400);
     const sd = await p.textContent('#data');
@@ -118,7 +118,7 @@ const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/seed3.jso
     check('Back up the console downloads its store and records it', /e21cc-console-.*\.json$/.test(dl.suggestedFilename()) && /Last backed up on/.test(await p.textContent('#cBackupLine')) && JSON.parse(fs.readFileSync(file, 'utf8')).store.items['s|x']);
     await p.evaluate(() => { localStorage.removeItem('e21cclog.teacher'); }); await p.reload(); await sleep(500);
     p.once('dialog', d => d.accept()); await p.setInputFiles('#cRestore', file); await sleep(1200);
-    check('Restore brings the console back from the file', await p.evaluate(() => !!JSON.parse(localStorage.getItem('e21cclog.teacher') || '{}').items?.['s|x']));
+    check('Restore brings the console back from the file', await p.evaluate(() => !!store.items?.['s|x']));
     await ctx.close(); }
 
   console.log('ERRORS', errors.length ? errors : 'none');

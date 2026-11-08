@@ -44,7 +44,7 @@ const BANNED = ['whole trick', ' beats ', 'not a verdict', 'most people never', 
   // Home from inside the editor keeps the draft
   await page.click('#cHome'); await sleep(400);
   check('Home in the editor goes home and keeps the draft', (await page.evaluate(() => location.hash)) === '#/' && !!(await prof()).drafts.grow && (await page.textContent('#toast')).includes('Draft saved'));
-  check('the home page says a GROW entry is unfinished', (await page.textContent('.nextcard')).includes('Finish your GROW entry'));
+  check('the home page says a GROW entry is unfinished, as one card at the top', /^Carry on with your Mathematics GROW$/.test(await page.textContent('#main .carrycard h2').catch(() => '')));
   await setProf('p.drafts = {};'); await page.reload(); await sleep(300);
 
   // 2. a student with only a CCA: two taps to a subject, and it is remembered

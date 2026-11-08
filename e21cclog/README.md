@@ -1,20 +1,31 @@
 # E21CC Log
 
-The E21CC Log lives at `genapp/e21cclog/` for students and `genapp/e21cclog/teacher.html` for teachers. The address stays the same from version to version, so bookmarks and links shared in Teams keep working. The version shows only inside the app: the small badge, and Settings, About. This is version 3.
+One app, at one address that stays the same from version to version, so bookmarks and links shared in Teams keep working. The version shows only inside the app: the small badge, and Settings, About. This is **Version 4** (8 November 2026): the pilot (Version 3) with the test version that was built beside it folded in.
+
+## Links to use
+| Who | Link |
+| --- | --- |
+| Students | https://harmanjohll.github.io/genapp/e21cclog/ |
+| Teachers (the console) | https://harmanjohll.github.io/genapp/e21cclog/teacher.html |
+| Showing what is possible (staff, students, parents) | https://harmanjohll.github.io/genapp/e21cclog/demo/ |
+| The demo, straight into a view | `e21cclog/demo/student/` (Sam Lee's log) and `e21cclog/demo/teacher/` (Mrs Goh's console) |
+| Older versions, read only | https://harmanjohll.github.io/genapp/e21cclog/legacy/ |
 
 ## Where things are
 | Path | What it is |
 | --- | --- |
-| `e21cclog/` | The Log: the student app, the teacher console, the statements, the tests |
-| `e21cclog/legacy/v1/`, `e21cclog/legacy/v2/` | The first version and v2, kept read only so nothing is lost. A banner sends students to the Log, and **Bring newer entries across** adds anything written there after the move (the newer copy of an entry wins) |
+| `e21cclog/` | The Log: the student app (`index.html`), the teacher console (`teacher.html`), the statements, the school offering |
+| `e21cclog/demo/` | The demo: made up people, nothing saved, an optional tour. `demo/make-demo.js` rebuilds its data |
+| `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
+| `e21cclog/BACKLOG.md`, `e21cclog/LOOP.md` | What is built next, in order, with specs; and the rules for scheduled build runs (paused) |
+| `e21cclog/legacy/` | The archive: Version 1, 2 and 3, read only, and `bridge.js`, which puts them in legacy mode. See `legacy/README.md` |
+| `e21cclog/next/` | Forwarding only. The test version lived here from 3 to 8 November 2026; its pages forward to the Log, and its offline copy removes itself |
 | `logs/`, `logsv2/`, `logsv3/` | Short pages left at the old addresses. Teacher note links, group links, class codes and share links go to the Log; other pages go to their legacy copy |
 | `e21cclog/school/beatty.json` | Beatty's offering: subjects for Lower and Upper Sec with the levels of demand each is offered at, CCAs, NEXUS@BTY modules, and the year's fixed experiences. See **Changing the school offering** |
-| `e21cclog/tests/` | Every browser test, run with `run.sh`, and on each pull request by `.github/workflows/e21cclog.yml` |
-| `e21cclog/next/` | The next version, built beside the pilot with its own storage and offline copy, so the pilot stays as it is. Its backlog and the rules for the scheduled build runs are in `next/BACKLOG.md` and `next/LOOP.md`; see `next/README.md` |
 
-The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console). Later versions change the data in place. Nothing is copied from the older versions.
+The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teacher` for the console, sealed by its PIN). Later versions change the data in place: a log saved by Version 3 opens in Version 4 with nothing lost (t27). Nothing is copied from older versions, except a log kept in the test version on the same device: the Log offers it once (**From the test version**, on Home or the welcome page) and brings it across with nothing doubled. A console kept there moves across once if the console here is empty.
 
-**The fresh start (1 November 2026).** Before any students, the Log cleared every log made while testing, once per browser: the Log's store, the older v1, v2 and v3 logs, and the console's items. Only the Log's own keys are removed; other pages on the site keep theirs. `FRESH_START` in `assets/store.js` marks it. Changing that value would clear every student's log again, so it stays as it is.
+**The fresh start (1 November 2026).** Before any students, the Log cleared every log made while testing, once per browser: the Log's store, the older v1, v2 and v3 logs, and the console's items. Only the Log's own keys are removed; other pages on the site keep theirs. `FRESH_START` in `assets/store.js` marks it. Changing that value would clear every student's log again, so it stays as it is, in every version.
 
 ## Getting back in
 - **A refresh keeps the student in.** A log with a PIN stays open in its tab through a refresh. Closing the tab, or **Switch to another log** in Settings, locks it again.
@@ -26,13 +37,14 @@ The Log keeps one lasting store in the browser (`e21cclog`, and `e21cclog.teache
 Until Phase 2 puts each log in the student's OneDrive, the log lives in one browser, and a cleared history, a new device or Safari's tracking prevention can lose it. So the Log:
 - **Asks the browser to keep it** (persistent storage), once there is an entry.
 - **Offers to install itself to the Home Screen.** On an iPad it gives the steps; on Chrome it shows a button. An installed app is not cleared the way an ordinary site can be.
-- **Asks for a backup.** After 5 new entries, or 3 weeks with anything new, What next? offers **Back up now**, a file the student keeps in OneDrive or Files. Settings, Your data shows the last backup, whether the browser has agreed to keep the log, and whether the Log is installed.
+- **Backs up in one tap.** **Back up my log** (Settings, Your data, and Home's Back up now) opens the share sheet where the device has one, so an iPad saves the file to Files or OneDrive; otherwise it downloads. Home reminds the student when 5 entries have changed since the last backup, or anything has after 3 weeks, and says when the last backup was.
+- **Brings a log back.** On a new device, the welcome page's **Bring my log from a backup** restores it, unfinished entry and all. Where a log with that name is already here, it adds only what is new (behind that log's PIN), so restoring twice doubles nothing.
 - **Opens without wifi.** An offline copy (`sw.js`) serves pages and scripts from the network first, with the copy kept for when the network is down.
-- **Backs up the console too.** The teacher console has **Back up the console** and **Restore from a backup**.
+- **Backs up the console too.** The teacher console has **Back up the console** and **Restore from a backup**, and a PIN that seals what it holds.
 
 ## Tests
 `e21cclog/tests/run.sh` starts a local server and a mock coach relay, then runs:
-- every suite (t2 to t13);
+- every suite (t2 to t27);
 - the console sweep;
 - one colour sweep per look.
 
@@ -46,6 +58,12 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 | t13 | Accessibility: axe, the keyboard, 200% zoom, forced colours |
 | t15 | Getting back in: the fresh start, a refresh with a PIN, the welcome back card, one log per name, switching logs |
 | t14 | Beatty's offering: subjects by Sec level with their levels of demand, CCAs and NEXUS@BTY, renaming older logs, the coach's level, the console |
+| t16 to t20 | The staff list, picking teachers, sharing to the right teacher, the console PIN, replies in one tap |
+| t21 | Resume where I left off |
+| t22 | The demo |
+| t23 to t25 | Plans checked back on their day and the weekly reminder; this term's rhythm and milestones; one gentle prompt per open |
+| t26 | Backup in one tap, and restore with nothing doubled |
+| t27 | Version 4: a Version 3 log and console open with nothing lost, the fresh start keeps pilot logs, test logs brought across once, `next/` forwarding and its offline copy, the Version 3 archive |
 | `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
 
 A screen reader still needs a person. The **VoiceOver check for an iPad** (about 10 minutes):
@@ -59,7 +77,30 @@ A screen reader still needs a person. The **VoiceOver check for an iPad** (about
 
 Note anything that is silent, out of order, or unclear.
 
-## Version 3
+## Version 4
+
+Version 4 is the pilot with the twelve items built beside it in November 2026 (pull requests #110 to #119):
+- **Teachers.**
+  - **The staff list.** The console reads the timetable's staff list and makes one school link for students.
+  - **Picking teachers.** A student picks a teacher for each subject and CCA, and a form teacher.
+  - **Sharing.** An entry goes to its own teacher, and Send gives a teacher all their new entries in one Teams link.
+  - **The console PIN.** It seals the console's store, and asks again after 10 minutes without use.
+  - **Replies.** Quick replies in one tap, Replies to send, and a Waiting for a reply filter.
+- **Students.**
+  - **From your teachers** comes first on Home.
+  - **Resume.** The Log opens where the student left off, and an unfinished entry waits as Carry on.
+  - **Backup and restore.** A backup is one tap, and restoring on a new device doubles nothing.
+- **Nudges without pressure.**
+  - A plan that names a day is asked about on that day: Yes, Partly, Not yet.
+  - A weekly calendar reminder.
+  - This term's rhythm, a dot for each week written, with no streak.
+  - Private milestones in Settings.
+  - At most one gentle prompt each time the Log opens.
+- **The demo** at `demo/`.
+
+Their specs, and what comes next (C1 Sharpen the reflection is next, unbuilt), are in `BACKLOG.md`.
+
+## From v3
 
 What v3 changes:
 - **Home in two parts, each the full width of the page.**
@@ -81,7 +122,7 @@ What v3 changes:
 - **The aim in two steps.** "Next time, aim for" asks for a competency first, then lists only its statements, grouped by band, in two native dropdowns that work the same on every device.
 - **Two settings before writing.** A student without a Sec level, or without any subject or CCA, sees an alert before a new entry and sets both there, then carries on.
 
-v3 keeps everything v2 added: the coach that meets each student where they are. That is described next.
+v3, and so Version 4, keeps everything v2 added: the coach that meets each student where they are. That is described next.
 
 ## From v2
 
@@ -110,7 +151,7 @@ What v2 adds: a coach that meets each student where they are.
   - the content question;
   - the knowledge, skills, values and dispositions ids.
 
-The rest of this README describes the log as a whole, the same in every version except where v3 says otherwise above.
+The rest of this README describes the log as a whole, the same in every version except where Version 4 and v3 say otherwise above.
 
 # E21CC Log
 
@@ -152,6 +193,8 @@ python3 -m http.server 8000
 | `assets/core.js` | Shared engine: frameworks, competency lens, Beatty's statements (embedded), the evidence gate, securing and levels, built in coach, AI coach prompt and schema, link codec, migration |
 | `assets/store.js` | The storage and transport seam: browser storage, form submissions, links. Phase 2 swaps it for OneDrive |
 | `assets/app.js` | Student app: frame, Home, Competencies, journals, composer and claim, entries, sharing, settings, the Gemini coach |
+| `assets/console-lock.js` | The console's PIN: the store sealed with AES GCM under a key made from the PIN |
+| `assets/demo.js`, `assets/demo-data.js` | The demo's banner, tour and made up data (`demo/make-demo.js` rebuilds the data) |
 | `assets/fonts/` | Literata and Inter, subset to Latin (SIL Open Font License) |
 | `teacher.html` | Teacher console: Inbox, Class grid, Students, Statements, group set up, guide |
 | `classes/*.json` | Published group files, one per code (`DEMO.json` is a sample) |
@@ -159,7 +202,9 @@ python3 -m http.server 8000
 | `relay/` | Cloudflare Worker that holds the school's API key and throttles per student |
 | `sw.js` | The offline copy: pages and scripts from the network first, kept for when the wifi is down |
 | `manifest.webmanifest` | Lets the Log install to a Home Screen |
-| `legacy/` | The first version and v2, read only, and `bridge.js`, which adds their banner and brings newer entries across |
+| `legacy/` | Version 1, 2 and 3, read only, with an index page; `bridge.js` adds their banner, stops saving, and (v1 and v2) brings newer entries across |
+| `demo/` | The demo's landing page, and `student/` and `teacher/`, which open each view |
+| `BACKLOG.md`, `LOOP.md` | The backlog, and the rules for scheduled build runs (paused) |
 | `tests/` | Every browser test; `run.sh` runs them |
 | `DESIGN.md` | Decisions, verification status, and the open questions |
 | `PHASE2-REQUEST.md` | What MOE IT needs to clear before the log can live in students' OneDrive |

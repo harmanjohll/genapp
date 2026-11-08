@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs every E21CC Log test against a local copy of the site.
+# Runs every test for the E21CC Log (e21cclog/) against a local copy of the site.
 #   e21cclog/tests/run.sh            all suites, the console sweep, one colour sweep per look
 #   FULL=1 e21cclog/tests/run.sh     also the full 48 combination colour sweep and the route audit
 # Needs Node 18 or later, Python 3, and Playwright with Chromium (npx playwright install chromium).
@@ -14,7 +14,7 @@ trap 'kill $SERVER $RELAY 2>/dev/null' EXIT
 for i in $(seq 1 30); do curl -sf "$BASE/index.html" >/dev/null && curl -sf localhost:8124/reset >/dev/null && break; sleep 0.5; done
 fails=0
 run(){ local name=$1; shift; curl -sf localhost:8124/reset >/dev/null; if "$@" > "$OUT/$name.txt" 2>&1 && grep -q "^PASS\|^findings 0 " "$OUT/$name.txt" && ! grep -q "^FAIL\|^findings [1-9]\|PAGEERROR" "$OUT/$name.txt"; then echo "pass  $name  $(grep -c '^PASS' "$OUT/$name.txt") checks"; else echo "FAIL  $name  (see $OUT/$name.txt)"; grep "^FAIL" "$OUT/$name.txt" | head -5; fails=$((fails+1)); fi; }
-for t in t2 t4 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15; do [ -f "$t.js" ] && run "$t" node "$t.js"; done
+for t in t2 t4 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27; do [ -f "$t.js" ] && run "$t" node "$t.js"; done
 run console-sweep node tsweep.js "$OUT/tsweep.md"
 if [ "${FULL:-}" = 1 ]; then
   run colour-sweep node sweep.js "$OUT/sweep.md"

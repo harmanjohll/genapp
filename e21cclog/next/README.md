@@ -1,29 +1,9 @@
-# E21CC Log, next version
+# Moved
 
-This folder holds the next version of the E21CC Log, built beside the pilot so the pilot stays as it is. It started as an exact copy of the pilot app (November 2026) and grows one backlog item at a time.
+The test version of the E21CC Log, built here beside the pilot from 3 to 8 November 2026, was folded into the E21CC Log as Version 4 on 8 November 2026. The Log is at `e21cclog/`, with its backlog (`../BACKLOG.md`), build rules (`../LOOP.md`), tests (`../tests/`) and demo (`../demo/`).
 
-| | Pilot | Next |
-|---|---|---|
-| Address | `e21cclog/` | `e21cclog/next/` |
-| Student log key | `e21cclog` | `e21cclog.next` |
-| Teacher console key | `e21cclog.teacher` | `e21cclog.next.teacher` |
-| Offline copy | `e21cclog-` caches, scope `e21cclog/` | `e21cclognext-` caches, scope `e21cclog/next/` |
-| Label in the app | v3 | Next |
+What stays here, so old links and installed copies keep working:
+- `index.html`, `teacher.html` and `demo/` forward to the same pages at `e21cclog/`, keeping the query and the hash.
+- `sw.js` replaces the old offline copy on any device that opened the test version: it clears the copy, removes itself, and reloads the page, which then forwards.
 
-The two never read or clear each other's data, and the pilot's offline copy ignores `next/`. A teacher or student can open both in one browser. When next is ready to replace the pilot, its log moves under the lasting key, as v1 to v3 did.
-
-## How it is built
-- `BACKLOG.md` lists the work in order: each item has a status, what it needs first, a spec, what done looks like, and its tests. The decisions behind it were made with Harman in November 2026.
-- `LOOP.md` holds the rules for the scheduled build runs: three times a day a fresh session takes the next ready item, builds it here, and opens one PR titled `Next: <id> <title>`. Harman reviews and merges; runs never merge.
-- Anything that needs a decision goes back to Harman as `needs Harman` in the backlog, never as a guess.
-
-## Trying it
-Open `e21cclog/next/index.html` for the student app and `e21cclog/next/teacher.html` for the console. Everything else works as in the pilot; see `../README.md` for how the Log works.
-
-## The demo
-`e21cclog/next/demo/` shows the Log with made up people, for staff, students and parents: `demo/student/` opens Sam Lee's log (Sec 3, a term in), and `demo/teacher/` opens Mrs Goh's console with what her class shared. Nothing is saved, and a real log or console on the same device is never read or changed. A banner says it is a demo, and an optional tour points at each feature. To refresh the sample data, run `node demo/make-demo.js` with a local server (see the top of that file).
-
-## Tests
-`e21cclog/next/tests/run.sh` runs every suite against `e21cclog/next/` (`FULL=1` adds the full colour sweep and the route audit). Install once with `npm ci` in `e21cclog/next/tests`. Before any push, also run `node pathways/tools/verify.mjs` from the repository root, as `CLAUDE.md` asks.
-
-Next's own checks: `t12` shows the pilot's offline copy never stands in for next and next has its own; `t15` shows next's fresh start clears only next's keys and the pilot opens its own log, unchanged, beside it.
+A log kept in the test version on a device stays where it was (`e21cclog.next` in that browser). The Log offers it once, on Home or the welcome page, and brings it across with nothing doubled. The build history is in pull requests #110 to #119.

@@ -1,2 +1,4 @@
 out/
 node_modules/
+# screenshots some suites write beside out/ (SHOTS + name); never committed
+out*.png
