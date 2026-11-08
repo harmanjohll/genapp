@@ -1,15 +1,19 @@
 /* ==================================================================
-   Legacy mode for the older versions of the E21CC Log (v1 and v2).
+   Legacy mode for the older versions of the E21CC Log (v1, v2 and v3).
    They are kept so nothing is lost: they open, show what was written,
    and export it, but they no longer save. A banner sends the student
-   to the E21CC Log, and can bring across any entries written here
-   after the log moved, so each student keeps one log.
-   Loaded by legacy/v1 and legacy/v2: after store.js in index.html,
-   and at the end of teacher.html.
+   to the E21CC Log, and (v1 and v2) can bring across any entries
+   written there after the log moved, so each student keeps one log.
+   v3 reads the same log as the live Log, so it is kept strictly read
+   only: no saving, no offline copy, nothing to bring across, and its
+   console page forwards to the live console.
+   Loaded by legacy/v1, v2 and v3: after store.js in index.html, and
+   at the end of teacher.html (v1 and v2).
    ================================================================== */
 (function(){
   'use strict';
-  const V = /\/legacy\/v1\//.test(location.pathname) ? 'v1' : 'v2';
+  const V = /\/legacy\/v1\//.test(location.pathname) ? 'v1' : /\/legacy\/v3\//.test(location.pathname) ? 'v3' : 'v2';
+  const SAME = V === 'v3';   // v3 and the live Log share one key: nothing to bring across, and nothing may be written
   const TEACHER = /teacher\.html$/.test(location.pathname);
   const OLD_KEY = TEACHER ? (V === 'v1' ? 'logs.teacher.v2' : 'logs.teacher.logsv2') : (V === 'v1' ? 'cdl.v2' : 'cdl.logsv2');
   const MAIN_KEY = TEACHER ? 'e21cclog.teacher' : 'e21cclog';
@@ -18,6 +22,8 @@
   // read only: nothing written here is kept
   if (TEACHER){ window.save = function(){}; }
   else if (typeof LocalStore !== 'undefined'){ LocalStore.save = function(){ return true; }; }
+  // no offline copy for an older version: its worker would clear the live Log's copy
+  if (SAME && navigator.serviceWorker){ try{ navigator.serviceWorker.register = function(){ return Promise.resolve(null); }; }catch{} }
 
   // writing routes lead nowhere in an older version
   const blocked = /^#\/(write|grow|act|across|setup)\b/;
@@ -28,7 +34,7 @@
   function bringAcross(){
     let old, main;
     try{ old = JSON.parse(localStorage.getItem(OLD_KEY) || 'null'); main = JSON.parse(localStorage.getItem(MAIN_KEY) || 'null'); }catch{ return {error:true}; }
-    if (!old || !old.profiles) return {added:0, updated:0};
+    if (SAME || !old || !old.profiles) return {added:0, updated:0};
     if (!main) return {fresh:true};
     main.profiles = main.profiles || {}; let added = 0, updated = 0;
     for (const [pid, p] of Object.entries(old.profiles)){
@@ -57,6 +63,7 @@
     const b = document.createElement('div'); b.className = 'legacy-banner'; b.setAttribute('role', 'region'); b.setAttribute('aria-label', 'Older version');
     b.innerHTML = TEACHER
       ? `<p>This is an older version of the teacher console, kept so nothing is lost. It no longer saves. The console now lives with the E21CC Log.</p><a href="${MAIN}">Open the console</a>`
+      : SAME ? `<p>This is Version 3 of the E21CC Log, kept to compare with. It shows your log but saves nothing. Your log lives in the E21CC Log.</p><a href="${MAIN}">Open my E21CC Log</a>`
       : `<p>This is an older version of the E21CC Log, kept so nothing is lost. It no longer saves. Your log now lives in the E21CC Log.</p><a href="${MAIN}">Open my E21CC Log</a><button type="button" id="lgMove">Bring newer entries across</button>`;
     document.body.prepend(b);
     const mv = document.getElementById('lgMove');

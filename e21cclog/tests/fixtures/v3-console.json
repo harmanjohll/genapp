@@ -1,0 +1,35 @@
+{
+ "classes": {},
+ "current": null,
+ "me": {
+  "name": "",
+  "role": ""
+ },
+ "items": {
+  "k1": {
+   "key": "k1",
+   "sk": "s1",
+   "kind": "e",
+   "data": {
+    "id": "e1",
+    "kind": "grow",
+    "created": 1794105629289,
+    "context": {
+     "type": "subject",
+     "name": "Geography"
+    },
+    "answers": {
+     "g1": "I compared two maps of Bedok."
+    }
+   },
+   "from": {
+    "name": "Wei Ling Tan",
+    "email": "wei_ling_tan@students.edu.sg"
+   },
+   "received": 1794105629289
+  }
+ },
+ "students": {},
+ "notes": {},
+ "confirms": {}
+}

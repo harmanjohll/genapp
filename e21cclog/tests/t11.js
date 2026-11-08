@@ -54,12 +54,16 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   check('What next? has Immediate, then Longer term', JSON.stringify(home.parts) === '["Immediate","Longer term"]', JSON.stringify(home.parts));
   check('the levels list, showcase, latest feedback and statement lists are gone from Home', !home.gone.length, home.gone.join(','));
   const nx = await page.evaluate(() => ({now:[...document.querySelectorAll('.nxpart:first-of-type .nxlist>li')].map(l => l.textContent.replace(/\s+/g, ' ').trim()), later:[...document.querySelectorAll('.nxpart:last-of-type .nxlist>li')].map(l => l.textContent.replace(/\s+/g, ' ').trim())}));
-  check('Immediate: the plan to tick, and the statement almost secured', /Tick it when you have done it/.test(nx.now[0] || '') && nx.now.some(t => /^Almost secured: “.+”\. One more entry/.test(t)), JSON.stringify(nx.now));
+  // the plan comes first: asked about once its day has come, shown as coming up before that (t23 tests the days themselves)
+  const plState = await page.evaluate(() => { const x = planToShow(me.entries.slice().sort((a, b) => b.created - a.created)); return x ? (x.ask ? 'ask' : 'up') : 'none'; });
+  const planOk = plState === 'ask' ? /^Did you do it\? “/.test(nx.now[0] || '') : plState === 'up' ? /^Your plan( for [^:]+)?:/.test(nx.now[0] || '') : !nx.now.some(t => /^(Did you do it|Your plan)/.test(t));
+  check('Immediate: the plan first, and the statement almost secured', planOk && nx.now.some(t => /^Almost secured: “.+”\. One more entry/.test(t)), JSON.stringify({plState, now:nx.now}));
   check('Longer term: the statement aimed for, and the nearest next level with what it takes', nx.later.some(t => /^Aiming for: “/.test(t)) && nx.later.some(t => /, now Setting Sail\. To reach Navigating, secure/.test(t)), JSON.stringify(nx.later));
   // a note and a draft come first
   await page.evaluate(() => { me.entries[0].notes = [{id:'n1', by:'Mr Lim', text:'Good start.', at:Date.now(), seen:false, field:'g1'}]; me.drafts.grow = {kind:'grow', key:'grow', step:1, context:{type:'subject', name:'Art'}, answers:{g1:'I learnt shading.'}, claims:[]}; saveDb(); route(); }); await sleep(400);
   const nx2 = await page.$$eval('.nxpart:first-of-type .nxlist>li', ls => ls.map(l => l.textContent.replace(/\s+/g, ' ').trim()));
-  check('Immediate also lists a teacher’s note to read and an entry to finish', nx2.some(t => /^Read Mr Lim’s note/.test(t)) && nx2.some(t => /^Finish your GROW entry/.test(t)), JSON.stringify(nx2));
+  const from = await page.$eval('#main', m => { const f = m.querySelector('.fromcard'); return f && f.compareDocumentPosition(m.querySelector('.wheelcard')) & Node.DOCUMENT_POSITION_FOLLOWING ? f.textContent : ''; });
+  check('a teacher’s note comes first on Home, in From your teachers, and the unfinished entry waits as its own card', /Mr Lim/.test(from) && /Good start\./.test(from) && /^Carry on with your Art GROW$/.test(await page.$eval('#main .carrycard h2', h => h.textContent).catch(() => '')), JSON.stringify(nx2));
   await page.evaluate(() => { me.entries[0].notes = []; delete me.drafts.grow; saveDb(); route(); }); await sleep(300);
 
   // 4. the wheel's panel: full width Home, the most recent competency first, then hover with a mouse, then a click opens
@@ -207,7 +211,7 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   check('the console reads Proficient: waiting, with Confirm Proficient', /Critical Thinking ?Proficient: waiting for a teacher/.test(tc.a) && tc.btn.includes('Confirm Proficient'), JSON.stringify(tc.btn));
   check('the student’s own word shows beside the standard one', /Adaptive Thinking ?Developing · they see “Navigating”/.test(tc.a), tc.a.slice(0, 300));
   check('a v2 Leading snapshot reads as Proficient', /Communication ?Proficient/.test(tc.b) && !/Leading/.test(tc.b), tc.b.slice(0, 200));
-  check('the console shows Version 3 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 3/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
+  check('the console shows Version 4 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 4/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
 
 
   // 12. no dashes in what students read

@@ -103,12 +103,12 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
   check('Settings: a view, a theme and a colour, kept after reload', ds.look === 'c' && ds.theme === 'dark' && ds.colour === 'plum', JSON.stringify(ds));
   await page.click('[data-th=light]'); await page.click('[data-lk=b]'); await page.click('[data-col=navy]'); await sleep(200);
   // 10. the name: E21CC Log, never portfolio or folio
-  const files = ['index.html', 'teacher.html', 'assets/app.js', 'assets/core.js', 'manifest.webmanifest', 'README.md', 'DESIGN.md'].map(f => [f, fs.readFileSync(require('path').join(__dirname, '..', f), 'utf8')]);
+  const files = ['index.html', 'teacher.html', 'assets/app.js', 'assets/core.js', 'manifest.webmanifest', 'README.md', 'BACKLOG.md', 'LOOP.md'].map(f => [f, fs.readFileSync(require('path').join(__dirname, '..', f), 'utf8')]);
   const bad = files.filter(([f, t]) => f !== 'DESIGN.md' && /portfolio|\bfolio/i.test(t)).map(([f]) => f);
   const old = files.filter(([f, t]) => f !== 'DESIGN.md' && /E21CC Learning Log/.test(t)).map(([f]) => f);
   check('no portfolio or folio anywhere; the old name only in DESIGN history', !bad.length && !old.length, bad.concat(old).join(', '));
   const title = await page.title();
-  check('the page is called E21CC Log; the version shows in the app, not the title or the address', title.startsWith('E21CC Log') && !/v\d/.test(title) && (await page.textContent('.topbar .word')) === 'E21CC Logv3' && (await page.textContent('.topbar .vmark')) === 'v3');
+  check('the page is called E21CC Log; the version shows in the app, not the title or the address', title.startsWith('E21CC Log') && !/v\d/.test(title) && (await page.textContent('.topbar .word')) === 'E21CC Logv4' && (await page.textContent('.topbar .vmark')) === 'v4');
   console.log('ERRORS', errors.length ? errors : 'none');
   console.log(fails ? `${fails} FAILED` : 'ALL PASS');
   await browser.close();

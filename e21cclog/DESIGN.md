@@ -1,6 +1,23 @@
 # E21CC Log: design, decisions, and the questions that are yours
 
-October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, and v3 makes Home simpler and help more specific. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
+October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, v3 made Home simpler and help more specific, and Version 4 (November) folded in the reply loop, the console PIN, backup and restore, and nudges without pressure. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
+
+## One Log again: Version 4 (8 November 2026)
+
+From 3 November a test version was built beside the pilot, at `e21cclog/next/`, so the pilot stayed as it was while twelve backlog items were built and reviewed one pull request at a time (#110 to #119). On 7 November Harman paused the build runs and asked for one app to refine. The pilot had not changed since the copy was made, so the test version was the pilot plus those items, and nothing in the pilot needed bringing across.
+
+**Decided with Harman.**
+- **Fold in all twelve.** The staff list, picking teachers, sharing to the right teacher, the console PIN, replies in one tap, resume, backup and restore, the calendar reminder, plans checked back on their day, rhythm and milestones, one gentle prompt per open, and the demo.
+- **Tidy the E21CC folders, and add a root index of every app.** No other app moves, so no shared link breaks.
+- **Archive Version 3 read only**, in `legacy/v3/`, beside v1 and v2.
+
+**What had to be got right.**
+- **The fresh start.** The pilot clears every log once per browser unless `e21cclog.fresh` holds `2026-11-01`. Version 4 keeps exactly that value, mark and key list, so no pilot log is cleared; the test version's own log is never on that list.
+- **Two versions, one key.** Version 3's archive reads the live log, so it is kept strictly read only: no fresh start, no saving, no writing pages, no offline copy (its worker would have cleared the live Log's), and its console forwards to the live one, which it could not read once sealed.
+- **Devices that opened the test version** kept its offline copy, which would have gone on showing it. `next/sw.js` now replaces that copy: it clears it, removes itself, and reloads the page, which forwards to the Log.
+- **Logs kept in the test version** stay where they were. The Log offers each once, on Home (same name as the open log) or the welcome page, and brings it in through the same merge as a backup, so nothing is doubled; a log here with that name and a PIN asks for it first. An empty console takes over the test version's console, opened by the same PIN.
+
+**How it was checked.** A log and a console saved by the real Version 3 are fixtures (`tests/fixtures/v3-store.json`, `v3-console.json`); t27 opens them in Version 4 with nothing lost, and covers the rest above. Every suite runs against `e21cclog/`.
 
 ## Getting back in, and a fresh start (1 November 2026)
 
