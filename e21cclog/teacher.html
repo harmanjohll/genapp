@@ -438,7 +438,7 @@ ol.steps li{margin-bottom:8px}
     <img class="band" src="assets/footer-band.jpg" alt="Beatty Secondary School">
   </section>
 
-  <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte · Nurturing Adaptive Thinkers, Agile Learners and Active Contributors</footer>
+  <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br><span id="verFoot">E21CC Log</span></footer>
 </div>
 <div id="toast" class="toast" hidden role="status"></div>
 <div id="dlg" class="dlg" hidden><div class="box" id="dlgBox" role="dialog" aria-modal="true"></div></div>
@@ -453,7 +453,7 @@ const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c])); }
 function toast(m, ms = 2800){ const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, ms); }
 function plural(n, one, many){ return `${n} ${n === 1 ? one : (many || one + 's')}`; }
-if (typeof APP_VERSION !== 'undefined') $('#ver').textContent = APP_VERSION.label;
+if (typeof APP_VERSION !== 'undefined'){ $('#ver').textContent = APP_VERSION.label; const vf = document.getElementById('verFoot'); if (vf) vf.textContent = 'E21CC Log ' + APP_VERSION.no; }
 // the school's subjects, CCAs and NEXUS@BTY modules, for the group form
 if (typeof SUBJECTS !== 'undefined') $('#subjList').innerHTML = [...SUBJECTS, ...ccaNames(), ...nexusFor(null).flatMap(t => t.modules.map(m => m.label))].map(n => `<option value="${esc(n)}">`).join('');
 function fmtDay(t){ return new Date(t).toLocaleDateString('en-SG', {weekday:'short', day:'numeric', month:'short'}); }

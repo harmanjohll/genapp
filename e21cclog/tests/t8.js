@@ -25,7 +25,7 @@ const SEED = JSON.stringify(seed);
   const acts = await page.evaluate(() => { const a = document.querySelector('.acts').getBoundingClientRect(); const t = document.querySelector('.tabs').getBoundingClientRect(); return {bottom:Math.round(a.bottom), barTop:Math.round(t.top)}; });
   check('phone: New GROW and New ACT show in the first screen', acts.bottom <= acts.barTop, JSON.stringify(acts));
   await page.screenshot({path:SHOTS + '93-phone-home.png'});
-  await go('#/settings'); await page.focus('#sName'); await sleep(150);
+  await go('#/settings?s=me'); await page.focus('#sName'); await sleep(150);
   check('phone: the tab bar hides while typing', await page.evaluate(() => getComputedStyle(document.querySelector('.tabs')).display === 'none'));
   await page.evaluate(() => document.activeElement.blur()); await sleep(150);
   check('phone: and comes back after', await page.evaluate(() => getComputedStyle(document.querySelector('.tabs')).display !== 'none'));

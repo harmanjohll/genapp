@@ -886,7 +886,7 @@ function frame(inner, active, opts = {}){
     <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
       <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
     <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Back it up in Settings now and then.</footer>`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte${DEMO ? '<br>Demo: nothing is saved.' : GUEST ? '<br>Guest: nothing is saved.' : ''}<span class="ver">E21CC Log ${esc(VERSION_NO)}</span></footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
@@ -909,7 +909,7 @@ function logLine(p, twin){
    beside the logs already here, so it cannot be mistaken for signing in. */
 /* Bring a log from a backup: on a new device it becomes the log here; where a log with that name is already here,
    it offers to add what is new to it (behind that log's PIN, if it has one), or to keep it separate. */
-function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">Bring your log back from a backup file, from Files or OneDrive.</p>
+function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">From a backup file in Files or OneDrive.</p>
   <label class="btn sec" for="wRestore">${icon('up')} Bring my log from a backup<input type="file" id="wRestore" accept="application/json,.json" hidden></label><div id="wRestoreOut" class="restoreout" aria-live="polite"></div></section>`; }
 function restoreAsNew(pr, opts = {}){
   const p = JSON.parse(JSON.stringify(pr)); if (db.profiles[p.id]) p.id = uid();
@@ -957,7 +957,7 @@ function testLogs(){
 function testCard(where){
   const logs = testLogs().filter(p => where === 'home' ? (me && sameName(p.name, me.name)) : true); if (!logs.length) return '';
   return `<section class="card fromtest" aria-labelledby="ftH"><h2 id="ftH">From the test version</h2>
-    <p class="tiny" style="margin-top:0">This device also has ${logs.length > 1 ? 'logs' : 'a log'} from the test version of the Log, which is now part of this one. Bring ${logs.length > 1 ? 'each' : 'it'} across to keep one log; nothing is doubled.</p>
+    <p class="tiny" style="margin-top:0">This device has ${logs.length > 1 ? 'logs' : 'a log'} from the test version. Bring ${logs.length > 1 ? 'each' : 'it'} across; nothing is doubled.</p>
     <ul class="ftlist">${logs.map(p => `<li><p><b>${esc(p.name)}</b> <span class="tiny">${esc(logLine(p))}</span></p><div class="row"><button type="button" class="btn small" data-fromtest="${esc(p.id)}">${icon('arrow')} Bring it across</button><button type="button" class="btn small ghost" data-fromtestleave="${esc(p.id)}">Leave it</button></div></li>`).join('')}</ul>
     <div id="ftOut" class="restoreout" aria-live="polite"></div></section>`;
 }
@@ -979,7 +979,7 @@ function renderWelcome(view){
   if (view === 'pin' && !known) view = 'choose';
   if (!profiles.length) view = 'new';
   const pre = db._preClass || '';
-  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so back it up from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
+  const guest = `<p class="tiny" style="margin-top:12px">Saved in this browser. Nothing goes online unless you share. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p><p class="tiny ver">E21CC Log ${esc(VERSION_NO)}</p>`;
   const panel = view === 'pin' ? `
     <section class="card fade" id="wPin"><div class="wback"><span class="avatar" aria-hidden="true">${avatarSvg(known.prefs.avatar)}</span><div><h2>Welcome back, ${esc(known.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(logLine(known))}</p></div></div>
       <form id="pinForm" class="row" style="margin-top:14px"><label class="f grow" style="margin:0"><span>Your PIN</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autocomplete="off" enterkeyhint="done" aria-describedby="pinMsg"></label><button class="btn" type="submit" style="margin-top:22px">${icon('arrow')} Open my log</button></form>
@@ -998,9 +998,9 @@ function renderWelcome(view){
       <form id="newForm" autocomplete="on">
         <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teachers call you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
         <div id="sameBox"></div>
-        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only needed if you share with a teacher. It is never sent to the AI coach.</small></label>
+        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only for sharing with a teacher.</small></label>
         ${pre ? `<label class="f"><span>Group code</span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>From your teacher.</small></label>` : ''}
-        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop. You will need it when this tab is closed and opened again.</small></label>
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Keeps classmates out on a shared device.</small></label>
         <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
       </form>
     </section>`;
@@ -1010,7 +1010,7 @@ function renderWelcome(view){
       <img src="assets/crest.png" alt="" class="crest">
       <h1>E21CC<br>Log <span class="vmark">${SITE_MARK}</span></h1>
       <p class="motto">GROW by reflecting. ACT on feedback.</p>
-      <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
+      <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
     <div class="wcol">${panel}${testCard('welcome')}${restoreCard()}${guest}</div>
@@ -1186,7 +1186,7 @@ function compPanel(c, x, recent){
   return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -1201,7 +1201,8 @@ function wireWheel(st, first){
     a.addEventListener('click', ev => { const touch = ev.pointerType ? ev.pointerType !== 'mouse' : coarse; if (touch && sel !== a.dataset.comp){ ev.preventDefault(); show(a.dataset.comp); } });
   });
 }
-function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
+function more(html){ return html ? `<details class="more"><summary>Details</summary><p>${html}</p></details>` : ''; }
+function nextItem(ic, html, href, go, detail){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${more(detail)}${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
 /* ---------- D4: this term's rhythm, and milestones ----------
    Rhythm: one dot for each week of the term, Monday to Sunday from its start, filled when anything was written that
    week. No count of weeks in a row, nothing that resets, and nothing said about a week without an entry. */
@@ -1309,35 +1310,35 @@ function renderHome(){
   const outer = COMPETENCIES.filter(c => c.d !== 'sec');
   // immediate: what to do this week
   const now = [];
-  if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
+  if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}.`, '#/setup', 'Set up'));
   const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
   const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
   // D3: one prompt for this open; what it shows is not listed again below
   const popts = promptOptions(pl, almost); const promptKind = choosePrompt(popts);
   const plan = !pl || promptKind === 'plan' ? '' : pl.ask
     ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
-    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
+    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}.</p>${more(pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.')}${ftc}</div></li>`;
   const nFirst = now.length;
-  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
-  if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
+  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet.</p>${more('A backup is a file you keep, in OneDrive or Files. It opens again on any device.')}<button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
+  if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b></p>${more('An installed Log is kept safe on this device, and opens without wifi.')}<div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
-  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
-  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”.`, `#/c/${almost.stmt.comp}`, 'See the statement', esc(almost.missing)));
+  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week.</b>`, '#/write/grow', 'New GROW', 'After your next lesson or CCA session. Two or three sentences for each question is enough.'));
   if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
-  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
-  if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
+  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read your teachers’ notes,</b> above.`));
+  if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b>`, '', '', 'Write a GROW after your next lesson, or an ACT when feedback comes back.'));
   // longer term: this term and beyond
   const later = [];
-  if (aim) later.push(nextItem('star', `<b>Aiming for:</b> “${esc(aim.text.replace(/\.$/, ''))}”. You chose it in your ${FRAMEWORKS[aimEntry.kind].name} entry on ${fmtDay(aimEntry.created)}.`, `#/c/${aim.comp}`, 'See the ladder'));
+  if (aim) later.push(nextItem('star', `<b>Aiming for:</b> “${esc(aim.text.replace(/\.$/, ''))}”.`, `#/c/${aim.comp}`, 'See the ladder', `You chose it in your ${FRAMEWORKS[aimEntry.kind].name} entry on ${fmtDay(aimEntry.created)}.`));
   const waiting = outer.filter(c => st[c.id].L.waiting);
-  if (waiting.length) later.push(nextItem('users', `<b>${esc(waiting.map(c => c.label).join(', '))}:</b> ready for ${esc(W[2])}. Share your log with a teacher and ask them to confirm it.`, '#/sharing', 'Share'));
+  if (waiting.length) later.push(nextItem('users', `<b>${esc(waiting.map(c => c.label).join(', '))}:</b> ready for ${esc(W[2])}.`, '#/sharing', 'Share', 'Share your log with a teacher and ask them to confirm it.'));
   const close = outer.filter(c => st[c.id].idx >= 1 && !st[c.id].L.waiting && st[c.id].L.need > 0 && st[c.id].idx < 3).sort((a, b) => st[a.id].L.need - st[b.id].L.need || st[b.id].idx - st[a.id].idx || st[b.id].last - st[a.id].last).slice(0, aim ? 1 : 2);
-  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}, now ${esc(W[x.idx - 1])}.</b> ${esc(x.L.next)}`, `#/c/${c.id}`, 'See what it takes')); }
+  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}, now ${esc(W[x.idx - 1])}.</b>`, `#/c/${c.id}`, 'See what it takes', esc(x.L.next))); }
   // nothing started yet: one way in, rather than a list of competencies that all say the same
-  if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
-  if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
-  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b> A weekly event in your calendar, at a time that suits you, with a link back here.`, '#/settings?s=remind', 'Set it up'));
-  if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
+  if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b>`, '#/c', 'Choose one', 'Write an entry that shows it, then link it to one of its I can statements.'));
+  if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Look across one area.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
+  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b>`, '#/settings?s=remind', 'Set it up', 'A weekly event in your own calendar, at a time that suits you.'));
+  if (!later.length) later.push(nextItem('ladder', `<b>Over the term:</b> one GROW a week, and an ACT for each piece of feedback.`));
   const first = recentComp(st);
   // replies from teachers come first (A5): who, on which entry, and the words
   unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
@@ -1388,11 +1389,11 @@ function renderHome(){
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
 function renderCompetencies(){
   const st = compStats(); const band = myBand();
-  const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? '<p class="tiny" style="margin:8px 0 0">The school is still writing its statements for these. Your entries show evidence of them in the meantime.</p>' : ''}</section>`;
+  const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? more('The school is still writing its statements for these. Your entries show evidence of them in the meantime.') : ''}</section>`;
   frame(leaves(`
     <section class="hero"><h1>Competencies</h1>
-      <p class="meta">Your level in each competency comes from the I can statements you secure. A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart.</p>
-      <p class="meta">${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Set your level in <a href="#/settings?s=me">Settings</a> so the log shows the right statements. Until then you see ${esc(bandLabel(band))}.`}</p>
+      <p class="meta">Your levels grow from the I can statements you secure.${me.level ? '' : ` <a href="#/settings?s=me">Set your Sec level</a> first.`}</p>
+      ${more(`A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart. ${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Until you set your level you see ${esc(bandLabel(band))}.`}`)}
       <details class="howlv"><summary>How levels work</summary><ol class="lvkey">${LOG_LEVELS.map((l, i) => `<li>${meter(i + 1, levelWords()[i])}<div><b>${esc(levelWords()[i])}</b><span>${esc(l.help)}</span></div></li>`).join('')}</ol></details>
     </section>
     ${dom(DOMAINS[0])}<!--leaf-->${dom(DOMAINS[1])}${dom(DOMAINS[2])}${dom(DOMAINS[3])}
@@ -1439,23 +1440,26 @@ function renderCompetency(id){
       ${L.none ? `<p class="lvline"><span class="pill lv none">Evidence only</span> <span class="tiny">${esc(fromLine(st))}</span></p>`
         : `<p class="lvline"><span class="pill lv">${esc(levelWord(st))}</span> <span class="tiny">${L.secured} of ${L.total} statements secured</span></p>${meter(st.idx, `${c.label}: ${levelWord(st)}`)}${L.next ? `<p class="nextlv">${esc(L.next)}</p>` : ''}${L.confirmed ? `<p class="tiny">${esc(levelWords()[2])} confirmed by ${esc(L.confirmed.by)} on ${fmtDate(L.confirmed.at)}.</p>` : ''}`}
     </section>`;
+  const evidLi = evidLiFor(id);
   const ladders = L.none ? `<section class="card flat"><h2>No statements yet</h2><p class="muted" style="margin:0">The school is still writing its I can statements for the social and emotional competencies. Until then, ${esc(c.label.toLowerCase())} shows as evidence from your entries, with no level.</p></section>` : L.strands.map(strandHtml).join('');
   frame(leaves(`${head}${ladders}<!--leaf-->
     <section class="card"><h2>Where it shows in your log</h2>${shows.length ? `<p class="tiny" style="margin:0 0 8px">${fromLine(st)[0].toUpperCase() + fromLine(st).slice(1)}. GROW and ACT entries both count.</p>` : ''}
-      ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
+      ${shows.length ? `<ul class="evid">${shows.slice(0, 3).map(evidLi).join('')}</ul>${shows.length > 3 ? `<details class="more"><summary>All ${shows.length} entries</summary><ul class="evid">${shows.slice(3).map(evidLi).join('')}</ul></details>` : ''}` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
     </section>
     ${shownSoFar(id)}
-    <section class="card"><h2>What it means</h2><p class="plain">${esc(c.plain)}</p>${c.moe ? `<p class="tiny">MOE: “${esc(c.moe)}”</p>` : ''}</section>
+    <section class="card"><h2>What it means</h2><p class="plain">${esc(c.plain)}</p>${c.moe ? more(`MOE: “${esc(c.moe)}”`) : ''}</section>
     <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
       <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
   `, 'minmax(0,3fr) minmax(0,2fr)'), 'comp', {wide:true, key:'comp:' + id});
   wireStmtButtons(id);
 }
+/* One entry where a competency shows: its kind, title, day, strength and best quote. */
+function evidLiFor(id){ return e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }; }
 /* Knowledge, skills, values and dispositions shown clearly so far, in plain words. */
 function shownSoFar(comp){
   const n = {}; for (const e of me.entries) for (const k of ((e.e21cc && e.e21cc.ksvd) || [])) if (k.strength !== 'glimpse' && (k.comp === comp || ((ksvdById(coreSet(), k.id) || {}).comp === comp))) n[k.id] = (n[k.id] || 0) + 1;
   const rows = Object.entries(n).sort((a, b) => b[1] - a[1]).map(([id, c]) => ({it:ksvdById(STMT_SET, id) || ksvdById(coreSet(), id), c})).filter(r => r.it);
-  return `<section class="card"><h2>What you have shown so far</h2>${rows.length ? `<ul class="kslist">${rows.map(r => `<li><span class="ktag t-${r.it.type}">${KSVD_NAME[r.it.type]}</span> <b>${esc(r.it.label)}</b> <small>in ${plural(r.c, 'entry', 'entries')}</small><span class="kplain">${esc(r.it.plain)}</span></li>`).join('')}</ul>` : `<p class="muted" style="margin:0">Nothing yet. When your words clearly show a piece of knowledge, a skill, a value or a habit of mind for this competency, it appears here.</p>`}</section>`;
+  return `<section class="card"><h2>What you have shown so far</h2>${rows.length ? `<ul class="kslist">${rows.map(r => `<li><details class="kitem"><summary><span class="ktag t-${r.it.type}">${KSVD_NAME[r.it.type]}</span> <b>${esc(r.it.label)}</b> <small>in ${plural(r.c, 'entry', 'entries')}</small></summary><span class="kplain">${esc(r.it.plain)}</span></details></li>`).join('')}</ul>` : `<p class="muted" style="margin:0">Nothing yet. It fills in as your entries show it clearly.</p>`}</section>`;
 }
 /* The competencies an entry claims follow the statements it is linked to, so the coach checks them. */
 function claimsFromLinks(links, old){
@@ -2244,8 +2248,7 @@ function renderSharing(){
     </section>`;
   };
   frame(leaves(`
-    <section class="hero"><h1>Sharing</h1><p class="meta">Your log is yours. Each adult sees only the sections you open to them, and only when you send.</p></section>
-    <div class="notice">GROW and ACT share whole entries. A domain shares your levels, the I can statements you have started or secured with the quotes that back them, and your look across. Teachers reply with notes in the margin, and can confirm the top level.</div>
+    <section class="hero"><h1>Sharing</h1><p class="meta">Each adult sees only what you open to them, and only when you send.</p>${more('GROW and ACT share whole entries. A domain shares your levels, the I can statements you have started or secured with the quotes that back them, and your look across. Teachers reply with notes in the margin, and can confirm the top level.')}</section>
     ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}<!--leaf-->
     <section class="card"><h2>Invite a mentor or another adult</h2>
       <form id="addAdult" class="two">
@@ -2254,7 +2257,7 @@ function renderSharing(){
         <label class="f"><span>Role</span><select class="in" name="role">${['Mentor','Counsellor','CCA coach','Year head','Other'].map(r => `<option>${r}</option>`).join('')}</select></label>
         <div class="f" style="align-self:end"><button class="btn" type="submit">${icon('plus')} Add</button></div>
       </form>
-      <p class="tiny">Adults without a drop box get a link you send them in Teams. It opens in their teacher console.</p>
+      <p class="tiny">No drop box? You send them a link in Teams.</p>
     </section>
   `, 'minmax(0,3fr) minmax(0,2fr)'), 'settings', {wide:true});
   $$('.adult').forEach(card => {
@@ -2377,12 +2380,12 @@ const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
-  const secOn = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')) ? hashParts().q.get('s') : 'me';
+  const asked = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')); const secOn = asked ? hashParts().q.get('s') : 'me';
   const modeCard = ([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span><b>${l}</b><small>${h}</small></span></label>`;
   frame(leaves(`
-    <section class="hero"><h1>Settings</h1><p class="meta">Your level, your view, your coach, and what you learn from.</p>
+    <section class="hero"><a class="setback" href="#/settings">${icon('arrow')}<span>All settings</span></a><h1>Settings</h1><p class="meta">Your level, your look, your coach.</p>
       <nav class="jumps" aria-label="Jump to">${SETTINGS_SECS.slice(0, 6).map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav>
-      <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id ? 'on' : ''}"${secOn === id ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
+      <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id && (asked || isDesk()) ? 'on' : ''}"${secOn === id && (asked || isDesk()) ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
     <section class="card" id="me"><h2>Me</h2>
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
       ${levelPicker()}
@@ -2435,10 +2438,10 @@ function renderSettings(){
         <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
       <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
-      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
+      <p class="muted">Your log lives in this browser. Back it up now and then.</p>${more('A cleared cache, a new laptop or a school reimage loses it. A backup file opens again here, or on any device.')}
       <ul class="safe">
         <li>${icon(me.backup ? 'check' : 'clock')}<span>${me.backup ? `Last backed up on ${fmtDate(me.backup.at)}, with ${plural(me.backup.count, 'entry', 'entries')}.` : 'Not backed up yet.'}</span></li>
-        <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if you do not open it for a while. Installing the Log, or backing up, keeps it safe.'}</span></li>
+        <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if it is not opened for a while.'}</span></li>
         <li>${icon(installed() ? 'check' : 'home')}<span>${installed() ? 'The Log is installed on this device.' : 'The Log is not installed on this device.'}</span>${!installed() && canInstall() ? `<span class="safe-how">${installHow()}</span>` : ''}</li>
       </ul>
       <div class="row">
@@ -2454,11 +2457,19 @@ function renderSettings(){
       </div>
     </section>
     ${milestonesCard()}
-    <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
-      <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working. Older versions are kept read only, from <a href="legacy/">the archive</a>.</p>
+    <section class="card flat" id="about"><h2>About the E21CC Log <span class="verpill">${esc(SITE_MARK)}</span></h2>
+      <div class="letter"><p>Dear Beattyian,</p>
+        <p>This is your log. After a lesson, a CCA session or feedback, write a short GROW or ACT. Over time, your own words show how you think, learn and work with others, and what to try next.</p>
+        <p>It stays on your device unless you choose to share it.</p>
+        <p>Write a little, often.</p>
+        <p>Warmly,<br><b>Mr Johll</b></p></div>
+      <p class="tiny">You are on ${esc(APP_VERSION.label)}, ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working. Older versions: <a href="legacy/">the archive</a>.</p>
+      <details><summary>More about the Log</summary><p class="tiny">GROW by reflecting and ACT on Feedback are the school’s frameworks (ASK comes later). The competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database. Teachers: see <a href="teacher.html">the teacher console</a>.</p></details>
       <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
   `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
-  if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
+  // a laptop shows the index and one section; a phone shows the index, or one section with a way back
+  const desk = isDesk(); $$('.leaf.r > section[id]').forEach(x => { x.hidden = (desk || asked) ? x.id !== secOn : true; });
+  $('#main').classList.toggle('setmenu', !desk && !asked); $('#main').classList.toggle('setone', !desk && asked);
   const sv = () => { saveDb(); applyPrefs(); };
   $$('[data-jump]').forEach(a => a.onclick = ev => { ev.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); });
   $('#sName').oninput = e => { me.name = e.target.value; sv(); };

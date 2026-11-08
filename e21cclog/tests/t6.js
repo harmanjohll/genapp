@@ -44,7 +44,7 @@ const check = (name, ok, info='') => console.log((ok ? 'PASS ' : 'FAIL ') + name
   const marks = await page.$$eval('.bm', l => l.map(x => x.textContent.trim().replace(/\s+/g, ' ')));
   check('bookmarks: All, CCA, subjects, camp', marks.join('|') === 'All 0|Football 0|Chemistry 0|English Language 0|History 0|Sec 2 camp 0', marks.join('|'));
   // Gemini settings
-  await page.evaluate(() => location.hash = '#/settings'); await sleep(400);
+  await page.evaluate(() => location.hash = '#/settings?s=coach'); await sleep(400);
   await page.click('#coachMode input[value=gemini]'); await page.fill('#sGKey', 'TESTKEY123'); await page.click('#sGLoad'); await sleep(500);
   const opts = await page.$$eval('#sGModel option', l => l.map(o => o.value + (o.selected ? '*' : '')));
   check('models listed, Flash suggested, embeddings left out', opts.includes('gemini-3.5-flash*') && !opts.some(o => o.includes('embedding')), opts.join(' '));

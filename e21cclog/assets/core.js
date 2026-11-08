@@ -779,7 +779,9 @@ function stuckUser(entry, qid, level, profile){
    E21CC Log: shared helpers
    ================================================================== */
 const APP_NAME = 'E21CC Log';
-const SITE_MARK = 'v4';   // the version, shown in the app only: the address (e21cclog/) never changes
+/* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
+const VERSION_NO = '4.1';
+const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
    names no day. A weekday is the next one after the day it was written (the same weekday means a week later);
@@ -842,7 +844,8 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
   return lines.map(icsFold).join('\r\n') + '\r\n';
 }
 
-const APP_VERSION = {label:'Version 4', date:'November 2026', notes:[
+const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'Fewer words: one line and one action on each card, the rest under Details; Settings opens section by section on a phone; the version at the bottom of every page',
   'One Log again: the test version is folded in, and a log kept there on this device can be brought across',
   'Back up in one tap to Files or OneDrive, and bring your log back on a new device, with nothing doubled',
   'One gentle prompt when the Log opens: a plan due, a statement close to secured, or a subject not written about this term',

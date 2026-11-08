@@ -9,7 +9,8 @@ The decisions behind these items were made with Harman in November 2026:
 - a PIN on the console;
 - coaching that stays offline;
 - nudges without pressure;
-- feelings data that never leaves the device.
+- feelings data that never leaves the device;
+- one app, moving forward (8 November): no Labs, no test version beside it. A Labs tab is built only when Harman asks for one.
 
 ## Waiting on Harman (outside the runs)
 - **Support contacts for E1:** the school counsellor's name and how to reach them, and the helplines to show, checked by the counsellor.
@@ -28,7 +29,59 @@ What multiplies use is how often students log, whether anyone answers, and wheth
 
 The measure: students active each week who got at least one reply from a teacher.
 
+## The order, agreed on 8 November
+Version 4 is live. Harman's next three, built in this order, each its own version number:
+1. **V1 Fewer words (4.1).** One line and one action per card; the rest under Details. The version number at the bottom of every page, and a note in Settings, About, on what the Log is for (like Co-Cher's).
+2. **V2 Goals (4.2).** Academic grades, competencies, CCA and the student's own, each from where the student is now to their next result.
+3. **V3 Calendar (4.3).** A simple calendar for the T in SMART: what is coming up, by week, month, list or goal.
+
+Then: V4 (goals agreed with a coach), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
+
 ---
+
+## V. Version 4 onwards
+
+### V1 Fewer words
+- **Status:** done (4.1)
+- **Needs:** nothing
+- **Spec:**
+  - **One line, one action.** Each card on Home, Settings, Competencies, a competency, Sharing and the welcome page shows a headline and one action. Explanations sit under a closed Details.
+  - **Settings on a phone** opens as a list of sections, like a phone's own settings; each section opens on its own, with a way back.
+  - **The version** shows at the bottom of every page of the app and the console (for example "E21CC Log 4.1"), from one number in `assets/core.js`.
+  - **About the Log.** Settings, About opens with a short signed note to students on what the Log is for, the version, and a link to older versions; the longer description sits under Details.
+- **Done when:** Home, Settings, a competency page and the welcome page each show at most an agreed number of visible words at phone size, and the version shows on every page.
+- **Tests:** a word budget per screen at 390 by 844, the version on every page, the About note, Settings opening section by section on a phone, and the suites that open Settings updated.
+
+### V2 Goals
+- **Status:** ready
+- **Needs:** V1
+- **Spec:**
+  - **A Goals place** in the navigation, beside Home, Competencies, Journals and Settings.
+  - **Kinds.** A subject grade; a competency (an I can statement to secure); a CCA skill; the student's own. Each kind offers presets to start from.
+  - **Grades at Beatty.** G3: A1 to F9. G2: Grades 1 to 6. G1: A to D. The subject's level comes from the student's subjects and levels of demand.
+  - **Where I am, where I am going.** The last result, and the target for the next result (which assessment, and when). The Log suggests a realistic target (one grade up) and a stretch (two up), and the student chooses.
+  - **Steps and checkpoints.** Up to three steps (what I will do each week) and dated checkpoints, ticked when done.
+  - **Private.** Goals stay on the device: never in what is shared, unless a later item lets the student share one.
+  - **Kept safe.** Goals are in the backup, and a restore merges them with nothing doubled.
+- **Done when:** a student sets a G3, a G2 and a G1 grade goal, a competency goal and a CCA goal from presets, sees the realistic and stretch suggestions, ticks a checkpoint, and the goals survive a backup and restore.
+- **Tests:** the scales, the suggestions at the top and bottom of each scale, presets, checkpoints, privacy (not in the share payload), the backup merge, axe and the word budget.
+
+### V3 Calendar
+- **Status:** ready
+- **Needs:** V2
+- **Spec:**
+  - **One calendar** inside Goals, with four views: week, month, list (what is coming up) and by goal.
+  - **What it shows.** Goal checkpoints and next results; the days plans name (from D2); the student's own events (an assessment, a CCA event, something else), each with a date, an optional time and an optional goal.
+  - **Reminders** go to the student's own calendar, one event at a time, as a calendar file (the Log cannot send notifications).
+  - **School weeks.** Days show the term and week.
+- **Done when:** a student adds an assessment linked to a goal, sees it in all four views with the goal's checkpoints and a plan's day, and adds it to their own calendar.
+- **Tests:** the four views, items from each source, adding, editing and removing an event, the calendar file, the backup merge, axe and the word budget.
+
+### V4 Goals agreed with a coach
+- **Status:** needs Harman
+- **Needs:** V2
+- **Spec:** a student shares a goal with a teacher, coach or instructor, who replies with a note or a suggested change, through the share and reply already built (A3, A5).
+- **Question for Harman:** should a coach be able to suggest a goal, or only respond to the student's?
 
 ## S. Showing what is possible
 
