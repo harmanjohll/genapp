@@ -134,7 +134,7 @@ body[data-theme="dark"] .avatar{background:var(--accent);color:var(--accent-ink)
 .page{position:relative;min-height:50vh}
 .footer{color:var(--on-bg-2);font-size:.85em;text-align:center;padding:18px 0 6px}
 .footer b{font-family:var(--head-font)}
-details.more{margin:2px 0 6px} details.more>summary{cursor:pointer;color:var(--text-2);font-size:.86em;font-weight:600;min-height:44px;display:inline-flex;align-items:center} details.more>p{margin:4px 0 0;color:var(--text-2)}
+details.more{margin:2px 0 6px} details.more>summary{cursor:pointer;color:var(--text-2);font-size:.86em;font-weight:600;min-height:44px;min-width:44px;display:inline-flex;align-items:center} details.more>p{margin:4px 0 0;color:var(--text-2)}
 .goals{list-style:none;margin:0;padding:0}
 .goal + .goal{border-top:1px solid var(--line)}
 .goal a{display:block;padding:12px 2px;color:var(--text);text-decoration:none}
@@ -199,7 +199,8 @@ details.more{margin:2px 0 6px} details.more>summary{cursor:pointer;color:var(--t
 .cmlist a{display:flex;align-items:center;gap:8px;min-height:44px;color:var(--head);font-weight:600;text-decoration:none}
 .cmlist a[aria-current]{text-decoration:underline}
 .cmlist small{color:var(--text-2);font-weight:400}
-@media (max-width:359px){.cgrid{display:none}.cmlist{display:block}}
+.cal{container-type:inline-size}
+@container (max-width:339px){.cgrid{display:none}.cmlist{display:block}}
 .tab .tls{display:none}
 @media (max-width:420px){.tab .tll{display:none}.tab .tls{display:inline}.gaddcheck{grid-template-columns:1fr 1fr}.gaddcheck .in:first-child{grid-column:1/-1}}
 .footer .ver,.wcol .ver{display:block;margin-top:4px;font-variant-numeric:tabular-nums}
