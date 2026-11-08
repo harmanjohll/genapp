@@ -851,6 +851,7 @@ function mergeBackup(t, pr){
   if (!t.experiences.cca && xs.cca){ t.experiences.cca = xs.cca; other++; }
   if (!t.level && pr.level){ t.level = pr.level; other++; }
   if (pr.goals){ t.goals = t.goals || []; other += mergeGoals(t.goals, pr.goals); }
+  if (pr.events){ t.events = t.events || []; other += mergeGoals(t.events, pr.events); }
   return {added, updated, drafts, other, any:added + updated + drafts + other > 0};
 }
 function mergeWords(r, from = 'that backup', verb = 'brought back'){
@@ -1325,6 +1326,8 @@ function renderHome(){
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b></p>${more('An installed Log is kept safe on this device, and opens without wifi.')}<div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
   if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”.`, `#/c/${almost.stmt.comp}`, 'See the statement', esc(almost.missing)));
+  { const today = ymd(Date.now()); const soon = calItems().find(it => it.kind === 'event' && it.date >= today && goalDate(it.date) <= addDays(Date.now(), 7));
+    if (soon) now.push(nextItem('clock', `<b>Coming up:</b> ${esc(soon.title)}, ${fmtDay(goalDate(soon.date))}${soon.time ? ', ' + esc(clockWords(soon.time)) : ''}.`, '#/goals/calendar', 'Calendar')); }
   if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week.</b>`, '#/write/grow', 'New GROW', 'After your next lesson or CCA session. Two or three sentences for each question is enough.'));
   if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
   if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read your teachers’ notes,</b> above.`));
@@ -2414,10 +2417,11 @@ function goalCard(g){
 function renderGoals(){
   const {parts, q} = hashParts(); const id = parts[2] || '';
   if (id === 'new') return renderGoalForm(q.get('k'), q.get('e'));
-  if (id && id !== 'calendar') return renderGoal(id);
+  if (id === 'calendar') return renderCalendar();
+  if (id) return renderGoal(id);
   const live = goalsOf().filter(g => !g.done).sort((a, b) => goalSoon(a) - goalSoon(b)); const done = goalsOf().filter(g => g.done);
   frame(`
-    <section class="hero"><h1>Goals</h1><p class="meta">Where you are, and where you are going next.</p>
+    <section class="hero"><h1>Goals</h1>${goalsSwitch('goals')}<p class="meta">Where you are, and where you are going next.</p>
       <div class="row"><a class="btn" href="#/goals/new" id="gNew">${icon('plus')} New goal</a></div></section>
     ${live.length ? `<section class="card"><ul class="goals">${live.map(goalCard).join('')}</ul></section>`
       : `<section class="card flat"><p class="muted" style="margin:0">No goals yet. Start with one: a subject, a competency, your CCA, or your own.</p></section>`}
@@ -2536,6 +2540,108 @@ function renderGoal(id){
     $('#gDelYes').onclick = () => { me.goals = goalsOf().filter(x => x.id !== g.id); saveDb(); closeDialog(); toast('Deleted.'); location.hash = '#/goals'; }; $('#gDelNo').onclick = closeDialog; };
   const gs = $('#gGotSave'); if (gs) gs.onclick = () => { const v = $('#gGot').value; if (!v) return; g.got = v; g.gotAt = Date.now(); if (gradeIndex(g.level, v) <= gradeIndex(g.level, g.target)){ g.done = true; g.doneAt = Date.now(); } save('Result recorded.'); };
   const ag = $('#gAgain'); if (ag) ag.onclick = ev => { ev.preventDefault(); goalDraft = {_for:'new:grade', kind:'grade', subject:g.subject, level:g.level, now:g.got, target:(gradeTargets(g.level, g.got) || {}).realistic || '', steps:['', '', ''], checks:[]}; location.hash = '#/goals/new?k=grade'; };
+}
+/* ---------- V3: the calendar ----------
+   One calendar for the T in SMART: the student's own events (an assessment, a CCA event, something else), goals'
+   checkpoints and By dates, and the days plans name. Four views: coming up, a week, a month, and by goal. The Log
+   cannot send notifications, so reminders go to the student's own calendar as a file. */
+const EVENT_TYPES = [['assessment', 'Assessment'], ['cca', 'CCA'], ['other', 'Other']];
+const CAL_VIEWS = [['list', 'Coming up'], ['week', 'Week'], ['month', 'Month'], ['goal', 'By goal']];
+function eventsOf(){ return me.events || (me.events = []); }
+const ymd = t => new Date(t).toLocaleDateString('en-CA');
+function goalsSwitch(on){ return `<nav class="seg gswitch" aria-label="Goals and calendar"><a href="#/goals" class="${on === 'goals' ? 'on' : ''}"${on === 'goals' ? ' aria-current="page"' : ''}>Goals</a><a href="#/goals/calendar" class="${on === 'calendar' ? 'on' : ''}"${on === 'calendar' ? ' aria-current="page"' : ''}>Calendar</a></nav>`; }
+function calItems(){
+  const out = [];
+  for (const ev of eventsOf()) out.push({key:'e:' + ev.id, kind:'event', type:ev.type || 'other', title:ev.title, date:ev.date, time:ev.time || '', goal:ev.goal || '', id:ev.id});
+  for (const g of goalsOf()) if (!g.done){
+    for (const c of (g.checks || [])) if (c.date) out.push({key:'c:' + g.id + ':' + c.id, kind:'check', title:c.text, date:c.date, goal:g.id, done:!!c.done});
+    if (g.by) out.push({key:'b:' + g.id, kind:'by', title:goalTitle(g), date:g.by, goal:g.id});
+  }
+  const since = Date.now() - 30 * 864e5;
+  for (const e of me.entries) if (e.created >= since && e.kind !== 'across' && String(planOf(e) || '').trim()){
+    const pc = (me.planChecks || {})[e.id]; if (pc && (pc.answer === 'yes' || pc.answer === 'partly')) continue;
+    const due = planDue(planOf(e), e.created); if (due) out.push({key:'p:' + e.id, kind:'plan', title:planOf(e), date:ymd(due), eid:e.id});
+  }
+  return out.sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
+}
+const CAL_TAG = {check:'Checkpoint', by:'Goal', plan:'Plan'};
+function calTag(it){ return it.kind === 'event' ? (EVENT_TYPES.find(x => x[0] === it.type) || [0, 'Other'])[1] : CAL_TAG[it.kind]; }
+function weekLabel(w){ const tp = termPos(addDays(w, 2)); return `${tp.inTerm ? `Term ${tp.term} · Week ${tp.week} · ` : ''}from ${fmtDay(w)}`; }
+function calRow(it, showDay){
+  const t = goalDate(it.date); const g = it.goal ? goalById(it.goal) : null;
+  const href = it.kind === 'plan' ? '#/entry/' + it.eid : it.goal && it.kind !== 'event' ? '#/goals/' + it.goal : '';
+  const label = `<span class="ctag t-${esc(it.kind === 'event' ? it.type : it.kind)}">${esc(calTag(it))}</span> <b>${esc(it.title)}</b>${it.time ? ` <small>${esc(clockWords(it.time))}</small>` : ''}${g && it.kind === 'event' ? ` <small>· ${esc(goalTitle(g))}</small>` : ''}`;
+  return `<li class="crow${it.done ? ' done' : ''}">${showDay ? `<span class="cday" aria-hidden="true"><b>${new Date(t).getDate()}</b><small>${new Date(t).toLocaleDateString('en-SG', {weekday:'short'})}</small></span>` : ''}
+    <div class="cbody">${showDay ? `<span class="sr">${esc(fmtDay(t))}: </span>` : ''}${it.kind === 'event' ? `<button type="button" class="cev" data-cev="${esc(it.id)}">${label}</button>` : href ? `<a href="${href}">${label}</a>` : label}</div></li>`;
+}
+function renderCalendar(){
+  const {q} = hashParts(); const view = CAL_VIEWS.some(v => v[0] === q.get('v')) ? q.get('v') : 'list';
+  const today = ymd(Date.now()); const at = /^\d{4}-\d{2}-\d{2}$/.test(q.get('d') || '') ? q.get('d') : today;
+  const items = calItems(); const link = (v, d) => `#/goals/calendar?v=${v}${d ? '&d=' + d : ''}`;
+  const nav = (prev, label, next, what) => `<div class="cnav"><a class="btn small ghost" href="${prev}" aria-label="Previous ${what}">${icon('back')}</a><b>${esc(label)}</b><a class="btn small ghost" href="${next}" aria-label="Next ${what}">${icon('arrow')}</a></div>`;
+  let body = '';
+  if (view === 'list'){
+    const up = items.filter(it => it.date >= today && !it.done).slice(0, 40); const weeks = new Map();
+    for (const it of up){ const w = weekKey(goalDate(it.date)); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(it); }
+    body = up.length ? [...weeks].map(([w, list]) => `<h2 class="cweek">${esc(weekLabel(w))}</h2><ul class="clist">${list.map(it => calRow(it, true)).join('')}</ul>`).join('')
+      : '<p class="muted" style="margin:0">Nothing coming up. Add an assessment or a CCA event, or give a goal a date.</p>';
+  } else if (view === 'week'){
+    const w = weekKey(goalDate(at)); const days = [0, 1, 2, 3, 4, 5, 6].map(i => ymd(addDays(w, i)));
+    body = nav(link('week', ymd(addDays(w, -7))), weekLabel(w), link('week', ymd(addDays(w, 7))), 'week') + `<ul class="cdays">${days.map(d => { const list = items.filter(it => it.date === d);
+      return `<li class="${d === today ? 'today' : ''}"><h2>${esc(fmtDay(goalDate(d)))}${d === today ? ' <small>Today</small>' : ''}</h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, false)).join('')}</ul>` : '<p class="tiny">Nothing</p>'}</li>`; }).join('')}</ul>`;
+  } else if (view === 'month'){
+    const d0 = new Date(goalDate(at)); const start = weekKey(new Date(d0.getFullYear(), d0.getMonth(), 1).getTime());
+    const month = d0.toLocaleDateString('en-SG', {month:'long', year:'numeric'}); const cells = Array.from({length:42}, (_, i) => ymd(addDays(start, i)));
+    const list = items.filter(it => it.date === at);
+    body = nav(link('month', ymd(new Date(d0.getFullYear(), d0.getMonth() - 1, 1))), month, link('month', ymd(new Date(d0.getFullYear(), d0.getMonth() + 1, 1))), 'month')
+      + `<div class="cgrid">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(x => `<span class="cgh" aria-hidden="true">${x}</span>`).join('')}${cells.map(d => { const n = items.filter(it => it.date === d).length; const inM = new Date(goalDate(d)).getMonth() === d0.getMonth();
+        return `<a class="cgc${inM ? '' : ' out'}${d === today ? ' today' : ''}${d === at ? ' sel' : ''}" href="${link('month', d)}" aria-label="${esc(fmtDay(goalDate(d)))}${n ? ', ' + plural(n, 'item') : ''}"${d === at ? ' aria-current="date"' : ''}><span>${new Date(goalDate(d)).getDate()}</span>${n ? `<i aria-hidden="true">${n}</i>` : ''}</a>`; }).join('')}</div>
+      <ul class="cmlist">${cells.filter(d => new Date(goalDate(d)).getMonth() === d0.getMonth()).map(d => [d, items.filter(it => it.date === d).length]).filter(([, n]) => n).map(([d, n]) => `<li><a href="${link('month', d)}"${d === at ? ' aria-current="date"' : ''}>${esc(fmtDay(goalDate(d)))} <small>${plural(n, 'item')}</small></a></li>`).join('') || '<li class="tiny">Nothing this month.</li>'}</ul>
+      <h2 class="cweek">${esc(fmtDay(goalDate(at)))}</h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, false)).join('')}</ul>` : '<p class="tiny">Nothing on this day.</p>'}`;
+  } else {
+    const gs = goalsOf().filter(g => !g.done);
+    body = gs.length ? gs.map(g => { const list = items.filter(it => it.goal === g.id); return `<section class="cgoal"><h2><a href="#/goals/${esc(g.id)}">${esc(goalTitle(g))}</a></h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, true)).join('')}</ul>` : '<p class="tiny">No dates yet. Add a checkpoint or a By date.</p>'}</section>`; }).join('')
+      : '<p class="muted" style="margin:0">No goals yet. <a href="#/goals/new">Set one</a>.</p>';
+  }
+  const upcoming = items.filter(it => it.date >= today && !it.done);
+  frame(`<section class="hero"><h1>Calendar</h1>${goalsSwitch('calendar')}
+      <nav class="seg cviews" aria-label="Calendar views">${CAL_VIEWS.map(([k, l]) => `<a href="${link(k, k === view ? q.get('d') : '')}" class="${view === k ? 'on' : ''}"${view === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav></section>
+    <section class="card cal">${body}</section>
+    <section class="card flat"><div class="row"><button type="button" class="btn small" id="cAdd">${icon('plus')} Add to the calendar</button>${upcoming.length ? `<button type="button" class="btn small sec" id="cIcs">${icon('down')} Put these in my calendar</button>` : ''}</div>
+      ${more('The Log cannot send notifications. Put these in my calendar saves a file that your phone or laptop calendar opens, with a reminder for each item.')}</section>`, 'goals', {key:'cal:' + view});
+  $('#cAdd').onclick = () => eventDialog(null);
+  const ci = $('#cIcs'); if (ci) ci.onclick = () => icsOut(upcoming.slice(0, 60));
+  $$('[data-cev]').forEach(b => b.onclick = () => eventDialog(eventsOf().find(x => x.id === b.dataset.cev)));
+}
+function eventDialog(ev){
+  const e = ev || {date:ymd(Date.now()), type:'assessment'}; const live = goalsOf().filter(g => !g.done);
+  dialog(`<h2>${ev ? 'Edit' : 'Add to the calendar'}</h2>
+    <label class="f"><span>What</span><input class="in" id="evTitle" maxlength="80" value="${esc(e.title || '')}" placeholder="e.g. Chemistry WA2"></label>
+    <div class="f"><span class="flabel" id="evTypeL">Kind</span><div class="seg" role="group" aria-labelledby="evTypeL">${EVENT_TYPES.map(([k, l]) => `<button type="button" data-evtype="${k}" class="${e.type === k ? 'on' : ''}" aria-pressed="${e.type === k}">${l}</button>`).join('')}</div></div>
+    <div class="row2"><label class="f"><span>Day</span><input class="in" id="evDate" type="date" value="${esc(e.date || '')}"></label><label class="f"><span>Time <small style="display:inline">(optional)</small></span><input class="in" id="evTime" type="time" value="${esc(e.time || '')}"></label></div>
+    ${live.length ? `<label class="f"><span>For a goal <small style="display:inline">(optional)</small></span><select class="in" id="evGoal"><option value="">None</option>${live.map(g => `<option value="${esc(g.id)}" ${e.goal === g.id ? 'selected' : ''}>${esc(goalTitle(g))}</option>`).join('')}</select></label>` : ''}
+    <p class="tiny" id="evMsg" role="alert"></p>
+    <div class="row"><button type="button" class="btn" id="evSave">${icon('check')} Save</button>${ev ? `<button type="button" class="btn small sec" id="evIcs">${icon('down')} Put it in my calendar</button><button type="button" class="linkbtn" id="evDel">Delete</button>` : ''}<button type="button" class="linkbtn" id="evCancel">Cancel</button></div>`);
+  let type = e.type || 'other';
+  $$('[data-evtype]').forEach(b => b.onclick = () => { type = b.dataset.evtype; $$('[data-evtype]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); });
+  $('#evCancel').onclick = closeDialog;
+  $('#evSave').onclick = () => {
+    const title = $('#evTitle').value.trim(), date = $('#evDate').value;
+    if (!title || !date){ $('#evMsg').textContent = !title ? 'Say what it is.' : 'Choose a day.'; return; }
+    const rec = Object.assign(ev || {id:uid(), created:Date.now()}, {title, date, time:$('#evTime').value || '', type, goal:($('#evGoal') || {}).value || '', updated:Date.now()});
+    if (!ev) eventsOf().push(rec); saveDb(); closeDialog(); toast(ev ? 'Saved.' : 'Added.'); route();
+  };
+  if (ev){
+    $('#evDel').onclick = () => { me.events = eventsOf().filter(x => x.id !== ev.id); saveDb(); closeDialog(); toast('Deleted.'); route(); };
+    $('#evIcs').onclick = () => icsOut(calItems().filter(it => it.key === 'e:' + ev.id));
+  }
+  $('#evTitle').focus();
+}
+async function icsOut(list){
+  const url = appUrl() + '#/goals/calendar'; const pre = {check:'Checkpoint: ', by:'Goal: ', plan:'Plan: '};
+  const text = icsEvents(list.map(it => ({uid:it.key.replace(/[^a-z0-9]/gi, '') + '.' + me.id, title:(pre[it.kind] || '') + it.title, date:it.date, time:it.time || '', note:'From your E21CC Log', url})));
+  const how = await shareFile(list.length === 1 ? 'E21CC Log event.ics' : 'E21CC Log calendar.ics', text, 'text/calendar', 'E21CC Log');
+  if (how !== 'cancelled') toast(list.length === 1 ? 'Open the file to add it to your calendar.' : `Open the file to add ${plural(list.length, 'item')} to your calendar.`, 4200);
 }
 const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['miles', 'Milestones', 'star'], ['about', 'About', 'note']];
 function renderSettings(){

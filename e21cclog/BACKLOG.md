@@ -67,7 +67,7 @@ Then: V4 (goals agreed with a coach), C1 to C3 coaching, E regulation. Later, wh
 - **Tests:** the scales, the suggestions at the top and bottom of each scale, presets, checkpoints, privacy (not in the share payload), the backup merge, axe and the word budget.
 
 ### V3 Calendar
-- **Status:** ready
+- **Status:** done (4.3)
 - **Needs:** V2
 - **Spec:**
   - **One calendar** inside Goals, with four views: week, month, list (what is coming up) and by goal.

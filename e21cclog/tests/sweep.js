@@ -168,6 +168,8 @@ if (require.main === module) (async () => {
     await visit('sharing', () => go('#/sharing'));
     await visit('goals', () => go('#/goals'));
     await visit('goal form', () => go('#/goals/new?k=grade'));
+    await visit('calendar', () => go('#/goals/calendar'));
+    await visit('calendar month', () => go('#/goals/calendar?v=month'));
     await visit('composer context', () => step('grow', 0));
     await visit('composer G with help', async () => { await step('grow', 1); await sleep(300); await page.evaluate(() => { const b = document.querySelector('[data-qinfo="g1"]'); if (b) b.click(); const s = document.querySelector('[data-stuck="g2"]'); if (s) s.click(); }); });
     await visit('composer W with aim', async () => { await step('grow', 4); await sleep(300); await page.evaluate(() => { const s = document.querySelector('[name=aimComp]'); if (s){ s.value = 'critical'; s.dispatchEvent(new Event('change')); } }); });

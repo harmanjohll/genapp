@@ -102,7 +102,9 @@ Since then, each release has its own number, shown at the bottom of every page:
 - **4.1 Fewer words.** One line and one action on each card, the rest under Details; Settings section by section on a phone; the version on every page; a note in Settings, About.
 - **4.2 Goals.** A Goals place: a subject grade from the last result to the next (G3 A1 to F9, G2 Grades 1 to 6, G1 A to D, with a realistic and a stretch target suggested), a competency, a CCA skill or the student's own, each with steps and dated checkpoints. Private, and in the backup.
 
-Their specs, and what comes next (V3 the calendar), are in `BACKLOG.md`.
+- **4.3 Calendar.** Beside Goals: what is coming up, a week, a month, or by goal. It shows the student's own assessments, CCA events and other events, goals' checkpoints and By dates, and the days plans name. One item, or everything coming up, goes into the student's own calendar as a file, with reminders.
+
+Their specs, and what comes next (V4 goals agreed with a coach, which needs a decision from Harman), are in `BACKLOG.md`.
 
 ## From v3
 

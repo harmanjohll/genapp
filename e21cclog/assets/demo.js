@@ -24,7 +24,13 @@
     if (st) g.push({id:'dg3', kind:'comp', sid:st.id, by:day(30), steps:['Write a GROW after the lesson where it shows'], checks:[], created:t - 5 * 864e5, updated:t});
     return g;
   }
-  window.demoStudentDb = () => { const db = shifted(window.E21_DEMO.student); const p = db.profiles && db.profiles[db.current]; if (p && !p.goals) p.goals = demoGoals(); return db; };
+  function demoEvents(){
+    const day = n => new Date(Date.now() + n * 864e5).toLocaleDateString('en-CA'); const t = Date.now();
+    return [{id:'de1', title:'Concert Band sectional', date:day(3), time:'15:30', type:'cca', goal:'dg2', created:t, updated:t},
+      {id:'de2', title:'Chemistry practical test', date:day(5), time:'', type:'assessment', goal:'dg1', created:t, updated:t},
+      {id:'de3', title:'History sources quiz', date:day(12), time:'', type:'assessment', goal:'', created:t, updated:t}];
+  }
+  window.demoStudentDb = () => { const db = shifted(window.E21_DEMO.student); const p = db.profiles && db.profiles[db.current]; if (p && !p.goals) p.goals = demoGoals(); if (p && !p.events) p.events = demoEvents(); return db; };
   window.demoConsoleStore = () => shifted(window.E21_DEMO.console);
 
   /* ---------- the tour ---------- */
@@ -37,7 +43,7 @@
     {go:hash('#/'), sel:'.wheelcard', title:'Where am I now?', text:'Each part of the wheel is a competency. It grows as Sam secures I can statements: two entries that back a statement, from two different subjects or CCAs, at least two weeks apart.'},
     {go:hash('#/c/critical'), sel:'#main', title:'One competency, one ladder', text:'Critical Thinking, step by step. Sam secured a statement with a History entry and a Geography entry, in Sam’s own words.'},
     {go:hash('#/journal/grow'), sel:'#main', title:'Journals', text:'Every GROW and ACT entry, by subject and CCA. Open one to see the coach’s question, Sam’s plan, and any teacher’s note beside the words it is about.'},
-    {go:hash('#/goals'), sel:'#main', title:'Goals', text:'From Sam’s last Chemistry result, B4, to B3 at the End of Year exam: realistic, with a stretch on offer. Steps and dated checkpoints, a Concert Band skill and a competency too. Only Sam sees them.'},
+    {go:hash('#/goals'), sel:'#main', title:'Goals', text:'From Sam’s last Chemistry result, B4, to B3 at the End of Year exam: realistic, with a stretch on offer. Steps and dated checkpoints, a Concert Band skill and a competency too, and a calendar of what is coming up. Only Sam sees them.'},
     {go:hash('#/sharing'), sel:'#main', title:'Sam decides who sees what', text:'Each teacher gets only what Sam chooses: the Chemistry teacher, Chemistry entries; the form teacher, the sections Sam opens. Nothing is shared by default.'},
     {go:hash('#/'), sel:'.navnew .btn, .acts .btn', title:'Try it', text:'Press New GROW and write about something from today. The coach asks a question back, offline. Then see the teacher’s side.', last:true, link:['See the teacher view', root + 'teacher.html?demo=1']},
   ] : [

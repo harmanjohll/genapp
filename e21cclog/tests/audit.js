@@ -87,7 +87,7 @@ function probe(){
     // seeded
     await page.evaluate(s => localStorage.setItem('e21cclog', s), SEED); await page.goto(BASE + 'index.html#/'); await page.reload(); await sleep(400);
     const go = h => page.evaluate(x => location.hash = x, h);
-    const routes = ['#/', '#/goals', '#/goals/new', '#/goals/new?k=grade', '#/goals/new?k=cca', '#/setup', '#/c', '#/c/critical', '#/c/collaboration', '#/c/selfaware', '#/journal/ask', '#/journal/grow?p=experience&v=bookmarks', '#/journal/grow?p=date&v=bookmarks', '#/journal/grow?p=competency&v=bookmarks', '#/journal/grow?p=term&v=bookmarks', '#/journal/grow?p=experience&v=shelf', '#/journal/act?p=experience&v=bookmarks', '#/journal/act?p=competency&v=shelf', '#/settings', '#/sharing', ...ids.map(i => '#/entry/' + i)];
+    const routes = ['#/', '#/goals', '#/goals/new', '#/goals/new?k=grade', '#/goals/new?k=cca', '#/goals/calendar', '#/goals/calendar?v=week', '#/goals/calendar?v=month', '#/goals/calendar?v=goal', '#/setup', '#/c', '#/c/critical', '#/c/collaboration', '#/c/selfaware', '#/journal/ask', '#/journal/grow?p=experience&v=bookmarks', '#/journal/grow?p=date&v=bookmarks', '#/journal/grow?p=competency&v=bookmarks', '#/journal/grow?p=term&v=bookmarks', '#/journal/grow?p=experience&v=shelf', '#/journal/act?p=experience&v=bookmarks', '#/journal/act?p=competency&v=shelf', '#/settings', '#/sharing', ...ids.map(i => '#/entry/' + i)];
     for (const r of routes) await run(r, () => go(r));
     // composer walk, both kinds
     for (const kind of ['grow', 'act']){
