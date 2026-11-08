@@ -98,7 +98,11 @@ Version 4 is the pilot with the twelve items built beside it in November 2026 (p
   - At most one gentle prompt each time the Log opens.
 - **The demo** at `demo/`.
 
-Their specs, and what comes next (C1 Sharpen the reflection is next, unbuilt), are in `BACKLOG.md`.
+Since then, each release has its own number, shown at the bottom of every page:
+- **4.1 Fewer words.** One line and one action on each card, the rest under Details; Settings section by section on a phone; the version on every page; a note in Settings, About.
+- **4.2 Goals.** A Goals place: a subject grade from the last result to the next (G3 A1 to F9, G2 Grades 1 to 6, G1 A to D, with a realistic and a stretch target suggested), a competency, a CCA skill or the student's own, each with steps and dated checkpoints. Private, and in the backup.
+
+Their specs, and what comes next (V3 the calendar), are in `BACKLOG.md`.
 
 ## From v3
 

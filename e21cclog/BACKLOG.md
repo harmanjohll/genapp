@@ -53,7 +53,7 @@ Then: V4 (goals agreed with a coach), C1 to C3 coaching, E regulation. Later, wh
 - **Tests:** a word budget per screen at 390 by 844, the version on every page, the About note, Settings opening section by section on a phone, and the suites that open Settings updated.
 
 ### V2 Goals
-- **Status:** ready
+- **Status:** done (4.2)
 - **Needs:** V1
 - **Spec:**
   - **A Goals place** in the navigation, beside Home, Competencies, Journals and Settings.

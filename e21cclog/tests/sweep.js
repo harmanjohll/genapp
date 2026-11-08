@@ -166,6 +166,8 @@ if (require.main === module) (async () => {
     await visit('entry', () => go('#/entry/' + gid));
     for (const sct of (w < 700 ? [''] : ['me', 'look', 'coach', 'expCard', 'groups', 'data'])) await visit('settings ' + sct, () => go('#/settings' + (sct ? '?s=' + sct : '')));
     await visit('sharing', () => go('#/sharing'));
+    await visit('goals', () => go('#/goals'));
+    await visit('goal form', () => go('#/goals/new?k=grade'));
     await visit('composer context', () => step('grow', 0));
     await visit('composer G with help', async () => { await step('grow', 1); await sleep(300); await page.evaluate(() => { const b = document.querySelector('[data-qinfo="g1"]'); if (b) b.click(); const s = document.querySelector('[data-stuck="g2"]'); if (s) s.click(); }); });
     await visit('composer W with aim', async () => { await step('grow', 4); await sleep(300); await page.evaluate(() => { const s = document.querySelector('[name=aimComp]'); if (s){ s.value = 'critical'; s.dispatchEvent(new Event('change')); } }); });

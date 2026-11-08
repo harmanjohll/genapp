@@ -45,7 +45,7 @@ const seed = JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf
     const st = await land.evaluate(() => ({h:document.querySelector('#demoTour h2').textContent, spot:document.querySelectorAll('.demo-spot').length, next:!!document.querySelector('#demoNext'), link:(document.querySelector('#demoTour a.demo-btn') || {}).href || ''}));
     seen.push(st); if (!st.next) break; await land.click('#demoNext'); await sleep(1000);
   }
-  check('the student tour points at something on every step, and ends with the teacher view', seen.length === 7 && seen.every(s => s.spot === 1) && /teacher\.html\?demo=1$/.test(seen[seen.length - 1].link), JSON.stringify(seen.map(s => s.h + ':' + s.spot)));
+  check('the student tour points at something on every step, and ends with the teacher view', seen.length === 8 && seen.every(s => s.spot === 1) && /teacher\.html\?demo=1$/.test(seen[seen.length - 1].link), JSON.stringify(seen.map(s => s.h + ':' + s.spot)));
   await land.keyboard.press('Escape'); await sleep(200); check('Escape closes the tour', !(await land.$('#demoTour')));
   // trying things changes nothing real: a written entry, a setting
   await land.evaluate(() => { location.hash = '#/'; }); await sleep(400);

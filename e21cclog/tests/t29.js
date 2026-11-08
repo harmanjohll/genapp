@@ -19,9 +19,9 @@ P.experiences.levels = Object.assign({}, P.experiences.levels, {Chemistry:'G3'})
 
   // 1. the scales and the suggestions
   const s = await p.evaluate(() => ({g3:GRADE_SCALES.G3.join(), g2:GRADE_SCALES.G2.join(), g1:GRADE_SCALES.G1.join(),
-    b4:gradeTargets('G3', 'B4'), a2:gradeTargets('G3', 'A2'), a1:gradeTargets('G3', 'A1'), f9:gradeTargets('G3', 'F9'), g2:gradeTargets('G2', '4'), d:gradeTargets('G1', 'D'), lbl:gradeLabel('G2', '3'), ch:gradeChoices('G3', 'C5').join()}));
+    b4:gradeTargets('G3', 'B4'), a2:gradeTargets('G3', 'A2'), a1:gradeTargets('G3', 'A1'), f9:gradeTargets('G3', 'F9'), g2t:gradeTargets('G2', '4'), d:gradeTargets('G1', 'D'), lbl:gradeLabel('G2', '3'), ch:gradeChoices('G3', 'C5').join()}));
   check('Beatty’s scales: G3 A1 to F9, G2 Grades 1 to 6, G1 A to D', s.g3 === 'A1,A2,B3,B4,C5,C6,D7,E8,F9' && s.g2 === '1,2,3,4,5,6' && s.g1 === 'A,B,C,D' && s.lbl === 'Grade 3', JSON.stringify(s));
-  check('from the last result: one up is realistic, two up a stretch; at the top, keep it; the next result is never below the last', s.b4.realistic === 'B3' && s.b4.stretch === 'A2' && s.a2.realistic === 'A1' && s.a2.stretch === 'A1' && s.a1.top && s.a1.realistic === 'A1' && s.f9.realistic === 'E8' && s.f9.stretch === 'D7' && s.g2.realistic === '3' && s.g2.stretch === '2' && s.d.realistic === 'C' && s.d.stretch === 'B' && s.ch === 'A1,A2,B3,B4,C5', JSON.stringify(s));
+  check('from the last result: one up is realistic, two up a stretch; at the top, keep it; the next result is never below the last', s.b4.realistic === 'B3' && s.b4.stretch === 'A2' && s.a2.realistic === 'A1' && s.a2.stretch === 'A1' && s.a1.top && s.a1.realistic === 'A1' && s.f9.realistic === 'E8' && s.f9.stretch === 'D7' && s.g2t.realistic === '3' && s.g2t.stretch === '2' && s.d.realistic === 'C' && s.d.stretch === 'B' && s.ch === 'A1,A2,B3,B4,C5', JSON.stringify(s));
 
   // 2. Home offers a goal; the Goals place is in the navigation
   const home = await p.evaluate(() => ({offer:[...document.querySelectorAll('.nxlist li')].some(li => /^Set a goal\./.test(li.textContent.trim())), tab:!!document.querySelector('.tabs a[href="#/goals"]')}));
