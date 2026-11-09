@@ -402,9 +402,9 @@ function settingsSheet(trigger) {
       <button type="button" class="chip press" data-action="words">Glossary</button>
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
-    <p class="caps" style="margin-top:20px">Older version</p>
-    <p class="small">Paths 4.4 is kept as it was. It keeps its own saved plans.</p>
-    <p><a class="btn ghost small" href="../legacy/pathways-v4/">Open Paths 4.4</a></p>
+    <p class="caps" style="margin-top:20px">Earlier version</p>
+    <p class="small">The version before this one is kept as it was, with its own saved plans.</p>
+    <p><a class="btn ghost small" href="../legacy/pathways-v4/">Open the earlier version</a></p>
     <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
 }
 
@@ -498,8 +498,13 @@ async function boot() {
 
   const build = document.getElementById('foot-build');
   if (build) {
-    const f = data._freshness;
-    build.textContent = `Paths ${BUILD}${f && f.known ? ` · figures checked ${f.days} day${f.days === 1 ? '' : 's'} ago` : ''}`;
+    // The date the admission rules were last checked, from pathways.json. The
+    // oldest date across every file read as "figures checked 96 days ago",
+    // because game text from July is in that set, while the rules were newer.
+    const checked = data.pathways && data.pathways._meta && data.pathways._meta.accessed;
+    const when = checked && !Number.isNaN(new Date(checked).getTime())
+      ? new Date(checked).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    build.textContent = `Paths ${BUILD}${when ? ` · admission rules checked ${when}` : ''}`;
   }
 
   topUp(() => refresh());

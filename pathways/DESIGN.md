@@ -1,4 +1,8 @@
-# Paths v4: design notes
+# Paths: design notes
+
+Written for the October 2026 rebuild, and still the basis of the app. The
+version numbers below are history; later changes are logged in
+[`../PATHWAYS_VERSIONS.md`](../PATHWAYS_VERSIONS.md).
 
 v4 is built on v3's engine, data discipline and ethics. Read v3's `DESIGN.md`
 first; everything it refuses, v4 refuses (no locked state, monotone distance,
