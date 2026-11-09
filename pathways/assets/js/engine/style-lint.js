@@ -52,6 +52,8 @@ const DATA_PATHS = [
   'psle.noGroup', 'psle.upgrades.note', 'psle.upgrades.rules[].text', 'psle.downgrades.note', 'psle.downgrades.rules[].text', 'psle.hmtl.text', 'psle.school.note',
   'grades.aggregates[].plain', 'grades.aggregates[].bonus', 'grades.aggregates[].dests[].note',
   'offer.subjects.*.note', 'offer.groupNotes.*.*',
+  // v5: goals and the day stories.
+  'goals.interests[].label', 'goals.familyNames.*', 'daysin.label', 'daysin.places.*.day', 'daysin.places.*.route',
 ];
 // Questions a student asks themselves: prompts, allowed as questions.
 const PROMPT_PATHS = ['years.years.*.talk.student[]'];
@@ -97,10 +99,12 @@ function codeSentences(src) {
 }
 
 const CODE_FILES = [
-  'assets/js/screens/start.js', 'assets/js/screens/home.js', 'assets/js/screens/year.js', 'assets/js/screens/explore.js',
+  'assets/js/screens/start.js', 'assets/js/screens/year.js', 'assets/js/screens/explore.js',
   'assets/js/screens/after.js', 'assets/js/screens/myplan.js', 'assets/js/ui/ticket.js', 'assets/js/ui/talk.js',
   'assets/js/ui/pslepanel.js', 'assets/js/ui/targets.js', 'assets/js/ui/destsheet.js', 'assets/js/ui/signal.js',
   'assets/js/engine/advice.js', 'assets/js/engine/rules.js', 'assets/js/engine/reach.js', 'assets/js/main.js', 'index.html',
+  'assets/js/screens/path.js', 'assets/js/screens/goal.js', 'assets/js/screens/compare.js', 'assets/js/screens/share.js',
+  'assets/js/screens/session.js', 'assets/js/engine/goal.js',
 ];
 
 /**

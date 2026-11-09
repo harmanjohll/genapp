@@ -11,23 +11,23 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=4.4.0';
-import { reach } from '../engine/reach.js?v=4.4.0';
-import { pulse } from '../engine/pulse.js?v=4.4.0';
-import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=4.4.0';
-import { advise } from '../engine/advice.js?v=4.4.0';
-import { psleSec1Plan } from '../engine/psle.js?v=4.4.0';
-import { openCount } from '../ui/map.js?v=4.4.0';
-import { destSheetHtml } from '../ui/destsheet.js?v=4.4.0';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=4.4.0';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=4.4.0';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=4.4.0';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=4.4.0';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=4.4.0';
-import { esc, onAction } from '../ui/dom.js?v=4.4.0';
-import { icon } from '../ui/icons.js?v=4.4.0';
-import { signalHtml } from '../ui/signal.js?v=4.4.0';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=4.4.0';
+} from '../state.js?v=6.0.0';
+import { reach } from '../engine/reach.js?v=6.0.0';
+import { pulse } from '../engine/pulse.js?v=6.0.0';
+import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=6.0.0';
+import { advise } from '../engine/advice.js?v=6.0.0';
+import { psleSec1Plan } from '../engine/psle.js?v=6.0.0';
+import { openCount } from '../ui/map.js?v=6.0.0';
+import { destSheetHtml } from '../ui/destsheet.js?v=6.0.0';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=6.0.0';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=6.0.0';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=6.0.0';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=6.0.0';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=6.0.0';
+import { esc, onAction } from '../ui/dom.js?v=6.0.0';
+import { icon } from '../ui/icons.js?v=6.0.0';
+import { signalHtml } from '../ui/signal.js?v=6.0.0';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=6.0.0';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.

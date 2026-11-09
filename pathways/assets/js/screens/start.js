@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode, setWordStyle,
-} from '../state.js?v=4.4.0';
-import { reach } from '../engine/reach.js?v=4.4.0';
-import { evalPlan, isLower } from '../engine/years.js?v=4.4.0';
-import { advise } from '../engine/advice.js?v=4.4.0';
-import { signalHtml } from '../ui/signal.js?v=4.4.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=4.4.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.4.0';
-import { subjTile, patchTile } from './year.js?v=4.4.0';
-import { esc, onAction } from '../ui/dom.js?v=4.4.0';
-import { icon } from '../ui/icons.js?v=4.4.0';
-import { t, openWord } from '../ui/labels.js?v=4.4.0';
+} from '../state.js?v=6.0.0';
+import { reach } from '../engine/reach.js?v=6.0.0';
+import { evalPlan, isLower } from '../engine/years.js?v=6.0.0';
+import { advise } from '../engine/advice.js?v=6.0.0';
+import { signalHtml } from '../ui/signal.js?v=6.0.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=6.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
+import { subjTile, patchTile } from './year.js?v=6.0.0';
+import { esc, onAction } from '../ui/dom.js?v=6.0.0';
+import { icon } from '../ui/icons.js?v=6.0.0';
+import { t, openWord } from '../ui/labels.js?v=6.0.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -151,7 +151,7 @@ export default {
         if (nb) nb.dataset.ready = String(n >= 3);
         { const rr = rowsFor(api, yy); api.announce(`${rr.filter((r) => r.state === 'open').length} of 8 ${openWord(rr)}.`); }
       },
-      'st-finish': () => { markStart(true); api.nav('home'); },
+      'st-finish': () => { markStart(true); api.nav('path'); },
       'st-len': (btn) => {
         setWordStyle(btn.dataset.mode);
         root.querySelectorAll('[data-action="st-len"]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === btn.dataset.mode)));
@@ -298,7 +298,7 @@ function renderDone(root, api) {
     <div class="wrap-narrow st-body st-done">
       <div class="st-art">${stepArt('done')}</div>
       <h1>Saved.</h1>
-      <p class="st-sub">Home shows your next step each time you open Paths.</p>
+      <p class="st-sub">Your path shows your next step each time you open it.</p>
       <div class="st-words">
         <p class="st-words-h">How much to show</p>
         <div class="rolebar on-paper" role="radiogroup" aria-label="How much to show">
@@ -313,7 +313,7 @@ function renderDone(root, api) {
         <p class="small">Change either in Settings.</p>
       </div>
       <div class="st-foot">
-        <button type="button" class="btn big press" data-action="st-finish">Go to Home ${icon('arrow')}</button>
+        <button type="button" class="btn big press" data-action="st-finish">See my path ${icon('arrow')}</button>
       </div>
     </div>
   </section>`;

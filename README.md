@@ -6,8 +6,7 @@ Web apps for Beatty Secondary School and its partners, published as one GitHub P
 | App | Open | What it is | Notes |
 | --- | --- | --- | --- |
 | E21CC Log | [`e21cclog/`](e21cclog/) (students), [`e21cclog/teacher.html`](e21cclog/teacher.html) (teachers), [`e21cclog/demo/`](e21cclog/demo/) (demo) | One reflective log per Beattyian, anchored in MOE's 21st Century Competencies: GROW and ACT journals, Beatty's I can statements, a teacher console | Version 4. See [`e21cclog/README.md`](e21cclog/README.md); backlog in [`e21cclog/BACKLOG.md`](e21cclog/BACKLOG.md) |
-| Paths | [`pathways.html`](pathways.html), which opens [`pathways/`](pathways/) | Plan secondary school year by year, for students, parents and teachers | Classic Paths, v4.4. Version log: [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md) |
-| Paths 5 (working title) | [`pathways5/`](pathways5/) | The new Paths, in development beside Classic Paths | See [`pathways5/README.md`](pathways5/README.md) |
+| Paths | [`pathways.html`](pathways.html), which opens [`pathways/`](pathways/) | Plan secondary school year by year, for students, parents and teachers | 6.0, joining v4.4 and v5. Version log: [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md) |
 
 ## Other apps
 | App | Open | What it is |
@@ -34,12 +33,12 @@ Kept because people have them saved. Each passes on the query and the hash, so s
 | `logs/`, `logsv2/` | The E21CC Log's Version 1 and 2 archive, or the Log itself for teacher notes, group links, class codes and share links |
 | `logsv3/` | The E21CC Log |
 | `e21cclog/next/` | The E21CC Log (the test version, folded in as Version 4 on 8 November 2026) |
-| `pathways2/`, `pathways3/`, `pathways4/` | Paths, or its archive |
+| `pathways2/`, `pathways3/`, `pathways4/`, `pathways5/` | Paths, or its archive |
 
 ## Archives
 | Folder | What it keeps |
 | --- | --- |
 | [`e21cclog/legacy/`](e21cclog/legacy/) | E21CC Log Version 1, 2 and 3, read only. See [`e21cclog/legacy/README.md`](e21cclog/legacy/README.md) |
-| [`legacy/`](legacy/) | Paths v1, v2 and v3, frozen. See [`legacy/README.md`](legacy/README.md) |
+| [`legacy/`](legacy/) | Paths v1 to v4.4, frozen. See [`legacy/README.md`](legacy/README.md) |
 
 Everything else that was ever here is in the git history.
