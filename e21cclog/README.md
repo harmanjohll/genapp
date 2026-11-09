@@ -106,7 +106,17 @@ Since then, each release has its own number, shown at the bottom of every page:
 
 - **5.1 The goal loop.** A goal's step is checked back on its day ("Did you do it?"), from Home or the goal's page, which leads with what the student will do and shows the weeks so far. A GROW or ACT entry can name a goal, and the goal lists its entries. A result opens a reflection: what helped, what will change. The coach asks what might get in the way next time and makes an if then plan. Setting a grade goal yourself asks first too.
 
-Their specs, and what comes next (V5 sharing a goal with a teacher, who responds; P1 a pilot report), are in `BACKLOG.md`.
+- **5.2 The pilot report.** The console's Class grid counts, week by week, the students who shared and how many got a reply that was sent, with Copy for the pilot lead (counts only, never names).
+
+Their specs, and what comes next (V5 sharing a goal with a teacher, who responds), are in `BACKLOG.md`.
+
+### Pilot evidence
+- **The weekly count.** Each pilot teacher copies Term N, week by week from the console's Class grid and sends it to the pilot lead, who adds them up. A student who shares with two teachers is counted by both: the total counts exchanges.
+- **A pulse at week 4,** three questions in a Microsoft Form:
+  1. Did the Log help you plan what to do next? Yes / A little / No
+  2. Did a teacher's reply change what you did? Yes / A little / No / No reply yet
+  3. One thing that would make you use it more? (your own words)
+- **A think aloud,** 20 minutes with each of five students, on a school device: set a goal with the coach; answer "Did you do it?"; write a GROW that names the goal; find a teacher's reply. Note where each student hesitates, and what they say, in their words.
 
 ## From v3
 

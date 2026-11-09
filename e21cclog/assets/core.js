@@ -918,7 +918,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '5.1';
+const VERSION_NO = '5.2';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -983,6 +983,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'For the pilot: each teacher’s console counts, week by week, the students who shared and how many got a reply, ready to copy for the pilot lead',
   'Goals and journals join up: the Log asks on the day whether you did your goal’s step, an entry can name a goal, and a result opens a reflection. The coach helps you plan for what might get in the way',
   'Version 5: a goal coach. It asks a few questions first, then drafts a goal that matters to you, or checks your goal is SMART. You choose the target',
   'A calendar in Goals: what is coming up, by week, by month or by goal, with your own assessments and CCA events, goal checkpoints and plan days, ready for your own calendar',
