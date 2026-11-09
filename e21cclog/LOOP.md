@@ -25,7 +25,7 @@ If a closed pull request that was not merged exists for that item, do not build 
 If the item is clearly too big for one run, split it in `BACKLOG.md` into parts (`A1a`, `A1b`), each with its own spec and done line, and build only the first part.
 
 ## 4. Build
-- Change files only inside `e21cclog/`, and never `e21cclog/legacy/` (the read only archive) or `e21cclog/next/` (forwarding only). Never touch Paths (`pathways/`, `pathways5/`) or anything else in the repository. Before pushing, `git diff --name-only origin/main` must list only `e21cclog/` paths.
+- Change files only inside `e21cclog/`, and never `e21cclog/legacy/` (the read only archive) or `e21cclog/next/` (forwarding only). Never touch Paths (`pathways/` and its old addresses) or anything else in the repository. Before pushing, `git diff --name-only origin/main` must list only `e21cclog/` paths.
 - Follow the existing code: plain JavaScript, no frameworks, no build step, no new dependencies, no network calls to new services. Everything stays on the device unless the item says otherwise.
 - Keep the Log's lasting keys (`e21cclog`, `e21cclog.teacher` and their companions). Never change `FRESH_START` in `assets/store.js`: it would clear every student's log.
 - Accessibility as in the rest of the Log: labelled controls, keyboard reachable, visible focus, touch targets of at least 44 px, contrast that passes the colour sweep in all four looks, light and dark.
@@ -36,7 +36,6 @@ If the item is clearly too big for one run, split it in `BACKLOG.md` into parts 
 ## 5. Test
 - Add a test suite for the item: `e21cclog/tests/tNN.js`, numbered after the highest existing one, written like the others (launch through `fixtures/launch.js`, `check(name, ok, info)`, print `ALL PASS`), and add it to the list in `e21cclog/tests/run.sh`.
 - Run `npm ci` in `e21cclog/tests` if `node_modules` is missing, then `FULL=1 e21cclog/tests/run.sh`: every line must say pass.
-- Run `node pathways/tools/verify.mjs` from the repository root: every sweep must say PASS.
 - Look at your screens: take a screenshot of each new screen at 390 by 844 and 1280 by 800 and check it reads well.
 
 If a check fails and you cannot fix it within the item, do not hide it: open the pull request as a draft and say exactly what fails.

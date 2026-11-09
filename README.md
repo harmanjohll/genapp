@@ -10,6 +10,8 @@ Apps are named here, never numbered. Each app keeps its own version history: the
 | E21CC Log | [`e21cclog/`](e21cclog/) (students), [`e21cclog/teacher.html`](e21cclog/teacher.html) (teachers), [`e21cclog/demo/`](e21cclog/demo/) (demo) | One reflective log per Beattyian, anchored in MOE's 21st Century Competencies: GROW and ACT journals, Beatty's I can statements, a teacher console | See [`e21cclog/README.md`](e21cclog/README.md); backlog in [`e21cclog/BACKLOG.md`](e21cclog/BACKLOG.md) |
 | Paths | [`pathways.html`](pathways.html), which opens [`pathways/`](pathways/) | Plan secondary school year by year, for students, parents and teachers | See [`pathways/README.md`](pathways/README.md); version history in [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md) |
 
+The E21CC Log and Paths are two separate apps. Each has its own folder, address, saved data on the device, offline copy, checks and version history, and a change to one never needs the other's checks. They share one fact: the subjects Beatty offers, and at which levels. Each app keeps its own copy (`e21cclog/school/beatty.json` and `pathways/data/offer.json`); when the offering changes, change both.
+
 ## Other apps
 | App | Open | What it is |
 | --- | --- | --- |

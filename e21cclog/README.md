@@ -243,7 +243,7 @@ Edit `statements/beatty-v1.json`, then paste it into `DEFAULT_STATEMENTS` in `as
 
 ## Changing the school offering
 
-Each year, edit `school/beatty.json`, then copy it into `DEFAULT_SCHOOL` in `assets/core.js` so the Log works offline (t14 fails until the two match).
+Each year, edit `school/beatty.json`, then copy it into `DEFAULT_SCHOOL` in `assets/core.js` so the Log works offline (t14 fails until the two match). Paths, a separate app, keeps its own copy of the subjects and levels in `../pathways/data/offer.json`: change it too.
 - **Subjects** sit under `subjects.lower` (Sec 1 and 2) and `subjects.upper` (Sec 3 to 5), in the order students see them. Each has a `name` in full, a `group`, and `levels`: the levels of demand it is offered at, or `null` for one common level. `outside` lists levels taken at another school or centre; `examinable: false` marks a subject that is not examined.
 - **`notes`** add a line under a group, by level.
 - **`aliases`** map short or old names to full ones, so older logs and group files still match.

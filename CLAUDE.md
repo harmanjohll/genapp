@@ -1,5 +1,6 @@
 # Notes for Claude
 
+- The E21CC Log (`e21cclog/`) and Paths (`pathways/`) are separate apps: work on one never touches the other or needs its checks. The one shared fact is Beatty's subject offering, copied in `e21cclog/school/beatty.json` and `pathways/data/offer.json`; change both together.
 - Name apps, never version numbers, in shared files (this one and the root `README.md`). Each app keeps its versions in its own log; a reader of one app should never meet another app's numbers.
 - Paths lives in `pathways/`, opened by `pathways.html`. Read `pathways/README.md` and `PATHWAYS_VERSIONS.md` first, and build there.
   - Earlier builds are frozen in `legacy/`. `pathways2/` to `pathways5/` only forward.
