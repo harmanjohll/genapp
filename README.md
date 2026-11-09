@@ -2,11 +2,13 @@
 
 Web apps for Beatty Secondary School and its partners, published as one GitHub Pages site. Every folder is a live address under `https://harmanjohll.github.io/genapp/`, so folders do not move: a link shared in Teams, a slide or a parent letter keeps working. Where an app has moved, a short page stays at the old address and forwards.
 
+Apps are named here, never numbered. Each app keeps its own version history: the E21CC Log in [`e21cclog/README.md`](e21cclog/README.md), Paths in [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md). Link to an app by its address in the Open column, never to a numbered folder.
+
 ## The two main apps
 | App | Open | What it is | Notes |
 | --- | --- | --- | --- |
-| E21CC Log | [`e21cclog/`](e21cclog/) (students), [`e21cclog/teacher.html`](e21cclog/teacher.html) (teachers), [`e21cclog/demo/`](e21cclog/demo/) (demo) | One reflective log per Beattyian, anchored in MOE's 21st Century Competencies: GROW and ACT journals, Beatty's I can statements, a teacher console | Version 4. See [`e21cclog/README.md`](e21cclog/README.md); backlog in [`e21cclog/BACKLOG.md`](e21cclog/BACKLOG.md) |
-| Paths | [`pathways.html`](pathways.html), which opens [`pathways/`](pathways/) | Plan secondary school year by year, for students, parents and teachers | 6.0, joining v4.4 and v5. Version log: [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md) |
+| E21CC Log | [`e21cclog/`](e21cclog/) (students), [`e21cclog/teacher.html`](e21cclog/teacher.html) (teachers), [`e21cclog/demo/`](e21cclog/demo/) (demo) | One reflective log per Beattyian, anchored in MOE's 21st Century Competencies: GROW and ACT journals, Beatty's I can statements, a teacher console | See [`e21cclog/README.md`](e21cclog/README.md); backlog in [`e21cclog/BACKLOG.md`](e21cclog/BACKLOG.md) |
+| Paths | [`pathways.html`](pathways.html), which opens [`pathways/`](pathways/) | Plan secondary school year by year, for students, parents and teachers | See [`pathways/README.md`](pathways/README.md); version history in [`PATHWAYS_VERSIONS.md`](PATHWAYS_VERSIONS.md) |
 
 ## Other apps
 | App | Open | What it is |
@@ -30,15 +32,15 @@ Kept because people have them saved. Each passes on the query and the hash, so s
 
 | Address | Goes to |
 | --- | --- |
-| `logs/`, `logsv2/` | The E21CC Log's Version 1 and 2 archive, or the Log itself for teacher notes, group links, class codes and share links |
+| `logs/`, `logsv2/` | The E21CC Log's archive, or the Log itself for teacher notes, group links, class codes and share links |
 | `logsv3/` | The E21CC Log |
-| `e21cclog/next/` | The E21CC Log (the test version, folded in as Version 4 on 8 November 2026) |
-| `pathways2/`, `pathways3/`, `pathways4/`, `pathways5/` | Paths, or its archive |
+| `e21cclog/next/` | The E21CC Log (its test version, folded in on 8 November 2026) |
+| `pathways2/`, `pathways3/`, `pathways4/`, `pathways5/` | Paths, or one of its earlier builds |
 
 ## Archives
 | Folder | What it keeps |
 | --- | --- |
-| [`e21cclog/legacy/`](e21cclog/legacy/) | E21CC Log Version 1, 2 and 3, read only. See [`e21cclog/legacy/README.md`](e21cclog/legacy/README.md) |
-| [`legacy/`](legacy/) | Paths v1 to v4.4, frozen. See [`legacy/README.md`](legacy/README.md) |
+| [`e21cclog/legacy/`](e21cclog/legacy/) | Earlier builds of the E21CC Log, read only. See [`e21cclog/legacy/README.md`](e21cclog/legacy/README.md) |
+| [`legacy/`](legacy/) | Earlier builds of Paths, frozen. See [`legacy/README.md`](legacy/README.md) |
 
 Everything else that was ever here is in the git history.
