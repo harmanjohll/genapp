@@ -16,7 +16,7 @@ const FILES = [
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories', 'moves', 'version',
   'activities', 'possibilities', 'work', 'money', 'evidence', 'schools',
-  'years', 'psle', 'grades', 'families', 'offer',
+  'years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin',
 ];
 
 /**
@@ -43,6 +43,8 @@ const FILES = [
 const EAGER = [
   'subjects', 'pathways', 'progressions', 'copy', 'glossary',
   'activities', 'lifelong', 'version', 'years', 'psle', 'grades', 'offer',
+  // v5: the path reads the goal, so goals and course families arrive first.
+  'goals', 'families',
 ];
 const DEFERRED = FILES.filter((f) => !EAGER.includes(f));
 
@@ -52,7 +54,9 @@ const DEFERRED = FILES.filter((f) => !EAGER.includes(f));
     error-free loading screen. */
 export const MODE_DATA = {
   home: [], plan: [], year: [], after: [],
-  dest: ['money', 'families'],
+  dest: ['money', 'families', 'daysin'],
+  path: ['goals', 'families'], goal: ['work', 'goals', 'families'], compare: [],
+  share: ['goals', 'families'], shared: ['goals', 'families'], session: ['goals', 'families', 'daysin'],
   myplan: ['futures'],
   play: ['journey', 'chances', 'moves', 'possibilities', 'dispositions'],
   act: ['futures', 'journey', 'moves'],

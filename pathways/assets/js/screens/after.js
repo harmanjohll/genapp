@@ -10,21 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=4.4.0';
-import { reach } from '../engine/reach.js?v=4.4.0';
-import { effective } from '../engine/years.js?v=4.4.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=4.4.0';
-import { report } from '../engine/grades.js?v=4.4.0';
-import { openCount } from '../ui/map.js?v=4.4.0';
-import { yearStrip } from '../ui/yearstrip.js?v=4.4.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=4.4.0';
-import { ticketHtml } from '../ui/ticket.js?v=4.4.0';
-import { boardWord } from '../ui/board.js?v=4.4.0';
-import { DEST_CODE } from '../ui/signal.js?v=4.4.0';
-import { t, isShort, stateWord } from '../ui/labels.js?v=4.4.0';
-import { decorate } from '../ui/glossary.js?v=4.4.0';
-import { esc, onAction } from '../ui/dom.js?v=4.4.0';
-import { icon } from '../ui/icons.js?v=4.4.0';
+import { getState, setFamilies } from '../state.js?v=6.0.0';
+import { reach } from '../engine/reach.js?v=6.0.0';
+import { effective } from '../engine/years.js?v=6.0.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=6.0.0';
+import { report } from '../engine/grades.js?v=6.0.0';
+import { openCount } from '../ui/map.js?v=6.0.0';
+import { yearStrip } from '../ui/yearstrip.js?v=6.0.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=6.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
+import { boardWord } from '../ui/board.js?v=6.0.0';
+import { DEST_CODE } from '../ui/signal.js?v=6.0.0';
+import { t, isShort, stateWord } from '../ui/labels.js?v=6.0.0';
+import { decorate } from '../ui/glossary.js?v=6.0.0';
+import { esc, onAction } from '../ui/dom.js?v=6.0.0';
+import { icon } from '../ui/icons.js?v=6.0.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
@@ -40,6 +40,20 @@ function basisLine(api) {
   if (!e.yearId) return 'No levels set yet. Set your levels to see where you stand.';
   if (e.yearId === 'sec1' || e.yearId === 'sec2') return `From your ${YEAR_LABEL[e.yearId]} levels. Admission reads your SEC results; these levels shape your Sec 3 subjects.`;
   return `From your ${YEAR_LABEL[e.yearId]} levels.`;
+}
+
+/** v5: a day in the place, and one route there. Composites, and labelled so. */
+function dayHtml(api, r) {
+  const d = api.data.daysin || {};
+  const p = (d.places || {})[r.id];
+  if (!p) return '';
+  return `
+      <section class="destsec daycard">
+        <h2 class="advh">A day at ${esc(r.railName)}</h2>
+        <p>${esc(p.day)}</p>
+        ${p.route ? `<p class="day-route"><b>One route here.</b> ${esc(p.route)}</p>` : ''}
+        <p class="small">${esc(d.label || '')}</p>
+      </section>`;
 }
 
 /** A destination section: open in Detailed wording, one tap away in Short. */
@@ -159,6 +173,8 @@ export const dest = {
         <h2 class="advh">${r.state === 'open' ? (r.lens === 'lower' ? 'Already on track. These moves also help' : 'Already open. These moves also help') : 'Moves that bring it closer'}</h2>
         <div class="ticketlist">${moves.map((m, i) => ticketHtml(m, { hero: i === 0 && r.state !== 'open' })).join('')}</div>
       </section>` : (r.state !== 'open' && !e.yearId ? `<p class="callout small">Set your levels on the Subjects page to see the moves that bring ${esc(r.railName)} closer.</p>` : '')}
+
+      ${dayHtml(api, r)}
 
       <section class="destsec">
         <h2 class="advh">${r.lens === 'lower' ? `What it asks of your ${esc(YEAR_LABEL[e.yearId] || 'Sec 1 and 2')} levels` : 'What it asks'}</h2>

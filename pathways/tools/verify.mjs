@@ -19,7 +19,7 @@ const load = (name) => JSON.parse(readFileSync(join(root, 'data', `${name}.json`
 const data = Object.fromEntries([
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
-  'moves', 'version', 'activities', 'possibilities', 'work', 'money', 'evidence', 'schools', 'offer',
+  'moves', 'version', 'activities', 'possibilities', 'work', 'money', 'evidence', 'schools', 'offer', 'goals', 'daysin',
 ].map((n) => [n, load(n)]));
 
 const { runInvariantSweep } = await import(join(root, 'assets/js/engine/reach.js'));
@@ -264,7 +264,15 @@ const { adviceSweep } = await import(join(root, 'assets/js/engine/advice.js'));
 const { gradesSweep } = await import(join(root, 'assets/js/engine/grades.js'));
 const { psleScore, postingFor, startLevels } = await import(join(root, 'assets/js/engine/psle.js'));
 const readData = (n) => JSON.parse(readFileSync(join(root, 'data', `${n}.json`), 'utf8'));
-const { lowerLensSweep, policySweep, offerSweep } = await import(join(root, 'assets/js/engine/policy.js'));
+const { lowerLensSweep, policySweep, offerSweep, v5Sweep } = await import(join(root, 'assets/js/engine/policy.js'));
+
+/** v5: the goal engine (interests, sectors, places, families) and share links. */
+function v5GoalSweep() {
+  const r = v5Sweep(ctx, { ...data, goals: readData('goals'), families: readData('families') });
+  pass('Goal and share', r.ok, `${r.checks} checks: every interest and sector leads somewhere, families only add, goal moves move it, links round trip`);
+  if (!r.ok) console.table(r.fails);
+  return r;
+}
 const { styleSweep, CODE_FILES } = await import(join(root, 'assets/js/engine/style-lint.js'));
 const { advise: adviseFn } = await import(join(root, 'assets/js/engine/advice.js'));
 const { subjectsForYear: forYear, isLower: lowerYear } = await import(join(root, 'assets/js/engine/years.js'));
@@ -355,7 +363,7 @@ function v4PsleSweep() {
 /** House style for the v4 data: no dashes in anything a reader sees. */
 function v4DashSweep() {
   const fails = [];
-  ['years', 'psle', 'grades', 'families', 'offer'].forEach((n) => {
+  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin'].forEach((n) => {
     const walk = (v, path) => {
       if (typeof v === 'string') {
         if (path.includes('url') || path.includes('_meta') || /\.id$/.test(path)) return;
@@ -382,6 +390,112 @@ async function syntaxSweep() {
     .filter((x) => x.r.status !== 0).map((x) => ({ file: x.f.replace(root, ''), err: (x.r.stderr || '').split('\n').slice(0, 4).join(' ') }));
   const ok = !fails.length;
   pass('Syntax', ok, `${files.length} modules parse`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
+/**
+ * The service worker must hold every module the app can load and every data
+ * file it can fetch. 5.0.0 shipped without the path screen in that list, so
+ * the home screen could not open with no signal. Walks the imports from
+ * main.js and each screen; the ?dev=1 lints are left out on purpose.
+ */
+async function offlineSweep() {
+  const { existsSync } = await import('node:fs');
+  const { normalize } = await import('node:path');
+  const sw = readFileSync(join(root, 'sw.js'), 'utf8');
+  const listed = new Set([...sw.matchAll(/v\('\.\/([^']+)'\)/g)].map((m) => m[1]));
+  const swData = new Set((sw.match(/const DATA = \[([\s\S]*?)\]/) || ['', ''])[1].match(/'([a-z0-9]+)'/g).map((x) => x.slice(1, -1)));
+  const main = readFileSync(join(root, 'assets/js/main.js'), 'utf8');
+  const devOnly = new Set(['assets/js/engine/copy-lint.js', 'assets/js/engine/dom-lint.js']);
+  const seen = new Set();
+  const queue = ['assets/js/main.js', ...[...main.matchAll(/mod: '(\.\/screens\/[^']+)'/g)].map((m) => normalize(`assets/js/${m[1]}`))];
+  while (queue.length) {
+    const f = queue.pop();
+    if (seen.has(f) || !existsSync(join(root, f))) continue;
+    seen.add(f);
+    for (const m of readFileSync(join(root, f), 'utf8').matchAll(/(?:from\s+|import\(\s*)['"`](\.{1,2}\/[^'"`?$]+)/g)) {
+      queue.push(normalize(join(dirname(f), m[1])));
+    }
+  }
+  const loader = readFileSync(join(root, 'assets/js/data-loader.js'), 'utf8');
+  const files = ((loader.match(/FILES = \[([\s\S]*?)\]/) || ['', ''])[1].match(/'([a-z0-9]+)'/g) || []).map((x) => x.slice(1, -1));
+  const fails = [
+    ...[...seen].filter((f) => !devOnly.has(f) && !listed.has(f)).map((f) => ({ missing: f })),
+    ...files.filter((n) => !swData.has(n)).map((n) => ({ missing: `data/${n}.json` })),
+    ...[...listed].filter((f) => !existsSync(join(root, f))).map((f) => ({ listedButAbsent: f })),
+  ];
+  const ok = !fails.length;
+  pass('Offline', ok, `${seen.size - devOnly.size} modules and ${files.length} data files held by the service worker`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
+/**
+ * 6.0 joined v4.4 and v5 behind four tabs. Every screen must stay within two
+ * taps of the menu: a tab, then one link on it. Links are read from each
+ * screen's own code (data-s, nav(), or a { s: } route). The first run start,
+ * the old Home address and the shared view, which opens only from a link, are
+ * left out on purpose.
+ */
+function reachableSweep() {
+  const main = readFileSync(join(root, 'assets/js/main.js'), 'utf8');
+  const screens = Object.fromEntries([...main.matchAll(/^\s+([a-z]+):\s+\{ mod: '\.\/(screens\/[^']+)'/gm)].map((m) => [m[1], m[2]]));
+  const tabs = [...(main.match(/const NAV_ITEMS = \[([\s\S]*?)\];/) || ['', ''])[1].matchAll(/s: '([a-z]+)'/g)].map((m) => m[1]);
+  const linksOf = (id) => {
+    const src = readFileSync(join(root, 'assets/js', screens[id]), 'utf8');
+    return new Set([...src.matchAll(/data-s=\\?"([a-z]+)|nav\('([a-z]+)'|\bs: '([a-z]+)'/g)].map((m) => m[1] || m[2] || m[3]).filter((s) => screens[s]));
+  };
+  const near = new Set(tabs);
+  tabs.forEach((tab) => linksOf(tab).forEach((s) => near.add(s)));
+  const skip = new Set(['start', 'home', 'shared']);
+  const fails = Object.keys(screens).filter((s) => !skip.has(s) && !near.has(s)).map((s) => ({ screen: s, why: 'more than two taps from the menu' }));
+  if (tabs.length !== 4) fails.push({ screen: 'menu', why: `${tabs.length} tabs; 6.0 has four` });
+  const ok = !fails.length;
+  pass('Reachable', ok, `${Object.keys(screens).length - skip.size} screens within two taps of ${tabs.join(', ')}`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
+/** Saved plans from v4.4 and v5 come into 6.0 joined, and nothing a student kept is lost. */
+async function migrateSweep() {
+  const { mergeStored } = await import(join(root, 'assets/js/engine/migrate.js'));
+  const v4 = {
+    plans: { sec1: { el: 'G2', math: 'G2' }, sec2: { el: 'G2', math: 'G2' }, sec3: {} },
+    actions: ['Ask about Maths', 'Talk to my form teacher'], grades: { now: { el: 'B3' }, target: { math: 'A2' } },
+    psle: { el: { al: 5 } }, runs: [{ id: 'r1' }], liveRun: { age: 15 }, history: [{ t: 1 }],
+    year: 'sec2', yearSet: true, seenStart: true, soundOn: true, seenVersion: '4.4.0', role: 'parent',
+  };
+  // v5 saves every field, defaults included, so its empty game state must not erase v4's.
+  const v5 = {
+    plans: { sec1: {}, sec2: { el: 'G3', math: 'G2' }, sec3: {}, sec4: {}, sec5: {} },
+    actions: ['Talk to my form teacher', 'Visit a poly open house'], grades: { now: {}, target: { math: 'A1' } },
+    psle: {}, runs: [], liveRun: null, history: [], year: 'sec2', yearSet: true, seenStart: true, soundOn: false,
+    role: 'student', goal: { dest: 'poly', role: 'Engineer' }, scenario: { yearId: 'sec2', plan: { el: 'G3' } }, importedFromClassic: true,
+  };
+  const both = mergeStored(v5, v4);
+  const only4 = mergeStored(null, v4);
+  const only5 = mergeStored(v5, null);
+  const eq = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const cases = [
+    ['a new device starts clean', mergeStored(null, null) === null],
+    ['v4 only: plans, moves and the game come across', eq(only4.plans.sec2, v4.plans.sec2) && only4.actions.length === 2 && eq(only4.liveRun, v4.liveRun)],
+    ['v4 only: its what changed stamp stays behind', !('seenVersion' in only4) && only4.importedFrom === 'v4'],
+    ['v5 only: the goal and Plan B come across', eq(only5.goal, v5.goal) && eq(only5.scenario, v5.scenario) && only5.importedFrom === 'v5'],
+    ['both: a year set in v5 wins', eq(both.plans.sec2, v5.plans.sec2)],
+    ['both: a year set only in v4 is kept', eq(both.plans.sec1, v4.plans.sec1)],
+    ['both: moves are joined without repeats', eq(both.actions, ['Talk to my form teacher', 'Visit a poly open house', 'Ask about Maths'])],
+    ['both: grades join subject by subject, v5 first', both.grades.now.el === 'B3' && both.grades.target.math === 'A1'],
+    ['both: PSLE results set only in v4 are kept', eq(both.psle, v4.psle)],
+    ['both: v4 game runs and history survive v5 defaults', eq(both.runs, v4.runs) && eq(both.liveRun, v4.liveRun) && eq(both.history, v4.history)],
+    ['both: the goal and Plan B come from v5', eq(both.goal, v5.goal) && eq(both.scenario, v5.scenario)],
+    ['both: a setting on in either stays on', both.soundOn === true && both.seenStart === true],
+    ['both: v5 choices win where both set one', both.role === 'student'],
+    ['both: neither app\'s own flags carry', !('importedFromClassic' in both) && !('seenVersion' in both) && both.importedFrom === 'v4+v5'],
+  ];
+  const fails = cases.filter(([, ok]) => !ok).map(([name]) => ({ case: name }));
+  const ok = !fails.length;
+  pass('Migrate', ok, `${cases.length} cases: v4.4 only, v5 only, both`);
   if (!ok) console.table(fails);
   return { ok, fails };
 }
@@ -428,8 +542,12 @@ const results = [
   ['policy', v4PolicySweep()],
   ['offer', v4OfferSweep()],
   ['style', v4StyleSweep()],
+  ['goal-share', v5GoalSweep()],
   ['dashes', v4DashSweep()],
   ['syntax', await syntaxSweep()],
+  ['offline', await offlineSweep()],
+  ['reachable', reachableSweep()],
+  ['migrate', await migrateSweep()],
   ['white-on-fill', whiteOnFillSweep()],
 ];
 

@@ -1,24 +1,53 @@
 # Paths: version log
 
-## Latest: v4.4.0, in `pathways/`. Build here.
+The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
+
+## Latest: v6.0.0, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
 - To release: `node pathways/tools/release.mjs x.y.z`, then add the notes to `pathways/data/version.json` and a line under the version below.
 
-## Two sites (from 2026-11-04)
+## One app again (from 2026-11-09)
 
-| Site | Folder | Version | Status |
-| --- | --- | --- | --- |
-| Classic Paths | `pathways/` | v4.4.0 | Live and stable. `pathways.html` still opens it. Keep it working; change it only when asked. |
-| The new site (working title "Paths 5", name to come) | `pathways5/` | v5.0.0 | In development. Build new features here. |
+From 2026-11-04 to 2026-11-09 there were two sites: v4.4 in `pathways/` and v5 in `pathways5/`. v5 was v4.4 plus a new layer: 5 screens, 2 engine files, 2 data files, and a different menu. Every other file differed only in its version stamp. 6.0 is v5's code with v4.4's front doors back, at v4.4's address.
 
-- **Separate storage.** The new site stores plans under `paths5.state.v1`, so the two sites never write over each other. On a device that used Classic, the first visit copies its plans once, read only (`stored()` in `pathways5/assets/js/state.js`).
-- **Separate offline caches:** `paths4-` and `paths5-`.
-- **Each site has its own checks:** `node pathways/tools/verify.mjs` and `node pathways5/tools/verify.mjs`.
+### v6.0.0 (2026-11-09): one Paths
 
-### v5.0.0 (2026-11-04): one path, a goal, and the conversation
+**What is critical (keep these when building on it)**
+- Everything listed under v4 below, except the storage key.
+- **Four tabs** (`NAV_ITEMS` in `assets/js/main.js`):
+  - **Path:** home.
+  - **Goal.**
+  - **Explore:** v4's Pathways hub. It holds the places, jobs, fees, school types, parents and teachers, and the game.
+  - **Saved:** moves, targets, print, and the plan card, link and counsellor session.
+  - **Compare** opens from each year on the path ("Try a what if").
+  - The Reachable sweep fails if any screen is more than two taps from the menu.
+- **v4's next step** sits on top of the path (`nextStep` in `screens/path.js`), only for what the open year cannot show:
+  - say your year;
+  - PSLE results;
+  - grade targets;
+  - talk to someone.
+- **Storage key `paths6.state.v1`.**
+  - The first visit joins `paths5.state.v1` and `pathways4.state.v1` (`engine/migrate.js`):
+    - a year set in v5 wins, else v4's;
+    - moves are joined;
+    - an empty v5 default never erases v4's game or history;
+    - the goal and Plan B come from v5.
+  - The old keys are only read. The Migrate sweep pins this.
+- **Offline cache `paths6-`.**
+  - It deletes `paths4-` and `paths5-`.
+  - The frozen v4.4 uses `paths4legacy-`, so it is left alone.
+
+**What changed**
+- One app at the same address. v4.4 is frozen in `legacy/pathways-v4/`, linked from Settings. `pathways5/` forwards to `pathways/`, keeping any `?query`, so shared plan links still open.
+- The four tabs above.
+- The share card names `genapp/pathways.html`.
+- v4's unused Home screen file is gone.
+- 30 sweeps, adding Reachable and Migrate.
+
+### v5.0.0 (2026-11-04, folded into 6.0): one path, a goal, and the conversation
 - **One path.** `screens/path.js` is the home screen: P6 to after Sec on one line, each year opening in place. The menu is Path, Goal, Compare and Share.
 - **Goal first.** `screens/goal.js` and `engine/goal.js` run interests (RIASEC), then work sectors (`work.json`), then a role and place, then a course family (`families.json`, plain names in `goals.json`).
   - Course family needs become rules only for JC, MI, polytechnic and PFP. They are marked to confirm until the 2028 lists arrive in mid 2027.
@@ -38,12 +67,11 @@
 
 | Address | Opens |
 | --- | --- |
-| `genapp/pathways5/` | The new site (v5, working title) |
-| `genapp/pathways.html` | Classic Paths (forwards to `pathways/`) |
+| `genapp/pathways.html` | The latest (forwards to `pathways/`) |
 | `genapp/pathways/` | The latest. Until 2026-10-31 this address was v1 |
-| `genapp/pathways4/` | Forwards to the latest |
+| `genapp/pathways4/`, `genapp/pathways5/` | Forward to the latest |
 | `genapp/pathways2/`, `genapp/pathways3/` | Forward to their legacy folders |
-| `genapp/legacy/pathways-v1/` to `-v3/` | The frozen versions |
+| `genapp/legacy/pathways-v1/` to `-v4/` | The frozen versions |
 
 The forwarding pages keep any `?query`, and remove any offline cache an old version registered at that address.
 
@@ -51,16 +79,18 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 
 | Version | Folder | Status | Dates | Built for |
 | --- | --- | --- | --- | --- |
-| v4.4.0 | `pathways/` | **Latest** | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |
+| v6.0.0 | `pathways/` | **Latest** | 2026-11-09 | One app: v5's path, goal, compare and sharing, with v4.4's hub, saved page and game |
+| v5.0.0 | none (folded into 6.0) | Superseded | 2026-11-04 to 2026-11-09 | One path, goal first planning, compare, sharing for the conversation |
+| v4.4.0 | `legacy/pathways-v4/` | Legacy, frozen | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |
 | v3.0.0 | `legacy/pathways-v3/` | Legacy, frozen | 2026-08-22 to 2026-08-23 | A new interface on v2's engine: the map as the product |
 | v2.15.0 | `legacy/pathways-v2/` | Legacy, frozen | 2026-08-07 to 2026-08-20 | A full rebuild of interface, game and content on v1's engine |
 | v1 | `legacy/pathways-v1/` | Legacy, frozen | 2026-08-07 | The first build: engine, ethics, three modes |
 
-### v4 (latest)
+### v4 (legacy)
 
 **What is critical (keep these when building on it)**
 - The ethics and invariants from v1: no destination is ever shown as locked; adding or raising a subject never moves a destination further away; nothing leaves the device; no ranking of destinations; no red.
-- Storage key `pathways4.state.v1`. Renaming it loses every saved plan; write a migration if it must change.
+- Storage key `pathways4.state.v1`. Renaming it loses every saved plan; write a migration if it must change. (6.0 did: see `engine/migrate.js`.)
 - Lower secondary plans reach the destination rules through the Sec 3 projection (`assets/js/engine/years.js`). Without it, Sec 1 and Sec 2 levels change nothing.
 - The 2028 admission rules were checked on 2026-10-27, from search engine extracts of the MOE, SEAB and institution pages (`research/`). Check the confirmed rows on moe.gov.sg before a class uses this. Course families stay provisional until the 2028 lists arrive in mid 2027.
 - `tools/verify.mjs` runs 26 checks, including advice, grades, PSLE, the lower lens, policy fixtures, the school offer, house style, dashes, syntax and white on fills.
@@ -112,6 +142,8 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 - Destination names: Sec 5, NAFA or LASALLE, Higher Nitec (2 yrs), Higher Nitec (3 yrs). `data/pathways.json` keeps its alphabetical `order`, so the destination list order changed.
 - Header chip reads "I am: Student"; buttons name their action (Save move, Copy words, Skip setup).
 
+**Why it was superseded:** v5 built the path, the goal, compare and sharing on top of it, as a separate site. 6.0 joined the two. v4's engine, rules, data and screens carry on inside 6.0 unchanged; only its Home screen gave way to the path.
+
 ### v3 (legacy)
 
 - **What is critical:** a real router (back button, URLs, reload), the map as the product, the rulebook in three levels of detail, the game staged turn by turn, the offline service worker, CSS in layers, 16 sweeps.
@@ -127,9 +159,9 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 - **What is critical:** the reach engine and its invariant, monotonicity, the data files with source and status on every figure, zero network calls, and the three modes (Now, Journey, the teacher and parent pages).
 - **Why it was superseded:** v2 rebuilt the interface, the game and the content after the first audit.
 
-## Starting the next version (v5)
+## Starting the next version (v7)
 
-1. Copy `pathways/` to `legacy/pathways-v4/` and commit that copy on its own.
-2. Build v5 in `pathways/`; `node pathways/tools/release.mjs 5.0.0`.
-3. Update this log: the Latest line, a v5 section, and v4 moved to Legacy with why it was superseded.
+1. Copy `pathways/` to `legacy/pathways-v6/`, give its offline cache its own prefix, and commit that copy on its own.
+2. Build v7 in `pathways/`; `node pathways/tools/release.mjs 7.0.0`.
+3. Update this log: the Latest line, a v7 section, and v6 moved to Legacy with why it was superseded.
 4. Keep `pathways.html` and the forwarding pages as they are; they need no change.

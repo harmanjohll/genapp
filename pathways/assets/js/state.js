@@ -9,7 +9,20 @@
 // Play/Journey/journey and Act/Aim/aim across labels, modules, state and
 // URLs. v3 says plan, play, act everywhere, including the address bar.
 
-const STORAGE_KEY = 'pathways4.state.v1';
+// 6.0 keeps its own key. On its first visit it joins what v4.4 and v5 saved
+// on this device (engine/migrate.js) and never writes to either old key, so
+// the frozen v4.4 in legacy/ keeps its own plans.
+import { mergeStored } from './engine/migrate.js?v=6.0.0';
+
+const STORAGE_KEY = 'paths6.state.v1';
+const V5_KEY = 'paths5.state.v1';
+const V4_KEY = 'pathways4.state.v1';
+const readKey = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } };
+function stored() {
+  const own = localStorage.getItem(STORAGE_KEY);
+  if (own) return JSON.parse(own);
+  return mergeStored(readKey(V5_KEY), readKey(V4_KEY));
+}
 
 export const MODES = {
   plan: { id: 'plan', label: 'Plan' },
@@ -63,6 +76,9 @@ const initial = () => ({
   // it did before anybody could answer. Stored because a student in a specialised
   // school should not have to re read the same disclaimer every visit.
   schoolKind: null,
+  // v5: the goal a student works back from, and a second plan to compare.
+  goal: null,           // { sector, role, dest, family } or null
+  scenario: null,       // { yearId, plan } or null: Plan B on the Compare page
 });
 
 // A guest session: ?guest=1. Reads nothing this device holds and writes
@@ -81,7 +97,7 @@ function load() {
   let base;
   try {
     base = GUEST ? initial()
-      : Object.assign(initial(), JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {});
+      : Object.assign(initial(), stored() || {});
   } catch {
     base = initial();
   }
@@ -98,6 +114,8 @@ function load() {
   if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
   if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
+  if (base.goal && (typeof base.goal !== 'object' || !base.goal.dest)) base.goal = null;
+  if (base.scenario && (typeof base.scenario !== 'object' || !base.scenario.plan)) base.scenario = null;
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
   ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
   try {
@@ -156,6 +174,8 @@ const state = load();
 const listeners = new Set();
 
 if (state._fromLink) { delete state._fromLink; persist(); }
+// The join from v4.4 and v5 happens once: save it straight away under 6.0's key.
+try { if (state.importedFrom && !localStorage.getItem(STORAGE_KEY)) persist(); } catch { /* private mode */ }
 
 function notify(evt) {
   listeners.forEach((fn) => {
@@ -266,6 +286,16 @@ export function setLabelMode(mode) {
   if (!['plain', 'line'].includes(mode)) return;
   state.labelMode = mode;
   persist(); notify({ kind: 'labels' });
+}
+
+export function setGoal(goal) {
+  state.goal = goal && goal.dest ? { sector: goal.sector || null, role: goal.role || null, dest: goal.dest, family: goal.family || null } : null;
+  persist(); notify({ kind: 'goal' });
+}
+
+export function setScenario(sc) {
+  state.scenario = sc && sc.plan ? { yearId: sc.yearId, plan: { ...sc.plan } } : null;
+  persist(); notify({ kind: 'scenario' });
 }
 
 export function setWordStyle(style) {

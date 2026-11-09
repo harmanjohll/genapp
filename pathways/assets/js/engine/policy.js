@@ -8,12 +8,12 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=4.4.0';
-import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=4.4.0';
-import { project } from './project.js?v=4.4.0';
-import { advise } from './advice.js?v=4.4.0';
-import { report } from './grades.js?v=4.4.0';
-import { startLevels, hmtlEligible } from './psle.js?v=4.4.0';
+import { reach } from './reach.js?v=6.0.0';
+import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=6.0.0';
+import { project } from './project.js?v=6.0.0';
+import { advise } from './advice.js?v=6.0.0';
+import { report } from './grades.js?v=6.0.0';
+import { startLevels, hmtlEligible } from './psle.js?v=6.0.0';
 
 const LV = ['G1', 'G2', 'G3'];
 // SEC language that has no place in Sec 1 and 2 advice. The horizon line is
@@ -186,4 +186,55 @@ export function policySweep(ctx, g, psleRules) {
   if (pg2.options.mtl.includes('G1')) fails.push('The Foundation Mother Tongue option applies to Posting Group 3 only');
 
   return { ok: !fails.length, checks: 16, fails };
+}
+
+// ---- v5: the goal engine and share links ----------------------------------
+
+import { sectorsFor, placesFor, familiesFor, familyRules, goalReach, goalMoves, workBack } from './goal.js?v=6.0.0';
+import { encodePacket, decodePacket } from './packet.js?v=6.0.0';
+
+export function v5Sweep(ctx, data) {
+  const fails = [];
+  let checks = 0;
+  const goals = data.goals || {}; const fams = data.families || {}; const work = data.work || {};
+  // Every interest finds work; every sector leads to at least one place.
+  (goals.interests || []).forEach((i) => { checks += 1; if (!sectorsFor([i.code], work).length) fails.push(`interest ${i.code} finds no work`); });
+  (work.sectors || []).forEach((s) => {
+    checks += 1;
+    const places = placesFor(s, goals, ctx.destinations);
+    if (!places.length) fails.push(`sector ${s.id} leads to no place`);
+    ((goals.sectorFamilies || {})[s.id] || []).forEach((f) => { if (!(goals.familyNames || {})[f]) fails.push(`sector ${s.id} names unknown family ${f}`); });
+  });
+  // Families: rules only where the lists are firm enough (JC, MI, polytechnic, PFP).
+  Object.keys(fams.destinations || {}).forEach((d) => familiesFor(null, d, goals, fams).forEach((f) => {
+    checks += 1;
+    const rules = familyRules(f, ctx.subjects);
+    if (!['jc', 'mi', 'poly', 'pfp'].includes(d) && rules.length) fails.push(`${f.id} turned into rules at ${d}`);
+    rules.forEach((r) => r.test.subjects.forEach((id) => { if (!ctx.subjects.some((s) => s.id === id)) fails.push(`${f.id} names unknown subject ${id}`); }));
+    if (!(goals.familyNames || {})[f.id]) fails.push(`${f.id} has no plain name`);
+  }));
+  // A family can only add to what a place asks, never take away; raising never moves the goal further.
+  const plan = { el: 'G3', maths: 'G2', mtl: 'G2', sci_pc: 'G2', hum_ss_geog: 'G3', poa: 'G3' };
+  [['poly', 'poly_C'], ['jc', 'jc_math_sci'], ['pfp', 'pfp_sciences']].forEach(([dest, family]) => {
+    checks += 1;
+    const plain = goalReach({ dest }, 'sec3', plan, ctx, data); const withFam = goalReach({ dest, family }, 'sec3', plan, ctx, data);
+    if (withFam.distance < plain.distance) fails.push(`${family} made ${dest} closer than the place alone`);
+    Object.keys(plan).forEach((sid) => {
+      const up = plan[sid] === 'G2' ? 'G3' : null; if (!up) return;
+      const after = goalReach({ dest, family }, 'sec3', { ...plan, [sid]: up }, ctx, data);
+      if (after.distance > withFam.distance) fails.push(`${sid} to G3 moved the ${family} goal further`);
+    });
+  });
+  // Goal moves bring the goal closer or open it.
+  const gm = goalMoves({ dest: 'poly' }, 'sec3', plan, ctx);
+  gm.forEach((m) => { checks += 1; if (!(m.opens || []).includes('Polytechnic') && !(m.nearer || []).includes('Polytechnic')) fails.push(`goal move "${m.line}" does not move Polytechnic`); });
+  checks += 1; if (workBack({ dest: 'jc' }, { sec2: { el: 'G3' } }, ctx, data).length !== 4) fails.push('work back should cover Sec 1 to Sec 4');
+  // Share links: round trip, and nothing but the year, the levels and the goal.
+  const pk = { y: 'sec2', plan: { el: 'G3', ls_science: 'G2', mtl: 'G1' }, goal: { dest: 'poly', family: 'poly_C', role: 'Engineering executive', sector: 'engineering' } };
+  const back = decodePacket(encodePacket(pk));
+  checks += 1;
+  if (!back || back.y !== 'sec2' || JSON.stringify(back.plan) !== JSON.stringify(pk.plan) || back.goal.family !== 'poly_C') fails.push('share link does not round trip');
+  checks += 1; if (decodePacket('not a packet') !== null) fails.push('a broken link should decode to nothing');
+  checks += 1; if (Object.keys(JSON.parse(decodeURIComponent(escape(atob(encodePacket(pk).replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((encodePacket(pk).length + 3) % 4)))))).sort().join() !== 'g,p,v,y') fails.push('share link carries more than the year, levels and goal');
+  return { ok: !fails.length, checks, fails };
 }

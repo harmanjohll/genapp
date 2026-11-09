@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=4.4.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=6.0.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
   setLabelMode, markStart, setAllSubjects, setWordStyle,
-} from './state.js?v=4.4.0';
-import { effective } from './engine/years.js?v=4.4.0';
-import { runStrip } from './ui/yearstrip.js?v=4.4.0';
-import { t } from './ui/labels.js?v=4.4.0';
-import { esc, onAction } from './ui/dom.js?v=4.4.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=4.4.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=4.4.0';
-import { icon } from './ui/icons.js?v=4.4.0';
-import { cue, setMutePredicate } from './sound.js?v=4.4.0';
+} from './state.js?v=6.0.0';
+import { effective } from './engine/years.js?v=6.0.0';
+import { runStrip } from './ui/yearstrip.js?v=6.0.0';
+import { t } from './ui/labels.js?v=6.0.0';
+import { esc, onAction } from './ui/dom.js?v=6.0.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=6.0.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=6.0.0';
+import { icon } from './ui/icons.js?v=6.0.0';
+import { cue, setMutePredicate } from './sound.js?v=6.0.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -44,9 +44,10 @@ if (BOARD) {
   document.documentElement.dataset.theme = 'dark'; // a lit projector needs dark ground
 }
 
-const THEME_KEY = 'pathways4.theme';
+// 6.0 keeps its own theme key, and reads the choice made in v5 or v4 once.
+const THEME_KEY = 'paths6.theme';
 try {
-  const t = localStorage.getItem(THEME_KEY);
+  const t = localStorage.getItem(THEME_KEY) || localStorage.getItem('paths5.theme') || localStorage.getItem('pathways4.theme');
   if (t && !BOARD) document.documentElement.dataset.theme = t;
 } catch { /* private mode */ }
 
@@ -74,7 +75,14 @@ export function announce(text) {
 
 const SCREENS = {
   start:   { mod: './screens/start.js', exp: 'default' },
-  home:    { mod: './screens/home.js', exp: 'default' },
+  // v5: one path is home. The old Home address lands on it.
+  home:    { mod: './screens/path.js', exp: 'default' },
+  path:    { mod: './screens/path.js', exp: 'default' },
+  goal:    { mod: './screens/goal.js', exp: 'default' },
+  compare: { mod: './screens/compare.js', exp: 'default' },
+  share:   { mod: './screens/share.js', exp: 'share' },
+  shared:  { mod: './screens/share.js', exp: 'shared' },
+  session: { mod: './screens/session.js', exp: 'default' },
   explore: { mod: './screens/explore.js', exp: 'default' },
   year:    { mod: './screens/year.js', exp: 'default' },
   after:   { mod: './screens/after.js', exp: 'after' },
@@ -121,7 +129,7 @@ function parseRoute() {
   if (s === 'plan') s = 'year';
   if (!SCREENS[s]) s = null;
   const extras = {};
-  ['tab', 'sector', 'kind', 'y', 'id', 'g'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
+  ['tab', 'sector', 'kind', 'y', 'id', 'g', 'd', 'for', 'step', 'i', 'dest', 'role'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
   return { s, q: extras };
 }
 
@@ -185,7 +193,7 @@ document.addEventListener('close', (e) => {
 
 // A first visit lands on the guided start; every visit after, on Home.
 function defaultScreen() {
-  return getState().seenStart ? 'home' : 'start';
+  return getState().seenStart ? 'path' : 'start';
 }
 
 // ---- paint -------------------------------------------------------------------
@@ -311,18 +319,21 @@ function themeNow() {
 }
 
 // Four doors. v4's first pass had five of equal weight, and a first-time
-// student could not tell which one came first.
+// student could not tell which one came first. 6.0 joins v4 and v5: the path
+// is home, the goal works back, Explore holds the places, jobs, fees and the
+// game, and Saved holds the plan to keep and share. Compare opens from a year.
 const NAV_ITEMS = [
-  { s: 'home', label: 'Home', icon: 'home' },
-  { s: 'year', label: 'Subjects', icon: 'steps' },
-  { s: 'explore', label: 'Pathways', icon: 'map' },
+  { s: 'path', label: 'Path', icon: 'steps' },
+  { s: 'goal', label: 'Goal', icon: 'target' },
+  { s: 'explore', label: 'Explore', icon: 'map' },
   { s: 'myplan', label: 'Saved', icon: 'flag' },
 ];
 const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
 
 function navCurrent(s) {
+  if (['home', 'year', 'compare'].includes(s)) return 'path';
   if (['after', 'dest', 'play', 'work', 'money', 'schools', 'adults'].includes(s)) return 'explore';
-  if (s === 'act') return 'myplan';
+  if (['act', 'share', 'shared', 'session'].includes(s)) return 'myplan';
   return s;
 }
 
@@ -388,13 +399,12 @@ function settingsSheet(trigger) {
     </div>
     <p class="caps" style="margin-top:20px">Also here</p>
     <div class="morerow">
-      <button type="button" class="chip press" data-action="go" data-s="work">Jobs and sectors</button>
-      <button type="button" class="chip press" data-action="go" data-s="money">Fees and financial help</button>
-      <button type="button" class="chip press" data-action="go" data-s="schools">My school type</button>
-      <button type="button" class="chip press" data-action="go" data-s="adults">For parents and teachers</button>
       <button type="button" class="chip press" data-action="words">Glossary</button>
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
+    <p class="caps" style="margin-top:20px">Earlier version</p>
+    <p class="small">The version before this one is kept as it was, with its own saved plans.</p>
+    <p><a class="btn ghost small" href="../legacy/pathways-v4/">Open the earlier version</a></p>
     <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
 }
 
@@ -410,9 +420,7 @@ function yearSheet(trigger) {
 onAction(document.body, {
   go: (btn) => {
     const q = {};
-    if (btn.dataset.y) q.y = btn.dataset.y;
-    if (btn.dataset.id) q.id = btn.dataset.id;
-    if (btn.dataset.tab) q.tab = btn.dataset.tab;
+    ['y', 'id', 'tab', 'step', 'd', 'for', 'dest', 'sector', 'i', 'role'].forEach((k) => { if (btn.dataset[k]) q[k] = btn.dataset[k]; });
     nav(btn.dataset.s, q);
   },
   role: (btn) => roleSheet(btn),
@@ -490,8 +498,13 @@ async function boot() {
 
   const build = document.getElementById('foot-build');
   if (build) {
-    const f = data._freshness;
-    build.textContent = `Paths ${BUILD}${f && f.known ? ` · figures checked ${f.days} day${f.days === 1 ? '' : 's'} ago` : ''}`;
+    // The date the admission rules were last checked, from pathways.json. The
+    // oldest date across every file read as "figures checked 96 days ago",
+    // because game text from July is in that set, while the rules were newer.
+    const checked = data.pathways && data.pathways._meta && data.pathways._meta.accessed;
+    const when = checked && !Number.isNaN(new Date(checked).getTime())
+      ? new Date(checked).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    build.textContent = `Paths ${BUILD}${when ? ` · admission rules checked ${when}` : ''}`;
   }
 
   topUp(() => refresh());
