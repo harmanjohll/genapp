@@ -10,7 +10,9 @@ The decisions behind these items were made with Harman in November 2026:
 - coaching that stays offline;
 - nudges without pressure;
 - feelings data that never leaves the device;
-- one app, moving forward (8 November): no Labs, no test version beside it. A Labs tab is built only when Harman asks for one.
+- one app, moving forward (8 November): no Labs, no test version beside it. A Labs tab is built only when Harman asks for one;
+- a goal coach that asks before it suggests (9 November): coaching questions first, and the student names the target; the Log never picks one;
+- a teacher responds to a student's goal, and does not suggest one, at least for now (9 November).
 
 ## Waiting on Harman (outside the runs)
 - **Support contacts for E1:** the school counsellor's name and how to reach them, and the helplines to show, checked by the counsellor.
@@ -35,7 +37,7 @@ Version 4 is live. Harman's next three, built in this order, each its own versio
 2. **V2 Goals (4.2).** Academic grades, competencies, CCA and the student's own, each from where the student is now to their next result.
 3. **V3 Calendar (4.3).** A simple calendar for the T in SMART: what is coming up, by week, month, list or goal.
 
-Then, agreed on 9 November: **V4 The goal coach (4.4).** Then V5 (share a goal with a teacher), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
+Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** Then V5 (share a goal with a teacher, who responds), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
 
 ---
 
@@ -78,25 +80,26 @@ Then, agreed on 9 November: **V4 The goal coach (4.4).** Then V5 (share a goal w
 - **Tests:** the four views, items from each source, adding, editing and removing an event, the calendar file, the backup merge, axe and the word budget.
 
 ### V4 The goal coach
-- **Status:** done (4.4)
+- **Status:** done (5.0)
 - **Needs:** V2
-- **Harman, 9 November:** the student chooses between a goal that matters to them and a SMART goal; the Log coaches through questions, with a limit, more than it suggests.
+- **Harman, 9 November:** the student chooses between a goal that matters to them and a SMART goal; the Log coaches through questions, with a limit, more than it suggests. Then: scaffolding and coaching questions only, with no "you should aim for".
 - **Spec:**
   - **Two doors on New goal.** "Help me find a goal that matters to me", and "Help me make a goal SMART" for any goal already set. Setting it yourself stays.
   - **Questions with a limit.** At most five, one at a time, each with answer chips and room for the student's own words. Any can be skipped; "Draft my goal now" is always there; the coach never asks a sixth.
-  - **The meaningful path** follows goal, reality, options, way forward: the area; why it matters; where you are now; what got in the way; what you will try, and when.
-  - **The draft** comes from the answers with no AI, so the same answers give the same draft. It opens in the goal form, with the realistic and stretch suggestion, for the student to change before setting.
-  - **The SMART path** reads the goal's five letters (a named target; a measure; within reach; a why; a date) and asks one question for each open letter only.
+  - **The meaningful path** follows goal, reality, options, way forward: the area; why it matters; where you are now and where you want to get to; what got in the way; what you will try, and when.
+  - **Asks before it suggests.** Each question opens with the student's own words; ideas come after, as "Or start from one of these". For a grade, the student names the result they want from the whole scale up from their last result; the Log then says how far that is ("B4 to B3: one grade up"), with no advice. What realistic and stretch mean sits under Details.
+  - **The draft** comes from the answers with no AI, so the same answers give the same draft. It never sets a target the student did not name. It opens in the goal form for the student to change before setting.
+  - **The SMART path** reads the goal's five letters (a named target; a measure; within reach; a why; a date) and asks one question for each open letter only. A big jump is met with a question ("C6 to A1 is 5 grades up. What would make it within reach?"): a first step the student names, or keep it and plan the steps.
   - **The why** shows on the goal's page, with the letters; "Make it SMART" shows only while a letter is open.
   - **Private.** The answers stay in the goal and the backup, never in what is shared. No praise for what is not there, and no "missed".
 - **Done when:** a student answers five questions or fewer, sets the draft, and sees its why; and a goal with open letters becomes SMART by answering only those.
-- **Tests:** t31: `smartCheck` and `draftGoal`, the five question limit, skipping, Draft my goal now, the draft in the form, the SMART path, the words, the backup, axe.
+- **Tests:** t31: `smartCheck` and `draftGoal` (never a target the student did not name), the five question limit, skipping, Draft my goal now, the student naming the grade with no advice shown, the draft in the form, the SMART paths and the big jump, the icons, the words, the backup, axe.
 
 ### V5 Share a goal with a teacher
-- **Status:** next
+- **Status:** ready
 - **Needs:** V4
-- **Spec:** a student shares one goal with a teacher, coach or instructor, who replies with a note or a suggested change, through the share and reply already built (A3, A5). The goal stays private until the student shares it.
-- **Question for Harman:** should a teacher be able to suggest a goal, or only respond to the student's?
+- **Harman, 9 November:** a teacher responds to the student's goal only, at least for now.
+- **Spec:** a student shares one goal with a teacher, coach or instructor, who responds with a note, through the share and reply already built (A3, A5). The teacher does not set or suggest a goal. The goal stays private until the student shares it.
 
 ## S. Showing what is possible
 

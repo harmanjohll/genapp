@@ -77,7 +77,7 @@ A screen reader still needs a person. The **VoiceOver check for an iPad** (about
 
 Note anything that is silent, out of order, or unclear.
 
-## Version 4
+## Version 4, and Version 5
 
 Version 4 is the pilot with the twelve items built beside it in November 2026 (pull requests #110 to #119):
 - **Teachers.**
@@ -102,9 +102,9 @@ Since then, each release has its own number, shown at the bottom of every page:
 - **4.1 Fewer words.** One line and one action on each card, the rest under Details; Settings section by section on a phone; the version on every page; a note in Settings, About.
 - **4.2 Goals.** A Goals place: a subject grade from the last result to the next (G3 A1 to F9, G2 Grades 1 to 6, G1 A to D, with a realistic and a stretch target suggested), a competency, a CCA skill or the student's own, each with steps and dated checkpoints. Private, and in the backup.
 - **4.3 Calendar.** Beside Goals: what is coming up, a week, a month, or by goal. It shows the student's own assessments, CCA events and other events, goals' checkpoints and By dates, and the days plans name. One item, or everything coming up, goes into the student's own calendar as a file, with reminders.
-- **4.4 The goal coach.** New goal offers "Help me find a goal that matters to me": at most five questions (why, where I am, what got in the way, what I will try and when), any skipped, then a draft to change before setting. "Make it SMART" asks only what a goal is missing. A goal's page shows why it matters.
+- **5.0 The goal coach (Version 5).** New goal offers "Help me find a goal that matters to me": at most five coaching questions (why, where I am and where I want to get to, what got in the way, what I will try and when), any skipped, then a draft to change before setting. It asks before it suggests: the student names the target, and the Log never picks one. "Make it SMART" asks only what a goal is missing. A goal's page shows why it matters.
 
-Their specs, and what comes next (V5 sharing a goal with a teacher), are in `BACKLOG.md`.
+Their specs, and what comes next (V5 sharing a goal with a teacher, who responds), are in `BACKLOG.md`.
 
 ## From v3
 

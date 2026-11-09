@@ -845,7 +845,7 @@ function mergeGoals(mine, theirs){
 
 /* ---------- V4: the goal coach ----------
    Questions with a limit: at most five, one at a time, any of them skipped; then a draft built from the answers,
-   the same answers always giving the same draft. smartCheck reads a goal and says which of S, M, A, R and T it has. */
+   the same answers always giving the same draft. It asks before it suggests: the student names the target. smartCheck reads a goal and says which of S, M, A, R and T it has. */
 const COACH_WHY = ['To keep a pathway open', 'To feel more confident', 'To be ready for what comes next', 'For my team or my family'];
 const COACH_BLOCKS = [['practice', 'Not enough practice'], ['topic', 'Something I don’t get yet'], ['careless', 'Careless mistakes'], ['time', 'Time or stress'], ['none', 'Nothing yet']];
 const COACH_TRIES = {
@@ -872,7 +872,7 @@ function draftGoal(a){
   const lc = s => s ? s[0].toLowerCase() + s.slice(1) : '';
   const step = a.try ? (a.day ? `Every ${a.day}: ${lc(a.try)}` : a.try) : '';
   const g = {kind, why:String(a.why || '').trim(), steps:step ? [step] : []};
-  if (kind === 'grade'){ g.subject = a.subject || ''; g.level = GRADE_SCALES[a.level] ? a.level : 'G3'; g.now = a.now || ''; const t = gradeTargets(g.level, g.now); g.target = a.target || (t ? t.realistic : ''); g.result = 'wa'; }
+  if (kind === 'grade'){ g.subject = a.subject || ''; g.level = GRADE_SCALES[a.level] ? a.level : 'G3'; g.now = a.now || ''; g.target = a.target || ''; g.result = 'wa'; }   // the student's own target; the coach never picks one
   else if (kind === 'comp') g.sid = a.sid || '';
   else { g.title = String(a.title || '').trim(); g.nowText = String(a.nowText || '').trim(); if (kind === 'cca') g.cca = a.cca || ''; }
   return g;
@@ -887,7 +887,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '4.4';
+const VERSION_NO = '5.0';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -952,7 +952,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
-  'A goal coach: a few questions, then a draft goal that matters to you, or a check that your goal is SMART',
+  'Version 5: a goal coach. It asks a few questions first, then drafts a goal that matters to you, or checks your goal is SMART. You choose the target',
   'A calendar in Goals: what is coming up, by week, by month or by goal, with your own assessments and CCA events, goal checkpoints and plan days, ready for your own calendar',
   'Goals: a subject grade from your last result to your next, a competency, a CCA skill or your own, with steps and checkpoints. Only you see them',
   'Fewer words: one line and one action on each card, the rest under Details; Settings opens section by section on a phone; the version at the bottom of every page',
