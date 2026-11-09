@@ -15,7 +15,22 @@
     const walk = v => Array.isArray(v) ? v.map(walk) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, y]) => [k, walk(y)])) : typeof v === 'number' && v > 1.5e12 && v < 2.5e12 ? v + d : v;
     return walk(x);
   }
-  window.demoStudentDb = () => shifted(window.E21_DEMO.student);
+  // Sam's goals, made for today: a Chemistry grade, a Concert Band skill, and a competency
+  function demoGoals(){
+    const day = n => new Date(Date.now() + n * 864e5).toLocaleDateString('en-CA'); const t = Date.now();
+    const st = (typeof coreSet === 'function' ? coreSet().list : []).find(s => s.comp === 'communication' && s.band === 'upper');
+    const g = [{id:'dg1', kind:'grade', subject:'Chemistry', level:'G3', now:'B4', target:'B3', result:'eoy', by:day(9), steps:['Redo the questions I got wrong, each week', 'Ask Ms Lim about one thing I am stuck on, each week'], checks:[{id:'dc1', text:'Redo the WA2 paper', date:day(-3), done:true}, {id:'dc2', text:'Balance 10 equations without notes', date:day(2), done:false}], created:t - 20 * 864e5, updated:t},
+      {id:'dg2', kind:'cca', cca:'Concert Band', title:'Play my hardest passage cleanly', nowText:'Bars 32 to 40 at 80 beats a minute', toText:'At 100, with no stops', by:day(20), steps:['Practise it for 15 minutes after training'], checks:[{id:'dc3', text:'Play it for my section leader', date:day(6), done:false}], created:t - 10 * 864e5, updated:t}];
+    if (st) g.push({id:'dg3', kind:'comp', sid:st.id, by:day(30), steps:['Write a GROW after the lesson where it shows'], checks:[], created:t - 5 * 864e5, updated:t});
+    return g;
+  }
+  function demoEvents(){
+    const day = n => new Date(Date.now() + n * 864e5).toLocaleDateString('en-CA'); const t = Date.now();
+    return [{id:'de1', title:'Concert Band sectional', date:day(3), time:'15:30', type:'cca', goal:'dg2', created:t, updated:t},
+      {id:'de2', title:'Chemistry practical test', date:day(5), time:'', type:'assessment', goal:'dg1', created:t, updated:t},
+      {id:'de3', title:'History sources quiz', date:day(12), time:'', type:'assessment', goal:'', created:t, updated:t}];
+  }
+  window.demoStudentDb = () => { const db = shifted(window.E21_DEMO.student); const p = db.profiles && db.profiles[db.current]; if (p && !p.goals) p.goals = demoGoals(); if (p && !p.events) p.events = demoEvents(); return db; };
   window.demoConsoleStore = () => shifted(window.E21_DEMO.console);
 
   /* ---------- the tour ---------- */
@@ -28,6 +43,7 @@
     {go:hash('#/'), sel:'.wheelcard', title:'Where am I now?', text:'Each part of the wheel is a competency. It grows as Sam secures I can statements: two entries that back a statement, from two different subjects or CCAs, at least two weeks apart.'},
     {go:hash('#/c/critical'), sel:'#main', title:'One competency, one ladder', text:'Critical Thinking, step by step. Sam secured a statement with a History entry and a Geography entry, in Sam’s own words.'},
     {go:hash('#/journal/grow'), sel:'#main', title:'Journals', text:'Every GROW and ACT entry, by subject and CCA. Open one to see the coach’s question, Sam’s plan, and any teacher’s note beside the words it is about.'},
+    {go:hash('#/goals'), sel:'#main', title:'Goals', text:'From Sam’s last Chemistry result, B4, to B3 at the End of Year exam: realistic, with a stretch on offer. Steps and dated checkpoints, a Concert Band skill and a competency too, and a calendar of what is coming up. Only Sam sees them.'},
     {go:hash('#/sharing'), sel:'#main', title:'Sam decides who sees what', text:'Each teacher gets only what Sam chooses: the Chemistry teacher, Chemistry entries; the form teacher, the sections Sam opens. Nothing is shared by default.'},
     {go:hash('#/'), sel:'.navnew .btn, .acts .btn', title:'Try it', text:'Press New GROW and write about something from today. The coach asks a question back, offline. Then see the teacher’s side.', last:true, link:['See the teacher view', root + 'teacher.html?demo=1']},
   ] : [

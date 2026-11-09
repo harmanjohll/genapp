@@ -781,6 +781,7 @@ function route(){
   if (h === '#/journal') { location.hash = '#/journal/' + lastJournal(); return; }
   if (h.startsWith('#/setup')) return renderSetup();
   if (h.startsWith('#/sharing')) return renderSharing();
+  if (h.startsWith('#/goals')) return renderGoals();
   if (h.startsWith('#/settings')) return renderSettings();
   // a log already open never shows the welcome page: it would invite a second log
   if (h.startsWith('#/welcome')){ location.hash = '#/'; return; }
@@ -849,6 +850,8 @@ function mergeBackup(t, pr){
   for (const s of (xs.subjects || [])) if (!t.experiences.subjects.includes(s)){ t.experiences.subjects.push(s); other++; }
   if (!t.experiences.cca && xs.cca){ t.experiences.cca = xs.cca; other++; }
   if (!t.level && pr.level){ t.level = pr.level; other++; }
+  if (pr.goals){ t.goals = t.goals || []; other += mergeGoals(t.goals, pr.goals); }
+  if (pr.events){ t.events = t.events || []; other += mergeGoals(t.events, pr.events); }
   return {added, updated, drafts, other, any:added + updated + drafts + other > 0};
 }
 function mergeWords(r, from = 'that backup', verb = 'brought back'){
@@ -869,7 +872,7 @@ function wireSafe(){
    bottom, on a tablet under the top bar, and on a laptop in a sidebar (or across the top in
    the Editorial view) with New GROW and New ACT beside them. On a laptop a page can open
    into two leaves, or three columns on Home. */
-const TABS = [['home', '#/', 'Home', 'home'], ['comp', '#/c', 'Competencies', 'wheel'], ['journals', '#/journal', 'Journals', 'shelf'], ['settings', '#/settings', 'Settings', 'sliders']];
+const TABS = [['home', '#/', 'Home', 'home'], ['comp', '#/c', 'Competencies', 'wheel', 'E21CC'], ['journals', '#/journal', 'Journals', 'shelf'], ['goals', '#/goals', 'Goals', 'target'], ['settings', '#/settings', 'Settings', 'sliders']];
 const DESK = window.matchMedia ? window.matchMedia('(min-width:1024px)') : {matches:true};
 function isDesk(){ return !!DESK.matches; }
 function lastJournal(){ const k = me && me.prefs.journal && me.prefs.journal.kind; return ['grow', 'act', 'ask'].includes(k) ? k : 'grow'; }
@@ -883,10 +886,10 @@ function frame(inner, active, opts = {}){
     <header class="topbar">
       <a class="brand" href="#/" aria-label="${esc(t)}, ${esc(me.name)}: Home"><span class="avatar" aria-hidden="true">${avatarSvg(me.prefs.avatar)}</span><span class="bt"><span class="word">${esc(t)}<span class="vmark" aria-label="version ${SITE_MARK.slice(1)}">${SITE_MARK}</span></span><span class="sub">${esc(me.name)}${me.level ? ' · Sec ' + me.level : ''}</span></span></a>
     </header>
-    <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${label}</span></a>`).join('')}
+    <nav class="tabs" aria-label="Places in your log">${TABS.map(([id, , label, ic, short]) => `<a class="tab t-${id}${active === id ? ' on' : ''}" href="${href(id)}" aria-label="${label}"${active === id ? ' aria-current="page"' : ''}><span class="ti">${icon(ic)}</span><span class="tl">${short ? `<span class="tll">${label}</span><span class="tls">${short}</span>` : label}</span></a>`).join('')}
       <div class="navnew"><a class="btn" href="#/write/grow">${icon('plus')} New GROW</a><a class="btn sec" href="#/write/act">${icon('plus')} New ACT</a></div></nav>
     <main class="page fade${spread ? (inner.cols ? ' cols' : ' spread') : ''}${opts.cls ? ' ' + opts.cls : ''}" id="main" tabindex="-1"${spread && inner.split ? ` style="--split:${inner.split}"` : ''}>${body}</main>
-    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte<br>Your log is saved on this device${DEMO ? ' (demo: nothing is saved)' : GUEST ? ' (guest: nothing is saved)' : ''}. Back it up in Settings now and then.</footer>`;
+    <footer class="footer"><b>Beatty Secondary School</b> · Non Vi Sed Arte${DEMO ? '<br>Demo: nothing is saved.' : GUEST ? '<br>Guest: nothing is saved.' : ''}<span class="ver">E21CC Log ${esc(VERSION_NO)}</span></footer>`;
   // moving within the same view (another entry in the reader) keeps the scroll; a new view starts at the top
   const key = opts.key || ''; if (!key || key !== lastFrameKey) scrollTop(); lastFrameKey = key;
 }
@@ -909,7 +912,7 @@ function logLine(p, twin){
    beside the logs already here, so it cannot be mistaken for signing in. */
 /* Bring a log from a backup: on a new device it becomes the log here; where a log with that name is already here,
    it offers to add what is new to it (behind that log's PIN, if it has one), or to keep it separate. */
-function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">Bring your log back from a backup file, from Files or OneDrive.</p>
+function restoreCard(){ return GUEST ? '' : `<section class="card fade wrestore" aria-labelledby="wRestoreH"><h2 id="wRestoreH">New device?</h2><p class="tiny" style="margin-top:0">From a backup file in Files or OneDrive.</p>
   <label class="btn sec" for="wRestore">${icon('up')} Bring my log from a backup<input type="file" id="wRestore" accept="application/json,.json" hidden></label><div id="wRestoreOut" class="restoreout" aria-live="polite"></div></section>`; }
 function restoreAsNew(pr, opts = {}){
   const p = JSON.parse(JSON.stringify(pr)); if (db.profiles[p.id]) p.id = uid();
@@ -957,7 +960,7 @@ function testLogs(){
 function testCard(where){
   const logs = testLogs().filter(p => where === 'home' ? (me && sameName(p.name, me.name)) : true); if (!logs.length) return '';
   return `<section class="card fromtest" aria-labelledby="ftH"><h2 id="ftH">From the test version</h2>
-    <p class="tiny" style="margin-top:0">This device also has ${logs.length > 1 ? 'logs' : 'a log'} from the test version of the Log, which is now part of this one. Bring ${logs.length > 1 ? 'each' : 'it'} across to keep one log; nothing is doubled.</p>
+    <p class="tiny" style="margin-top:0">This device has ${logs.length > 1 ? 'logs' : 'a log'} from the test version. Bring ${logs.length > 1 ? 'each' : 'it'} across; nothing is doubled.</p>
     <ul class="ftlist">${logs.map(p => `<li><p><b>${esc(p.name)}</b> <span class="tiny">${esc(logLine(p))}</span></p><div class="row"><button type="button" class="btn small" data-fromtest="${esc(p.id)}">${icon('arrow')} Bring it across</button><button type="button" class="btn small ghost" data-fromtestleave="${esc(p.id)}">Leave it</button></div></li>`).join('')}</ul>
     <div id="ftOut" class="restoreout" aria-live="polite"></div></section>`;
 }
@@ -979,7 +982,7 @@ function renderWelcome(view){
   if (view === 'pin' && !known) view = 'choose';
   if (!profiles.length) view = 'new';
   const pre = db._preClass || '';
-  const guest = `<p class="tiny" style="margin-top:12px">Nothing here goes to a server unless you turn on an AI coach or share. Your log is saved in this browser, so back it up from Settings now and then. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p>`;
+  const guest = `<p class="tiny" style="margin-top:12px">Saved in this browser. Nothing goes online unless you share. <a href="?guest=1#/welcome">Try as a guest</a> (nothing saved).</p><p class="tiny ver">E21CC Log ${esc(VERSION_NO)}</p>`;
   const panel = view === 'pin' ? `
     <section class="card fade" id="wPin"><div class="wback"><span class="avatar" aria-hidden="true">${avatarSvg(known.prefs.avatar)}</span><div><h2>Welcome back, ${esc(known.name)}</h2><p class="tiny" style="margin:2px 0 0">${esc(logLine(known))}</p></div></div>
       <form id="pinForm" class="row" style="margin-top:14px"><label class="f grow" style="margin:0"><span>Your PIN</span><input class="in" name="pin" inputmode="numeric" maxlength="4" autocomplete="off" enterkeyhint="done" aria-describedby="pinMsg"></label><button class="btn" type="submit" style="margin-top:22px">${icon('arrow')} Open my log</button></form>
@@ -998,9 +1001,9 @@ function renderWelcome(view){
       <form id="newForm" autocomplete="on">
         <label class="f"><span>Your name</span><input class="in" name="name" required maxlength="60" placeholder="What your teachers call you" autocapitalize="words" autocomplete="name" enterkeyhint="next"></label>
         <div id="sameBox"></div>
-        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only needed if you share with a teacher. It is never sent to the AI coach.</small></label>
+        <label class="f"><span>School email <small style="display:inline">(optional)</small></span><input class="in" name="email" type="email" inputmode="email" maxlength="120" placeholder="name@students.edu.sg" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="email" enterkeyhint="next"><small>Only for sharing with a teacher.</small></label>
         ${pre ? `<label class="f"><span>Group code</span><input class="in" name="classCode" maxlength="16" value="${esc(pre)}" style="text-transform:uppercase" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off"><small>From your teacher.</small></label>` : ''}
-        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Stops classmates opening your log on a shared laptop. You will need it when this tab is closed and opened again.</small></label>
+        <label class="f"><span>4 digit PIN <small style="display:inline">(optional)</small></span><input class="in" name="pin" inputmode="numeric" pattern="\\d{4}" maxlength="4" placeholder="For shared devices" autocomplete="off" enterkeyhint="done"><small>Keeps classmates out on a shared device.</small></label>
         <button class="btn wide" type="submit">${icon('arrow')} Open my log</button>
       </form>
     </section>`;
@@ -1010,7 +1013,7 @@ function renderWelcome(view){
       <img src="assets/crest.png" alt="" class="crest">
       <h1>E21CC<br>Log <span class="vmark">${SITE_MARK}</span></h1>
       <p class="motto">GROW by reflecting. ACT on feedback.</p>
-      <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions. Write in your GROW and ACT journals. Your entries back Beatty’s I can statements, and your level in each competency grows from them.</p>
+      <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
     <div class="wcol">${panel}${testCard('welcome')}${restoreCard()}${guest}</div>
@@ -1186,7 +1189,7 @@ function compPanel(c, x, recent){
   return `<div class="cpa">${head}<p class="lvline"><span class="pill lv">${esc(levelWord(x))}</span>${meter(x.idx, `${c.label}: ${levelWord(x)}`)}</p><p class="tiny">${x.secured} of ${x.total} statements secured · ${esc(fromLine(x))}</p><ul class="cpstrands">${strands}</ul></div><div class="cpb">${x.L.next ? `<p class="nextlv">${esc(x.L.next)}</p>` : ''}${aim}${words}${open}</div>`;
 }
 function recentComp(st){ return COMPETENCIES.filter(c => st[c.id].last).sort((a, b) => st[b.id].last - st[a.id].last)[0] || COMPETENCIES[0]; }
-function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}Point at or tap a part of the wheel to see it here.</span></p>`; }
+function wheelHint(sNow, sAll, n){ return `<p class="tiny hint">${icon('wheel')}<span>${n ? `${plural(n, 'entry', 'entries')}. ` : ''}${sNow ? `You secured ${plural(sNow, 'statement')} this term. ` : sAll ? `You have secured ${plural(sAll, 'statement')} so far. ` : ''}</span></p>`; }
 function wireWheel(st, first){
   const panel = $('#cpanel'); if (!panel) return;
   const coarse = !!(window.matchMedia && matchMedia('(hover: none)').matches);
@@ -1201,7 +1204,8 @@ function wireWheel(st, first){
     a.addEventListener('click', ev => { const touch = ev.pointerType ? ev.pointerType !== 'mouse' : coarse; if (touch && sel !== a.dataset.comp){ ev.preventDefault(); show(a.dataset.comp); } });
   });
 }
-function nextItem(ic, html, href, go){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
+function more(html){ return html ? `<details class="more"><summary>Details</summary><p>${html}</p></details>` : ''; }
+function nextItem(ic, html, href, go, detail){ return `<li><span class="nxi" aria-hidden="true">${icon(ic)}</span><div><p>${html}</p>${more(detail)}${href ? `<a class="nxgo" href="${href}">${esc(go || 'Open')}</a>` : ''}</div></li>`; }
 /* ---------- D4: this term's rhythm, and milestones ----------
    Rhythm: one dot for each week of the term, Monday to Sunday from its start, filled when anything was written that
    week. No count of weeks in a row, nothing that resets, and nothing said about a week without an entry. */
@@ -1309,35 +1313,40 @@ function renderHome(){
   const outer = COMPETENCIES.filter(c => c.d !== 'sec');
   // immediate: what to do this week
   const now = [];
-  if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}, so your entries count towards the right statements.`, '#/setup', 'Set up'));
+  if (!setupDone()) now.push(nextItem('sliders', `<b>Set up your log.</b> ${!me.level ? 'Choose your Sec level' : 'Your Sec level is set'}${!me.level && !myExperiences().length ? ' and add' : !myExperiences().length ? '; now add' : ''}${!myExperiences().length ? ' a subject or CCA' : ''}.`, '#/setup', 'Set up'));
   const from = e => { const w = (e.context && e.context.name) || e.subject || ''; return `From your ${w ? esc(w) + ' ' : ''}${FRAMEWORKS[e.kind].name} on ${fmtDay(e.created)}`; };
   const ftc = followed ? `<p class="ftcount">${icon('check')} Plans you followed through: ${followed}</p>` : '';
   // D3: one prompt for this open; what it shows is not listed again below
   const popts = promptOptions(pl, almost); const promptKind = choosePrompt(popts);
   const plan = !pl || promptKind === 'plan' ? '' : pl.ask
     ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
-    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}. ${pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.'}</p>${ftc}</div></li>`;
+    : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}.</p>${more(pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.')}${ftc}</div></li>`;
   const nFirst = now.length;
-  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet. A backup is a file you keep, in OneDrive or Files, and it opens again on any device.</p><button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
-  if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b> An installed Log is kept safe on this device, and opens without wifi.</p><div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
+  if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet.</p>${more('A backup is a file you keep, in OneDrive or Files. It opens again on any device.')}<button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
+  if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b></p>${more('An installed Log is kept safe on this device, and opens without wifi.')}<div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
-  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”. ${esc(almost.missing)}`, `#/c/${almost.stmt.comp}`, 'See the statement'));
-  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week,</b> after your next learning experience. Two or three sentences for each question is enough.`, '#/write/grow', 'New GROW'));
+  if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”.`, `#/c/${almost.stmt.comp}`, 'See the statement', esc(almost.missing)));
+  { const today = ymd(Date.now()); const soon = calItems().find(it => it.kind === 'event' && it.date >= today && goalDate(it.date) <= addDays(Date.now(), 7));
+    if (soon) now.push(nextItem('clock', `<b>Coming up:</b> ${esc(soon.title)}, ${fmtDay(goalDate(soon.date))}${soon.time ? ', ' + esc(clockWords(soon.time)) : ''}.`, '#/goals/calendar', 'Calendar')); }
+  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week.</b>`, '#/write/grow', 'New GROW', 'After your next lesson or CCA session. Two or three sentences for each question is enough.'));
   if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
-  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read what your teachers wrote,</b> above. Each note sits beside the words it is about.`));
-  if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b> Write a GROW after your next learning experience, or an ACT when feedback comes back.`));
+  if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read your teachers’ notes,</b> above.`));
+  if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b>`, '', '', 'Write a GROW after your next lesson, or an ACT when feedback comes back.'));
   // longer term: this term and beyond
   const later = [];
-  if (aim) later.push(nextItem('star', `<b>Aiming for:</b> “${esc(aim.text.replace(/\.$/, ''))}”. You chose it in your ${FRAMEWORKS[aimEntry.kind].name} entry on ${fmtDay(aimEntry.created)}.`, `#/c/${aim.comp}`, 'See the ladder'));
+  const nextGoal = goalsOf().filter(g => !g.done).sort((a, b) => goalSoon(a) - goalSoon(b))[0];
+  if (nextGoal){ const c = goalNext(nextGoal); later.push(nextItem('target', `<b>Goal:</b> ${esc(goalTitle(nextGoal))}.`, '#/goals/' + nextGoal.id, 'Open', c ? esc(`Next checkpoint: ${c.text}, ${fmtDay(goalDate(c.date))}.`) : goalWhen(nextGoal) ? esc(`By ${goalWhen(nextGoal)}.`) : '')); }
+  else if (me.entries.length && !GUEST) later.push(nextItem('target', `<b>Set a goal.</b>`, '#/goals/new', 'Set a goal', 'A subject grade, a competency, a CCA skill or your own.'));
+  if (aim) later.push(nextItem('star', `<b>Aiming for:</b> “${esc(aim.text.replace(/\.$/, ''))}”.`, `#/c/${aim.comp}`, 'See the ladder', `You chose it in your ${FRAMEWORKS[aimEntry.kind].name} entry on ${fmtDay(aimEntry.created)}.`));
   const waiting = outer.filter(c => st[c.id].L.waiting);
-  if (waiting.length) later.push(nextItem('users', `<b>${esc(waiting.map(c => c.label).join(', '))}:</b> ready for ${esc(W[2])}. Share your log with a teacher and ask them to confirm it.`, '#/sharing', 'Share'));
+  if (waiting.length) later.push(nextItem('users', `<b>${esc(waiting.map(c => c.label).join(', '))}:</b> ready for ${esc(W[2])}.`, '#/sharing', 'Share', 'Share your log with a teacher and ask them to confirm it.'));
   const close = outer.filter(c => st[c.id].idx >= 1 && !st[c.id].L.waiting && st[c.id].L.need > 0 && st[c.id].idx < 3).sort((a, b) => st[a.id].L.need - st[b.id].L.need || st[b.id].idx - st[a.id].idx || st[b.id].last - st[a.id].last).slice(0, aim ? 1 : 2);
-  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}, now ${esc(W[x.idx - 1])}.</b> ${esc(x.L.next)}`, `#/c/${c.id}`, 'See what it takes')); }
+  for (const c of close){ const x = st[c.id]; later.push(nextItem('ladder', `<b>${esc(c.label)}, now ${esc(W[x.idx - 1])}.</b>`, `#/c/${c.id}`, 'See what it takes', esc(x.L.next))); }
   // nothing started yet: one way in, rather than a list of competencies that all say the same
-  if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b> Write an entry that shows it, then link it to one of its I can statements.`, '#/c', 'Choose one'));
-  if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Choose one area, read what you wrote this term, then answer three questions.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
-  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b> A weekly event in your calendar, at a time that suits you, with a link back here.`, '#/settings?s=remind', 'Set it up'));
-  if (!later.length) later.push(nextItem('ladder', `<b>Over the term,</b> write one GROW a week and one ACT whenever feedback comes back. Your levels grow from what you write.`));
+  if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b>`, '#/c', 'Choose one', 'Write an entry that shows it, then link it to one of its I can statements.'));
+  if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Look across one area.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
+  if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b>`, '#/settings?s=remind', 'Set it up', 'A weekly event in your own calendar, at a time that suits you.'));
+  if (!later.length) later.push(nextItem('ladder', `<b>Over the term:</b> one GROW a week, and an ACT for each piece of feedback.`));
   const first = recentComp(st);
   // replies from teachers come first (A5): who, on which entry, and the words
   unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
@@ -1388,11 +1397,11 @@ function renderHome(){
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
 function renderCompetencies(){
   const st = compStats(); const band = myBand();
-  const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? '<p class="tiny" style="margin:8px 0 0">The school is still writing its statements for these. Your entries show evidence of them in the meantime.</p>' : ''}</section>`;
+  const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? more('The school is still writing its statements for these. Your entries show evidence of them in the meantime.') : ''}</section>`;
   frame(leaves(`
     <section class="hero"><h1>Competencies</h1>
-      <p class="meta">Your level in each competency comes from the I can statements you secure. A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart.</p>
-      <p class="meta">${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Set your level in <a href="#/settings?s=me">Settings</a> so the log shows the right statements. Until then you see ${esc(bandLabel(band))}.`}</p>
+      <p class="meta">Your levels grow from the I can statements you secure.${me.level ? '' : ` <a href="#/settings?s=me">Set your Sec level</a> first.`}</p>
+      ${more(`A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart. ${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Until you set your level you see ${esc(bandLabel(band))}.`}`)}
       <details class="howlv"><summary>How levels work</summary><ol class="lvkey">${LOG_LEVELS.map((l, i) => `<li>${meter(i + 1, levelWords()[i])}<div><b>${esc(levelWords()[i])}</b><span>${esc(l.help)}</span></div></li>`).join('')}</ol></details>
     </section>
     ${dom(DOMAINS[0])}<!--leaf-->${dom(DOMAINS[1])}${dom(DOMAINS[2])}${dom(DOMAINS[3])}
@@ -1439,23 +1448,26 @@ function renderCompetency(id){
       ${L.none ? `<p class="lvline"><span class="pill lv none">Evidence only</span> <span class="tiny">${esc(fromLine(st))}</span></p>`
         : `<p class="lvline"><span class="pill lv">${esc(levelWord(st))}</span> <span class="tiny">${L.secured} of ${L.total} statements secured</span></p>${meter(st.idx, `${c.label}: ${levelWord(st)}`)}${L.next ? `<p class="nextlv">${esc(L.next)}</p>` : ''}${L.confirmed ? `<p class="tiny">${esc(levelWords()[2])} confirmed by ${esc(L.confirmed.by)} on ${fmtDate(L.confirmed.at)}.</p>` : ''}`}
     </section>`;
+  const evidLi = evidLiFor(id);
   const ladders = L.none ? `<section class="card flat"><h2>No statements yet</h2><p class="muted" style="margin:0">The school is still writing its I can statements for the social and emotional competencies. Until then, ${esc(c.label.toLowerCase())} shows as evidence from your entries, with no level.</p></section>` : L.strands.map(strandHtml).join('');
   frame(leaves(`${head}${ladders}<!--leaf-->
     <section class="card"><h2>Where it shows in your log</h2>${shows.length ? `<p class="tiny" style="margin:0 0 8px">${fromLine(st)[0].toUpperCase() + fromLine(st).slice(1)}. GROW and ACT entries both count.</p>` : ''}
-      ${shows.length ? `<ul class="evid">${shows.map(e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }).join('')}</ul>` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
+      ${shows.length ? `<ul class="evid">${shows.slice(0, 3).map(evidLi).join('')}</ul>${shows.length > 3 ? `<details class="more"><summary>All ${shows.length} entries</summary><ul class="evid">${shows.slice(3).map(evidLi).join('')}</ul></details>` : ''}` : `<p class="muted">Not in your log yet. ${esc(c.probe)}</p>`}
     </section>
     ${shownSoFar(id)}
-    <section class="card"><h2>What it means</h2><p class="plain">${esc(c.plain)}</p>${c.moe ? `<p class="tiny">MOE: “${esc(c.moe)}”</p>` : ''}</section>
+    <section class="card"><h2>What it means</h2><p class="plain">${esc(c.plain)}</p>${c.moe ? more(`MOE: “${esc(c.moe)}”`) : ''}</section>
     <section class="card flat"><h2>Go deeper</h2><p class="ask">${esc(c.probe)}</p>
       <p class="tiny" style="margin-top:10px">Once a term, look across ${esc(d.short.toLowerCase())}: ${across ? `<a href="#/entry/${across.id}">read this term’s look across</a>` : `<a href="#/across/${c.d}">look across ${termLabel(tk)}</a>`}.</p></section>
   `, 'minmax(0,3fr) minmax(0,2fr)'), 'comp', {wide:true, key:'comp:' + id});
   wireStmtButtons(id);
 }
+/* One entry where a competency shows: its kind, title, day, strength and best quote. */
+function evidLiFor(id){ return e => { const q = bestQuote(e, id); const lv = compLevelOf(e, id); return `<li><span class="badge b-${e.kind}">${FRAMEWORKS[e.kind].name}</span> <a href="#/entry/${e.id}"><b>${esc(entryTitle(e))}</b></a> <span class="tiny">${fmtDay(e.created)}</span> <span class="str ${lv === 3 ? 'strong' : lv === 2 ? 'clear' : 'none'}">${lv === 3 ? 'Strong' : lv === 2 ? 'Clear' : 'Glimpse or claim'}</span>${q ? `<q>${esc(q.quote)}</q>` : ''}</li>`; }; }
 /* Knowledge, skills, values and dispositions shown clearly so far, in plain words. */
 function shownSoFar(comp){
   const n = {}; for (const e of me.entries) for (const k of ((e.e21cc && e.e21cc.ksvd) || [])) if (k.strength !== 'glimpse' && (k.comp === comp || ((ksvdById(coreSet(), k.id) || {}).comp === comp))) n[k.id] = (n[k.id] || 0) + 1;
   const rows = Object.entries(n).sort((a, b) => b[1] - a[1]).map(([id, c]) => ({it:ksvdById(STMT_SET, id) || ksvdById(coreSet(), id), c})).filter(r => r.it);
-  return `<section class="card"><h2>What you have shown so far</h2>${rows.length ? `<ul class="kslist">${rows.map(r => `<li><span class="ktag t-${r.it.type}">${KSVD_NAME[r.it.type]}</span> <b>${esc(r.it.label)}</b> <small>in ${plural(r.c, 'entry', 'entries')}</small><span class="kplain">${esc(r.it.plain)}</span></li>`).join('')}</ul>` : `<p class="muted" style="margin:0">Nothing yet. When your words clearly show a piece of knowledge, a skill, a value or a habit of mind for this competency, it appears here.</p>`}</section>`;
+  return `<section class="card"><h2>What you have shown so far</h2>${rows.length ? `<ul class="kslist">${rows.map(r => `<li><details class="kitem"><summary><span class="ktag t-${r.it.type}">${KSVD_NAME[r.it.type]}</span> <b>${esc(r.it.label)}</b> <small>in ${plural(r.c, 'entry', 'entries')}</small></summary><span class="kplain">${esc(r.it.plain)}</span></details></li>`).join('')}</ul>` : `<p class="muted" style="margin:0">Nothing yet. It fills in as your entries show it clearly.</p>`}</section>`;
 }
 /* The competencies an entry claims follow the statements it is linked to, so the coach checks them. */
 function claimsFromLinks(links, old){
@@ -2244,8 +2256,7 @@ function renderSharing(){
     </section>`;
   };
   frame(leaves(`
-    <section class="hero"><h1>Sharing</h1><p class="meta">Your log is yours. Each adult sees only the sections you open to them, and only when you send.</p></section>
-    <div class="notice">GROW and ACT share whole entries. A domain shares your levels, the I can statements you have started or secured with the quotes that back them, and your look across. Teachers reply with notes in the margin, and can confirm the top level.</div>
+    <section class="hero"><h1>Sharing</h1><p class="meta">Each adult sees only what you open to them, and only when you send.</p>${more('GROW and ACT share whole entries. A domain shares your levels, the I can statements you have started or secured with the quotes that back them, and your look across. Teachers reply with notes in the margin, and can confirm the top level.')}</section>
     ${list.length ? list.map(card).join('') : `<section class="card flat"><p class="muted">No adults yet. A teacher’s group brings them in (Settings, Groups), or invite a mentor below.</p></section>`}<!--leaf-->
     <section class="card"><h2>Invite a mentor or another adult</h2>
       <form id="addAdult" class="two">
@@ -2254,7 +2265,7 @@ function renderSharing(){
         <label class="f"><span>Role</span><select class="in" name="role">${['Mentor','Counsellor','CCA coach','Year head','Other'].map(r => `<option>${r}</option>`).join('')}</select></label>
         <div class="f" style="align-self:end"><button class="btn" type="submit">${icon('plus')} Add</button></div>
       </form>
-      <p class="tiny">Adults without a drop box get a link you send them in Teams. It opens in their teacher console.</p>
+      <p class="tiny">No drop box? You send them a link in Teams.</p>
     </section>
   `, 'minmax(0,3fr) minmax(0,2fr)'), 'settings', {wide:true});
   $$('.adult').forEach(card => {
@@ -2373,16 +2384,275 @@ function milestonesCard(){
 }
 const REMIND_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const clockWords = hm => { const [h, m] = String(hm || '').split(':').map(Number); return `${h % 12 || 12}.${String(m || 0).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+/* ---------- V2: goals ----------
+   Four kinds: a subject grade (last result to next result), a competency (an I can statement to secure), a CCA skill,
+   and the student's own. Each has up to three steps and dated checkpoints. Goals stay on this device: they are in the
+   backup, never in what is shared. */
+let goalDraft = null;
+function goalsOf(){ return me.goals || (me.goals = []); }
+function goalById(id){ return goalsOf().find(g => g.id === id) || null; }
+function subjectLevel(name){
+  const lv = (me.experiences && me.experiences.levels) || {}; const k = Object.keys(lv).find(x => sameSubject(x, name));
+  if (k && GRADE_SCALES[String(lv[k]).slice(0, 2)]) return String(lv[k]).slice(0, 2);
+  const off = name ? subjectOffer(name, me.level) : null; const ls = off && off.levels ? off.levels.filter(l => GRADE_SCALES[l]) : [];
+  return ls.length === 1 ? ls[0] : '';
+}
+function goalKindLabel(k){ return (GOAL_KINDS.find(x => x[0] === k) || [k, 'Goal'])[1]; }
+function goalTitle(g){
+  if (g.kind === 'grade') return `${g.subject}: ${gradeLabel(g.level, g.now)} to ${gradeLabel(g.level, g.target)}`;
+  if (g.kind === 'comp'){ const s = statementById(g.sid); return s ? s.text.replace(/\.$/, '') : 'A competency'; }
+  return g.title || 'My goal';
+}
+function goalWhen(g){
+  const r = g.kind === 'grade' ? (g.result === 'other' ? (g.resultName || 'Another assessment') : ((RESULTS.find(x => x[0] === g.result) || [])[1] || '')) : '';
+  return [r, g.by ? fmtDay(goalDate(g.by)) : ''].filter(Boolean).join(', ');
+}
+function goalNext(g){ return (g.checks || []).filter(c => !c.done && c.date).sort((a, b) => goalDate(a.date) - goalDate(b.date))[0] || null; }
+function goalSoon(g){ const c = goalNext(g); return c ? goalDate(c.date) : g.by ? goalDate(g.by) : Infinity; }
+function goalCard(g){
+  const c = goalNext(g); const ticks = (g.checks || []).length;
+  return `<li class="goal${g.done ? ' done' : ''}"><a href="#/goals/${esc(g.id)}"><span class="kicker">${esc(goalKindLabel(g.kind))}</span><b>${esc(goalTitle(g))}</b>
+    <small>${esc([goalWhen(g) ? 'By ' + goalWhen(g) : '', c ? `Next: ${c.text}, ${fmtDay(goalDate(c.date))}` : '', ticks ? `${(g.checks || []).filter(x => x.done).length} of ${ticks} checkpoints` : ''].filter(Boolean).join(' · '))}</small></a></li>`;
+}
+function renderGoals(){
+  const {parts, q} = hashParts(); const id = parts[2] || '';
+  if (id === 'new') return renderGoalForm(q.get('k'), q.get('e'));
+  if (id === 'calendar') return renderCalendar();
+  if (id) return renderGoal(id);
+  const live = goalsOf().filter(g => !g.done).sort((a, b) => goalSoon(a) - goalSoon(b)); const done = goalsOf().filter(g => g.done);
+  frame(`
+    <section class="hero"><h1>Goals</h1>${goalsSwitch('goals')}<p class="meta">Where you are, and where you are going next.</p>
+      <div class="row"><a class="btn" href="#/goals/new" id="gNew">${icon('plus')} New goal</a></div></section>
+    ${live.length ? `<section class="card"><ul class="goals">${live.map(goalCard).join('')}</ul></section>`
+      : `<section class="card flat"><p class="muted" style="margin:0">No goals yet. Start with one: a subject, a competency, your CCA, or your own.</p></section>`}
+    ${done.length ? `<section class="card flat"><details class="more"><summary>Done (${done.length})</summary><ul class="goals">${done.map(goalCard).join('')}</ul></details></section>` : ''}
+  `, 'goals', {key:'goals'});
+}
+function renderGoalForm(kind, editId){
+  const old = editId ? goalById(editId) : null;
+  if (!goalDraft || goalDraft._for !== (editId || 'new:' + (kind || ''))) goalDraft = old ? Object.assign(JSON.parse(JSON.stringify(old)), {_for:editId}) : {_for:'new:' + (kind || ''), kind:kind || '', steps:['', '', ''], checks:[]};
+  const d = goalDraft; kind = d.kind;
+  if (!kind){
+    frame(`<section class="hero"><a class="backlink" href="#/goals">${icon('back')} Goals</a><h1>New goal</h1><p class="meta">What kind of goal?</p></section>
+      <section class="card"><div class="gkinds">${GOAL_KINDS.map(([k, l, h]) => `<a class="gkind" href="#/goals/new?k=${k}"><b>${esc(l)}</b><small>${esc(h)}</small></a>`).join('')}</div></section>`, 'goals', {key:'goals:new'});
+    return;
+  }
+  const field = (label, html, help) => `<label class="f"><span>${label}</span>${html}${help ? `<small>${help}</small>` : ''}</label>`;
+  const chips = (list, attr) => `<div class="chips">${list.map(t => `<button type="button" class="chip" ${attr}="${esc(t)}">${esc(t)}</button>`).join('')}</div>`;
+  let body = '';
+  if (kind === 'grade'){
+    const subs = myExperiences().filter(x => x.type === 'subject').map(x => x.name);
+    if (!d.subject && subs.length) d.subject = subs[0];
+    if (!d.level) d.level = subjectLevel(d.subject) || 'G3';
+    const scale = GRADE_SCALES[d.level]; if (d.now && !scale.includes(d.now)) d.now = ''; if (d.target && !gradeChoices(d.level, d.now).includes(d.target)) d.target = '';
+    const sug = d.now ? gradeTargets(d.level, d.now) : null;
+    body = `${subs.length ? field('Subject', `<select class="in" id="gSubject">${subs.map(s => `<option ${sameSubject(s, d.subject) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>`) : field('Subject', `<input class="in" id="gSubjectText" value="${esc(d.subject || '')}" maxlength="60" placeholder="Which subject?">`)}
+      <div class="f"><span class="flabel" id="gLvL">Level</span><div class="seg" role="group" aria-labelledby="gLvL">${['G3', 'G2', 'G1'].map(l => `<button type="button" data-glevel="${l}" class="${d.level === l ? 'on' : ''}" aria-pressed="${d.level === l}">${l}</button>`).join('')}</div><small>${esc(GRADE_NAMES[d.level])}</small></div>
+      ${field('Your last result', `<select class="in" id="gNow"><option value="">Choose</option>${scale.map(g => `<option value="${g}" ${d.now === g ? 'selected' : ''}>${esc(gradeLabel(d.level, g))}</option>`).join('')}</select>`)}
+      <div class="f"><span class="flabel">Your next result</span>
+        ${sug ? `<div class="gsug">${sug.top ? `<button type="button" class="chip${d.target === sug.realistic ? ' on' : ''}" data-gtarget="${sug.realistic}">Keep ${esc(gradeLabel(d.level, sug.realistic))}</button>`
+          : `<button type="button" class="chip${d.target === sug.realistic ? ' on' : ''}" data-gtarget="${sug.realistic}">Realistic: ${esc(gradeLabel(d.level, sug.realistic))}</button>${sug.stretch !== sug.realistic ? `<button type="button" class="chip${d.target === sug.stretch ? ' on' : ''}" data-gtarget="${sug.stretch}">Stretch: ${esc(gradeLabel(d.level, sug.stretch))}</button>` : ''}`}</div>` : '<small>Choose your last result first.</small>'}
+        ${d.now ? `<select class="in" id="gTarget" aria-label="Your next result"><option value="">Or choose</option>${gradeChoices(d.level, d.now).map(g => `<option value="${g}" ${d.target === g ? 'selected' : ''}>${esc(gradeLabel(d.level, g))}</option>`).join('')}</select>` : ''}
+        ${more('Realistic is one grade up from your last result; a stretch is two. Both are fine. Pick the one you will work for.')}</div>
+      <div class="f"><span class="flabel" id="gResL">When</span><div class="seg wrap" role="group" aria-labelledby="gResL">${RESULTS.map(([k, l]) => `<button type="button" data-gresult="${k}" class="${d.result === k ? 'on' : ''}" aria-pressed="${d.result === k}">${esc(l)}</button>`).join('')}</div></div>
+      ${d.result === 'other' ? field('Which assessment', `<input class="in" id="gResName" value="${esc(d.resultName || '')}" maxlength="60" placeholder="e.g. Science practical test">`) : ''}`;
+  } else if (kind === 'comp'){
+    const comps = COMPETENCIES.filter(c => strandsOf(STMT_SET, c.id).length);
+    const cur = d.sid ? statementById(d.sid) : null; const comp = d._comp != null ? d._comp : cur ? cur.comp : '';
+    const list = comp ? myStatements().concat(otherStatements()).filter(s => s.comp === comp) : [];
+    body = `${field('Competency', `<select class="in" id="gComp"><option value="">Choose a competency</option>${comps.map(c => `<option value="${c.id}" ${comp === c.id ? 'selected' : ''}>${esc(c.label)}</option>`).join('')}</select>`)}
+      ${field('I can statement', `<select class="in" id="gSid" ${comp ? '' : 'disabled'}><option value="">${comp ? 'Choose one' : 'Choose a competency first'}</option>${list.map(s => `<option value="${esc(s.id)}" ${d.sid === s.id ? 'selected' : ''}>${esc(s.text)}${s.band !== myBand() ? ' (' + (s.band === 'upper' ? 'stretch' : 'earlier ground') + ')' : ''}</option>`).join('')}</select>`)}`;
+  } else {
+    const ccas = myExperiences().filter(x => x.type === 'cca').map(x => x.name);
+    if (kind === 'cca' && !d.cca && ccas.length) d.cca = ccas[0];
+    const presets = kind === 'cca' ? (CCA_PRESETS[ccaGroup(d.cca)] || CCA_PRESETS.Clubs) : OWN_PRESETS;
+    body = `${kind === 'cca' ? (ccas.length > 1 ? field('CCA', `<select class="in" id="gCca">${ccas.map(c => `<option ${c === d.cca ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>`) : field('CCA', `<input class="in" id="gCcaText" value="${esc(d.cca || '')}" maxlength="60" placeholder="Your CCA">`)) : ''}
+      <div class="f"><span class="flabel">Start from</span>${chips(presets, 'data-gpreset')}</div>
+      ${field('Your goal', `<input class="in" id="gTitle" value="${esc(d.title || '')}" maxlength="90" placeholder="In your own words">`)}
+      ${field('Where you are now <small style="display:inline">(optional)</small>', `<input class="in" id="gNowText" value="${esc(d.nowText || '')}" maxlength="90">`)}
+      ${field('Where you want to be <small style="display:inline">(optional)</small>', `<input class="in" id="gToText" value="${esc(d.toText || '')}" maxlength="90">`)}`;
+  }
+  const steps = [0, 1, 2].map(i => `<input class="in" data-gstep="${i}" value="${esc((d.steps || [])[i] || '')}" maxlength="90" aria-label="Step ${i + 1}" placeholder="${i === 0 ? 'What will you do each week?' : 'Another step (optional)'}">`).join('');
+  frame(`<section class="hero"><a class="backlink" href="${old ? '#/goals/' + esc(old.id) : '#/goals/new'}">${icon('back')} ${old ? 'Back' : 'Kinds'}</a><h1>${old ? 'Edit goal' : esc(goalKindLabel(kind))}</h1></section>
+    <section class="card goalform">${body}
+      ${field('By <small style="display:inline">(optional)</small>', `<input class="in" id="gBy" type="date" value="${esc(d.by || '')}">`)}
+      <div class="f"><span class="flabel">Steps</span><div class="gsteps-in">${steps}</div>${chips(STEP_PRESETS[kind] || [], 'data-gsteppre')}</div>
+      <p class="tiny" id="gMsg" role="alert"></p>
+      <div class="row"><button type="button" class="btn" id="gSave">${icon('check')} ${old ? 'Save' : 'Set this goal'}</button><a class="linkbtn" href="${old ? '#/goals/' + esc(old.id) : '#/goals'}">Cancel</a></div>
+      <p class="tiny">Only you see your goals, unless you choose to share.</p></section>`, 'goals', {key:'goals:form'});
+  wireGoalForm(old);
+}
+function wireGoalForm(old){
+  const d = goalDraft; const keep = fn => { const y = window.scrollY; fn(); renderGoalForm(d.kind, old && old.id); window.scrollTo(0, y); };
+  const val = id => ($('#' + id) || {}).value;
+  const collectGoal = () => {
+    if (val('gSubjectText') !== undefined) d.subject = val('gSubjectText').trim();
+    for (const [id, k] of [['gResName', 'resultName'], ['gTitle', 'title'], ['gNowText', 'nowText'], ['gToText', 'toText'], ['gCcaText', 'cca'], ['gBy', 'by']]) if (val(id) !== undefined) d[k] = val(id).trim();
+    d.steps = $$('[data-gstep]').map(i => i.value.trim());
+  };
+  const on = (id, fn) => { const el = $('#' + id); if (el) el.onchange = () => { collectGoal(); keep(() => fn(el.value)); }; };
+  on('gSubject', v => { d.subject = v; d.level = subjectLevel(v) || d.level; });
+  on('gNow', v => { d.now = v; const s = gradeTargets(d.level, v); if (s && !d.target) d.target = s.realistic; });
+  on('gTarget', v => { d.target = v; });
+  on('gComp', v => { d._comp = v; d.sid = ''; });
+  on('gSid', v => { d.sid = v; });
+  on('gCca', v => { d.cca = v; });
+  $$('[data-glevel]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { if (d.level !== b.dataset.glevel){ d.level = b.dataset.glevel; d.now = ''; d.target = ''; } }); });
+  $$('[data-gtarget]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { d.target = b.dataset.gtarget; }); });
+  $$('[data-gresult]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { d.result = b.dataset.gresult; }); });
+  $$('[data-gpreset]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { d.title = b.dataset.gpreset; }); });
+  $$('[data-gsteppre]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { const i = d.steps.findIndex(s => !s); if (i >= 0) d.steps[i] = b.dataset.gsteppre; else d.steps[2] = b.dataset.gsteppre; }); });
+  $('#gSave').onclick = () => {
+    collectGoal();
+    const miss = d.kind === 'grade' ? (!d.subject ? 'Choose a subject.' : !d.now ? 'Choose your last result.' : !d.target ? 'Choose your next result.' : '') : d.kind === 'comp' ? (!d.sid ? 'Choose an I can statement.' : '') : (!d.title ? 'Write your goal, or start from one above.' : '');
+    if (miss){ $('#gMsg').textContent = miss; return; }
+    const g = Object.assign({}, d); delete g._for; delete g._comp; g.steps = (g.steps || []).filter(Boolean).slice(0, 3);
+    g.updated = Date.now();
+    if (old){ const i = goalsOf().findIndex(x => x.id === old.id); goalsOf()[i] = Object.assign(old, g); }
+    else { g.id = uid(); g.created = g.updated; g.checks = g.checks || []; goalsOf().push(g); }
+    saveDb(); goalDraft = null; toast(old ? 'Saved.' : 'Goal set.'); location.hash = '#/goals/' + (old ? old.id : g.id);
+  };
+}
+function renderGoal(id){
+  const g = goalById(id); if (!g){ location.hash = '#/goals'; return; }
+  const checks = (g.checks || []).slice().sort((a, b) => (goalDate(a.date) || Infinity) - (goalDate(b.date) || Infinity));
+  const nowTo = g.kind === 'grade' ? `<p class="gnowto"><span><small>Last result</small><b>${esc(gradeLabel(g.level, g.now))}</b></span>${icon('arrow')}<span><small>Next result</small><b>${esc(gradeLabel(g.level, g.target))}</b></span></p>`
+    : (g.nowText || g.toText) ? `<p class="gnowto"><span><small>Now</small><b>${esc(g.nowText || '…')}</b></span>${icon('arrow')}<span><small>Next</small><b>${esc(g.toText || '…')}</b></span></p>` : '';
+  const sec = g.kind === 'comp' && statementById(g.sid) ? statementStatus(me.entries, statementById(g.sid)) : null;
+  frame(`<section class="hero"><a class="backlink" href="#/goals">${icon('back')} Goals</a><p class="kicker">${esc(goalKindLabel(g.kind))}${g.kind === 'grade' ? ' · ' + esc(g.level) : g.kind === 'cca' && g.cca ? ' · ' + esc(g.cca) : ''}</p><h1>${esc(goalTitle(g))}</h1>
+      ${goalWhen(g) ? `<p class="meta">By ${esc(goalWhen(g))}</p>` : ''}${g.done ? `<p class="pill lv">Done${g.doneAt ? ' · ' + esc(fmtDay(g.doneAt)) : ''}</p>` : ''}</section>
+    <section class="card">${nowTo}
+      ${sec ? `<p class="tiny">${sec.secured ? 'Secured.' : esc(sec.missing || 'Not started yet.')} <a href="#/c/${esc(statementById(g.sid).comp)}">See the statement</a></p>` : ''}
+      ${(g.steps || []).length ? `<h2>Steps</h2><ul class="gsteps-list">${g.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}</section>
+    <section class="card"><h2>Checkpoints</h2>
+      ${checks.length ? `<ul class="gchecks">${checks.map(c => `<li><label><input type="checkbox" data-gcheck="${esc(c.id)}" ${c.done ? 'checked' : ''}><span>${esc(c.text)}${c.date ? ` <small>${esc(fmtDay(goalDate(c.date)))}</small>` : ''}</span></label><button type="button" class="linkbtn" data-gdelcheck="${esc(c.id)}" aria-label="Remove ${esc(c.text)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="muted">Small steps on the way, with a date. Tick them as you go.</p>'}
+      <div class="gaddcheck"><input class="in" id="gCheckText" maxlength="80" placeholder="e.g. Redo the WA1 paper" aria-label="New checkpoint"><input class="in" id="gCheckDate" type="date" aria-label="Its date"><button type="button" class="btn small sec" id="gCheckAdd">${icon('plus')} Add</button></div></section>
+    ${g.kind === 'grade' && !g.done ? `<section class="card flat"><h2>Got your result?</h2><div class="row"><select class="in" id="gGot" aria-label="Your result"><option value="">Choose your result</option>${GRADE_SCALES[g.level].map(x => `<option value="${x}">${esc(gradeLabel(g.level, x))}</option>`).join('')}</select><button type="button" class="btn small" id="gGotSave">Record it</button></div></section>` : ''}
+    ${g.got ? `<section class="card flat"><p>Result: <b>${esc(gradeLabel(g.level, g.got))}</b>. ${gradeIndex(g.level, g.got) <= gradeIndex(g.level, g.target) ? 'You reached your goal.' : 'Not this time. Look at what helped, and go again.'}</p><a class="btn small" href="#/goals/new?k=grade" id="gAgain">${icon('plus')} Next goal from here</a></section>` : ''}
+    <div class="row gactions"><a class="btn small sec" href="#/goals/new?k=${esc(g.kind)}&e=${esc(g.id)}">${icon('edit')} Edit</a><button type="button" class="btn small sec" id="gDone">${g.done ? 'Not done yet' : `${icon('check')} Mark as done`}</button><button type="button" class="linkbtn" id="gDel">Delete</button></div>
+  `, 'goals', {key:'goal:' + id});
+  const save = (msg) => { g.updated = Date.now(); saveDb(); if (msg) toast(msg); route(); };
+  $$('[data-gcheck]').forEach(b => b.onchange = () => { const c = g.checks.find(x => x.id === b.dataset.gcheck); if (c){ c.done = b.checked; c.doneAt = b.checked ? Date.now() : null; save(b.checked ? 'Ticked.' : ''); } });
+  $$('[data-gdelcheck]').forEach(b => b.onclick = () => { g.checks = g.checks.filter(x => x.id !== b.dataset.gdelcheck); save('Removed.'); });
+  $('#gCheckAdd').onclick = () => { const t = $('#gCheckText').value.trim(); if (!t){ $('#gCheckText').focus(); return; } g.checks = g.checks || []; g.checks.push({id:uid(), text:t, date:$('#gCheckDate').value || '', done:false}); save('Checkpoint added.'); };
+  $('#gDone').onclick = () => { g.done = !g.done; g.doneAt = g.done ? Date.now() : null; save(g.done ? 'Marked as done.' : ''); };
+  $('#gDel').onclick = () => { dialog(`<h2>Delete this goal?</h2><p>${esc(goalTitle(g))}</p><div class="row"><button type="button" class="btn" id="gDelYes">Delete</button><button type="button" class="btn ghost" id="gDelNo">Keep it</button></div>`);
+    $('#gDelYes').onclick = () => { me.goals = goalsOf().filter(x => x.id !== g.id); saveDb(); closeDialog(); toast('Deleted.'); location.hash = '#/goals'; }; $('#gDelNo').onclick = closeDialog; };
+  const gs = $('#gGotSave'); if (gs) gs.onclick = () => { const v = $('#gGot').value; if (!v) return; g.got = v; g.gotAt = Date.now(); if (gradeIndex(g.level, v) <= gradeIndex(g.level, g.target)){ g.done = true; g.doneAt = Date.now(); } save('Result recorded.'); };
+  const ag = $('#gAgain'); if (ag) ag.onclick = ev => { ev.preventDefault(); goalDraft = {_for:'new:grade', kind:'grade', subject:g.subject, level:g.level, now:g.got, target:(gradeTargets(g.level, g.got) || {}).realistic || '', steps:['', '', ''], checks:[]}; location.hash = '#/goals/new?k=grade'; };
+}
+/* ---------- V3: the calendar ----------
+   One calendar for the T in SMART: the student's own events (an assessment, a CCA event, something else), goals'
+   checkpoints and By dates, and the days plans name. Four views: coming up, a week, a month, and by goal. The Log
+   cannot send notifications, so reminders go to the student's own calendar as a file. */
+const EVENT_TYPES = [['assessment', 'Assessment'], ['cca', 'CCA'], ['other', 'Other']];
+const CAL_VIEWS = [['list', 'Coming up'], ['week', 'Week'], ['month', 'Month'], ['goal', 'By goal']];
+function eventsOf(){ return me.events || (me.events = []); }
+const ymd = t => new Date(t).toLocaleDateString('en-CA');
+function goalsSwitch(on){ return `<nav class="seg gswitch" aria-label="Goals and calendar"><a href="#/goals" class="${on === 'goals' ? 'on' : ''}"${on === 'goals' ? ' aria-current="page"' : ''}>Goals</a><a href="#/goals/calendar" class="${on === 'calendar' ? 'on' : ''}"${on === 'calendar' ? ' aria-current="page"' : ''}>Calendar</a></nav>`; }
+function calItems(){
+  const out = [];
+  for (const ev of eventsOf()) out.push({key:'e:' + ev.id, kind:'event', type:ev.type || 'other', title:ev.title, date:ev.date, time:ev.time || '', goal:ev.goal || '', id:ev.id});
+  for (const g of goalsOf()) if (!g.done){
+    for (const c of (g.checks || [])) if (c.date) out.push({key:'c:' + g.id + ':' + c.id, kind:'check', title:c.text, date:c.date, goal:g.id, done:!!c.done});
+    if (g.by) out.push({key:'b:' + g.id, kind:'by', title:goalTitle(g), date:g.by, goal:g.id});
+  }
+  const since = Date.now() - 30 * 864e5;
+  for (const e of me.entries) if (e.created >= since && e.kind !== 'across' && String(planOf(e) || '').trim()){
+    const pc = (me.planChecks || {})[e.id]; if (pc && (pc.answer === 'yes' || pc.answer === 'partly')) continue;
+    const due = planDue(planOf(e), e.created); if (due) out.push({key:'p:' + e.id, kind:'plan', title:planOf(e), date:ymd(due), eid:e.id});
+  }
+  return out.sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
+}
+const CAL_TAG = {check:'Checkpoint', by:'Goal', plan:'Plan'};
+function calTag(it){ return it.kind === 'event' ? (EVENT_TYPES.find(x => x[0] === it.type) || [0, 'Other'])[1] : CAL_TAG[it.kind]; }
+function weekLabel(w){ const tp = termPos(addDays(w, 2)); return `${tp.inTerm ? `Term ${tp.term} · Week ${tp.week} · ` : ''}from ${fmtDay(w)}`; }
+function calRow(it, showDay){
+  const t = goalDate(it.date); const g = it.goal ? goalById(it.goal) : null;
+  const href = it.kind === 'plan' ? '#/entry/' + it.eid : it.goal && it.kind !== 'event' ? '#/goals/' + it.goal : '';
+  const label = `<span class="ctag t-${esc(it.kind === 'event' ? it.type : it.kind)}">${esc(calTag(it))}</span> <b>${esc(it.title)}</b>${it.time ? ` <small>${esc(clockWords(it.time))}</small>` : ''}${g && it.kind === 'event' ? ` <small>· ${esc(goalTitle(g))}</small>` : ''}`;
+  return `<li class="crow${it.done ? ' done' : ''}">${showDay ? `<span class="cday" aria-hidden="true"><b>${new Date(t).getDate()}</b><small>${new Date(t).toLocaleDateString('en-SG', {weekday:'short'})}</small></span>` : ''}
+    <div class="cbody">${showDay ? `<span class="sr">${esc(fmtDay(t))}: </span>` : ''}${it.kind === 'event' ? `<button type="button" class="cev" data-cev="${esc(it.id)}">${label}</button>` : href ? `<a href="${href}">${label}</a>` : label}</div></li>`;
+}
+function renderCalendar(){
+  const {q} = hashParts(); const view = CAL_VIEWS.some(v => v[0] === q.get('v')) ? q.get('v') : 'list';
+  const today = ymd(Date.now()); const at = /^\d{4}-\d{2}-\d{2}$/.test(q.get('d') || '') ? q.get('d') : today;
+  const items = calItems(); const link = (v, d) => `#/goals/calendar?v=${v}${d ? '&d=' + d : ''}`;
+  const nav = (prev, label, next, what) => `<div class="cnav"><a class="btn small ghost" href="${prev}" aria-label="Previous ${what}">${icon('back')}</a><b>${esc(label)}</b><a class="btn small ghost" href="${next}" aria-label="Next ${what}">${icon('arrow')}</a></div>`;
+  let body = '';
+  if (view === 'list'){
+    const up = items.filter(it => it.date >= today && !it.done).slice(0, 40); const weeks = new Map();
+    for (const it of up){ const w = weekKey(goalDate(it.date)); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(it); }
+    body = up.length ? [...weeks].map(([w, list]) => `<h2 class="cweek">${esc(weekLabel(w))}</h2><ul class="clist">${list.map(it => calRow(it, true)).join('')}</ul>`).join('')
+      : '<p class="muted" style="margin:0">Nothing coming up. Add an assessment or a CCA event, or give a goal a date.</p>';
+  } else if (view === 'week'){
+    const w = weekKey(goalDate(at)); const days = [0, 1, 2, 3, 4, 5, 6].map(i => ymd(addDays(w, i)));
+    body = nav(link('week', ymd(addDays(w, -7))), weekLabel(w), link('week', ymd(addDays(w, 7))), 'week') + `<ul class="cdays">${days.map(d => { const list = items.filter(it => it.date === d);
+      return `<li class="${d === today ? 'today' : ''}"><h2>${esc(fmtDay(goalDate(d)))}${d === today ? ' <small>Today</small>' : ''}</h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, false)).join('')}</ul>` : '<p class="tiny">Nothing</p>'}</li>`; }).join('')}</ul>`;
+  } else if (view === 'month'){
+    const d0 = new Date(goalDate(at)); const start = weekKey(new Date(d0.getFullYear(), d0.getMonth(), 1).getTime());
+    const month = d0.toLocaleDateString('en-SG', {month:'long', year:'numeric'}); const cells = Array.from({length:42}, (_, i) => ymd(addDays(start, i)));
+    const list = items.filter(it => it.date === at);
+    body = nav(link('month', ymd(new Date(d0.getFullYear(), d0.getMonth() - 1, 1))), month, link('month', ymd(new Date(d0.getFullYear(), d0.getMonth() + 1, 1))), 'month')
+      + `<div class="cgrid">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(x => `<span class="cgh" aria-hidden="true">${x}</span>`).join('')}${cells.map(d => { const n = items.filter(it => it.date === d).length; const inM = new Date(goalDate(d)).getMonth() === d0.getMonth();
+        return `<a class="cgc${inM ? '' : ' out'}${d === today ? ' today' : ''}${d === at ? ' sel' : ''}" href="${link('month', d)}" aria-label="${esc(fmtDay(goalDate(d)))}${n ? ', ' + plural(n, 'item') : ''}"${d === at ? ' aria-current="date"' : ''}><span>${new Date(goalDate(d)).getDate()}</span>${n ? `<i aria-hidden="true">${n}</i>` : ''}</a>`; }).join('')}</div>
+      <ul class="cmlist">${cells.filter(d => new Date(goalDate(d)).getMonth() === d0.getMonth()).map(d => [d, items.filter(it => it.date === d).length]).filter(([, n]) => n).map(([d, n]) => `<li><a href="${link('month', d)}"${d === at ? ' aria-current="date"' : ''}>${esc(fmtDay(goalDate(d)))} <small>${plural(n, 'item')}</small></a></li>`).join('') || '<li class="tiny">Nothing this month.</li>'}</ul>
+      <h2 class="cweek">${esc(fmtDay(goalDate(at)))}</h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, false)).join('')}</ul>` : '<p class="tiny">Nothing on this day.</p>'}`;
+  } else {
+    const gs = goalsOf().filter(g => !g.done);
+    body = gs.length ? gs.map(g => { const list = items.filter(it => it.goal === g.id); return `<section class="cgoal"><h2><a href="#/goals/${esc(g.id)}">${esc(goalTitle(g))}</a></h2>${list.length ? `<ul class="clist">${list.map(it => calRow(it, true)).join('')}</ul>` : '<p class="tiny">No dates yet. Add a checkpoint or a By date.</p>'}</section>`; }).join('')
+      : '<p class="muted" style="margin:0">No goals yet. <a href="#/goals/new">Set one</a>.</p>';
+  }
+  const upcoming = items.filter(it => it.date >= today && !it.done);
+  frame(`<section class="hero"><h1>Calendar</h1>${goalsSwitch('calendar')}
+      <nav class="seg cviews" aria-label="Calendar views">${CAL_VIEWS.map(([k, l]) => `<a href="${link(k, k === view ? q.get('d') : '')}" class="${view === k ? 'on' : ''}"${view === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav></section>
+    <section class="card cal">${body}</section>
+    <section class="card flat"><div class="row"><button type="button" class="btn small" id="cAdd">${icon('plus')} Add to the calendar</button>${upcoming.length ? `<button type="button" class="btn small sec" id="cIcs">${icon('down')} Put these in my calendar</button>` : ''}</div>
+      ${more('The Log cannot send notifications. Put these in my calendar saves a file that your phone or laptop calendar opens, with a reminder for each item.')}</section>`, 'goals', {key:'cal:' + view});
+  $('#cAdd').onclick = () => eventDialog(null);
+  const ci = $('#cIcs'); if (ci) ci.onclick = () => icsOut(upcoming.slice(0, 60));
+  $$('[data-cev]').forEach(b => b.onclick = () => eventDialog(eventsOf().find(x => x.id === b.dataset.cev)));
+}
+function eventDialog(ev){
+  const e = ev || {date:ymd(Date.now()), type:'assessment'}; const live = goalsOf().filter(g => !g.done);
+  dialog(`<h2>${ev ? 'Edit' : 'Add to the calendar'}</h2>
+    <label class="f"><span>What</span><input class="in" id="evTitle" maxlength="80" value="${esc(e.title || '')}" placeholder="e.g. Chemistry WA2"></label>
+    <div class="f"><span class="flabel" id="evTypeL">Kind</span><div class="seg" role="group" aria-labelledby="evTypeL">${EVENT_TYPES.map(([k, l]) => `<button type="button" data-evtype="${k}" class="${e.type === k ? 'on' : ''}" aria-pressed="${e.type === k}">${l}</button>`).join('')}</div></div>
+    <div class="row2"><label class="f"><span>Day</span><input class="in" id="evDate" type="date" value="${esc(e.date || '')}"></label><label class="f"><span>Time <small style="display:inline">(optional)</small></span><input class="in" id="evTime" type="time" value="${esc(e.time || '')}"></label></div>
+    ${live.length ? `<label class="f"><span>For a goal <small style="display:inline">(optional)</small></span><select class="in" id="evGoal"><option value="">None</option>${live.map(g => `<option value="${esc(g.id)}" ${e.goal === g.id ? 'selected' : ''}>${esc(goalTitle(g))}</option>`).join('')}</select></label>` : ''}
+    <p class="tiny" id="evMsg" role="alert"></p>
+    <div class="row"><button type="button" class="btn" id="evSave">${icon('check')} Save</button>${ev ? `<button type="button" class="btn small sec" id="evIcs">${icon('down')} Put it in my calendar</button><button type="button" class="linkbtn" id="evDel">Delete</button>` : ''}<button type="button" class="linkbtn" id="evCancel">Cancel</button></div>`);
+  let type = e.type || 'other';
+  $$('[data-evtype]').forEach(b => b.onclick = () => { type = b.dataset.evtype; $$('[data-evtype]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); });
+  $('#evCancel').onclick = closeDialog;
+  $('#evSave').onclick = () => {
+    const title = $('#evTitle').value.trim(), date = $('#evDate').value;
+    if (!title || !date){ $('#evMsg').textContent = !title ? 'Say what it is.' : 'Choose a day.'; return; }
+    const rec = Object.assign(ev || {id:uid(), created:Date.now()}, {title, date, time:$('#evTime').value || '', type, goal:($('#evGoal') || {}).value || '', updated:Date.now()});
+    if (!ev) eventsOf().push(rec); saveDb(); closeDialog(); toast(ev ? 'Saved.' : 'Added.'); route();
+  };
+  if (ev){
+    $('#evDel').onclick = () => { me.events = eventsOf().filter(x => x.id !== ev.id); saveDb(); closeDialog(); toast('Deleted.'); route(); };
+    $('#evIcs').onclick = () => icsOut(calItems().filter(it => it.key === 'e:' + ev.id));
+  }
+  $('#evTitle').focus();
+}
+async function icsOut(list){
+  const url = appUrl() + '#/goals/calendar'; const pre = {check:'Checkpoint: ', by:'Goal: ', plan:'Plan: '};
+  const text = icsEvents(list.map(it => ({uid:it.key.replace(/[^a-z0-9]/gi, '') + '.' + me.id, title:(pre[it.kind] || '') + it.title, date:it.date, time:it.time || '', note:'From your E21CC Log', url})));
+  const how = await shareFile(list.length === 1 ? 'E21CC Log event.ics' : 'E21CC Log calendar.ics', text, 'text/calendar', 'E21CC Log');
+  if (how !== 'cancelled') toast(list.length === 1 ? 'Open the file to add it to your calendar.' : `Open the file to add ${plural(list.length, 'item')} to your calendar.`, 4200);
+}
 const SETTINGS_SECS = [['me', 'Me', 'user'], ['look', 'Look', 'eye'], ['coach', 'Coach', 'spark'], ['expCard', 'Experiences', 'book'], ['groups', 'Groups', 'users'], ['remind', 'Reminder', 'clock'], ['data', 'Your data', 'down'], ['miles', 'Milestones', 'star'], ['about', 'About', 'note']];
 function renderSettings(){
   const p = me.prefs; const c = me.coach; const gs = myGroups(); const relay = relayFor(null); const modes = COACH_MODES();
   const sinkLabel = cfg => cfg && cfg.sink && cfg.sink.kind && cfg.sink.kind !== 'none' ? (cfg.sink.kind === 'msforms' ? 'Microsoft Form' : 'Google Form') : 'no drop box';
-  const secOn = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')) ? hashParts().q.get('s') : 'me';
+  const asked = SETTINGS_SECS.some(x => x[0] === hashParts().q.get('s')); const secOn = asked ? hashParts().q.get('s') : 'me';
   const modeCard = ([k, l, h]) => `<label class="pcard" style="cursor:pointer"><input type="radio" name="cm" value="${k}" ${c.mode === k ? 'checked' : ''} style="width:22px;height:22px;accent-color:var(--cover)"><span><b>${l}</b><small>${h}</small></span></label>`;
   frame(leaves(`
-    <section class="hero"><h1>Settings</h1><p class="meta">Your level, your view, your coach, and what you learn from.</p>
+    <section class="hero"><a class="setback" href="#/settings">${icon('arrow')}<span>All settings</span></a><h1>Settings</h1><p class="meta">Your level, your look, your coach.</p>
       <nav class="jumps" aria-label="Jump to">${SETTINGS_SECS.slice(0, 6).map(([id, l]) => `<a href="#" data-jump="${id}">${l}</a>`).join('')}</nav>
-      <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id ? 'on' : ''}"${secOn === id ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
+      <nav class="snav" aria-label="Settings sections">${SETTINGS_SECS.map(([id, l, ic]) => `<a href="#/settings?s=${id}" class="${secOn === id && (asked || isDesk()) ? 'on' : ''}"${secOn === id && (asked || isDesk()) ? ' aria-current="true"' : ''}>${icon(ic)}<span>${l}</span></a>`).join('')}<a href="#/sharing">${icon('share')}<span>Sharing: who sees what</span></a></nav></section><!--leaf-->
     <section class="card" id="me"><h2>Me</h2>
       <label class="f"><span>Name</span><input class="in" id="sName" value="${esc(me.name)}" maxlength="60"></label>
       ${levelPicker()}
@@ -2435,10 +2705,10 @@ function renderSettings(){
         <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
       <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
-      <p class="muted">Everything is in this browser. A cleared cache, a new laptop or a school reimage loses it, so back up now and then. The file imports back here, on any device.</p>
+      <p class="muted">Your log lives in this browser. Back it up now and then.</p>${more('A cleared cache, a new laptop or a school reimage loses it. A backup file opens again here, or on any device.')}
       <ul class="safe">
         <li>${icon(me.backup ? 'check' : 'clock')}<span>${me.backup ? `Last backed up on ${fmtDate(me.backup.at)}, with ${plural(me.backup.count, 'entry', 'entries')}.` : 'Not backed up yet.'}</span></li>
-        <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if you do not open it for a while. Installing the Log, or backing up, keeps it safe.'}</span></li>
+        <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if it is not opened for a while.'}</span></li>
         <li>${icon(installed() ? 'check' : 'home')}<span>${installed() ? 'The Log is installed on this device.' : 'The Log is not installed on this device.'}</span>${!installed() && canInstall() ? `<span class="safe-how">${installHow()}</span>` : ''}</li>
       </ul>
       <div class="row">
@@ -2454,11 +2724,19 @@ function renderSettings(){
       </div>
     </section>
     ${milestonesCard()}
-    <section class="card flat" id="about"><h2>About</h2><p class="tiny">The E21CC Log for Beattyians. It holds your GROW and ACT journals (ASK comes later). GROW by reflecting and ACT on Feedback are the school’s frameworks; the competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database: your reflections are yours until you choose to share them. Teachers: see <a href="teacher.html">the teacher console</a>.</p>
-      <p class="tiny"><b>${esc(APP_VERSION.label)}</b> · ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working. Older versions are kept read only, from <a href="legacy/">the archive</a>.</p>
+    <section class="card flat" id="about"><h2>About the E21CC Log <span class="verpill">${esc(SITE_MARK)}</span></h2>
+      <div class="letter"><p>Dear Beattyian,</p>
+        <p>This is your log. After a lesson, a CCA session or feedback, write a short GROW or ACT. Over time, your own words show how you think, learn and work with others, and what to try next.</p>
+        <p>It stays on your device unless you choose to share it.</p>
+        <p>Write a little, often.</p>
+        <p>Warmly,<br><b>Mr Johll</b></p></div>
+      <p class="tiny">You are on ${esc(APP_VERSION.label)}, ${esc(APP_VERSION.date)}. The address stays the same from version to version, so bookmarks and links keep working. Older versions: <a href="legacy/">the archive</a>.</p>
+      <details><summary>More about the Log</summary><p class="tiny">GROW by reflecting and ACT on Feedback are the school’s frameworks (ASK comes later). The competencies follow MOE’s 21st Century Competencies (2023 refresh), and the I can statements are Beatty’s own (draft ${esc(STMT_SET.draft || 'V1')}). No accounts and no database. Teachers: see <a href="teacher.html">the teacher console</a>.</p></details>
       <details><summary>What is new</summary><ul class="tiny">${APP_VERSION.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></details></section>
   `, 'minmax(240px,1fr) minmax(0,3fr)'), 'settings', {wide:true, key:'settings', cls:'settingsspread'});
-  if (isDesk()) $$('.leaf.r > section[id]').forEach(x => { x.hidden = x.id !== secOn; });
+  // a laptop shows the index and one section; a phone shows the index, or one section with a way back
+  const desk = isDesk(); $$('.leaf.r > section[id]').forEach(x => { x.hidden = (desk || asked) ? x.id !== secOn : true; });
+  $('#main').classList.toggle('setmenu', !desk && !asked); $('#main').classList.toggle('setone', !desk && asked);
   const sv = () => { saveDb(); applyPrefs(); };
   $$('[data-jump]').forEach(a => a.onclick = ev => { ev.preventDefault(); const t = document.getElementById(a.dataset.jump); if (t) t.scrollIntoView({behavior:'smooth', block:'start'}); });
   $('#sName').oninput = e => { me.name = e.target.value; sv(); };

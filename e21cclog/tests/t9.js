@@ -108,7 +108,7 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
   const old = files.filter(([f, t]) => f !== 'DESIGN.md' && /E21CC Learning Log/.test(t)).map(([f]) => f);
   check('no portfolio or folio anywhere; the old name only in DESIGN history', !bad.length && !old.length, bad.concat(old).join(', '));
   const title = await page.title();
-  check('the page is called E21CC Log; the version shows in the app, not the title or the address', title.startsWith('E21CC Log') && !/v\d/.test(title) && (await page.textContent('.topbar .word')) === 'E21CC Logv4' && (await page.textContent('.topbar .vmark')) === 'v4');
+  check('the page is called E21CC Log; the version shows in the app, not the title or the address', title.startsWith('E21CC Log') && !/v\d/.test(title) && (await page.textContent('.topbar .word')) === 'E21CC Log' + (await page.evaluate(() => SITE_MARK)) && /^v\d+(\.\d+)?$/.test(await page.textContent('.topbar .vmark')));
   console.log('ERRORS', errors.length ? errors : 'none');
   console.log(fails ? `${fails} FAILED` : 'ALL PASS');
   await browser.close();

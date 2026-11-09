@@ -50,7 +50,7 @@ const seed = fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'
   check('the right PIN opens the log, where the student left off (Set up)', (await tab.evaluate(() => location.hash)) === '#/setup' && !(await tab.$('#wPin')));
 
   // 3. switching logs locks the tab; choosing a log shows the logs here, and starting one is a separate step
-  await tab.evaluate(() => location.hash = '#/settings'); await sleep(400); await tab.click('#sOut'); await sleep(500);
+  await tab.evaluate(() => location.hash = '#/settings?s=data'); await sleep(400); await tab.click('#sOut'); await sleep(500);
   const ch = await tab.evaluate(() => ({cards:document.querySelectorAll('.pcard').length, form:!!document.querySelector('#newForm'), open:sessionStorage.getItem('e21cclog.open'), btn:(document.querySelector('#wNew') || {}).textContent || ''}));
   check('Switch to another log locks the tab and shows the logs here, with Start a new log as its own button', ch.cards === 1 && !ch.form && ch.open === null && /Start a new log/.test(ch.btn), JSON.stringify(ch));
   const a2 = await axe(tab); check('the choose your log page has no serious or critical accessibility issues', !a2.length, a2.join(' | '));
@@ -66,7 +66,7 @@ const seed = fs.readFileSync(path.join(__dirname, 'fixtures/seed3.json'), 'utf8'
   await tab.click('#wNew'); await sleep(300); await tab.fill('#newForm [name=name]', 'Wei Ling Tan'); await tab.click('#newForm button[type=submit]'); await sleep(300);
   await tab.click('#sameAnyway'); await sleep(600);
   check('This is someone else with the same name makes a second log, only on that click', (await count(tab)) === 2 && (await tab.evaluate(() => location.hash)) === '#/setup');
-  await tab.evaluate(() => location.hash = '#/settings'); await sleep(400); await tab.click('#sOut'); await sleep(500);
+  await tab.evaluate(() => location.hash = '#/settings?s=data'); await sleep(400); await tab.click('#sOut'); await sleep(500);
   const lines = await tab.$$eval('.pcard small', l => l.map(x => x.textContent));
   check('two logs with one name are told apart on their cards', lines.length === 2 && lines[0] !== lines[1] && lines.every(t => /started \d+ \w+, \d+:\d\d/i.test(t)), JSON.stringify(lines));
   await tab.screenshot({path:require('./shots.js')('t15-choose.png'), animations:'disabled'});

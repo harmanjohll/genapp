@@ -779,7 +779,73 @@ function stuckUser(entry, qid, level, profile){
    E21CC Log: shared helpers
    ================================================================== */
 const APP_NAME = 'E21CC Log';
-const SITE_MARK = 'v4';   // the version, shown in the app only: the address (e21cclog/) never changes
+/* ---------- V3: the calendar as a file ----------
+   icsEvents(items) gives one calendar file with an event for each item, on its day (all day) or at its time,
+   Singapore time, with a reminder: 8 am on the day for an all day item, 30 minutes before a timed one. */
+function icsEvents(items, now = Date.now()){
+  const p2 = n => String(n).padStart(2, '0');
+  const stamp = t => { const x = new Date(t); return `${x.getUTCFullYear()}${p2(x.getUTCMonth() + 1)}${p2(x.getUTCDate())}T${p2(x.getUTCHours())}${p2(x.getUTCMinutes())}00`; };
+  const text = t => String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Beatty Secondary School//E21CC Log//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE', 'TZID:Asia/Singapore', 'BEGIN:STANDARD', 'DTSTART:19820101T000000', 'TZOFFSETFROM:+0800', 'TZOFFSETTO:+0800', 'TZNAME:SGT', 'END:STANDARD', 'END:VTIMEZONE'];
+  for (const it of items){
+    const d = String(it.date).replace(/-/g, '');
+    L.push('BEGIN:VEVENT', `UID:${it.uid}@e21cclog`, `DTSTAMP:${stamp(now)}Z`);
+    if (it.time){
+      const [hh, mm] = String(it.time).split(':').map(Number); const end = Math.min(hh * 60 + mm + 60, 23 * 60 + 59);
+      L.push(`DTSTART;TZID=Asia/Singapore:${d}T${p2(hh)}${p2(mm)}00`, `DTEND;TZID=Asia/Singapore:${d}T${p2(Math.floor(end / 60))}${p2(end % 60)}00`);
+    } else {
+      const nx = new Date(it.date + 'T00:00:00'); nx.setDate(nx.getDate() + 1);
+      L.push(`DTSTART;VALUE=DATE:${d}`, `DTEND;VALUE=DATE:${nx.getFullYear()}${p2(nx.getMonth() + 1)}${p2(nx.getDate())}`);
+    }
+    L.push(`SUMMARY:${text(it.title)}`); if (it.note) L.push(`DESCRIPTION:${text(it.note)}`); if (it.url) L.push(`URL:${it.url}`);
+    L.push('BEGIN:VALARM', 'ACTION:DISPLAY', `TRIGGER:${it.time ? '-PT30M' : 'PT8H'}`, `DESCRIPTION:${text(it.title)}`, 'END:VALARM', 'END:VEVENT');
+  }
+  L.push('END:VCALENDAR'); return L.map(icsFold).join('\r\n') + '\r\n';
+}
+
+/* ---------- V2: goals ----------
+   Beatty's reports: G3 subjects A1 to F9, G2 subjects Grades 1 to 6, G1 subjects A to D. The best grade comes first.
+   A grade goal meets the student where they are: from the last result, one grade up is realistic and two up is a
+   stretch; at the top, the goal is to keep it. The student chooses; the Log only suggests. */
+const GRADE_SCALES = {G3:['A1', 'A2', 'B3', 'B4', 'C5', 'C6', 'D7', 'E8', 'F9'], G2:['1', '2', '3', '4', '5', '6'], G1:['A', 'B', 'C', 'D']};
+const GRADE_NAMES = {G3:'A1 to F9', G2:'Grades 1 to 6', G1:'A to D'};
+function gradeLabel(level, g){ return level === 'G2' && g ? 'Grade ' + g : String(g || ''); }
+function gradeIndex(level, g){ return (GRADE_SCALES[level] || []).indexOf(String(g)); }
+function gradeTargets(level, now){
+  const s = GRADE_SCALES[level] || []; const i = s.indexOf(String(now)); if (i < 0) return null;
+  return {realistic:s[Math.max(0, i - 1)], stretch:s[Math.max(0, i - 2)], top:i === 0};
+}
+/* Grades the next result can aim at: the last result, or better. */
+function gradeChoices(level, now){ const s = GRADE_SCALES[level] || []; const i = s.indexOf(String(now)); return i < 0 ? s.slice() : s.slice(0, i + 1); }
+const RESULTS = [['wa', 'Next weighted assessment'], ['eoy', 'End of Year exam'], ['other', 'Another assessment']];
+const GOAL_KINDS = [['grade', 'A subject grade', 'From your last result to your next'], ['comp', 'A competency', 'An I can statement to secure'], ['cca', 'A CCA skill', 'A skill to build in your CCA'], ['own', 'My own goal', 'Anything else that matters to you']];
+/* Presets are skills and habits to work on, not awards: the student edits them into their own words. */
+const CCA_PRESETS = {
+  'Sports':['Get fitter: improve one fitness measure', 'Master one skill, such as my first touch or my serve', 'Read the game: call for the ball and move into space', 'Lead the warm up for my team'],
+  'Performing Arts':['Play or sing my hardest passage cleanly', 'Sight read a new piece with fewer stops', 'Prepare a solo or a feature part', 'Help a junior learn their part'],
+  'Uniformed Groups':['Earn the next proficiency badge', 'Lead a drill or an activity', 'Plan one task for camp', 'Mentor a junior member'],
+  'Clubs':['Finish a project from start to end', 'Present our work at an event', 'Learn a new tool or technique', 'Teach a member a skill I have']
+};
+const OWN_PRESETS = ['Read for 20 minutes a day', 'Sleep by 11 pm on school nights', 'Hand in every piece of homework on time', 'Ask one question in class each week'];
+const STEP_PRESETS = {
+  grade:['Redo the questions I got wrong, each week', 'Do one practice question every school day', 'Ask my teacher about one thing I am stuck on, each week'],
+  comp:['Write a GROW after the lesson where it shows', 'Try it in a second subject or my CCA', 'Ask a teacher to read the entry'],
+  cca:['Practise it for 15 minutes after training', 'Ask my coach what to change', 'Film or record myself once a fortnight'],
+  own:['Start small, on one day a week', 'Tell a friend so they check on me', 'Tick it off on the day']
+};
+function ccaGroup(name){ for (const g of ((typeof SCHOOL !== 'undefined' && SCHOOL.cca) || [])) if ((g.names || []).some(n => String(n).toLowerCase() === String(name || '').trim().toLowerCase())) return g.group; return ''; }
+function goalDate(s){ return s ? new Date(s + 'T00:00:00').getTime() : 0; }
+/* Merging two copies of the goals (a restore): by id, the newer copy wins. */
+function mergeGoals(mine, theirs){
+  let n = 0; mine = mine || [];
+  for (const g of (theirs || [])){ const i = mine.findIndex(x => x.id === g.id); if (i < 0){ mine.push(g); n++; } else if ((g.updated || 0) > (mine[i].updated || 0)){ mine[i] = g; n++; } }
+  return n;
+}
+
+/* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
+const VERSION_NO = '4.3';
+const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
    names no day. A weekday is the next one after the day it was written (the same weekday means a week later);
@@ -842,7 +908,10 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
   return lines.map(icsFold).join('\r\n') + '\r\n';
 }
 
-const APP_VERSION = {label:'Version 4', date:'November 2026', notes:[
+const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'A calendar in Goals: what is coming up, by week, by month or by goal, with your own assessments and CCA events, goal checkpoints and plan days, ready for your own calendar',
+  'Goals: a subject grade from your last result to your next, a competency, a CCA skill or your own, with steps and checkpoints. Only you see them',
+  'Fewer words: one line and one action on each card, the rest under Details; Settings opens section by section on a phone; the version at the bottom of every page',
   'One Log again: the test version is folded in, and a log kept there on this device can be brought across',
   'Back up in one tap to Files or OneDrive, and bring your log back on a new device, with nothing doubled',
   'One gentle prompt when the Log opens: a plan due, a statement close to secured, or a subject not written about this term',
