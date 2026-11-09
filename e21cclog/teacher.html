@@ -74,6 +74,13 @@ th{font-family:var(--serif);color:var(--navy)}
 .classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:44px}
 .classes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:#fff}
+.pilot{margin:0 0 16px}
+.pilot h2{margin:0 0 4px}
+.pilottable{border-collapse:collapse;margin:8px 0 10px;width:auto;min-width:320px}
+.pilottable th,.pilottable td{padding:6px 12px 6px 0;text-align:left;border-bottom:1px solid var(--line)}
+.pilottable td{font-variant-numeric:tabular-nums}
+.pilottable small{color:var(--text-2);font-weight:400}
+.pilot summary{min-height:44px;display:flex;align-items:center;cursor:pointer}
 summary{cursor:pointer;font-weight:700;color:var(--navy);padding:10px 0;min-height:44px}
 ol.steps li{margin-bottom:8px}
 .drop{border:2px dashed var(--line-2);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-2);background:#fff}
@@ -219,6 +226,7 @@ ol.steps li{margin-bottom:8px}
       <h1>The class at a glance.</h1>
       <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. When a student shares a domain, its column shows their level in each competency (E Emerging, D Developing, P Proficient, ! waiting for a teacher to confirm Proficient); otherwise the number of their shared entries that show it.</p>
       <div class="row" style="margin-bottom:10px"><select class="in" id="gGroup" aria-label="Group" style="width:auto"></select><button class="btn sec small" id="gCsv">Download CSV</button></div>
+      <div class="pilot" id="pilotBox"></div>
       <div class="scroll" id="gridTable"></div>
     </div>
   </section>
@@ -800,8 +808,36 @@ function studentRows(code){
   }
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 }
+/* P1: the pilot's measure, as this console can see it. For each school week of the term, how many students shared an
+   entry written that week, and how many of them got a reply that was sent. In a holiday, the term just ended.
+   Counts only: names never leave this page. */
+function pilotWeeks(items, notes, keep, now = Date.now()){
+  const tp = termPos(now), T = termsFor(tp.year); let k = T.find(x => x.n === tp.term);
+  if (!tp.inTerm){ const past = T.filter(x => x.end < now); k = past.length ? past[past.length - 1] : termsFor(tp.year - 1)[3]; }
+  const last = Math.min(now, k.end), weeks = [];
+  for (let s = k.start, n = 1; s <= last; s += 7 * 864e5, n++) weeks.push({n, start:s, end:Math.min(s + 7 * 864e5 - 1, k.end), shared:new Set(), replied:new Set()});
+  for (const it of Object.values(items)){
+    if (it.kind !== 'e' || !keep(it.sk)) continue;
+    const t = itemDate(it), w = weeks.find(x => t >= x.start && t <= x.end); if (!w) continue;
+    w.shared.add(it.sk); if ((notes[it.key] || []).some(n => n.sentAt)) w.replied.add(it.sk);
+  }
+  return {term:k.n, year:new Date(k.start).getFullYear(), weeks:weeks.map(w => ({n:w.n, start:w.start, shared:w.shared.size, replied:w.replied.size}))};
+}
+function pilotText(p, group){
+  return [`E21CC pilot · ${signer().name} · ${group || 'All groups'} · Term ${p.term}, ${p.year}`, ...p.weeks.map(w => `Week ${w.n} (from ${fmtDay(w.start)}): ${w.shared} shared, ${w.replied} got a reply`)].join('\n');
+}
+function renderPilot(code){
+  const p = pilotWeeks(store.items, store.notes, sk => inGroup(sk, code));
+  $('#pilotBox').innerHTML = `<h2>Term ${p.term}, week by week</h2>
+    <p class="tiny">Students who shared an entry written that week, and how many of them got a reply you sent.</p>
+    <table class="pilottable"><thead><tr><th scope="col">Week</th><th scope="col">Shared</th><th scope="col">Got a reply</th></tr></thead>
+      <tbody>${p.weeks.map(w => `<tr><th scope="row">Week ${w.n} <small>from ${esc(fmtDay(w.start))}</small></th><td>${w.shared}</td><td>${w.replied}</td></tr>`).join('')}</tbody></table>
+    <div class="row"><button class="btn sec small" id="pilotCopy">Copy for the pilot lead</button></div>
+    <details><summary>About these counts</summary><p class="tiny">A student who shares with two teachers is counted by both, so the pilot lead's total counts exchanges, not separate students. A reply counts once it is sent. The copy carries counts only, never names.</p></details>`;
+  $('#pilotCopy').onclick = () => copy(pilotText(p, code));
+}
 function renderGrid(){
-  groupOptions($('#gGroup'), 'All groups'); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
+  groupOptions($('#gGroup'), 'All groups'); renderPilot($('#gGroup').value); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
   const lvCell = (b, lv, look) => COMPETENCIES.filter(c => c.d === b && lv[c.id]).map(c => { const x = lv[c.id]; const i = levelIdx(x.level); return `<span class="lvc ${x.waiting ? 'w' : 'l' + i}" title="${esc(c.label)}: ${x.waiting ? 'Proficient, waiting for you to confirm' : esc(lvWords(x, look))}">${x.waiting ? '!' : LV_LETTER[x.level] || '·'}</span>`; }).join('');
   const cell = (c, b) => c.snap ? (c.levels ? lvCell(b, c.levels, c.look) || '<span class="cell0">·</span>' : `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}`) : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
   $('#gridTable').innerHTML = rows.length ? `<table class="gridtable"><thead><tr><th>Student</th><th>GROW<br><span class="tiny">T${tp.term}</span></th><th>ACT<br><span class="tiny">T${tp.term}</span></th>${DOMAINS.map(d => `<th>${esc(d.short)}</th>`).join('')}<th>Last entry</th><th>Notes sent</th></tr></thead><tbody>

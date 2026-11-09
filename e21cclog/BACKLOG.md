@@ -119,10 +119,15 @@ Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** 
 - **Tests:** t32; t29 and t31 for the form that asks first; the colour sweep and the route audit visit a goal with a step to check.
 
 ### P1 Pilot report
-- **Status:** ready
+- **Status:** done (5.2)
 - **Needs:** nothing
 - **Harman, 9 November:** each form teacher's console shows their own count, and the pilot lead adds them up.
-- **Spec:** the console shows, for each school week, how many students shared at least one entry and how many of those got a reply, with a one tap copy for the pilot lead. A three question student pulse at week 4, and a 20 minute think aloud with five students on Goals. No feelings data leaves the device.
+- **Spec:**
+  - **The count.** Class grid, under the group filter: for each school week of the term so far, the students who shared an entry written that week, and how many of them got a reply that was sent (a drafted reply does not count). In a holiday, the term just ended.
+  - **Copy for the pilot lead.** Plain text, counts only, never names: the teacher, the group, the term, then one line a week.
+  - **Said under About these counts:** a student who shares with two teachers is counted by both, so the pilot lead's total counts exchanges, not separate students.
+  - **Beyond the count** (see the README): a three question pulse at week 4, and a 20 minute think aloud with five students. No feelings data leaves the device.
+- **Tests:** t33: the counts by week, sent replies only, the group filter, a holiday, the copy with no names, axe.
 
 ## S. Showing what is possible
 
