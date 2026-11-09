@@ -2590,7 +2590,7 @@ function coachQuestion(key, cs, g){
     }
     return {q:'Say exactly what you will be able to do.', html:field('The goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || g.title || '')}">`)};
   }
-  if (key === 'M') return {q:'How will you know you got there?', html:field('What you will see', `<input class="in" id="cToText" maxlength="90" value="${esc(a.toText || g.toText || '')}" placeholder="e.g. at 100 beats a minute, with no stops">`)};
+  if (key === 'M') return {q:'How will you know you got there?', html:field('What you will see', `<input class="in" id="cToText" maxlength="90" value="${esc(a.toText || g.toText || '')}" placeholder="e.g. all eight drills, in time, with no stops">`)};
   if (key === 'A'){
     if (g.kind === 'grade'){
       const now = a.now || g.now, tg = a.target || g.target; const t = gradeTargets(g.level, now); const n = now && tg ? gradeIndex(g.level, now) - gradeIndex(g.level, tg) : 0;
