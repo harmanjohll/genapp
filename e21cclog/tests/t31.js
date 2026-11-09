@@ -1,4 +1,4 @@
-// t31 (V4): the goal coach. smartCheck reads S, M, A, R and T; draftGoal gives the same draft for the same answers and
+// t31 (V4, Version 5): the goal coach, which asks before it suggests. smartCheck reads S, M, A, R and T; draftGoal gives the same draft for the same answers and
 // a draft even when every question is skipped; the meaningful path asks at most five questions, any skipped, with
 // Draft my goal at any step, and its draft opens in the form to change before setting; the SMART path asks only the
 // open letters and then every letter is ticked; the why shows on the goal; no praise and no "missed"; axe; backup.
@@ -13,7 +13,9 @@ const PRAISE = /well done|great job|good job|excellent|amazing|awesome|fantastic
 const seed = JSON.parse(fs.readFileSync(__dirname + '/fixtures/seed3.json', 'utf8')); const P = seed.profiles[seed.current];
 P.experiences.levels = Object.assign({}, P.experiences.levels, {Chemistry:'G3'});
 P.goals = [{id:'cg1', kind:'cca', cca:'Football', title:'Lead the warm up for my team', steps:[], checks:[], created:Date.now(), updated:Date.now()},
-  {id:'cg2', kind:'grade', subject:'Physics', level:'G3', now:'', target:'', steps:[], checks:[], created:Date.now(), updated:Date.now()}];   // no last result: saved before the form asked
+  {id:'cg2', kind:'grade', subject:'Physics', level:'G3', now:'', target:'', steps:[], checks:[], created:Date.now(), updated:Date.now()},   // no last result: saved before the form asked
+  {id:'cg3', kind:'grade', subject:'Biology', level:'G3', now:'C6', target:'A1', why:'To be ready for what comes next', by:'2026-12-01', result:'wa', steps:[], checks:[], created:Date.now(), updated:Date.now()}];   // a big jump
+const TELLS = /realistic|stretch|aim for|you should/i;   // what the coach must not say before the student has answered
 (async () => {
   const browser = await launch(); const errors = [];
   const axe = async p => { await p.addScriptTag({content:AXE}); return p.evaluate(async () => (await axe.run(document, {resultTypes:['violations']})).violations.filter(v => v.impact === 'serious' || v.impact === 'critical').map(v => v.id + ' ' + v.nodes[0].target.join(' '))); };
@@ -27,10 +29,11 @@ P.goals = [{id:'cg1', kind:'cca', cca:'Football', title:'Lead the warm up for my
     const bare = {kind:'own', title:'Read more'};
     const ans = {area:'grade', why:'To keep a pathway open', subject:'Chemistry', level:'G3', now:'B4', block:'practice', try:'Redo the questions I got wrong', day:'Tuesday'};
     return {full:smartCheck(full).open.join(), far:smartCheck(far).open.join(), bare:smartCheck(bare).open.join(), comp:smartCheck({kind:'comp', sid:'x', why:'y', sure:true, by:'2026-12-01'}).open.join(),
-      d1:JSON.stringify(draftGoal(ans)), d2:JSON.stringify(draftGoal(ans)), skip:draftGoal({}), draft:draftGoal(ans)};
+      d1:JSON.stringify(draftGoal(ans)), d2:JSON.stringify(draftGoal(ans)), skip:draftGoal({}), draft:draftGoal(ans), own:draftGoal(Object.assign({}, ans, {target:'A2'}))};
   });
   check('smartCheck: a full grade goal has every letter; two grades too far up needs A; a bare goal needs M, A, R and T', pure.full === '' && pure.far === 'A' && pure.bare === 'M,A,R,T' && pure.comp === '', JSON.stringify({full:pure.full, far:pure.far, bare:pure.bare, comp:pure.comp}));
-  check('draftGoal: the same answers give the same draft, one grade up, with the day in the step and the why kept', pure.d1 === pure.d2 && pure.draft.target === 'B3' && pure.draft.steps[0] === 'Every Tuesday: redo the questions I got wrong' && pure.draft.why === 'To keep a pathway open', pure.d1);
+  check('draftGoal: the same answers give the same draft, with the day in the step and the why kept', pure.d1 === pure.d2 && pure.draft.steps[0] === 'Every Tuesday: redo the questions I got wrong' && pure.draft.why === 'To keep a pathway open', pure.d1);
+  check('draftGoal never picks a target: none named, none set; the student’s own kept as it is', pure.draft.target === '' && pure.own.target === 'A2', JSON.stringify({none:pure.draft.target, own:pure.own.target}));
   check('draftGoal: every question skipped still gives a draft to start from', pure.skip.kind === 'own' && Array.isArray(pure.skip.steps), JSON.stringify(pure.skip));
 
   // 2. the meaningful path
@@ -46,7 +49,14 @@ P.goals = [{id:'cg1', kind:'cca', cca:'Football', title:'Lead the warm up for my
   const a2 = await axe(p); check('a coach question has no serious or critical accessibility issues', !a2.length, a2.join(' | '));
   await p.screenshot({path:shots('t31-coach-390.png'), animations:'disabled', fullPage:true});
   await p.click('#coachNext'); await sleep(300);
-  await step(); await p.selectOption('#cSubject', 'Chemistry'); await sleep(250); await p.selectOption('#cNow', 'B4'); await p.click('#coachNext'); await sleep(300);
+  await step(); await p.selectOption('#cSubject', 'Chemistry'); await sleep(250);
+  const q3a = await p.evaluate(() => ({target:!!document.querySelector('#cTarget'), text:document.querySelector('.coachstep').innerText}));
+  await p.selectOption('#cNow', 'B4'); await sleep(250);
+  const q3b = await p.evaluate(() => ({focus:document.activeElement.id, opts:[...document.querySelectorAll('#cTarget option')].map(o => o.value).filter(Boolean).join(), chosen:document.querySelector('#cTarget').value, text:document.querySelector('.coachstep').innerText}));
+  await p.selectOption('#cTarget', 'B3'); await sleep(250);
+  const q3c = await p.evaluate(() => ({focus:document.activeElement.id, gap:(document.querySelector('.coachgap') || {}).textContent || '', text:document.querySelector('.coachstep').innerText}));
+  check('where to get to: the student names the grade, from the whole scale up, with nothing chosen and no advice before or after', !q3a.target && q3b.opts === 'A1,A2,B3,B4' && q3b.chosen === '' && q3b.focus === 'cNow' && q3c.focus === 'cTarget' && q3c.gap === 'B4 to B3: one grade up.' && ![q3a.text, q3b.text, q3c.text].some(t => TELLS.test(t)), JSON.stringify({q3a:q3a.target, q3b, q3c}));
+  await p.click('#coachNext'); await sleep(300);
   await step(); await p.click('#coachSkip'); await sleep(300);   // skip what got in the way
   await step(); await p.click('[data-ca="try|Keep one steady habit"]'); await sleep(200); await p.click('[data-ca="day|Tuesday"]'); await sleep(200);
   const lastBtn = await p.textContent('#coachNext');
@@ -55,7 +65,7 @@ P.goals = [{id:'cg1', kind:'cca', cca:'Football', title:'Lead the warm up for my
   const form = await p.evaluate(() => ({hash:location.hash, note:(document.querySelector('.hero .meta') || {}).textContent || '', now:(document.querySelector('#gNow') || {}).value, target:[...document.querySelectorAll('.gsug .chip.on')].map(c => c.textContent).join(), why:(document.querySelector('#gWhy') || {}).value, step:(document.querySelector('[data-gstep="0"]') || {}).value}));
   check('the draft opens in the form to change: B4 to B3, the why and the step filled in', form.hash === '#/goals/new?k=grade' && /Your draft, from your answers/.test(form.note) && form.now === 'B4' && /B3/.test(form.target) && form.why === 'To keep a pathway open' && form.step === 'Every Tuesday: keep one steady habit', JSON.stringify(form));
   await p.click('#gSave'); await sleep(600);
-  const saved = await p.evaluate(() => { const g = me.goals.find(x => x.kind === 'grade' && x.id !== 'cg2'); return {why:g && g.why, page:document.querySelector('.gwhy') ? document.querySelector('.gwhy').textContent : '', letters:[...document.querySelectorAll('.smart .sl')].map(s => s.textContent + (s.classList.contains('on') ? '+' : '-')).join('')}; });
+  const saved = await p.evaluate(() => { const g = me.goals.find(x => x.kind === 'grade' && !['cg2', 'cg3'].includes(x.id)); return {why:g && g.why, page:document.querySelector('.gwhy') ? document.querySelector('.gwhy').textContent : '', letters:[...document.querySelectorAll('.smart .sl')].map(s => s.textContent + (s.classList.contains('on') ? '+' : '-')).join('')}; });
   check('set, the goal shows why it matters and its SMART letters', saved.why === 'To keep a pathway open' && /Why it matters/.test(saved.page) && saved.letters === 'S+M+A+R+T-', JSON.stringify(saved));
 
   // 3. Draft my goal now, from the first question
@@ -89,18 +99,27 @@ P.goals = [{id:'cg1', kind:'cca', cca:'Football', title:'Lead the warm up for my
   for (let i = 0; i < 6; i++){
     const at = await p.evaluate(() => ({hash:location.hash, k:(document.querySelector('.hero .kicker') || {}).textContent || '', q:(document.querySelector('#coachQ') || {}).textContent || '', chips:[...document.querySelectorAll('.coachstep .chip')].map(c => c.textContent)}));
     if (!/coach/.test(at.hash)) break;
-    if (/Which grade/.test(at.q)){ await p.selectOption('#cNow', 'C5'); await sleep(250); at.after = await p.evaluate(() => [...document.querySelectorAll('.coachstep .chip')].map(c => c.textContent).join(', ') + (document.activeElement.id === 'cNow' ? ' (focus kept)' : '')); await p.click('.coachstep [data-ca^="target|"]'); }
+    if (/proud of/.test(at.q)){ await p.selectOption('#cNow', 'C5'); await sleep(250); at.after = await p.evaluate(() => ({focus:document.activeElement.id, opts:[...document.querySelectorAll('#cTarget option')].map(o => o.value).filter(Boolean).join(), chosen:document.querySelector('#cTarget').value, text:document.querySelector('.coachstep').innerText})); await p.selectOption('#cTarget', 'B4'); await sleep(250); }
     if (/reach it/.test(at.q)) await p.click('[data-ca="achieve|keep"]');
     if (/Why does it matter/.test(at.q)) await p.click('[data-ca^="why|"]');
     if (/By when/.test(at.q)) await p.click('[data-ca^="by|"]');
     g2.push(at); await sleep(150); await p.click('#coachNext'); await sleep(350);
   }
   const g2s = await p.evaluate(() => { const g = me.goals.find(x => x.id === 'cg2'); return {now:g.now, target:g.target, open:smartCheck(g).open.join()}; });
-  check('a grade goal with no last result: asked for it, offered B4 and B3, four questions with no M, then SMART', g2.length === 4 && /Which grade/.test(g2[0].q) && !g2[0].chips.length && /B4/.test(g2[0].after) && /B3/.test(g2[0].after) && /focus kept/.test(g2[0].after) && g2s.now === 'C5' && g2s.target === 'B4' && g2s.open === '', JSON.stringify({g2, g2s}));
+  check('a grade goal with no last result: asked for it, then the student names the grade, four questions with no M, then SMART', g2.length === 4 && /proud of/.test(g2[0].q) && !g2[0].chips.length && g2[0].after.opts === 'A1,A2,B3,B4,C5' && g2[0].after.chosen === '' && g2[0].after.focus === 'cNow' && !TELLS.test(g2[0].after.text) && g2s.now === 'C5' && g2s.target === 'B4' && g2s.open === '', JSON.stringify({g2, g2s}));
+
+  // a big jump: the coach asks what would make it reachable, and the student names any first step
+  await p.evaluate(() => { location.hash = '#/goals/coach?m=smart&g=cg3'; }); await sleep(400);
+  const j1 = await p.evaluate(() => ({k:document.querySelector('.hero .kicker').textContent, q:document.querySelector('#coachQ').textContent, text:document.querySelector('.coachstep').innerText, chips:[...document.querySelectorAll('.coachstep .chip')].map(c => c.textContent)}));
+  await p.click('[data-ca="achieve|step"]'); await sleep(250);
+  const j2 = await p.evaluate(() => [...document.querySelectorAll('#cFirst option')].map(o => o.value).filter(Boolean).join());
+  await p.selectOption('#cFirst', 'B3'); await p.click('#coachNext'); await sleep(500);
+  const j3 = await p.evaluate(() => { const g = me.goals.find(x => x.id === 'cg3'); return {target:g.target, sure:g.sure, open:smartCheck(g).open.join(), hash:location.hash}; });
+  check('a big jump asks a question, not an answer: C6 to A1 is five grades up, what would make it within reach; the student picks the first step', j1.k === 'Question 1 of 1' && j1.q === 'C6 to A1 is 5 grades up. What would make it within reach?' && !TELLS.test(j1.text) && j1.chips.join() === 'A first step on the way,Keep it, and plan the steps' && j2 === 'A2,B3,B4,C5' && j3.target === 'B3' && j3.sure === true && j3.open === '' && j3.hash === '#/goals/cg3', JSON.stringify({j1, j2, j3}));
 
   // every icon draws: the Goals tab, Home's goal item, the coach
   const blank = [];
-  for (const h of ['#/', '#/goals', '#/goals/cg1', '#/goals/coach?m=meaning']){
+  for (const h of ['#/', '#/goals', '#/goals/cg1', '#/goals/coach?m=meaning', '#/goals/coach?m=smart&g=cg2']){
     await p.evaluate(x => { location.hash = x; }, h); await sleep(350);
     blank.push(...await p.evaluate(x => [...document.querySelectorAll('svg')].filter(s => !s.children.length && s.getBoundingClientRect().width).map(s => x + ' ' + (s.closest('[class]') || s.parentElement).className), h));
   }

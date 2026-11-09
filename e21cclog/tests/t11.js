@@ -211,7 +211,7 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   check('the console reads Proficient: waiting, with Confirm Proficient', /Critical Thinking ?Proficient: waiting for a teacher/.test(tc.a) && tc.btn.includes('Confirm Proficient'), JSON.stringify(tc.btn));
   check('the student’s own word shows beside the standard one', /Adaptive Thinking ?Developing · they see “Navigating”/.test(tc.a), tc.a.slice(0, 300));
   check('a v2 Leading snapshot reads as Proficient', /Communication ?Proficient/.test(tc.b) && !/Leading/.test(tc.b), tc.b.slice(0, 200));
-  check('the console shows Version 4 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 4/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
+  check('the console shows Version 5 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 5/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
 
 
   // 12. no dashes in what students read

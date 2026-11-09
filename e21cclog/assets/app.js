@@ -2559,17 +2559,23 @@ function coachChips(list, key, cur){ return `<div class="chips" role="group">${l
 function coachQuestion(key, cs, g){
   const a = cs.a; const field = (label, html) => `<label class="f"><span>${label}</span>${html}</label>`;
   const area = cs.m === 'smart' ? g.kind : (a.area || 'own');
+  const own = '<small style="display:inline">(optional)</small>', ideas = '<span class="flabel">Or start from one of these</span>';
+  // a grade the student names, from the whole scale up from the last result; then how far that is, said plainly, with no advice
+  const gradePick = (level, now, cur) => field('The result you want next', `<select class="in" id="cTarget"><option value="">Choose</option>${gradeChoices(level, now).map(x => `<option value="${x}" ${cur === x ? 'selected' : ''}>${esc(gradeLabel(level, x))}</option>`).join('')}</select>`);
+  const gap = (level, now, tg) => { if (!now || !tg) return ''; const n = gradeIndex(level, now) - gradeIndex(level, tg); return n < 0 ? '' : `<p class="tiny coachgap">${n === 0 ? `Keep ${esc(gradeLabel(level, tg))}.` : `${esc(gradeLabel(level, now))} to ${esc(gradeLabel(level, tg))}: ${n === 1 ? 'one grade' : n === 2 ? 'two grades' : n + ' grades'} up.`}</p>`; };
+  const howFar = more('How far is far? One grade up from your last result is within reach for most; two is a stretch. Both are fine. You choose.');
   if (key === 'area') return {q:'What is the goal about?', html:coachChips([['grade', 'A subject'], ['comp', 'A competency'], ['cca', 'My CCA'], ['own', 'Something else']], 'area', a.area)};
-  if (key === 'why' || key === 'R') return {q:'Why does it matter to you?', hint:'This is what keeps you going.', html:coachChips(COACH_WHY.map(w => [w, w]), 'why', a.why) + field('In your own words <small style="display:inline">(optional)</small>', `<input class="in" id="cWhy" maxlength="120" value="${esc(a.why || (g && g.why) || '')}">`)};
+  if (key === 'why' || key === 'R') return {q:'Why does it matter to you?', hint:'This is what keeps you going.', html:field('In your own words', `<input class="in" id="cWhy" maxlength="120" value="${esc(a.why || (g && g.why) || '')}">`) + ideas + coachChips(COACH_WHY.map(w => [w, w]), 'why', a.why)};
   if (key === 'block') return {q:'What got in the way last time?', html:coachChips(COACH_BLOCKS, 'block', a.block)};
-  if (key === 'try') return {q:'What will you try, and on which day?', html:coachChips(coachTries(area, a.block).map(t => [t, t]), 'try', a.try) + `<span class="flabel">Day</span>` + coachChips(COACH_DAYS.map(d => [d, d.slice(0, 3)]), 'day', a.day)};
+  if (key === 'try') return {q:'What will you try, and on which day?', html:field('In your own words', `<input class="in" id="cTry" maxlength="90" value="${esc(a.try || '')}">`) + ideas + coachChips(coachTries(area, a.block).map(t => [t, t]), 'try', a.try) + `<span class="flabel">Day</span>` + coachChips(COACH_DAYS.map(d => [d, d.slice(0, 3)]), 'day', a.day)};
   if (key === 'now'){
     if (area === 'grade'){
       const subs = myExperiences().filter(x => x.type === 'subject').map(x => x.name); if (!a.subject && subs.length) a.subject = subs[0];
       if (!a.level) a.level = subjectLevel(a.subject) || 'G3';
-      return {q:'Where are you now?', html:(subs.length ? field('Subject', `<select class="in" id="cSubject">${subs.map(s => `<option ${sameSubject(s, a.subject) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>`) : field('Subject', `<input class="in" id="cSubjectText" maxlength="60" value="${esc(a.subject || '')}">`))
+      return {q:'Where are you now, and where do you want to get to?', html:(subs.length ? field('Subject', `<select class="in" id="cSubject">${subs.map(s => `<option ${sameSubject(s, a.subject) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>`) : field('Subject', `<input class="in" id="cSubjectText" maxlength="60" value="${esc(a.subject || '')}">`))
         + `<span class="flabel">Level</span>` + coachChips(['G3', 'G2', 'G1'].map(l => [l, l]), 'level', a.level)
-        + field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${GRADE_SCALES[a.level].map(x => `<option value="${x}" ${a.now === x ? 'selected' : ''}>${esc(gradeLabel(a.level, x))}</option>`).join('')}</select>`)};
+        + field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${GRADE_SCALES[a.level].map(x => `<option value="${x}" ${a.now === x ? 'selected' : ''}>${esc(gradeLabel(a.level, x))}</option>`).join('')}</select>`)
+        + (a.now ? gradePick(a.level, a.now, a.target) + gap(a.level, a.now, a.target) + howFar : '')};
     }
     if (area === 'comp'){
       const comps = COMPETENCIES.filter(c => strandsOf(STMT_SET, c.id).length); const list = a.comp ? myStatements().concat(otherStatements()).filter(s => s.comp === a.comp) : [];
@@ -2578,24 +2584,28 @@ function coachQuestion(key, cs, g){
     }
     const ccas = myExperiences().filter(x => x.type === 'cca').map(x => x.name); if (area === 'cca' && !a.cca && ccas.length) a.cca = ccas[0];
     const presets = area === 'cca' ? (CCA_PRESETS[ccaGroup(a.cca)] || CCA_PRESETS.Clubs) : OWN_PRESETS;
-    return {q:area === 'cca' ? 'What skill, and where are you now?' : 'What is it, and where are you now?', html:(area === 'cca' ? (ccas.length > 1 ? field('CCA', `<select class="in" id="cCca">${ccas.map(c => `<option ${c === a.cca ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>`) : field('CCA', `<input class="in" id="cCcaText" maxlength="60" value="${esc(a.cca || '')}">`)) : '')
-      + coachChips(presets.map(t => [t, t]), 'title', a.title) + field('The goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || '')}">`) + field('Where you are now <small style="display:inline">(optional)</small>', `<input class="in" id="cNowText" maxlength="90" value="${esc(a.nowText || '')}">`)};
+    return {q:area === 'cca' ? 'What do you want to get better at?' : 'What do you want to change or get better at?', html:(area === 'cca' ? (ccas.length > 1 ? field('CCA', `<select class="in" id="cCca">${ccas.map(c => `<option ${c === a.cca ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>`) : field('CCA', `<input class="in" id="cCcaText" maxlength="60" value="${esc(a.cca || '')}">`)) : '')
+      + field('In your own words', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || '')}">`) + ideas + coachChips(presets.map(t => [t, t]), 'title', a.title) + field(`Where you are now ${own}`, `<input class="in" id="cNowText" maxlength="90" value="${esc(a.nowText || '')}">`)};
   }
   // the SMART path: one question for each open letter
   if (key === 'S'){
     if (g.kind === 'grade'){
-      const now = a.now || g.now; const t = gradeTargets(g.level, now);
-      return {q:'Which grade will you aim for?', html:(g.now ? '' : field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${(GRADE_SCALES[g.level] || []).map(x => `<option value="${x}" ${now === x ? 'selected' : ''}>${esc(gradeLabel(g.level, x))}</option>`).join('')}</select>`))
-        + (t ? coachChips([[t.realistic, `Realistic: ${gradeLabel(g.level, t.realistic)}`], ...(t.stretch !== t.realistic ? [[t.stretch, `Stretch: ${gradeLabel(g.level, t.stretch)}`]] : [])], 'target', a.target) : '<p class="tiny">Choose your last result first.</p>')};
+      const now = a.now || g.now;
+      return {q:'What result would you be proud of next time?', html:(g.now ? '' : field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${(GRADE_SCALES[g.level] || []).map(x => `<option value="${x}" ${now === x ? 'selected' : ''}>${esc(gradeLabel(g.level, x))}</option>`).join('')}</select>`))
+        + (now ? gradePick(g.level, now, a.target) + gap(g.level, now, a.target) + howFar : '<p class="tiny">Choose your last result first.</p>')};
     }
     return {q:'Say exactly what you will be able to do.', html:field('The goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || g.title || '')}">`)};
   }
   if (key === 'M') return {q:'How will you know you got there?', html:field('What you will see', `<input class="in" id="cToText" maxlength="90" value="${esc(a.toText || g.toText || '')}" placeholder="e.g. all eight drills, in time, with no stops">`)};
   if (key === 'A'){
     if (g.kind === 'grade'){
-      const now = a.now || g.now, tg = a.target || g.target; const t = gradeTargets(g.level, now); const n = now && tg ? gradeIndex(g.level, now) - gradeIndex(g.level, tg) : 0;
-      if (n > 2) return {q:`That is ${n} grades up. A smaller step first?`, html:coachChips([...(t ? [[t.stretch, `Aim for ${gradeLabel(g.level, t.stretch)} first`]] : []), ['keep', 'Keep my goal']], 'achieve', a.achieve)};
-      return {q:'Can you reach it by your date, with steady work?', html:coachChips([['keep', 'Yes, I can']], 'achieve', a.achieve)};
+      const now = a.now || g.now, tg = a.target || g.target; const n = now && tg ? gradeIndex(g.level, now) - gradeIndex(g.level, tg) : 0;
+      if (n > 2){   // a big jump: ask what would make it reachable; the student names any first step
+        const between = (GRADE_SCALES[g.level] || []).filter(x => gradeIndex(g.level, x) < gradeIndex(g.level, now) && gradeIndex(g.level, x) > gradeIndex(g.level, tg));
+        return {q:`${gradeLabel(g.level, now)} to ${gradeLabel(g.level, tg)} is ${n} grades up. What would make it within reach?`, html:coachChips([['step', 'A first step on the way'], ['keep', 'Keep it, and plan the steps']], 'achieve', a.achieve)
+          + (a.achieve === 'step' ? field('Which grade first?', `<select class="in" id="cFirst"><option value="">Choose</option>${between.map(x => `<option value="${x}" ${a.first === x ? 'selected' : ''}>${esc(gradeLabel(g.level, x))}</option>`).join('')}</select>`) : '')};
+      }
+      return {q:'Can you reach it by your date, with steady work?', html:coachChips([['keep', 'Yes, I can'], ['unsure', 'Not sure yet']], 'achieve', a.achieve)};
     }
     return {q:'Can you do this by your date, with steady work?', html:coachChips([['yes', 'Yes, I can'], ['smaller', 'Make it smaller']], 'achieve', a.achieve) + (a.achieve === 'smaller' ? field('A smaller goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || g.title || '')}">`) : '')};
   }
@@ -2604,7 +2614,7 @@ function coachQuestion(key, cs, g){
 }
 function coachCollect(){
   const a = coachState.a; const v = id => { const el = $('#' + id); return el ? el.value.trim() : undefined; };
-  for (const [id, k] of [['cWhy', 'why'], ['cSubject', 'subject'], ['cSubjectText', 'subject'], ['cNow', 'now'], ['cComp', 'comp'], ['cSid', 'sid'], ['cCca', 'cca'], ['cCcaText', 'cca'], ['cTitle', 'title'], ['cNowText', 'nowText'], ['cToText', 'toText'], ['cBy', 'by']]){ const x = v(id); if (x !== undefined && (x || k !== 'by')) a[k] = x; }
+  for (const [id, k] of [['cWhy', 'why'], ['cSubject', 'subject'], ['cSubjectText', 'subject'], ['cNow', 'now'], ['cComp', 'comp'], ['cSid', 'sid'], ['cCca', 'cca'], ['cCcaText', 'cca'], ['cTitle', 'title'], ['cNowText', 'nowText'], ['cToText', 'toText'], ['cBy', 'by'], ['cTarget', 'target'], ['cTry', 'try'], ['cFirst', 'first']]){ const x = v(id); if (x !== undefined && (x || k !== 'by')) a[k] = x; }
 }
 function renderCoach(){
   const {q} = hashParts(); const m = q.get('m') === 'smart' ? 'smart' : 'meaning'; const gid = q.get('g') || '';
@@ -2625,7 +2635,8 @@ function renderCoach(){
     if (k === 'title' && $('#cTitle')) $('#cTitle').value = cs.a.title || '';
     renderCoach();
   });
-  const cn = $('#cNow'); if (cn && m === 'smart') cn.onchange = () => { coachCollect(); cs.a.target = ''; renderCoach(); const el = $('#cNow'); if (el) el.focus(); };
+  // a last result or a chosen grade redraws what follows, and keeps the focus where the student was
+  for (const id of ['cNow', 'cTarget']){ const el = $('#' + id); if (el) el.onchange = () => { coachCollect(); const lv = m === 'smart' ? g.level : cs.a.level; if (id === 'cNow' && cs.a.target && !gradeChoices(lv, cs.a.now).includes(cs.a.target)) cs.a.target = ''; renderCoach(); const f = $('#' + id); if (f) f.focus(); }; }
   for (const id of ['cSubject', 'cComp', 'cCca']){ const el = $('#' + id); if (el) el.onchange = () => { if (id === 'cSubject'){ coachCollect(); cs.a.level = subjectLevel(el.value) || cs.a.level; cs.a.now = ''; renderCoach(); } else if (id === 'cComp'){ coachCollect(); cs.a.sid = ''; renderCoach(); } else redraw(); }; }
   $('#coachNext').onclick = () => { coachCollect(); cs.i++; renderCoach(); };
   $('#coachSkip').onclick = () => { cs.i++; renderCoach(); };
@@ -2640,9 +2651,10 @@ function coachFinish(){
   }
   const g = goalById(cs.g); if (!g){ location.hash = '#/goals'; return; } const a = cs.a;
   if (a.now && !g.now && GRADE_SCALES[g.level] && GRADE_SCALES[g.level].includes(a.now)) g.now = a.now;
-  if (a.target && GRADE_SCALES[g.level] && a.target !== 'keep'){ g.target = a.target; }
+  const scale = GRADE_SCALES[g.level] || [];
+  if (a.target && scale.includes(a.target)) g.target = a.target;
   if (a.achieve === 'keep' || a.achieve === 'yes') g.sure = true;
-  if (a.achieve && GRADE_SCALES[g.level] && a.achieve !== 'keep'){ g.target = a.achieve; g.sure = true; }
+  if (a.achieve === 'step' && scale.includes(a.first)){ g.target = a.first; g.sure = true; }   // the first step the student named
   if (a.achieve === 'smaller' && a.title){ g.title = a.title; g.sure = true; }
   if (a.title && g.kind !== 'grade' && g.kind !== 'comp') g.title = a.title;
   if (a.toText) g.toText = a.toText; if (a.why) g.why = a.why; if (a.by) g.by = a.by;
