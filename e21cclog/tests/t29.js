@@ -37,9 +37,11 @@ P.experiences.levels = Object.assign({}, P.experiences.levels, {Chemistry:'G3'})
   await p.selectOption('#gSubject', 'Chemistry'); await sleep(250);
   const lv = await p.evaluate(() => document.querySelector('[data-glevel].on').textContent);
   await p.selectOption('#gNow', 'B4'); await sleep(250);
-  const sug = await p.$$eval('.gsug .chip', l => l.map(x => x.textContent + (x.classList.contains('on') ? '*' : '')));
-  check('Chemistry at G3: from B4, Realistic B3 (chosen) and Stretch A2 are offered', lv === 'G3' && sug.join('|') === 'Realistic: B3*|Stretch: A2', JSON.stringify({lv, sug}));
-  await p.click('.gsug .chip:nth-child(2)'); await sleep(250);
+  const sug = await p.evaluate(() => ({opts:[...document.querySelectorAll('#gTarget option')].map(o => o.value).filter(Boolean).join(), chosen:document.querySelector('#gTarget').value, text:document.querySelector('.goalform').innerText}));
+  check('Chemistry at G3: from B4 the student names the next result, A1 to B4, with none chosen and no target labelled', lv === 'G3' && sug.opts === 'A1,A2,B3,B4' && sug.chosen === '' && !/realistic|stretch/i.test(sug.text), JSON.stringify({lv, sug}));
+  await p.selectOption('#gTarget', 'A2'); await sleep(250);
+  const gap = await p.evaluate(() => ({gap:(document.querySelector('.coachgap') || {}).textContent || '', focus:document.activeElement.id}));
+  check('then the form says how far that is, with no advice, and the focus stays on the list', gap.gap === 'B4 to A2: two grades up.' && gap.focus === 'gTarget', JSON.stringify(gap));
   await p.click('[data-gresult="eoy"]'); await sleep(250);
   await p.click('[data-gsteppre]'); await sleep(250);
   await p.screenshot({path:shots('t29-goal-form-390.png'), animations:'disabled', fullPage:true});
@@ -60,8 +62,8 @@ P.experiences.levels = Object.assign({}, P.experiences.levels, {Chemistry:'G3'})
   const got = await p.evaluate(() => ({done:me.goals[0].done, got:me.goals[0].got, txt:document.querySelector('#main').textContent}));
   check('recording the result: reached, and the goal is done', got.done && got.got === 'A2' && /You reached your goal/.test(got.txt), JSON.stringify({done:got.done, got:got.got}));
   await p.click('#gAgain'); await sleep(500);
-  const nx = await p.evaluate(() => ({now:document.querySelector('#gNow').value, chips:[...document.querySelectorAll('.gsug .chip')].map(x => x.textContent)}));
-  check('the next goal starts from that result: A2, with A1 offered', nx.now === 'A2' && nx.chips.join() === 'Realistic: A1', JSON.stringify(nx));
+  const nx = await p.evaluate(() => ({now:document.querySelector('#gNow').value, opts:[...document.querySelectorAll('#gTarget option')].map(o => o.value).filter(Boolean).join(), chosen:document.querySelector('#gTarget').value}));
+  check('the next goal starts from that result: A2, with A1 and A2 to choose from and none chosen', nx.now === 'A2' && nx.opts === 'A1,A2' && nx.chosen === '', JSON.stringify(nx));
 
   // 4. a competency goal and a CCA goal
   await p.evaluate(() => { goalDraft = null; location.hash = '#/goals/new?k=comp'; }); await sleep(500);

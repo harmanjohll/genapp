@@ -62,8 +62,8 @@ const TELLS = /realistic|stretch|aim for|you should/i;   // what the coach must 
   const lastBtn = await p.textContent('#coachNext');
   await p.click('#coachNext'); await sleep(600);
   check('at most five questions, numbered, the last one drafting', qs.length === 5 && qs.every((x, i) => x.k === `Question ${i + 1} of 5`) && /Draft my goal/.test(lastBtn), JSON.stringify(qs.map(x => x.k + ': ' + x.q)));
-  const form = await p.evaluate(() => ({hash:location.hash, note:(document.querySelector('.hero .meta') || {}).textContent || '', now:(document.querySelector('#gNow') || {}).value, target:[...document.querySelectorAll('.gsug .chip.on')].map(c => c.textContent).join(), why:(document.querySelector('#gWhy') || {}).value, step:(document.querySelector('[data-gstep="0"]') || {}).value}));
-  check('the draft opens in the form to change: B4 to B3, the why and the step filled in', form.hash === '#/goals/new?k=grade' && /Your draft, from your answers/.test(form.note) && form.now === 'B4' && /B3/.test(form.target) && form.why === 'To keep a pathway open' && form.step === 'Every Tuesday: keep one steady habit', JSON.stringify(form));
+  const form = await p.evaluate(() => ({hash:location.hash, note:(document.querySelector('.hero .meta') || {}).textContent || '', now:(document.querySelector('#gNow') || {}).value, target:(document.querySelector('#gTarget') || {}).value, tells:document.querySelector('.goalform').innerText, why:(document.querySelector('#gWhy') || {}).value, step:(document.querySelector('[data-gstep="0"]') || {}).value}));
+  check('the draft opens in the form to change: B4 to B3, the why and the step filled in, with no target labelled for the student', form.hash === '#/goals/new?k=grade' && /Your draft, from your answers/.test(form.note) && form.now === 'B4' && form.target === 'B3' && !/realistic|stretch/i.test(form.tells) && form.why === 'To keep a pathway open' && form.step === 'Every Tuesday: keep one steady habit', JSON.stringify(form));
   await p.click('#gSave'); await sleep(600);
   const saved = await p.evaluate(() => { const g = me.goals.find(x => x.kind === 'grade' && !['cg2', 'cg3'].includes(x.id)); return {why:g && g.why, page:document.querySelector('.gwhy') ? document.querySelector('.gwhy').textContent : '', letters:[...document.querySelectorAll('.smart .sl')].map(s => s.textContent + (s.classList.contains('on') ? '+' : '-')).join('')}; });
   check('set, the goal shows why it matters and its SMART letters', saved.why === 'To keep a pathway open' && /Why it matters/.test(saved.page) && saved.letters === 'S+M+A+R+T-', JSON.stringify(saved));
@@ -126,7 +126,7 @@ const TELLS = /realistic|stretch|aim for|you should/i;   // what the coach must 
   check('every icon draws, the Goals tab’s target among them', !blank.length, blank.join(' | '));
 
   // 5. the words, the backup, and no page errors
-  const words = await p.evaluate(() => JSON.stringify([COACH_WHY, COACH_BLOCKS, COACH_TRIES, SMART_NAMES]));
+  const words = await p.evaluate(() => JSON.stringify([COACH_WHY, COACH_BLOCKS, COACH_TRIES, COACH_THENS, SMART_NAMES]));
   check('the coach’s words: no praise and nothing about missing out', !PRAISE.test(words));
   const bk = await p.evaluate(() => /For my team or my family/.test(STORE.exportProfile(me)) && !/For my team or my family/.test(JSON.stringify(compactEntry(me.entries[0]))));
   check('the answers stay in the goal, in the backup, and never in what is shared', bk);

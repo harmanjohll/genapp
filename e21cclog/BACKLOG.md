@@ -12,7 +12,9 @@ The decisions behind these items were made with Harman in November 2026:
 - feelings data that never leaves the device;
 - one app, moving forward (8 November): no Labs, no test version beside it. A Labs tab is built only when Harman asks for one;
 - a goal coach that asks before it suggests (9 November): coaching questions first, and the student names the target; the Log never picks one;
-- a teacher responds to a student's goal, and does not suggest one, at least for now (9 November).
+- a teacher responds to a student's goal, and does not suggest one, at least for now (9 November);
+- close loops before adding features, then gather evidence from the pilot (9 November, after the audit): V6, V5 and P1 come first; C1 to C3, E2 to E5 and Paths in goals wait for pilot data;
+- the pilot count (9 November): each form teacher's console shows their own weekly count, and the pilot lead adds them up.
 
 ## Waiting on Harman (outside the runs)
 - **Support contacts for E1:** the school counsellor's name and how to reach them, and the helplines to show, checked by the counsellor.
@@ -37,7 +39,7 @@ Version 4 is live. Harman's next three, built in this order, each its own versio
 2. **V2 Goals (4.2).** Academic grades, competencies, CCA and the student's own, each from where the student is now to their next result.
 3. **V3 Calendar (4.3).** A simple calendar for the T in SMART: what is coming up, by week, month, list or goal.
 
-Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** Then V5 (share a goal with a teacher, who responds), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
+Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** After the audit that day: **V6 The goal loop (5.1)**, then V5 (share a goal with a teacher, who responds), then P1 (a pilot report), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
 
 ---
 
@@ -100,6 +102,27 @@ Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** 
 - **Needs:** V4
 - **Harman, 9 November:** a teacher responds to the student's goal only, at least for now.
 - **Spec:** a student shares one goal with a teacher, coach or instructor, who responds with a note, through the share and reply already built (A3, A5). The teacher does not set or suggest a goal. The goal stays private until the student shares it.
+
+### V6 The goal loop
+- **Status:** done (5.1)
+- **Needs:** V4
+- **Why (the audit, 9 November):** goals sat beside the journals, not inside them. Goals work when progress is fed back (Locke and Latham), and if then plans for what might get in the way have the strongest evidence for follow through (Gollwitzer and Sheeran; Duckworth and colleagues with high school students).
+- **Spec:**
+  - **Steps checked back.** Each week, on the weekday a step names ("Every Tuesday: ...") or a week at a time from the day the goal was set, Home asks "Did you do it?": Yes, Partly or Not this week. The goal's page asks too, and shows the weeks so far as dots. An if then line is never checked back.
+  - **The goal page leads with what the student will do,** then the grade, the why and the letters.
+  - **An entry can name a goal.** A GROW or ACT entry has "For a goal (optional)"; Write about this goal starts one on the goal's subject or CCA. The goal's page lists its entries.
+  - **A result opens a reflection.** "What helped? What will you change?" starts a GROW about the result, naming the goal.
+  - **The coach plans for what might get in the way.** Question 4 asks what might get in the way next time, then "If that happens, then I will…"; the draft carries the if then line as a step.
+  - **The form asks first.** Setting a grade goal yourself, the student names the result they want; the form says how far that is, with no advice, and what realistic and stretch mean sits under Details.
+  - **Private.** The goal an entry names, and the weeks answered, stay on the device and in the backup, never in what is shared.
+- **Done when:** a step set for Tuesday is asked about on Tuesday and its answer shows on the goal; an entry names a goal and is listed on it; a result opens a reflection; the coach's draft carries an if then line.
+- **Tests:** t32; t29 and t31 for the form that asks first; the colour sweep and the route audit visit a goal with a step to check.
+
+### P1 Pilot report
+- **Status:** ready
+- **Needs:** nothing
+- **Harman, 9 November:** each form teacher's console shows their own count, and the pilot lead adds them up.
+- **Spec:** the console shows, for each school week, how many students shared at least one entry and how many of those got a reply, with a one tap copy for the pilot lead. A three question student pulse at week 4, and a 20 minute think aloud with five students on Goals. No feelings data leaves the device.
 
 ## S. Showing what is possible
 
