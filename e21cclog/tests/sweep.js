@@ -140,7 +140,7 @@ if (require.main === module) (async () => {
   const browser = await require('./fixtures/launch.js')();
   const started = Date.now(); let pages = 0;
   for (const look of LOOKS) for (const theme of THEMES) for (const colour of COLOURS) for (const [w, h] of VIEWS){
-    const seed = JSON.parse(JSON.stringify(seed0)); const P = seed.profiles[seed.current]; Object.assign(P.prefs, {look, theme, colour}); P.drafts = {};
+    const seed = JSON.parse(JSON.stringify(seed0)); const P = seed.profiles[seed.current]; Object.assign(P.prefs, {look, theme, colour}); P.drafts = {}; require('./fixtures/goal.js')(P);
     const gid = P.entries.find(e => e.kind === 'grow').id;
     const ctx = await browser.newContext({viewport:{width:w, height:h}}); await ctx.addInitScript(install);
     const page = await ctx.newPage(); const errs = [];
@@ -171,6 +171,7 @@ if (require.main === module) (async () => {
     await visit('calendar', () => go('#/goals/calendar'));
     await visit('calendar month', () => go('#/goals/calendar?v=month'));
     await visit('goal coach', () => go('#/goals/coach?m=meaning'));
+    await visit('goal page', () => go('#/goals/ag1'));
     await visit('composer context', () => step('grow', 0));
     await visit('composer G with help', async () => { await step('grow', 1); await sleep(300); await page.evaluate(() => { const b = document.querySelector('[data-qinfo="g1"]'); if (b) b.click(); const s = document.querySelector('[data-stuck="g2"]'); if (s) s.click(); }); });
     await visit('composer W with aim', async () => { await step('grow', 4); await sleep(300); await page.evaluate(() => { const s = document.querySelector('[name=aimComp]'); if (s){ s.value = 'critical'; s.dispatchEvent(new Event('change')); } }); });

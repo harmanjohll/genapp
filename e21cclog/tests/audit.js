@@ -4,7 +4,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/');
 const OUT = process.argv[2] || require('./shots.js')('audit.md');
-const SEED = (() => { const d = JSON.parse(fs.readFileSync(require('path').join(__dirname, 'fixtures', process.env.SEED || 'seed3.json'), 'utf8')); const [look, theme] = (process.env.LOOK || 'b:light').split(':'); Object.assign(d.profiles[d.current].prefs, {look, theme:theme || 'light'}); return JSON.stringify(d); })();
+const SEED = (() => { const d = JSON.parse(fs.readFileSync(require('path').join(__dirname, 'fixtures', process.env.SEED || 'seed3.json'), 'utf8')); const [look, theme] = (process.env.LOOK || 'b:light').split(':'); Object.assign(d.profiles[d.current].prefs, {look, theme:theme || 'light'}); require('./fixtures/goal.js')(d.profiles[d.current]); return JSON.stringify(d); })();
 const VIEWS_ENV = process.env.VIEWS ? process.env.VIEWS.split(',').map(v => v.split('x').map(Number)) : null;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const VIEWS_DEFAULT = [[320, 640], [390, 844], [768, 1024], [1280, 900], [1920, 1080]];
@@ -87,7 +87,7 @@ function probe(){
     // seeded
     await page.evaluate(s => localStorage.setItem('e21cclog', s), SEED); await page.goto(BASE + 'index.html#/'); await page.reload(); await sleep(400);
     const go = h => page.evaluate(x => location.hash = x, h);
-    const routes = ['#/', '#/goals', '#/goals/new', '#/goals/new?k=grade', '#/goals/new?k=cca', '#/goals/calendar', '#/goals/calendar?v=week', '#/goals/calendar?v=month', '#/goals/calendar?v=goal', '#/goals/coach?m=meaning', '#/setup', '#/c', '#/c/critical', '#/c/collaboration', '#/c/selfaware', '#/journal/ask', '#/journal/grow?p=experience&v=bookmarks', '#/journal/grow?p=date&v=bookmarks', '#/journal/grow?p=competency&v=bookmarks', '#/journal/grow?p=term&v=bookmarks', '#/journal/grow?p=experience&v=shelf', '#/journal/act?p=experience&v=bookmarks', '#/journal/act?p=competency&v=shelf', '#/settings', '#/sharing', ...ids.map(i => '#/entry/' + i)];
+    const routes = ['#/', '#/goals', '#/goals/new', '#/goals/new?k=grade', '#/goals/new?k=cca', '#/goals/calendar', '#/goals/calendar?v=week', '#/goals/calendar?v=month', '#/goals/calendar?v=goal', '#/goals/coach?m=meaning', '#/goals/ag1', '#/setup', '#/c', '#/c/critical', '#/c/collaboration', '#/c/selfaware', '#/journal/ask', '#/journal/grow?p=experience&v=bookmarks', '#/journal/grow?p=date&v=bookmarks', '#/journal/grow?p=competency&v=bookmarks', '#/journal/grow?p=term&v=bookmarks', '#/journal/grow?p=experience&v=shelf', '#/journal/act?p=experience&v=bookmarks', '#/journal/act?p=competency&v=shelf', '#/settings', '#/sharing', ...ids.map(i => '#/entry/' + i)];
     for (const r of routes) await run(r, () => go(r));
     // composer walk, both kinds
     for (const kind of ['grow', 'act']){

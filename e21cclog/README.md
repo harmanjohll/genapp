@@ -104,7 +104,9 @@ Since then, each release has its own number, shown at the bottom of every page:
 - **4.3 Calendar.** Beside Goals: what is coming up, a week, a month, or by goal. It shows the student's own assessments, CCA events and other events, goals' checkpoints and By dates, and the days plans name. One item, or everything coming up, goes into the student's own calendar as a file, with reminders.
 - **5.0 The goal coach (Version 5).** New goal offers "Help me find a goal that matters to me": at most five coaching questions (why, where I am and where I want to get to, what got in the way, what I will try and when), any skipped, then a draft to change before setting. It asks before it suggests: the student names the target, and the Log never picks one. "Make it SMART" asks only what a goal is missing. A goal's page shows why it matters.
 
-Their specs, and what comes next (V5 sharing a goal with a teacher, who responds), are in `BACKLOG.md`.
+- **5.1 The goal loop.** A goal's step is checked back on its day ("Did you do it?"), from Home or the goal's page, which leads with what the student will do and shows the weeks so far. A GROW or ACT entry can name a goal, and the goal lists its entries. A result opens a reflection: what helped, what will change. The coach asks what might get in the way next time and makes an if then plan. Setting a grade goal yourself asks first too.
+
+Their specs, and what comes next (V5 sharing a goal with a teacher, who responds; P1 a pilot report), are in `BACKLOG.md`.
 
 ## From v3
 

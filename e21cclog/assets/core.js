@@ -847,7 +847,35 @@ function mergeGoals(mine, theirs){
    Questions with a limit: at most five, one at a time, any of them skipped; then a draft built from the answers,
    the same answers always giving the same draft. It asks before it suggests: the student names the target. smartCheck reads a goal and says which of S, M, A, R and T it has. */
 const COACH_WHY = ['To keep a pathway open', 'To feel more confident', 'To be ready for what comes next', 'For my team or my family'];
-const COACH_BLOCKS = [['practice', 'Not enough practice'], ['topic', 'Something I don’t get yet'], ['careless', 'Careless mistakes'], ['time', 'Time or stress'], ['none', 'Nothing yet']];
+const COACH_BLOCKS = [['practice', 'I skip practice'], ['topic', 'I get stuck on something'], ['careless', 'I rush and make careless mistakes'], ['time', 'I run out of time, or feel stressed'], ['none', 'Nothing I can think of']];
+const COACH_NONE = 'Nothing I can think of';
+/* What to do if it happens: the then of an if then plan (mental contrasting with implementation intentions). */
+const COACH_THENS = {
+  grade:{practice:['do one question anyway', 'set a five minute timer and start'], topic:['ask my teacher or a friend the next day', 'look at one worked example'], careless:['check one answer twice', 'read the question again before I answer'], time:['do just ten minutes', 'move it to the next free day']},
+  any:{practice:['do five minutes anyway', 'set a timer and start'], topic:['ask my teacher or coach the next day', 'watch how someone else does it'], careless:['slow down and check once', 'go over one thing again'], time:['do just ten minutes', 'move it to the next free day']}
+};
+function coachThens(area, block){ const set = COACH_THENS[area === 'grade' ? 'grade' : 'any']; return set[block] || set.time; }
+/* The first letter lower case, except I: "Redo the questions" reads "redo the questions"; "I rush" stays "I rush". */
+function lcStart(s){ s = String(s || '').trim(); return !s || /^I\b/.test(s) ? s : s[0].toLowerCase() + s.slice(1); }
+/* How far a target is, said plainly, with no advice: "B4 to B3: one grade up." */
+function gradeGap(level, now, tg){
+  if (!now || !tg || !GRADE_SCALES[level]) return ''; const n = gradeIndex(level, now) - gradeIndex(level, tg); if (n < 0) return '';
+  return n === 0 ? `Keep ${gradeLabel(level, tg)}.` : `${gradeLabel(level, now)} to ${gradeLabel(level, tg)}: ${n === 1 ? 'one grade' : n === 2 ? 'two grades' : n + ' grades'} up.`;
+}
+/* A goal's step, checked back each week: on the weekday it names ("Every Tuesday: ..."), or a week at a time from
+   the day the goal was set. An if then line is a plan for when something happens, so it is never checked back. */
+function isIfThen(text){ return /^\s*if\b/i.test(String(text || '')); }
+function stepWeekday(text){
+  const s = ' ' + String(text || '').toLowerCase().replace(/[^a-z ]+/g, ' ') + ' ';
+  const m = s.match(/ (sunday|monday|tuesday|wednesday|thursday|friday|saturday|tues|wed|thurs?|fri)s? /); if (!m) return null;
+  const i = PLAN_DAYS.indexOf(m[1]); return i >= 0 ? i : PLAN_SHORT[m[1]];
+}
+function stepCheckDay(text, created, now = Date.now()){
+  const today = dayStart(now), start = dayStart(created || now); const w = stepWeekday(text); let d = null;
+  if (w != null) d = addDays(today, -((new Date(today).getDay() - w + 7) % 7));
+  else { const k = Math.floor((today - start) / (7 * 864e5)); if (k >= 1) d = addDays(start, 7 * k); }
+  return d != null && d > start ? d : null;
+}
 const COACH_TRIES = {
   grade:{
     practice:['Do one practice question', 'Redo the questions I got wrong'],
@@ -869,9 +897,12 @@ const COACH_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat
 const SMART_NAMES = {S:'Specific', M:'Measurable', A:'Achievable', R:'Relevant to you', T:'Time bound'};
 function draftGoal(a){
   a = a || {}; const kind = ['grade', 'comp', 'cca', 'own'].includes(a.area) ? a.area : 'own';
-  const lc = s => s ? s[0].toLowerCase() + s.slice(1) : '';
-  const step = a.try ? (a.day ? `Every ${a.day}: ${lc(a.try)}` : a.try) : '';
-  const g = {kind, why:String(a.why || '').trim(), steps:step ? [step] : []};
+  const tidy = s => String(s || '').trim().replace(/[.!]+$/, '');
+  const step = a.try ? (a.day ? `Every ${a.day}: ${lcStart(tidy(a.try))}` : tidy(a.try)) : '';
+  // the if then plan: what might get in the way next time, and what the student will do then
+  const obs = tidy(a.blockText).replace(/^if\s+/i, ''), then = tidy(a.then).replace(/^(then\s+)?(i will|i'll)\s+/i, '');
+  const ifThen = obs && obs !== COACH_NONE && then ? `If ${lcStart(obs)}, then I will ${lcStart(then)}` : '';
+  const g = {kind, why:String(a.why || '').trim(), steps:[step, ifThen].filter(Boolean)};
   if (kind === 'grade'){ g.subject = a.subject || ''; g.level = GRADE_SCALES[a.level] ? a.level : 'G3'; g.now = a.now || ''; g.target = a.target || ''; g.result = 'wa'; }   // the student's own target; the coach never picks one
   else if (kind === 'comp') g.sid = a.sid || '';
   else { g.title = String(a.title || '').trim(); g.nowText = String(a.nowText || '').trim(); if (kind === 'cca') g.cca = a.cca || ''; }
@@ -887,7 +918,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '5.0';
+const VERSION_NO = '5.1';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -952,6 +983,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'Goals and journals join up: the Log asks on the day whether you did your goal’s step, an entry can name a goal, and a result opens a reflection. The coach helps you plan for what might get in the way',
   'Version 5: a goal coach. It asks a few questions first, then drafts a goal that matters to you, or checks your goal is SMART. You choose the target',
   'A calendar in Goals: what is coming up, by week, by month or by goal, with your own assessments and CCA events, goal checkpoints and plan days, ready for your own calendar',
   'Goals: a subject grade from your last result to your next, a competency, a CCA skill or your own, with steps and checkpoints. Only you see them',

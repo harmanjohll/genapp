@@ -1323,6 +1323,8 @@ function renderHome(){
     ? `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('check')}</span><div><p><b id="planQ">Did you do it?</b> “${esc(nextStepOf(pl.e))}”</p><p class="tiny" style="margin:4px 0 8px">${from(pl.e)}${pl.named ? ', for ' + fmtDay(pl.due) : ''}.</p><div class="seg" role="group" aria-labelledby="planQ">${[['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']].map(([k, l]) => `<button type="button" data-plan="${k}">${l}</button>`).join('')}</div>${ftc}</div></li>`
     : `<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>${pl.named ? `Your plan for ${fmtDay(pl.due)}:` : 'Your plan:'}</b> ${esc(nextStepOf(pl.e))}</p><p class="tiny" style="margin:4px 0 0">${from(pl.e)}.</p>${more(pl.named ? 'The Log will ask how it went on the day.' : 'The Log will ask how it went in a week.')}${ftc}</div></li>`;
   const nFirst = now.length;
+  { const gs = goalStepsDue()[0];   // 5.1: one goal step a week, asked about on its day
+    if (gs) now.push(`<li class="nxplan"><span class="nxi" aria-hidden="true">${icon('target')}</span><div><p><b id="gstepQ">Did you do it?</b> “${esc(gs.step)}”</p><p class="tiny" style="margin:4px 0 8px">For your goal: ${esc(goalTitle(gs.g))}, ${esc(fmtDay(gs.day))}.</p>${stepAsk(gs, 'gstepQ')}</div></li>`); }
   if (backupDue()){ const fresh = sinceBackup(); now.push(`<li><span class="nxi" aria-hidden="true">${icon('down')}</span><div><p><b>Back up your log.</b> ${me.backup ? `Last backup: ${fmtDay(me.backup.at)}.` : 'Not backed up yet.'} ${plural(fresh, 'entry', 'entries')} ${fresh === 1 ? 'is' : 'are'} not in a backup yet.</p>${more('A backup is a file you keep, in OneDrive or Files. It opens again on any device.')}<button type="button" class="btn small sec" id="nxBackup">${icon('down')} Back up now</button></div></li>`); }
   if (me.entries.length >= 3 && canInstall() && !(me.installLater && Date.now() - me.installLater < 14 * 864e5)) now.push(`<li><span class="nxi" aria-hidden="true">${icon('home')}</span><div><p><b>Add the Log to your Home Screen.</b></p>${more('An installed Log is kept safe on this device, and opens without wifi.')}<div class="row">${installHow()}<button type="button" class="linkbtn flush" id="nxInstallLater">Not now</button></div></div></li>`);
   for (const k of drafts) if (k !== carry) now.push(nextItem('edit', `<b>Finish your ${FRAMEWORKS[k].name} entry.</b> Your answers so far are saved.`, '#/write/' + k + '?go=1', 'Carry on'));
@@ -1385,6 +1387,7 @@ function renderHome(){
   const nl = $('#nudgeLater'); if (nl) nl.onclick = () => { me.prompts.away[promptKind] = Date.now() + 7 * 864e5; saveDb(); route(); };
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   wireFromTest();
+  wireStepAnswers();
   $$('[data-readnote]').forEach(b => b.onclick = () => { const [eid, nid] = b.dataset.readnote.split('|'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); if (n){ n.seen = true; saveDb(); } toast('Marked as read.'); route(); });
   $$('[data-plan]').forEach(b => b.onclick = () => {
     const a = b.dataset.plan, id = pl.e.id; me.planChecks = me.planChecks || {};
@@ -1549,6 +1552,9 @@ function openComposer(kind, editId, basket){
     // nothing is assumed: the subject or experience comes from the student, or from the bookmark they started at
     draft._pre = kind !== 'across' && !editId ? hashParts().q.get('x') || '' : '';
     if (draft._pre && !ask) applyPrefill(draft._pre);
+    // 5.1: started from a goal, the entry names it; started from a result, it is about that result
+    const gq = kind !== 'across' && !editId ? hashParts().q.get('g') || '' : ''; draft._goal = gq && goalById(gq) ? gq : '';
+    if (draft._goal && !ask){ draft.goal = draft._goal; const gg = goalById(gq); if (hashParts().q.get('r') && gg.got && !draft.topic) draft.topic = `My result: ${gradeLabel(gg.level, gg.got)}`; }
     if (kind === 'across') draft.lookedAt = acrossEvidence(basket, draft.term).map(x => ({eid:x.e.id, quote:x.q.quote})).slice(0, 8);
   }
   renderComposer();
@@ -1560,7 +1566,7 @@ function closeComposer(){
   if (was) setTimeout(() => { const t = composerFrom && [...document.querySelectorAll(`a[href="${composerFrom}"]`)].find(a => a.offsetParent); const m = t || $('#main'); if (m) m.focus({preventScroll:true}); }, 80);
 }
 function saveDraft(){
-  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._pickQ; d.saved = Date.now();
+  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._goal; delete d._pickQ; d.saved = Date.now();
   if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
   saveDb();
 }
@@ -1609,7 +1615,7 @@ function renderComposer(){
   $('#cHome').onclick = () => leave('#/');
   $('#cClose').onclick = () => leave(draftReturn());
   const rc = $('#rContinue'); if (rc) rc.onclick = () => { draft._ask = false; renderComposer(); };
-  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre}); if (pre) applyPrefill(pre); renderComposer(); };
+  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre, gl = draft._goal; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre, _goal:gl}); if (pre) applyPrefill(pre); if (gl) draft.goal = gl; renderComposer(); };
   const bk = $('#cBack'); if (bk) bk.onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
   // leaving step 1 needs a subject or experience; a new one joins the student's list
   const leaveContext = () => {
@@ -1678,6 +1684,7 @@ function collect(){
   const g = $('[name=groupCode]', sh); if (g) draft.groupCode = g.value;
   const ft = $('[name=feedbackText]', sh); if (ft) draft.feedbackText = ft.value.trim();
   const tg = $('[name=target]', sh); if (tg) draft.target = tg.value;
+  const gl = $('[name=goalLink]', sh); if (gl) draft.goal = gl.value;
 }
 /* A new subject or experience the student picks joins their list, so it is there next time. */
 function rememberExperience(ctx){
@@ -1744,6 +1751,7 @@ function contextStep(fw){
     ${ptype ? `<div class="typepanel">${panel}${willAdd && cur.type === ptype ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}</div>` : willAdd ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}
     ${!usual.length ? `<p class="tiny" style="margin:10px 0 0">Tip: add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a>, and they will appear at the top.</p>` : ''}
     <label class="f" style="margin-top:16px"><span>${fw.id === 'grow' ? ct.topic : 'What was the feedback on?'} <small style="display:inline">(optional)</small></span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}" maxlength="80"></label>
+    ${(() => { const live = goalsOf().filter(x => !x.done || x.id === draft.goal); return live.length ? `<label class="f" style="margin-top:12px"><span>For a goal <small style="display:inline">(optional)</small></span><select class="in" name="goalLink"><option value="">None</option>${live.map(x => `<option value="${esc(x.id)}" ${draft.goal === x.id ? 'selected' : ''}>${esc(goalTitle(x))}</option>`).join('')}</select></label>` : ''; })()}
     ${groupLine()}
     ${fw.id === 'act' ? `
     <div class="f" style="margin-top:12px"><span class="flabel" id="fbLbl">Who gave the feedback?</span>
@@ -1858,7 +1866,7 @@ function draftEntry(){
   if (draft.kind === 'across'){ const b = basketOf(draft.basket); return Object.assign(base, {basket:draft.basket, term:draft.term, context:{type:'across', name:b.label}, subject:b.short, topic:termLabel(draft.term), lookedAt:draft.lookedAt || [], groupCode:'', competencies:[]}); }
   const claims = draft.claims || [];
   return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText,
-    competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || '', followThrough:draft.followThrough || null});
+    competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || '', followThrough:draft.followThrough || null, goal:draft.goal || ''});
 }
 function readbackStep(){
   const fw = FRAMEWORKS[draft.kind]; const entry = draftEntry(); const cls = groupFor(entry); const stmts = myStatements();
@@ -2408,6 +2416,42 @@ function goalWhen(g){
   const r = g.kind === 'grade' ? (g.result === 'other' ? (g.resultName || 'Another assessment') : ((RESULTS.find(x => x[0] === g.result) || [])[1] || '')) : '';
   return [r, g.by ? fmtDay(goalDate(g.by)) : ''].filter(Boolean).join(', ');
 }
+const HOW_FAR = 'How far is far? One grade up from your last result is within reach for most; two is a stretch. Both are fine. You choose.';
+function gradeGapLine(level, now, tg){ const t = gradeGap(level, now, tg); return t ? `<p class="tiny coachgap">${esc(t)}</p>` : ''; }
+/* 5.1: a goal's steps, checked back. Each week's step is asked about for six days, until the next week's takes its place. */
+const STEP_ASK_FOR = 6 * 864e5;
+function goalStepsDue(now = Date.now()){
+  const today = dayStart(now), out = [];
+  for (const g of goalsOf()) if (!g.done) (g.steps || []).forEach((s, i) => {
+    if (!String(s || '').trim() || isIfThen(s)) return;
+    const d = stepCheckDay(s, g.created || now, now); if (d == null || today - d > STEP_ASK_FOR) return;
+    const key = i + ':' + ymd(d); if ((g.stepChecks || {})[key]) return;
+    out.push({g, i, step:s, day:d, key});
+  });
+  return out.sort((a, b) => a.day - b.day);
+}
+function stepAsk(x, labelId){ return `<div class="seg" role="group" aria-labelledby="${labelId}">${[['yes', 'Yes'], ['partly', 'Partly'], ['no', 'Not this week']].map(([k, l]) => `<button type="button" data-gstepans="${esc(x.g.id)}|${x.i}|${ymd(x.day)}|${k}">${l}</button>`).join('')}</div>`; }
+function wireStepAnswers(){
+  $$('[data-gstepans]').forEach(b => b.onclick = () => {
+    const [gid, i, day, a] = b.dataset.gstepans.split('|'); const g = goalById(gid); if (!g) return;
+    g.stepChecks = Object.assign({}, g.stepChecks, {[i + ':' + day]:{answer:a, at:Date.now()}}); g.updated = Date.now(); saveDb();
+    toast(a === 'yes' ? 'Noted on your goal.' : a === 'partly' ? 'Partly counts. Your next entry can say what got in the way.' : 'Noted. Next week is a fresh go.', 3600);
+    setTimeout(route, 400);
+  });
+}
+/* The weeks so far for one step: a filled dot for yes, half for partly, a ring for not that week or not answered. */
+function stepWeeks(g, i, s){
+  const d0 = stepCheckDay(s, g.created || Date.now()); if (d0 == null) return '';
+  const days = [3, 2, 1, 0].map(k => addDays(d0, -7 * k)).filter(d => d > dayStart(g.created || 0));
+  const ans = d => ((g.stepChecks || {})[i + ':' + ymd(d)] || {}).answer;
+  const word = a => a === 'yes' ? 'yes' : a === 'partly' ? 'partly' : a === 'no' ? 'not that week' : 'not answered';
+  return `<span class="gwk"><small aria-hidden="true">Weeks so far</small><span class="rdots gweeks" role="img" aria-label="${esc('Weeks so far: ' + days.map(d => word(ans(d))).join(', '))}">${days.map(d => { const a = ans(d); return `<i class="${a === 'yes' ? 'on' : a === 'partly' ? 'part' : ''}"></i>`; }).join('')}</span></span>`;
+}
+/* Write about a goal: a GROW entry that names it, on the goal's subject or CCA. */
+function goalWriteHref(g, extra = ''){
+  const x = g.kind === 'grade' && g.subject ? 'subject:' + g.subject : g.kind === 'cca' && g.cca ? 'cca:' + g.cca : '';
+  return '#/write/grow?g=' + encodeURIComponent(g.id) + (x ? '&x=' + encodeURIComponent(x) : '') + extra;
+}
 function goalNext(g){ return (g.checks || []).filter(c => !c.done && c.date).sort((a, b) => goalDate(a.date) - goalDate(b.date))[0] || null; }
 function goalSoon(g){ const c = goalNext(g); return c ? goalDate(c.date) : g.by ? goalDate(g.by) : Infinity; }
 function goalCard(g){
@@ -2449,15 +2493,11 @@ function renderGoalForm(kind, editId){
     if (!d.subject && subs.length) d.subject = subs[0];
     if (!d.level) d.level = subjectLevel(d.subject) || 'G3';
     const scale = GRADE_SCALES[d.level]; if (d.now && !scale.includes(d.now)) d.now = ''; if (d.target && !gradeChoices(d.level, d.now).includes(d.target)) d.target = '';
-    const sug = d.now ? gradeTargets(d.level, d.now) : null;
     body = `${subs.length ? field('Subject', `<select class="in" id="gSubject">${subs.map(s => `<option ${sameSubject(s, d.subject) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>`) : field('Subject', `<input class="in" id="gSubjectText" value="${esc(d.subject || '')}" maxlength="60" placeholder="Which subject?">`)}
       <div class="f"><span class="flabel" id="gLvL">Level</span><div class="seg" role="group" aria-labelledby="gLvL">${['G3', 'G2', 'G1'].map(l => `<button type="button" data-glevel="${l}" class="${d.level === l ? 'on' : ''}" aria-pressed="${d.level === l}">${l}</button>`).join('')}</div><small>${esc(GRADE_NAMES[d.level])}</small></div>
       ${field('Your last result', `<select class="in" id="gNow"><option value="">Choose</option>${scale.map(g => `<option value="${g}" ${d.now === g ? 'selected' : ''}>${esc(gradeLabel(d.level, g))}</option>`).join('')}</select>`)}
-      <div class="f"><span class="flabel">Your next result</span>
-        ${sug ? `<div class="gsug">${sug.top ? `<button type="button" class="chip${d.target === sug.realistic ? ' on' : ''}" data-gtarget="${sug.realistic}">Keep ${esc(gradeLabel(d.level, sug.realistic))}</button>`
-          : `<button type="button" class="chip${d.target === sug.realistic ? ' on' : ''}" data-gtarget="${sug.realistic}">Realistic: ${esc(gradeLabel(d.level, sug.realistic))}</button>${sug.stretch !== sug.realistic ? `<button type="button" class="chip${d.target === sug.stretch ? ' on' : ''}" data-gtarget="${sug.stretch}">Stretch: ${esc(gradeLabel(d.level, sug.stretch))}</button>` : ''}`}</div>` : '<small>Choose your last result first.</small>'}
-        ${d.now ? `<select class="in" id="gTarget" aria-label="Your next result"><option value="">Or choose</option>${gradeChoices(d.level, d.now).map(g => `<option value="${g}" ${d.target === g ? 'selected' : ''}>${esc(gradeLabel(d.level, g))}</option>`).join('')}</select>` : ''}
-        ${more('Realistic is one grade up from your last result; a stretch is two. Both are fine. Pick the one you will work for.')}</div>
+      ${d.now ? field('The result you want next', `<select class="in" id="gTarget"><option value="">Choose</option>${gradeChoices(d.level, d.now).map(g => `<option value="${g}" ${d.target === g ? 'selected' : ''}>${esc(gradeLabel(d.level, g))}</option>`).join('')}</select>`) + gradeGapLine(d.level, d.now, d.target) + more(HOW_FAR)
+        : '<div class="f"><span class="flabel">The result you want next</span><small>Choose your last result first.</small></div>'}
       <div class="f"><span class="flabel" id="gResL">When</span><div class="seg wrap" role="group" aria-labelledby="gResL">${RESULTS.map(([k, l]) => `<button type="button" data-gresult="${k}" class="${d.result === k ? 'on' : ''}" aria-pressed="${d.result === k}">${esc(l)}</button>`).join('')}</div></div>
       ${d.result === 'other' ? field('Which assessment', `<input class="in" id="gResName" value="${esc(d.resultName || '')}" maxlength="60" placeholder="e.g. Science practical test">`) : ''}`;
   } else if (kind === 'comp'){
@@ -2495,9 +2535,9 @@ function wireGoalForm(old){
     for (const [id, k] of [['gResName', 'resultName'], ['gTitle', 'title'], ['gNowText', 'nowText'], ['gToText', 'toText'], ['gCcaText', 'cca'], ['gBy', 'by'], ['gWhy', 'why']]) if (val(id) !== undefined) d[k] = val(id).trim();
     d.steps = $$('[data-gstep]').map(i => i.value.trim());
   };
-  const on = (id, fn) => { const el = $('#' + id); if (el) el.onchange = () => { collectGoal(); keep(() => fn(el.value)); }; };
+  const on = (id, fn) => { const el = $('#' + id); if (el) el.onchange = () => { collectGoal(); keep(() => fn(el.value)); const f = $('#' + id); if (f) f.focus(); }; };   // the focus stays where the student was
   on('gSubject', v => { d.subject = v; d.level = subjectLevel(v) || d.level; });
-  on('gNow', v => { d.now = v; const s = gradeTargets(d.level, v); if (s && !d.target) d.target = s.realistic; });
+  on('gNow', v => { d.now = v; if (d.target && !gradeChoices(d.level, v).includes(d.target)) d.target = ''; });   // the student names the target: none is chosen for them
   on('gTarget', v => { d.target = v; });
   on('gComp', v => { d._comp = v; d.sid = ''; });
   on('gSid', v => { d.sid = v; });
@@ -2509,7 +2549,7 @@ function wireGoalForm(old){
   $$('[data-gsteppre]').forEach(b => b.onclick = () => { collectGoal(); keep(() => { const i = d.steps.findIndex(s => !s); if (i >= 0) d.steps[i] = b.dataset.gsteppre; else d.steps[2] = b.dataset.gsteppre; }); });
   $('#gSave').onclick = () => {
     collectGoal();
-    const miss = d.kind === 'grade' ? (!d.subject ? 'Choose a subject.' : !d.now ? 'Choose your last result.' : !d.target ? 'Choose your next result.' : '') : d.kind === 'comp' ? (!d.sid ? 'Choose an I can statement.' : '') : (!d.title ? 'Write your goal, or start from one above.' : '');
+    const miss = d.kind === 'grade' ? (!d.subject ? 'Choose a subject.' : !d.now ? 'Choose your last result.' : !d.target ? 'Choose the result you want next.' : '') : d.kind === 'comp' ? (!d.sid ? 'Choose an I can statement.' : '') : (!d.title ? 'Write your goal, or start from one above.' : '');
     if (miss){ $('#gMsg').textContent = miss; return; }
     const g = Object.assign({}, d); delete g._for; delete g._comp; delete g._coached; g.steps = (g.steps || []).filter(Boolean).slice(0, 3);
     g.updated = Date.now();
@@ -2524,19 +2564,25 @@ function renderGoal(id){
   const nowTo = g.kind === 'grade' ? `<p class="gnowto"><span><small>Last result</small><b>${esc(gradeLabel(g.level, g.now))}</b></span>${icon('arrow')}<span><small>Next result</small><b>${esc(gradeLabel(g.level, g.target))}</b></span></p>`
     : (g.nowText || g.toText) ? `<p class="gnowto"><span><small>Now</small><b>${esc(g.nowText || '…')}</b></span>${icon('arrow')}<span><small>Next</small><b>${esc(g.toText || '…')}</b></span></p>` : '';
   const sec = g.kind === 'comp' && statementById(g.sid) ? statementStatus(me.entries, statementById(g.sid)) : null;
+  const due = g.done ? [] : goalStepsDue().filter(x => x.g.id === g.id);
+  const stepsHtml = (g.steps || []).length ? `<h2>What you will do</h2><ul class="gsteps-list">${g.steps.map((s, i) => { const d = due.find(x => x.i === i); return `<li><span class="gstep">${esc(s)}</span>${isIfThen(s) ? '' : stepWeeks(g, i, s)}${d ? `<div class="gstepask"><p class="tiny" id="gsq${i}">Did you do it, ${esc(fmtDay(d.day))}?</p>${stepAsk(d, 'gsq' + i)}</div>` : ''}</li>`; }).join('')}</ul>` : '';
+  const linked = me.entries.filter(e => e.goal === g.id).sort((a, b) => b.created - a.created);
   frame(`<section class="hero"><a class="backlink" href="#/goals">${icon('back')} Goals</a><p class="kicker">${esc(goalKindLabel(g.kind))}${g.kind === 'grade' ? ' · ' + esc(g.level) : g.kind === 'cca' && g.cca ? ' · ' + esc(g.cca) : ''}</p><h1>${esc(goalTitle(g))}</h1>
       ${goalWhen(g) ? `<p class="meta">By ${esc(goalWhen(g))}</p>` : ''}${g.done ? `<p class="pill lv">Done${g.doneAt ? ' · ' + esc(fmtDay(g.doneAt)) : ''}</p>` : ''}</section>
-    <section class="card">${nowTo}${g.why ? `<p class="gwhy"><small>Why it matters</small>${esc(g.why)}</p>` : ''}${smartRow(g)}
-      ${sec ? `<p class="tiny">${sec.secured ? 'Secured.' : esc(sec.missing || 'Not started yet.')} <a href="#/c/${esc(statementById(g.sid).comp)}">See the statement</a></p>` : ''}
-      ${(g.steps || []).length ? `<h2>Steps</h2><ul class="gsteps-list">${g.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}</section>
+    <section class="card">${stepsHtml}${nowTo}${g.why ? `<p class="gwhy"><small>Why it matters</small>${esc(g.why)}</p>` : ''}${smartRow(g)}
+      ${sec ? `<p class="tiny">${sec.secured ? 'Secured.' : esc(sec.missing || 'Not started yet.')} <a href="#/c/${esc(statementById(g.sid).comp)}">See the statement</a></p>` : ''}</section>
+    <section class="card"><h2>Your entries for this goal</h2>
+      ${linked.length ? `<ul class="glinked">${linked.map(e => `<li><a href="#/entry/${esc(e.id)}">${esc(FRAMEWORKS[e.kind].name)} · ${esc(fmtDay(e.created))}${e.topic ? ' · ' + esc(e.topic) : ''}</a></li>`).join('')}</ul>` : '<p class="muted">None yet. A GROW or ACT entry can name this goal.</p>'}
+      <a class="btn small sec" href="${goalWriteHref(g)}" id="gWrite">${icon('edit')} Write about this goal</a></section>
     <section class="card"><h2>Checkpoints</h2>
       ${checks.length ? `<ul class="gchecks">${checks.map(c => `<li><label><input type="checkbox" data-gcheck="${esc(c.id)}" ${c.done ? 'checked' : ''}><span>${esc(c.text)}${c.date ? ` <small>${esc(fmtDay(goalDate(c.date)))}</small>` : ''}</span></label><button type="button" class="linkbtn" data-gdelcheck="${esc(c.id)}" aria-label="Remove ${esc(c.text)}">${icon('trash')}</button></li>`).join('')}</ul>` : '<p class="muted">Small steps on the way, with a date. Tick them as you go.</p>'}
       <div class="gaddcheck"><input class="in" id="gCheckText" maxlength="80" placeholder="e.g. Redo the WA1 paper" aria-label="New checkpoint"><input class="in" id="gCheckDate" type="date" aria-label="Its date"><button type="button" class="btn small sec" id="gCheckAdd">${icon('plus')} Add</button></div></section>
     ${g.kind === 'grade' && !g.done ? `<section class="card flat"><h2>Got your result?</h2><div class="row"><select class="in" id="gGot" aria-label="Your result"><option value="">Choose your result</option>${GRADE_SCALES[g.level].map(x => `<option value="${x}">${esc(gradeLabel(g.level, x))}</option>`).join('')}</select><button type="button" class="btn small" id="gGotSave">Record it</button></div></section>` : ''}
-    ${g.got ? `<section class="card flat"><p>Result: <b>${esc(gradeLabel(g.level, g.got))}</b>. ${gradeIndex(g.level, g.got) <= gradeIndex(g.level, g.target) ? 'You reached your goal.' : 'Not this time. Look at what helped, and go again.'}</p><a class="btn small" href="#/goals/new?k=grade" id="gAgain">${icon('plus')} Next goal from here</a></section>` : ''}
+    ${g.got ? `<section class="card flat"><p>Result: <b>${esc(gradeLabel(g.level, g.got))}</b>. ${gradeIndex(g.level, g.got) <= gradeIndex(g.level, g.target) ? 'You reached your goal.' : 'Not this time.'}</p><div class="row"><a class="btn small" href="${goalWriteHref(g, '&r=1')}" id="gReflect">${icon('edit')} What helped? What will you change?</a><a class="btn small sec" href="#/goals/new?k=grade" id="gAgain">${icon('plus')} Next goal from here</a></div></section>` : ''}
     <div class="row gactions"><a class="btn small sec" href="#/goals/new?k=${esc(g.kind)}&e=${esc(g.id)}">${icon('edit')} Edit</a><button type="button" class="btn small sec" id="gDone">${g.done ? 'Not done yet' : `${icon('check')} Mark as done`}</button><button type="button" class="linkbtn" id="gDel">Delete</button></div>
   `, 'goals', {key:'goal:' + id});
   const save = (msg) => { g.updated = Date.now(); saveDb(); if (msg) toast(msg); route(); };
+  wireStepAnswers();
   $$('[data-gcheck]').forEach(b => b.onchange = () => { const c = g.checks.find(x => x.id === b.dataset.gcheck); if (c){ c.done = b.checked; c.doneAt = b.checked ? Date.now() : null; save(b.checked ? 'Ticked.' : ''); } });
   $$('[data-gdelcheck]').forEach(b => b.onclick = () => { g.checks = g.checks.filter(x => x.id !== b.dataset.gdelcheck); save('Removed.'); });
   $('#gCheckAdd').onclick = () => { const t = $('#gCheckText').value.trim(); if (!t){ $('#gCheckText').focus(); return; } g.checks = g.checks || []; g.checks.push({id:uid(), text:t, date:$('#gCheckDate').value || '', done:false}); save('Checkpoint added.'); };
@@ -2544,10 +2590,10 @@ function renderGoal(id){
   $('#gDel').onclick = () => { dialog(`<h2>Delete this goal?</h2><p>${esc(goalTitle(g))}</p><div class="row"><button type="button" class="btn" id="gDelYes">Delete</button><button type="button" class="btn ghost" id="gDelNo">Keep it</button></div>`);
     $('#gDelYes').onclick = () => { me.goals = goalsOf().filter(x => x.id !== g.id); saveDb(); closeDialog(); toast('Deleted.'); location.hash = '#/goals'; }; $('#gDelNo').onclick = closeDialog; };
   const gs = $('#gGotSave'); if (gs) gs.onclick = () => { const v = $('#gGot').value; if (!v) return; g.got = v; g.gotAt = Date.now(); if (gradeIndex(g.level, v) <= gradeIndex(g.level, g.target)){ g.done = true; g.doneAt = Date.now(); } save('Result recorded.'); };
-  const ag = $('#gAgain'); if (ag) ag.onclick = ev => { ev.preventDefault(); goalDraft = {_for:'new:grade', kind:'grade', subject:g.subject, level:g.level, now:g.got, target:(gradeTargets(g.level, g.got) || {}).realistic || '', steps:['', '', ''], checks:[]}; location.hash = '#/goals/new?k=grade'; };
+  const ag = $('#gAgain'); if (ag) ag.onclick = ev => { ev.preventDefault(); goalDraft = {_for:'new:grade', kind:'grade', subject:g.subject, level:g.level, now:g.got, target:'', steps:['', '', ''], checks:[]}; location.hash = '#/goals/new?k=grade'; };
 }
 /* ---------- V4: the goal coach ----------
-   Two doors: find a goal that matters (why first, then where I am, what got in the way, what I will try), or make a
+   Two doors: find a goal that matters (why first, then where I am, what might get in the way and an if then plan for it, what I will try), or make a
    goal SMART (one question for each letter it lacks). At most five questions, any skipped, then a draft to edit. */
 let coachState = null;
 function smartRow(g){
@@ -2562,11 +2608,14 @@ function coachQuestion(key, cs, g){
   const own = '<small style="display:inline">(optional)</small>', ideas = '<span class="flabel">Or start from one of these</span>';
   // a grade the student names, from the whole scale up from the last result; then how far that is, said plainly, with no advice
   const gradePick = (level, now, cur) => field('The result you want next', `<select class="in" id="cTarget"><option value="">Choose</option>${gradeChoices(level, now).map(x => `<option value="${x}" ${cur === x ? 'selected' : ''}>${esc(gradeLabel(level, x))}</option>`).join('')}</select>`);
-  const gap = (level, now, tg) => { if (!now || !tg) return ''; const n = gradeIndex(level, now) - gradeIndex(level, tg); return n < 0 ? '' : `<p class="tiny coachgap">${n === 0 ? `Keep ${esc(gradeLabel(level, tg))}.` : `${esc(gradeLabel(level, now))} to ${esc(gradeLabel(level, tg))}: ${n === 1 ? 'one grade' : n === 2 ? 'two grades' : n + ' grades'} up.`}</p>`; };
-  const howFar = more('How far is far? One grade up from your last result is within reach for most; two is a stretch. Both are fine. You choose.');
+  const gap = gradeGapLine, howFar = more(HOW_FAR);
   if (key === 'area') return {q:'What is the goal about?', html:coachChips([['grade', 'A subject'], ['comp', 'A competency'], ['cca', 'My CCA'], ['own', 'Something else']], 'area', a.area)};
   if (key === 'why' || key === 'R') return {q:'Why does it matter to you?', hint:'This is what keeps you going.', html:field('In your own words', `<input class="in" id="cWhy" maxlength="120" value="${esc(a.why || (g && g.why) || '')}">`) + ideas + coachChips(COACH_WHY.map(w => [w, w]), 'why', a.why)};
-  if (key === 'block') return {q:'What got in the way last time?', html:coachChips(COACH_BLOCKS, 'block', a.block)};
+  if (key === 'block'){   // what might get in the way next time, then an if then plan for it
+    const obs = String(a.blockText || '').trim();
+    return {q:'What might get in the way next time?', hint:'Then plan for it.', html:field('In your own words', `<input class="in" id="cBlock" maxlength="90" value="${esc(obs)}">`) + ideas + coachChips(COACH_BLOCKS, 'block', a.block)
+      + `<div id="cThenWrap"${obs && obs !== COACH_NONE ? '' : ' hidden'}><label class="f"><span id="cThenLab">${esc(thenLabel(obs))}</span><input class="in" id="cThen" maxlength="90" value="${esc(a.then || '')}"></label>${ideas}${coachChips(coachThens(area, a.block).map(t => [t, t]), 'then', a.then)}</div>`};
+  }
   if (key === 'try') return {q:'What will you try, and on which day?', html:field('In your own words', `<input class="in" id="cTry" maxlength="90" value="${esc(a.try || '')}">`) + ideas + coachChips(coachTries(area, a.block).map(t => [t, t]), 'try', a.try) + `<span class="flabel">Day</span>` + coachChips(COACH_DAYS.map(d => [d, d.slice(0, 3)]), 'day', a.day)};
   if (key === 'now'){
     if (area === 'grade'){
@@ -2612,9 +2661,11 @@ function coachQuestion(key, cs, g){
   if (key === 'T'){ const tp = termPos(Date.now()); const end = tp.inTerm ? ymd(termsFor(tp.year)[tp.term - 1].end) : ''; return {q:'By when?', html:coachChips([...(end ? [[end, 'End of this term']] : []), [ymd(addDays(Date.now(), 14)), 'In two weeks'], [ymd(addDays(Date.now(), 30)), 'In a month']], 'by', a.by) + field('Or a day', `<input class="in" id="cBy" type="date" value="${esc(a.by || '')}">`)}; }
   return {q:'', html:''};
 }
+function thenLabel(obs){ return `If ${lcStart(String(obs || '').trim().replace(/^if\s+/i, ''))}, then I will…`; }
 function coachCollect(){
   const a = coachState.a; const v = id => { const el = $('#' + id); return el ? el.value.trim() : undefined; };
-  for (const [id, k] of [['cWhy', 'why'], ['cSubject', 'subject'], ['cSubjectText', 'subject'], ['cNow', 'now'], ['cComp', 'comp'], ['cSid', 'sid'], ['cCca', 'cca'], ['cCcaText', 'cca'], ['cTitle', 'title'], ['cNowText', 'nowText'], ['cToText', 'toText'], ['cBy', 'by'], ['cTarget', 'target'], ['cTry', 'try'], ['cFirst', 'first']]){ const x = v(id); if (x !== undefined && (x || k !== 'by')) a[k] = x; }
+  for (const [id, k] of [['cWhy', 'why'], ['cSubject', 'subject'], ['cSubjectText', 'subject'], ['cNow', 'now'], ['cComp', 'comp'], ['cSid', 'sid'], ['cCca', 'cca'], ['cCcaText', 'cca'], ['cTitle', 'title'], ['cNowText', 'nowText'], ['cToText', 'toText'], ['cBy', 'by'], ['cTarget', 'target'], ['cTry', 'try'], ['cFirst', 'first'], ['cBlock', 'blockText'], ['cThen', 'then']]){ const x = v(id); if (x !== undefined && (x || k !== 'by')) a[k] = x; }
+  if (a.block && (COACH_BLOCKS.find(x => x[0] === a.block) || [])[1] !== a.blockText) a.block = '';   // own words in place of an idea
 }
 function renderCoach(){
   const {q} = hashParts(); const m = q.get('m') === 'smart' ? 'smart' : 'meaning'; const gid = q.get('g') || '';
@@ -2633,9 +2684,12 @@ function renderCoach(){
     coachCollect(); cs.a[k] = cs.a[k] === val && !['area', 'level'].includes(k) ? '' : val;
     if (k === 'why') cs.a.why = cs.a[k]; if (k === 'level'){ cs.a.now = ''; } if (k === 'by' && $('#cBy')) $('#cBy').value = cs.a.by || '';
     if (k === 'title' && $('#cTitle')) $('#cTitle').value = cs.a.title || '';
+    if (k === 'block'){ cs.a.blockText = cs.a.block ? (COACH_BLOCKS.find(x => x[0] === cs.a.block) || [])[1] : ''; if (cs.a.block === 'none') cs.a.then = ''; }
     renderCoach();
   });
   // a last result or a chosen grade redraws what follows, and keeps the focus where the student was
+  // the if then line follows the student's own words as they type, with nothing redrawn under their next tap
+  { const cb = $('#cBlock'); if (cb) cb.oninput = () => { const t = cb.value.trim(), w = $('#cThenWrap'); if (w) w.hidden = !t || t === COACH_NONE; const l = $('#cThenLab'); if (l) l.textContent = thenLabel(t); }; }
   for (const id of ['cNow', 'cTarget']){ const el = $('#' + id); if (el) el.onchange = () => { coachCollect(); const lv = m === 'smart' ? g.level : cs.a.level; if (id === 'cNow' && cs.a.target && !gradeChoices(lv, cs.a.now).includes(cs.a.target)) cs.a.target = ''; renderCoach(); const f = $('#' + id); if (f) f.focus(); }; }
   for (const id of ['cSubject', 'cComp', 'cCca']){ const el = $('#' + id); if (el) el.onchange = () => { if (id === 'cSubject'){ coachCollect(); cs.a.level = subjectLevel(el.value) || cs.a.level; cs.a.now = ''; renderCoach(); } else if (id === 'cComp'){ coachCollect(); cs.a.sid = ''; renderCoach(); } else redraw(); }; }
   $('#coachNext').onclick = () => { coachCollect(); cs.i++; renderCoach(); };
