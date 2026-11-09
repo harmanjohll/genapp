@@ -843,8 +843,51 @@ function mergeGoals(mine, theirs){
   return n;
 }
 
+/* ---------- V4: the goal coach ----------
+   Questions with a limit: at most five, one at a time, any of them skipped; then a draft built from the answers,
+   the same answers always giving the same draft. smartCheck reads a goal and says which of S, M, A, R and T it has. */
+const COACH_WHY = ['To keep a pathway open', 'To feel more confident', 'To be ready for what comes next', 'For my team or my family'];
+const COACH_BLOCKS = [['practice', 'Not enough practice'], ['topic', 'Something I don’t get yet'], ['careless', 'Careless mistakes'], ['time', 'Time or stress'], ['none', 'Nothing yet']];
+const COACH_TRIES = {
+  grade:{
+    practice:['Do one practice question', 'Redo the questions I got wrong'],
+    topic:['Ask my teacher about one thing I am stuck on', 'Explain the topic to a friend'],
+    careless:['Check every answer once before I hand it in', 'Redo the questions I got wrong'],
+    time:['Do a short revision session', 'Plan the week ahead'],
+    none:['Keep one steady habit', 'Try one new way of practising']
+  },
+  any:{
+    practice:['Practise for 15 minutes', 'Work on the hardest part first'],
+    topic:['Ask my teacher or coach about one thing I am stuck on', 'Watch how someone good at it does it'],
+    careless:['Slow down and check once', 'Go over what went wrong last time'],
+    time:['Set aside 15 minutes for it', 'Plan the week ahead'],
+    none:['Keep one steady habit', 'Try one new way of practising']
+  }
+};
+function coachTries(area, block){ const set = COACH_TRIES[area === 'grade' ? 'grade' : 'any']; return set[block] || set.none; }
+const COACH_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const SMART_NAMES = {S:'Specific', M:'Measurable', A:'Achievable', R:'Relevant to you', T:'Time bound'};
+function draftGoal(a){
+  a = a || {}; const kind = ['grade', 'comp', 'cca', 'own'].includes(a.area) ? a.area : 'own';
+  const lc = s => s ? s[0].toLowerCase() + s.slice(1) : '';
+  const step = a.try ? (a.day ? `Every ${a.day}: ${lc(a.try)}` : a.try) : '';
+  const g = {kind, why:String(a.why || '').trim(), steps:step ? [step] : []};
+  if (kind === 'grade'){ g.subject = a.subject || ''; g.level = GRADE_SCALES[a.level] ? a.level : 'G3'; g.now = a.now || ''; const t = gradeTargets(g.level, g.now); g.target = a.target || (t ? t.realistic : ''); g.result = 'wa'; }
+  else if (kind === 'comp') g.sid = a.sid || '';
+  else { g.title = String(a.title || '').trim(); g.nowText = String(a.nowText || '').trim(); if (kind === 'cca') g.cca = a.cca || ''; }
+  return g;
+}
+function smartCheck(g){
+  const has = s => !!String(s || '').trim();
+  const S = g.kind === 'grade' ? has(g.subject) && has(g.target) : g.kind === 'comp' ? has(g.sid) : has(g.title);
+  const M = g.kind === 'grade' || g.kind === 'comp' ? S : has(g.toText) || (g.checks || []).length > 0;
+  const A = g.kind === 'grade' ? !!g.sure || (has(g.now) && has(g.target) && gradeIndex(g.level, g.now) - gradeIndex(g.level, g.target) <= 2) : !!g.sure;
+  const out = {S, M, A, R:has(g.why), T:has(g.by) || (g.checks || []).some(c => c.date)};
+  out.open = ['S', 'M', 'A', 'R', 'T'].filter(k => !out[k]); return out;
+}
+
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '4.3';
+const VERSION_NO = '4.4';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -909,6 +952,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'A goal coach: a few questions, then a draft goal that matters to you, or a check that your goal is SMART',
   'A calendar in Goals: what is coming up, by week, by month or by goal, with your own assessments and CCA events, goal checkpoints and plan days, ready for your own calendar',
   'Goals: a subject grade from your last result to your next, a competency, a CCA skill or your own, with steps and checkpoints. Only you see them',
   'Fewer words: one line and one action on each card, the rest under Details; Settings opens section by section on a phone; the version at the bottom of every page',

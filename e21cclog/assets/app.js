@@ -75,6 +75,7 @@ function icon(n){
     map:'<path d="M3 20l6-11 4 6 3-4 5 9z"/><path d="M14 6l1.5-2L17 6"/>',
     log:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/>',
     settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
     back:'<path d="M15 18l-6-6 6-6"/>', close:'<path d="M18 6L6 18M6 6l12 12"/>', arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
     send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>', copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
     down:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>', up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
@@ -2399,7 +2400,7 @@ function subjectLevel(name){
 }
 function goalKindLabel(k){ return (GOAL_KINDS.find(x => x[0] === k) || [k, 'Goal'])[1]; }
 function goalTitle(g){
-  if (g.kind === 'grade') return `${g.subject}: ${gradeLabel(g.level, g.now)} to ${gradeLabel(g.level, g.target)}`;
+  if (g.kind === 'grade') return g.now && g.target ? `${g.subject}: ${gradeLabel(g.level, g.now)} to ${gradeLabel(g.level, g.target)}` : g.target ? `${g.subject}: ${gradeLabel(g.level, g.target)}` : (g.subject || 'A subject grade');
   if (g.kind === 'comp'){ const s = statementById(g.sid); return s ? s.text.replace(/\.$/, '') : 'A competency'; }
   return g.title || 'My goal';
 }
@@ -2418,6 +2419,7 @@ function renderGoals(){
   const {parts, q} = hashParts(); const id = parts[2] || '';
   if (id === 'new') return renderGoalForm(q.get('k'), q.get('e'));
   if (id === 'calendar') return renderCalendar();
+  if (id === 'coach') return renderCoach();
   if (id) return renderGoal(id);
   const live = goalsOf().filter(g => !g.done).sort((a, b) => goalSoon(a) - goalSoon(b)); const done = goalsOf().filter(g => g.done);
   frame(`
@@ -2434,7 +2436,9 @@ function renderGoalForm(kind, editId){
   const d = goalDraft; kind = d.kind;
   if (!kind){
     frame(`<section class="hero"><a class="backlink" href="#/goals">${icon('back')} Goals</a><h1>New goal</h1><p class="meta">What kind of goal?</p></section>
-      <section class="card"><div class="gkinds">${GOAL_KINDS.map(([k, l, h]) => `<a class="gkind" href="#/goals/new?k=${k}"><b>${esc(l)}</b><small>${esc(h)}</small></a>`).join('')}</div></section>`, 'goals', {key:'goals:new'});
+      <section class="card gdoorcard"><a class="gdoor" href="#/goals/coach?m=meaning" id="gCoach">${icon('spark')}<span><b>Help me find a goal that matters to me</b><small>A few questions, then a draft you can change</small></span></a>
+        ${goalsOf().some(g => !g.done && smartCheck(g).open.length) ? `<details class="more"><summary>Help me make a goal SMART</summary><ul class="gsmartlist">${goalsOf().filter(g => !g.done && smartCheck(g).open.length).map(g => `<li><a href="#/goals/coach?m=smart&g=${esc(g.id)}">${esc(goalTitle(g))}</a></li>`).join('')}</ul></details>` : ''}</section>
+      <h2 class="cweek">Or set it yourself</h2><section class="card"><div class="gkinds">${GOAL_KINDS.map(([k, l, h]) => `<a class="gkind" href="#/goals/new?k=${k}"><b>${esc(l)}</b><small>${esc(h)}</small></a>`).join('')}</div></section>`, 'goals', {key:'goals:new'});
     return;
   }
   const field = (label, html, help) => `<label class="f"><span>${label}</span>${html}${help ? `<small>${help}</small>` : ''}</label>`;
@@ -2473,8 +2477,9 @@ function renderGoalForm(kind, editId){
       ${field('Where you want to be <small style="display:inline">(optional)</small>', `<input class="in" id="gToText" value="${esc(d.toText || '')}" maxlength="90">`)}`;
   }
   const steps = [0, 1, 2].map(i => `<input class="in" data-gstep="${i}" value="${esc((d.steps || [])[i] || '')}" maxlength="90" aria-label="Step ${i + 1}" placeholder="${i === 0 ? 'What will you do each week?' : 'Another step (optional)'}">`).join('');
-  frame(`<section class="hero"><a class="backlink" href="${old ? '#/goals/' + esc(old.id) : '#/goals/new'}">${icon('back')} ${old ? 'Back' : 'Kinds'}</a><h1>${old ? 'Edit goal' : esc(goalKindLabel(kind))}</h1></section>
+  frame(`<section class="hero"><a class="backlink" href="${old ? '#/goals/' + esc(old.id) : '#/goals/new'}">${icon('back')} ${old ? 'Back' : 'Kinds'}</a><h1>${old ? 'Edit goal' : esc(goalKindLabel(kind))}</h1>${d._coached ? '<p class="meta">Your draft, from your answers. Change anything, then set it.</p>' : ''}</section>
     <section class="card goalform">${body}
+      ${field('Why it matters <small style="display:inline">(optional)</small>', `<input class="in" id="gWhy" maxlength="120" value="${esc(d.why || '')}">`)}
       ${field('By <small style="display:inline">(optional)</small>', `<input class="in" id="gBy" type="date" value="${esc(d.by || '')}">`)}
       <div class="f"><span class="flabel">Steps</span><div class="gsteps-in">${steps}</div>${chips(STEP_PRESETS[kind] || [], 'data-gsteppre')}</div>
       <p class="tiny" id="gMsg" role="alert"></p>
@@ -2487,7 +2492,7 @@ function wireGoalForm(old){
   const val = id => ($('#' + id) || {}).value;
   const collectGoal = () => {
     if (val('gSubjectText') !== undefined) d.subject = val('gSubjectText').trim();
-    for (const [id, k] of [['gResName', 'resultName'], ['gTitle', 'title'], ['gNowText', 'nowText'], ['gToText', 'toText'], ['gCcaText', 'cca'], ['gBy', 'by']]) if (val(id) !== undefined) d[k] = val(id).trim();
+    for (const [id, k] of [['gResName', 'resultName'], ['gTitle', 'title'], ['gNowText', 'nowText'], ['gToText', 'toText'], ['gCcaText', 'cca'], ['gBy', 'by'], ['gWhy', 'why']]) if (val(id) !== undefined) d[k] = val(id).trim();
     d.steps = $$('[data-gstep]').map(i => i.value.trim());
   };
   const on = (id, fn) => { const el = $('#' + id); if (el) el.onchange = () => { collectGoal(); keep(() => fn(el.value)); }; };
@@ -2506,7 +2511,7 @@ function wireGoalForm(old){
     collectGoal();
     const miss = d.kind === 'grade' ? (!d.subject ? 'Choose a subject.' : !d.now ? 'Choose your last result.' : !d.target ? 'Choose your next result.' : '') : d.kind === 'comp' ? (!d.sid ? 'Choose an I can statement.' : '') : (!d.title ? 'Write your goal, or start from one above.' : '');
     if (miss){ $('#gMsg').textContent = miss; return; }
-    const g = Object.assign({}, d); delete g._for; delete g._comp; g.steps = (g.steps || []).filter(Boolean).slice(0, 3);
+    const g = Object.assign({}, d); delete g._for; delete g._comp; delete g._coached; g.steps = (g.steps || []).filter(Boolean).slice(0, 3);
     g.updated = Date.now();
     if (old){ const i = goalsOf().findIndex(x => x.id === old.id); goalsOf()[i] = Object.assign(old, g); }
     else { g.id = uid(); g.created = g.updated; g.checks = g.checks || []; goalsOf().push(g); }
@@ -2521,7 +2526,7 @@ function renderGoal(id){
   const sec = g.kind === 'comp' && statementById(g.sid) ? statementStatus(me.entries, statementById(g.sid)) : null;
   frame(`<section class="hero"><a class="backlink" href="#/goals">${icon('back')} Goals</a><p class="kicker">${esc(goalKindLabel(g.kind))}${g.kind === 'grade' ? ' · ' + esc(g.level) : g.kind === 'cca' && g.cca ? ' · ' + esc(g.cca) : ''}</p><h1>${esc(goalTitle(g))}</h1>
       ${goalWhen(g) ? `<p class="meta">By ${esc(goalWhen(g))}</p>` : ''}${g.done ? `<p class="pill lv">Done${g.doneAt ? ' · ' + esc(fmtDay(g.doneAt)) : ''}</p>` : ''}</section>
-    <section class="card">${nowTo}
+    <section class="card">${nowTo}${g.why ? `<p class="gwhy"><small>Why it matters</small>${esc(g.why)}</p>` : ''}${smartRow(g)}
       ${sec ? `<p class="tiny">${sec.secured ? 'Secured.' : esc(sec.missing || 'Not started yet.')} <a href="#/c/${esc(statementById(g.sid).comp)}">See the statement</a></p>` : ''}
       ${(g.steps || []).length ? `<h2>Steps</h2><ul class="gsteps-list">${g.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}</section>
     <section class="card"><h2>Checkpoints</h2>
@@ -2541,6 +2546,111 @@ function renderGoal(id){
   const gs = $('#gGotSave'); if (gs) gs.onclick = () => { const v = $('#gGot').value; if (!v) return; g.got = v; g.gotAt = Date.now(); if (gradeIndex(g.level, v) <= gradeIndex(g.level, g.target)){ g.done = true; g.doneAt = Date.now(); } save('Result recorded.'); };
   const ag = $('#gAgain'); if (ag) ag.onclick = ev => { ev.preventDefault(); goalDraft = {_for:'new:grade', kind:'grade', subject:g.subject, level:g.level, now:g.got, target:(gradeTargets(g.level, g.got) || {}).realistic || '', steps:['', '', ''], checks:[]}; location.hash = '#/goals/new?k=grade'; };
 }
+/* ---------- V4: the goal coach ----------
+   Two doors: find a goal that matters (why first, then where I am, what got in the way, what I will try), or make a
+   goal SMART (one question for each letter it lacks). At most five questions, any skipped, then a draft to edit. */
+let coachState = null;
+function smartRow(g){
+  const s = smartCheck(g);
+  return `<div class="smart"><span class="sr">SMART: ${['S', 'M', 'A', 'R', 'T'].map(k => `${SMART_NAMES[k]} ${s[k] ? 'yes' : 'not yet'}`).join(', ')}.</span>${['S', 'M', 'A', 'R', 'T'].map(k => `<span class="sl${s[k] ? ' on' : ''}" aria-hidden="true" title="${SMART_NAMES[k]}">${k}</span>`).join('')}${s.open.length && !g.done ? `<a class="btn small sec" href="#/goals/coach?m=smart&g=${esc(g.id)}" id="gSmart">Make it SMART</a>` : ''}</div>`;
+}
+function coachSteps(cs){ if (cs.m === 'smart'){ const g = goalById(cs.g); return g ? smartCheck(g).open.filter(k => !(k === 'M' && ['grade', 'comp'].includes(g.kind))) : []; } return ['area', 'why', 'now', 'block', 'try']; }   // a grade's or a statement's M comes with its S
+function coachChips(list, key, cur){ return `<div class="chips" role="group">${list.map(([v, l]) => `<button type="button" class="chip${cur === v ? ' on' : ''}" aria-pressed="${cur === v}" data-ca="${esc(key)}|${esc(v)}">${esc(l)}</button>`).join('')}</div>`; }
+function coachQuestion(key, cs, g){
+  const a = cs.a; const field = (label, html) => `<label class="f"><span>${label}</span>${html}</label>`;
+  const area = cs.m === 'smart' ? g.kind : (a.area || 'own');
+  if (key === 'area') return {q:'What is the goal about?', html:coachChips([['grade', 'A subject'], ['comp', 'A competency'], ['cca', 'My CCA'], ['own', 'Something else']], 'area', a.area)};
+  if (key === 'why' || key === 'R') return {q:'Why does it matter to you?', hint:'This is what keeps you going.', html:coachChips(COACH_WHY.map(w => [w, w]), 'why', a.why) + field('In your own words <small style="display:inline">(optional)</small>', `<input class="in" id="cWhy" maxlength="120" value="${esc(a.why || (g && g.why) || '')}">`)};
+  if (key === 'block') return {q:'What got in the way last time?', html:coachChips(COACH_BLOCKS, 'block', a.block)};
+  if (key === 'try') return {q:'What will you try, and on which day?', html:coachChips(coachTries(area, a.block).map(t => [t, t]), 'try', a.try) + `<span class="flabel">Day</span>` + coachChips(COACH_DAYS.map(d => [d, d.slice(0, 3)]), 'day', a.day)};
+  if (key === 'now'){
+    if (area === 'grade'){
+      const subs = myExperiences().filter(x => x.type === 'subject').map(x => x.name); if (!a.subject && subs.length) a.subject = subs[0];
+      if (!a.level) a.level = subjectLevel(a.subject) || 'G3';
+      return {q:'Where are you now?', html:(subs.length ? field('Subject', `<select class="in" id="cSubject">${subs.map(s => `<option ${sameSubject(s, a.subject) ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select>`) : field('Subject', `<input class="in" id="cSubjectText" maxlength="60" value="${esc(a.subject || '')}">`))
+        + `<span class="flabel">Level</span>` + coachChips(['G3', 'G2', 'G1'].map(l => [l, l]), 'level', a.level)
+        + field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${GRADE_SCALES[a.level].map(x => `<option value="${x}" ${a.now === x ? 'selected' : ''}>${esc(gradeLabel(a.level, x))}</option>`).join('')}</select>`)};
+    }
+    if (area === 'comp'){
+      const comps = COMPETENCIES.filter(c => strandsOf(STMT_SET, c.id).length); const list = a.comp ? myStatements().concat(otherStatements()).filter(s => s.comp === a.comp) : [];
+      return {q:'Which I can statement?', html:field('Competency', `<select class="in" id="cComp"><option value="">Choose</option>${comps.map(c => `<option value="${c.id}" ${a.comp === c.id ? 'selected' : ''}>${esc(c.label)}</option>`).join('')}</select>`)
+        + field('Statement', `<select class="in" id="cSid" ${a.comp ? '' : 'disabled'}><option value="">${a.comp ? 'Choose one' : 'Choose a competency first'}</option>${list.map(s => `<option value="${esc(s.id)}" ${a.sid === s.id ? 'selected' : ''}>${esc(s.text)}</option>`).join('')}</select>`)};
+    }
+    const ccas = myExperiences().filter(x => x.type === 'cca').map(x => x.name); if (area === 'cca' && !a.cca && ccas.length) a.cca = ccas[0];
+    const presets = area === 'cca' ? (CCA_PRESETS[ccaGroup(a.cca)] || CCA_PRESETS.Clubs) : OWN_PRESETS;
+    return {q:area === 'cca' ? 'What skill, and where are you now?' : 'What is it, and where are you now?', html:(area === 'cca' ? (ccas.length > 1 ? field('CCA', `<select class="in" id="cCca">${ccas.map(c => `<option ${c === a.cca ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>`) : field('CCA', `<input class="in" id="cCcaText" maxlength="60" value="${esc(a.cca || '')}">`)) : '')
+      + coachChips(presets.map(t => [t, t]), 'title', a.title) + field('The goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || '')}">`) + field('Where you are now <small style="display:inline">(optional)</small>', `<input class="in" id="cNowText" maxlength="90" value="${esc(a.nowText || '')}">`)};
+  }
+  // the SMART path: one question for each open letter
+  if (key === 'S'){
+    if (g.kind === 'grade'){
+      const now = a.now || g.now; const t = gradeTargets(g.level, now);
+      return {q:'Which grade will you aim for?', html:(g.now ? '' : field('Your last result', `<select class="in" id="cNow"><option value="">Choose</option>${(GRADE_SCALES[g.level] || []).map(x => `<option value="${x}" ${now === x ? 'selected' : ''}>${esc(gradeLabel(g.level, x))}</option>`).join('')}</select>`))
+        + (t ? coachChips([[t.realistic, `Realistic: ${gradeLabel(g.level, t.realistic)}`], ...(t.stretch !== t.realistic ? [[t.stretch, `Stretch: ${gradeLabel(g.level, t.stretch)}`]] : [])], 'target', a.target) : '<p class="tiny">Choose your last result first.</p>')};
+    }
+    return {q:'Say exactly what you will be able to do.', html:field('The goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || g.title || '')}">`)};
+  }
+  if (key === 'M') return {q:'How will you know you got there?', html:field('What you will see', `<input class="in" id="cToText" maxlength="90" value="${esc(a.toText || g.toText || '')}" placeholder="e.g. at 100 beats a minute, with no stops">`)};
+  if (key === 'A'){
+    if (g.kind === 'grade'){
+      const now = a.now || g.now, tg = a.target || g.target; const t = gradeTargets(g.level, now); const n = now && tg ? gradeIndex(g.level, now) - gradeIndex(g.level, tg) : 0;
+      if (n > 2) return {q:`That is ${n} grades up. A smaller step first?`, html:coachChips([...(t ? [[t.stretch, `Aim for ${gradeLabel(g.level, t.stretch)} first`]] : []), ['keep', 'Keep my goal']], 'achieve', a.achieve)};
+      return {q:'Can you reach it by your date, with steady work?', html:coachChips([['keep', 'Yes, I can']], 'achieve', a.achieve)};
+    }
+    return {q:'Can you do this by your date, with steady work?', html:coachChips([['yes', 'Yes, I can'], ['smaller', 'Make it smaller']], 'achieve', a.achieve) + (a.achieve === 'smaller' ? field('A smaller goal', `<input class="in" id="cTitle" maxlength="90" value="${esc(a.title || g.title || '')}">`) : '')};
+  }
+  if (key === 'T'){ const tp = termPos(Date.now()); const end = tp.inTerm ? ymd(termsFor(tp.year)[tp.term - 1].end) : ''; return {q:'By when?', html:coachChips([...(end ? [[end, 'End of this term']] : []), [ymd(addDays(Date.now(), 14)), 'In two weeks'], [ymd(addDays(Date.now(), 30)), 'In a month']], 'by', a.by) + field('Or a day', `<input class="in" id="cBy" type="date" value="${esc(a.by || '')}">`)}; }
+  return {q:'', html:''};
+}
+function coachCollect(){
+  const a = coachState.a; const v = id => { const el = $('#' + id); return el ? el.value.trim() : undefined; };
+  for (const [id, k] of [['cWhy', 'why'], ['cSubject', 'subject'], ['cSubjectText', 'subject'], ['cNow', 'now'], ['cComp', 'comp'], ['cSid', 'sid'], ['cCca', 'cca'], ['cCcaText', 'cca'], ['cTitle', 'title'], ['cNowText', 'nowText'], ['cToText', 'toText'], ['cBy', 'by']]){ const x = v(id); if (x !== undefined && (x || k !== 'by')) a[k] = x; }
+}
+function renderCoach(){
+  const {q} = hashParts(); const m = q.get('m') === 'smart' ? 'smart' : 'meaning'; const gid = q.get('g') || '';
+  if (!coachState || coachState.m !== m || coachState.g !== gid) coachState = {m, g:gid, i:0, a:{}, steps:null};
+  const cs = coachState; const g = gid ? goalById(gid) : null;
+  if (m === 'smart' && !g){ location.hash = '#/goals'; return; }
+  if (!cs.steps) cs.steps = coachSteps(cs).slice(0, 5);   // the limit: never more than five questions
+  if (cs.i >= cs.steps.length) return coachFinish();
+  const key = cs.steps[cs.i]; const Q = coachQuestion(key, cs, g); const last = cs.i + 1 >= cs.steps.length;
+  frame(`<section class="hero"><a class="backlink" href="${g ? '#/goals/' + esc(g.id) : '#/goals/new'}">${icon('back')} ${g ? 'Back to the goal' : 'New goal'}</a><p class="kicker">Question ${cs.i + 1} of ${cs.steps.length}</p><h1 id="coachQ">${esc(Q.q)}</h1>${Q.hint ? `<p class="meta">${esc(Q.hint)}</p>` : ''}</section>
+    <section class="card coachstep" aria-labelledby="coachQ">${Q.html}
+      <div class="row coachnav"><button type="button" class="btn" id="coachNext">${icon('arrow')} ${last ? (m === 'smart' ? 'Done' : 'Draft my goal') : 'Next'}</button><button type="button" class="linkbtn" id="coachSkip">Skip</button>${m === 'meaning' && !last ? '<button type="button" class="linkbtn" id="coachDraft">Draft my goal now</button>' : ''}</div></section>`, 'goals', {key:'coach:' + m + ':' + cs.i});
+  const redraw = () => { coachCollect(); renderCoach(); };
+  $$('[data-ca]').forEach(b => b.onclick = () => {
+    const i = b.dataset.ca.indexOf('|'); const k = b.dataset.ca.slice(0, i), val = b.dataset.ca.slice(i + 1);
+    coachCollect(); cs.a[k] = cs.a[k] === val && !['area', 'level'].includes(k) ? '' : val;
+    if (k === 'why') cs.a.why = cs.a[k]; if (k === 'level'){ cs.a.now = ''; } if (k === 'by' && $('#cBy')) $('#cBy').value = cs.a.by || '';
+    if (k === 'title' && $('#cTitle')) $('#cTitle').value = cs.a.title || '';
+    renderCoach();
+  });
+  const cn = $('#cNow'); if (cn && m === 'smart') cn.onchange = () => { coachCollect(); cs.a.target = ''; renderCoach(); const el = $('#cNow'); if (el) el.focus(); };
+  for (const id of ['cSubject', 'cComp', 'cCca']){ const el = $('#' + id); if (el) el.onchange = () => { if (id === 'cSubject'){ coachCollect(); cs.a.level = subjectLevel(el.value) || cs.a.level; cs.a.now = ''; renderCoach(); } else if (id === 'cComp'){ coachCollect(); cs.a.sid = ''; renderCoach(); } else redraw(); }; }
+  $('#coachNext').onclick = () => { coachCollect(); cs.i++; renderCoach(); };
+  $('#coachSkip').onclick = () => { cs.i++; renderCoach(); };
+  const dn = $('#coachDraft'); if (dn) dn.onclick = () => { coachCollect(); cs.i = cs.steps.length; renderCoach(); };
+  const first = $('.coachstep .chip, .coachstep .in'); if (first) first.focus();
+}
+function coachFinish(){
+  const cs = coachState; coachState = null;
+  if (cs.m === 'meaning'){
+    const d = draftGoal(cs.a); goalDraft = Object.assign({_for:'new:' + d.kind, checks:[], _coached:true}, d, {steps:[...(d.steps || []), '', '', ''].slice(0, 3)});
+    location.hash = '#/goals/new?k=' + d.kind; if (location.hash === '#/goals/new?k=' + d.kind) route(); return;
+  }
+  const g = goalById(cs.g); if (!g){ location.hash = '#/goals'; return; } const a = cs.a;
+  if (a.now && !g.now && GRADE_SCALES[g.level] && GRADE_SCALES[g.level].includes(a.now)) g.now = a.now;
+  if (a.target && GRADE_SCALES[g.level] && a.target !== 'keep'){ g.target = a.target; }
+  if (a.achieve === 'keep' || a.achieve === 'yes') g.sure = true;
+  if (a.achieve && GRADE_SCALES[g.level] && a.achieve !== 'keep'){ g.target = a.achieve; g.sure = true; }
+  if (a.achieve === 'smaller' && a.title){ g.title = a.title; g.sure = true; }
+  if (a.title && g.kind !== 'grade' && g.kind !== 'comp') g.title = a.title;
+  if (a.toText) g.toText = a.toText; if (a.why) g.why = a.why; if (a.by) g.by = a.by;
+  g.updated = Date.now(); saveDb();
+  const open = smartCheck(g).open; toast(open.length ? `Still open: ${open.map(k => SMART_NAMES[k]).join(', ')}.` : 'Your goal is SMART now.', 4200);
+  location.hash = '#/goals/' + g.id;
+}
+
 /* ---------- V3: the calendar ----------
    One calendar for the T in SMART: the student's own events (an assessment, a CCA event, something else), goals'
    checkpoints and By dates, and the days plans name. Four views: coming up, a week, a month, and by goal. The Log
