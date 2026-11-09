@@ -4,17 +4,17 @@
 // with the planning path for a first-time student's attention. Here they sit
 // together as things to wander through once the plan has a shape.
 
-import { getState } from '../state.js?v=4.4.0';
-import { reach } from '../engine/reach.js?v=4.4.0';
-import { signalStrip } from '../ui/signal.js?v=4.4.0';
-import { openWord } from '../ui/labels.js?v=4.4.0';
-import { skyline } from '../ui/scenes.js?v=4.4.0';
-import { onAction } from '../ui/dom.js?v=4.4.0';
-import { icon } from '../ui/icons.js?v=4.4.0';
+import { getState } from '../state.js?v=6.0.0';
+import { reach } from '../engine/reach.js?v=6.0.0';
+import { signalStrip } from '../ui/signal.js?v=6.0.0';
+import { openWord } from '../ui/labels.js?v=6.0.0';
+import { skyline } from '../ui/scenes.js?v=6.0.0';
+import { onAction } from '../ui/dom.js?v=6.0.0';
+import { icon } from '../ui/icons.js?v=6.0.0';
 
 export default {
   id: 'explore',
-  title: 'Pathways',
+  title: 'Explore',
   era: 'school',
   render(root, api) {
     const st = getState();
@@ -24,7 +24,7 @@ export default {
     const open = rows.filter((r) => r.state === 'open').length;
     root.innerHTML = `
     <div class="wrap homewrap">
-      <h1 class="ex-h">Pathways</h1>
+      <h1 class="ex-h">Explore</h1>
       <div class="ex-grid">
         <button type="button" class="ex-card ex-after press arrive" data-action="go" data-s="after">
           <span class="ex-t">Where can I go after Sec?</span>

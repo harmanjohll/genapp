@@ -1,10 +1,32 @@
-# Paths (latest: v4)
+# Paths 6.0
 
-This folder is always the latest Paths, and the one to build on. Share it as
-**genapp/pathways.html**, which forwards here. Every version, what is
+The latest Paths, and the one to build on. Share it as **genapp/pathways.html**,
+which forwards here. 6.0 joins v4.4 and v5 into one app; every version, what is
 critical in it and why it was superseded is logged in
-[`../PATHWAYS_VERSIONS.md`](../PATHWAYS_VERSIONS.md). v1, v2 and v3 are
-frozen in [`../legacy/`](../legacy/).
+[`../PATHWAYS_VERSIONS.md`](../PATHWAYS_VERSIONS.md). v1 to v4.4 are frozen in
+[`../legacy/`](../legacy/); `../pathways5/` only forwards here.
+
+## What 6.0 is
+
+- **Four tabs.** Path, Goal, Explore and Saved (`NAV_ITEMS` in `assets/js/main.js`).
+- **Path** (`screens/path.js`) is home: P6 to after Sec on one line, each year
+  opening in place with its levels, best move and dates. v4's next step sits on
+  top for what the open year cannot show (`nextStep`). "Try a what if" opens
+  Compare (`screens/compare.js`) for that year.
+- **Goal** (`screens/goal.js`, `engine/goal.js`) works back from what a student
+  enjoys to this year's moves.
+- **Explore** (`screens/explore.js`) holds the 8 places, jobs, fees, school
+  types, help for parents and teachers, and the game.
+- **Saved** (`screens/myplan.js`) keeps moves, targets and the printable plan,
+  and opens the plan card and link (`screens/share.js`) and the counsellor
+  session (`screens/session.js`).
+- **Saved plans.** Stored under `paths6.state.v1`. The first visit joins what
+  v4.4 and v5 saved on the device (`engine/migrate.js`) and never writes to
+  their keys.
+- **Checks.** `node pathways/tools/verify.mjs`: 30 sweeps, including Reachable
+  (every screen within two taps of the menu) and Migrate.
+
+The notes below describe the v4 base 6.0 is built on; they still hold.
 
 A planning and conversation tool for Singapore students, parents and teachers
 under Full Subject Based Banding, first SEC cohort. Version 4 reorganises the
