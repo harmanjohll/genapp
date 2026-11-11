@@ -1,10 +1,12 @@
 {
   "_meta": {
-    "accessed": "2026-10-27",
+    "accessed": "2026-11-11",
+    "first_read": "2026-10-27",
+    "recheck_note": "2026-11-11: every MOE and SEAB page cited here was fetched in full with curl, including the expandable sections MOE ships as JSON in the page source, and each quoted line was checked against the saved text. Read recheck_2026_11_11 at the end of this file first: it supersedes anything above it that it contradicts. Items corrected in place say so. The destination families lists below are the older reading; data/families.json holds the corrected lists.",
     "method_note": "WebFetch could not resolve any host in this session (getaddrinfo ENOTFOUND for moe.gov.sg, seab.gov.sg, school sites) and direct curl to moe.gov.sg was refused by the egress proxy. All facts were gathered from WebSearch result extracts of the cited pages. 'confirmed' means the search extract quoted or paraphrased a primary page (moe.gov.sg / seab.gov.sg / institution site) stating the rule; a human should spot-check the confirmed items against the live pages before release. 'provisional' means a secondary source, a pre-2028 (2026 JAE) primary source, or inference.",
     "sources": [
       {"id": "moe_pse", "title": "MOE: Post-Secondary Admissions Exercise (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse", "kind": "primary"},
-      {"id": "moe_pse_jcmi", "title": "MOE: Junior colleges and Millennia Institute - Admission criteria (PSE, page updated 16 Mar 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/jc-and-mi", "kind": "primary"},
+      {"id": "moe_pse_jcmi", "title": "MOE: Junior colleges and Millennia Institute - Admission criteria (PSE, page updated 28 Jul 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/jc-and-mi", "kind": "primary"},
       {"id": "moe_jae_2028", "title": "MOE: JAE changes from 2028", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/changes-from-2028", "kind": "primary"},
       {"id": "moe_infosheet1", "title": "MOE COS 2025 Infosheet 1: Revised Junior College (JC) Admission Criteria (6 Mar 2025)", "url": "https://www.moe.gov.sg/news/press-releases/20250306-infosheet-1-revised-jc-admission-criteria", "kind": "primary"},
       {"id": "moe_pse_poly", "title": "MOE: Polytechnic diploma course (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/polytechnic-diploma-course", "kind": "primary"},
@@ -12,10 +14,10 @@
       {"id": "moe_pse_hn2", "title": "MOE: Institute of Technical Education 2-Year Higher Nitec (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-2-year-higher-nitec", "kind": "primary"},
       {"id": "moe_pse_hn3", "title": "MOE: Institute of Technical Education 3-Year Higher Nitec (PSE)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-3-year-higher-nitec", "kind": "primary"},
       {"id": "moe_pse_explore", "title": "MOE: Pathways, courses and programmes (PSE explore pathways)", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways", "kind": "primary"},
-      {"id": "moe_fsbb_faq", "title": "MOE Full SBB FAQ", "url": "https://www.moe.gov.sg/microsites/psle-fsbb/full-subject-based-banding/faq.html", "kind": "primary"},
+      {"id": "moe_fsbb_faq", "title": "MOE Full SBB FAQ", "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/faq", "kind": "primary"},
       {"id": "moe_jae_poly", "title": "MOE: JAE Polytechnic admission and courses (2026 JAE rules, CCA points table)", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/polytechnics", "kind": "primary"},
       {"id": "moe_jae_criteria", "title": "MOE: JAE Admission criteria (pre-2028 bonus point table)", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/admission-criteria", "kind": "primary"},
-      {"id": "moe_jae2026_aggtypes", "title": "MOE: Polytechnic Aggregate Types Computation ELR2B2 (2026 JAE) PDF", "url": "https://www.moe.gov.sg/-/media/files/post-secondary/2026-jae/polytechnic-aggregate-types-computation-2026-jae.pdf", "kind": "primary"},
+      {"id": "moe_jae2026_aggtypes", "title": "MOE: Polytechnic Aggregate Types Computation ELR2B2 (2026 JAE) PDF", "url": "https://www.moe.gov.sg/media/files/post-secondary/2026%20JAE/Polytechnic%20Aggregate%20Types%20Computation%202026%20JAE.pdf", "kind": "primary"},
       {"id": "moe_2023_ite", "title": "MOE press release 21 Jul 2023: Changes to admissions requirements for ITE upgraders / DPP ends AY2028", "url": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027", "kind": "primary"},
       {"id": "seab_grading", "title": "SEAB: National Examinations' Grading System", "url": "https://www.seab.gov.sg/newsroom/national-examinations--grading-system/", "kind": "primary"},
       {"id": "seab_sec", "title": "SEAB: Secondary Education Certificate (SEC)", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "kind": "primary"},
@@ -127,7 +129,7 @@
         "R1B3-C": "R1 = English + 3 best",
         "B4": "4 best subjects, no grade requirement"
       },
-      "subjectGradeForRandB": "G3 A1-E8, G2 1-5, G1 A-D (B4: none)",
+      "subjectGradeForRandB": "Corrected 2026-11-11. G3 A1-E8, G2 1-5, G1 A-D for three of the four subjects: R1, R2 and B1 in R2B2; R1, B1 and B2 in R1B3-A, -B and -C. The last B subject has no grade requirement. B4: none.",
       "status": "confirmed",
       "sourceRef": ["moe_pse_hn3"],
       "note": "No numeric aggregate cut-off for these types was found."
@@ -152,16 +154,16 @@
       ],
       "status": "confirmed",
       "sourceRef": ["moe_infosheet1", "moe_jae_2028"],
-      "statusNote": "Cap and LEP rule confirmed; per-item values provisional."
+      "statusNote": "2026-11-11: cap, every item value and the LEP rule read on the PSE JC and MI page. Items: CCA Excellent 2, Good 1; English with Higher MTL at A1-C6 2; Chinese or Malay (Special Programme) or Bahasa Indonesia at A1-C6 2; affiliated JC 2. The 'selected JC programmes' item above is the Language Elective Programme only."
     },
     "poly": {
       "items": [{"text": "CCA Excellent (A1/A2): 2 points; Good (B3-C6): 1 point; subtracted from ELR2B2 gross", "points": {"excellent": 2, "good": 1}, "status": "confirmed", "sourceRef": ["moe_pse_poly", "moe_jae_poly"]}],
       "cap": null,
       "capNote": "No separate poly cap stated; only CCA points found (so effectively max 2). Cut-off 22 is on the NET aggregate."
     },
-    "pfp": {"text": "Gross ELMAB3 (no bonus points)", "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
-    "hnitec2": {"text": "Gross ELMAB3, excluding CCA points", "status": "confirmed", "sourceRef": ["moe_pse_hn2", "moe_pse_explore"]},
-    "hnitec3": {"text": "Not stated", "status": "provisional", "sourceRef": []},
+    "pfp": {"text": "Corrected 2026-11-11. Eligibility is on gross ELMAB3 (12); CCA points, Excellent 2 or Good 1, are then subtracted to give the net aggregate used for posting.", "status": "confirmed", "sourceRef": ["moe_pse_pfp"]},
+    "hnitec2": {"text": "Corrected 2026-11-11. Eligibility is on gross ELMAB3 (19); CCA points, up to 2, are then subtracted to give the net aggregate used for posting.", "status": "confirmed", "sourceRef": ["moe_pse_hn2", "moe_pse_explore"]},
+    "hnitec3": {"text": "Corrected 2026-11-11. CCA points, Excellent 2 or Good 1, are subtracted to give the net aggregate used for posting.", "status": "confirmed", "sourceRef": ["moe_pse_hn3"]},
     "sec5": {"text": "Gross aggregates", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
     "arts": {"text": "NAFA notes bonus points may count toward the aggregate (O-Level route wording)", "status": "provisional", "sourceRef": ["nafa_theatre"]}
   },
@@ -287,7 +289,7 @@
         {"text": "Route 1: 3 or more G3 passes AND not eligible for JC, MI or Poly Year 1", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
         {"text": "Route 2: 2 or fewer G3 passes AND gross ELMAB3 <= 21, or ELB3 <= 14, or MAB3 <= 14, computed at G2 (at least grade 5 at G2 for every subject used)", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
         {"text": "To offer ALL subjects at G3 in 5th year: gross ELMAB3 (G2-computed, each subject at least grade 5) <= 19", "status": "confirmed", "sourceRef": ["moe_pse_explore", "sch_wrss_2026"]},
-        {"text": "Definition of a 'G3 pass' (C6? E8?) not stated in sources found", "status": "provisional", "sourceRef": []}
+        {"text": "Definition of a 'G3 pass' is not on any MOE page read on 2026-11-11. SEAB's reply of 5 May 2026 calls A1 to C6 the O Level subject passes; the SEC certificate is awarded at E8. The app keeps E8 and says it is to confirm with the school.", "status": "provisional", "sourceRef": ["seab_grading", "seab_sec"]}
       ],
       "aggregate": {"type": "ELMAB3|ELB3|MAB3", "computedAt": "G2-equivalent", "cutoff": {"ELMAB3": 21, "ELB3": 14, "MAB3": 14, "allG3Option_ELMAB3": 19}, "gross": true, "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
       "families": []
@@ -313,18 +315,45 @@
   ],
 
   "open_questions": [
-    "Live verification: every 'confirmed' item came via search-engine extracts because WebFetch/curl could not reach moe.gov.sg in this session. Spot-check the MOE PSE pages directly.",
-    "Exact 2028 per-item JC/MI bonus values (CCA, affiliation, HMTL, elective programmes) under the cap of 3: null / provisional.",
-    "Does JC/MI conditional admission (old rule: L1R4/L1R5 near-miss with A1/A2 grades, or missing a subject floor and re-sitting) continue under PSE 2028? Not found.",
-    "Definition of a 'G3 pass' for the Sec 5 '3 or more G3 passes' rule (C6 or E8?): not found.",
-    "Is there an explicit cap on poly bonus points under PSE beyond CCA's 2 points? Not found.",
-    "Numeric aggregate cut-off (if any) for 3-Year Higher Nitec G1 aggregate types: not found; MER is per type.",
-    "Which ITE courses/clusters use which G1 aggregate type (R2B2 / R1B3-A/B/C / B4): not published.",
-    "2028 ELR2B2-A..D relevant-subject lists under SEC and per-course MERs (e.g. Maths 1-6, science 1-6): to be published mid-2027; 2026 JAE lists used as provisional and sources disagree on B and D 2nd groups.",
-    "Whether a G2 subject can be used as poly R1/R2 for any aggregate type (MOE text says R1, R2 use G3 grade, implying no).",
-    "Whether PFP ELMAB3 uses B1+B2+B3 or B1+B3 (one extract said '1st and 3rd best'); ITE page uses B1, B2, B3.",
-    "PFP per-cluster MER subject lists for 2028 (EL 3, Maths 3, relevant 3, best two 4 is from AY2026 poly pages and an MOE FAQ extract).",
-    "JC H2 Art/Music and humanities prerequisites: not researched from primary JC pages.",
-    "NAFA English requirement for 2028 SEC route: not restated in extract."
-  ]
+    "Definition of a 'G3 pass' for the Sec 5 '3 or more G3 passes' rule: not on any MOE page. SEAB calls A1 to C6 the O Level passes; the certificate is awarded at E8. Ask MOE or the school.",
+    "What applies to a JC or MI applicant with no Mother Tongue grade: not stated.",
+    "How many subject grade floors may be missed under conditional admission: not stated.",
+    "Which ITE courses use which G1 aggregate type (R2B2, R1B3-A/B/C, B4): not published; mid 2027.",
+    "2028 ELR2B2 relevant subject lists and per course MERs: mid 2027. MOE's own 2026 JAE table is used as provisional.",
+    "2028 PFP relevant subjects per cluster, including whether Physics, Chemistry and Biology count: mid 2027. The current list names only D&T, Nutrition and Food Science and the combined Sciences for the Sciences and DET clusters.",
+    "JC H2 prerequisites: MOE publishes none; each college sets its own.",
+    "Arts diploma length and how much the portfolio or audition weighs: not on any MOE page; institution pages not opened."
+  ],
+
+  "recheck_2026_11_11": {
+    "method": "Primary MOE and SEAB pages fetched in full with curl; quotes machine checked. Narrative in research/pse.md, last section.",
+    "result": {"confirmed": 61, "wrong": 19, "not_found_on_primary_page": 8},
+    "supersedes": [
+      {"text": "JC and MI Humanities for R1 and R3: Bahasa Indonesia as a 3rd Language, Chinese (Special Programme), Malay (Special Programme), Geography, History, Higher Art, Higher Music, Humanities (Social Studies with an elective), Literature. Art, Music and Economics are 'Others' and count only as R4; so is Computing. Religious Knowledge cannot be counted.", "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+      {"text": "Conditional admission to JC and MI continues from the 2028 PSE. With a subject grade floor missed: JC with L1R4 <= 12, or 13 to 16 with A1 or A2 in all four R subjects; MI with L1R4 <= 15, or 16 to 20 likewise. The grade must be obtained by the end of Year 1 (JC: otherwise transfer to Year 2 at MI). Not available for an Absent grade.", "status": "confirmed", "sourceRef": ["moe_pse_jcmi"]},
+      {"text": "Mother Tongue and Higher Mother Tongue of the same language: only one may be used in any aggregate (JC, MI, polytechnic, PFP, ITE).", "status": "confirmed", "sourceRef": ["moe_pse_jcmi", "moe_pse_poly", "moe_pse_pfp", "moe_pse_hn2", "moe_pse_hn3"]},
+      {"text": "PFP, 2 year and 3 year Higher Nitec: CCA bonus points (Excellent 2, Good 1) are subtracted for posting. PFP 12 and Higher Nitec 19 are gross limits read before them.", "status": "confirmed", "sourceRef": ["moe_pse_pfp", "moe_pse_hn2", "moe_pse_hn3"]},
+      {"text": "ELMAB3 for PFP and 2 year Higher Nitec does not count G1 subjects. PFP also drops G2 5 and 6 and a G3 9; Higher Nitec counts them in the aggregate but not for subject MERs.", "status": "confirmed", "sourceRef": ["moe_pse_pfp", "moe_pse_hn2"]},
+      {"text": "PFP subject minimums for the SEC cohort, at G2 level: English 3, Mathematics 3, relevant subject 3, two best subjects 4.", "status": "confirmed", "sourceRef": ["moe_fsbb_faq"]},
+      {"text": "PFP has three clusters: Sciences; Design, Engineering and Technology; Humanities, Art, Media and Business. Design, and Engineering and Technology, are sub-clusters at NYP and TP only. Current relevant subjects for Sciences and DET: D&T, Food and Nutrition/Nutrition and Food Science, Science (Chemistry, Biology), Science (Physics, Biology), Science (Physics, Chemistry). For HAMB: Art, Geography, History, the three Humanities (Social Studies) combinations, Literature in English, Principles of Accounts. App ids: pfp_sciences, pfp_det, pfp_hamb.", "status": "provisional", "sourceRef": ["moe_pfp", "moe_pse_explore"], "url": ["https://www.moe.gov.sg/post-secondary/admissions/pfp/eligibility-criteria", "https://www.moe.gov.sg/media/files/post-secondary/e98ca3e8-f1c7-4e12-bc0f-71cc1789ebb4.pdf"]},
+      {"text": "Polytechnic R1 and R2 must be G3 subjects. For 2028 MOE states type B counts only Mathematics or Additional Mathematics as R1; MOE's 2026 JAE table prints one first group cell, Additional Mathematics and Mathematics, across B, C and D. A G2 Mathematics can only sit in B2.", "status": "confirmed", "sourceRef": ["moe_pse_poly", "moe_jae2026_aggtypes"]},
+      {"text": "Polytechnic types on MOE's 2026 JAE table. A: first group arts, business and humanities subjects without Principles of Accounts; second group adds Mathematics, Additional Mathematics, Mother Tongue and Higher Mother Tongue, D&T, Design Studies, Nutrition and Food Science, Principles of Accounts; no science in either. B: second group is Art, Business Studies, Combined Humanities, Economics, Geography, Higher Art, Higher Music, History, Humanities (Social Studies with an elective), Literature, Media Studies, Music, Principles of Accounts. C: second group is the sciences, Biotechnology, Computing, D&T, Nutrition and Food Science, Electronics, Exercise and Sports Science. D: second group is Art, Higher Art, the sciences, Biotechnology, Computing, D&T, Design Studies, Nutrition and Food Science, Electronics, Media Studies.", "status": "provisional", "sourceRef": ["moe_jae2026_aggtypes"]},
+      {"text": "Arts institutions, one rule for both from the 2028 intake: a pass in G3 English at C6 or better, and 21 points or better in four other subjects (three G3 and one G2; with four G3, the lowest is mapped to G2). Admission tests, portfolios, auditions and interviews continue; meeting the minimum does not guarantee admission. Both are outside the PSE. Early admissions: LASALLE in May, NAFA in June, open to G2 and G3 students from AY2028.", "status": "confirmed", "sourceRef": ["moe_fsbb_faq", "moe_pse"]},
+      {"text": "NAFA Foundation Programme: ELMAB3 gross of 15 or better at G2 equivalent grades, excluding CCA bonus points.", "status": "confirmed", "sourceRef": ["moe_fsbb_faq"]},
+      {"text": "Sec 5: not qualified for Polytechnic Year 1 means no course MER met or a net ELR2B2 of 23 or more. Students without enough G2 or G3 subjects to compute the criteria may consult their schools; eligible students approach their secondary school directly.", "status": "confirmed", "sourceRef": ["moe_pse_explore"]},
+      {"text": "The PSE replaces the Joint Admissions Exercise, the PFP Admissions Exercise and the ITE Joint Intake Exercise (2 year and 3 year Higher Nitec). The DPP ceases from the AY2028 ITE intake. Up to 12 choices, six calendar days from the SEC results in mid January 2028, posting by early February 2028. Tie breakers: citizenship, choice order, gross aggregate, ballot.", "status": "confirmed", "sourceRef": ["moe_pse"], "url": ["https://www.moe.gov.sg/news/press-releases/20260303-we-learn-for-life-together-building-a-we-first-society-through-education", "https://www.moe.gov.sg/post-secondary/admissions/pse/how-to-apply", "https://www.moe.gov.sg/post-secondary/admissions/pse/how-posting-works"]},
+      {"text": "G3 and G2 points equal the grade number: MOE's 2028 worked examples show it (for example 6 + 1 + 1 + 3 + 1 = 12).", "status": "confirmed", "sourceRef": ["moe_pse_jcmi", "moe_pse_hn2"]}
+    ],
+    "resolved_questions": [
+      "JC and MI bonus item values under the cap of 3: confirmed.",
+      "Conditional admission under the 2028 PSE: confirmed, with thresholds.",
+      "Polytechnic bonus beyond CCA: only CCA is listed.",
+      "A G2 subject cannot be R1 or R2: EL, R1, R2 and B1 use the G3 grade.",
+      "PFP ELMAB3 uses B1, B2 and B3.",
+      "PFP subject minimums apply to the SEC cohort: confirmed on MOE's FAQ.",
+      "NAFA's English requirement for 2028: MOE states G3 English at C6 for both institutions."
+    ],
+    "applied_to": ["data/pathways.json", "data/grades.json", "data/families.json", "data/goals.json (familyNames, sectorFamilies)", "assets/js/engine/grades.js", "assets/js/engine/policy.js (admissions pins)"],
+    "not_in_these_files": ["data/glossary.json: the PSE and Early Admissions entries", "assets/js/ui/targets.js: the 'read 27 October 2026' source line"]
+  }
 }

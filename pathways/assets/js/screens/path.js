@@ -9,20 +9,28 @@
 // 6.0 adds v4's next step on top, for the steps the open year cannot show
 // itself: say your year, enter PSLE results, set grade targets, talk to
 // someone. A level to set or a move to make is already in the open year.
+//
+// 7.0: the line no longer stops at 17. After the 8 places comes the long
+// view, ages 12 to 65 to scale. The compass sits beside the goal at the top,
+// the next step asks about a goal that is due a second look, and the pages
+// Explore used to hold (places, jobs, fees, school types, adults) are links
+// at the foot of the line.
 
-import { getState, setYearLevel, replaceYearPlan, YEARS } from '../state.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=6.0.0';
-import { sayMove } from '../ui/talk.js?v=6.0.0';
-import { advise } from '../engine/advice.js?v=6.0.0';
-import { psleScore } from '../engine/psle.js?v=6.0.0';
-import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=6.0.0';
-import { signalHtml } from '../ui/signal.js?v=6.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
-import { subjTile } from './year.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { stateWord, openWord, isShort, t } from '../ui/labels.js?v=6.0.0';
+import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.0.0';
+import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.0.0';
+import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.0.0';
+import { sayMove } from '../ui/talk.js?v=7.0.0';
+import { advise } from '../engine/advice.js?v=7.0.0';
+import { psleScore } from '../engine/psle.js?v=7.0.0';
+import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.0.0';
+import { signalHtml } from '../ui/signal.js?v=7.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=7.0.0';
+import { subjTile } from './year.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { stateWord, openWord, isShort, t } from '../ui/labels.js?v=7.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const ORDER = YEARS.map((y) => y.id);
@@ -70,6 +78,12 @@ export function nextStep(api, st) {
   }
   const plan = (st.plans && st.plans[y]) || {};
   if (!Object.keys(plan).length) return null;
+  if (goalDue(st.goal)) {
+    return { title: 'Is this still your goal?', body: goalLine(api, st.goal), cta: 'Look at it again', s: 'goal' };
+  }
+  if (st.role === 'student' && !st.compass.enjoy.length) {
+    return { title: 'Say what you enjoy', body: 'Two taps on your compass. It shapes your goal and the game.', cta: 'Open Me', s: 'me' };
+  }
   const a = advise({ yearId: y, plan, ctx: api.ctx() });
   const top = a.singles[0] || a.pairs[0];
   if (top && !st.actions.includes(sayMove(top, st.role))) return null;
@@ -187,15 +201,33 @@ export default {
     const now = st.yearSet ? st.year : 'sec2';
     const open = q.y && ORDER.includes(q.y) ? q.y : now;
     const e = effective(st.plans, api.ctx().subjects);
+    const age = st.yearSet ? (currentYear().realAge || currentYear().age) : 14;
+    const markers = (api.data.lifelong && api.data.lifelong.markers) || [];
+    let lvSel = firstMarker(markers, age);
+    // A student who used an earlier build sees, once, what is different.
+    const rel = ((api.data.version || {}).releases || [])[0];
+    const showNew = !!(rel && st.importedFrom && st.seenVersion !== rel.version);
     root.innerHTML = `
     <div class="wrap-narrow pathwrap">
       <header class="ph arrive">
-        <p class="ph-k">Your path</p>
+        <p class="ph-k">How do I get there?</p>
         <h1>${st.role === 'student' ? 'From P6 to after Sec' : 'The path, P6 to after Sec'}</h1>
-        ${st.goal
-          ? `<button type="button" class="goalchip press" data-action="go" data-s="goal">${icon('target')}<span><small>Aiming for</small> ${esc(goalLine(api, st.goal))}</span>${icon('caret', 'chev')}</button>`
-          : `<button type="button" class="btn press" data-action="go" data-s="goal">${icon('target')} Set a goal</button>`}
+        <div class="ph-row">
+          <button type="button" class="mechipbtn press" data-action="go" data-s="me" aria-label="Me: your compass, ${pointsFilled(compassFill())} of 4 points filled">${compassSvg(compassFill(), { mini: true })}</button>
+          ${st.goal
+            ? `<button type="button" class="goalchip press" data-action="go" data-s="goal">${icon('target')}<span><small>Aiming for</small> ${esc(goalLine(api, st.goal))}</span>${icon('caret', 'chev')}</button>`
+            : `<button type="button" class="btn press" data-action="go" data-s="goal">${icon('target')} Set a goal</button>`}
+        </div>
       </header>
+      ${st.role !== 'student' ? `<button type="button" class="adultdoor press arrive" data-action="go" data-s="adults" data-tab="${st.role === 'teacher' ? 'teacher' : 'parent'}">
+        ${icon(st.role)}<span><b>${st.role === 'teacher' ? 'For teachers' : 'For parents'}</b><small>${st.role === 'teacher' ? 'A lesson, and a 15 minute session.' : 'What changed since your school days.'}</small></span>${icon('arrow')}</button>` : ''}
+      ${showNew ? `<section class="whatsnew arrive" aria-labelledby="wn-h">
+        <p class="ns-k">New in this version</p>
+        <h2 id="wn-h">${esc(rel.head)}</h2>
+        <ul>${rel.changes.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        <p class="btnrow"><button type="button" class="btn small press" data-action="wn-ok">${icon('check')} Got it</button>
+          <button type="button" class="btn ghost small press" data-action="wn-all">All changes</button></p>
+      </section>` : ''}
       ${nextHtml(api, st)}
       <ol class="pline">
         ${ORDER.map((y) => {
@@ -214,12 +246,35 @@ export default {
         }).join('')}
         <li class="py py-end" data-when="after" data-open="true">
           <div class="py-h static"><span class="py-dot" aria-hidden="true"></span><span class="py-name">After Sec</span><span class="py-sum">${e.yearId ? `From your ${esc(LABEL[e.yearId])} levels` : 'Set your levels to see where you stand'}</span></div>
-          <div class="py-body">${afterHtml(api, st)}</div>
+          <div class="py-body">${afterHtml(api, st)}
+            <p class="py-links"><button type="button" class="linkbtn" data-action="go" data-s="after">What each place asks and costs</button></p>
+          </div>
+        </li>
+        <li class="py py-end py-later" data-when="later" data-open="true">
+          <div class="py-h static"><span class="py-dot" aria-hidden="true"></span><span class="py-name">After that</span><span class="py-sum">Ages 12 to 65, to scale</span></div>
+          <div class="py-body" id="py-long">${longViewHtml(api.data.lifelong, age, lvSel)}</div>
         </li>
       </ol>
+      <nav class="lookrow" aria-label="More to look at">
+        <button type="button" class="chip press" data-action="go" data-s="work">${icon('d_portfolio')} Jobs and sectors</button>
+        <button type="button" class="chip press" data-action="go" data-s="money">${icon('ticket')} Fees and help</button>
+        <button type="button" class="chip press" data-action="go" data-s="schools">${icon('home')} School types</button>
+        <button type="button" class="chip press" data-action="go" data-s="adults">${icon('d_people')} Parents and teachers</button>
+      </nav>
     </div>`;
 
     onAction(root, {
+      'wn-ok': () => { markVersionSeen(rel.version); api.refresh(); },
+      'wn-all': (btn) => api.sheet(`<h2 id="sheet-title">${esc(rel.head)}</h2><ul class="wn-list">${rel.changes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`, btn),
+      // The long view redraws itself in place, and keeps the finger on Next.
+      'lv-pick': (btn) => {
+        lvSel = Math.max(0, Math.min(markers.length - 1, Number(btn.dataset.i)));
+        const host = root.querySelector('#py-long');
+        if (!host) return;
+        host.innerHTML = longViewHtml(api.data.lifelong, age, lvSel);
+        const back = host.querySelector(`[data-key="${btn.dataset.key}"]:not([disabled])`) || host.querySelector('[data-key="lv-next"]:not([disabled])') || host.querySelector('[data-key="lv-prev"]');
+        if (back) back.focus({ preventScroll: true });
+      },
       'py-open': (btn) => {
         const y = btn.dataset.y;
         api.setQuery({ y: y === open ? '_' : y });

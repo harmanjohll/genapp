@@ -1,0 +1,260 @@
+{
+  "_meta": {
+    "accessed": "2026-10-27",
+    "method": "WebFetch could not resolve any host in this sandbox (DNS failure, even for wikipedia.org) and the outbound proxy refused direct curl. Every fact here comes from search-indexed text of the cited pages, retrieved through WebSearch. 'confirmed' means the search engine's excerpt attributed the statement to the primary page. It does not mean the page itself was opened. Recheck high-stakes numbers on the live page before shipping.",
+    "sources": [
+      {"id": "moe-pg", "title": "MOE: What are posting groups", "url": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups", "kind": "primary"},
+      {"id": "moe-calc", "title": "MOE PSLE-FSBB: PSLE Score Calculator (AL tables)", "url": "https://www.moe.gov.sg/psle-fsbb/resources/score-calculator", "kind": "primary"},
+      {"id": "moe-fsbb-faq", "title": "MOE PSLE-FSBB microsite: Full SBB FAQ", "url": "https://www.moe.gov.sg/microsites/psle-fsbb/full-subject-based-banding/faq.html", "kind": "primary"},
+      {"id": "moe-fsbb-about", "title": "MOE: What is Full SBB?", "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/about-full-sbb", "kind": "primary"},
+      {"id": "moe-fsbb-exp", "title": "MOE: Secondary school experience under Full SBB", "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience", "kind": "primary"},
+      {"id": "moe-fsbb-story", "title": "MOE: Full SBB Interactive Story", "url": "https://www.moe.gov.sg/microsites/psle-fsbb/full-subject-based-banding/interactive.html", "kind": "primary"},
+      {"id": "moe-edtalk", "title": "MOE EdTalks: What you need to know about Full SBB", "url": "https://www.moe.gov.sg/news/edtalks/what-you-need-to-know-about-full-sbb", "kind": "primary"},
+      {"id": "moe-curr", "title": "MOE: Curriculum for secondary schools (Full SBB, SEC, fifth year)", "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb?toggle-id=singapore-cambridge-secondary-education-certificate-sec-examination", "kind": "primary"},
+      {"id": "moe-psle25", "title": "MOE press release: Release of 2025 PSLE Results and S1 Posting Exercise (18 Nov 2025)", "url": "https://www.moe.gov.sg/news/press-releases/20251118-release-of-2025-psle-results-and-secondary-1-posting-exercise", "kind": "primary"},
+      {"id": "moe-psle25b", "title": "MOE press release: Release of 2025 PSLE Results (25 Nov 2025)", "url": "https://www.moe.gov.sg/news/press-releases/20251125-release-of-2025-psle-results", "kind": "primary"},
+      {"id": "moe-s1results", "title": "MOE: S1 View school posting results", "url": "https://www.moe.gov.sg/secondary/s1-posting/results", "kind": "primary"},
+      {"id": "moe-s1choices", "title": "MOE: S1 Posting eligibilities and choices", "url": "https://www.moe.gov.sg/secondary/s1-posting/school-choices/eligibilities-and-choices", "kind": "primary"},
+      {"id": "moe-natdates", "title": "MOE: National examinations dates", "url": "https://www.moe.gov.sg/national-exams-dates", "kind": "primary"},
+      {"id": "seab-dates", "title": "SEAB: Important Dates for Candidates", "url": "https://www.seab.gov.sg/important-dates-for-candidates/", "kind": "primary"},
+      {"id": "moe-mtl2024", "title": "MOE press release: Strengthening Efforts for Students to Learn and Use Their MTL from Young (14 Sep 2024)", "url": "https://www.moe.gov.sg/news/press-releases/20240914-strengthening-efforts-for-students-to-learn-and-use-their-mother-tongue-language-from-young", "kind": "primary"},
+      {"id": "moe-psle2019", "title": "MOE press release: Updates to PSLE 2021 Scoring System (25 Jul 2019)", "url": "https://www.moe.gov.sg/news/press-releases/20190725-updates-to-psle-2021-scoring-system-enabling-students-to-progress-regardless-of-starting-points", "kind": "primary"},
+      {"id": "moe-scoringfaq", "title": "MOE PSLE microsite FAQ: Scoring changes", "url": "https://www.moe.gov.sg/microsites/psle/FAQs/scoring-changes.html", "kind": "primary"},
+      {"id": "seab-sec", "title": "SEAB: Secondary Education Certificate (SEC)", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "kind": "primary"},
+      {"id": "seab-g1-2027", "title": "SEAB: (2027 SEC) G1 Syllabuses for School Candidates", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/g1-syllabuses-for-school-candidates-2027/", "kind": "primary"},
+      {"id": "seab-g3-2027", "title": "SEAB: (2027 SEC) G3 Syllabuses for School Candidates", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/g3-syllabuses-for-school-candidates-2027/", "kind": "primary"},
+      {"id": "moe-infosheet2", "title": "MOE Infosheet 2 (4 Mar 2024): Full SBB-related changes on SEC exam timetable, Poly Y1 admission criteria", "url": "https://www.moe.gov.sg/news/press-releases/20240304-infosheet-2-full-sbb-related-changes-on-sec-examination-timetable-polytechnic-year-1-admission-criteria", "kind": "primary"},
+      {"id": "moe-jc2028", "title": "MOE Infosheet 1 (6 Mar 2025): Revised JC Admission Criteria", "url": "https://www.moe.gov.sg/news/press-releases/20250306-infosheet-1-revised-jc-admission-criteria", "kind": "primary"},
+      {"id": "moe-jae2028", "title": "MOE: JAE changes from 2028", "url": "https://www.moe.gov.sg/post-secondary/admissions/jae/changes-from-2028", "kind": "primary"},
+      {"id": "moe-pse", "title": "MOE: Post-Secondary Admissions Exercise (PSE)", "url": "https://www.moe.gov.sg/pse", "kind": "primary"},
+      {"id": "moe-cos2026", "title": "MOE press release (3 Mar 2026): Learning Together with Different Strengths and Needs (COS 2026)", "url": "https://www.moe.gov.sg/news/press-releases/20260303-learning-together-with-different-strengths-and-needs", "kind": "primary"},
+      {"id": "moe-pse-hnitec2", "title": "MOE PSE: ITE 2-Year Higher Nitec", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-2-year-higher-nitec", "kind": "primary"},
+      {"id": "moe-pse-pfp", "title": "MOE PSE: Polytechnic Foundation Programme", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/pfp", "kind": "primary"},
+      {"id": "moe-eae2026", "title": "MOE press release (5 May 2026): Start of 2026 DSA Exercises and ITE and Polytechnic EAE", "url": "https://www.moe.gov.sg/news/press-releases/20260505-start-of-2026-direct-school-admission-exercises-ite-and-polytechnic-early-admissions-exercise", "kind": "primary"},
+      {"id": "moe-as", "title": "MOE: Applied Subjects", "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb/school-specific-opportunities/applied-subjects", "kind": "primary"},
+      {"id": "moe-sf-beatty", "title": "MOE SchoolFinder: Beatty Secondary School", "url": "https://www.moe.gov.sg/schoolfinder/schooldetail/beatty-secondary-school", "kind": "primary"},
+      {"id": "bty-fsbb", "title": "Beatty Secondary: Full Subject Based Banding", "url": "https://www.beattysec.moe.edu.sg/student-life/fsbb/", "kind": "primary"},
+      {"id": "bty-dsa", "title": "Beatty Secondary: Direct School Admission (DSA)", "url": "https://www.beattysec.moe.edu.sg/prospective-students/dsa/", "kind": "primary"},
+      {"id": "bty-cca", "title": "Beatty Secondary: CCAs", "url": "https://www.beattysec.moe.edu.sg/student-life/cca/", "kind": "primary"},
+      {"id": "bty-principal", "title": "Beatty Secondary: Principal's Message", "url": "https://www.beattysec.moe.edu.sg/our-compass/principals-message/", "kind": "primary"},
+      {"id": "moe-dsa-ta-2024", "title": "2024 DSA-Sec talent areas table (MOE annex, hosted by Montfort Junior)", "url": "https://www.montfortjunior.moe.edu.sg/files/SEMESTER%201%202024/Annex_E_2024_DSA_Talent_Areas_for_Pri_Sch_reference.pdf", "kind": "primary"},
+      {"id": "sch-peicai", "title": "Pei Cai Secondary: Secondary 1 and 2 (FSBB cohorts), example of school-based level-change criteria", "url": "https://www.peicaisec.moe.edu.sg/ecg-s1-and-s2/", "kind": "primary"},
+      {"id": "sch-damai", "title": "Damai Secondary: Full Subject Based Banding, example of Humanities criteria", "url": "https://damaisec.moe.edu.sg/information/full-subject-based-banding/", "kind": "primary"},
+      {"id": "sch-manjusri", "title": "Manjusri Secondary: Sec 2 Subject Selection 2026 (for Sec 3 2027)", "url": "https://www.manjusrisec.moe.edu.sg/files/Meet%20the%20school%20(mts)/2026%20MTS/2026_MTS___S2_Subject_Selection_Briefing.pdf", "kind": "primary"},
+      {"id": "sch-peicai-s3", "title": "Pei Cai Secondary: Subject Options for Sec 3 2026", "url": "https://www.peicaisec.moe.edu.sg/files/Subject_Options_For_Sec_3_2026__for_Sec_2_PES_.pdf", "kind": "primary"},
+      {"id": "sch-plmgs", "title": "PLMGS (Secondary): S3 Subject Combination 2026 Booklet", "url": "https://www.plmgss.moe.edu.sg/files/S3_Subject_Combination_2026_Booklet_v2.pdf", "kind": "primary"},
+      {"id": "sec-eclat", "title": "Eclat Institute: Secondary school PSLE score ranges table (reproduces SchoolFinder)", "url": "https://eclatinstitute.sg/blog/singapore-secondary-school-psle-score-ranges", "kind": "secondary"},
+      {"id": "sec-schlah", "title": "Schlah: Beatty Secondary School profile", "url": "https://schlah.com/secondary-schools/beatty-secondary-school", "kind": "secondary"}
+    ]
+  },
+
+  "psle": {
+    "al": {
+      "scoreRange": "4 to 32 (4 best). 4 to 30 is the range that maps to a Posting Group; 31 to 32 does not.",
+      "standardBands": [
+        {"al": 1, "marks": ">= 90"},
+        {"al": 2, "marks": "85-89"},
+        {"al": 3, "marks": "80-84"},
+        {"al": 4, "marks": "75-79"},
+        {"al": 5, "marks": "65-74"},
+        {"al": 6, "marks": "45-64"},
+        {"al": 7, "marks": "20-44"},
+        {"al": 8, "marks": "< 20"}
+      ],
+      "foundationBands": [
+        {"al": "A", "marks": "75-100", "mapsTo": 6},
+        {"al": "B", "marks": "30-74", "mapsTo": 7},
+        {"al": "C", "marks": "< 30", "mapsTo": 8}
+      ],
+      "notes": "PSLE Score is the sum of 4 subject ALs. Foundation AL A, B and C count as AL 6, 7 and 8 when the score is worked out.",
+      "status": "confirmed",
+      "sourceRef": ["moe-calc", "moe-psle2019"]
+    },
+    "postingGroups": [
+      {"group": 3, "scoreRange": "4-20", "startLevel": "G3", "status": "confirmed", "sourceRef": "moe-pg"},
+      {"group": 2, "scoreRange": "23-24 (only PG2); 21-22 and 25 are option bands shared with PG3 and PG1 respectively", "startLevel": "G2", "status": "confirmed", "sourceRef": "moe-pg"},
+      {"group": 1, "scoreRange": "26-30, with AL 7 or better in both English Language and Mathematics; 25 is an option band shared with PG2", "startLevel": "G1", "status": "confirmed", "sourceRef": "moe-pg"}
+    ],
+    "optionBands": [
+      {"score": "21-22", "groups": [2, 3], "startLevel": "G2 or G3", "text": "Eligible for two Posting Groups. The family picks one Posting Group before submitting school choices, and that group applies to all 6 choices.", "status": "confirmed", "sourceRef": ["moe-pg", "moe-s1choices"]},
+      {"score": "25", "groups": [1, 2], "startLevel": "G1 or G2", "text": "Eligible for two Posting Groups. The family picks one, as above.", "status": "confirmed", "sourceRef": ["moe-pg", "moe-s1choices"]},
+      {"score": "26-30 without AL 7 or better in both EL and Maths, or 31-32", "groups": [], "startLevel": null, "text": "Not eligible for a Posting Group. Under the older MOE FAQ wording, such students could repeat P6 or go to NorthLight School or Assumption Pathway School. That FAQ predates Full SBB, so its wording may be dated.", "status": "provisional", "sourceRef": "moe-scoringfaq"}
+    ],
+    "subjectUpgrades": [
+      {"rule": "Applies only to students eligible for Posting Group 1 or 2. Covers English Language, Mother Tongue Language, Mathematics and Science. The student may take the subject at a more demanding level from the start of Sec 1, based on their PSLE AL for that subject.", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-psle25b"]},
+      {"rule": "AL 5 or better in a PSLE Standard subject: may take that subject at G3 (from PG1 or PG2) or at G2 (from PG1).", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-pg"]},
+      {"rule": "AL 6 in a PSLE Standard subject, or AL A in a PSLE Foundation subject: may take that subject at G2 (relevant to PG1 students).", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-pg"]},
+      {"rule": "MOE's worked example: PSLE Score 23 with AL 5 in Maths. The student is posted via PG2, takes most subjects at G2, and may take Maths at G3 from Sec 1.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+      {"rule": "Downward option: a student who took Foundation EL, Maths and/or Science at PSLE but is taking most subjects at G3 may take those subjects at a less demanding level, in consultation with the secondary school.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+      {"rule": "Scale: about 65% of students eligible for PG1 and PG2 could take at least one subject at a more demanding level (reported for the 2024 and 2025 P6 cohorts).", "status": "confirmed", "sourceRef": ["moe-psle25b"]}
+    ],
+    "hmtl": {
+      "current": "From the 2026 Sec 1 intake (that is, the 2025 PSLE cohort), Higher MTL eligibility no longer depends on the overall PSLE Score. A student qualifies with AL 1 or AL 2 in MTL, or Distinction or Merit in Higher MTL, at PSLE.",
+      "previous": "Overall PSLE Score of 8 or better; or a score of 9 to 14 inclusive plus AL 1 or AL 2 in MTL or Distinction or Merit in HMTL.",
+      "schoolDiscretion": "Schools may still offer HMTL to students assessed to have high ability and interest in MTL, provided it does not affect their performance in other subjects. Schools can also make offers after Semester 1 or after year-end exam results.",
+      "status": "confirmed",
+      "sourceRef": ["moe-mtl2024", "moe-curr", "moe-psle2019"],
+      "caveat": "The exact first cohort (2026 S1) comes from search excerpts of the MOE curriculum page and the 2024 MTL Symposium speech. Recheck it on moe-mtl2024."
+    },
+    "timeline": [
+      {"when": "Sep-Oct of P6", "what": "PSLE written papers (orals and listening comprehension earlier, around Aug).", "status": "provisional", "sourceRef": "seab-dates"},
+      {"when": "2025 cycle: Tue 25 Nov 2025, 11am", "what": "PSLE results released with the S1 Option Form and Eligibility Letter (lists eligible Posting Group(s), HMTL eligibility and other eligibilities).", "status": "confirmed", "sourceRef": ["moe-psle25", "moe-s1choices"]},
+      {"when": "2025 cycle: 25 Nov 2025 11.30am to Mon 1 Dec 2025 4.30pm", "what": "Submit 6 secondary school choices online (S1 Portal) or through the primary school.", "status": "confirmed", "sourceRef": "moe-psle25"},
+      {"when": "2025 cycle: Fri 19 Dec 2025, 9am", "what": "S1 posting results released through the S1 Portal and SMS.", "status": "confirmed", "sourceRef": "moe-s1results"},
+      {"when": "2026 cycle: Tue 24 or Wed 25 Nov 2026 (tentative)", "what": "2026 PSLE results release, with DSA-Sec allocation results on the same day.", "status": "confirmed", "sourceRef": ["seab-dates", "moe-natdates"]},
+      {"when": "2026 cycle: late Nov to early Dec 2026", "what": "S1 option window. Exact 2026 dates were not found.", "status": "provisional", "sourceRef": "moe-psle25"},
+      {"when": "2026 cycle: around mid-to-late Dec 2026", "what": "S1 posting results. The 2026 date was not found; it was 19 Dec in 2025.", "status": "provisional", "sourceRef": "moe-s1results"},
+      {"when": "May-Jun of P6", "what": "DSA-Sec application window (2026: 6 May 11am to 2 Jun 4.30pm; up to 3 choices).", "status": "confirmed", "sourceRef": "moe-eae2026"}
+    ]
+  },
+
+  "years": {
+    "p6": {
+      "happens": [
+        {"text": "DSA-Sec applications open around May to early June (2026: 6 May to 2 Jun).", "status": "confirmed", "sourceRef": "moe-eae2026"},
+        {"text": "PSLE taken. Each of the 4 subjects is graded AL 1 to 8 (Foundation: A to C), and the PSLE Score is the sum, from 4 to 32.", "status": "confirmed", "sourceRef": "moe-calc"},
+        {"text": "Results come out in late November with the S1 Option Form and Eligibility Letter (2025: 25 Nov; 2026: tentatively 24 or 25 Nov).", "status": "confirmed", "sourceRef": ["moe-psle25", "seab-dates"]},
+        {"text": "S1 posting results come out in December (2025: 19 Dec).", "status": "confirmed", "sourceRef": "moe-s1results"}
+      ],
+      "decisions": [
+        {"text": "Score of 21-22 or 25: pick one of the two eligible Posting Groups before listing schools. The chosen group applies to all 6 choices.", "status": "confirmed", "sourceRef": "moe-s1choices"},
+        {"text": "List 6 secondary schools in order of preference. Academic merit (PSLE Score) is the first posting criterion, followed by citizenship, choice order and balloting as tie-breakers.", "status": "confirmed", "sourceRef": "moe-s1choices"},
+        {"text": "School PSLE score ranges are published (cut-off = score of the last student admitted the previous year). They vary year to year and are not guarantees.", "status": "confirmed", "sourceRef": "moe-sf-beatty"}
+      ],
+      "moves": [
+        {"text": "PG1 or PG2 students can start EL, MTL, Maths or Science at a more demanding level using their subject AL (AL<=5 Standard -> G3 or G2; AL 6 Standard or AL A Foundation -> G2).", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+        {"text": "HMTL at Sec 1 for AL 1 or 2 in MTL, or Distinction or Merit in HMTL, whatever the overall score (2026 S1 intake onwards).", "status": "confirmed", "sourceRef": "moe-curr"}
+      ]
+    },
+    "sec1": {
+      "happens": [
+        {"text": "Mixed form classes. About one-third of curriculum time is spent in the form class on Common Curriculum subjects: Art, Music, D&T, FCE, PE and CCE. These are not levelled; examinable ones are assessed at a common level and standard.", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-edtalk"]},
+        {"text": "Levelled subjects (G1, G2 or G3): English Language, Mother Tongue Language, Mathematics, Science and Humanities. Students are regrouped across form classes for these.", "status": "confirmed", "sourceRef": ["moe-fsbb-about", "moe-edtalk"]},
+        {"text": "Starting levels follow the Posting Group (PG1 -> G1, PG2 -> G2, PG3 -> G3), plus any PSLE-based upgrades.", "status": "confirmed", "sourceRef": "moe-pg"}
+      ],
+      "decisions": [
+        {"text": "Towards the end of Sec 1, a review covers whether to take subjects at a different level next year. MOE describes this as one of several points in the secondary journey where levels can be adjusted.", "status": "confirmed", "sourceRef": "moe-fsbb-story"},
+        {"text": "Criteria are school-based. MOE's wording is 'performance in the subject in secondary school and a holistic assessment by the school to ensure that the student can cope with the subject and overall workload'. MOE publishes no national thresholds.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+        {"text": "Example of school thresholds (Pei Cai Sec): 75% in a subject at end of Sec 1 or Sec 2 to be offered it at the more demanding level next year. Other schools differ (e.g. CHIJ Sec: 50% or 75% depending on prior SBB status).", "status": "provisional", "sourceRef": "sch-peicai"}
+      ],
+      "moves": [
+        {"text": "Upward moves for EL, MTL, Maths and Science after Sec 1 are possible, based on school assessment.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+        {"text": "Humanities (Geography, History, Literature in English) can be taken at a more demanding level from Sec 2, based on aptitude for and interest in the subjects in Sec 1.", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "bty-fsbb"]},
+        {"text": "Lateral transfer (taking all subjects at a more demanding level) remains available.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+        {"text": "Moving down a level mid-secondary: MOE says schools 'guide and advise students on their eligibility to offer subjects at a more or less demanding level' and that students have flexibility to offer some subjects at a less demanding level. No published national criteria.", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-edtalk"]}
+      ]
+    },
+    "sec2": {
+      "happens": [
+        {"text": "Same structure as Sec 1. Humanities upgrades (Geog, Hist, Lit) take effect from Sec 2 for eligible students.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"},
+        {"text": "Subject combination or selection exercise for upper secondary, usually briefed around mid-year (Term 2-3) and finalised on end-of-year results.", "status": "provisional", "sourceRef": ["sch-manjusri", "sch-peicai-s3"]}
+      ],
+      "decisions": [
+        {"text": "Pick upper-secondary subjects and their levels. MOE says students offer between 5 and 9 examinable subjects at upper secondary. Typical school combinations are about 7 to 8 (secondary sources).", "status": "provisional", "sourceRef": "moe-fsbb-faq"},
+        {"text": "Core: English, MTL, Maths, a Science option and Humanities. Humanities usually means Combined Humanities (Social Studies plus an elective: Geography, History or Literature), with pure Humanities subjects as extra options.", "status": "provisional", "sourceRef": ["sch-manjusri", "sch-plmgs"]},
+        {"text": "Science: Combined Science (two of Physics, Chemistry, Biology) or two or three Pure Sciences, depending on school and results.", "status": "provisional", "sourceRef": ["sch-manjusri", "sch-plmgs"]},
+        {"text": "Allocation is typically by merit (Sec 2 overall and subject results), student choice order and school capacity or minimum class size.", "status": "provisional", "sourceRef": "sch-manjusri"},
+        {"text": "Additional Mathematics prerequisites are set by each school. Examples: >=55% Sec 2 G3 Maths (one school, tentative); 65% Sec 2 G3 Maths (Pei Cai 2026); >=60% Sec 1 G3 Maths plus a pass in Sec 2 G3 Maths (another school); >=65% in Sec 2 G3 EL and Maths (PLMGS); >=70% (Manjusri 2026).", "status": "provisional", "sourceRef": ["sch-manjusri", "sch-peicai-s3", "sch-plmgs"]},
+        {"text": "Applied Subjects: students may offer MOE G3 Applied Subjects (e.g. Computing, Exercise and Sports Science, Drama) and G1 MOE-ITE Applied Subjects (e.g. Smart Electrical Technology) as part of upper-secondary subjects. Elements of Business Skills is a G1 subject for Sec 3-4. Nutrition and Food Science has G1 and G3 syllabuses.", "status": "confirmed", "sourceRef": ["moe-as", "seab-g1-2027", "seab-g3-2027"]}
+      ],
+      "moves": [
+        {"text": "End-of-Sec 2 review sets upper-secondary levels. Starting a subject at a higher level in Sec 1 does not guarantee that level in Sec 3; it depends on combination criteria and class size.", "status": "provisional", "sourceRef": "sch-manjusri"},
+        {"text": "Students can keep a Humanities subject at a more demanding level into upper secondary if they meet the criteria and the school deems them suitable.", "status": "confirmed", "sourceRef": "moe-fsbb-faq"}
+      ]
+    },
+    "sec3": {
+      "happens": [
+        {"text": "First year of the 2-year SEC course in the chosen combination.", "status": "confirmed", "sourceRef": "moe-curr"},
+        {"text": "Promotion criteria to Sec 4 are school-based and vary by level (e.g. one school: G3 needs Grade 6 or better in EL plus 2 other subjects).", "status": "provisional", "sourceRef": "moe-curr"}
+      ],
+      "decisions": [
+        {"text": "End-of-Sec 3 review: schools can adjust a subject's level for Sec 4 at their discretion. MOE says students can adjust levels 'at appropriate junctures'. No national criteria found for switching levels at Sec 3/4.", "status": "provisional", "sourceRef": "moe-fsbb-exp"}
+      ],
+      "moves": [
+        {"text": "Move up or down is possible but not guaranteed; it is subject to school resourcing.", "status": "provisional", "sourceRef": "moe-fsbb-exp"}
+      ]
+    },
+    "sec4": {
+      "happens": [
+        {"text": "First SEC sitting in 2027 for the 2024 Sec 1 cohort. SEC replaces the GCE N(T), N(A) and O-Level exams. The certificate shows the level (G1, G2 or G3) of each subject.", "status": "confirmed", "sourceRef": ["moe-curr", "seab-sec"]},
+        {"text": "Non-written components (orals, listening comprehension, science practicals) come before the written papers.", "status": "confirmed", "sourceRef": "seab-sec"},
+        {"text": "EL and all MTL written papers in September. There is one MTL sitting for G1, G2, G3 MTL and G3 HMTL, so the mid-year MTL sitting ends.", "status": "confirmed", "sourceRef": ["seab-sec", "moe-infosheet2"]},
+        {"text": "All other written papers from October to November.", "status": "confirmed", "sourceRef": ["seab-sec", "moe-infosheet2"]},
+        {"text": "All SEC results come out together in January of the following year (January 2028 for the first cohort). The exact 2027 timetable and results date had not been published as of the searches.", "status": "confirmed", "sourceRef": ["moe-infosheet2", "seab-sec"]},
+        {"text": "Early admissions during Sec 4 (2026 dates for reference): ITE EAE 20-26 May; Poly EAE for O-Level students 25 Jun to 1 Jul; DSA-JC 6 May to 2 Jun. DSA-JC, Poly EAE and ITE EAE continue alongside PSE.", "status": "confirmed", "sourceRef": ["moe-eae2026", "moe-pse"]}
+      ],
+      "decisions": [
+        {"text": "PSE in 2028 replaces the JAE, the PFP Admissions Exercise and the ITE Joint Intake Exercise for JC, MI, Poly, PFP and ITE 2-Year and 3-Year Higher Nitec. Anyone who sat the SEC at any level can take part.", "status": "confirmed", "sourceRef": ["moe-pse", "moe-cos2026"]},
+        {"text": "PSE timeline: SEC results and PSE applications in mid-January 2028, with a 6-day application window and up to 12 choices through the Post-Sec Portal (Singpass). Posting results are due 'by early February' per the COS 2026 release, but 'by end of February 2028' per one MOE page excerpt. That conflict is unresolved.", "status": "provisional", "sourceRef": ["moe-pse", "moe-cos2026"]},
+        {"text": "PSE tie-breakers: citizenship, then choice order, then gross aggregate, then computerised balloting.", "status": "confirmed", "sourceRef": "moe-pse"},
+        {"text": "JC from 2028: L1R4 <= 16 (was L1R5 <= 20). All subjects must be G3 (O-Level counts as G3). Requires EL A1-C6 and AMath or Maths A1-D7. Bonus points capped at 3. MI threshold is L1R4 <= 20.", "status": "confirmed", "sourceRef": ["moe-jc2028", "moe-jae2028"]},
+        {"text": "Poly Y1 from 2028: ELR2B2, with one B subject allowed at G2. Cut-off moves from 26 to 22 points (Nursing: 28 to 24).", "status": "confirmed", "sourceRef": "moe-infosheet2"},
+        {"text": "PFP from 2028: ELMAB3 computed on G2-equivalent grades (G3 A1-B3 -> 1, B4-C6 -> 2, D7 -> 3, E8 -> 4), cut-off 12. ITE 2-Year Higher Nitec: ELMAB3 (G2-equivalent) <= 19.", "status": "confirmed", "sourceRef": ["moe-pse-pfp", "moe-pse-hnitec2"]}
+      ],
+      "moves": [
+        {"text": "Students who meet the fifth-year criteria may stay for Sec 5 instead of entering post-secondary (see sec5).", "status": "confirmed", "sourceRef": "moe-curr"}
+      ]
+    },
+    "sec5": {
+      "happens": [
+        {"text": "The fifth year continues under Full SBB for eligible students, to pace learning and take subjects at a more demanding level so more post-secondary pathways open up. They sit the SEC again the following year (so the first Sec 5 SEC is in 2028).", "status": "confirmed", "sourceRef": ["moe-fsbb-faq", "moe-curr"]},
+        {"text": "PSE allows combining results from up to two exam years (SEC and/or GCE N or O-Level).", "status": "confirmed", "sourceRef": "moe-pse"}
+      ],
+      "decisions": [
+        {"text": "Eligibility: 2 or fewer G3 passes, and gross ELMAB3 <= 21, or ELB3 <= 14, or MAB3 <= 14, computed at G2, with at least Grade 5 at G2 in every subject counted.", "status": "confirmed", "sourceRef": "moe-curr"},
+        {"text": "To take all subjects at G3 in the fifth year: gross ELMAB3 (computed at G2, Grade 5 or better) of 19 or better.", "status": "confirmed", "sourceRef": ["moe-curr", "sch-peicai"]},
+        {"text": "Students without enough G2 or G3 subjects to compute eligibility consult their school.", "status": "confirmed", "sourceRef": "moe-curr"}
+      ],
+      "moves": [
+        {"text": "Typical use: a student who sat mostly G2 subjects in Sec 4 takes them at G3 in Sec 5 (secondary-source framing, consistent with the MOE criteria).", "status": "provisional", "sourceRef": "moe-curr"}
+      ]
+    }
+  },
+
+  "beatty": {
+    "identity": "Beatty Secondary School, 1 Toa Payoh North, S318990. Government co-ed school. Non-affiliated: the SchoolFinder score table shows no affiliated row. Implemented Full SBB from 2022 as one of about 30 early-adopter schools.",
+    "subjects": [
+      "Additional Mathematics", "Art", "Biology", "Chemistry", "Physics", "Science (combinations)",
+      "Chinese Language", "Higher Chinese", "Malay Language", "Higher Malay", "Tamil Language", "Higher Tamil",
+      "Basic Chinese / Basic Malay / Basic Tamil",
+      "Computer Applications", "Design & Technology", "Elements of Business Skills", "English Language",
+      "Geography", "History", "Humanities (Social Studies with Geography or History)", "Literature in English",
+      "Mathematics", "Music", "Nutrition and Food Science", "Physical Education",
+      "Principles of Accounts", "Smart Electrical Technology"
+    ],
+    "subjectsNote": "From SchoolFinder (2026 DSA-year data), via search excerpts. SchoolFinder says the subjects are 'offered to the current cohort and may change for subsequent intakes'. The 2025 version also listed Food & Consumer Education (a Common Curriculum subject). 'History' as a standalone elective is inferred from the Humanities and timetable entries, so verify it. G-levels per subject are not listed.",
+    "alp": "SchoolFinder 2025: 'STEM - Cities and Urban Landscapes', 'Beattyians Think. Create. Innovate - Programming for smart living' (accorded 2015). The Principal's Message describes the ALP as Machine Learning / AI with ethics. The 2026 SchoolFinder entry lists the ALP without a theme name.",
+    "llp": "'Beatty's Leaders for Life Programme' under Community Youth Leadership (accorded 2015). The school site also calls it the 'Leading for Life Programme', a tiered leadership programme.",
+    "programmes": [
+      "NEXUS@BTY (school programme page exists; details not retrieved)",
+      "Secondary 1 Critical Inquiry Project",
+      "Hearing Loss Support (school page exists)",
+      "DSA talent areas (2024 MOE table; secondary sources agree): Leadership (LLP); Performing Arts: Chinese Orchestra, Choir, Concert Band, English Drama, Malay Dance, Modern Dance; Sports & Games: Badminton, Canoeing, Football (boys), Volleyball (girls), Wushu. Schlah (secondary) also reports a STEM category and 13 talent areas.",
+      "CCAs (incomplete; mostly from 2017-2019 achievements pages): Uniformed Groups: NCC, NPCC, NCDCC, Scouts, Girl Guides, Boys' Brigade; Performing Arts: Band, Choir, Chinese Orchestra, Malay Dance, Indian Dance, International Dance, Drama; Sports: Wushu, Football, Volleyball, Canoeing, Badminton, Judo, Swimming, Taekwondo (some may be outdated); Clubs: Infocomm Club"
+    ],
+    "psleRange": {
+      "year": "2025 S1 posting (shown on SchoolFinder for 2026 choices)",
+      "pg3": "12-18",
+      "pg2": "21-25",
+      "pg1": "25-28",
+      "affiliated": null,
+      "prior2024": {"pg3": "12-17", "pg2": "21-25", "pg1": "25-28"}
+    },
+    "status": "confirmed for PSLE ranges, subjects, ALP and LLP names (search excerpts of SchoolFinder). Provisional for DSA talent areas and CCAs.",
+    "sourceRef": ["moe-sf-beatty", "bty-fsbb", "bty-dsa", "bty-cca", "bty-principal", "moe-dsa-ta-2024", "sec-eclat", "sec-schlah"],
+    "notes": "The SchoolFinder page renders with JavaScript and WebFetch was unavailable, so all Beatty data came from search-indexed text. Some secondary sites report PG3 as 12-17 (the 2024 figure) or PG2 as 21-24, but the SchoolFinder excerpt gave 12-18 and 21-25 for 2025. School phone 6256 9108."
+  },
+
+  "open_questions": [
+    "Recheck all 'confirmed' items on the live pages. WebFetch was blocked, so the evidence is search-engine excerpts.",
+    "Exact 2026 S1 Option Form window and 2026 S1 posting results date (2025: 25 Nov to 1 Dec; results 19 Dec).",
+    "Exact 2027 SEC timetable dates and the January 2028 results release date (SEAB has not published them yet).",
+    "PSE 2028 posting-results date: 'by early February' (COS 2026) vs 'by end of February 2028' (MOE page excerpt). The 6-day window and 12-choice cap also need a direct check on moe.gov.sg/pse.",
+    "Exact 2027 ITE EAE and Poly EAE windows for the first SEC cohort (only 2026 dates found).",
+    "Whether MOE publishes any national criteria for moving a subject DOWN a level mid-secondary. Only school-level practice was found.",
+    "Is there a mid-year (Semester 1) level review, or only end-of-year? MOE names 'appropriate junctures'; schools mostly use end-of-year results. Some schools offer HMTL after Semester 1.",
+    "Whether G2 versions exist for Applied Subjects (e.g. Nutrition and Food Science, Elements of Business Skills). SEAB G2 lists were not checked. SEAB notes 2027 is the last exam year for the MOE-ITE Applied Subjects (e.g. Smart Electrical Technology), so Beatty's offering of SET may change.",
+    "Beatty: which subjects are offered at which G-levels; current full CCA list; current ALP theme name (STEM programming for smart living vs Machine Learning); whether standalone History is offered; any Beatty-specific Sec 2 subject combination criteria or AMath threshold.",
+    "Whether 31-32 or non-PG students' routes (NorthLight, Assumption Pathway) wording has been updated for Full SBB."
+  ]
+}

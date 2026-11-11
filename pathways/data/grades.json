@@ -1,10 +1,20 @@
 {
   "_meta": {
-    "source": "SEAB SEC grading pages; MOE PSE pages for JC and MI, polytechnic, PFP, ITE 2 year and 3 year Higher Nitec, with their grade mapping tables",
+    "source": "MOE PSE pages for JC and MI, polytechnic, PFP, ITE 2 year and 3 year Higher Nitec, with their grade mapping tables and worked examples; SEAB SEC page",
     "url": "https://www.moe.gov.sg/post-secondary/admissions/pse",
-    "accessed": "2026-10-27",
+    "accessed": "2026-11-11",
     "units": "grade points, lower is better",
-    "notes": "Read from search engine extracts of the primary pages on 2026-10-27. G3 points equal the grade number by the O Level convention; no SEC page restating it was seen. Grades entered here are the student's own hypothetical targets, for planning and goal setting. They are never a prediction."
+    "notes": "Confirmed rows were read in full from the primary MOE and SEAB pages on 2026-11-11 (research/pse.md). G3 and G2 points equal the grade number, as MOE's 2028 worked examples show. Two things stay provisional because MOE does not state them: what counts as a G3 pass for a fifth year, and what applies to a student with no Mother Tongue grade. Bonus points are not taken off here. Grades entered here are the student's own hypothetical targets, for planning and goal setting. They are never a prediction.",
+    "sources": {
+      "moe_pse_jc": { "title": "Junior colleges and Millennia Institute, admission criteria from the 2028 PSE", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/jc-and-mi", "accessed": "2026-11-11" },
+      "moe_pse_poly": { "title": "Polytechnic diploma course, admission criteria from the 2028 PSE", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/polytechnic-diploma-course", "accessed": "2026-11-11" },
+      "moe_pse_pfp": { "title": "Polytechnic Foundation Programme, admission criteria from the 2028 PSE", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/pfp", "accessed": "2026-11-11" },
+      "moe_pse_hn2": { "title": "ITE 2 year Higher Nitec, admission criteria from the 2028 PSE", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-2-year-higher-nitec", "accessed": "2026-11-11" },
+      "moe_pse_hn3": { "title": "ITE 3 year Higher Nitec, admission criteria from the 2028 PSE", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-3-year-higher-nitec", "accessed": "2026-11-11" },
+      "moe_pse_explore": { "title": "Explore pathways, with the fifth year criteria", "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways", "accessed": "2026-11-11" },
+      "moe_fsbb_faq": { "title": "Full Subject Based Banding, questions and answers", "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/faq", "accessed": "2026-11-11" },
+      "seab_sec": { "title": "Secondary Education Certificate", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/", "accessed": "2026-11-11" }
+    }
   },
   "scales": {
     "G3": { "grades": ["A1", "A2", "B3", "B4", "C5", "C6", "D7", "E8", "9"], "points": { "A1": 1, "A2": 2, "B3": 3, "B4": 4, "C5": 5, "C6": 6, "D7": 7, "E8": 8, "9": 9 } },
@@ -13,15 +23,59 @@
   },
   "mapDown": {
     "status": "confirmed",
+    "sourceRef": "seab_sec",
     "note": "A G3 grade counts at its G2 or G1 equivalent where a score is read at that level. There is no mapping upwards.",
     "G3toG2": { "A1": "1", "A2": "1", "B3": "1", "B4": "2", "C5": "2", "C6": "2", "D7": "3", "E8": "4", "9": "5" },
     "G3toG1": { "A1": "A", "A2": "A", "B3": "A", "B4": "A", "C5": "A", "C6": "A", "D7": "A", "E8": "B", "9": "C" },
     "G2toG1": { "1": "A", "2": "A", "3": "A", "4": "B", "5": "C", "6": "D" }
   },
   "aggregates": [
-    { "id": "L1R4", "name": "L1R4", "plain": "English, a Humanities, a Maths or Science, one more of either, and your best other subject, all at G3.", "level": "G3", "dests": [{ "id": "jc", "cutoff": 16 }, { "id": "mi", "cutoff": 20 }], "bonus": "Bonus points (up to 3) affect which college you are posted to. They do not change the cut off.", "floors": [{ "label": "English at C6 or better", "subjects": ["el"], "G3": 6 }, { "label": "Maths or Additional Maths at G3, D7 or better", "subjects": ["maths", "amaths"], "G3": 7 }, { "label": "Mother Tongue at D7 (G3), 5 (G2) or D (G1)", "subjects": ["mtl"], "G3": 7, "G2": 5, "G1": 4, "ifTaken": true }], "status": "confirmed" },
-    { "id": "ELR2B2", "name": "ELR2B2", "plain": "English, two relevant subjects and your best other at G3, plus a fifth subject at its G2 value.", "level": "G3", "dests": [{ "id": "poly", "cutoff": 22 }], "bonus": "CCA can take off 2 points. Each course counts different relevant subjects; this uses your best ones.", "status": "confirmed" },
-    { "id": "ELMAB3", "name": "ELMAB3 at G2 value", "plain": "English, Maths and your best three others, each counted at its G2 value.", "level": "G2", "dests": [{ "id": "pfp", "cutoff": 12, "exclude": ["5", "6"], "note": "G2 grades 5 and 6, and a G3 9, cannot count." }, { "id": "hnitec", "cutoff": 19, "note": "Every grade can count." }, { "id": "sec5", "cutoff": 21, "exclude": ["6"], "g3Passes": 3, "note": "Only with 2 or fewer G3 passes. With 3 or more, the score is not needed. Each grade counted must be 5 or better." }], "bonus": "No bonus points for PFP or Higher Nitec.", "status": "confirmed" }
+    {
+      "id": "L1R4", "name": "L1R4", "level": "G3", "status": "confirmed", "sourceRef": "moe_pse_jc",
+      "plain": "English or Higher Mother Tongue, a Humanities, a Mathematics or Science, one more of these, and one other, all at G3. Art, Music and Economics count only as the other subject.",
+      "dests": [
+        { "id": "jc", "cutoff": 16, "conditional": { "clear": 12, "rGrades": ["A1", "A2"] }, "note": "A missed grade floor can still be a conditional admission." },
+        { "id": "mi", "cutoff": 20, "conditional": { "clear": 15, "rGrades": ["A1", "A2"] }, "note": "A missed grade floor can still be a conditional admission." }
+      ],
+      "bonus": "Bonus points come off for posting only. The cap is 3, plus 2 for a Language Elective Programme place. Mother Tongue is read too. Ask your school if you do not take it.",
+      "floors": [
+        { "label": "English at G3, C6 or better", "subjects": ["el"], "G3": 6, "status": "confirmed" },
+        { "label": "Mathematics or Additional Mathematics at G3, D7 or better", "subjects": ["maths", "amaths"], "G3": 7, "status": "confirmed" },
+        {
+          "label": "Mother Tongue at D7 (G3), 5 (G2) or D (G1), or Higher Mother Tongue at E8", "subjects": ["mtl"], "G3": 7, "G2": 5, "G1": 4,
+          "alt": [{ "subjects": ["hmtl"], "G3": 8 }],
+          "ifTaken": true, "status": "provisional",
+          "note": "The grades are confirmed. MOE lists Mother Tongue, or an approved language in its place, as a required subject and does not say what applies to a student without one. With no Mother Tongue grade entered, this floor is left unchecked. Confirm with the school."
+        }
+      ],
+      "conditionalNote": "Conditional admission, from the 2028 PSE. With a floor grade missed: JC at L1R4 12 or better, or 13 to 16 with A1 or A2 in all four R subjects; MI at 15 or better, or 16 to 20 likewise. The grade must be reached by the end of Year 1. An Absent grade does not qualify. MOE's page does not say how many floors may be missed, so none is assumed here. The engine applies it only where the subject was sat at a level the floor reads."
+    },
+    {
+      "id": "ELR2B2", "name": "ELR2B2", "level": "G3", "status": "confirmed", "sourceRef": "moe_pse_poly",
+      "plain": "English, two relevant subjects and your best other at G3, plus a fifth subject at its G2 value.",
+      "dests": [{ "id": "poly", "cutoff": 22 }],
+      "bonus": "CCA points, up to 2, come off before the 22 is read. They are not taken off here. Each course counts different relevant subjects; this uses your best ones."
+    },
+    {
+      "id": "ELMAB3", "name": "ELMAB3 at G2 value", "level": "G2", "status": "confirmed", "sourceRef": "moe_pse_pfp",
+      "plain": "English, Mathematics and your best three others, each at its G2 value. G1 subjects are not counted.",
+      "dests": [
+        {
+          "id": "pfp", "cutoff": 12, "exclude": ["5", "6"],
+          "mins": { "el": 3, "ma": 3, "relevant": 3, "others": 4, "label": "English 3, Mathematics 3, a relevant subject 3 and two others 4 or better, at G2 grades", "status": "confirmed", "sourceRef": "moe_fsbb_faq" },
+          "note": "G2 grades 5 and 6, and a G3 9, cannot count."
+        },
+        { "id": "hnitec", "cutoff": 19, "note": "Every G2 and G3 grade can count. Each course also sets minimum grades." },
+        {
+          "id": "sec5", "cutoff": 21, "exclude": ["6"], "g3Passes": 3, "passStatus": "provisional",
+          "note": "Only with 2 or fewer G3 passes. With 3 or more, the score is not needed. Each grade counted must be 5 or better."
+        }
+      ],
+      "bonus": "The 12, 19 and 21 are read before bonus points. CCA points, up to 2, then come off for PFP and Higher Nitec posting."
+    }
   ],
-  "excluded": { "G3": ["9"], "G2": ["5", "6"], "note": "These grades cannot be used in polytechnic, PFP or ITE course requirements." }
+  "excluded": {
+    "G3": ["9"], "G2": ["5", "6"],
+    "note": "Polytechnic and PFP scores cannot use these grades. ITE scores can use a G3 9 and a G2 5 or 6. A G3 9, a G2 6 or a G1 E cannot meet an ITE course's subject minimum."
+  }
 }

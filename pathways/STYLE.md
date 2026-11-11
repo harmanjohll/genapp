@@ -26,7 +26,7 @@ How Paths talks on the planning screens: setup, Home, Subjects, P6, destination 
 | Before | After |
 | --- | --- |
 | None ever closes. Every place keeps a way in. | Every place is still possible. Some need more moves. |
-| Starting higher is a choice, not an instruction | You do not have to start higher. Levels are reviewed again before Sec 3. |
+| Starting higher is a choice, not an instruction | You do not have to start higher. Your school can move a level later. |
 | A normal load. Is there one in there I took for the look of it? | A normal load. |
 | Nothing shifted, and that is normal. | No change. |
 | Eased to G2, it would be a move away again. | If it drops to G2, that place needs one more move. |

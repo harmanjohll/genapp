@@ -1,34 +1,44 @@
-// The adults' hub: one screen, four tabs.
+// The adults' hub: one screen, four tabs, each ordered by the task the adult
+// walked in with.
 //
-// v2 grew four loose adult pages that cross-linked into a web, a 436-line
-// teacher wall with no task order, and a counsellor page promising features
-// that did not exist. v3 collapses them here. Each tab is ordered by the task
-// the adult actually walked in with: the parent gets the guest game first
-// (v2 buried its best feature), the teacher gets a lesson to run now, the
-// counsellor gets the one student in front of them, and the evidence tab
-// keeps the citations honest, criticism first.
+// 7.0 rewrite. In 6.0 this page still described v3: a lesson built on Plan,
+// the lever line and Act, none of which a teacher could find, and a three
+// step counsellor guide beside a five step session that disagreed with it.
+// It was also two taps down inside Explore.
+//
+// Now: picking Parent or Teacher in "I am" lands here, on that tab. Parents
+// get what changed as one line of four dates, and their own stream in
+// today's words; the reading folds away under it. Teachers get a lesson
+// that names the five tabs as they are. Counsellors get the one session.
+// The evidence tab keeps the citations, criticism first.
 //
 // The tab arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
 // printed handout always reproduces the exact page.
 
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { decorate } from '../ui/glossary.js?v=6.0.0';
+import { getState } from '../state.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { decorate } from '../ui/glossary.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { STEPS } from './session.js?v=7.0.0';
 
 const TABS = [
-  { id: 'parent', label: 'For parents' },
-  { id: 'teacher', label: 'Run a lesson' },
-  { id: 'counsellor', label: 'One student' },
-  { id: 'evidence', label: 'What this is built on' },
+  { id: 'parent', label: 'Parents' },
+  { id: 'teacher', label: 'Teachers' },
+  { id: 'counsellor', label: 'Counsellors' },
+  { id: 'evidence', label: 'Evidence' },
 ];
 
 function currentTab() {
   const t = new URLSearchParams(location.search).get('tab');
-  return TABS.some((x) => x.id === t) ? t : 'parent';
+  if (TABS.some((x) => x.id === t)) return t;
+  return getState().role === 'teacher' ? 'teacher' : 'parent';
 }
+
+let stream = 'express';
 
 export default {
   id: 'adults',
-  title: 'For the adults',
+  title: 'For parents and teachers',
   era: 'school',
 
   render(root, api) {
@@ -39,10 +49,10 @@ export default {
       : evidenceTab(api);
 
     root.innerHTML = `
-    <div class="wrap-narrow">
-      <header class="hero" style="padding-bottom:12px">
-        <h1>For the adults</h1>
-        <p class="lede">The student's tool, from your side of the table. Pick who you are.</p>
+    <div class="wrap-narrow adultwrap">
+      <header class="ph">
+        <p class="ph-k">For the adults</p>
+        <h1>${esc({ parent: 'For parents', teacher: 'For teachers', counsellor: 'For ECG counsellors', evidence: 'What this is built on' }[tab])}</h1>
       </header>
 
       <div class="tabstrip" role="tablist" aria-label="Who is reading">
@@ -62,40 +72,68 @@ export default {
 };
 
 /* ---- for parents ----------------------------------------------------------
-   The guest game leads. It is the one thing on this screen a parent cannot
-   get from a brochure: their own 1990s stream, lived again under today's
-   levels, without touching a byte the child saved. */
+   Four dates and one translation carry most of what a parent needs: the
+   system changed, and here is what your own stream is called now. The game
+   as a guest comes next, and the reading sits under folds. */
+
+function thenNowHtml(p) {
+  const tn = p.thenNow || {};
+  const rows = tn.rows || {};
+  const row = rows[stream] || Object.values(rows)[0];
+  if (!row) return '';
+  const cols = tn.cols || {};
+  return `
+  <section class="section thennow" aria-labelledby="tn-h">
+    <h2 id="tn-h">${esc(tn.head || 'Your stream, in today\'s words')}</h2>
+    <div class="chipset" role="group" aria-label="${esc(tn.ask || 'Which stream were you in?')}">
+      ${Object.entries(rows).map(([id, r]) => `<button type="button" class="mechip press" data-action="ad-stream" data-id="${esc(id)}" aria-pressed="${id === stream}">${esc(r.label)}</button>`).join('')}
+    </div>
+    <div class="tn-card" aria-live="polite">
+      <div><span>${esc(cols.levels || 'Subjects now')}</span><b>${esc(row.levels)}</b></div>
+      <div><span>${esc(cols.group || 'Posting Group')}</span><b>${esc(row.group)}</b></div>
+      <div><span>${esc(cols.exam || 'The exam')}</span><b>${esc(row.exam)}</b></div>
+    </div>
+    <p class="small">${decorate(tn.note || '')}</p>
+  </section>`;
+}
 
 function parentTab(api) {
   const p = api.data.parent || {};
   const g = p.guest || {};
+  const st = getState();
+  const y = st.yearSet ? st.year : 'sec2';
+  const asks = ((((api.data.years || {}).years || {})[y] || {}).talk || {}).parent || [];
   return `
-  <section aria-label="${esc(g.head || 'Play your own school years')}">
+  <section class="changes" aria-labelledby="chg-h">
+    <h2 id="chg-h">${esc(p.changesHead || 'What changed')}</h2>
+    <ol class="chg">${(p.changes || []).map((c) => `<li>
+      <b class="chg-y">${esc(c.year)}</b>
+      <span class="chg-t">${esc(c.head)}</span>
+      <span class="chg-b">${decorate(c.body)}</span></li>`).join('')}</ol>
+  </section>
+
+  ${thenNowHtml(p)}
+
+  ${asks.length ? `<section class="section" aria-labelledby="ask-h">
+    <h2 id="ask-h">${esc(p.askHead || 'Three things to ask this week')}</h2>
+    <div class="bubbles">${asks.slice(0, 3).map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>
+    <p class="btnrow"><button type="button" class="btn press" data-action="go" data-s="path">${icon('steps')} Open the path</button>
+      <button type="button" class="btn ghost press" data-action="go" data-s="me">${icon('compass')} Their compass</button></p>
+  </section>` : ''}
+
+  <section class="section" aria-label="${esc(g.head || 'Play your own school years')}">
     <div class="card" style="border-left:4px solid var(--accent)">
       <h2 style="margin-bottom:8px">${esc(g.head || 'Play your own school years')}</h2>
-      <p>${decorate(g.body || 'The game your child plays, but as you at fourteen: your old stream, Express, Normal Academic or Normal Technical, translated into today’s levels.')}</p>
+      <p>${decorate(g.body || '')}</p>
       <p class="btnrow" style="margin-bottom:0">
-        <a class="btn press" href="./?guest=1&amp;s=play">${esc(g.cta || 'Play it from Sec 3')}</a>
+        <a class="btn press" href="./?guest=1&amp;s=play">${icon('play')} ${esc(g.cta || 'Play it from Sec 3')}</a>
       </p>
-      <p class="small" style="margin:12px 0 0">${esc(g.note || 'Opens as a guest. Nothing your child saved on this phone is read or touched.')}</p>
+      <p class="small" style="margin:12px 0 0">${esc(g.note || '')}</p>
     </div>
   </section>
 
-  <section class="section" aria-label="The shape of the system">
-    <p style="font-size:var(--t-h3);color:var(--ink-soft);max-width:52ch">${decorate(p.lede || '')}</p>
-    ${(p.sections || []).map((s) => `
-      <div style="margin-top:var(--s-6)">
-        <h3>${esc(s.head)}</h3>
-        ${s.body ? `<p>${decorate(s.body)}</p>` : ''}
-        ${s.items ? `<ul class="movelist">${s.items.map((it) => `
-          <li class="move"><span>${decorate(it)}</span></li>`).join('')}</ul>` : ''}
-        ${s.links ? `<p class="btnrow" style="margin-top:var(--s-3)">${s.links.map((l) => `
-          <a class="btn ghost small" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</p>` : ''}
-      </div>`).join('')}
-  </section>
-
-  <section class="section" aria-label="${esc(p.windowsHead || 'The windows')}">
-    <h3>${esc(p.windowsHead || 'The windows, roughly when they open')}</h3>
+  <details class="fold section">
+    <summary>${esc(p.windowsHead || 'The windows, roughly when they open')}</summary>
     <ul class="movelist">
       ${(p.windows || []).map((w) => `
       <li class="move">
@@ -108,101 +146,95 @@ function parentTab(api) {
       </li>`).join('')}
     </ul>
     <p class="small" style="margin-top:var(--s-3)">${esc(p.windowsNote || '')}</p>
-  </section>`;
+  </details>
+
+  <details class="fold section">
+    <summary>${esc(p.moreHead || 'More for parents')}</summary>
+    ${(p.sections || []).map((s) => `
+      <div style="margin-top:var(--s-5)">
+        <h3>${esc(s.head)}</h3>
+        ${s.body ? `<p>${decorate(s.body)}</p>` : ''}
+        ${s.items ? `<ul class="movelist">${s.items.map((it) => `
+          <li class="move"><span>${decorate(it)}</span></li>`).join('')}</ul>` : ''}
+        ${s.links ? `<p class="btnrow" style="margin-top:var(--s-3)">${s.links.map((l) => `
+          <a class="btn ghost small" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</p>` : ''}
+      </div>`).join('')}
+  </details>`;
 }
 
-/* ---- run a lesson ----------------------------------------------------------
-   Task order, not topic order. The 45 minute shape is what a teacher opening
-   this page five minutes before class actually needs, so it goes first. */
+/* ---- for teachers -----------------------------------------------------------
+   Task order. The 45 minute shape is what a teacher opening this page five
+   minutes before class needs, and each row names a tab the class can see. */
+
+const LESSON = [
+  { min: 5, ic: 'compass', tab: 'Me', line: 'Two taps: what they enjoy. One strength, with what shows it.' },
+  { min: 8, ic: 'steps', tab: 'Path', line: 'Their real levels for this year. Read the best move together.' },
+  { min: 5, ic: 'target', tab: 'Goal', line: 'One goal and why. It can change next week.' },
+  { min: 12, ic: 'play', tab: 'Play', line: 'The short story, once through. Same play code for the class.' },
+  { min: 10, ic: 'talk', tab: 'Talk', line: 'In pairs, then the room. Use the four questions below.' },
+  { min: 5, ic: 'flag', tab: 'Saved', line: 'One step, one date, one adult to tell.' },
+];
 
 function teacherTab(api) {
   const prompts = [
     { q: 'What did you assume was closed to you that turned out not to be?',
       why: 'Surfaces beliefs picked up from siblings and from adults schooled under a different system.' },
-    { q: 'You played twice from the same start. What did your starting point actually decide?',
-      why: 'The load bearing question of the whole lesson. Worth ten minutes, not two.' },
+    { q: 'What did your starting levels decide, and what did they leave open?',
+      why: 'The question the lesson turns on. Give it ten minutes.' },
     { q: 'Whose combination looks nothing like yours, and what does it open that yours does not?',
-      why: 'There is no best combination, and the evidence is the person sitting next to them.' },
+      why: 'There is no best combination. The evidence is the person sitting next to them.' },
     { q: 'What went wrong in your story, and what happened after it?',
-      why: 'Normalises setback as an event with a next step rather than an ending.' },
+      why: 'Treats a setback as an event with a next step.' },
   ];
 
   return `
-  <section aria-label="Run a lesson now">
-    <h2>Run a lesson now</h2>
-    <p class="small" style="max-width:60ch">The tool teaches nothing on its own. The learning is in what students say afterwards, so budget more time for talk than for screen.</p>
-    <ol class="steps">
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 8px"><strong>The 45 minute shape.</strong> One device per student, one run of the loop, and the talk around it.</p>
-          <ul style="list-style:none;margin:0;padding:0;display:grid;gap:6px">
-            ${[
-              ['5 min', 'Ask what decides their future. Write the answers up. Correct none of them.'],
-              ['8 min', 'Plan. The combination they are actually considering, levels tapped in.'],
-              ['4 min', 'Read the lever line together. The one move that opens most. Who shares one?'],
-              ['10 min', 'Play, once through, the short run.'],
-              ['8 min', 'Play again from the same start, choosing differently. Compare the two maps.'],
-              ['5 min', 'Act. Three actions, and one question carried out of the room to a named adult.'],
-              ['5 min', 'Back to the opening answers. What would they change?'],
-            ].map(([m, t]) => `
-            <li style="display:flex;gap:10px;align-items:baseline">
-              <span class="pill" data-tone="quiet" style="flex:none">${esc(m)}</span>
-              <span class="small" style="color:var(--ink-soft)">${decorate(t)}</span>
-            </li>`).join('')}
-          </ul>
-          <p class="small" style="margin:10px 0 0">Running early: Act is a second activity, not a replay.</p>
-        </div>
-      </li>
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 6px"><strong>Put the board view on the projector.</strong></p>
-          <p class="small" style="margin:0 0 10px">It forces dark colours and huge type, sized for the back row, and hides the student chrome.</p>
-          <a class="btn ghost small" href="./?board=1">Open the board view</a>
-        </div>
-      </li>
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 8px"><strong>The debrief.</strong> Four questions that carry the lesson.</p>
-          <ul style="list-style:none;margin:0;padding:0;display:grid;gap:10px">
-            ${prompts.map((x) => `
-            <li>
-              <p style="margin:0"><strong>${esc(x.q)}</strong></p>
-              <p class="small" style="margin:2px 0 0">${esc(x.why)}</p>
-            </li>`).join('')}
-          </ul>
-        </div>
-      </li>
+  <section aria-labelledby="les-h">
+    <h2 id="les-h">A 45 minute lesson</h2>
+    <p class="small" style="max-width:60ch">One device each. Budget more time for talk than for screen.</p>
+    <ol class="runsheet">
+      ${LESSON.map((r) => `<li>
+        <span class="rs-min">${r.min} min</span>
+        <span class="rs-ic">${icon(r.ic)}</span>
+        <span class="rs-t"><b>${esc(r.tab)}</b>${esc(r.line)}</span></li>`).join('')}
     </ol>
-  </section>
-
-  <section class="section" aria-label="Set up for my school">
-    <h2>Set up for my school</h2>
-    <p style="max-width:65ch">Nothing to install and nothing collected. Students each plan on their own device, the plan stays on that device, and the carry link at the bottom of Plan takes a combination home to a parent. The link holds the subjects and nothing else.</p>
-    <div class="card">
+    <div class="card" style="margin-top:var(--s-4)">
       <h3 style="margin-bottom:4px">${esc(api.copy('teacher.playHead', 'Class play: same luck for everyone'))}</h3>
-      <p class="small">${esc(api.copy('teacher.playIntro', 'Generate a play code and read it out. Every student who enters it gets the same chances in the same order, so the debrief compares answers instead of luck.'))}
-        Students type it in where Play asks “${esc(api.copy('journey.classSeedLabel', 'Playing with my class?'))}”.</p>
+      <p class="small">${esc(api.copy('teacher.playIntro', 'Generate a play code and read it out. Every student who enters it gets the same chances in the same order, so the debrief compares answers instead of luck.'))}</p>
       <p class="btnrow" style="margin-bottom:0">
         <button type="button" class="btn small press" data-action="ad-code">${esc(api.copy('teacher.playBtn', 'New play code'))}</button>
         <span id="ad-code-out" class="figure" aria-live="polite" style="letter-spacing:0.1em"></span>
+        <a class="btn ghost small" href="./?board=1">Projector view</a>
       </p>
-      <p class="small" style="margin:10px 0 0">${esc(api.copy('teacher.playNote', 'The code seeds the game’s randomness and carries nothing else.'))}</p>
     </div>
   </section>
 
-  <section class="section" aria-label="Understand the tool">
-    <h2>Understand the tool</h2>
-    <p style="max-width:65ch">Ten named frames, three critics quoted at full strength, and five things the tool refuses to do. The citations are complete enough to disagree with.</p>
-    <p class="btnrow">
-      <button type="button" class="btn ghost press" data-action="ad-evidence">What this is built on</button>
-    </p>
-    <p class="small" style="max-width:65ch;margin-top:var(--s-4)">For group play, two to six students arguing over one device,
-      <a href="../legacy/pathways-v2/?mode=table">the tabletop variant lives in v2</a>.
-      It was not rebuilt for this version; the game there is complete and still works, so v3 simply points at it.</p>
-  </section>`;
+  <section class="section" aria-labelledby="deb-h">
+    <h2 id="deb-h">The debrief</h2>
+    <ul class="debrief">
+      ${prompts.map((x) => `
+      <li>
+        <p style="margin:0"><strong>${esc(x.q)}</strong></p>
+        <p class="small" style="margin:2px 0 0">${esc(x.why)}</p>
+      </li>`).join('')}
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="one-h">
+    <h2 id="one-h">One student, 15 minutes</h2>
+    <p class="small">The same five steps an ECG counsellor uses. Open it on the student's device.</p>
+    <p class="btnrow"><button type="button" class="btn press" data-action="go" data-s="session">${icon('talk')} Start a session</button></p>
+  </section>
+
+  <details class="fold section">
+    <summary>Set up for my school</summary>
+    <p style="max-width:65ch">Nothing to install and nothing collected. Each student plans on their own device and the plan stays there. Saved has a link that carries a plan to another device, and a card to share with a parent.</p>
+    <p class="small" style="max-width:65ch">For two to six students around one device,
+      <a href="../legacy/pathways-v2/?mode=table">the tabletop game is in an earlier version</a>.</p>
+    <p class="btnrow"><button type="button" class="btn ghost small press" data-action="ad-evidence">What this is built on</button></p>
+  </details>`;
 }
 
-/* ---- one student -----------------------------------------------------------
+/* ---- for counsellors --------------------------------------------------------
    The counsellor knows the system better than this app does. What they do not
    know is what their student has just been shown, so the facts table below
    renders from the same file the student screens read. The two cannot
@@ -212,34 +244,23 @@ function counsellorTab(api) {
   const c = api.ctx();
   const meta = c.pathwaysMeta || {};
   return `
-  <section aria-label="Fifteen minutes, one student">
-    <h2>Fifteen minutes, one student</h2>
-    <p class="small" style="max-width:60ch">The tool has already said something to your student before they sat down. This is the shortest honest way through it together.</p>
-    <ol class="steps">
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 4px"><strong>Start from what they hold.</strong> <span class="pill" data-tone="quiet">4 min</span></p>
-          <p class="small" style="margin:0">Open Plan on their phone: the combination they actually have, not the one they wish they had. Ask what they expected to be closed. Nothing in the tool is, and hearing them name the padlock they expected is the session's real material.</p>
-        </div>
-      </li>
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 4px"><strong>Use Plan's map together.</strong> <span class="pill" data-tone="quiet">7 min</span></p>
-          <p class="small" style="margin:0">The map under the subjects answers every tap. Read the lever line with them, the one subject move that opens most, then open the station they care about: what it wants, what it costs, the ways in, and the exact rule with its source behind one fold.</p>
-        </div>
-      </li>
-      <li>
-        <div style="min-width:0">
-          <p style="margin:0 0 4px"><strong>One commitment, written in Act.</strong> <span class="pill" data-tone="quiet">4 min</span></p>
-          <p class="small" style="margin:0">Not three, one. Written in Act as words to say to a named adult, and copied to their phone from the ask card. Raise it again next session; a commitment nobody returns to is decoration.</p>
-        </div>
-      </li>
+  <section aria-labelledby="ss-h">
+    <h2 id="ss-h">Fifteen minutes, one student</h2>
+    <ol class="runsheet">
+      ${STEPS.map((s) => `<li>
+        <span class="rs-min">${s.min} min</span>
+        <span class="rs-t"><b>${esc(s.t)}</b>${esc(s.ask)}</span></li>`).join('')}
     </ol>
+    <p class="btnrow">
+      <button type="button" class="btn big press" data-action="go" data-s="session">${icon('talk')} Start a session</button>
+    </p>
+    <p class="small">It reads the plan on this device. A plan a student shared by link opens the same session, and saves nothing.</p>
+    <p class="small">The steps follow MOE's three questions: Who am I? Where do I want to go? How do I get there? For interest profiles and course search, use the <a href="https://go.gov.sg/mysfsec" target="_blank" rel="noopener">MySkillsFuture Student Portal</a>.</p>
   </section>
 
-  <section class="section" aria-label="The facts the tool serves">
-    <h2>The facts the tool serves</h2>
-    <p class="small" style="max-width:65ch">Rendered from the same data file the student screens read, so this list and their screen can never disagree. Structural rules only: the tool never weighs a performance bar against a student, because it does not know their grades and never guesses.</p>
+  <details class="fold section">
+    <summary>The facts the tool serves</summary>
+    <p class="small" style="max-width:65ch">From the same file the student screens read. Subject level rules only: the tool never weighs a grade against a student unless they enter a target.</p>
     <ul class="movelist">
       ${(c.destinations || []).map((d) => `
       <li class="move">
@@ -252,12 +273,12 @@ function counsellorTab(api) {
     <p class="provline" style="margin-top:var(--s-3)">
       <span>Source: ${esc(meta.source || 'MOE post secondary admissions pages')}${meta.accessed ? ` · checked ${esc(meta.accessed)}` : ''}</span>
     </p>
-  </section>
+  </details>
 
   <section class="section" aria-label="What this tool refuses to do">
     <div class="notegood">
       <p style="margin:0 0 6px"><strong>What this tool refuses to do.</strong></p>
-      <p style="margin:0">It does not predict grades, it does not rank routes, and it makes no forecast about any student. It shows published rules and keeps everything on the device. The question it cannot answer is the reason the student is in your room.</p>
+      <p style="margin:0">It does not predict grades, rank routes or give a student a type. The compass holds only what the student tapped or wrote.</p>
     </div>
   </section>`;
 }
@@ -270,8 +291,7 @@ function evidenceTab(api) {
   const ev = api.data.evidence || {};
   return `
   <section aria-label="The frames">
-    <h2>What this is built on</h2>
-    <p class="small" style="max-width:65ch">Ten frames, each with what it claims, where it shows up in the tool, and where it stops. The professionals this page is for will read the limits first, so they are on every card.</p>
+    <p class="small" style="max-width:65ch">${(ev.frames || []).length} frames, each with what it claims, where it shows up in the tool, and where it stops.</p>
     <p class="provline"><span>Citations assembled by this build and not yet checked by a human against the originals. Volume numbers appear only where the build is confident.</span></p>
     <div class="infogrid" style="margin-top:var(--s-4)">
       ${(ev.frames || []).map((f) => `
@@ -319,6 +339,14 @@ function bind(root, api) {
       api.nav('adults', { tab: btn.dataset.tab });
     },
     'ad-evidence': () => api.nav('adults', { tab: 'evidence' }),
+    'ad-stream': (btn) => {
+      stream = btn.dataset.id;
+      const host = root.querySelector('.thennow');
+      if (!host) return;
+      host.outerHTML = thenNowHtml(api.data.parent || {});
+      const again = root.querySelector(`[data-action="ad-stream"][data-id="${stream}"]`);
+      if (again) again.focus({ preventScroll: true });
+    },
     'ad-code': () => {
       const out = root.querySelector('#ad-code-out');
       if (!out) return;

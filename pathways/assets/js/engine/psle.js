@@ -9,8 +9,8 @@
 //
 // Pure: no DOM, no storage. Rules come from data/psle.json.
 
-import { reach } from './reach.js?v=6.0.0';
-import { evalPlan } from './years.js?v=6.0.0';
+import { reach } from './reach.js?v=7.0.0';
+import { evalPlan } from './years.js?v=7.0.0';
 
 export function alOf(entry, rules) {
   if (!entry) return null;
@@ -43,6 +43,23 @@ const LV = { 1: 'G1', 2: 'G2', 3: 'G3' };
 const RANK = { G1: 1, G2: 2, G3: 3 };
 
 /**
+ * The less demanding options MOE allows for one subject at the start of Sec 1.
+ * A rule names the Posting Groups it covers, the subjects, and the PSLE
+ * results that qualify: `standard` is a list of ALs, `foundation` a list of
+ * Foundation grades.
+ */
+export function downRules(group, id, entry, rules) {
+  const down = rules.downgrades || {};
+  const e = entry || {};
+  return (down.rules || []).filter((r) => {
+    if (!(r.groups || down.groups || []).includes(group)) return false;
+    if (!(r.subjects || []).includes(id)) return false;
+    if (e.foundation) return (r.foundation || []).includes(e.grade);
+    return Number.isFinite(e.al) && (r.standard || []).includes(e.al);
+  });
+}
+
+/**
  * Starting levels for a chosen Posting Group, plus the upgrade options.
  * Returns { base, options: { el: ['G2','G3'] ... }, plan } where plan maps
  * the app's Sec 1 subject ids to the base level (options are offered, not
@@ -66,16 +83,12 @@ export function startLevels(group, psle, rules, chosen = {}) {
       // A subject that may start at G3 may also start in between.
       if (opts.has('G3') && base === 'G1') opts.add('G2');
     }
-    // Posting Group 3 with a Foundation subject: the school can offer a less
-    // demanding start in that subject (MOE Full SBB). An option, never a default.
-    const down = rules.downgrades || {};
-    if ((down.groups || []).includes(group)) {
-      const e = psle[id] || {};
-      (down.rules || []).forEach((r) => {
-        if (!(r.subjects || []).includes(id)) return;
-        if (e.foundation && (r.foundation || []).includes(e.grade)) (r.levels || []).forEach((l) => opts.add(l));
-      });
-    }
+    // A less demanding start (MOE, Secondary school experience under Full SBB,
+    // read 2026-11-11). Posting Group 3: English, Mathematics or Science taken
+    // at Foundation can start at G2. Mother Tongue has its own table, which
+    // reads Standard as well as Foundation results and has a row for Posting
+    // Group 2. An option, never a default.
+    downRules(group, id, psle[id] || {}, rules).forEach((r) => (r.levels || []).forEach((l) => opts.add(l)));
     options[id] = [...opts].sort((a, b) => RANK[a] - RANK[b]);
   });
   const pick = (id) => (options[id].includes(chosen[id]) ? chosen[id] : base);
@@ -146,6 +159,10 @@ export function p6Choices(psle, rules, ctx) {
         from: cur,
         up: RANK[l] > RANK[cur],
         result: e.foundation ? `Foundation ${e.grade}` : `AL ${e.al}`,
+        // Why a less demanding start is allowed, in MOE's terms, for the screen
+        // to print: a Standard AL 6 to 8 in Mother Tongue qualifies too, so
+        // "taken at Foundation" is no longer always the reason.
+        why: RANK[l] > RANK[cur] ? null : ((downRules(group, id, e, rules).find((r) => (r.levels || []).includes(l)) || {}).text || null),
         opens,
         nearer,
         sec3: s && s.sec3 ? s.sec3[l] || null : null,

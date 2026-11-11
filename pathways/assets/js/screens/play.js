@@ -15,26 +15,26 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { decorate, bindGlossary } from '../ui/glossary.js?v=6.0.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../ui/sheet.js?v=6.0.0';
-import { cue } from '../sound.js?v=6.0.0';
-import { drawStoryMap, saveStoryCard } from '../ui/storymap.js?v=6.0.0';
-import { skyline, envelopeArt } from '../ui/scenes.js?v=6.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { decorate, bindGlossary } from '../ui/glossary.js?v=7.0.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../ui/sheet.js?v=7.0.0';
+import { cue } from '../sound.js?v=7.0.0';
+import { drawStoryMap, saveStoryCard } from '../ui/storymap.js?v=7.0.0';
+import { skyline, envelopeArt } from '../ui/scenes.js?v=7.0.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=6.0.0';
+} from '../engine/possible.js?v=7.0.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, finish, diffRuns, CAPACITY_CAP, heldAsks,
-  wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield,
+  wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield, strongestDisp,
   companionLine, companionEnd, midyearLine,
-} from '../engine/journey4.js?v=6.0.0';
+} from '../engine/journey4.js?v=7.0.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
-  setAim,
-} from '../state.js?v=6.0.0';
+  addNote, toggleAction,
+} from '../state.js?v=7.0.0';
 
 let NAV = () => {};
 const YEAR_FOR_PICK = () => { const y = getState().year; return y === 'p6' ? 'sec1' : y; };
@@ -238,8 +238,12 @@ function openPicker(data, trigger) {
 function introScreen(host, data, st) {
   const jc = data.copy.journey;
   const wants = data.journey.wants || [];
-  // Act stores its answer as a future id, and the ids are shared with this list.
-  const known = st.aim ? wants.find((w) => w.id === st.aim && w.id !== 'unsure') : null;
+  // Me asks what the student enjoys, with the same six kinds as this list. A
+  // student who answered there is shown that answer here, first.
+  const first = (st.compass && st.compass.enjoy[0]) || null;
+  const known = first ? wants.find((w) => w.riasec === first) : null;
+  const goalDest = st.goal ? ((data.pathways && data.pathways.destinations) || []).find((d) => d.id === st.goal.dest) : null;
+  const goalText = goalDest ? (st.goal.role ? `${st.goal.role}, via ${goalDest.railName || goalDest.name}` : (goalDest.railName || goalDest.name)) : '';
   const rows = planRows(data, st.plan);
   const hasPlan = rows.length > 0;
 
@@ -280,9 +284,7 @@ function introScreen(host, data, st) {
           <p class="caps rail-q">${icon('q_where')}${esc(jc.q2)}</p>
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(jc.wantHint)}</p>
-          ${/* Act asks this same question with the same six kinds. A student
-                arriving from there should be shown their answer, not asked it
-                again, or the app looks like it was not listening. */ ''}
+          ${goalText ? `<p class="play-goal">${icon('target')}<span><small>My goal</small> ${esc(goalText)}</span></p>` : ''}
           ${known ? `
             <div class="wantknown">
               <p class="micro mute">${esc(jc.wantKnown)}</p>
@@ -666,9 +668,49 @@ function wantSet(host, data, btn) {
   if (b) b.innerHTML = `<p class="small mute">Now: ${esc(w.label)}.</p>`;
 }
 
+/**
+ * The subjects a story started with. A level raised inside the story changes
+ * run.plan, and 6.0 compared that with the saved plan, so the game's own
+ * raise set off the "my subjects changed" notice. Undo the raises first.
+ */
+function startPlan(r) {
+  const p = { ...(r.plan || {}) };
+  [...(r.raises || [])].reverse().forEach((x) => { if (x && x.subject && x.from && p[x.subject]) p[x.subject] = x.from; });
+  return p;
+}
+const samePlan = (a, b) => {
+  const ka = Object.keys(a || {}).sort();
+  const kb = Object.keys(b || {}).sort();
+  return ka.length === kb.length && ka.every((k, i) => k === kb[i] && a[k] === b[k]);
+};
+
+/**
+ * What a finished story hands back: one line about me, and one step I took
+ * in the story that I can take this term. Both wait for a tap.
+ */
+function takeHome(data, st) {
+  const disp = ((data.dispositions && data.dispositions.dispositions) || []).find((d) => d.id === strongestDisp(run));
+  const notes = [disp && disp.short, run.reflection].filter(Boolean).map((t) => String(t).trim())
+    .filter((t, i, all) => t && all.indexOf(t) === i && !st.compass.notes.some((n) => n.text === t)).slice(0, 2);
+  const steps = (run.movesMade || []).filter((mm) => mm.age <= 17)
+    .map((mm) => MV(data).find((x) => x.id === mm.id)).filter((m) => m && (m.at || []).includes('sec'))
+    .map((m) => `${m.label}.`).filter((t, i, all) => all.indexOf(t) === i && !st.actions.includes(t)).slice(0, 2);
+  if (!notes.length && !steps.length) return '';
+  return `
+    <div class="panel takehome" style="margin-top:var(--s-6)">
+      <h2>Take one thing with me</h2>
+      ${notes.length ? `<p class="caps" style="margin-top:var(--s-3)">${icon('compass')} What I noticed about me</p>
+        <ul class="takelist">${notes.map((t) => `<li><span>${esc(t)}</span>
+          <button class="btn ghost small" type="button" data-action="takenote" data-t="${esc(t)}">${icon('plus')} Add to Me</button></li>`).join('')}</ul>` : ''}
+      ${steps.length ? `<p class="caps" style="margin-top:var(--s-4)">${icon('ticket')} A step I can take this term</p>
+        <ul class="takelist">${steps.map((t) => `<li><span>${esc(t)}</span>
+          <button class="btn ghost small" type="button" data-action="takestep" data-t="${esc(t)}">${icon('plus')} Add to my steps</button></li>`).join('')}</ul>` : ''}
+    </div>`;
+}
+
 function staleCheck(data, st) {
   if (!run || run.done) return null;
-  const same = JSON.stringify(run.plan || {}) === JSON.stringify(st.plan || {});
+  const same = samePlan(startPlan(run), st.plan || {});
   const yearAge = currentYear().age;
   const sameYear = run.startAge === yearAge;
   if (same && sameYear) return null;
@@ -1302,6 +1344,7 @@ function endingScreen(host, data, st) {
         })()}
         ${run.reflection ? `<p class="small mute" style="margin-top:var(--s-4)">At ${run.reflectionAge || 32} I wrote: ${esc(run.reflection)}</p>` : ''}
         ${story ? storyCard(story) : ''}
+        ${takeHome(data, st)}
         <div class="panel" style="margin-top:var(--s-6);border:2px solid var(--accent)">
           <h2>${esc(jc.playAgain)}</h2>
           <p class="small mute">Same start. A different want, or different years.</p>
@@ -1364,10 +1407,16 @@ function endingScreen(host, data, st) {
       rerender();
     },
     compare2: () => showDiff(host, data, st.runs.slice(-2)),
-    toact: () => {
-      setAim(run.want ? run.want.id : 'unsure');
-      run = null;
-      NAV('myplan');
+    toact: () => { run = null; NAV('goal'); },
+    // What the story showed me goes back to the real side only when I tap it:
+    // one line to Me, one step to my saved steps. Nothing moves on its own.
+    takenote: (btn) => {
+      addNote(btn.dataset.t, 'play');
+      btn.disabled = true; btn.innerHTML = `${icon('check')} On Me`;
+    },
+    takestep: (btn) => {
+      if (!getState().actions.includes(btn.dataset.t)) toggleAction(btn.dataset.t);
+      btn.disabled = true; btn.innerHTML = `${icon('check')} In my steps`;
     },
     tonow: () => { run = null; NAV('year', { y: YEAR_FOR_PICK() }); },
   });

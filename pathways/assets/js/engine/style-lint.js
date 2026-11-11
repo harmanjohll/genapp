@@ -99,12 +99,14 @@ function codeSentences(src) {
 }
 
 const CODE_FILES = [
-  'assets/js/screens/start.js', 'assets/js/screens/year.js', 'assets/js/screens/explore.js',
+  'assets/js/screens/start.js', 'assets/js/screens/year.js', 'assets/js/screens/me.js',
   'assets/js/screens/after.js', 'assets/js/screens/myplan.js', 'assets/js/ui/ticket.js', 'assets/js/ui/talk.js',
   'assets/js/ui/pslepanel.js', 'assets/js/ui/targets.js', 'assets/js/ui/destsheet.js', 'assets/js/ui/signal.js',
   'assets/js/engine/advice.js', 'assets/js/engine/rules.js', 'assets/js/engine/reach.js', 'assets/js/main.js', 'index.html',
   'assets/js/screens/path.js', 'assets/js/screens/goal.js', 'assets/js/screens/compare.js', 'assets/js/screens/share.js',
   'assets/js/screens/session.js', 'assets/js/engine/goal.js',
+  // 7.0
+  'assets/js/ui/compass.js', 'assets/js/ui/longview.js',
 ];
 
 /**

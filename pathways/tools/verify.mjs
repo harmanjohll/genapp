@@ -40,7 +40,7 @@ const ctx = {
   yearId: 'sec3',
 };
 
-const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
+const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css', 'v7.css'];
 const PINNED = [...CSS_FILES, 'main.js'];
 
 function pass(name, ok, extra) {
@@ -118,7 +118,7 @@ function cssVarSweep() {
  * nothing watching. This is the byte budget as a gate: raw bytes, because
  * gzip ratios are stable enough here that raw drift is what matters.
  */
-const EAGER_DATA = ['subjects', 'pathways', 'progressions', 'copy', 'glossary', 'activities', 'lifelong', 'version', 'years', 'psle', 'grades'];
+const EAGER_DATA = ['subjects', 'pathways', 'progressions', 'copy', 'glossary', 'activities', 'lifelong', 'version', 'years', 'psle', 'grades', 'offer', 'goals', 'families', 'compass'];
 const EAGER_BUDGET = 420 * 1024;
 function payloadSweep() {
   const failures = [];
@@ -320,7 +320,7 @@ function v4LowerSweep() {
 /** Verdicts MOE's published rules decide, pinned. */
 function v4PolicySweep() {
   const r = policySweep(ctx, readData('grades'), readData('psle'));
-  pass('Policy', r.ok, 'JC and MI with Mother Tongue at G2, R3, NAFA, PFP and Sec 5 grades, JC floors, HMTL, PG3 Foundation');
+  pass('Policy', r.ok, 'JC and MI with Mother Tongue at G2, R3, NAFA, PFP and Sec 5 grades, JC floors and conditional admission, HMTL, the Mother Tongue options');
   if (!r.ok) console.table(r.fails);
   return r;
 }
@@ -363,7 +363,7 @@ function v4PsleSweep() {
 /** House style for the v4 data: no dashes in anything a reader sees. */
 function v4DashSweep() {
   const fails = [];
-  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin'].forEach((n) => {
+  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass'].forEach((n) => {
     const walk = (v, path) => {
       if (typeof v === 'string') {
         if (path.includes('url') || path.includes('_meta') || /\.id$/.test(path)) return;
@@ -432,7 +432,7 @@ async function offlineSweep() {
 }
 
 /**
- * 6.0 joined v4.4 and v5 behind four tabs. Every screen must stay within two
+ * Five tabs: Me, Goal, Path, Play, Saved. Every screen must stay within two
  * taps of the menu: a tab, then one link on it. Links are read from each
  * screen's own code (data-s, nav(), or a { s: } route). The first run start,
  * the old Home address and the shared view, which opens only from a link, are
@@ -450,7 +450,7 @@ function reachableSweep() {
   tabs.forEach((tab) => linksOf(tab).forEach((s) => near.add(s)));
   const skip = new Set(['start', 'home', 'shared']);
   const fails = Object.keys(screens).filter((s) => !skip.has(s) && !near.has(s)).map((s) => ({ screen: s, why: 'more than two taps from the menu' }));
-  if (tabs.length !== 4) fails.push({ screen: 'menu', why: `${tabs.length} tabs; 6.0 has four` });
+  if (tabs.length !== 5) fails.push({ screen: 'menu', why: `${tabs.length} tabs; 7.0 has five` });
   const ok = !fails.length;
   pass('Reachable', ok, `${Object.keys(screens).length - skip.size} screens within two taps of ${tabs.join(', ')}`);
   if (!ok) console.table(fails);
@@ -496,6 +496,69 @@ async function migrateSweep() {
   const fails = cases.filter(([, ok]) => !ok).map(([name]) => ({ case: name }));
   const ok = !fails.length;
   pass('Migrate', ok, `${cases.length} cases: v4.4 only, v5 only, both`);
+  if (!ok) console.table(fails);
+  return { ok, fails };
+}
+
+/**
+ * 7.0: the compass, the fuller goal and the links that carry them. These are
+ * the parts with no screen to catch a mistake: what comes across from 6.0,
+ * what a link may carry, when a goal is due, and that every list the new
+ * screens read is whole.
+ */
+async function sevenSweep() {
+  const { upgradeTo7, fromEarlier, cleanCompass, WANT_CODE } = await import(join(root, 'assets/js/engine/migrate.js'));
+  const { encodePacket, decodePacket, packMe, unpackMe } = await import(join(root, 'assets/js/engine/packet.js'));
+  const { goalDue } = await import(join(root, 'assets/js/state.js'));
+  const compass = readData('compass');
+  const goals = readData('goals');
+  const parent = data.parent;
+  const eq = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const v6 = { plans: { sec2: { el: 'G3' } }, aim: 'people', actions: ['Ask about Maths'], goal: { dest: 'poly', sector: 'care' }, seenVersion: '6.0.0', year: 'sec2', yearSet: true };
+  const up = fromEarlier(v6, { plans: { sec2: { el: 'G1' } } }, null);
+  const junk = cleanCompass({ enjoy: ['S', 'S', 'X', 'I', 'A'], strengths: [{ id: 'explain', proof: 'x'.repeat(200) }, { id: 'BAD ID' }, null, { id: 'a_b' }, { id: 'c_d' }, { id: 'e_f' }], values: ['help', 'help', 7, 'make', 'learn', 'earn'], notes: [{ text: '  two   spaces ' }, { text: '' }, 'no'] });
+  const me = { enjoy: ['S', 'I'], values: ['help', 'secure'], strengths: [{ id: 'explain', proof: 'private words' }], notes: [{ text: 'private' }] };
+  const pk = decodePacket(encodePacket({ y: 'sec2', plan: { el: 'G3' }, goal: { dest: 'poly' }, me }));
+  const day = (n) => new Date(Date.UTC(2026, 10, 11) + n * 86400000).toISOString().slice(0, 10);
+  const SANE = /^[A-Za-z0-9 ,.'’()%:;?!$-]{3,120}$/;
+  const destIds = new Set(ctx.destinations.map((d) => d.id));
+  const steps = (goals.steps && goals.steps.list) || [];
+  const ids = (list) => list.map((x) => x.id);
+  const uniq = (list) => new Set(list).size === list.length;
+  const codes = (goals.interests || []).map((x) => x.code).sort().join('');
+  const wantCodes = new Set(((data.journey && data.journey.wants) || []).map((w) => w.riasec).filter(Boolean));
+  const cases = [
+    ['6.0 comes across: plans, steps and the goal', up && eq(up.plans.sec2, { el: 'G3' }) && up.actions.length === 1 && up.goal.dest === 'poly' && up.importedFrom === 'v6'],
+    ['6.0 wins over v5 when both are on the device', up && up.plans.sec2.el === 'G3'],
+    ['the game\'s old want becomes what the student enjoys', up && eq(up.compass.enjoy, ['S']) && !('aim' in up)],
+    ['6.0\'s what changed stamp stays behind', up && !('seenVersion' in up)],
+    ['a device that never opened 6.0 still joins v5 and v4', eq(fromEarlier(null, { plans: { sec2: { el: 'G1' } }, goal: { dest: 'jc' } }, null).plans.sec2, { el: 'G1' })],
+    ['a new device starts clean', fromEarlier(null, null, null) === null],
+    ['a compass already filled is not overwritten by an old want', eq(upgradeTo7({ aim: 'make', compass: { enjoy: ['R'] } }).compass.enjoy, ['R'])],
+    ['every want of the game maps to an interest', Object.values(WANT_CODE).every((c) => 'RIASEC'.includes(c)) && [...wantCodes].every((c) => codes.includes(c))],
+    ['the compass holds two interests, three strengths, three values at most', junk.enjoy.length === 2 && junk.strengths.length === 3 && junk.values.length === 3],
+    ['the compass drops what it cannot read', eq(junk.enjoy, ['S', 'I']) && junk.strengths.every((r) => /^[a-z_]+$/.test(r.id)) && junk.values.every((v) => typeof v === 'string')],
+    ['typed lines are trimmed and capped', junk.strengths[0].proof.length === 90 && eq(junk.notes.map((n) => n.text), ['two spaces'])],
+    ['a link carries the compass only when asked', decodePacket(encodePacket({ y: 'sec2', plan: {}, goal: null })).me === null && pk.me && eq(pk.me.enjoy, ['S', 'I'])],
+    ['a link never carries typed words', pk.me.strengths[0].proof === '' && pk.me.notes.length === 0 && !/private/.test(packMe(me))],
+    ['a malformed compass in a link reads as none', unpackMe('<script>') === null && unpackMe('ZZ.help') === null && unpackMe('..') === null],
+    ['a goal is due after its date', goalDue({ by: day(-1), checkedAt: day(-10), setAt: day(-10) }, day(0)) === true],
+    ['a goal looked at after its date is not asked about again that week', goalDue({ by: day(-3), checkedAt: day(-1), setAt: day(-30) }, day(0)) === false],
+    ['a goal with no date is due after three weeks', goalDue({ setAt: day(-22), checkedAt: day(-22) }, day(0)) === true && goalDue({ setAt: day(-5), checkedAt: day(-5) }, day(0)) === false],
+    ['no goal is never due', goalDue(null, day(0)) === false],
+    ['the six interests are the six kinds, once each', codes === 'ACEIRS'],
+    ['strengths and values: ten each, ids unique and plain', (compass.strengths || []).length >= 6 && (compass.values || []).length >= 6 && uniq(ids(compass.strengths)) && uniq(ids(compass.values)) && [...ids(compass.strengths), ...ids(compass.values)].every((id) => /^[a-z_]{2,24}$/.test(id))],
+    ['the compass has its four parts', eq((compass.parts || []).map((x) => x.id), ['enjoy', 'strengths', 'values', 'goal'])],
+    ['every goal step can travel in a link', steps.length >= 6 && steps.every((x) => SANE.test(x.label))],
+    ['every goal step names real places and years', uniq(ids(steps)) && steps.every((x) => (!x.for || x.for.every((d) => destIds.has(d))) && (x.years || []).length && x.years.every((y) => /^sec[1-5]$/.test(y)))],
+    ['every place has a step to offer in every year', [...destIds].every((d) => ['sec1', 'sec2', 'sec3', 'sec4'].every((y) => steps.some((x) => (!x.for || x.for.includes(d)) && x.years.includes(y))))],
+    ['every long view marker speaks to the student as you', (data.lifelong.markers || []).length >= 6 && data.lifelong.markers.every((m) => m.you && m.you.title && m.you.body) && data.lifelong.bands.every((b) => b.you)],
+    ['what changed runs in date order', (parent.changes || []).length >= 3 && parent.changes.every((c, i, all) => !i || Number(c.year) > Number(all[i - 1].year))],
+    ['each old stream has its words for today', ['express', 'na', 'nt'].every((k) => parent.thenNow && parent.thenNow.rows[k] && parent.thenNow.rows[k].levels && parent.thenNow.rows[k].group && parent.thenNow.rows[k].exam)],
+  ];
+  const fails = cases.filter(([, ok]) => !ok).map(([name]) => ({ case: name }));
+  const ok = !fails.length;
+  pass('Seven', ok, `${cases.length} cases: what comes across from 6.0, the compass, goal dates, links, and the lists the new screens read`);
   if (!ok) console.table(fails);
   return { ok, fails };
 }
@@ -548,6 +611,7 @@ const results = [
   ['offline', await offlineSweep()],
   ['reachable', reachableSweep()],
   ['migrate', await migrateSweep()],
+  ['seven', await sevenSweep()],
   ['white-on-fill', whiteOnFillSweep()],
 ];
 

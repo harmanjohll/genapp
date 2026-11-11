@@ -12,8 +12,9 @@
 // money.json's own register is the guide: costs first, in full, then the
 // help, then the sentences that matter more than either table.
 
-import { getState, setSchoolKind } from '../state.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
+import { getState, setSchoolKind } from '../state.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
 
 function fmtDate(iso) {
   const d = new Date(iso);
@@ -51,7 +52,7 @@ export const money = {
           : api.copy('info.moneyLede', 'Every cost in the open, and the help attached to each one.'))}</p>
       </header>
 
-      ${provline('Every figure below is a band, not a quote, checked against the official fee and assistance pages this data names.', meta.accessed)}
+      ${provline('Figures marked checked were read on moe.gov.sg. The rest are bands from each institution, to confirm on its own page.', meta.accessed)}
 
       <section class="section" aria-label="What each road costs">
         <h2>${esc(api.copy('info.costsHead', 'What each road costs'))}</h2>
@@ -63,13 +64,14 @@ export const money = {
             <p class="figure" style="margin:0">${esc(c.fee)}</p>
             <p class="subline" style="margin:2px 0 0">${esc(c.misc)}</p>
             <p class="small" style="margin:10px 0 0">${esc(c.note)}</p>
+            <p style="margin:8px 0 0">${c.checked ? `<span class="src-chip checked">${icon('check')} checked on moe.gov.sg</span>` : '<span class="src-chip provisional">to confirm</span>'}</p>
           </article>`).join('')}
         </div>
       </section>
 
       <section class="section" aria-label="The help">
         <h2>${esc(api.copy('info.helpHead', 'The help'))}</h2>
-        <p class="small">${esc(api.copy('info.helpLede', 'Nine names. Almost none of this is offered unasked, so knowing the names is itself worth money.'))}</p>
+        <p class="small">${esc(api.copy('info.helpLede', `${help.length} schemes. Most must be applied for, so it helps to know their names.`))}</p>
         <ul class="movelist">
           ${help.map((h) => `
           <li class="move"><div>

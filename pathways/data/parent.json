@@ -1,25 +1,38 @@
 {
   "_meta": {
-    "source": "MOE Full SBB pages, SEAB SEC overview, MOE SchoolFinder guidance. Written for parents of the first SEC cohorts.",
+    "source": "MOE Full SBB secondary school experience and FAQ; MOE S1 Posting pages; SEAB SEC page; MOE DSA for JC, Polytechnic EAE, ITE EAE and Post Secondary Admissions Exercise pages; MOE Education and Career Guidance page. Written for parents of the first SEC cohorts.",
     "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
-    "accessed": "2026-08-05",
+    "accessed": "2026-11-11",
     "units": "not applicable",
-    "notes": "One calm page. The parent is very often the person actually driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes."
+    "notes": "Read from the primary MOE and SEAB pages, opened in full, on 2026-11-11. The four dated changes, the stream table and the windows were each checked against those pages. Early admissions months are the 2026 cycle; MOE had not published the 2027 dates. MOE states no date for choosing upper secondary subjects and no open house dates, so those two windows point to the school and the campus. One calm page. The parent is very often the person driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes.",
+    "sources": {
+      "changes_2021": "https://www.moe.gov.sg/psle-fsbb/psle/psle-scoring-system",
+      "changes_2024": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
+      "changes_2027": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
+      "changes_2028": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+      "thenNow": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+      "level_changes": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/faq",
+      "dsa_jc": "https://www.moe.gov.sg/post-secondary/admissions/dsa",
+      "poly_eae": "https://www.moe.gov.sg/post-secondary/admissions/poly-eae",
+      "ite_eae": "https://www.moe.gov.sg/post-secondary/admissions/ite-eae",
+      "pse": "https://www.moe.gov.sg/post-secondary/admissions/pse",
+      "ecg": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance"
+    }
   },
   "title": "For parents",
   "lede": "The system your child is in is not the one you went through. Here is the shape of it, in five minutes.",
   "sections": [
     {
       "head": "What changed since your day",
-      "body": "Express, Normal Academic and Normal Technical are gone. Since 2024 your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels became one exam, the SEC, first sat in 2027. And the JAE you remember is replaced from 2028 by one Post Secondary Admissions Exercise covering JC, MI, poly, PFP and ITE on a single portal."
+      "body": "Express, Normal (Academic) and Normal (Technical) are gone. From the 2024 Sec 1 cohort your child takes each subject at its own level, G1, G2 or G3, and can mix them. The O and N Levels become one exam, the SEC, first sat in 2027, with all results in January. Mother Tongue has one written sitting, in September. From 2028 one Post Secondary Admissions Exercise replaces the JAE you remember, for JC, MI, polytechnic, PFP and ITE."
     },
     {
-      "head": "What G1, G2 and G3 actually are",
-      "body": "Levels of a subject, not a rank of your child. G3 covers the most ground fastest, G1 is the most practical. A student can hold G3 English beside G2 Maths. Levels move: schools shift students up and down every year, on classwork, not on one paper."
+      "head": "What G1, G2 and G3 are",
+      "body": "Each is a level of one subject. G3 is the most demanding and G1 the least. They follow the old Express, Normal (Academic) and Normal (Technical) standards. A student can hold G3 English beside G2 Mathematics. Levels can move. MOE sets no dates for this: the school decides, on results in the subject and its view of the whole workload."
     },
     {
       "head": "When the decisions happen",
-      "body": "Sec 1 and 2: levels settle and can move. Mid Sec 2: the subject combination exercise, the one that feels enormous and is adjustable. Sec 3: the combination runs. Sec 4: Early Admissions opens before results, on interest and evidence, then the main posting after results. A fifth year exists so one set of results does not settle everything."
+      "body": "P6: the Posting Group, and six school choices in the 7 days after results. Sec 1 and 2: levels can move, and Humanities can move from Sec 2. Before Sec 3: the upper secondary subjects, on dates your school sets. Sec 4: Early Admissions before the exams, then one admissions exercise that opens on results day in January. A fifth year is open to students who meet MOE's criteria."
     },
     {
       "head": "Five conversations that help",
@@ -28,7 +41,7 @@
         "Go to one open house together, including one route you had not considered.",
         "Ask the subject teacher what moving up a level would take.",
         "Ask them to show you this tool and their three actions for the term.",
-        "Ask the ECG counsellor anything. It is their job and it is free."
+        "Ask the ECG Counsellor at school. Guiding education and career plans is their job."
       ]
     },
     {
@@ -41,7 +54,7 @@
     },
     {
       "head": "Where the official answers live",
-      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is actually on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking, not deciding: the headline 2028 figures match what MOE has announced, and anything not yet read from a primary page is marked provisional on screen.",
+      "body": "moe.gov.sg for criteria, SchoolFinder for what each school runs, and your child's school for what is on offer, since schools run different subsets of subjects and lists change between cohorts. This tool is for thinking. Its school facts were read on MOE and SEAB pages on 11 November 2026, and anything not read from a primary page is marked provisional on screen.",
       "links": [
         {
           "label": "MOE, post secondary admissions",
@@ -57,34 +70,46 @@
   "status": "confirmed",
   "windows": [
     {
-      "label": "Subject combination exercise",
-      "when": "Mid Sec 2, around May to July",
-      "what": "The school runs briefings and the form goes home. Levels can still move after it, every year.",
+      "label": "Upper secondary subjects",
+      "when": "During Sec 2, on your school's dates",
+      "what": "Your school guides the choice of upper secondary subjects. MOE sets no date for it. A level can still move later.",
       "check": "The school's own circular"
     },
     {
       "label": "Direct admission, DSA",
-      "when": "May to July of Sec 4, for JC",
-      "what": "Talent based entry to a JC before results, on CCA and portfolio evidence. The Sec 1 version is behind you; this one is not.",
+      "when": "From May of Sec 4, for JC",
+      "what": "Talent based entry to a JC before the exams, on CCA records and a portfolio. Each JC sets its own dates, with offers into September.",
       "check": "MOE DSA JC page"
     },
     {
       "label": "Early Admissions, EAE",
-      "when": "About June of Sec 4, before results",
-      "what": "Poly and ITE admission on interest and evidence, before the exam. The folder it needs is built in Sec 3.",
+      "when": "May for ITE, late June for polytechnic",
+      "what": "Polytechnic and ITE admission on aptitude and interest, before the exams. Polytechnic takes up to 3 courses. These are the 2026 months.",
       "check": "Polytechnic EAE and ITE EAE pages"
     },
     {
       "label": "Open houses",
-      "when": "November to January, mostly",
-      "what": "JC, MI, poly and ITE campuses open around results season. Going to one changes more minds than any brochure.",
+      "when": "Dates set by each campus",
+      "what": "JC, MI, polytechnic and ITE campuses hold open houses. MOE names these visits as part of ECG in secondary school.",
       "check": "Each campus's page"
     },
     {
+      "label": "CCA record check",
+      "when": "By September of Sec 4",
+      "what": "CCA bonus points count in the admissions exercise. Ask your child to check the record with the school.",
+      "check": "MOE Post Secondary Admissions Exercise page"
+    },
+    {
+      "label": "The SEC papers",
+      "when": "September, then October to November",
+      "what": "English and Mother Tongue written papers in September, with one sitting only. Other papers follow from October. All results come in January.",
+      "check": "SEAB SEC page"
+    },
+    {
       "label": "The main posting round",
-      "when": "Days after results, January",
-      "what": "One PSE portal from 2028 for JC, MI, poly, PFP and ITE, replacing the JAE you remember.",
-      "check": "MOE posting matters page"
+      "when": "From results day, mid January",
+      "what": "One portal from 2028 for JC, MI, polytechnic, PFP and ITE. Six days to rank up to 12 courses. Posting results by early February.",
+      "check": "MOE Post Secondary Admissions Exercise page"
     }
   ],
   "guest": {
@@ -99,12 +124,12 @@
       },
       {
         "id": "na",
-        "label": "Normal Academic",
+        "label": "Normal (Academic)",
         "level": "G2"
       },
       {
         "id": "nt",
-        "label": "Normal Technical",
+        "label": "Normal (Technical)",
         "level": "G1"
       },
       {
@@ -118,5 +143,60 @@
     "note": "Opens as a guest. The game saves nothing to this phone, and handing it back leaves everything exactly as it was."
   },
   "windowsHead": "The windows, roughly when they open",
-  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise."
+  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise.",
+  "changes": [
+    {
+      "year": "2021",
+      "head": "PSLE scored in Achievement Levels",
+      "body": "Each subject gets AL1 to AL8. The PSLE Score is their sum, from 4 to 32."
+    },
+    {
+      "year": "2024",
+      "head": "Streams end",
+      "body": "From the 2024 Sec 1 cohort there are no Express or Normal streams. Each subject is taken at G1, G2 or G3."
+    },
+    {
+      "year": "2027",
+      "head": "One exam, the SEC",
+      "body": "The Singapore Cambridge Secondary Education Certificate replaces the O and N Levels. Each subject is examined at its own level, and all results come in January."
+    },
+    {
+      "year": "2028",
+      "head": "New admission rules",
+      "body": "JC counts five subjects. Polytechnic can count one subject at G2. One exercise, the PSE, covers JC, MI, polytechnic and ITE."
+    }
+  ],
+  "changesHead": "What changed",
+  "thenNow": {
+    "head": "Your stream, in today's words",
+    "ask": "Which stream were you in?",
+    "cols": {
+      "levels": "Subjects now",
+      "group": "Posting Group",
+      "exam": "The exam"
+    },
+    "rows": {
+      "express": {
+        "label": "Express",
+        "levels": "Mostly G3",
+        "group": "Group 3",
+        "exam": "O Level, now the SEC"
+      },
+      "na": {
+        "label": "Normal (Academic)",
+        "levels": "Mostly G2",
+        "group": "Group 2",
+        "exam": "N(A) Level, now the SEC"
+      },
+      "nt": {
+        "label": "Normal (Technical)",
+        "levels": "Mostly G1",
+        "group": "Group 1",
+        "exam": "N(T) Level, now the SEC"
+      }
+    },
+    "note": "The change: your child takes each subject at its own level, and a level can move. The Posting Group only guides the starting levels."
+  },
+  "askHead": "Three things to ask this week",
+  "moreHead": "More for parents"
 }

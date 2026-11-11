@@ -337,6 +337,10 @@ const SECOND_PERSON = /\b(you|your|yours|yourself)\b/i;
 
 function voiceFaults(value, where) {
   if (ADDRESSES_READER.some((p) => where.startsWith(p))) return [];
+  // 7.0 draws the long view on the path, a planning screen that speaks to the
+  // student as "you". Each marker and band keeps its first person form for the
+  // game and carries a second, `you`, for the path.
+  if (/^lifelong\.(markers|bands)\[\d+\]\.you\b/.test(where)) return [];
   const m = String(value).match(SECOND_PERSON);
   if (!m) return [];
   return [{

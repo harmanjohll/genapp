@@ -5,7 +5,7 @@
 // transit vocabulary (departures, tickets, a pass) for students who enjoy
 // it; the visuals are the same in both. The choice is stored on the device.
 
-import { getState } from '../state.js?v=6.0.0';
+import { getState } from '../state.js?v=7.0.0';
 
 const WORDS = {
   plain: {
@@ -29,12 +29,12 @@ const WORDS = {
     movesShort: 'Moves',
     keep: 'Save move',
     kept: 'Saved',
-    keptList: 'Saved moves',
-    keptCount: (n) => `${n} ${n === 1 ? 'move' : 'moves'} saved`,
-    noneKept: 'No moves saved yet. Tap Save move on any move.',
+    keptList: 'Your steps',
+    keptCount: (n) => `${n} ${n === 1 ? 'step' : 'steps'} saved`,
+    noneKept: 'No steps yet. Tap Save move on any move.',
     plan: 'Saved',
-    planTitle: 'Your saved moves and summary',
-    openPlan: 'See saved moves',
+    planTitle: 'Your plan',
+    openPlan: 'See your steps',
     years: 'Your school years',
     afterTitle: '8 places to go after secondary school',
     allPlaces: 'All 8 places',

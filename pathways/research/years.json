@@ -1,6 +1,7 @@
 {
   "_meta": {
-    "accessed": "2026-10-27",
+    "accessed": "2026-11-11",
+    "recheck": "2026-11-11: every MOE and SEAB page was opened in full with curl from www.moe.gov.sg and www.seab.gov.sg, and each fact in the app was checked against a verbatim quote. See recheck_2026_11_11 below and the dated section in years.md. Entries corrected in place carry a note that says so. The method line that follows describes the first pass of 2026-10-27.",
     "method": "WebFetch could not resolve any host in this sandbox (DNS failure, even for wikipedia.org) and the outbound proxy refused direct curl. Every fact here comes from search-indexed text of the cited pages, retrieved through WebSearch. 'confirmed' means the search engine's excerpt attributed the statement to the primary page. It does not mean the page itself was opened. Recheck high-stakes numbers on the live page before shipping.",
     "sources": [
       {"id": "moe-pg", "title": "MOE: What are posting groups", "url": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups", "kind": "primary"},
@@ -16,6 +17,15 @@
       {"id": "moe-s1results", "title": "MOE: S1 View school posting results", "url": "https://www.moe.gov.sg/secondary/s1-posting/results", "kind": "primary"},
       {"id": "moe-s1choices", "title": "MOE: S1 Posting eligibilities and choices", "url": "https://www.moe.gov.sg/secondary/s1-posting/school-choices/eligibilities-and-choices", "kind": "primary"},
       {"id": "moe-natdates", "title": "MOE: National examinations dates", "url": "https://www.moe.gov.sg/national-exams-dates", "kind": "primary"},
+      {"id": "moe-s1", "title": "MOE: Secondary 1 (S1) Posting process (last updated 4 Nov 2026)", "url": "https://www.moe.gov.sg/secondary/s1-posting", "kind": "primary"},
+      {"id": "moe-calendar", "title": "MOE: Academic calendar and key dates (page data)", "url": "https://www.moe.gov.sg/calendar", "kind": "primary"},
+      {"id": "moe-dsajc", "title": "MOE: Direct School Admission for junior colleges (last updated 7 Jul 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/dsa", "kind": "primary"},
+      {"id": "moe-polyeae", "title": "MOE: Polytechnic Early Admissions Exercise (last updated 7 May 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/poly-eae", "kind": "primary"},
+      {"id": "moe-iteeae", "title": "MOE: ITE Early Admissions Exercise (last updated 7 May 2026)", "url": "https://www.moe.gov.sg/post-secondary/admissions/ite-eae", "kind": "primary"},
+      {"id": "moe-types", "title": "MOE: Types of schools (last updated 12 Jan 2026)", "url": "https://www.moe.gov.sg/education-in-sg/our-schools/types-of-schools", "kind": "primary"},
+      {"id": "moe-ecg", "title": "MOE: Education and Career Guidance (last updated 7 Sep 2026)", "url": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance", "kind": "primary"},
+      {"id": "moe-terms2027", "title": "MOE press release (14 Jul 2026): School Terms and Holidays for 2027", "url": "https://www.moe.gov.sg/news/press-releases/20260714-school-terms-and-holidays-for-2027", "kind": "primary"},
+      {"id": "seab-g2-2027", "title": "SEAB: (2027 SEC) G2 Syllabuses for School Candidates", "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/g2-syllabuses-for-school-candidates-2027/", "kind": "primary"},
       {"id": "seab-dates", "title": "SEAB: Important Dates for Candidates", "url": "https://www.seab.gov.sg/important-dates-for-candidates/", "kind": "primary"},
       {"id": "moe-mtl2024", "title": "MOE press release: Strengthening Efforts for Students to Learn and Use Their MTL from Young (14 Sep 2024)", "url": "https://www.moe.gov.sg/news/press-releases/20240914-strengthening-efforts-for-students-to-learn-and-use-their-mother-tongue-language-from-young", "kind": "primary"},
       {"id": "moe-psle2019", "title": "MOE press release: Updates to PSLE 2021 Scoring System (25 Jul 2019)", "url": "https://www.moe.gov.sg/news/press-releases/20190725-updates-to-psle-2021-scoring-system-enabling-students-to-progress-regardless-of-starting-points", "kind": "primary"},
@@ -97,13 +107,13 @@
       "caveat": "The exact first cohort (2026 S1) comes from search excerpts of the MOE curriculum page and the 2024 MTL Symposium speech. Recheck it on moe-mtl2024."
     },
     "timeline": [
-      {"when": "Sep-Oct of P6", "what": "PSLE written papers (orals and listening comprehension earlier, around Aug).", "status": "provisional", "sourceRef": "seab-dates"},
+      {"when": "Aug to Sep of P6", "what": "2026: PSLE Orals 12 to 13 Aug, Listening 15 Sep, Written 24 to 30 Sep; marking exercise 12 to 14 Oct. Corrected 2026-11-11 from the MOE calendar page data; the earlier entry said Sep to Oct.", "status": "confirmed", "sourceRef": "moe-calendar"},
       {"when": "2025 cycle: Tue 25 Nov 2025, 11am", "what": "PSLE results released with the S1 Option Form and Eligibility Letter (lists eligible Posting Group(s), HMTL eligibility and other eligibilities).", "status": "confirmed", "sourceRef": ["moe-psle25", "moe-s1choices"]},
       {"when": "2025 cycle: 25 Nov 2025 11.30am to Mon 1 Dec 2025 4.30pm", "what": "Submit 6 secondary school choices online (S1 Portal) or through the primary school.", "status": "confirmed", "sourceRef": "moe-psle25"},
-      {"when": "2025 cycle: Fri 19 Dec 2025, 9am", "what": "S1 posting results released through the S1 Portal and SMS.", "status": "confirmed", "sourceRef": "moe-s1results"},
+      {"when": "2025 cycle: 18 or 19 Dec 2025", "what": "S1 posting results released through the S1 Portal and SMS. The MOE release of 25 Nov 2025 gave either date; the page read on 2026-11-11 does not say which it was.", "status": "provisional", "sourceRef": "moe-psle25b"},
       {"when": "2026 cycle: Tue 24 or Wed 25 Nov 2026 (tentative)", "what": "2026 PSLE results release, with DSA-Sec allocation results on the same day.", "status": "confirmed", "sourceRef": ["seab-dates", "moe-natdates"]},
-      {"when": "2026 cycle: late Nov to early Dec 2026", "what": "S1 option window. Exact 2026 dates were not found.", "status": "provisional", "sourceRef": "moe-psle25"},
-      {"when": "2026 cycle: around mid-to-late Dec 2026", "what": "S1 posting results. The 2026 date was not found; it was 19 Dec in 2025.", "status": "provisional", "sourceRef": "moe-s1results"},
+      {"when": "2026 cycle: 7 calendar days from the day of PSLE results release", "what": "S1 option window: from 11.30am on results day to 4.30pm on the last day. Found 2026-11-11 on the MOE S1 Posting page (last updated 4 Nov 2026).", "status": "confirmed", "sourceRef": "moe-s1"},
+      {"when": "2026 cycle: Fri 18 Dec 2026 (tentative)", "what": "S1 posting results, through the S1 Portal and SMS. Found 2026-11-11 on the MOE S1 Posting page.", "status": "confirmed", "sourceRef": "moe-s1"},
       {"when": "May-Jun of P6", "what": "DSA-Sec application window (2026: 6 May 11am to 2 Jun 4.30pm; up to 3 choices).", "status": "confirmed", "sourceRef": "moe-eae2026"}
     ]
   },
@@ -114,7 +124,7 @@
         {"text": "DSA-Sec applications open around May to early June (2026: 6 May to 2 Jun).", "status": "confirmed", "sourceRef": "moe-eae2026"},
         {"text": "PSLE taken. Each of the 4 subjects is graded AL 1 to 8 (Foundation: A to C), and the PSLE Score is the sum, from 4 to 32.", "status": "confirmed", "sourceRef": "moe-calc"},
         {"text": "Results come out in late November with the S1 Option Form and Eligibility Letter (2025: 25 Nov; 2026: tentatively 24 or 25 Nov).", "status": "confirmed", "sourceRef": ["moe-psle25", "seab-dates"]},
-        {"text": "S1 posting results come out in December (2025: 19 Dec).", "status": "confirmed", "sourceRef": "moe-s1results"}
+        {"text": "S1 posting results come out in December (2026: Fri 18 Dec, tentative).", "status": "confirmed", "sourceRef": "moe-s1"}
       ],
       "decisions": [
         {"text": "Score of 21-22 or 25: pick one of the two eligible Posting Groups before listing schools. The chosen group applies to all 6 choices.", "status": "confirmed", "sourceRef": "moe-s1choices"},
@@ -181,11 +191,11 @@
         {"text": "EL and all MTL written papers in September. There is one MTL sitting for G1, G2, G3 MTL and G3 HMTL, so the mid-year MTL sitting ends.", "status": "confirmed", "sourceRef": ["seab-sec", "moe-infosheet2"]},
         {"text": "All other written papers from October to November.", "status": "confirmed", "sourceRef": ["seab-sec", "moe-infosheet2"]},
         {"text": "All SEC results come out together in January of the following year (January 2028 for the first cohort). The exact 2027 timetable and results date had not been published as of the searches.", "status": "confirmed", "sourceRef": ["moe-infosheet2", "seab-sec"]},
-        {"text": "Early admissions during Sec 4 (2026 dates for reference): ITE EAE 20-26 May; Poly EAE for O-Level students 25 Jun to 1 Jul; DSA-JC 6 May to 2 Jun. DSA-JC, Poly EAE and ITE EAE continue alongside PSE.", "status": "confirmed", "sourceRef": ["moe-eae2026", "moe-pse"]}
+        {"text": "Early admissions during Sec 4 (2026 dates for reference): ITE EAE 20-26 May; Poly EAE for O-Level students 25 Jun to 1 Jul (up to 3 diploma courses); DSA-JC opened Tue 5 May, with application dates set by each JC, Phase 1 selection 29 Jun to 11 Aug and Phase 2 selection 17 Aug to 7 Sep. Only one offer (DSA-JC or EAE) can be accepted. Corrected 2026-11-11: the earlier entry gave the DSA-Sec dates, 6 May to 2 Jun, for DSA-JC. DSA-JC, Poly EAE and ITE EAE continue alongside PSE.", "status": "confirmed", "sourceRef": ["moe-dsajc", "moe-polyeae", "moe-iteeae", "moe-pse"]}
       ],
       "decisions": [
         {"text": "PSE in 2028 replaces the JAE, the PFP Admissions Exercise and the ITE Joint Intake Exercise for JC, MI, Poly, PFP and ITE 2-Year and 3-Year Higher Nitec. Anyone who sat the SEC at any level can take part.", "status": "confirmed", "sourceRef": ["moe-pse", "moe-cos2026"]},
-        {"text": "PSE timeline: SEC results and PSE applications in mid-January 2028, with a 6-day application window and up to 12 choices through the Post-Sec Portal (Singpass). Posting results are due 'by early February' per the COS 2026 release, but 'by end of February 2028' per one MOE page excerpt. That conflict is unresolved.", "status": "provisional", "sourceRef": ["moe-pse", "moe-cos2026"]},
+        {"text": "PSE timeline: SEC results and PSE applications in mid-January 2028, with a 6-day application window and up to 12 choices through the Post-Sec Portal (Singpass). Posting results are released by early February 2028; end February 2028 is the deadline to accept the offer. Settled 2026-11-11 on the MOE PSE page (last updated 22 Sep 2026).", "status": "confirmed", "sourceRef": ["moe-pse", "moe-cos2026"]},
         {"text": "PSE tie-breakers: citizenship, then choice order, then gross aggregate, then computerised balloting.", "status": "confirmed", "sourceRef": "moe-pse"},
         {"text": "JC from 2028: L1R4 <= 16 (was L1R5 <= 20). All subjects must be G3 (O-Level counts as G3). Requires EL A1-C6 and AMath or Maths A1-D7. Bonus points capped at 3. MI threshold is L1R4 <= 20.", "status": "confirmed", "sourceRef": ["moe-jc2028", "moe-jae2028"]},
         {"text": "Poly Y1 from 2028: ELR2B2, with one B subject allowed at G2. Cut-off moves from 26 to 22 points (Nursing: 28 to 24).", "status": "confirmed", "sourceRef": "moe-infosheet2"},
@@ -201,7 +211,7 @@
         {"text": "PSE allows combining results from up to two exam years (SEC and/or GCE N or O-Level).", "status": "confirmed", "sourceRef": "moe-pse"}
       ],
       "decisions": [
-        {"text": "Eligibility: 2 or fewer G3 passes, and gross ELMAB3 <= 21, or ELB3 <= 14, or MAB3 <= 14, computed at G2, with at least Grade 5 at G2 in every subject counted.", "status": "confirmed", "sourceRef": "moe-curr"},
+        {"text": "Eligibility, either one of two criteria. First: 3 or more G3 passes, and not qualifying for JC, MI or Polytechnic Year 1 (no polytechnic course minimum met, or net ELR2B2 of 23 or more). Second: 2 or fewer G3 passes, and gross ELMAB3 <= 21, or ELB3 <= 14, or MAB3 <= 14, computed at G2, with at least Grade 5 at G2 in every subject counted. Corrected 2026-11-11: the earlier entry held only the second.", "status": "confirmed", "sourceRef": "moe-fsbb-exp"},
         {"text": "To take all subjects at G3 in the fifth year: gross ELMAB3 (computed at G2, Grade 5 or better) of 19 or better.", "status": "confirmed", "sourceRef": ["moe-curr", "sch-peicai"]},
         {"text": "Students without enough G2 or G3 subjects to compute eligibility consult their school.", "status": "confirmed", "sourceRef": "moe-curr"}
       ],
@@ -245,16 +255,106 @@
     "notes": "The SchoolFinder page renders with JavaScript and WebFetch was unavailable, so all Beatty data came from search-indexed text. Some secondary sites report PG3 as 12-17 (the 2024 figure) or PG2 as 21-24, but the SchoolFinder excerpt gave 12-18 and 21-25 for 2025. School phone 6256 9108."
   },
 
+  "recheck_2026_11_11": {
+    "method": "curl to www.moe.gov.sg and www.seab.gov.sg, 131 pages opened in full. MOE pages hold their text in embedded page data, which was decoded before reading. Every quote in the working notes was machine checked to appear word for word in the saved page.",
+    "counts": {
+      "confirmed": 111,
+      "wrong": 15,
+      "not_found_on_primary_page": 35
+    },
+    "corrected_in_app": [
+      {
+        "file": "data/psle.json",
+        "what": "Less demanding Mother Tongue option now follows MOE's whole table: most subjects at G3 with Standard AL 6 or Foundation A gives G2; AL 7 to 8 or Foundation B to C gives G1 or G2; most subjects at G2 with AL 7 to 8 or Foundation B to C gives G1. The Beatty range note now says first to last student posted.",
+        "sourceRef": [
+          "moe-fsbb-exp",
+          "moe-pg"
+        ]
+      },
+      {
+        "file": "data/years.json",
+        "what": "Sec 5 entry has two criteria, not one. PSLE written papers are in late September. Added the 2026 P6 dates, one Mother Tongue written sitting in September, the PSE window (six days from results day, up to 12 choices, posting by early February 2028) and the CCA record check by September. Review dates and percentage bars removed or marked school practice.",
+        "sourceRef": [
+          "moe-fsbb-exp",
+          "moe-s1",
+          "seab-sec",
+          "moe-pse"
+        ]
+      },
+      {
+        "file": "data/subjects.json",
+        "what": "Music has no G2. Drama is G3 only. Economics is not new (earlier code 2286). Higher Art, Design and Technology, Higher Music, Exercise and Sports Science and Electronics confirmed on SEAB's lists. Level descriptions reduced to MOE's more and less demanding. G1 Humanities is Social Studies with exposure modules, not examined.",
+        "sourceRef": [
+          "seab-g1-2027",
+          "seab-g2-2027",
+          "seab-g3-2027",
+          "moe-fsbb-exp"
+        ]
+      },
+      {
+        "file": "data/glossary.json",
+        "what": "Early Admissions months (ITE late May, polytechnic late June in 2026), up to 3 polytechnic courses, Project Work is pass or fail and outside the University Admission Score, the PSE replaces the JAE, the PFP Admissions Exercise and the ITE Joint Intake Exercise, the DPP ends from the 2028 ITE intake.",
+        "sourceRef": [
+          "moe-polyeae",
+          "moe-iteeae",
+          "moe-cos2026",
+          "moe-fsbb-faq"
+        ]
+      },
+      {
+        "file": "data/schools.json",
+        "what": "Source address fixed. NorthLight School and Assumption Pathway School are the specialised schools; Crest and Spectra are Posting Group 1 secondary schools whose students graduate with the SEC and an ITE Skills Subject Certificate. The support officer is the SEN Officer.",
+        "sourceRef": [
+          "moe-types"
+        ]
+      },
+      {
+        "file": "data/parent.json",
+        "what": "Windows rewritten to the published months; rows added for the CCA record check and the SEC papers; the four dated changes and the stream table checked and kept.",
+        "sourceRef": [
+          "moe-dsajc",
+          "moe-polyeae",
+          "moe-iteeae",
+          "moe-pse",
+          "seab-sec"
+        ]
+      }
+    ],
+    "not_found_on_primary_page": [
+      "Any national date or mark for a change of level. MOE says only: at appropriate junctures, on performance in the subject and a holistic assessment by the school.",
+      "When upper secondary subjects are chosen, and any briefing date. School practice.",
+      "How many examinable subjects a student takes (the earlier 5 to 9, most 7 or 8).",
+      "Percentage bars for moving up a level or for Additional Mathematics.",
+      "The ECG labels awareness, exploration and planning. The current MOE page (7 Sep 2026) uses three goals with three questions: Who am I? Where do I want to go? How do I get there? The older pages with the three labels now return 404.",
+      "2027 SEC paper dates, 2027 PSLE dates and 2027 early admissions dates. MOE says mid 2027 onwards.",
+      "Higher Mother Tongue entry after Sec 1.",
+      "Open house dates.",
+      "How the Nitec is awarded inside the three year Higher Nitec course (ITE's own site was not reachable)."
+    ],
+    "ecg_framework_current_wording": {
+      "definition": "Education and Career Guidance (ECG) helps students develop a sense of purpose in life.",
+      "goals": [
+        "Discovering purpose - Who am I?",
+        "Exploring opportunities - Where do I want to go?",
+        "Staying relevant - How do I get there?"
+      ],
+      "secondary_focus": "The focus at the Secondary level is to allow students to develop self-awareness, explore possible career pathways and discover various education options.",
+      "portal": "MySkillsFuture Student Portal, for secondary students at http://go.gov.sg/mysfsec (target not opened from this build)",
+      "counsellors": "Secondary schools, junior colleges, and Millennia Institute have Education and Career Guidance (ECG) Counsellors, while post-secondary education institutions have Education and Career Coaches.",
+      "sourceRef": "moe-ecg"
+    }
+  },
+
   "open_questions": [
-    "Recheck all 'confirmed' items on the live pages. WebFetch was blocked, so the evidence is search-engine excerpts.",
-    "Exact 2026 S1 Option Form window and 2026 S1 posting results date (2025: 25 Nov to 1 Dec; results 19 Dec).",
-    "Exact 2027 SEC timetable dates and the January 2028 results release date (SEAB has not published them yet).",
-    "PSE 2028 posting-results date: 'by early February' (COS 2026) vs 'by end of February 2028' (MOE page excerpt). The 6-day window and 12-choice cap also need a direct check on moe.gov.sg/pse.",
-    "Exact 2027 ITE EAE and Poly EAE windows for the first SEC cohort (only 2026 dates found).",
-    "Whether MOE publishes any national criteria for moving a subject DOWN a level mid-secondary. Only school-level practice was found.",
-    "Is there a mid-year (Semester 1) level review, or only end-of-year? MOE names 'appropriate junctures'; schools mostly use end-of-year results. Some schools offer HMTL after Semester 1.",
-    "Whether G2 versions exist for Applied Subjects (e.g. Nutrition and Food Science, Elements of Business Skills). SEAB G2 lists were not checked. SEAB notes 2027 is the last exam year for the MOE-ITE Applied Subjects (e.g. Smart Electrical Technology), so Beatty's offering of SET may change.",
-    "Beatty: which subjects are offered at which G-levels; current full CCA list; current ALP theme name (STEM programming for smart living vs Machine Learning); whether standalone History is offered; any Beatty-specific Sec 2 subject combination criteria or AMath threshold.",
-    "Whether 31-32 or non-PG students' routes (NorthLight, Assumption Pathway) wording has been updated for Full SBB."
+    "Settled 2026-11-11: the 2026 S1 option window (7 calendar days from results day) and posting date (Fri 18 Dec 2026, tentative).",
+    "Settled 2026-11-11: PSE posting results by early February 2028; end February is the acceptance deadline. Six days and up to 12 choices confirmed on moe.gov.sg/post-secondary/admissions/pse.",
+    "Settled 2026-11-11: students with no Posting Group may repeat the PSLE or progress to NorthLight School or Assumption Pathway School with their principal's endorsement (MOE PSLE FAQ).",
+    "Settled 2026-11-11: MOE publishes no national criteria with marks or dates for moving a subject down a level. Electives may drop if the student wishes; for compulsory subjects the school assesses holistically.",
+    "Settled 2026-11-11: G2 exists for Nutrition and Food Science, Art, Design and Technology, Computing and Principles of Accounts; Elements of Business Skills is G1 only; Music has no G2; Drama is G3 only (SEAB 2027 lists).",
+    "Still open: exact 2027 SEC timetable dates and the January 2028 results release date. SEAB's dates page covered 2026 only on 2026-11-11.",
+    "Still open: exact 2027 ITE EAE, Poly EAE and DSA-JC windows for the first SEC cohort. MOE says mid 2027 onwards.",
+    "Still open: whether a school reviews levels mid year or at year end. MOE names only appropriate junctures.",
+    "Still open: Higher Mother Tongue entry after Sec 1.",
+    "Still open, for the school to answer: Beatty's current full CCA list, ALP theme name, and any Sec 2 subject combination criteria. SchoolFinder on 2026-11-11 lists Elements of Business Skills and Smart Electrical Technology among Beatty's subjects, which the Principal's offering of 1 November 2026 does not."
   ]
 }

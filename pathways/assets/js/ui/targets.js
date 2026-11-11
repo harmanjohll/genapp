@@ -8,11 +8,11 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=6.0.0';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=6.0.0';
-import { esc, onAction } from './dom.js?v=6.0.0';
-import { icon } from './icons.js?v=6.0.0';
-import { listNames, sayName } from '../engine/advice.js?v=6.0.0';
+import { getState, setGrade } from '../state.js?v=7.0.0';
+import { report, gradesFor, polyByType } from '../engine/grades.js?v=7.0.0';
+import { esc, onAction } from './dom.js?v=7.0.0';
+import { icon } from './icons.js?v=7.0.0';
+import { listNames, sayName } from '../engine/advice.js?v=7.0.0';
 
 const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };
@@ -30,6 +30,12 @@ function stepper(which, s, lv, cur) {
     <output class="step-v" aria-live="off">${cur ? esc(cur) : '·'}</output>
     <button type="button" class="step-b press" data-action="tg-step" data-which="${which}" data-sid="${esc(s.id)}" data-d="1" aria-label="${esc(s.name)} ${which}: one grade higher">${icon('plus')}</button>
   </span>`;
+}
+
+/** The date the grade tables were read on MOE's pages, from the data itself. */
+function readOn(g) {
+  const d = new Date((g && g._meta && g._meta.accessed) || '');
+  return Number.isNaN(d.getTime()) ? 'from MOE' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export function targetsHtml(api, y) {
@@ -132,7 +138,7 @@ function outHtml(api, y) {
       <h2 class="advh">Polytechnic by course type</h2>
       <p class="small">Each type counts different relevant subjects. Provisional until the 2028 lists in mid 2027.</p>
       <div class="famscores">${fam.map((f) => `<div><span>${esc(f.name)}</span><b>${f.value == null ? '·' : f.value}</b></div>`).join('')}</div>` : ''}
-    <p class="srcline">Scores use the MOE mapping tables, read 27 October 2026. Bonus points are not included. Course requirements and cut offs move every year; check with your ECG counsellor.</p>`;
+    <p class="srcline">Scores use the MOE mapping tables, read ${esc(readOn(g))}. Bonus points are not included. Course requirements and cut offs move every year; check with your ECG counsellor.</p>`;
 }
 
 export function bindTargets(root, api, y) {

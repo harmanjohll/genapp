@@ -7,11 +7,13 @@
    "No aggregate is invented. Where a figure is provisional the truth line says so."
   ],
   "sources": "Figures match DESIGN.md's confirmed table for the 2027 SEC cohort.",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "accessed": "2026-11-11",
+  "notes": "Re-checked 2026-11-11 against moe.gov.sg (the 2028 Post-Secondary Admissions Exercise pages, the JPAE, Poly EAE, PFP and DPP pages, the SkillsFuture Level-Up Programme releases and the October 2025 financial assistance release). Changed: p_hn_direct now names the 2028 exercise (it said the 2027 intake) and no longer states a last DPP intake, which no MOE page read gives; p_mcta covers part time study, added in early 2026; p_nursing and forkNeeds.d_polyroad say the polytechnic score is taken after CCA bonus points, the one net score among the fork figures; p_appeal says posting results; p_bursary reflects that most families no longer hand in income papers and adds the top up to the Post-Secondary Education Account at 17. Resting on search extracts and so provisional: p_defer (universities hold an accepted place during National Service; no form or deadline was found), p_mature (adult learner routes found at NUS, NTU, SMU and SUSS only), p_ccp (Career Conversion Programmes, now under the Skills and Workforce Development Agency) and the SIT half of p_parttime. Not found and so not stated: how long a part time degree takes, and that every polytechnic and ITE has mentors and an ECG counsellor. The subject grade conditions in forkNeeds.d_alevels were not re-checked here; the admission rules are verified elsewhere."
  },
  "forkNeeds": {
   "d_alevels": "L1R4 of sixteen or better across five G3 subjects, with English at C6, G3 Maths at D7 and Mother Tongue at D7.",
-  "d_polyroad": "Four G3 subjects and one G2 subject in the B slot. ELR2B2 of twenty two or better, and twenty four for nursing.",
+  "d_polyroad": "Four G3 subjects and one G2 subject in the B slot. ELR2B2 of twenty two or better after CCA bonus points, and twenty four for nursing.",
   "d_iteroad": "A pass that carries me in. Higher Nitec runs three years, and Nitec is the award I hold if I exit early.",
   "d_portfolio": "A portfolio or an audition, and the year of practice sitting behind it.",
   "d_fifth": "The Sec 5 criteria. A fifth year taken at all G3 asks a gross ELMAB3 of nineteen or better.",
@@ -126,10 +128,10 @@
    ],
    "paths": null,
    "label": "Start Higher Nitec at year two",
-   "when": "Applying after Sec 4, to the 2027 intake",
+   "when": "Applying after Sec 4, in the 2028 admissions exercise",
    "needs": "ELMAB3 of nineteen or better",
    "leads": "Higher Nitec without sitting through the first year",
-   "truth": "This route replaced the old DPP. The last DPP intake is 2027, so the mechanism has changed name and shape."
+   "truth": "From the 2028 exercise MOE lists this as the 2 Year Higher Nitec. The score is counted at G2, with G3 grades mapped across."
   },
   {
    "id": "p_nursing",
@@ -141,7 +143,7 @@
    "paths": null,
    "label": "Nursing at a polytechnic",
    "when": "Applying after Sec 4",
-   "needs": "ELR2B2 of twenty four or better",
+   "needs": "ELR2B2 of twenty four or better, after CCA bonus points",
    "leads": "A nursing diploma, then practice, or a degree later",
    "truth": "Nursing carries a wider net score than most diplomas because the need is real and the training is long."
   },
@@ -168,7 +170,7 @@
    ],
    "paths": null,
    "label": "Appeal a posting",
-   "when": "The days straight after results",
+   "when": "The days straight after posting results",
    "needs": "A course I can name, and a reason that is more than wanting it",
    "leads": "A second look at where I was posted",
    "truth": "Appealing is an ordinary part of the exercise. Ask early, ask in person, and ask about the next intake too."
@@ -324,9 +326,9 @@
    "paths": null,
    "label": "Ask about money early",
    "when": "As soon as the fee letter appears",
-   "needs": "Household income papers, and one appointment nobody enjoys making",
+   "needs": "One application through the institution. Most families no longer hand in income papers",
    "leads": "Fees covered in part or in full, and a loan I understand",
-   "truth": "Bursaries, loans and hardship funds are ordinary. Nobody in this system is expected to fund it alone."
+   "truth": "Bursaries and loans are ordinary. From 2026 a ten thousand dollar top up also lands in my Post Secondary Education Account at 17."
   },
   {
    "id": "p_defer",
@@ -337,8 +339,8 @@
    ],
    "paths": null,
    "label": "Defer a place for service",
-   "when": "When the enlistment letter arrives",
-   "needs": "One form, filed before the deadline on it",
+   "when": "When I accept the offer, before I enlist",
+   "needs": "An accepted offer, which the university holds while I serve",
    "leads": "The place kept for me until I finish serving",
    "truth": "Deferment is routine and the place waits. Serving is done in the army, the police or the civil defence force."
   },
@@ -353,7 +355,7 @@
    "label": "A degree part time, while working",
    "when": "Any year I can carry both",
    "needs": "A course that runs in the evening, and a manager who knows I am doing it",
-   "leads": "A degree over four or five years, without stopping earning",
+   "leads": "A degree, without stopping earning",
    "truth": "SUSS and SIT build part time degrees around working adults. The classmates are mostly people with jobs."
   },
   {
@@ -393,9 +395,9 @@
    ],
    "paths": null,
    "label": "Take the training allowance",
-   "when": "While studying full time, mid career",
-   "needs": "An eligible full time course, and the paperwork filed",
-   "leads": "An allowance that covers some of what I stop earning",
+   "when": "From 40, while studying full time or part time",
+   "needs": "An eligible full time or part time course, and the paperwork filed",
+   "leads": "Half my pay up to 3,000 a month full time, or 300 a month part time",
    "truth": "Lost income is the real barrier to retraining at forty. The allowance exists because that was obvious to everybody."
   },
   {
@@ -424,7 +426,7 @@
    "when": "From twenty five",
    "needs": "Work behind me, and a case for myself I can write down",
    "leads": "A degree begun late and finished anyway",
-   "truth": "Mature entry routes exist at every local university, and the people using them are not unusual."
+   "truth": "NUS, NTU, SMU and SUSS each run an adult learner route, and the people using them are not unusual."
   },
   {
    "id": "p_stack",
@@ -508,7 +510,7 @@
    "when": "Any week, and before I have a crisis",
    "needs": "One booked appointment, and a question sharper than what should I do",
    "leads": "Someone who knows the transfer windows, the GPA bars and who is hiring",
-   "truth": "Every polytechnic and ITE has mentors and an ECG counsellor. Almost nobody books them until something has already gone wrong."
+   "truth": "The polytechnics and ITE provide Education and Career Guidance. Almost nobody books it until something has already gone wrong."
   }
  ]
 }

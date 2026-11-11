@@ -2,21 +2,51 @@
   "_meta": {
     "purpose": "Goal first planning: interests, then job sectors (work.json), then the places that lead there, then a course family (families.json). Plain names for the course families, and which families fit each sector.",
     "notes": "Course family requirements are the 2026 lists; the 2028 lists arrive in mid 2027. Every family here is marked to confirm.",
-    "accessed": "2026-11-04"
+    "accessed": "2026-11-11"
   },
   "interests": [
-    { "code": "R", "label": "Fixing, building and making things work" },
-    { "code": "I", "label": "Finding out how things work" },
-    { "code": "A", "label": "Creating, designing or performing" },
-    { "code": "S", "label": "Helping, teaching or caring for people" },
-    { "code": "E", "label": "Leading, persuading or starting things" },
-    { "code": "C", "label": "Organising, planning and getting details right" }
+    {
+      "code": "R",
+      "label": "Fixing, building and making things work"
+    },
+    {
+      "code": "I",
+      "label": "Finding out how things work"
+    },
+    {
+      "code": "A",
+      "label": "Creating, designing or performing"
+    },
+    {
+      "code": "S",
+      "label": "Helping, teaching or caring for people"
+    },
+    {
+      "code": "E",
+      "label": "Leading, persuading or starting things"
+    },
+    {
+      "code": "C",
+      "label": "Organising, planning and getting details right"
+    }
   ],
   "levelDests": {
-    "uni": ["jc", "mi", "poly"],
-    "poly": ["poly", "pfp"],
-    "ite": ["hnitec", "nitec"],
-    "arts": ["arts"]
+    "uni": [
+      "jc",
+      "mi",
+      "poly"
+    ],
+    "poly": [
+      "poly",
+      "pfp"
+    ],
+    "ite": [
+      "hnitec",
+      "nitec"
+    ],
+    "arts": [
+      "arts"
+    ]
   },
   "familyNames": {
     "jc_math_sci": "Science and Maths (H2 Mathematics)",
@@ -30,9 +60,8 @@
     "poly_C": "Engineering, IT, applied sciences and health, including Nursing",
     "poly_D": "Design and architecture",
     "pfp_sciences": "Sciences",
-    "pfp_eng_tech": "Engineering and Technology",
-    "pfp_design": "Design",
-    "pfp_hamb": "Humanities, Arts, Media and Business",
+    "pfp_det": "Design, Engineering and Technology",
+    "pfp_hamb": "Humanities, Art, Media and Business",
     "ite_engineering": "Engineering",
     "ite_infocomm": "Infocomm Technology and Digital Media",
     "ite_business_services": "Business and Services",
@@ -47,21 +76,283 @@
     "arts_performing": "Performing arts: music, theatre and dance"
   },
   "sectorFamilies": {
-    "arts": ["jc_art_music", "jc_humanities", "poly_A", "arts_performing", "arts_visual_design", "ite_design_media", "ite3_design_media", "pfp_hamb"],
-    "beauty": ["poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "built": ["jc_physics", "jc_math_sci", "poly_C", "poly_D", "ite_engineering", "ite3_engineering", "pfp_eng_tech"],
-    "business": ["jc_humanities", "jc_math_sci", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "care": ["jc_biology", "jc_chemistry", "poly_C", "ite_applied_health", "ite3_applied_health", "pfp_sciences"],
-    "children": ["jc_humanities", "poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "computing": ["jc_math_sci", "jc_physics", "poly_C", "ite_infocomm", "ite3_infocomm", "pfp_eng_tech"],
-    "design": ["jc_art_music", "poly_D", "arts_visual_design", "ite_design_media", "ite3_design_media", "pfp_design"],
-    "engineering": ["jc_physics", "jc_math_sci", "poly_C", "ite_engineering", "ite3_engineering", "pfp_eng_tech"],
-    "food": ["jc_chemistry", "poly_C", "poly_A", "ite_applied_health", "ite3_applied_health", "ite_business_services", "ite3_business_services", "pfp_sciences"],
-    "hotels": ["poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "law": ["jc_humanities", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "moving": ["jc_math_sci", "poly_C", "poly_B", "ite_engineering", "ite3_engineering", "ite_business_services", "ite3_business_services", "pfp_eng_tech"],
-    "selling": ["jc_humanities", "poly_A", "poly_B", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "social": ["jc_humanities", "poly_A", "ite_business_services", "ite3_business_services", "pfp_hamb"],
-    "environment": ["jc_biology", "jc_chemistry", "jc_humanities", "poly_C", "ite_applied_health", "ite3_applied_health", "pfp_sciences"]
+    "arts": [
+      "jc_art_music",
+      "jc_humanities",
+      "poly_A",
+      "arts_performing",
+      "arts_visual_design",
+      "ite_design_media",
+      "ite3_design_media",
+      "pfp_hamb"
+    ],
+    "beauty": [
+      "poly_A",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "built": [
+      "jc_physics",
+      "jc_math_sci",
+      "poly_C",
+      "poly_D",
+      "ite_engineering",
+      "ite3_engineering",
+      "pfp_det"
+    ],
+    "business": [
+      "jc_humanities",
+      "jc_math_sci",
+      "poly_A",
+      "poly_B",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "care": [
+      "jc_biology",
+      "jc_chemistry",
+      "poly_C",
+      "ite_applied_health",
+      "ite3_applied_health",
+      "pfp_sciences"
+    ],
+    "children": [
+      "jc_humanities",
+      "poly_A",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "computing": [
+      "jc_math_sci",
+      "jc_physics",
+      "poly_C",
+      "ite_infocomm",
+      "ite3_infocomm",
+      "pfp_det"
+    ],
+    "design": [
+      "jc_art_music",
+      "poly_D",
+      "arts_visual_design",
+      "ite_design_media",
+      "ite3_design_media",
+      "pfp_det"
+    ],
+    "engineering": [
+      "jc_physics",
+      "jc_math_sci",
+      "poly_C",
+      "ite_engineering",
+      "ite3_engineering",
+      "pfp_det"
+    ],
+    "food": [
+      "jc_chemistry",
+      "poly_C",
+      "poly_A",
+      "ite_applied_health",
+      "ite3_applied_health",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_sciences"
+    ],
+    "hotels": [
+      "poly_A",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "law": [
+      "jc_humanities",
+      "poly_A",
+      "poly_B",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "moving": [
+      "jc_math_sci",
+      "poly_C",
+      "poly_B",
+      "ite_engineering",
+      "ite3_engineering",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_det"
+    ],
+    "selling": [
+      "jc_humanities",
+      "poly_A",
+      "poly_B",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "social": [
+      "jc_humanities",
+      "poly_A",
+      "ite_business_services",
+      "ite3_business_services",
+      "pfp_hamb"
+    ],
+    "environment": [
+      "jc_biology",
+      "jc_chemistry",
+      "jc_humanities",
+      "poly_C",
+      "ite_applied_health",
+      "ite3_applied_health",
+      "pfp_sciences"
+    ]
+  },
+  "steps": {
+    "_note": "Steps a student can add to a goal besides a subject move. `for` lists the places a step fits; null fits every place. `years` lists the school years it suits. Each label is the saved step, in the words the student keeps.",
+    "list": [
+      {
+        "id": "ecg",
+        "label": "Book a chat with your ECG counsellor about this goal.",
+        "for": null,
+        "years": [
+          "sec1",
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      },
+      {
+        "id": "parent",
+        "label": "Tell a parent what you want to do, and why.",
+        "for": null,
+        "years": [
+          "sec1",
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      },
+      {
+        "id": "person",
+        "label": "Ask someone who does this work what a normal day is like.",
+        "for": null,
+        "years": [
+          "sec1",
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      },
+      {
+        "id": "openhouse",
+        "label": "Go to an open house and ask one question about the course.",
+        "for": [
+          "jc",
+          "mi",
+          "poly",
+          "pfp",
+          "hnitec",
+          "nitec",
+          "arts"
+        ],
+        "years": [
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      },
+      {
+        "id": "senior",
+        "label": "Ask a senior who took this route what they would do again.",
+        "for": null,
+        "years": [
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      },
+      {
+        "id": "folder",
+        "label": "Start a folder of projects, certificates and photos for early admission.",
+        "for": [
+          "poly",
+          "pfp",
+          "hnitec",
+          "nitec",
+          "arts",
+          "jc"
+        ],
+        "years": [
+          "sec2",
+          "sec3",
+          "sec4"
+        ]
+      },
+      {
+        "id": "try",
+        "label": "Try one thing in this field outside class this term.",
+        "for": null,
+        "years": [
+          "sec1",
+          "sec2",
+          "sec3",
+          "sec4"
+        ]
+      },
+      {
+        "id": "cca",
+        "label": "Ask your CCA teacher for a role with more responsibility.",
+        "for": null,
+        "years": [
+          "sec2",
+          "sec3"
+        ]
+      },
+      {
+        "id": "portfolio",
+        "label": "Finish one piece of work you could show at an audition or interview.",
+        "for": [
+          "arts",
+          "poly",
+          "pfp"
+        ],
+        "years": [
+          "sec3",
+          "sec4"
+        ]
+      },
+      {
+        "id": "targets",
+        "label": "Set a grade target for each subject this place reads.",
+        "for": [
+          "jc",
+          "mi",
+          "poly",
+          "pfp",
+          "hnitec",
+          "nitec",
+          "arts",
+          "sec5"
+        ],
+        "years": [
+          "sec3",
+          "sec4",
+          "sec5"
+        ]
+      }
+    ],
+    "who": {
+      "parent": "A parent",
+      "form": "Form teacher",
+      "subject": "Subject teacher",
+      "ecg": "ECG counsellor",
+      "other": "Someone else"
+    }
   }
 }

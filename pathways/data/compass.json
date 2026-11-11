@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "purpose": "The compass on the Me tab: what a student is good at and what matters to them, as lists to tap. What a student enjoys reads the six interests in goals.json, so there is one list of those.",
+    "source": "Authored for this app. The three parts follow the self awareness strand of MOE's Education and Career Guidance (interests, abilities and values); the wording is this app's.",
+    "url": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance",
+    "accessed": "2026-11-11",
+    "notes": "Nothing here scores or types a student. The lists only offer words; the student picks, and can add one line of proof for each strength. No list is ranked and none maps to a place after secondary school."
+  },
+  "parts": [
+    { "id": "enjoy", "head": "What you enjoy", "ask": "Pick one or two.", "max": 2 },
+    { "id": "strengths", "head": "What you are good at", "ask": "Pick up to three. Add what shows it.", "max": 3 },
+    { "id": "values", "head": "What matters to you", "ask": "Pick up to three.", "max": 3 },
+    { "id": "goal", "head": "Where you are aiming", "ask": "Set a goal when you are ready.", "max": 1 }
+  ],
+  "strengths": [
+    { "id": "explain", "label": "Explaining things clearly" },
+    { "id": "solve", "label": "Working out hard problems" },
+    { "id": "hands", "label": "Making or fixing things by hand" },
+    { "id": "stick", "label": "Staying with a task until it is done" },
+    { "id": "people", "label": "Getting on with all kinds of people" },
+    { "id": "organise", "label": "Organising people, time or things" },
+    { "id": "ideas", "label": "Coming up with new ideas" },
+    { "id": "calm", "label": "Staying calm when things go wrong" },
+    { "id": "notice", "label": "Noticing details others miss" },
+    { "id": "lead", "label": "Getting a group moving" }
+  ],
+  "proofHint": "What shows it? One line.",
+  "values": [
+    { "id": "help", "label": "Helping people directly" },
+    { "id": "make", "label": "Making something that lasts" },
+    { "id": "learn", "label": "Learning new things all the time" },
+    { "id": "secure", "label": "A steady job and income" },
+    { "id": "earn", "label": "Earning well" },
+    { "id": "free", "label": "Choosing how you work" },
+    { "id": "team", "label": "Being part of a close team" },
+    { "id": "decide", "label": "Leading and deciding" },
+    { "id": "create", "label": "Room to be creative" },
+    { "id": "home", "label": "Time for family and home" }
+  ],
+  "noteHint": "Something you noticed about yourself.",
+  "prompts": {
+    "student": ["Which of these would a friend say about you?", "What did you do this term that shows one of them?"],
+    "parent": ["Ask: which of these feels most like you, and why?", "Ask: when did you last feel proud of your work?"],
+    "teacher": ["Ask: what shows this strength in class or CCA?", "Ask: which of these do you want to grow this year?"]
+  }
+}

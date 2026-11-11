@@ -5,16 +5,25 @@
 // numbers are the student's own, never the app's guess about them.
 //
 // What it computes, from data/grades.json:
-//   L1R4     JC 16, MI 20. Five subjects, all G3.
+//   L1R4     JC 16, MI 20. Five subjects, all G3. A missed grade floor can
+//            still be a conditional admission (grades.json, dests[].conditional).
 //   ELR2B2   Polytechnic 22. Four at G3, the fifth at its G2 value.
 //   ELMAB3   PFP 12, two year Higher Nitec 19, Sec 5 21. All at G2 value.
+// Mother Tongue and Higher Mother Tongue of one language count once in any
+// score (MOE, PSE pages, read 2026-11-11).
 // And, for any score short of a cut off, the smallest set of grade steps
 // in the subjects being counted that would close the gap, by name.
 //
 // Pure: no DOM, no storage.
 
-const HUM = ['hum_ss_geog', 'hum_ss_hist', 'hum_ss_lit', 'geography', 'history', 'literature', 'art', 'higher_art', 'music', 'higher_music', 'economics'];
+// MOE's L1R4 subject groups for 2028. Art, Music and Economics are "Others"
+// (R4 only); Higher Art and Higher Music are Humanities. Computing is "Others".
+const HUM = ['hum_ss_geog', 'hum_ss_hist', 'hum_ss_lit', 'geography', 'history', 'literature', 'higher_art', 'higher_music'];
 const MS = ['maths', 'amaths', 'sci_pc', 'sci_pb', 'sci_cb', 'physics', 'chemistry', 'biology'];
+
+// One language, one count: Higher Mother Tongue and Mother Tongue share a key,
+// so no score can hold both.
+const once = (sid) => (sid === 'hmtl' ? 'mtl' : sid);
 
 export function gradesFor(level, g) {
   return ((g.scales || {})[level] || {}).grades || [];
@@ -50,12 +59,12 @@ function bestAssign(slots, pool, value) {
     if (best && sum >= best.sum) return;
     if (i === slots.length) { best = { sum, pick: pick.slice() }; return; }
     pool.forEach((e) => {
-      if (used.has(e.sid) || !slots[i](e)) return;
+      if (used.has(once(e.sid)) || !slots[i](e)) return;
       const v = value(e);
       if (v == null) return;
-      used.add(e.sid); pick.push(e);
+      used.add(once(e.sid)); pick.push(e);
       go(i + 1, sum + v);
-      used.delete(e.sid); pick.pop();
+      used.delete(once(e.sid)); pick.pop();
     });
   };
   go(0, 0);
@@ -94,7 +103,7 @@ function elr2b2(es, g, r1 = null, r2 = null) {
   let best = null;
   const first = bestAssignAll(slots, g3, v3);
   first.forEach((cand) => {
-    const left = es.filter((e) => !cand.pick.some((p) => p.sid === e.sid));
+    const left = es.filter((e) => !cand.pick.some((p) => once(p.sid) === once(e.sid)));
     const b2 = left.map((e) => ({ e, val: b2v(e) })).filter((x) => x.val != null).sort((a, b) => a.val - b.val)[0];
     if (!b2) return;
     const sum = cand.sum + b2.val;
@@ -115,12 +124,12 @@ function bestAssignAll(slots, pool, value) {
   const go = (i, sum) => {
     if (i === slots.length) { out.push({ sum, pick: pick.slice() }); return; }
     pool.forEach((e) => {
-      if (used.has(e.sid) || !slots[i](e)) return;
+      if (used.has(once(e.sid)) || !slots[i](e)) return;
       const v = value(e);
       if (v == null) return;
-      used.add(e.sid); pick.push(e);
+      used.add(once(e.sid)); pick.push(e);
       go(i + 1, sum + v);
-      used.delete(e.sid); pick.pop();
+      used.delete(once(e.sid)); pick.pop();
     });
   };
   go(0, 0);
@@ -179,20 +188,62 @@ export function stepsToClose(counted, gap, g) {
 
 /**
  * Grade floors (JC and MI): a score can be inside the cut off and still miss
- * a floor, such as English below C6. Returns the labels of unmet floors.
- * A floor on a subject not taken (ifTaken) is not a floor.
+ * a floor, such as English below C6. Returns the unmet floors.
+ * A floor on a subject not taken (ifTaken) is not a floor. A floor can name
+ * another subject that also meets it (alt): Higher Mother Tongue at E8 meets
+ * the Mother Tongue floor.
+ * `missed` is true when the student holds the subject at a level the floor
+ * reads and the grade falls short. That is the case MOE's conditional
+ * admission covers; a subject not taken at that level is a different gap.
  */
 function unmetFloors(floors, es, g) {
-  return (floors || []).filter((f) => {
-    const held = es.filter((e) => (f.subjects || []).includes(e.sid));
-    if (!held.length) return !f.ifTaken;
-    return !held.some((e) => f[e.level] != null && pts(e.level, e.grade, g) != null && pts(e.level, e.grade, g) <= f[e.level]);
-  }).map((f) => f.label);
+  const ok = (e, t) => t[e.level] != null && pts(e.level, e.grade, g) != null && pts(e.level, e.grade, g) <= t[e.level];
+  return (floors || []).map((f) => {
+    const sets = [f, ...(f.alt || [])];
+    const held = sets.flatMap((t) => es.filter((e) => (t.subjects || []).includes(e.sid)).map((e) => ({ e, t })));
+    if (!held.length) return f.ifTaken ? null : { label: f.label, missed: false };
+    if (held.some(({ e, t }) => ok(e, t))) return null;
+    return { label: f.label, missed: held.some(({ e, t }) => t[e.level] != null) };
+  }).filter(Boolean);
 }
 
-/** G3 passes (E8 or better), for Sec 5's first route. */
+/**
+ * G3 passes, for Sec 5's first route. MOE does not define a "G3 pass" on its
+ * pages (read 2026-11-11). E8 or better is used here, the grade the SEC
+ * certificate is awarded at; the words shown say it is to confirm.
+ */
 function g3Passes(es, g) {
   return es.filter((e) => e.level === 'G3' && pts('G3', e.grade, g) != null && pts('G3', e.grade, g) <= 8).length;
+}
+
+/**
+ * Conditional admission (JC and MI, from the 2028 PSE): with a floor grade
+ * missed, a student is still admitted when the score is `clear` or better,
+ * or anywhere inside the cut off with every R subject at one of `rGrades`.
+ * The R subjects are the four counted after L1.
+ */
+function conditional(d, r) {
+  const c = d.conditional;
+  if (!c || r.value == null || r.value > d.cutoff) return false;
+  if (r.value <= c.clear) return true;
+  const rs = (r.counted || []).slice(1);
+  return rs.length === 4 && rs.every((e) => (c.rGrades || []).includes(e.grade));
+}
+
+/**
+ * Subject minimums on top of a score (PFP, read at G2 grades): English,
+ * Mathematics, one relevant subject, and two others. Which subjects are
+ * relevant is set per cluster and the 2028 lists arrive in mid 2027, so this
+ * checks what is certain: English, a Mathematics, and one more subject at the
+ * relevant grade. The two others are inside `others` already, because the
+ * destination excludes the grades below it.
+ */
+function meetsMins(m, es, g) {
+  const v = (e) => { const gg = asG2(e.level, e.grade, g); return gg ? pts('G2', gg, g) : null; };
+  const at = (e, max) => v(e) != null && v(e) <= max;
+  const maths = es.filter((e) => (e.sid === 'maths' || e.sid === 'amaths') && at(e, m.ma));
+  if (!es.some((e) => e.sid === 'el' && at(e, m.el)) || !maths.length) return false;
+  return maths.some((mm) => es.some((e) => e.sid !== 'el' && once(e.sid) !== once(mm.sid) && e.sid !== mm.sid && at(e, m.relevant)));
 }
 
 /**
@@ -204,15 +255,22 @@ function judge(a, d, es, g) {
   const calc = CALC[a.id];
   const r = d.exclude ? calc(es, g, { exclude: d.exclude }) : calc(es, g);
   if (d.g3Passes && g3Passes(es, g) >= d.g3Passes) {
-    return { r, meets: true, gap: null, via: `${g3Passes(es, g)} G3 passes: this route does not read the score` };
+    return { r, meets: true, gap: null, via: `${g3Passes(es, g)} G3 passes at E8 or better, so the score is not read. This route is for students who miss JC, MI and polytechnic. Confirm with your school what counts as a pass` };
   }
   if (r.value == null) return { r, meets: null, gap: null, via: null };
   const floors = r.value <= d.cutoff ? unmetFloors(a.floors, es, g) : [];
-  return { r, meets: r.value <= d.cutoff && !floors.length, gap: r.value - d.cutoff, via: floors.length ? `Also needs ${floors.join('; ')}` : null };
+  const labels = floors.map((f) => f.label).join('; ');
+  if (floors.length && floors.every((f) => f.missed) && conditional(d, r)) {
+    return { r, meets: true, conditional: true, gap: r.value - d.cutoff, via: `Conditional admission: you must reach ${labels} by the end of Year 1` };
+  }
+  if (d.mins && r.value <= d.cutoff && !meetsMins(d.mins, es, g)) {
+    return { r, meets: false, gap: r.value - d.cutoff, via: `Also needs ${d.mins.label}` };
+  }
+  return { r, meets: r.value <= d.cutoff && !floors.length, gap: r.value - d.cutoff, via: floors.length ? `Also needs ${labels}` : null };
 }
 
 /**
- * @returns Array<{ id, name, plain, now, target, dests: [{ id, name, cutoff, value, meets, nowMeets, targetMeets, gap, steps, via }] }>
+ * @returns Array<{ id, name, plain, now, target, dests: [{ id, name, cutoff, value, meets, nowMeets, targetMeets, gap, steps, via, conditional }] }>
  */
 export function report({ plan, grades, g, names, destNames }) {
   return (g.aggregates || []).map((a) => {
@@ -237,6 +295,7 @@ export function report({ plan, grades, g, names, destNames }) {
         targetMeets: jt.meets,
         gap: j.gap,
         via: j.via,
+        conditional: !!j.conditional,
         note: d.note || null,
         steps: j.gap != null && j.gap > 0 ? stepsToClose(j.r.counted, j.gap, g) : null,
       };
