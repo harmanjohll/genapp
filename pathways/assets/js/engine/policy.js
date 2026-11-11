@@ -171,10 +171,38 @@ export function policySweep(ctx, g, psleRules) {
   const g2 = rep({ el: 'G2', maths: 'G2', mtl: 'G2', sci_pc: 'G2', hum_ss_geog: 'G2', poa: 'G2' }, { el: '1', maths: '1', mtl: '1', sci_pc: '1', hum_ss_geog: '5', poa: '6' });
   if (g2.pfp.meets) fails.push('PFP counted a G2 grade 5 or 6');
   if (!g2.hnitec.meets) fails.push('Higher Nitec (2 yrs) refused grades it counts');
+  // Sec 5, first route. MOE does not define a "G3 pass" on its pages (read
+  // 2026-11-11). E8 or better is used, and the line shown says it is to confirm.
   const s5 = rep({ el: 'G3', maths: 'G3', sci_pc: 'G3', mtl: 'G2', hum_ss_geog: 'G2' }, { el: 'E8', maths: 'E8', sci_pc: 'E8', mtl: '6', hum_ss_geog: '6' });
   if (!s5.sec5.meets) fails.push('Sec 5: three G3 passes should qualify without the score');
-  const fl = rep({ el: 'G3', maths: 'G3', sci_pc: 'G3', hum_ss_geog: 'G3', poa: 'G3' }, { el: 'D7', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'A1', poa: 'A1' });
-  if (fl.jc.meets) fails.push('JC met on L1R4 with English below C6');
+  if (!/Confirm with your school/.test(s5.sec5.via || '')) fails.push('Sec 5: the G3 pass route should say the definition is to confirm');
+
+  // JC and MI: a missed grade floor can still be a conditional admission.
+  // Source: MOE, PSE, Junior colleges and Millennia Institute, read in full on
+  // 2026-11-11 (moe.gov.sg/post-secondary/admissions/pse/jc-and-mi). JC: L1R4
+  // 12 or better, or 13 to 16 with A1 or A2 in all four R subjects. MI: 15 or
+  // better, or 16 to 20 likewise.
+  const five = { el: 'G3', maths: 'G3', sci_pc: 'G3', hum_ss_geog: 'G3', poa: 'G3' };
+  const c11 = rep(five, { el: 'D7', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'A1', poa: 'A1' });
+  if (!c11.jc.meets || !c11.jc.conditional || !/^Conditional admission/.test(c11.jc.via || '')) fails.push('JC: English D7 with four A1 (L1R4 11) should be a conditional admission');
+  const c14 = rep(five, { el: 'D7', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'B3', poa: 'A2' });
+  if (c14.jc.meets || !/^Also needs/.test(c14.jc.via || '')) fails.push('JC: L1R4 14 with English D7 and an R subject below A2 should not be met');
+  if (!c14.mi.meets || !c14.mi.conditional) fails.push('MI: L1R4 14 with English D7 should be a conditional admission');
+  const clean = rep(five, { el: 'C6', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'A1', poa: 'A1' });
+  if (!clean.jc.meets || clean.jc.conditional) fails.push('JC: every floor met should be a plain admission');
+  // Higher Mother Tongue at E8 or better meets the Mother Tongue floor.
+  const hm = rep({ ...five, hmtl: 'G3' }, { el: 'A1', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'A1', poa: 'A1', hmtl: 'E8' });
+  if (!hm.jc.meets || hm.jc.conditional) fails.push('JC: Higher Mother Tongue at E8 should meet the Mother Tongue floor');
+  // Mother Tongue and Higher Mother Tongue of one language count once.
+  const both = rep({ el: 'G3', hmtl: 'G3', mtl: 'G3', maths: 'G3', sci_pc: 'G3', hum_ss_geog: 'G3' }, { el: 'C6', hmtl: 'A1', mtl: 'A1', maths: 'A1', sci_pc: 'A1', hum_ss_geog: 'A1' });
+  if (both.jc.value !== 10) fails.push(`L1R4 counted Mother Tongue and Higher Mother Tongue together (expected 10, got ${both.jc.value})`);
+  // L1R4 Humanities: Art, Music and Economics are R4 only. Higher Art counts.
+  const all1 = { el: 'A1', maths: 'A1', sci_pc: 'A1', art: 'A1', higher_art: 'A1', poa: 'A1' };
+  if (rep({ el: 'G3', maths: 'G3', sci_pc: 'G3', art: 'G3', poa: 'G3' }, all1).jc.value != null) fails.push('L1R4 read Art as the Humanities subject');
+  if (rep({ el: 'G3', maths: 'G3', sci_pc: 'G3', higher_art: 'G3', poa: 'G3' }, all1).jc.value !== 5) fails.push('L1R4 should read Higher Art as a Humanities subject');
+  // PFP subject minimums (MOE Full SBB FAQ, read 2026-11-11): English 3 at G2 grades.
+  const pm = rep({ el: 'G2', maths: 'G2', mtl: 'G2', sci_pc: 'G2', hum_ss_geog: 'G2' }, { el: '4', maths: '1', mtl: '1', sci_pc: '1', hum_ss_geog: '1' });
+  if (pm.pfp.meets || !/^Also needs/.test(pm.pfp.via || '')) fails.push('PFP met on ELMAB3 with English below grade 3');
 
   // P6.
   if (!hmtlEligible({ mtl: { al: 4 }, hmtl: { grade: 'M' } })) fails.push('HMTL: a Merit in PSLE Higher Mother Tongue should qualify');
@@ -182,10 +210,31 @@ export function policySweep(ctx, g, psleRules) {
   const pg3 = startLevels(3, { el: { foundation: true, grade: 'B' }, mtl: { al: 4 }, maths: { al: 4 }, science: { al: 5 } }, psleRules);
   if (!pg3.options.el.includes('G2') || !pg3.options.el.includes('G3')) fails.push('PG3 with Foundation English: G2 should be an option beside G3');
   if (pg3.plan.el !== 'G3') fails.push('PG3 with Foundation English: the default should stay at the group level');
-  const pg2 = startLevels(2, { el: { al: 7 }, mtl: { foundation: true, grade: 'B' }, maths: { al: 6 }, science: { al: 6 } }, psleRules);
-  if (pg2.options.mtl.includes('G1')) fails.push('The Foundation Mother Tongue option applies to Posting Group 3 only');
+  // Mother Tongue at a less demanding level, at the start of Sec 1. Source: MOE,
+  // Secondary school experience under Full SBB, "Offering subjects at a less
+  // demanding level", read in full on 2026-11-11
+  // (moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience).
+  // Most subjects at G3: AL 6 or Foundation A gives G2; AL 7 to 8 or Foundation
+  // B to C gives G1 or G2. Most subjects at G2: AL 7 to 8 or Foundation B to C
+  // gives G1. English, Mathematics and Science have a Foundation option for
+  // Posting Group 3 only, and it is G2.
+  const mt = (g, mtl) => startLevels(g, { el: { al: 4 }, mtl, maths: { al: 4 }, science: { al: 4 } }, psleRules).options.mtl.join(' ');
+  [
+    [3, { al: 5 }, 'G3', 'Posting Group 3, Mother Tongue AL 5: no less demanding option'],
+    [3, { al: 6 }, 'G2 G3', 'Posting Group 3, Mother Tongue AL 6: G2 is an option'],
+    [3, { foundation: true, grade: 'A' }, 'G2 G3', 'Posting Group 3, Foundation Mother Tongue A: G2 is an option'],
+    [3, { al: 8 }, 'G1 G2 G3', 'Posting Group 3, Mother Tongue AL 7 to 8: G1 and G2 are options'],
+    [3, { foundation: true, grade: 'C' }, 'G1 G2 G3', 'Posting Group 3, Foundation Mother Tongue B to C: G1 and G2 are options'],
+    [2, { al: 6 }, 'G2', 'Posting Group 2, Mother Tongue AL 6: stays at G2'],
+    [2, { foundation: true, grade: 'A' }, 'G2', 'Posting Group 2, Foundation Mother Tongue A: stays at G2'],
+    [2, { al: 7 }, 'G1 G2', 'Posting Group 2, Mother Tongue AL 7 to 8: G1 is an option'],
+    [2, { foundation: true, grade: 'B' }, 'G1 G2', 'Posting Group 2, Foundation Mother Tongue B to C: G1 is an option'],
+    [1, { al: 8 }, 'G1', 'Posting Group 1, Mother Tongue AL 8: stays at G1'],
+  ].forEach(([g, mtl, want, why]) => { if (mt(g, mtl) !== want) fails.push(`${why} (got ${mt(g, mtl)})`); });
+  const pg2 = startLevels(2, { el: { foundation: true, grade: 'B' }, mtl: { al: 6 }, maths: { al: 6 }, science: { al: 6 } }, psleRules);
+  if (pg2.options.el.join(' ') !== 'G2') fails.push('Posting Group 2 with Foundation English: MOE gives no less demanding option');
 
-  return { ok: !fails.length, checks: 16, fails };
+  return { ok: !fails.length, checks: 26, fails };
 }
 
 // ---- v5: the goal engine and share links ----------------------------------

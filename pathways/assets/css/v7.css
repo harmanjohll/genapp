@@ -330,3 +330,10 @@
 .lv-key span { display: inline-flex; align-items: center; gap: 6px; }
 .lv-key i { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); }
 .lv-key i[data-id="postsec"] { background: var(--night); box-shadow: 0 0 0 1px var(--night-rule); }
+
+/* What is new, shown once to a student who used an earlier build. */
+.whatsnew { margin: 14px 0 0; padding: 16px 18px; border-radius: var(--r-md); background: var(--surface); border: 1.5px solid var(--ink); border-left: 6px solid var(--accent); }
+.whatsnew .ns-k { color: var(--ink-mute); }
+.whatsnew h2 { font-size: 1.2rem; margin: 0 0 8px; }
+.whatsnew ul, .wn-list { margin: 0 0 12px; padding-left: 18px; display: grid; gap: 6px; font-size: 0.94rem; color: var(--ink-soft); }
+.whatsnew .btnrow { margin: 0; }

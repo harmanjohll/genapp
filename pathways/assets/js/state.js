@@ -125,6 +125,9 @@ function load() {
   if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
   base.goal = cleanGoal(base.goal);
+  // A goal set before 7.0 has no dates. It counts as set today, so it comes up
+  // for a second look in three weeks like any other.
+  if (base.goal && !base.goal.setAt) { base.goal.setAt = today(); base.goal.checkedAt = base.goal.checkedAt || today(); }
   base.compass = cleanCompass(base.compass);
   // A want saved by an earlier build, or carried in an old link.
   if (WANT_CODE[base.aim] && !base.compass.enjoy.length) base.compass.enjoy = [WANT_CODE[base.aim]];

@@ -16,7 +16,7 @@
 // Explore used to hold (places, jobs, fees, school types, adults) are links
 // at the foot of the line.
 
-import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear } from '../state.js?v=7.0.0';
+import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.0.0';
 import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.0.0';
 import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.0.0';
 import { reach } from '../engine/reach.js?v=7.0.0';
@@ -204,6 +204,9 @@ export default {
     const age = st.yearSet ? (currentYear().realAge || currentYear().age) : 14;
     const markers = (api.data.lifelong && api.data.lifelong.markers) || [];
     let lvSel = firstMarker(markers, age);
+    // A student who used an earlier build sees, once, what is different.
+    const rel = ((api.data.version || {}).releases || [])[0];
+    const showNew = !!(rel && st.importedFrom && st.seenVersion !== rel.version);
     root.innerHTML = `
     <div class="wrap-narrow pathwrap">
       <header class="ph arrive">
@@ -218,6 +221,13 @@ export default {
       </header>
       ${st.role !== 'student' ? `<button type="button" class="adultdoor press arrive" data-action="go" data-s="adults" data-tab="${st.role === 'teacher' ? 'teacher' : 'parent'}">
         ${icon(st.role)}<span><b>${st.role === 'teacher' ? 'For teachers' : 'For parents'}</b><small>${st.role === 'teacher' ? 'A lesson, and a 15 minute session.' : 'What changed since your school days.'}</small></span>${icon('arrow')}</button>` : ''}
+      ${showNew ? `<section class="whatsnew arrive" aria-labelledby="wn-h">
+        <p class="ns-k">New in this version</p>
+        <h2 id="wn-h">${esc(rel.head)}</h2>
+        <ul>${rel.changes.slice(0, 3).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        <p class="btnrow"><button type="button" class="btn small press" data-action="wn-ok">${icon('check')} Got it</button>
+          <button type="button" class="btn ghost small press" data-action="wn-all">All changes</button></p>
+      </section>` : ''}
       ${nextHtml(api, st)}
       <ol class="pline">
         ${ORDER.map((y) => {
@@ -254,6 +264,8 @@ export default {
     </div>`;
 
     onAction(root, {
+      'wn-ok': () => { markVersionSeen(rel.version); api.refresh(); },
+      'wn-all': (btn) => api.sheet(`<h2 id="sheet-title">${esc(rel.head)}</h2><ul class="wn-list">${rel.changes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`, btn),
       // The long view redraws itself in place, and keeps the finger on Next.
       'lv-pick': (btn) => {
         lvSel = Math.max(0, Math.min(markers.length - 1, Number(btn.dataset.i)));

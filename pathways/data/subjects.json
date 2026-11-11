@@ -1,30 +1,38 @@
 {
  "_meta": {
-  "source": "SEAB SEC 2027 syllabus listings (G1/G2/G3 school candidates), MOE course and applied subject pages, school Sec 3 option booklets. K codes verified by syllabus PDF title where marked confirmed.; MOE Full SBB pages and school FSBB briefings for the lower secondary model",
+  "source": "SEAB (2027 SEC) G1, G2 and G3 Syllabuses for School Candidates; SEAB Secondary Education Certificate (SEC) page; MOE Secondary school experience under Full SBB; MOE Full SBB FAQ; MOE Curriculum for secondary schools",
   "url": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
-  "accessed": "2026-08-05",
+  "accessed": "2026-11-11",
   "units": "subject levels G1, G2, G3",
-  "notes": "The national picture, not a promise about any one school. Schools run subsets, and the subjects marked selected are offered only at schools approved to run them. Teachers can trim the list to their school in the teacher layer. No syllabus codes are shown to students: the Combined Science pair to code mapping is unverified and the app never needs it. Items marked provisional could not be verified against a primary SEAB PDF title. Third languages (MOELC, PSLE gated) and MTL B (performance triggered) are deliberately not planner rows; see the availability sheet."
+  "notes": "Read from the primary MOE and SEAB pages, opened in full, on 2026-11-11. Subject levels follow SEAB's 2027 syllabus lists for school candidates: Music is G1 and G3 with no G2, Drama is G3 only, and Economics carries an earlier subject code so it is not new. Grading follows the SEAB SEC page. The national picture, not a promise about any one school. Schools run subsets, and the subjects marked selected are offered only at schools approved to run them. MOE gives no dates or marks for a change of level, only that schools decide at appropriate junctures, so the juncture lines say that and no more. MOE publishes no link between a lower secondary level and a Sec 3 subject; the sec3 lines state only which levels each Sec 3 subject exists at. Teachers can trim the list to their school in the teacher layer. No syllabus codes are shown to students. Third languages (MOELC, PSLE gated) and MTL B (discontinued from the 2024 Sec 1 cohort) are deliberately not planner rows.",
+  "sources": {
+   "levels_g1": "https://www.seab.gov.sg/secondary-education-certificate-sec/g1-syllabuses-for-school-candidates-2027/",
+   "levels_g2": "https://www.seab.gov.sg/secondary-education-certificate-sec/g2-syllabuses-for-school-candidates-2027/",
+   "levels_g3": "https://www.seab.gov.sg/secondary-education-certificate-sec/g3-syllabuses-for-school-candidates-2027/",
+   "grading": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
+   "lower_and_upper_secondary": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+   "level_changes": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/faq"
+  }
  },
  "levelInfo": {
   "G1": {
    "label": "G1",
    "name": "General 1",
-   "plain": "Key ideas, with more practical work.",
+   "plain": "The least demanding of the three levels.",
    "grading": "Graded A to E.",
    "status": "confirmed"
   },
   "G2": {
    "label": "G2",
    "name": "General 2",
-   "plain": "More depth, at a steady pace.",
+   "plain": "The middle level.",
    "grading": "Graded 1 to 6.",
    "status": "confirmed"
   },
   "G3": {
    "label": "G3",
    "name": "General 3",
-   "plain": "The most content, at the fastest pace.",
+   "plain": "The most demanding of the three levels.",
    "grading": "Graded A1 to 9.",
    "status": "confirmed"
   }
@@ -41,14 +49,14 @@
   {
    "id": "science",
    "label": "Science",
-   "note": "At G2, science is taken as a pair. Pure sciences are G3.",
+   "note": "At G2, Science is taken as a pair. Physics, Chemistry and Biology as single subjects are G3 only.",
    "lowerNote": "One Science in Sec 1 and 2. In Sec 3 it becomes a pair, or single sciences."
   },
   {
    "id": "humanities",
    "label": "Humanities",
-   "note": "At G2 and G3, you take one Humanities pair. Some schools add a pure Humanities subject.",
-   "lowerNote": "In Sec 1 and 2, each Humanities subject has its own level."
+   "note": "At G2 and G3, you take Social Studies with one Humanities elective. You can add a full Humanities subject. At G1, Humanities is Social Studies with one Humanities Exposure Module, not examined.",
+   "lowerNote": "In Sec 1 and 2, each Humanities subject has its own level. At G1, Humanities is Social Studies and the Humanities Exposure Modules, not examined."
   },
   {
    "id": "elective",
@@ -100,8 +108,8 @@
     "G3"
    ],
    "compulsory": false,
-   "note": "Offered to students strong in the language, usually alongside mostly G3 subjects. Ask your school.",
-   "status": "provisional",
+   "note": "AL 1 or 2 in PSLE Mother Tongue qualifies from 2026. So does a Distinction or Merit in PSLE Higher Mother Tongue. Schools can offer it to others.",
+   "status": "confirmed",
    "phase": "both"
   },
   {
@@ -119,8 +127,8 @@
    "phase": "both",
    "raisableFrom": "sec1",
    "sec3": {
-    "G2": "Maths at G2 is the usual way into Additional Maths at G2. The school sets the mark.",
-    "G3": "Maths at G3 is the usual way into Additional Maths at G3. The school sets the mark."
+    "G2": "Additional Mathematics exists at G2 and G3. Your school decides who takes it.",
+    "G3": "Additional Mathematics exists at G2 and G3. Your school decides who takes it."
    }
   },
   {
@@ -323,7 +331,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -337,7 +345,7 @@
     "G3"
    ],
    "compulsory": false,
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -360,12 +368,12 @@
    "group": "elective",
    "levels": [
     "G1",
-    "G2",
     "G3"
    ],
    "compulsory": false,
-   "status": "provisional",
-   "phase": "upper"
+   "status": "confirmed",
+   "phase": "upper",
+   "note": "Offered at G1 and G3. The SEC has no G2 Music."
   },
   {
    "id": "higher_music",
@@ -376,7 +384,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -401,7 +409,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "note": "New at SEC, first exam 2027. Few schools offer it yet.",
+   "note": "Only at schools approved to offer it.",
    "status": "confirmed",
    "phase": "upper"
   },
@@ -416,7 +424,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "note": "Part of the G1 package from 2026. At G2 and G3, selected schools.",
+   "note": "An elective at G1, G2 and G3 from the 2026 Sec 3 cohort. Students on mainly G1 subjects take Computing or Science.",
    "status": "confirmed",
    "phase": "upper"
   },
@@ -442,7 +450,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -450,12 +458,11 @@
    "name": "Drama",
    "group": "elective",
    "levels": [
-    "G2",
     "G3"
    ],
    "compulsory": false,
    "availability": "selected",
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -467,7 +474,7 @@
    ],
    "compulsory": false,
    "availability": "selected",
-   "status": "provisional",
+   "status": "confirmed",
    "phase": "upper"
   },
   {
@@ -484,10 +491,10 @@
    "compulsory": true,
    "raisableFrom": "sec1",
    "sec3": {
-    "G2": "Science at G2 is the usual way into a Science pair at G2.",
-    "G3": "Science at G3 is the usual way into the pure sciences at G3. The school sets the mark."
+    "G2": "At G2, Science is a pair, such as Science (Physics, Chemistry).",
+    "G3": "Physics, Chemistry and Biology as single subjects are G3 only. Your school decides who takes them."
    },
-   "note": "In Sec 3 this becomes a Science pair, or pure sciences at G3.",
+   "note": "In Sec 3 this becomes Science at G1, a Science pair at G2 or G3, or single sciences at G3.",
    "status": "provisional"
   },
   {
@@ -504,10 +511,10 @@
    "compulsory": true,
    "raisableFrom": "sec2",
    "sec3": {
-    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
-    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+    "G2": "Humanities at G2 is Social Studies with one elective, such as Geography.",
+    "G3": "Humanities at G3 is Social Studies with one elective. You can add a full Humanities subject."
    },
-   "levelNote": "G1 is the Humanities Exposure Modules",
+   "levelNote": "G1 is Social Studies and the Humanities Exposure Modules, not examined",
    "status": "provisional"
   },
   {
@@ -524,10 +531,10 @@
    "compulsory": true,
    "raisableFrom": "sec2",
    "sec3": {
-    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
-    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+    "G2": "Humanities at G2 is Social Studies with one elective, such as Geography.",
+    "G3": "Humanities at G3 is Social Studies with one elective. You can add a full Humanities subject."
    },
-   "levelNote": "G1 is the Humanities Exposure Modules",
+   "levelNote": "G1 is Social Studies and the Humanities Exposure Modules, not examined",
    "status": "provisional"
   },
   {
@@ -544,11 +551,11 @@
    "compulsory": false,
    "raisableFrom": "sec2",
    "sec3": {
-    "G2": "A Humanities at G2 leads to the Social Studies pair at G2.",
-    "G3": "A Humanities at G3 keeps the Social Studies pair and a Humanities elective at G3 open. The school sets the mark."
+    "G2": "Humanities at G2 is Social Studies with one elective, such as Geography.",
+    "G3": "Humanities at G3 is Social Studies with one elective. You can add a full Humanities subject."
    },
-   "levelNote": "G1 is the Humanities Exposure Modules",
-   "note": "Some schools offer this in Sec 1 and 2.",
+   "levelNote": "G1 is Social Studies and the Humanities Exposure Modules, not examined",
+   "note": "MOE lists Literature in English with Geography and History for Sec 1 and 2. Ask your school how it runs it.",
    "status": "provisional"
   },
   {
@@ -600,16 +607,16 @@
   "status": "confirmed",
   "years": {
    "sec1": {
-    "up": "English, Mother Tongue, Maths and Science move up at school reviews, often end of Sec 1.",
+    "up": "English, Mother Tongue, Maths and Science can move up, on your results and your school's assessment.",
     "note": "Humanities levels can move from Sec 2."
    },
    "sec2": {
     "up": "Every subject here can move now, Humanities included.",
-    "note": "The end of Sec 2 sets your Sec 3 subjects."
+    "note": "Your school guides your Sec 3 subject choices. Ask when it decides."
    },
    "sec3": {
     "up": null,
-    "note": "Your levels are mostly set now. Grade targets matter more."
+    "note": "Levels can still change, with your school. Grade targets start to matter."
    },
    "sec4": {
     "up": null,
@@ -619,6 +626,7 @@
     "up": null,
     "note": "Sec 5 helps most when you aim it at one place."
    }
-  }
+  },
+  "source": "MOE Full SBB FAQ and Secondary school experience under Full SBB. MOE sets no dates: levels change at appropriate junctures, on results in the subject and the school's holistic assessment."
  }
 }

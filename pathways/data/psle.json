@@ -1,10 +1,19 @@
 {
   "_meta": {
-    "source": "MOE PSLE scoring and S1 posting pages; MOE Full SBB FAQ; MOE curriculum page on Higher Mother Tongue; MOE SchoolFinder (Beatty Secondary)",
+    "source": "MOE: What are Posting Groups (last updated 1 Oct 2026); MOE PSLE scoring system and PSLE FAQs; MOE Secondary school experience under Full SBB; MOE Understand PSLE score ranges; MOE SchoolFinder (Beatty Secondary School)",
     "url": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups",
-    "accessed": "2026-10-27",
+    "accessed": "2026-11-11",
     "units": "PSLE Achievement Levels (AL 1 best to AL 8), PSLE Score 4 to 32",
-    "notes": "Read from search engine extracts of the primary MOE pages on 2026-10-27; the pages themselves could not be opened end to end from the research session. Eyeball once against moe.gov.sg before a class uses this. Everything a student enters here is hypothetical and stays on the device."
+    "notes": "Read from the primary MOE pages, opened in full, on 2026-11-11. Each rule block carries its own source. Posting Group ranges, AL bands, the more demanding and less demanding options at the start of Sec 1 and the Higher Mother Tongue rule all match MOE word for word. Beatty's ranges are the 2025 posting; MOE publishes the 2026 cut off points in SchoolFinder in December 2026. Everything a student enters here is hypothetical and stays on the device.",
+    "sources": {
+      "postingGroups": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/what-are-posting-groups",
+      "bands": "https://www.moe.gov.sg/psle-fsbb/psle/psle-scoring-system",
+      "noGroup": "https://www.moe.gov.sg/psle-fsbb/psle/faqs",
+      "upgrades": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+      "downgrades": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+      "hmtl": "https://www.moe.gov.sg/psle-fsbb/psle/psle-scoring-system",
+      "ranges": "https://www.moe.gov.sg/secondary/s1-posting/how-to-choose/understand-psle-score-ranges"
+    }
   },
   "subjects": [
     { "id": "el", "name": "English" },
@@ -22,31 +31,34 @@
   ],
   "postingGroups": [
     { "min": 4, "max": 20, "groups": [3], "status": "confirmed" },
-    { "min": 21, "max": 22, "groups": [3, 2], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 21, "max": 22, "groups": [3, 2], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices. If you list no schools, MOE assigns the more demanding group." },
     { "min": 23, "max": 24, "groups": [2], "status": "confirmed" },
-    { "min": 25, "max": 25, "groups": [2, 1], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices." },
+    { "min": 25, "max": 25, "groups": [2, 1], "status": "confirmed", "note": "Choose one group before listing schools. It applies to all six choices. If you list no schools, MOE assigns the more demanding group." },
     { "min": 26, "max": 30, "groups": [1], "needs": "AL 7 or better in both English and Mathematics", "status": "confirmed" }
   ],
-  "noGroup": "This score does not map to a Posting Group. Talk to your primary school about the options, including specialised schools and repeating P6.",
+  "noGroup": "This score does not map to a Posting Group. MOE offers two options: repeat the PSLE, or move to NorthLight School or Assumption Pathway School. Talk to your primary school principal.",
   "upgrades": {
     "status": "confirmed",
     "groups": [1, 2],
     "subjects": ["el", "mtl", "maths", "science"],
     "rules": [
-      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: you can start this subject at G3." },
+      { "standardMax": 5, "level": "G3", "text": "AL 5 or better at Standard: you can start this subject at G3. From Posting Group 1, G2 is also an option." },
       { "standardMax": 6, "foundation": "A", "level": "G2", "onlyGroup": 1, "text": "AL 6 at Standard, or A at Foundation: you can start this subject at G2." }
     ],
-    "note": "Your school offers these and your family decides. You do not have to start higher. Levels are reviewed again before Sec 3."
+    "note": "These are options, so you do not have to start higher. After Sec 1 starts, a level can still go up. That depends on your results in the subject and your school's assessment.",
+    "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience"
   },
   "downgrades": {
     "status": "confirmed",
-    "groups": [3],
+    "groups": [3, 2],
     "rules": [
-      { "subjects": ["el", "maths", "science"], "foundation": ["A", "B", "C"], "levels": ["G2"], "text": "Taken at Foundation: the school can offer this subject at G2." },
-      { "subjects": ["mtl"], "foundation": ["A"], "levels": ["G2"], "text": "Foundation A: the school can offer Mother Tongue at G2." },
-      { "subjects": ["mtl"], "foundation": ["B", "C"], "levels": ["G1", "G2"], "text": "Foundation B or C: the school can offer Mother Tongue at G2 or G1." }
+      { "groups": [3], "subjects": ["el", "maths", "science"], "foundation": ["A", "B", "C"], "levels": ["G2"], "text": "Taken at Foundation: you can take this subject at G2, after talking with your secondary school." },
+      { "groups": [3], "subjects": ["mtl"], "standard": [6], "foundation": ["A"], "levels": ["G2"], "text": "AL 6 at Standard, or A at Foundation: you can take Mother Tongue at G2." },
+      { "groups": [3], "subjects": ["mtl"], "standard": [7, 8], "foundation": ["B", "C"], "levels": ["G1", "G2"], "text": "AL 7 or 8 at Standard, or B or C at Foundation: you can take Mother Tongue at G2 or G1." },
+      { "groups": [2], "subjects": ["mtl"], "standard": [7, 8], "foundation": ["B", "C"], "levels": ["G1"], "text": "AL 7 or 8 at Standard, or B or C at Foundation: you can take Mother Tongue at G1." }
     ],
-    "note": "Posting Group 3 with a Foundation subject: you can start that subject at a lower level, with the school."
+    "note": "A less demanding start is an option at the start of Sec 1. MOE offers the Mother Tongue option to students who face exceptional difficulties coping with the language.",
+    "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience"
   },
   "hmtl": {
     "text": "You can take Higher Mother Tongue in Sec 1 with AL 1 or 2 in Mother Tongue. A Distinction or Merit in PSLE Higher Mother Tongue also qualifies. Schools can offer it to others too.",
@@ -60,7 +72,7 @@
       { "group": 2, "range": "21 to 25" },
       { "group": 1, "range": "25 to 28" }
     ],
-    "note": "The score of the last student admitted in 2025, from MOE SchoolFinder. Ranges change every year.",
+    "note": "Each range runs from the first to the last student posted in 2025, from MOE SchoolFinder. Ranges change every year.",
     "url": "https://www.moe.gov.sg/schoolfinder/schooldetail/beatty-secondary-school",
     "status": "confirmed"
   }
