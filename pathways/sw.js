@@ -10,18 +10,19 @@
 // loads. A new build (new VERSION below, stamped by tools/release.mjs) makes
 // a new cache and the old one is deleted on activate.
 
-const VERSION = '6.0.0';
-const CACHE = `paths6-${VERSION}`;
-// The caches v4.4 and v5 kept at genapp/pathways/ and genapp/pathways5/. The
-// frozen v4.4 in legacy/ uses `paths4legacy-`, which this leaves alone.
-const OLD = ['paths4-', 'paths5-'];
+const VERSION = '7.0.0';
+const CACHE = `paths7-${VERSION}`;
+// The caches earlier builds kept at genapp/pathways/ and genapp/pathways5/. The
+// frozen copies in legacy/ use `paths4legacy-` and `paths6legacy-`, which this
+// leaves alone.
+const OLD = ['paths4-', 'paths5-', 'paths6-'];
 const v = (p) => `${p}?v=${VERSION}`;
 
 const SHELL = [
   './',
   './index.html',
   v('./assets/css/tokens4.css'), v('./assets/css/base.css'),
-  v('./assets/css/app.css'), v('./assets/css/play.css'), v('./assets/css/v4.css'),
+  v('./assets/css/app.css'), v('./assets/css/play.css'), v('./assets/css/v4.css'), v('./assets/css/v7.css'),
   v('./assets/fonts/bricolage-var-latin.woff2'), v('./assets/fonts/jetbrains-mono-var-latin.woff2'),
   v('./assets/js/main.js'), v('./assets/js/state.js'),
   v('./assets/js/data-loader.js'), v('./assets/js/sound.js'),
@@ -39,13 +40,13 @@ const SHELL = [
   v('./assets/js/ui/board.js'), v('./assets/js/ui/ticket.js'),
   v('./assets/js/ui/signal.js'), v('./assets/js/ui/labels.js'),
   v('./assets/js/engine/goal.js'), v('./assets/js/engine/packet.js'), v('./assets/js/engine/migrate.js'),
-  v('./assets/js/screens/path.js'), v('./assets/js/screens/goal.js'),
+  v('./assets/js/screens/path.js'), v('./assets/js/screens/goal.js'), v('./assets/js/screens/me.js'), v('./assets/js/ui/compass.js'), v('./assets/js/ui/longview.js'),
   v('./assets/js/screens/compare.js'), v('./assets/js/screens/share.js'),
   v('./assets/js/screens/session.js'),
-  v('./assets/js/screens/start.js'), v('./assets/js/screens/explore.js'),
+  v('./assets/js/screens/start.js'),
   v('./assets/js/screens/year.js'),
   v('./assets/js/screens/after.js'), v('./assets/js/screens/myplan.js'),
-  v('./assets/js/screens/play.js'), v('./assets/js/screens/act.js'),
+  v('./assets/js/screens/play.js'),
   v('./assets/js/screens/adults.js'), v('./assets/js/screens/info.js'),
 ];
 const DATA = [
@@ -53,7 +54,7 @@ const DATA = [
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
   'moves', 'version', 'activities', 'possibilities', 'work', 'money',
   'evidence', 'schools', 'years', 'psle', 'grades', 'families',
-  'offer', 'goals', 'daysin',
+  'offer', 'goals', 'daysin', 'compass',
 ].map((n) => v(`./data/${n}.json`));
 
 self.addEventListener('install', (e) => {
@@ -67,7 +68,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => (k.startsWith('paths6-') && k !== CACHE) || OLD.some((o) => k.startsWith(o))).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => (k.startsWith('paths7-') && k !== CACHE) || OLD.some((o) => k.startsWith(o))).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });

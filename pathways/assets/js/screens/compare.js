@@ -5,14 +5,14 @@
 // B changes, place by place, then the table, then B's levels. "Use Plan B"
 // is the only thing that writes to the real plan.
 
-import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=6.0.0';
-import { listNames } from '../engine/advice.js?v=6.0.0';
-import { subjTile } from './year.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { stateWord, openWord } from '../ui/labels.js?v=6.0.0';
+import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
+import { listNames } from '../engine/advice.js?v=7.0.0';
+import { subjTile } from './year.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { stateWord, openWord } from '../ui/labels.js?v=7.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const RANK = { open: 0, 'within-reach': 1, 'longer-route': 2, 'other-route': 3 };

@@ -10,21 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { effective } from '../engine/years.js?v=6.0.0';
-import { advise, listNames, sayName } from '../engine/advice.js?v=6.0.0';
-import { report } from '../engine/grades.js?v=6.0.0';
-import { openCount } from '../ui/map.js?v=6.0.0';
-import { yearStrip } from '../ui/yearstrip.js?v=6.0.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=6.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
-import { boardWord } from '../ui/board.js?v=6.0.0';
-import { DEST_CODE } from '../ui/signal.js?v=6.0.0';
-import { t, isShort, stateWord } from '../ui/labels.js?v=6.0.0';
-import { decorate } from '../ui/glossary.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
+import { getState, setFamilies } from '../state.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { effective } from '../engine/years.js?v=7.0.0';
+import { advise, listNames, sayName } from '../engine/advice.js?v=7.0.0';
+import { report } from '../engine/grades.js?v=7.0.0';
+import { openCount } from '../ui/map.js?v=7.0.0';
+import { yearStrip } from '../ui/yearstrip.js?v=7.0.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=7.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=7.0.0';
+import { boardWord } from '../ui/board.js?v=7.0.0';
+import { DEST_CODE } from '../ui/signal.js?v=7.0.0';
+import { t, isShort, stateWord } from '../ui/labels.js?v=7.0.0';
+import { decorate } from '../ui/glossary.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });

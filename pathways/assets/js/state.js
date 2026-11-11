@@ -9,20 +9,26 @@
 // Play/Journey/journey and Act/Aim/aim across labels, modules, state and
 // URLs. v3 says plan, play, act everywhere, including the address bar.
 
-// 6.0 keeps its own key. On its first visit it joins what v4.4 and v5 saved
-// on this device (engine/migrate.js) and never writes to either old key, so
-// the frozen v4.4 in legacy/ keeps its own plans.
-import { mergeStored } from './engine/migrate.js?v=6.0.0';
+// 7.0 keeps its own key. On its first visit it reads what 6.0 saved on this
+// device, or joins v4.4 and v5 the way 6.0 did (engine/migrate.js). It never
+// writes to an old key, so the frozen builds in legacy/ keep their own plans.
+import { fromEarlier, cleanCompass, WANT_CODE } from './engine/migrate.js?v=7.0.0';
+import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.0.0';
 
-const STORAGE_KEY = 'paths6.state.v1';
+const STORAGE_KEY = 'paths7.state.v1';
+const V6_KEY = 'paths6.state.v1';
 const V5_KEY = 'paths5.state.v1';
 const V4_KEY = 'pathways4.state.v1';
 const readKey = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } };
 function stored() {
   const own = localStorage.getItem(STORAGE_KEY);
   if (own) return JSON.parse(own);
-  return mergeStored(readKey(V5_KEY), readKey(V4_KEY));
+  return fromEarlier(readKey(V6_KEY), readKey(V5_KEY), readKey(V4_KEY));
 }
+
+const today = () => new Date().toISOString().slice(0, 10);
+const oneLine = (t, n) => String(t == null ? '' : t).replace(/\s+/g, ' ').trim().slice(0, n);
+const GOAL_WHO = ['parent', 'form', 'subject', 'ecg', 'other'];
 
 export const MODES = {
   plan: { id: 'plan', label: 'Plan' },
@@ -58,8 +64,11 @@ const initial = () => ({
   labelMode: 'plain',   // 'plain' words by default; 'line' turns on the transit vocabulary
   wordStyle: 'short',   // 'short' by default: the fact and the move, the rest folded; 'detailed' shows it all
   activities: [],
-  aim: null,
+  // 7.0: who the student says they are, in their own taps and words. Never
+  // computed, never a type. The game's old `aim` lives here as `enjoy`.
+  compass: { enjoy: [], strengths: [], values: [], notes: [] },
   actions: [],
+  done: {},             // { [step words]: 'YYYY-MM-DD' } for saved steps ticked as done
   runs: [],
   liveRun: null,
   looked: [],
@@ -77,7 +86,8 @@ const initial = () => ({
   // school should not have to re read the same disclaimer every visit.
   schoolKind: null,
   // v5: the goal a student works back from, and a second plan to compare.
-  goal: null,           // { sector, role, dest, family } or null
+  // 7.0 adds why, by (a date), who (the adult it was agreed with), setAt and checkedAt.
+  goal: null,           // { sector, role, dest, family, why, by, who, setAt, checkedAt } or null
   scenario: null,       // { yearId, plan } or null: Plan B on the Compare page
 });
 
@@ -115,6 +125,11 @@ function load() {
   if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
   if (base.goal && (typeof base.goal !== 'object' || !base.goal.dest)) base.goal = null;
+  base.compass = cleanCompass(base.compass);
+  // A want saved by an earlier build, or carried in an old link.
+  if (WANT_CODE[base.aim] && !base.compass.enjoy.length) base.compass.enjoy = [WANT_CODE[base.aim]];
+  delete base.aim;
+  if (!base.done || typeof base.done !== 'object' || Array.isArray(base.done)) base.done = {};
   if (base.scenario && (typeof base.scenario !== 'object' || !base.scenario.plan)) base.scenario = null;
   ['plan', 'guesses'].forEach((k) => { if (!base[k] || typeof base[k] !== 'object' || Array.isArray(base[k])) base[k] = {}; });
   ['actions', 'runs', 'looked', 'activities', 'history'].forEach((k) => { if (!Array.isArray(base[k])) base[k] = []; });
@@ -138,8 +153,22 @@ function load() {
     // A carry link, read back. Everything here is additive and everything is
     // validated, because a link is the one input a stranger can hand a student and
     // a malformed one must never break the app or overwrite more than it names.
+    // An old link carried one want; a 7.0 link carries the compass as ids only.
     const want = params.get('want');
-    if (want && /^[a-z_]{2,20}$/.test(want)) { base.aim = want; base._fromLink = true; }
+    if (WANT_CODE[want] && !base.compass.enjoy.length) { base.compass.enjoy = [WANT_CODE[want]]; base._fromLink = true; }
+    const me = unpackMe(params.get('me'));
+    if (me) {
+      const had = base.compass;
+      base.compass = cleanCompass({
+        enjoy: had.enjoy.length ? had.enjoy : me.enjoy,
+        values: had.values.length ? had.values : me.values,
+        strengths: had.strengths.length ? had.strengths : me.strengths,
+        notes: had.notes,
+      });
+      base._fromLink = true;
+    }
+    const gk = params.get('gk');
+    if (gk && !base.goal) { const pk = decodePacket(gk); if (pk && pk.goal) { base.goal = pk.goal; base._fromLink = true; } }
     const sk = params.get('sk');
     if (sk && /^[a-z_]{2,20}$/.test(sk)) { base.schoolKind = sk; base._fromLink = true; }
     const act = params.get('act');
@@ -174,7 +203,7 @@ const state = load();
 const listeners = new Set();
 
 if (state._fromLink) { delete state._fromLink; persist(); }
-// The join from v4.4 and v5 happens once: save it straight away under 6.0's key.
+// What an earlier build saved comes across once: save it straight away under 7.0's key.
 try { if (state.importedFrom && !localStorage.getItem(STORAGE_KEY)) persist(); } catch { /* private mode */ }
 
 function notify(evt) {
@@ -288,9 +317,106 @@ export function setLabelMode(mode) {
   persist(); notify({ kind: 'labels' });
 }
 
+/** A new goal. The why carries over when only the course family or role changed. */
 export function setGoal(goal) {
-  state.goal = goal && goal.dest ? { sector: goal.sector || null, role: goal.role || null, dest: goal.dest, family: goal.family || null } : null;
+  const was = state.goal;
+  const same = was && goal && was.dest === goal.dest && (was.sector || null) === (goal.sector || null);
+  state.goal = goal && goal.dest ? {
+    sector: goal.sector || null, role: goal.role || null, dest: goal.dest, family: goal.family || null,
+    why: same ? was.why || '' : '', by: same ? was.by || null : null, who: same ? was.who || null : null,
+    setAt: same ? was.setAt || today() : today(), checkedAt: today(),
+  } : null;
   persist(); notify({ kind: 'goal' });
+}
+
+/** The parts of a goal the student writes: why, by when, and with whom. */
+export function patchGoal(part) {
+  if (!state.goal || !part) return;
+  if ('why' in part) state.goal.why = oneLine(part.why, 140);
+  if ('by' in part) state.goal.by = /^\d{4}-\d{2}-\d{2}$/.test(part.by || '') ? part.by : null;
+  if ('who' in part) state.goal.who = GOAL_WHO.includes(part.who) ? part.who : null;
+  persist(); notify({ kind: 'goal' });
+}
+
+/** The student looked at the goal again and it still stands. */
+export function checkGoal() {
+  if (!state.goal) return;
+  state.goal.checkedAt = today();
+  persist(); notify({ kind: 'goal' });
+}
+
+/**
+ * A goal is due a second look when its date has passed, or when three weeks
+ * have gone by since it was last looked at. Pure, so the path and the checks
+ * can both ask.
+ */
+export function goalDue(goal, now = today()) {
+  if (!goal) return false;
+  if (goal.by && goal.by < now && (!goal.checkedAt || goal.checkedAt <= goal.by)) return true;
+  const last = goal.checkedAt || goal.setAt;
+  if (!last) return false;
+  return (new Date(now).getTime() - new Date(last).getTime()) / 86400000 >= 21;
+}
+
+// --- the compass: what the student says about themselves -------------------
+
+/** Tap an interest on or off. Two at most; a third replaces the oldest. */
+export function toggleEnjoy(code) {
+  const list = state.compass.enjoy;
+  const i = list.indexOf(code);
+  if (i >= 0) list.splice(i, 1); else { if (list.length >= 2) list.shift(); list.push(code); }
+  state.compass = cleanCompass(state.compass);
+  persist(); notify({ kind: 'compass' });
+}
+
+export function setEnjoy(codes) {
+  state.compass = cleanCompass({ ...state.compass, enjoy: codes || [] });
+  persist(); notify({ kind: 'compass' });
+}
+
+/** Tap a value on or off. Three at most. */
+export function toggleValue(id) {
+  const list = state.compass.values;
+  const i = list.indexOf(id);
+  if (i >= 0) list.splice(i, 1); else { if (list.length >= 3) return false; list.push(id); }
+  persist(); notify({ kind: 'compass' });
+  return true;
+}
+
+/** Tap a strength on or off. Three at most, each with one line of proof. */
+export function toggleStrength(id) {
+  const list = state.compass.strengths;
+  const i = list.findIndex((r) => r.id === id);
+  if (i >= 0) list.splice(i, 1); else { if (list.length >= 3) return false; list.push({ id, proof: '' }); }
+  persist(); notify({ kind: 'compass' });
+  return true;
+}
+
+export function setProof(id, text) {
+  const row = state.compass.strengths.find((r) => r.id === id);
+  if (!row) return;
+  row.proof = oneLine(text, 90);
+  persist(); notify({ kind: 'compass' });
+}
+
+/** One line the student noticed about themselves, from the game or typed. */
+export function addNote(text, from = 'me') {
+  const line = oneLine(text, 140);
+  if (!line || state.compass.notes.some((n) => n.text === line)) return false;
+  state.compass.notes.push({ t: today(), text: line, from: from === 'play' ? 'play' : 'me' });
+  if (state.compass.notes.length > 6) state.compass.notes.shift();
+  persist(); notify({ kind: 'compass' });
+  return true;
+}
+
+export function dropNote(i) {
+  state.compass.notes.splice(i, 1);
+  persist(); notify({ kind: 'compass' });
+}
+
+/** How much of the compass is filled, part by part. */
+export function compassFill(c = state.compass) {
+  return { enjoy: c.enjoy.length, strengths: c.strengths.length, values: c.values.length, goal: state.goal ? 1 : 0 };
 }
 
 export function setScenario(sc) {
@@ -327,10 +453,6 @@ export function markLooked(subjectId) {
   persist(); notify({ kind: 'looked' });
 }
 
-export function setAim(futureId) {
-  state.aim = futureId;
-  persist(); notify({ kind: 'aim' });
-}
 
 /**
  * Which kind of secondary school this is.
@@ -348,7 +470,14 @@ export function setSchoolKind(id) {
 
 export function toggleAction(text) {
   const i = state.actions.indexOf(text);
-  if (i >= 0) state.actions.splice(i, 1); else state.actions.push(text);
+  if (i >= 0) { state.actions.splice(i, 1); delete state.done[text]; } else state.actions.push(text);
+  persist(); notify({ kind: 'actions' });
+}
+
+/** Tick a saved step as done, or untick it. */
+export function toggleDone(text) {
+  if (!state.actions.includes(text)) return;
+  if (state.done[text]) delete state.done[text]; else state.done[text] = today();
   persist(); notify({ kind: 'actions' });
 }
 
@@ -567,7 +696,9 @@ export function carryUrl() {
   const url = new URL(location.origin + location.pathname);
   Object.entries(state.plans).forEach(([yid, p]) => { if (Object.keys(p).length) url.searchParams.set(yid, encodePlan(p)); });
   url.searchParams.set('y', state.year);
-  if (state.aim) url.searchParams.set('want', state.aim);
+  // The compass travels as ids only. What the student typed stays on the device.
+  if (packMe(state.compass)) url.searchParams.set('me', packMe(state.compass));
+  if (state.goal) url.searchParams.set('gk', encodePacket({ y: 'sec1', plan: {}, goal: state.goal }));
   if (state.schoolKind) url.searchParams.set('sk', state.schoolKind);
   if ((state.activities || []).length) url.searchParams.set('act', state.activities.join('~'));
   const acts = (state.actions || []).filter(Boolean);
@@ -581,7 +712,8 @@ export function carrySummary() {
   return {
     subjects: Object.keys(state.plan || {}).length,
     todo: (state.actions || []).filter(Boolean).length,
-    want: !!state.aim,
+    want: state.compass.enjoy.length > 0,
+    goal: !!state.goal,
     school: !!state.schoolKind,
     activities: (state.activities || []).length,
   };

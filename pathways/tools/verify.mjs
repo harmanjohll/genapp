@@ -40,7 +40,7 @@ const ctx = {
   yearId: 'sec3',
 };
 
-const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css'];
+const CSS_FILES = ['tokens4.css', 'base.css', 'app.css', 'play.css', 'v4.css', 'v7.css'];
 const PINNED = [...CSS_FILES, 'main.js'];
 
 function pass(name, ok, extra) {
@@ -118,7 +118,7 @@ function cssVarSweep() {
  * nothing watching. This is the byte budget as a gate: raw bytes, because
  * gzip ratios are stable enough here that raw drift is what matters.
  */
-const EAGER_DATA = ['subjects', 'pathways', 'progressions', 'copy', 'glossary', 'activities', 'lifelong', 'version', 'years', 'psle', 'grades'];
+const EAGER_DATA = ['subjects', 'pathways', 'progressions', 'copy', 'glossary', 'activities', 'lifelong', 'version', 'years', 'psle', 'grades', 'offer', 'goals', 'families', 'compass'];
 const EAGER_BUDGET = 420 * 1024;
 function payloadSweep() {
   const failures = [];
@@ -363,7 +363,7 @@ function v4PsleSweep() {
 /** House style for the v4 data: no dashes in anything a reader sees. */
 function v4DashSweep() {
   const fails = [];
-  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin'].forEach((n) => {
+  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass'].forEach((n) => {
     const walk = (v, path) => {
       if (typeof v === 'string') {
         if (path.includes('url') || path.includes('_meta') || /\.id$/.test(path)) return;
@@ -432,7 +432,7 @@ async function offlineSweep() {
 }
 
 /**
- * 6.0 joined v4.4 and v5 behind four tabs. Every screen must stay within two
+ * Five tabs: Me, Goal, Path, Play, Saved. Every screen must stay within two
  * taps of the menu: a tab, then one link on it. Links are read from each
  * screen's own code (data-s, nav(), or a { s: } route). The first run start,
  * the old Home address and the shared view, which opens only from a link, are
@@ -450,7 +450,7 @@ function reachableSweep() {
   tabs.forEach((tab) => linksOf(tab).forEach((s) => near.add(s)));
   const skip = new Set(['start', 'home', 'shared']);
   const fails = Object.keys(screens).filter((s) => !skip.has(s) && !near.has(s)).map((s) => ({ screen: s, why: 'more than two taps from the menu' }));
-  if (tabs.length !== 4) fails.push({ screen: 'menu', why: `${tabs.length} tabs; 6.0 has four` });
+  if (tabs.length !== 5) fails.push({ screen: 'menu', why: `${tabs.length} tabs; 7.0 has five` });
   const ok = !fails.length;
   pass('Reachable', ok, `${Object.keys(screens).length - skip.size} screens within two taps of ${tabs.join(', ')}`);
   if (!ok) console.table(fails);

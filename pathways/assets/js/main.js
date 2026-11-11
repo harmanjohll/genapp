@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=6.0.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.0.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
   setLabelMode, markStart, setAllSubjects, setWordStyle,
-} from './state.js?v=6.0.0';
-import { effective } from './engine/years.js?v=6.0.0';
-import { runStrip } from './ui/yearstrip.js?v=6.0.0';
-import { t } from './ui/labels.js?v=6.0.0';
-import { esc, onAction } from './ui/dom.js?v=6.0.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=6.0.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=6.0.0';
-import { icon } from './ui/icons.js?v=6.0.0';
-import { cue, setMutePredicate } from './sound.js?v=6.0.0';
+} from './state.js?v=7.0.0';
+import { effective } from './engine/years.js?v=7.0.0';
+import { runStrip } from './ui/yearstrip.js?v=7.0.0';
+import { t } from './ui/labels.js?v=7.0.0';
+import { esc, onAction } from './ui/dom.js?v=7.0.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.0.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.0.0';
+import { icon } from './ui/icons.js?v=7.0.0';
+import { cue, setMutePredicate } from './sound.js?v=7.0.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -44,10 +44,10 @@ if (BOARD) {
   document.documentElement.dataset.theme = 'dark'; // a lit projector needs dark ground
 }
 
-// 6.0 keeps its own theme key, and reads the choice made in v5 or v4 once.
-const THEME_KEY = 'paths6.theme';
+// 7.0 keeps its own theme key, and reads the choice made in an earlier build once.
+const THEME_KEY = 'paths7.theme';
 try {
-  const t = localStorage.getItem(THEME_KEY) || localStorage.getItem('paths5.theme') || localStorage.getItem('pathways4.theme');
+  const t = localStorage.getItem(THEME_KEY) || localStorage.getItem('paths6.theme') || localStorage.getItem('paths5.theme') || localStorage.getItem('pathways4.theme');
   if (t && !BOARD) document.documentElement.dataset.theme = t;
 } catch { /* private mode */ }
 
@@ -78,18 +78,17 @@ const SCREENS = {
   // v5: one path is home. The old Home address lands on it.
   home:    { mod: './screens/path.js', exp: 'default' },
   path:    { mod: './screens/path.js', exp: 'default' },
+  me:      { mod: './screens/me.js', exp: 'default' },
   goal:    { mod: './screens/goal.js', exp: 'default' },
   compare: { mod: './screens/compare.js', exp: 'default' },
   share:   { mod: './screens/share.js', exp: 'share' },
   shared:  { mod: './screens/share.js', exp: 'shared' },
   session: { mod: './screens/session.js', exp: 'default' },
-  explore: { mod: './screens/explore.js', exp: 'default' },
   year:    { mod: './screens/year.js', exp: 'default' },
   after:   { mod: './screens/after.js', exp: 'after' },
   dest:    { mod: './screens/after.js', exp: 'dest' },
   myplan:  { mod: './screens/myplan.js', exp: 'default' },
   play:    { mod: './screens/play.js', exp: 'default' },
-  act:     { mod: './screens/act.js', exp: 'default' },
   adults:  { mod: './screens/adults.js', exp: 'default' },
   money:   { mod: './screens/info.js', exp: 'money' },
   work:    { mod: './screens/info.js', exp: 'work' },
@@ -127,9 +126,12 @@ function parseRoute() {
   if (legacy) { s = legacy.s; if (legacy.tab) q.set('tab', legacy.tab); }
   // v3 addresses: Plan becomes your year page.
   if (s === 'plan') s = 'year';
+  // 6.0 addresses: Explore's links now sit on the path, and Act's steps on the goal.
+  if (s === 'explore') s = 'path';
+  if (s === 'act') s = 'goal';
   if (!SCREENS[s]) s = null;
   const extras = {};
-  ['tab', 'sector', 'kind', 'y', 'id', 'g', 'd', 'for', 'step', 'i', 'dest', 'role'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
+  ['tab', 'sector', 'kind', 'y', 'id', 'g', 'd', 'for', 'step', 'i', 'dest', 'role', 'part', 'me', 'by'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
   return { s, q: extras };
 }
 
@@ -216,7 +218,7 @@ function failedScreen(id, missing) {
 }
 
 function screenLabel(s) {
-  return { year: 'Subjects', after: 'After Sec', myplan: 'Saved', play: 'Play', act: 'Act', adults: 'For parents and teachers', money: 'Fees and financial help', work: 'Jobs and sectors', schools: 'My school type' }[s] || s;
+  return { year: 'Subjects', after: 'After Sec', myplan: 'Saved', play: 'Play', me: 'Me', goal: 'Goal', adults: 'For parents and teachers', money: 'Fees and financial help', work: 'Jobs and sectors', schools: 'My school type' }[s] || s;
 }
 
 async function paint({ scrollTo = null, fromPop = false } = {}) {
@@ -318,22 +320,24 @@ function themeNow() {
     || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 }
 
-// Four doors. v4's first pass had five of equal weight, and a first-time
-// student could not tell which one came first. 6.0 joins v4 and v5: the path
-// is home, the goal works back, Explore holds the places, jobs, fees and the
-// game, and Saved holds the plan to keep and share. Compare opens from a year.
+// Five tabs, in the order of MOE's three guiding questions: who am I (Me),
+// where do I want to go (Goal), how do I get there (Path). Play rehearses all
+// three, and Saved is the record to keep and share. The path is home and sits
+// in the middle. 6.0's Explore is gone: the places, jobs, fees and the pages
+// for adults are one tap from the path.
 const NAV_ITEMS = [
-  { s: 'path', label: 'Path', icon: 'steps' },
+  { s: 'me', label: 'Me', icon: 'compass' },
   { s: 'goal', label: 'Goal', icon: 'target' },
-  { s: 'explore', label: 'Explore', icon: 'map' },
+  { s: 'path', label: 'Path', icon: 'steps' },
+  { s: 'play', label: 'Play', icon: 'play' },
   { s: 'myplan', label: 'Saved', icon: 'flag' },
 ];
 const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
 
 function navCurrent(s) {
-  if (['home', 'year', 'compare'].includes(s)) return 'path';
-  if (['after', 'dest', 'play', 'work', 'money', 'schools', 'adults'].includes(s)) return 'explore';
-  if (['act', 'share', 'shared', 'session'].includes(s)) return 'myplan';
+  if (['home', 'year', 'compare', 'after', 'dest', 'money', 'schools', 'adults'].includes(s)) return 'path';
+  if (s === 'work') return 'goal';
+  if (['share', 'shared', 'session'].includes(s)) return 'myplan';
   return s;
 }
 
@@ -369,7 +373,7 @@ function roleSheet(trigger) {
   const st = getState();
   openSheetRouted(`
     <h2 id="sheet-title">Who is reading?</h2>
-    <p class="small">The facts stay the same. Parents get questions to ask their child. Teachers get questions to ask a student.</p>
+    <p class="small">The facts stay the same. Parents and teachers get questions to ask, and their own page.</p>
     <div class="rolegrid">
       ${Object.entries(ROLE_LABEL).map(([id, label]) => `<button type="button" class="btn ${st.role === id ? '' : 'ghost'} press" data-action="pick-role" data-id="${id}" aria-pressed="${st.role === id}">${esc(label)}</button>`).join('')}
     </div>`, trigger);
@@ -404,7 +408,7 @@ function settingsSheet(trigger) {
     </div>
     <p class="caps" style="margin-top:20px">Earlier version</p>
     <p class="small">The version before this one is kept as it was, with its own saved plans.</p>
-    <p><a class="btn ghost small" href="../legacy/pathways-v4/">Open the earlier version</a></p>
+    <p><a class="btn ghost small" href="../legacy/pathways-v6/">Open the earlier version</a></p>
     <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
 }
 
@@ -420,7 +424,7 @@ function yearSheet(trigger) {
 onAction(document.body, {
   go: (btn) => {
     const q = {};
-    ['y', 'id', 'tab', 'step', 'd', 'for', 'dest', 'sector', 'i', 'role'].forEach((k) => { if (btn.dataset[k]) q[k] = btn.dataset[k]; });
+    ['y', 'id', 'tab', 'step', 'd', 'for', 'dest', 'sector', 'i', 'role', 'part'].forEach((k) => { if (btn.dataset[k]) q[k] = btn.dataset[k]; });
     nav(btn.dataset.s, q);
   },
   role: (btn) => roleSheet(btn),
@@ -439,7 +443,14 @@ onAction(document.body, {
   },
   'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
   settings: (btn) => settingsSheet(btn),
-  'pick-role': (btn) => { setRole(btn.dataset.id); closeSheet(); refresh(); },
+  // A parent or teacher lands on their own page; a student goes back to where they were.
+  'pick-role': (btn) => {
+    const id = btn.dataset.id;
+    const was = getState().role;
+    setRole(id);
+    closeSheet();
+    if (id !== 'student' && id !== was) nav('adults', { tab: id }); else refresh();
+  },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
   'set-detail': (btn) => { setWordStyle(flip(btn) ? 'detailed' : 'short'); refresh(); },
   'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },

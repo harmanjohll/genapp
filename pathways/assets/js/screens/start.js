@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode, setWordStyle,
-} from '../state.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { evalPlan, isLower } from '../engine/years.js?v=6.0.0';
-import { advise } from '../engine/advice.js?v=6.0.0';
-import { signalHtml } from '../ui/signal.js?v=6.0.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=6.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
-import { subjTile, patchTile } from './year.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { t, openWord } from '../ui/labels.js?v=6.0.0';
+} from '../state.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { evalPlan, isLower } from '../engine/years.js?v=7.0.0';
+import { advise } from '../engine/advice.js?v=7.0.0';
+import { signalHtml } from '../ui/signal.js?v=7.0.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=7.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=7.0.0';
+import { subjTile, patchTile } from './year.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { t, openWord } from '../ui/labels.js?v=7.0.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));

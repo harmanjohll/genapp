@@ -3,8 +3,24 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "6.0.0",
+  "version": "7.0.0",
   "releases": [
+    {
+      "version": "7.0.0",
+      "date": "2026-11-11",
+      "head": "A compass, a real goal, and the long view",
+      "changes": [
+        "Five tabs: Me, Goal, Path, Play and Saved.",
+        "The Me tab is new. Your compass holds what you enjoy, what you are good at and what matters to you. You fill it in. Nothing is worked out about you.",
+        "A goal now has a why, steps you can tick, a date to look at it again, and the adult you agreed it with.",
+        "The path goes past Sec 4. After the 8 places it shows ages 12 to 65 to scale.",
+        "The game starts from your compass and your goal. At the end you can keep one line about yourself and one step.",
+        "Parents and teachers have their own pages: what changed and when, your old stream in today's words, a 45 minute lesson and a 15 minute session.",
+        "Explore is gone. The places, jobs, fees and school types are one tap from the path.",
+        "Admission rules, school year facts and fees were checked again on MOE's own pages on 11 November 2026.",
+        "Your saved plans come across. The version before this one stays available from Settings."
+      ]
+    },
     {
       "version": "6.0.0",
       "date": "2026-11-09",
@@ -109,5 +125,6 @@
         "One face for the words on every phone, and dark mode is a proper night."
       ]
     }
-  ]
+  ],
+  "date": null
 }

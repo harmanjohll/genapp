@@ -1,4 +1,13 @@
-// Bringing saved plans into 6.0, once.
+// Bringing saved plans into this build, once.
+//
+// 7.0 saves under its own key. On its first visit it reads what 6.0 saved
+// (`paths6.state.v1`), or, on a device that never opened 6.0, joins v5 and
+// v4.4 the way 6.0 did. Then `upgradeTo7` adds what 7.0 keeps: the compass
+// and the steps done. The want the game used to keep on its own becomes the
+// first thing the student enjoys, so there is one record of it.
+//
+// How 6.0 joined v4.4 and v5, kept as it was:
+//
 //
 // Until 6.0 there were two Paths apps on one device: v4.4 saved under
 // `pathways4.state.v1` and v5 under `paths5.state.v1`. v5 copied some of
@@ -69,4 +78,50 @@ export function mergeStored(v5, v4) {
   out.goal = a.goal || null;
   out.scenario = a.scenario || null;
   return out;
+}
+
+// The six wants of the game and of Act, as the interest each one stands for.
+export const WANT_CODE = { make: 'A', hands: 'R', people: 'S', own: 'E', how: 'I', order: 'C', decide: 'E' };
+const CODES = new Set(['R', 'I', 'A', 'S', 'E', 'C']);
+
+/** A compass as 7.0 keeps it, from whatever was stored. Never throws. */
+export function cleanCompass(c) {
+  const x = obj(c) || {};
+  const list = (v) => (Array.isArray(v) ? v : []);
+  const line = (t, n) => String(t == null ? '' : t).replace(/\s+/g, ' ').trim().slice(0, n);
+  return {
+    enjoy: [...new Set(list(x.enjoy).filter((k) => CODES.has(k)))].slice(0, 2),
+    strengths: list(x.strengths).filter((r) => obj(r) && typeof r.id === 'string' && /^[a-z_]{2,24}$/.test(r.id))
+      .map((r) => ({ id: r.id, proof: line(r.proof, 90) })).slice(0, 3),
+    values: [...new Set(list(x.values).filter((k) => typeof k === 'string' && /^[a-z_]{2,24}$/.test(k)))].slice(0, 3),
+    notes: list(x.notes).filter((r) => obj(r) && line(r.text, 140)).map((r) => ({ t: line(r.t, 10), text: line(r.text, 140), from: r.from === 'play' ? 'play' : 'me' })).slice(-6),
+  };
+}
+
+/**
+ * What 7.0 adds to a state saved by an earlier build.
+ *   - compass: what the student enjoys, is good at and cares about
+ *   - the old `aim` (a want picked in the game or in Act) becomes the first
+ *     thing enjoyed, unless the compass already says
+ *   - done: which saved steps are ticked, by their words
+ */
+export function upgradeTo7(state) {
+  const out = { ...state };
+  out.compass = cleanCompass(out.compass);
+  const code = WANT_CODE[out.aim];
+  if (code && !out.compass.enjoy.length) out.compass.enjoy = [code];
+  delete out.aim;
+  out.done = obj(out.done) ? { ...out.done } : {};
+  return out;
+}
+
+/**
+ * @param {Object|null} v6   parsed `paths6.state.v1`, or null
+ * @param {Object|null} v5   parsed `paths5.state.v1`, or null
+ * @param {Object|null} v4   parsed `pathways4.state.v1`, or null
+ * @returns {Object|null}    the state 7.0 starts from, or null for a new device
+ */
+export function fromEarlier(v6, v5, v4) {
+  const base = obj(v6) ? { ...carry(v6), importedFrom: 'v6' } : mergeStored(v5, v4);
+  return base ? upgradeTo7(base) : null;
 }

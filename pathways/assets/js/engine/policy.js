@@ -8,12 +8,12 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=6.0.0';
-import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=6.0.0';
-import { project } from './project.js?v=6.0.0';
-import { advise } from './advice.js?v=6.0.0';
-import { report } from './grades.js?v=6.0.0';
-import { startLevels, hmtlEligible } from './psle.js?v=6.0.0';
+import { reach } from './reach.js?v=7.0.0';
+import { evalPlan, subjectsForYear, moreSubjects } from './years.js?v=7.0.0';
+import { project } from './project.js?v=7.0.0';
+import { advise } from './advice.js?v=7.0.0';
+import { report } from './grades.js?v=7.0.0';
+import { startLevels, hmtlEligible } from './psle.js?v=7.0.0';
 
 const LV = ['G1', 'G2', 'G3'];
 // SEC language that has no place in Sec 1 and 2 advice. The horizon line is
@@ -190,8 +190,8 @@ export function policySweep(ctx, g, psleRules) {
 
 // ---- v5: the goal engine and share links ----------------------------------
 
-import { sectorsFor, placesFor, familiesFor, familyRules, goalReach, goalMoves, workBack } from './goal.js?v=6.0.0';
-import { encodePacket, decodePacket } from './packet.js?v=6.0.0';
+import { sectorsFor, placesFor, familiesFor, familyRules, goalReach, goalMoves, workBack } from './goal.js?v=7.0.0';
+import { encodePacket, decodePacket } from './packet.js?v=7.0.0';
 
 export function v5Sweep(ctx, data) {
   const fails = [];

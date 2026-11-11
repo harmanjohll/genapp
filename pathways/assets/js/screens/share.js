@@ -5,27 +5,31 @@
 // questions that person should ask. It goes out as an image or a link. The
 // link opens a read only view on the other device, voiced for that person;
 // nothing is saved there unless they choose to. No account, no server.
+//
+// 7.0: the compass stays off the card until the student switches it on. The
+// image then shows its words; the link carries its ids and nothing typed.
 
-import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=6.0.0';
-import { decodePacket } from '../engine/packet.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=6.0.0';
-import { advise } from '../engine/advice.js?v=6.0.0';
-import { goalMoves } from '../engine/goal.js?v=6.0.0';
-import { sayMove } from '../ui/talk.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { stateWord, openWord } from '../ui/labels.js?v=6.0.0';
-import { goalLine } from './path.js?v=6.0.0';
+import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.0.0';
+import { decodePacket } from '../engine/packet.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
+import { advise } from '../engine/advice.js?v=7.0.0';
+import { goalMoves } from '../engine/goal.js?v=7.0.0';
+import { sayMove } from '../ui/talk.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { stateWord, openWord } from '../ui/labels.js?v=7.0.0';
+import { goalLine } from './path.js?v=7.0.0';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const FOR = { parent: 'A parent', teacher: 'A teacher', counsellor: 'My ECG counsellor' };
 
 // ---- the packet: what a link carries (engine/packet.js) -------------------
 
-export { decodePacket } from '../engine/packet.js?v=6.0.0';
-import { encodePacket } from '../engine/packet.js?v=6.0.0';
-export function packFor(st, y) { return { y, plan: st.plans[y] || {}, goal: st.goal || null }; }
+export { decodePacket } from '../engine/packet.js?v=7.0.0';
+import { encodePacket } from '../engine/packet.js?v=7.0.0';
+export function packFor(st, y, withMe = false) { return { y, plan: st.plans[y] || {}, goal: st.goal || null, me: withMe ? st.compass : null }; }
 function linkFor(packet, who) {
   const url = new URL(location.origin + location.pathname);
   url.searchParams.set('s', 'shared');
@@ -37,7 +41,7 @@ function linkFor(packet, who) {
 // ---- what a plan says, for any reader --------------------------------------
 
 /** Everything the card and the shared view need, from a year and a plan. */
-export function readPlan(api, y, plan, goal) {
+export function readPlan(api, y, plan, goal, me = null) {
   const c = api.ctx();
   const ep = evalPlan(y, plan, c.subjects);
   const rows = c.destinations.map((d) => reach(ep, d, { ...c, plan: ep, yearId: y }));
@@ -46,7 +50,7 @@ export function readPlan(api, y, plan, goal) {
   const top = gm[0] || a.singles[0] || a.pairs[0] || null;
   const byId = new Map(c.subjects.map((s) => [s.id, s]));
   const levels = Object.entries(plan).map(([id, lv]) => ({ name: (byId.get(id) || {}).shortName || (byId.get(id) || {}).name || id, lv }));
-  return { y, rows, top, levels, open: rows.filter((r) => r.state === 'open').length, word: openWord(rows), goal };
+  return { y, rows, top, levels, open: rows.filter((r) => r.state === 'open').length, word: openWord(rows), goal, me, meLines: me ? compassLines(api.data, me) : [] };
 }
 
 /** The questions for whoever is reading. */
@@ -65,6 +69,9 @@ function cardHtml(api, pl, who) {
     <p class="pc-k">${icon('brand')} Paths · for ${esc(FOR[who] || 'you')}</p>
     <p class="pc-year">${esc(LABEL[pl.y])} <span>${pl.open} of 8 ${esc(pl.word)}</span></p>
     ${pl.goal ? `<p class="pc-goal">${icon('target')} ${esc(goalLine(api, pl.goal))}</p>` : ''}
+    ${pl.goal && pl.goal.why && pl.me ? `<p class="pc-why">${esc(pl.goal.why)}</p>` : ''}
+    ${pl.meLines.length ? `<div class="pc-me">${compassSvg({ enjoy: pl.me.enjoy.length, strengths: pl.me.strengths.length, values: pl.me.values.length, goal: pl.goal ? 1 : 0 }, { mini: true })}
+      <dl>${pl.meLines.map(([k, list]) => `<div><dt>${esc(k)}</dt><dd>${list.map((w) => esc(w)).join(' · ')}</dd></div>`).join('')}</dl></div>` : ''}
     <p class="pc-levels">${pl.levels.map((l) => `<span class="pl-chip" data-level="${l.lv}">${esc(l.name)} <b>${l.lv}</b></span>`).join('')}</p>
     ${pl.top ? `<div class="pc-move"><p class="pc-mk">Best move</p><p class="pc-mr">${esc(pl.top.result)}</p><p class="small">${esc(pl.top.cond.charAt(0).toUpperCase() + pl.top.cond.slice(1))}.</p></div>` : ''}
     <div class="pc-q"><p class="pc-mk">Questions to ask</p>${questionsFor(api, who, pl).map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>
@@ -99,6 +106,12 @@ async function cardImage(api, pl, who) {
   x.fillStyle = '#FFC21A'; x.font = '700 40px "Bricolage Grotesque", sans-serif'; x.fillText(`${pl.open} of 8 ${pl.word}`, 80, 380);
   let y = 450;
   if (pl.goal) { x.fillStyle = '#EEF2FB'; x.font = '700 36px "Bricolage Grotesque", sans-serif'; y = wrap(x, `Aiming for: ${goalLine(api, pl.goal)}`, 80, y, 920, 46) + 14; }
+  // The compass, only when the student switched it on: one line for each part.
+  pl.meLines.forEach(([k, list]) => {
+    x.fillStyle = '#A9B6D6'; x.font = '700 24px "JetBrains Mono", monospace'; x.fillText(k.toUpperCase(), 80, y);
+    x.fillStyle = '#EEF2FB'; x.font = '500 28px "Bricolage Grotesque", sans-serif'; y = wrap(x, list.join(' · '), 300, y, 700, 36) + 8;
+  });
+  if (pl.meLines.length) y += 14;
   // Levels as chips.
   x.font = '700 30px "Bricolage Grotesque", sans-serif';
   let cx = 80; const chipH = 54;
@@ -138,13 +151,18 @@ export const share = {
         <p><button type="button" class="btn press" data-action="go" data-s="path">Set your levels ${icon('arrow')}</button></p></div>`;
       return;
     }
-    const pl = readPlan(api, y, st.plans[y] || {}, st.goal);
+    const hasMe = compassLines(api.data, st.compass).length > 0;
+    const withMe = hasMe && q.me === '1';
+    const pl = readPlan(api, y, st.plans[y] || {}, st.goal, withMe ? st.compass : null);
     root.innerHTML = `
     <div class="wrap-narrow sharewrap">
       <p class="ph-k">Share</p>
       <h1>Who is it for?</h1>
       <div class="segtabs compact" role="tablist" aria-label="Who it is for">${Object.entries(FOR).map(([k, v]) => `<button type="button" role="tab" class="segtab press" data-action="go" data-s="share" data-for="${k}" data-y="${y}" aria-selected="${k === who}">${esc(v.replace('My ', ''))}</button>`).join('')}</div>
       ${cardHtml(api, pl, who)}
+      ${hasMe ? `<button type="button" class="setrow press" role="switch" aria-checked="${withMe}" data-action="sh-me">
+        <span><strong>Add your compass</strong><span class="small">What you enjoy, are good at and care about. Off unless you turn it on.</span></span>
+        <span class="switch" aria-hidden="true"><i></i></span></button>` : ''}
       <p class="btnrow">
         <button type="button" class="btn press" data-action="sh-image">${icon('copy')} Share image</button>
         <button type="button" class="btn ghost press" data-action="sh-link">Copy link</button>
@@ -156,8 +174,9 @@ export const share = {
     </div>`;
     const note = root.querySelector('#sh-note');
     onAction(root, {
+      'sh-me': () => { api.setQuery({ me: withMe ? null : '1' }); api.refresh(); },
       'sh-link': async () => {
-        const url = linkFor(packFor(getState(), y), who);
+        const url = linkFor(packFor(getState(), y, withMe), who);
         try {
           if (navigator.share) { await navigator.share({ title: 'My Paths plan', url }); return; }
           await navigator.clipboard.writeText(url); note.textContent = 'Link copied.';
@@ -189,7 +208,7 @@ export const shared = {
       return;
     }
     const who = FOR[q.for] ? q.for : 'parent';
-    const pl = readPlan(api, pk.y, pk.plan, pk.goal);
+    const pl = readPlan(api, pk.y, pk.plan, pk.goal, pk.me);
     root.innerHTML = `
     <div class="wrap-narrow sharewrap">
       <h1 class="sr-only">A shared plan</h1>

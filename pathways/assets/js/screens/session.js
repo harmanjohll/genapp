@@ -3,30 +3,39 @@
 // Built for a desk or a projector: large type, one idea per screen, and a
 // prompt for the adult on each step with a time guide. It reads the
 // student's own plan, or a plan shared by link (?d=), which it never saves.
-// The last step agrees one move and a date; on the student's own device
-// that move is saved to their list.
+//
+// 7.0: the five steps follow MOE's three guiding questions. Who you are
+// (the compass), where you stand, what you want, then one move and the
+// agreement. The last step agrees one step, a date and who it was agreed
+// with; on the student's own device those are saved to the goal. This is
+// the only counsellor flow: the adults page opens it, and no longer keeps a
+// second, shorter guide that disagreed with it.
 
-import { getState, toggleAction, YEARS } from '../state.js?v=6.0.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=6.0.0';
-import { advise } from '../engine/advice.js?v=6.0.0';
-import { goalMoves } from '../engine/goal.js?v=6.0.0';
-import { sayMove } from '../ui/talk.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
-import { stateWord } from '../ui/labels.js?v=6.0.0';
-import { goalLine } from './path.js?v=6.0.0';
-import { readPlan } from './share.js?v=6.0.0';
-import { decodePacket } from '../engine/packet.js?v=6.0.0';
+import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.0.0';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
+import { advise } from '../engine/advice.js?v=7.0.0';
+import { goalMoves } from '../engine/goal.js?v=7.0.0';
+import { sayMove } from '../ui/talk.js?v=7.0.0';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
+import { stateWord } from '../ui/labels.js?v=7.0.0';
+import { goalLine } from './path.js?v=7.0.0';
+import { readPlan } from './share.js?v=7.0.0';
+import { decodePacket } from '../engine/packet.js?v=7.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
-const STEPS = [
-  { t: 'Where you are', min: 2, ask: 'Ask: which of these levels feels right, and which feels wrong?' },
+export const STEPS = [
+  { t: 'Who you are', min: 3, ask: 'Ask: which of these is most you? What shows it?' },
   { t: 'Where you stand', min: 3, ask: 'Ask: which place here surprises you?' },
   { t: 'What you want', min: 3, ask: 'Ask: what work do you picture yourself doing? What draws you to it?' },
-  { t: 'One move', min: 4, ask: 'Ask: what would make this move realistic this term?' },
-  { t: 'Agree a next step', min: 3, ask: 'Agree one step and a date. Write it down together.' },
+  { t: 'One move', min: 3, ask: 'Ask: what would make this move realistic this term?' },
+  { t: 'Agree it', min: 3, ask: 'Agree one step and a date. Say who will ask about it.' },
 ];
+
+const inDays = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+const niceDay = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 export default {
   id: 'session',
@@ -42,6 +51,7 @@ export default {
     const y = pk ? pk.y : (q.y && PLAN_YEARS.includes(q.y) ? q.y : e.yearId);
     const plan = pk ? pk.plan : ((y && st.plans[y]) || {});
     const goal = pk ? pk.goal : st.goal;
+    const me = pk ? pk.me : st.compass;
     const n = Math.min(5, Math.max(1, Number(q.step) || 1));
     if (!y || !Object.keys(plan).length) {
       root.innerHTML = `<div class="wrap-narrow session"><h1>Set the levels first</h1><p class="lede">A session reads one year's levels.</p><p><button type="button" class="btn big press" data-action="go" data-s="path">Open the path</button></p></div>`;
@@ -51,15 +61,36 @@ export default {
     const c = api.ctx();
     const moves = [...(goal ? goalMoves(goal, y, plan, c) : []), ...advise({ yearId: y, plan, ctx: c }).singles].filter((m, i, all) => all.findIndex((x) => x.line === m.line) === i).slice(0, 3);
     const S = STEPS[n - 1];
+    const lines = me ? compassLines(api.data, me) : [];
     let body = '';
-    if (n === 1) body = `<p class="ss-big">${esc(LABEL[y])}</p><p class="pc-levels big">${pl.levels.map((l) => `<span class="pl-chip" data-level="${l.lv}">${esc(l.name)} <b>${l.lv}</b></span>`).join('')}</p>`;
-    if (n === 2) body = `<p class="ss-big">${pl.open} of 8 ${esc(pl.word)}</p><ul class="pafter big">${pl.rows.map((r) => `<li><div class="pa-row" data-goal="${!!(goal && r.id === goal.dest)}"><span class="pa-name">${esc(r.railName)}</span><span class="pill" data-tone="${esc(r.state)}">${esc(stateWord(r.state, r.lens))}</span></div></li>`).join('')}</ul>`;
-    if (n === 3) body = goal ? `<p class="ss-big">${icon('target')} ${esc(goalLine(api, goal))}</p>` : `<p class="ss-big">No goal yet</p><p class="lede">That is fine at this stage. Start from what the student enjoys.</p>${own ? `<p><button type="button" class="btn big press" data-action="go" data-s="goal">Find a goal together</button></p>` : ''}`;
+    if (n === 1) {
+      body = lines.length
+        ? `<div class="ss-me">${compassSvg(own ? compassFill() : { enjoy: me.enjoy.length, strengths: me.strengths.length, values: me.values.length, goal: goal ? 1 : 0 }, { mini: true })}
+            <dl class="melines big">${lines.map(([k, list]) => `<div><dt>${esc(k)}</dt><dd>${list.map((w) => esc(w)).join(' · ')}</dd></div>`).join('')}</dl></div>`
+        : `<p class="ss-big">Nothing on the compass yet</p><p class="lede">Start here. Ask what the student enjoys, is good at and cares about.</p>
+           ${own ? `<p><button type="button" class="btn big press" data-action="go" data-s="me">Fill it in together</button></p>` : ''}`;
+    }
+    if (n === 2) {
+      body = `<p class="ss-big">${esc(LABEL[y])}: ${pl.open} of 8 ${esc(pl.word)}</p>
+        <p class="pc-levels big">${pl.levels.map((l) => `<span class="pl-chip" data-level="${l.lv}">${esc(l.name)} <b>${l.lv}</b></span>`).join('')}</p>
+        <ul class="pafter big">${pl.rows.map((r) => `<li><div class="pa-row" data-goal="${!!(goal && r.id === goal.dest)}"><span class="pa-name">${esc(r.railName)}</span><span class="pill" data-tone="${esc(r.state)}">${esc(stateWord(r.state, r.lens))}</span></div></li>`).join('')}</ul>`;
+    }
+    if (n === 3) {
+      body = goal
+        ? `<p class="ss-big">${icon('target')} ${esc(goalLine(api, goal))}</p>${goal.why ? `<p class="lede">${esc(goal.why)}</p>` : ''}`
+        : `<p class="ss-big">No goal yet</p><p class="lede">That is fine at this stage. Start from what the student enjoys.</p>${own ? `<p><button type="button" class="btn big press" data-action="go" data-s="goal">Find a goal together</button></p>` : ''}`;
+    }
     if (n === 4) body = pl.top ? `<p class="ss-big">${esc(pl.top.result)}</p><p class="lede">${esc(pl.top.cond.charAt(0).toUpperCase() + pl.top.cond.slice(1))}.</p><p class="bubble">${esc(sayMove(pl.top, 'student'))}</p>` : '<p class="ss-big">No move needed</p>';
     if (n === 5) {
-      body = `<p class="lede">Pick the one step to try first. Do it before the school's next review.</p>
-        <div class="glist">${moves.map((m, i) => `<button type="button" class="gcard press" data-action="ss-agree" data-i="${i}"><span class="gcard-t">${esc(m.result)}</span><span class="gcard-p">${esc(m.cond.charAt(0).toUpperCase() + m.cond.slice(1))}.</span></button>`).join('')}</div>
-        <p class="small" id="ss-note" role="status">${own ? 'The agreed step is saved to the student\'s moves.' : 'This plan came by link, so nothing is saved here. Write the step down together.'}</p>`;
+      const by = own && goal ? goal.by : (q.by || null);
+      const saved = own
+        ? (goal ? 'The step and the date are saved to the student\'s goal.' : 'The step is saved to the student\'s steps. Set a goal to keep a date with it.')
+        : 'This plan came by link, so nothing is saved here. Write it down together.';
+      body = `<p class="py-k">1. The step</p>
+        <div class="glist">${moves.map((m, i) => `<button type="button" class="gcard press" data-action="ss-agree" data-i="${i}" aria-pressed="${own && st.actions.includes(sayMove(m, st.role))}"><span class="gcard-t">${esc(m.result)}</span><span class="gcard-p">${esc(m.cond.charAt(0).toUpperCase() + m.cond.slice(1))}.</span></button>`).join('')}</div>
+        <p class="py-k">2. Look at it again in</p>
+        <div class="chipset">${[[14, '2 weeks'], [30, '1 month'], [90, '3 months']].map(([d, label]) => `<button type="button" class="mechip press" data-action="ss-by" data-n="${d}" aria-pressed="${by === inDays(d)}">${esc(label)}</button>`).join('')}</div>
+        <p class="small" id="ss-note" role="status">${by ? `Agreed: look again by ${esc(niceDay(by))}. ` : ''}${esc(saved)}</p>`;
     }
     root.innerHTML = `
     <div class="session">
@@ -83,17 +114,24 @@ export default {
     document.addEventListener('keydown', onKey, { once: true });
     onAction(root, {
       'ss-go': (btn) => go(Number(btn.dataset.n)),
-      'ss-exit': () => { api.nav(own ? 'path' : 'shared', own ? {} : { d: q.d, for: 'counsellor' }); },
+      'ss-exit': () => { api.nav(own ? (goal ? 'goal' : 'path') : 'shared', own ? {} : { d: q.d, for: 'counsellor' }); },
       'ss-agree': (btn) => {
         const m = moves[Number(btn.dataset.i)];
-        const note = root.querySelector('#ss-note');
         if (own) {
           const say = sayMove(m, getState().role);
           if (!getState().actions.includes(say)) toggleAction(say);
-          note.textContent = 'Saved to the student\'s moves.';
+          if (getState().goal) patchGoal({ who: 'ecg' });
+          api.refresh();
         } else {
-          note.textContent = `Agreed: ${m.result}, ${m.cond}.`;
+          root.querySelectorAll('[data-action="ss-agree"]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+          root.querySelector('#ss-note').textContent = `Agreed: ${m.result}, ${m.cond}. Write it down together.`;
         }
+      },
+      'ss-by': (btn) => {
+        const d = inDays(Number(btn.dataset.n));
+        if (own && getState().goal) patchGoal({ by: d, who: getState().goal.who || 'ecg' });
+        else api.setQuery({ by: d });
+        api.refresh();
       },
     });
   },

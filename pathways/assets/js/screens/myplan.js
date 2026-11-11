@@ -9,22 +9,28 @@
 //
 // 6.0: the Saved tab. It also opens v5's plan card and share link, and the
 // 15 minute counsellor session, from the top of the page.
+//
+// 7.0: this is the record of all three questions. The goal and its why sit
+// on the pass, the compass has its own card, and each saved step can be
+// ticked as done. It prints as one page for a parent or a review.
 
-import { getState, toggleAction, carryUrl, carrySummary, YEARS } from '../state.js?v=6.0.0';
-import { reach } from '../engine/reach.js?v=6.0.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=6.0.0';
-import { advise, sayName } from '../engine/advice.js?v=6.0.0';
-import { report } from '../engine/grades.js?v=6.0.0';
-import { psleScore } from '../engine/psle.js?v=6.0.0';
-import { openCount, mapPips } from '../ui/map.js?v=6.0.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=6.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=6.0.0';
-import { boardHtml } from '../ui/board.js?v=6.0.0';
-import { signalHtml } from '../ui/signal.js?v=6.0.0';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=6.0.0';
-import { STRIP } from '../ui/yearstrip.js?v=6.0.0';
-import { esc, onAction } from '../ui/dom.js?v=6.0.0';
-import { icon } from '../ui/icons.js?v=6.0.0';
+import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.0.0';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.0.0';
+import { goalLine } from './path.js?v=7.0.0';
+import { reach } from '../engine/reach.js?v=7.0.0';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
+import { advise, sayName } from '../engine/advice.js?v=7.0.0';
+import { report } from '../engine/grades.js?v=7.0.0';
+import { psleScore } from '../engine/psle.js?v=7.0.0';
+import { openCount, mapPips } from '../ui/map.js?v=7.0.0';
+import { sayMove, roleWords } from '../ui/talk.js?v=7.0.0';
+import { ticketHtml } from '../ui/ticket.js?v=7.0.0';
+import { boardHtml } from '../ui/board.js?v=7.0.0';
+import { signalHtml } from '../ui/signal.js?v=7.0.0';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.0.0';
+import { STRIP } from '../ui/yearstrip.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.0.0';
+import { icon } from '../ui/icons.js?v=7.0.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -48,8 +54,10 @@ export default {
     const rep = g && anyGrades ? report({ plan: c.plan, grades: st.grades, g, names: Object.fromEntries(c.subjects.map((s) => [s.id, sayName(s)])), destNames: Object.fromEntries(c.destinations.map((d) => [d.id, d.railName])) }) : [];
     const yearMeta = ((api.data.years || {}).years || {})[st.year] || {};
     const talk = (yearMeta.talk && yearMeta.talk[st.role]) || [];
-    const wants = ((api.data.futures || {}).futures || []);
-    const want = st.aim ? wants.find((w) => w.id === st.aim) : null;
+    const meLines = compassLines(api.data, st.compass);
+    const doneN = st.actions.filter((a) => st.done[a]).length;
+    const who = ((((api.data.goals || {}).steps || {}).who) || {})[st.goal && st.goal.who] || '';
+    const by = st.goal && st.goal.by ? new Date(st.goal.by).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
 
     const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
     root.innerHTML = `
@@ -62,6 +70,8 @@ export default {
           </div>
           <p class="pass-open"><b>${open}</b><span>of ${rows.length} ${openWord(rows)}</span></p>
         </div>
+        ${st.goal ? `<p class="pass-goal">${icon('target')}<span><b>${esc(goalLine(api, st.goal))}</b>${st.goal.why ? `<small>${esc(st.goal.why)}</small>` : ''}${by || who ? `<small>${by ? `Look again by ${esc(by)}` : ''}${by && who ? ' · ' : ''}${who ? `Agreed with: ${esc(who.charAt(0).toLowerCase() + who.slice(1))}` : ''}</small>` : ''}</span></p>`
+    : `<p class="pass-goal no-print"><button type="button" class="btn ghost on-night small press" data-action="go" data-s="goal">${icon('target')} Set a goal</button></p>`}
         <ol class="pass-line">
           ${isShort() && !sc.complete && !(st.yearSet && st.year === 'p6') ? '' : `<li data-filled="${sc.complete}" data-now="${st.yearSet && st.year === 'p6'}">
             <button type="button" class="pl-stn press no-print-btn" data-action="go" data-s="year" data-y="p6"><i></i><b>P6</b></button>
@@ -93,13 +103,25 @@ export default {
         </section>
 
         <section class="destsec">
-          <h2 class="advh">${esc(t('keptList'))}</h2>
-          ${want ? `<p class="small">Want: <strong>${esc(want.want || want.id)}</strong></p>` : ''}
-          ${st.actions.length ? `<ul class="keptlist">${st.actions.map((a, i) => `<li>${icon('ticket')}<span>${esc(a)}</span><button type="button" class="linkbtn small no-print" data-action="mp-drop" data-i="${i}">Remove</button></li>`).join('')}</ul>`
+          <h2 class="advh">${esc(t('keptList'))}${st.actions.length ? ` <span class="gcount">${doneN} of ${st.actions.length} done</span>` : ''}</h2>
+          ${st.actions.length ? `<ul class="steplist">${st.actions.map((a, i) => `<li data-done="${!!st.done[a]}">
+            <button type="button" class="stepcheck press" role="checkbox" aria-checked="${!!st.done[a]}" data-action="mp-done" data-i="${i}" aria-label="Done: ${esc(a)}">${st.done[a] ? icon('check') : ''}</button>
+            <span>${esc(a)}</span>
+            <button type="button" class="iconbtn press no-print" data-action="mp-drop" data-i="${i}" aria-label="Remove this step">${icon('x')}</button></li>`).join('')}</ul>`
             : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">Each move comes with words to say to a teacher or parent.</p></div>`}
-          <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="act">Pick three moves for this term</button></p>
+          <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="goal">${st.goal ? 'Add steps on your goal' : 'Set a goal and add steps'}</button></p>
         </section>
       </div>
+
+      <section class="destsec mecard">
+        <button type="button" class="mecard-rose press no-print-btn" data-action="go" data-s="me" aria-label="Open Me">${compassSvg(compassFill(), { mini: true })}</button>
+        <div>
+          <h2 class="advh">${st.role === 'student' ? 'Who you are' : 'Who they are'}</h2>
+          ${meLines.length ? `<dl class="melines">${meLines.map(([k, list]) => `<div><dt>${esc(k)}</dt><dd>${list.map((w) => esc(w)).join(' · ')}</dd></div>`).join('')}</dl>`
+    : `<p class="small no-print">Nothing on the compass yet. <button type="button" class="linkbtn" data-action="go" data-s="me">Open Me</button></p>`}
+          ${st.compass.notes.length ? `<p class="small">${esc(st.compass.notes[st.compass.notes.length - 1].text)}</p>` : ''}
+        </div>
+      </section>
 
       ${top.length ? `
       <section class="destsec">
@@ -129,6 +151,7 @@ export default {
 
     onAction(root, {
       'mp-print': () => window.print(),
+      'mp-done': (btn) => { const a = getState().actions[Number(btn.dataset.i)]; if (a) toggleDone(a); api.refresh(); },
       'mp-drop': (btn) => { const a = getState().actions[Number(btn.dataset.i)]; if (a) toggleAction(a); api.refresh(); },
       'mp-carry': async () => {
         const url = carryUrl();

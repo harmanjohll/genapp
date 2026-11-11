@@ -2,7 +2,7 @@
   "_meta": {
     "source": "MOE Full SBB pages, SEAB SEC overview, MOE SchoolFinder guidance. Written for parents of the first SEC cohorts.",
     "url": "https://www.moe.gov.sg/secondary/schools-offering-full-sbb",
-    "accessed": "2026-08-05",
+    "accessed": "2026-11-11",
     "units": "not applicable",
     "notes": "One calm page. The parent is very often the person actually driving the subject combination decision, working from the system they went through, which no longer exists. Tone rules: never tells a parent they are wrong, never ranks routes, no dashes."
   },
@@ -118,5 +118,60 @@
     "note": "Opens as a guest. The game saves nothing to this phone, and handing it back leaves everything exactly as it was."
   },
   "windowsHead": "The windows, roughly when they open",
-  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise."
+  "windowsNote": "Months drift from year to year, so every row needs checking against the named page. The knowledge is the order, and that none of these should arrive as a surprise.",
+  "changes": [
+    {
+      "year": "2021",
+      "head": "PSLE scored in Achievement Levels",
+      "body": "Each subject gets AL1 to AL8. The PSLE Score is their sum, from 4 to 32."
+    },
+    {
+      "year": "2024",
+      "head": "Streams end",
+      "body": "No more Express or Normal streams. Each subject is taken at G1, G2 or G3."
+    },
+    {
+      "year": "2027",
+      "head": "One exam, the SEC",
+      "body": "The Singapore Cambridge Secondary Education Certificate replaces the O and N Levels."
+    },
+    {
+      "year": "2028",
+      "head": "New admission rules",
+      "body": "JC counts five subjects. Polytechnic counts one subject at G2. One admissions exercise covers them all."
+    }
+  ],
+  "changesHead": "What changed",
+  "thenNow": {
+    "head": "Your stream, in today's words",
+    "ask": "Which stream were you in?",
+    "cols": {
+      "levels": "Subjects now",
+      "group": "Posting Group",
+      "exam": "The exam"
+    },
+    "rows": {
+      "express": {
+        "label": "Express",
+        "levels": "Mostly G3",
+        "group": "Group 3",
+        "exam": "O Level, now the SEC"
+      },
+      "na": {
+        "label": "Normal (Academic)",
+        "levels": "Mostly G2",
+        "group": "Group 2",
+        "exam": "N(A) Level, now the SEC"
+      },
+      "nt": {
+        "label": "Normal (Technical)",
+        "levels": "Mostly G1",
+        "group": "Group 1",
+        "exam": "N(T) Level, now the SEC"
+      }
+    },
+    "note": "The change: your child takes each subject at its own level, and a level can move."
+  },
+  "askHead": "Three things to ask this week",
+  "moreHead": "More for parents"
 }
