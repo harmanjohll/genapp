@@ -174,7 +174,7 @@
         "name": "ELR2B2 A: mostly business, humanities and media courses",
         "needs": [
           {
-            "text": "R1 is an arts, business or Humanities subject, such as Art, Economics, Geography, History, Literature, Music or Humanities (Social Studies with an elective).",
+            "text": "R1 is an arts, business or Humanities subject. Examples: Art, Economics, Geography, History, Literature, Music, Humanities (Social Studies, Geography).",
             "subjects": [
               "art",
               "higher_art",
@@ -194,7 +194,7 @@
             "sourceRef": "moe_poly_types_2026"
           },
           {
-            "text": "R2 is a second subject from that list, or Mathematics, Additional Mathematics, Mother Tongue, Design and Technology, Nutrition and Food Science or Principles of Accounts. No science counts.",
+            "text": "R2 is a second subject from that list, or one of these. Mathematics, Additional Mathematics, Mother Tongue, Design and Technology, Nutrition and Food Science, Principles of Accounts. No science counts.",
             "subjects": [
               "art",
               "higher_art",
@@ -239,7 +239,7 @@
             "sourceRef": "moe_pse_poly"
           },
           {
-            "text": "R2 is an arts, business or Humanities subject, such as Principles of Accounts, Economics, Geography, History, Literature, Art, Music or Humanities (Social Studies with an elective).",
+            "text": "R2 is an arts, business or Humanities subject. Examples: Principles of Accounts, Economics, Geography, History, Literature, Art, Music, Humanities (Social Studies, History).",
             "subjects": [
               "art",
               "higher_art",
@@ -278,7 +278,7 @@
             "sourceRef": "moe_poly_types_2026"
           },
           {
-            "text": "R2 is a science or technology subject: a Science, Physics, Chemistry, Biology, Computing, Design and Technology, Nutrition and Food Science, Electronics or Exercise and Sports Science.",
+            "text": "R2 is a science or technology subject. A Science, Physics, Chemistry, Biology, Computing, Design and Technology, Nutrition and Food Science and Electronics all count.",
             "subjects": [
               "physics",
               "chemistry",
@@ -513,7 +513,7 @@
         "name": "Engineering",
         "needs": [
           {
-            "text": "2026 example, Higher Nitec in Electronics Engineering: Mathematics or Science at G1 grade D or G2 grade 5 or better, plus any two other subjects.",
+            "text": "2026 example, Higher Nitec in Electronics Engineering. Mathematics or Science at G1 grade D or G2 grade 5 or better, plus any two other subjects.",
             "subjects": [
               "maths",
               "science_g1",

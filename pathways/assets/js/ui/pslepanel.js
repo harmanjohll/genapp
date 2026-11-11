@@ -71,13 +71,14 @@ function choicesHtml(api, psle, rules, names) {
   if (!ch) return '';
   const said = (list, one, many) => `${listNames(list)} ${list.length > 1 ? many : one}`;
   const effect = (pk) => {
-    if (!pk.up) return 'A steadier start. Levels can move up at school reviews.';
+    if (!pk.up) return 'A steadier start. Your school can move a level later.';
     if (pk.opens.length) return `${said(pk.opens, 'is on track', 'are on track')}${pk.nearer.length ? `, and ${said(pk.nearer, 'comes closer', 'come closer')}` : ''}.`;
     if (pk.nearer.length) return `${said(pk.nearer, 'comes closer', 'come closer')}.`;
     return 'No place changes yet.';
   };
   const why = (pk) => {
-    if (!pk.up) return `Taken at Foundation, so the school can offer it at ${pk.level}.`;
+    // The reason comes from MOE's table: Foundation, or a Standard AL 6 to 8 in Mother Tongue.
+    if (!pk.up) return pk.why || `The school can offer it at ${pk.level}.`;
     if (pk.level === ch.base) return 'The level your Posting Group starts at.';
     return `Your PSLE ${names[pk.sid]} ${pk.result} allows it.`;
   };

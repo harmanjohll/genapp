@@ -48,7 +48,7 @@
           "note": "The grades are confirmed. MOE lists Mother Tongue, or an approved language in its place, as a required subject and does not say what applies to a student without one. With no Mother Tongue grade entered, this floor is left unchecked. Confirm with the school."
         }
       ],
-      "conditionalNote": "Conditional admission, from the 2028 PSE. With a floor grade missed: JC at L1R4 12 or better, or 13 to 16 with A1 or A2 in all four R subjects; MI at 15 or better, or 16 to 20 likewise. The grade must be reached by the end of Year 1. An Absent grade does not qualify. The engine applies it only where the subject was sat at a level the floor reads."
+      "conditionalNote": "Conditional admission, from the 2028 PSE. With a floor grade missed: JC at L1R4 12 or better, or 13 to 16 with A1 or A2 in all four R subjects; MI at 15 or better, or 16 to 20 likewise. The grade must be reached by the end of Year 1. An Absent grade does not qualify. MOE's page does not say how many floors may be missed, so none is assumed here. The engine applies it only where the subject was sat at a level the floor reads."
     },
     {
       "id": "ELR2B2", "name": "ELR2B2", "level": "G3", "status": "confirmed", "sourceRef": "moe_pse_poly",

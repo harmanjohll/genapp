@@ -255,7 +255,7 @@ function judge(a, d, es, g) {
   const calc = CALC[a.id];
   const r = d.exclude ? calc(es, g, { exclude: d.exclude }) : calc(es, g);
   if (d.g3Passes && g3Passes(es, g) >= d.g3Passes) {
-    return { r, meets: true, gap: null, via: `${g3Passes(es, g)} G3 passes at E8 or better, so the score is not read. Confirm with your school what counts as a pass` };
+    return { r, meets: true, gap: null, via: `${g3Passes(es, g)} G3 passes at E8 or better, so the score is not read. This route is for students who miss JC, MI and polytechnic. Confirm with your school what counts as a pass` };
   }
   if (r.value == null) return { r, meets: null, gap: null, via: null };
   const floors = r.value <= d.cutoff ? unmetFloors(a.floors, es, g) : [];

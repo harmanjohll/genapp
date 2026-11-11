@@ -213,8 +213,13 @@ export function policySweep(ctx, g, psleRules) {
   const pm = rep({ el: 'G2', maths: 'G2', mtl: 'G2', sci_pc: 'G2', hum_ss_geog: 'G2' }, { el: '4', maths: '1', mtl: '1', sci_pc: '1', hum_ss_geog: '1' });
   if (pm.pfp.meets || !/^Also needs/.test(pm.pfp.via || '')) fails.push('PFP met on ELMAB3 with English below grade 3');
 
-  // P6.
+  // P6. Higher Mother Tongue from the 2026 Sec 1 cohort: "PSLE MTL score of
+  // AL1/AL2 OR HMTL score of Distinction/Merit", whatever the PSLE Score (MOE,
+  // PSLE scoring system page, read in full on 2026-11-11:
+  // moe.gov.sg/psle-fsbb/psle/psle-scoring-system).
   if (!hmtlEligible({ mtl: { al: 4 }, hmtl: { grade: 'M' } })) fails.push('HMTL: a Merit in PSLE Higher Mother Tongue should qualify');
+  if (!hmtlEligible({ mtl: { al: 2 } })) fails.push('HMTL: AL 2 in PSLE Mother Tongue should qualify');
+  if (hmtlEligible({ mtl: { foundation: true, grade: 'A' } })) fails.push('HMTL: Foundation Mother Tongue should not qualify');
   if (hmtlEligible({ mtl: { al: 3 }, hmtl: { grade: 'P' } })) fails.push('HMTL: AL 3 with a Pass should not qualify');
   const pg3 = startLevels(3, { el: { foundation: true, grade: 'B' }, mtl: { al: 4 }, maths: { al: 4 }, science: { al: 5 } }, psleRules);
   if (!pg3.options.el.includes('G2') || !pg3.options.el.includes('G3')) fails.push('PG3 with Foundation English: G2 should be an option beside G3');
