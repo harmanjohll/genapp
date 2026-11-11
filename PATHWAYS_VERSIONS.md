@@ -2,18 +2,54 @@
 
 The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
 
-## Latest: v6.0.0, in `pathways/`. Build here.
+## Latest: v7.0.0, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
 - To release: `node pathways/tools/release.mjs x.y.z`, then add the notes to `pathways/data/version.json` and a line under the version below.
 
+### v7.0.0 (2026-11-11): the three questions
+
+**What is critical (keep these when building on it)**
+- Everything listed under v6 and v4 below, except the storage key and the four tabs.
+- **Five tabs** (`NAV_ITEMS` in `assets/js/main.js`), in the order of MOE's three guiding questions:
+  - **Me:** the compass (Who am I?).
+  - **Goal** (Where do I want to go?).
+  - **Path:** home (How do I get there?).
+  - **Play:** the game.
+  - **Saved:** the record.
+  - Explore and Act are gone. `?s=explore` lands on Path and `?s=act` on Goal. The places, jobs, fees, school types and the pages for adults are linked from the foot of the path.
+  - The Reachable sweep fails if any screen is more than two taps from the menu.
+- **One record of what a student wants.**
+  - `state.compass`: `enjoy` (two of the six interests), `strengths` (three, each with a line of proof), `values` (three), `notes` (six lines).
+  - `state.goal`: `sector`, `role`, `dest`, `family`, and now `why`, `by`, `who`, `setAt`, `checkedAt`.
+  - `state.done`: saved steps ticked as done, by their words.
+  - The old `aim` is gone. The game reads the compass's first interest (`play.js`, `introScreen`). Never add a second place to store a want.
+- **The compass is authored, never computed.** No type, no score, no match. `cleanCompass` in `engine/migrate.js` is the only shape it may take. A link carries its ids and never typed words (`engine/packet.js`, `packMe`).
+- **A goal is due a second look** after its date, or after three weeks (`goalDue` in `state.js`). The path's next step asks.
+- **Storage key `paths7.state.v1`.**
+  - The first visit reads `paths6.state.v1`, or joins v5 and v4.4 the way 6.0 did (`fromEarlier` in `engine/migrate.js`).
+  - The old keys are only read. The Migrate and Seven sweeps pin this.
+- **Offline cache `paths7-`.** It deletes `paths4-`, `paths5-` and `paths6-`. The frozen copies use `paths4legacy-` and `paths6legacy-`, so they are left alone.
+- **New styles go in `assets/css/v7.css`.** The compass hues (`--cp-*`) are fixed in both themes, because its disc is always navy.
+- **Facts.** Admission rules, school year facts and fees were read from the primary MOE and SEAB pages on 2026-11-11 (`research/`). Keep `_meta.accessed` and the source on every row that changes.
+
+**What changed**
+- Me: the compass, and a place for lines a student noticed about themselves.
+- Goal: why, steps to tick, a date, the adult it was agreed with, a drawn route, and a second look when it is due.
+- Path: the long view after the 8 places (ages 12 to 65, `data/lifelong.json`); the compass beside the goal; a door for parents and teachers when one is reading.
+- Play: starts from the compass and the goal; ends by offering one line for Me and one step. The false "my subjects changed" notice after the game's own level raise is fixed (`startPlan` in `play.js`).
+- Adults: picking Parent or Teacher under "I am" opens their page. What changed as four dates; an old stream in today's words; a lesson that names the five tabs; one counsellor session of five steps, which saves the step, the date and who agreed it.
+- Saved and Share: the goal and its why on the pass, a compass card, ticks on steps; the compass on a shared card only when switched on.
+- Evidence page: every "In this tool" line rewritten to what the app does.
+- 31 sweeps, adding Seven.
+
 ## One app again (from 2026-11-09)
 
 From 2026-11-04 to 2026-11-09 there were two sites: v4.4 in `pathways/` and v5 in `pathways5/`. v5 was v4.4 plus a new layer: 5 screens, 2 engine files, 2 data files, and a different menu. Every other file differed only in its version stamp. 6.0 is v5's code with v4.4's front doors back, at v4.4's address.
 
-### v6.0.0 (2026-11-09): one Paths
+### v6.0.0 (2026-11-09, legacy): one Paths
 
 **What is critical (keep these when building on it)**
 - Everything listed under v4 below, except the storage key.
@@ -39,6 +75,8 @@ From 2026-11-04 to 2026-11-09 there were two sites: v4.4 in `pathways/` and v5 i
 - **Offline cache `paths6-`.**
   - It deletes `paths4-` and `paths5-`.
   - The frozen v4.4 uses `paths4legacy-`, so it is left alone.
+
+**Why it was superseded:** it joined a planner and a game that kept separate records of what a student wants, and knew nothing about the student beyond levels. 7.0 rebuilt it around MOE's three questions. Its engine, rules, data and screens carry on inside 7.0; Explore and Act gave way to Path and Goal.
 
 **What changed**
 - One app at the same address. v4.4 is frozen in `legacy/pathways-v4/`, linked from Settings. `pathways5/` forwards to `pathways/`, keeping any `?query`, so shared plan links still open.
@@ -71,7 +109,7 @@ From 2026-11-04 to 2026-11-09 there were two sites: v4.4 in `pathways/` and v5 i
 | `genapp/pathways/` | The latest. Until 2026-10-31 this address was v1 |
 | `genapp/pathways4/`, `genapp/pathways5/` | Forward to the latest |
 | `genapp/pathways2/`, `genapp/pathways3/` | Forward to their legacy folders |
-| `genapp/legacy/pathways-v1/` to `-v4/` | The frozen versions |
+| `genapp/legacy/pathways-v1/` to `-v4/`, and `-v6/` | The frozen versions |
 
 The forwarding pages keep any `?query`, and remove any offline cache an old version registered at that address.
 
@@ -79,7 +117,8 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 
 | Version | Folder | Status | Dates | Built for |
 | --- | --- | --- | --- | --- |
-| v6.0.0 | `pathways/` | **Latest** | 2026-11-09 | One app: v5's path, goal, compare and sharing, with v4.4's hub, saved page and game |
+| v7.0.0 | `pathways/` | **Latest** | 2026-11-11 | MOE's three questions: Me (the compass), a goal with steps and a date, the path past 17, the game joined to both |
+| v6.0.0 | `legacy/pathways-v6/` | Legacy, frozen | 2026-11-09 to 2026-11-11 | One app: v5's path, goal, compare and sharing, with v4.4's hub, saved page and game |
 | v5.0.0 | none (folded into 6.0) | Superseded | 2026-11-04 to 2026-11-09 | One path, goal first planning, compare, sharing for the conversation |
 | v4.4.0 | `legacy/pathways-v4/` | Legacy, frozen | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |
 | v3.0.0 | `legacy/pathways-v3/` | Legacy, frozen | 2026-08-22 to 2026-08-23 | A new interface on v2's engine: the map as the product |
@@ -159,9 +198,9 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 - **What is critical:** the reach engine and its invariant, monotonicity, the data files with source and status on every figure, zero network calls, and the three modes (Now, Journey, the teacher and parent pages).
 - **Why it was superseded:** v2 rebuilt the interface, the game and the content after the first audit.
 
-## Starting the next version (v7)
+## Starting the next version (v8)
 
-1. Copy `pathways/` to `legacy/pathways-v6/`, give its offline cache its own prefix, and commit that copy on its own.
-2. Build v7 in `pathways/`; `node pathways/tools/release.mjs 7.0.0`.
-3. Update this log: the Latest line, a v7 section, and v6 moved to Legacy with why it was superseded.
+1. Copy `pathways/` to `legacy/pathways-v7/`, give its offline cache its own prefix, point its links to other legacy folders at `../pathways-vN/`, and commit that copy on its own.
+2. Build v8 in `pathways/`; `node pathways/tools/release.mjs 8.0.0`.
+3. Update this log: the Latest line, a v8 section, and v7 moved to Legacy with why it was superseded.
 4. Keep `pathways.html` and the forwarding pages as they are; they need no change.

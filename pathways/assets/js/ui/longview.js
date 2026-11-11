@@ -39,6 +39,7 @@ export function longViewHtml(lifelong, age, sel) {
       <span class="lv-you" style="left:${pct(Math.max(r.from, Math.min(r.to, age)), r).toFixed(2)}%" aria-hidden="true">You</span>
     </div>
     <div class="lv-ages" aria-hidden="true"><span>${r.from}</span><span>20</span><span>30</span><span>45</span><span>${r.to}</span></div>
+    <p class="lv-key">${bands.slice(0, 2).map((b) => `<span><i data-id="${esc(b.id)}"></i>${esc(b.you || b.label)}</span>`).join('')}</p>
     <div class="lv-card" aria-live="polite">
       <p class="lv-age">Age ${m.age}</p>
       <p class="lv-t">${esc(say.title)}</p>

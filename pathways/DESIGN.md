@@ -83,3 +83,49 @@ Problem: a first-time student did not know what to tap first. Fix:
 - **Four nav items**: Home, My year, Explore, My plan.
 - **Words switch** (`ui/labels.js`): plain words by default; Line mode turns
   on departures, tickets and a pass. Same visuals in both.
+
+## The three questions (2026-11-11)
+
+Audit of 6.0 against what Paths is for: showing possibilities, serving
+parents and teachers too, goal setting, role play, an internal compass, and
+ECG coaching.
+
+| Area | Finding in 6.0 | Answer |
+| --- | --- | --- |
+| Two apps | A planner (levels, places, moves) and a game (wants, dispositions, reflection) that never spoke. What a student wanted was stored twice, as `goal` and `aim` | One record. The game's want is the compass's first interest; the game starts from Me and the goal, and hands back one line and one step |
+| Who am I | One tap on six interests. Everything else about the student lived inside a game run | Me: a compass the student fills in. Interests, strengths with proof, values, and lines noticed |
+| Goal | A place and its subject rules. No why, no date, no steps beyond levels, no review | Why, steps to tick, a date, the adult it was agreed with, and a second look when it is due |
+| Past 17 | The line stopped at the 8 places | The long view: ages 12 to 65 to scale, ten markers, one open at a time |
+| Adults | Two taps down in Explore. The lesson plan and counsellor guide described screens that no longer existed; two counsellor flows disagreed | Role sets the front door. What changed as four dates; a stream in today's words; a lesson that names the tabs; one session |
+| Evidence | Claimed an ikigai feature no code backed, and a game that ran to 48 | Rewritten to what the app does |
+| Facts | Admission rules checked from search engine extracts | Read from the primary MOE and SEAB pages; see `research/` |
+
+### Decisions
+
+1. **MOE's three questions are the spine.** Me (Who am I?), Goal (Where do I
+   want to go?), Path (How do I get there?). Play rehearses all three; Saved
+   is the record. The path stays home and sits in the middle of five tabs.
+2. **The compass is authored, never computed.** The app keeps its refusal to
+   type a student. It offers words to tap; it does not infer, score or match
+   them. The only use made of a pick is ordering which sectors are shown.
+3. **Private by default.** The compass is on a shared card only when the
+   student switches it on. A link carries its ids, never typed words.
+4. **Game mechanics stay in the fiction.** No points, streaks or badges on a
+   real goal. The real side gets a date, a named adult and a tick.
+5. **One surface added, two removed.** Me is new. Explore and Act are gone;
+   their contents sit on Path and Goal, and their addresses forward.
+
+### The compass, drawn
+
+A navy disc with four points: Enjoy (north), Good at (east), Matters
+(south), Aim (west). A point grows as it is filled. The needle rests on the
+next point to fill and wavers until all four are in; then it settles on the
+aim. The four hues are fixed, because the disc is navy in both themes. A
+small form of the same drawing sits on the path, on Saved, on a shared card
+and in the session.
+
+### Gates added to `tools/verify.mjs`
+
+- Seven: what comes across from 6.0, the compass limits, goal dates, what a
+  link may carry, and that the lists the new screens read are whole.
+- Reachable: five tabs, every screen within two taps.

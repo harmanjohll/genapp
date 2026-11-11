@@ -310,3 +310,23 @@
   .melines div, .pc-me dl div { grid-template-columns: 1fr; gap: 1px; }
 }
 .planwrap .gcount { margin-left: 8px; }
+
+/* Compare: the table ran 11px past a 390px screen. */
+@media (max-width: 480px) {
+  .cmp-table { table-layout: fixed; }
+  .cmp-table th, .cmp-table td { padding: 8px 6px; overflow-wrap: anywhere; }
+  .cmp-table .pill { white-space: normal; }
+}
+
+/* The long view, second pass: the markers ride a rail above the bands, so a
+   dot never sits on a band's name. */
+.lv-track { padding-top: 22px; }
+.lv-track::before { content: ""; position: absolute; left: 0; right: 0; top: 37px; height: 2px; background: var(--rule); }
+.lv-m { top: 22px; height: 32px; }
+.lv-bands { margin-top: 34px; height: 30px; }
+.lv-you::after { height: 46px; width: 2px; opacity: 0.55; }
+.lv-band i { font-size: 0.62rem; letter-spacing: 0.02em; }
+.lv-key { display: flex; gap: 14px; margin: 0; font-size: 0.78rem; color: var(--ink-soft); }
+.lv-key span { display: inline-flex; align-items: center; gap: 6px; }
+.lv-key i { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); }
+.lv-key i[data-id="postsec"] { background: var(--night); box-shadow: 0 0 0 1px var(--night-rule); }

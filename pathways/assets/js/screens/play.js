@@ -285,9 +285,6 @@ function introScreen(host, data, st) {
           <p class="want-q">${esc(jc.wantPrompt)}</p>
           <p class="micro mute">${esc(jc.wantHint)}</p>
           ${goalText ? `<p class="play-goal">${icon('target')}<span><small>My goal</small> ${esc(goalText)}</span></p>` : ''}
-          ${/* Act asks this same question with the same six kinds. A student
-                arriving from there should be shown their answer, not asked it
-                again, or the app looks like it was not listening. */ ''}
           ${known ? `
             <div class="wantknown">
               <p class="micro mute">${esc(jc.wantKnown)}</p>
