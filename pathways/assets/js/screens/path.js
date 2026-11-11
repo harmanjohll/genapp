@@ -207,7 +207,7 @@ export default {
     root.innerHTML = `
     <div class="wrap-narrow pathwrap">
       <header class="ph arrive">
-        <p class="ph-k">Your path</p>
+        <p class="ph-k">How do I get there?</p>
         <h1>${st.role === 'student' ? 'From P6 to after Sec' : 'The path, P6 to after Sec'}</h1>
         <div class="ph-row">
           <button type="button" class="mechipbtn press" data-action="go" data-s="me" aria-label="Me: your compass, ${pointsFilled(compassFill())} of 4 points filled">${compassSvg(compassFill(), { mini: true })}</button>

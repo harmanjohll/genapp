@@ -89,9 +89,9 @@ function thenNowHtml(p) {
       ${Object.entries(rows).map(([id, r]) => `<button type="button" class="mechip press" data-action="ad-stream" data-id="${esc(id)}" aria-pressed="${id === stream}">${esc(r.label)}</button>`).join('')}
     </div>
     <div class="tn-card" aria-live="polite">
-      <div><span>${esc(cols.levels || 'Subjects now')}</span><b>${decorate(row.levels)}</b></div>
+      <div><span>${esc(cols.levels || 'Subjects now')}</span><b>${esc(row.levels)}</b></div>
       <div><span>${esc(cols.group || 'Posting Group')}</span><b>${esc(row.group)}</b></div>
-      <div><span>${esc(cols.exam || 'The exam')}</span><b>${decorate(row.exam)}</b></div>
+      <div><span>${esc(cols.exam || 'The exam')}</span><b>${esc(row.exam)}</b></div>
     </div>
     <p class="small">${decorate(tn.note || '')}</p>
   </section>`;
@@ -108,7 +108,7 @@ function parentTab(api) {
     <h2 id="chg-h">${esc(p.changesHead || 'What changed')}</h2>
     <ol class="chg">${(p.changes || []).map((c) => `<li>
       <b class="chg-y">${esc(c.year)}</b>
-      <span class="chg-t">${decorate(c.head)}</span>
+      <span class="chg-t">${esc(c.head)}</span>
       <span class="chg-b">${decorate(c.body)}</span></li>`).join('')}</ol>
   </section>
 
@@ -255,6 +255,7 @@ function counsellorTab(api) {
       <button type="button" class="btn big press" data-action="go" data-s="session">${icon('talk')} Start a session</button>
     </p>
     <p class="small">It reads the plan on this device. A plan a student shared by link opens the same session, and saves nothing.</p>
+    <p class="small">The steps follow MOE's three questions: Who am I? Where do I want to go? How do I get there? For interest profiles and course search, use the <a href="https://go.gov.sg/mysfsec" target="_blank" rel="noopener">MySkillsFuture Student Portal</a>.</p>
   </section>
 
   <details class="fold section">

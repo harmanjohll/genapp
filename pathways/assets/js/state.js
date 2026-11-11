@@ -12,7 +12,7 @@
 // 7.0 keeps its own key. On its first visit it reads what 6.0 saved on this
 // device, or joins v4.4 and v5 the way 6.0 did (engine/migrate.js). It never
 // writes to an old key, so the frozen builds in legacy/ keep their own plans.
-import { fromEarlier, cleanCompass, WANT_CODE } from './engine/migrate.js?v=7.0.0';
+import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.0.0';
 import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.0.0';
 
 const STORAGE_KEY = 'paths7.state.v1';
@@ -124,7 +124,7 @@ function load() {
   if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
   if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
   if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
-  if (base.goal && (typeof base.goal !== 'object' || !base.goal.dest)) base.goal = null;
+  base.goal = cleanGoal(base.goal);
   base.compass = cleanCompass(base.compass);
   // A want saved by an earlier build, or carried in an old link.
   if (WANT_CODE[base.aim] && !base.compass.enjoy.length) base.compass.enjoy = [WANT_CODE[base.aim]];
@@ -168,7 +168,7 @@ function load() {
       base._fromLink = true;
     }
     const gk = params.get('gk');
-    if (gk && !base.goal) { const pk = decodePacket(gk); if (pk && pk.goal) { base.goal = pk.goal; base._fromLink = true; } }
+    if (gk && !base.goal) { const pk = decodePacket(gk); if (pk && pk.goal) { base.goal = cleanGoal(pk.goal); base._fromLink = true; } }
     const sk = params.get('sk');
     if (sk && /^[a-z_]{2,20}$/.test(sk)) { base.schoolKind = sk; base._fromLink = true; }
     const act = params.get('act');

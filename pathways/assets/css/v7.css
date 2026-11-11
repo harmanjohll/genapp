@@ -288,3 +288,25 @@
 .session .gcard[aria-pressed="true"] { border-color: var(--ink); background: var(--open-wash); }
 .session .py-k { margin: 14px 0 8px; }
 @media (max-width: 520px) { .ss-me { grid-template-columns: 1fr; } .ss-me .compass { max-width: 120px; } }
+
+/* A fold that reads as a row to tap, with a mark that turns when it opens. */
+.adultwrap .fold > summary, .goalwrap .fold > summary {
+  list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 52px; padding: 10px 14px; border-radius: var(--r-md); border: 1.5px solid var(--rule); background: var(--surface); color: var(--ink); font-weight: 800;
+}
+.adultwrap .fold > summary::-webkit-details-marker, .goalwrap .fold > summary::-webkit-details-marker { display: none; }
+.adultwrap .fold > summary::after, .goalwrap .fold > summary::after {
+  content: ""; flex: none; width: 9px; height: 9px; border-right: 2.5px solid var(--ink-mute); border-bottom: 2.5px solid var(--ink-mute); transform: rotate(45deg); margin: 0 4px 4px 0; transition: transform 180ms var(--ease);
+}
+.adultwrap .fold[open] > summary::after, .goalwrap .fold[open] > summary::after { transform: rotate(-135deg); margin: 4px 4px 0 0; }
+.adultwrap .fold.section { padding: 0; border-top: 0; margin: 10px 0; }
+.adultwrap .fold[open] > summary { margin-bottom: 12px; }
+.adultwrap .tabstrip { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 0; overflow: visible; }
+.adultwrap .tabstrip button { padding-left: 6px; padding-right: 6px; font-size: 0.95rem; }
+@media (max-width: 359px) { .adultwrap .tabstrip button { font-size: 0.84rem; padding-left: 3px; padding-right: 3px; } }
+@media (max-width: 520px) {
+  .mecard { grid-template-columns: 56px minmax(0, 1fr); gap: 12px; }
+  .mecard-rose { width: 56px; height: 56px; }
+  .melines div, .pc-me dl div { grid-template-columns: 1fr; gap: 1px; }
+}
+.planwrap .gcount { margin-left: 8px; }

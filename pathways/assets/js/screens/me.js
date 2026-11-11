@@ -2,8 +2,9 @@
 //
 // 6.0 knew a student's levels and where they led, and nothing about the
 // student. The game tracked curiosity and persistence, but only inside a
-// story. This is the first of MOE's three guiding questions given its own
-// place: what you enjoy, what you are good at, what matters to you, and
+// story. This is the first of the three questions MOE's Education and Career
+// Guidance is built on ("Who am I?", "Where do I want to go?", "How do I get
+// there?"; moe.gov.sg, page updated 7 Sep 2026), given its own place: what you enjoy, what you are good at, what matters to you, and
 // where you are aiming.
 //
 // The student writes all of it. The app offers words to tap and never works
@@ -119,7 +120,7 @@ export default {
       root.innerHTML = `
       <div class="wrap-narrow mewrap">
         <header class="ph arrive">
-          <p class="ph-k">Me</p>
+          <p class="ph-k">Who am I?</p>
           <h1>${st.role === 'student' ? 'Your compass' : 'The compass'}</h1>
           <p class="lede">${st.role === 'student' ? 'Four things only you can say. Change them any time.' : 'Four things only the student can say.'}</p>
         </header>
@@ -135,6 +136,7 @@ export default {
           ${st.goal ? '' : `<button type="button" class="btn press" data-action="go" data-s="goal">${icon('target')} Set a goal from this</button>`}
           <button type="button" class="btn ${st.goal ? '' : 'ghost'} press" data-action="go" data-s="play">${icon('play')} Play it forward</button>
         </p>
+        <p class="small me-moe">MOE's portal goes further: <a href="https://go.gov.sg/mysfsec" target="_blank" rel="noopener">MySkillsFuture Student Portal</a>.</p>
       </div>`;
 
       // A point on the drawing opens its part, the same as its label.

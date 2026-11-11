@@ -4,6 +4,8 @@
 const LEVEL_CODE = { G1: '1', G2: '2', G3: '3' };
 const CODE_LEVEL = { 1: 'G1', 2: 'G2', 3: 'G3' };
 const YEARS = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5'];
+// MOE lists three PFP clusters; 6.0 had Design apart from Engineering and Technology.
+const FAMILY_NOW = { pfp_eng_tech: 'pfp_det', pfp_design: 'pfp_det' };
 
 export function packPlan(plan) {
   return Object.entries(plan || {}).map(([id, lv]) => `${id}${LEVEL_CODE[lv] || ''}`).join('~');
@@ -43,6 +45,8 @@ export function decodePacket(d) {
     const s = String(d).replace(/-/g, '+').replace(/_/g, '/');
     const o = JSON.parse(decodeURIComponent(escape(atob(s + '==='.slice((s.length + 3) % 4)))));
     if (!o || !YEARS.includes(o.y)) return null;
-    return { y: o.y, plan: unpackPlan(o.p), goal: o.g && o.g.dest ? o.g : null, me: o.m ? unpackMe(o.m) : null };
+    // A link made by 6.0 may name a course family by its old id.
+    const g = o.g && o.g.dest ? { ...o.g, family: FAMILY_NOW[o.g.family] || o.g.family || null } : null;
+    return { y: o.y, plan: unpackPlan(o.p), goal: g, me: o.m ? unpackMe(o.m) : null };
   } catch { return null; }
 }

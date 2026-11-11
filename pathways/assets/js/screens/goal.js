@@ -201,7 +201,7 @@ function summaryHtml(api, st) {
         <button type="button" class="btn press" data-action="g-still">${icon('check')} Yes, still my goal</button>
         <button type="button" class="btn ghost on-night press" data-action="go" data-s="goal" data-step="sector">Change it</button>
       </p></section>` : ''}
-    <p class="ph-k">Your goal</p>
+    <p class="ph-k">Where do I want to go?</p>
     <h1>${esc(goalLine(api, goal))}</h1>
     ${goalFamily(api, goal) ? `<p class="lede gfam">Courses: ${esc(goalFamily(api, goal))}</p>` : ''}
     ${fits.length ? `<p class="gfrom">${icon('compass')}<span>Fits what you enjoy: ${fits.map((x) => esc(x.label.charAt(0).toLowerCase() + x.label.slice(1))).join(' · ')}</span></p>` : ''}

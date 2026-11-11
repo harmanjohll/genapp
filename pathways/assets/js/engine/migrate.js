@@ -98,6 +98,16 @@ export function cleanCompass(c) {
   };
 }
 
+// MOE lists three Polytechnic Foundation Programme clusters. 6.0 had four,
+// with Design and Engineering and Technology apart; they are one cluster.
+const FAMILY_NOW = { pfp_eng_tech: 'pfp_det', pfp_design: 'pfp_det' };
+
+/** A saved goal, with a course family 6.0 named differently brought up to date. */
+export function cleanGoal(goal) {
+  if (!obj(goal) || !goal.dest) return null;
+  return FAMILY_NOW[goal.family] ? { ...goal, family: FAMILY_NOW[goal.family] } : goal;
+}
+
 /**
  * What 7.0 adds to a state saved by an earlier build.
  *   - compass: what the student enjoys, is good at and cares about
@@ -112,6 +122,7 @@ export function upgradeTo7(state) {
   if (code && !out.compass.enjoy.length) out.compass.enjoy = [code];
   delete out.aim;
   out.done = obj(out.done) ? { ...out.done } : {};
+  out.goal = cleanGoal(out.goal);
   return out;
 }
 
