@@ -320,7 +320,7 @@ function v4LowerSweep() {
 /** Verdicts MOE's published rules decide, pinned. */
 function v4PolicySweep() {
   const r = policySweep(ctx, readData('grades'), readData('psle'));
-  pass('Policy', r.ok, 'JC and MI with Mother Tongue at G2, R3, NAFA, PFP and Sec 5 grades, JC floors, HMTL, PG3 Foundation');
+  pass('Policy', r.ok, 'JC and MI with Mother Tongue at G2, R3, NAFA, PFP and Sec 5 grades, JC floors and conditional admission, HMTL, the Mother Tongue options');
   if (!r.ok) console.table(r.fails);
   return r;
 }

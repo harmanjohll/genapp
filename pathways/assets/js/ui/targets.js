@@ -32,6 +32,12 @@ function stepper(which, s, lv, cur) {
   </span>`;
 }
 
+/** The date the grade tables were read on MOE's pages, from the data itself. */
+function readOn(g) {
+  const d = new Date((g && g._meta && g._meta.accessed) || '');
+  return Number.isNaN(d.getTime()) ? 'from MOE' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 export function targetsHtml(api, y) {
   const st = getState();
   const plan = st.plans[y] || {};
@@ -132,7 +138,7 @@ function outHtml(api, y) {
       <h2 class="advh">Polytechnic by course type</h2>
       <p class="small">Each type counts different relevant subjects. Provisional until the 2028 lists in mid 2027.</p>
       <div class="famscores">${fam.map((f) => `<div><span>${esc(f.name)}</span><b>${f.value == null ? '·' : f.value}</b></div>`).join('')}</div>` : ''}
-    <p class="srcline">Scores use the MOE mapping tables, read 27 October 2026. Bonus points are not included. Course requirements and cut offs move every year; check with your ECG counsellor.</p>`;
+    <p class="srcline">Scores use the MOE mapping tables, read ${esc(readOn(g))}. Bonus points are not included. Course requirements and cut offs move every year; check with your ECG counsellor.</p>`;
 }
 
 export function bindTargets(root, api, y) {

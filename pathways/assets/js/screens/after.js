@@ -207,6 +207,9 @@ export const dest = {
           <p class="small">Each group of courses asks for different subjects. Most students need this from Sec 3.</p>
           <button type="button" class="btn ghost small press" data-action="dt-fam" data-on="1">Show course families</button>`) : ''}
 
+      ${(d.alsoIn || []).length ? destSec('Good to know', `
+        <ul class="dest-plain">${d.alsoIn.map((x) => `<li>${decorate(esc(x))}</li>`).join('')}</ul>`) : ''}
+
       ${routes.length ? destSec('Other routes in', `
         <ul class="dest-plain">${routes.map((x) => `<li><strong>${esc(x.label)}</strong>${x.years ? ` · ${esc(String(x.years))} years` : ''}${x.honest ? `. ${esc(x.honest)}` : ''}</li>`).join('')}</ul>`) : ''}
 
