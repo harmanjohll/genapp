@@ -165,6 +165,15 @@ export function policySweep(ctx, g, psleRules) {
   // SEC: NAFA and LASALLE count four other subjects, at most one at G2.
   const arts = { el: 'G3', mtl: 'G2', maths: 'G2', sci_pc: 'G2', hum_ss_geog: 'G2' };
   if (state('sec3', arts, 'arts') === 'open') fails.push('English G3 with four at G2 shows NAFA or LASALLE open');
+  // SEC: Art, Music and Economics are not Humanities for L1R4; Higher Art and
+  // Higher Music are (MOE's subject lists for the 2028 PSE, read 2026-11-11).
+  const artHum = { el: 'G3', maths: 'G3', sci_pc: 'G3', art: 'G3', poa: 'G3', hum_ss_geog: 'G2' };
+  if (state('sec3', artHum, 'jc') === 'open') fails.push('G3 Art read as the Humanities subject for Junior College');
+  if (state('sec3', { el: 'G3', maths: 'G3', sci_pc: 'G3', higher_art: 'G3', poa: 'G3', hum_ss_geog: 'G2' }, 'jc') !== 'open') fails.push('G3 Higher Art should count as the Humanities subject for Junior College');
+  // SEC: polytechnic stays open with Mathematics at G2 (type A courses can use
+  // another subject), and the row says Mathematics at G3 is usually needed.
+  const polyG2 = rowsFor('sec3', { el: 'G3', mtl: 'G3', sci_pc: 'G3', hum_ss_geog: 'G3', poa: 'G3', maths: 'G2' }, ctx).find((r) => r.id === 'poly');
+  if (polyG2.state !== 'open' || !/Maths to G3/.test(polyG2.status.text)) fails.push('Polytechnic with Mathematics at G2 should be open and say Maths to G3 is usually needed');
 
   // Grade targets.
   const rep = (plan, now) => Object.fromEntries(report({ plan, grades: { now, target: {} }, g }).flatMap((a) => a.dests.map((d) => [d.id, d])));

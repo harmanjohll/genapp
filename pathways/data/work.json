@@ -1,11 +1,11 @@
 {
  "_meta": {
-  "source": "SkillsFuture Singapore Skills Frameworks for the sector and role structures; ITE, polytechnic and autonomous university Graduate Employment Surveys for the pay bands; Ministry of Manpower occupational wage data",
+  "source": "Skills Frameworks for the sector and role structures, published by SkillsFuture Singapore, which merged with Workforce Singapore into the Skills and Workforce Development Agency on 1 July 2026; ITE, polytechnic and autonomous university Graduate Employment Surveys for the pay bands; MOE post secondary overview for ITE course structure",
   "url": "https://www.skillsfuture.gov.sg/skills-framework",
-  "accessed": "2026-08-09",
+  "accessed": "2026-11-11",
   "units": "Singapore dollars, gross monthly, for a first job",
   "status": "provisional",
-  "notes": "Pay is stated ONCE per level of entry and never per sector. Sector by sector figures would be dozens of numbers this build cannot defend, and comparing sectors on pay is a prestige ranking wearing a dollar sign, which this app does not render. Every band is provisional and needs a human against the named surveys before a class sees it. Sectors are ordered alphabetically by label so the ordering is visibly arbitrary. Every sector carries a real entry at three or more levels, which is checked, because the claim that a level of entry is not a ceiling is the load bearing claim of this file."
+  "notes": "Re-checked 2026-11-11. EVERY PAY BAND STAYS PROVISIONAL, and the work sweep requires it. What each rests on: degree, the Joint Autonomous Universities Graduate Employment Survey 2025, whose course cluster medians (3,840 to 5,500) were read on moe.gov.sg and whose overall median of 4,500 is a search extract; diploma, the Polytechnic Graduate Employment Survey 2025, median 3,000 for fresh and post NS graduates together and 3,137 post NS, both search extracts (the band was 2,500 to 2,900 and sat below the median); Nitec and Higher Nitec, a third party article quoting the ITE survey of 2024 (Nitec 2,000 to 2,050, Higher Nitec 2,100 to 2,300 for fresh graduates), by search extract, with the 2025 ITE survey not found, so those two bands are unchanged. ITE routes now read Higher Nitec: MOE states that by Academic Year 2026 all Nitec courses have moved to the three year structure leading to a Higher Nitec, with Nitec as the award on leaving early. Course areas in the routes are descriptions, not course titles. Role names, licences and the moving and myth lines were read for plausibility only and are not checked against a source. Pay is stated ONCE per level of entry and never per sector. Sector by sector figures would be dozens of numbers this build cannot defend, and comparing sectors on pay is a prestige ranking wearing a dollar sign, which this app does not render. Sectors are ordered alphabetically by label so the ordering is visibly arbitrary. Every sector carries a real entry at three or more levels, which is checked, because the claim that a level of entry is not a ceiling is the load bearing claim of this file."
  },
  "levelPay": [
   {
@@ -27,7 +27,7 @@
   {
    "id": "diploma",
    "label": "Fresh polytechnic diploma",
-   "band": "About 2,500 to 2,900 a month",
+   "band": "About 2,900 to 3,100 a month",
    "note": "Men who have served usually start a little above this, being two years older.",
    "status": "provisional",
    "sourceRef": "poly_ges"
@@ -35,7 +35,7 @@
   {
    "id": "degree",
    "label": "Fresh degree from a local university",
-   "band": "About 4,000 to 4,500 a month",
+   "band": "About 4,000 to 4,600 a month",
    "note": "The spread inside this is wider than the gap to the row above it.",
    "status": "provisional",
    "sourceRef": "uni_ges"
@@ -63,7 +63,7 @@
     {
      "level": "ite",
      "role": "Technical crew",
-     "route": "Nitec in media or events production",
+     "route": "Higher Nitec in media or events production",
      "note": "Sound, lighting and stage crew are hired on skill, not on a certificate."
     },
     {
@@ -128,7 +128,7 @@
     {
      "level": "ite",
      "role": "Therapist, stylist, trainer",
-     "route": "Nitec in beauty and wellness, or a sport certificate",
+     "route": "Higher Nitec in beauty and wellness, or a sport certificate",
      "note": "This sector genuinely starts here and a lot of owners started here too."
     },
     {
@@ -240,7 +240,7 @@
     {
      "level": "ite",
      "role": "Accounts or operations assistant",
-     "route": "Nitec or Higher Nitec in business services",
+     "route": "Higher Nitec in business services",
      "note": "The finance function of every organisation hires at this level."
     },
     {
@@ -468,7 +468,7 @@
     {
      "level": "ite",
      "role": "Design or media assistant",
-     "route": "Nitec in visual communication or media",
+     "route": "Higher Nitec in visual communication or media",
      "note": "Production skill first, which is what studios are short of."
     },
     {
@@ -533,7 +533,7 @@
     {
      "level": "ite",
      "role": "Technician or aircraft mechanic",
-     "route": "Nitec or Higher Nitec in engineering or aerospace",
+     "route": "Higher Nitec in engineering or aerospace",
      "note": "Aerospace, marine and precision all hire heavily and directly at this level."
     },
     {
@@ -589,7 +589,7 @@
     {
      "level": "ite",
      "role": "Cook, baker, food technician",
-     "route": "Nitec in culinary arts or food technology",
+     "route": "Higher Nitec in culinary arts or food technology",
      "note": "Kitchens hire on skill and attitude, and this is the fastest way to both."
     },
     {
@@ -644,7 +644,7 @@
     {
      "level": "ite",
      "role": "Guest services, events crew",
-     "route": "Nitec in hospitality operations",
+     "route": "Higher Nitec in hospitality operations",
      "note": "This sector promotes from the floor faster than most, if somebody is good."
     },
     {
@@ -702,7 +702,7 @@
     {
      "level": "ite",
      "role": "Officer or specialist",
-     "route": "Nitec, then Police, Civil Defence or Prisons intake",
+     "route": "Higher Nitec, then Police, Civil Defence or Prisons intake",
      "note": "The uniformed services recruit and train at this level, with a real ladder."
     },
     {
@@ -760,7 +760,7 @@
     {
      "level": "ite",
      "role": "Operations or rail technician",
-     "route": "Nitec or Higher Nitec in logistics or engineering",
+     "route": "Higher Nitec in logistics or engineering",
      "note": "The rail and air operators recruit and train heavily at this level."
     },
     {
@@ -818,7 +818,7 @@
     {
      "level": "ite",
      "role": "Retail or service crew",
-     "route": "Nitec in retail services or business",
+     "route": "Higher Nitec in retail services or business",
      "note": "Fastest sector to get real responsibility young, if somebody wants it."
     },
     {

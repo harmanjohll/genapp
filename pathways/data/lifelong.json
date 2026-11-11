@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "SkillsFuture Singapore, MySkillsFuture, MOE press releases and parliamentary replies on the SkillsFuture Level Up Programme",
-    "url": "https://www.skillsfuture.gov.sg/",
-    "accessed": "2026-08-05",
+    "source": "MOE press releases, infosheets and parliamentary replies on the SkillsFuture Level-Up Programme and SkillsFuture Credit, the MOE Committee of Supply 2026 release, and the MOE Post-Secondary Education Account page, all read on moe.gov.sg. The schemes are run by the Skills and Workforce Development Agency, formed on 1 July 2026 from SkillsFuture Singapore and Workforce Singapore",
+    "url": "https://www.moe.gov.sg/news/press-releases/20250306-infosheet-2-enhancing-support-for-mid-career-individuals-under-the-skillsfuture-level-up-programme",
+    "accessed": "2026-11-11",
     "units": "Singapore dollars, ages in years",
-    "notes": "Supplies the Long View ribbon. Its job is proportion: secondary school is the small band on the left. Markers are spaced at least four years apart so no two tap targets overlap at 375px. Several figures are provisional. 7.0 draws the ribbon at the end of the path. Each marker and band carries a `you` form for the planning screens; the first person form stays for the game."
+    "notes": "Supplies the Long View ribbon. Its job is proportion: secondary school is the small band on the left. Markers are spaced so no two tap targets overlap at 375px. 7.0 draws the ribbon at the end of the path. Each marker and band carries a `you` form for the planning screens; the first person form stays for the game, and the two must state the same fact. Re-checked 2026-11-11. Confirmed on moe.gov.sg: ages 16, 18 (including the 10,000 top up to the Post-Secondary Education Account at 17, from those turning 17 in 2026), 26 (500 opening credit at 25, which does not expire), 41 (4,000 in the year of turning 40; full time allowance of half of income, 300 to 3,000 a month, up to 24 months; over 36,000 users from 1 May 2024 to 30 April 2025; a 300 a month part time allowance announced for early 2026, whose 1 March 2026 start is a search extract) and 48 (the Mid-Career Enhanced Subsidy of up to 90 percent, for citizens aged 40 and above, covering another full time diploma from Academic Year 2025; the title used to say at any age). Still provisional: 56, where retirement at 64 and re-employment at 69 from 1 July 2026 rest on a search extract and are not stated in the marker; and 22, 31 and 36, which state no checkable figure."
   },
   "ribbon": {
     "from": 12,
@@ -77,11 +77,11 @@
     {
       "age": 18,
       "title": "After school starts",
-      "body": "JC, MI, poly, a foundation year or ITE. Every one of them has roads leading on.",
+      "body": "JC, MI, poly, a foundation year or ITE. Every one of them has roads leading on. At 17, $10,000 goes into my Post Secondary Education Account.",
       "status": "confirmed",
       "you": {
         "title": "After secondary school",
-        "body": "JC, MI, polytechnic, a foundation year, ITE or an arts school. Each one leads on."
+        "body": "JC, MI, polytechnic, a foundation year, ITE or an arts school. Each one leads on. At 17, $10,000 goes into your Post Secondary Education Account."
       }
     },
     {
@@ -97,12 +97,12 @@
     {
       "age": 26,
       "title": "SkillsFuture Credit is mine",
-      "body": "From 25, credit to spend on courses I pick. Not tied to an employer or to what I studied.",
+      "body": "At 25, a $500 opening credit that does not expire, to spend on approved courses I pick. Not tied to an employer or to what I studied.",
       "url": "https://www.skillsfuture.gov.sg/",
-      "status": "provisional",
+      "status": "confirmed",
       "you": {
         "title": "SkillsFuture Credit",
-        "body": "From 25, you get credit to spend on courses you pick."
+        "body": "At 25 you get a $500 credit for approved courses you pick. It does not expire."
       }
     },
     {
@@ -127,23 +127,23 @@
     },
     {
       "age": 41,
-      "title": "SkillsFuture Level Up",
-      "body": "At 40: a $4,000 credit, plus half my income as a monthly allowance while studying full time. Over 36,000 people used it in its first year, to April 2025.",
+      "title": "SkillsFuture Level Up Programme",
+      "body": "At 40: a $4,000 credit. Half my income, up to $3,000 a month, while studying full time, or $300 a month part time. Over 36,000 people used the credit in year one.",
       "url": "https://www.skillsfuture.gov.sg/",
       "status": "confirmed",
       "you": {
-        "title": "SkillsFuture Level Up",
-        "body": "At 40: a $4,000 credit, and a monthly allowance if you study full time."
+        "title": "SkillsFuture Level Up Programme",
+        "body": "At 40: a $4,000 credit. A monthly allowance if you study full time, and $300 a month part time."
       }
     },
     {
       "age": 48,
-      "title": "A subsidised diploma, at any age",
-      "body": "Up to 90 percent off a full time diploma at ITE, the polys, NAFA or LASALLE. People start in their forties and fifties.",
+      "title": "A subsidised diploma, from forty",
+      "body": "From 40, up to 90 percent off course fees. Since 2025 that covers another full time diploma at ITE, the polys, NAFA or LASALLE.",
       "status": "confirmed",
       "you": {
-        "title": "A subsidised diploma at any age",
-        "body": "Up to 90 percent off a full time diploma at ITE, a polytechnic, NAFA or LASALLE."
+        "title": "A subsidised diploma from 40",
+        "body": "From 40, up to 90 percent off another full time diploma at ITE, a polytechnic, NAFA or LASALLE."
       }
     },
     {

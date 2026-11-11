@@ -1,161 +1,186 @@
 {
  "_meta": {
-  "source": "MOE, SEAB, ITE, SkillsFuture Singapore public pages",
+  "source": "MOE and SEAB public pages for the school terms; MOE press releases for Project Work, the Mid Career Enhanced Subsidy and the ITE GPA rules. Terms owned by other agencies are marked provisional.",
   "url": "https://www.moe.gov.sg/",
-  "accessed": "2026-08-05",
+  "accessed": "2026-11-11",
   "units": "not applicable",
-  "notes": "The system runs on acronyms and students are expected to absorb them by osmosis. Kept a little longer than the rest of the copy budget on purpose: these entries carry the explanation load for the weakest readers, so cutting them hardest would cut the students who need them most."
+  "notes": "Read from the primary MOE and SEAB pages, opened in full, on 2026-11-11. A term with status provisional could not be read on a primary page from this build: UAS, WSP, ORD and NYAA belong to other agencies, and EXCO, class comm, immersion and remedial are school usage that MOE does not define. The Nitec entry keeps only what MOE states; how the Nitec is awarded inside the three year course needs ITE's own page. Early Admissions months are the 2026 cycle; the 2027 dates were not yet published. The system runs on acronyms and students are expected to absorb them by osmosis. Kept a little longer than the rest of the copy budget on purpose: these entries carry the explanation load for the weakest readers.",
+  "sources": {
+   "sec": "https://www.seab.gov.sg/secondary-education-certificate-sec/",
+   "full_sbb": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+   "full_sbb_faq": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/faq",
+   "pse": "https://www.moe.gov.sg/post-secondary/admissions/pse",
+   "pse_replaces": "https://www.moe.gov.sg/news/press-releases/20260303-we-learn-for-life-together-building-a-we-first-society-through-education",
+   "aggregates": "https://www.moe.gov.sg/post-secondary/admissions/pse/explore-pathways",
+   "poly_eae": "https://www.moe.gov.sg/post-secondary/admissions/poly-eae",
+   "ite_eae": "https://www.moe.gov.sg/post-secondary/admissions/ite-eae",
+   "dsa": "https://www.moe.gov.sg/secondary/dsa",
+   "gpa": "https://www.moe.gov.sg/news/press-releases/20230721-changes-to-admissions-requirements-for-ite-upgraders-applying-to-polytechnics-from-ay2027",
+   "project_work": "https://www.moe.gov.sg/news/press-releases/20260227-release-of-the-2025-singapore-cambridge-gce-a-level-examination-results",
+   "mces": "https://www.moe.gov.sg/news/press-releases/20240304-future-of-learning-empowering-contributors-to-build-a-better-tomorrow",
+   "ecg": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance",
+   "cca": "https://www.moe.gov.sg/education-in-sg/our-programmes/cca/overview",
+   "via": "https://www.moe.gov.sg/education-in-sg/our-programmes/values-in-action"
+  }
  },
  "terms": [
   {
    "term": "Full SBB",
    "full": "Full Subject Based Banding",
-   "plain": "Since 2024 there are no more Express, Normal Academic or Normal Technical classes. You take each subject at the level that fits you, G1, G2 or G3, and you can mix them."
+   "plain": "From the 2024 Sec 1 cohort there are no more Express, Normal (Academic) or Normal (Technical) streams. You take each subject at the level that fits you, G1, G2 or G3, and you can mix them."
   },
   {
    "term": "SEC",
    "full": "Singapore Cambridge Secondary Education Certificate",
-   "plain": "The national exam that replaces the O and N Levels. One certificate listing each subject and the level you took it at. First sat in 2027."
+   "plain": "The national exam that replaces the O and N Levels, first sat in 2027. One certificate lists each subject and the level you took it at. All results come out together, in January."
   },
   {
    "term": "PG1, PG2, PG3",
    "full": "Posting Groups",
-   "plain": "Which group you went into at the end of primary school, from your PSLE score. It sets your starting levels. It does not lock them."
+   "plain": "The group you are posted through at the end of primary school, from your PSLE Score. It guides your starting levels in Sec 1. It does not fix them."
   },
   {
    "term": "G1, G2, G3",
    "full": "General 1, 2 and 3",
-   "plain": "The three levels a subject can be taken at. G3 covers the most ground fastest, G1 is the most practical. They are levels of a subject, not levels of a person."
+   "plain": "The three levels a subject can be taken at. G3 is the most demanding and G1 the least. A level belongs to a subject, so you can hold different levels at once."
   },
   {
    "term": "L1R4",
-   "full": "One language plus four relevant subjects",
-   "plain": "The score used for JC and MI entry. Lower is better. JC asks for 16 or better; MI takes up to 20, which is the point of MI."
+   "full": "First language plus four relevant subjects",
+   "plain": "The score for JC and MI entry, from five G3 subjects: English or Higher Mother Tongue, plus four relevant subjects. Lower is better. JC needs 16 or better and MI needs 20 or better."
   },
   {
    "term": "ELR2B2",
-   "full": "English, two relevant subjects, two better subjects",
-   "plain": "The score used for polytechnic entry. Lower is better."
+   "full": "English, two relevant subjects, two best subjects",
+   "plain": "The score for entry to a polytechnic diploma. Lower is better. From 2028 the net score must be 22 or better, with one of the two best subjects counted at G2."
   },
   {
    "term": "ELMAB3",
    "full": "English, Maths and three best subjects",
-   "plain": "The score used for the Poly Foundation Year and some ITE entry. Worked out at G2 grades."
+   "plain": "The score for the Polytechnic Foundation Programme, the 2 year Higher Nitec and entry to Sec 5. It is worked out at G2 grades, so a G3 grade is mapped to G2 first."
   },
   {
    "term": "PFP",
    "full": "Polytechnic Foundation Programme",
-   "plain": "A one year foundation inside a polytechnic, taught by poly staff, leading straight into Year 1 of a diploma."
+   "plain": "A one year programme at a polytechnic, taught by polytechnic lecturers. You enter one of three broad clusters and are posted to a diploma course at the end of the year."
   },
   {
    "term": "DPP",
    "full": "Direct Entry Scheme to Polytechnic Programme",
-   "plain": "An old route into Higher Nitec with a guaranteed poly place. Its last intake was 2027, so it will not be there for you. Direct entry into Year 2 of Higher Nitec replaces it."
+   "plain": "An older route into a 2 year Higher Nitec course, with a polytechnic place for those who met the GPA. It ends from the 2028 ITE intake. You can still enter the 2 year Higher Nitec with SEC grades."
   },
   {
    "term": "EAE",
    "full": "Early Admissions Exercise",
-   "plain": "You apply on your interest and aptitude for one course, and can get a place before your results come out. What you have done and can talk about is what counts."
+   "plain": "You apply on aptitude and interest before the exams, and can get a conditional offer. Polytechnic takes up to 3 course choices. In 2026, ITE applications were in late May and polytechnic applications in late June."
   },
   {
    "term": "PSE",
    "full": "Post Secondary Admissions Exercise",
-   "plain": "One exercise after results for JC, MI, poly, PFP and ITE together, on one portal. From 2028 it replaces the JAE your parents knew. On tied scores, ranking a course higher helps."
+   "plain": "One exercise after SEC results for JC, MI, polytechnic, PFP and ITE, on one portal. From 2028 it replaces the Joint Admissions Exercise, the PFP Admissions Exercise and the ITE Joint Intake Exercise. You rank up to 12 courses."
   },
   {
    "term": "JAE",
    "full": "Joint Admissions Exercise",
-   "plain": "The old posting exercise, used up to the 2027 intake. Your cohort uses the PSE instead. If an adult says JAE, they mean the thing the PSE now does."
+   "plain": "The posting exercise used with O Level results, up to the 2027 intake. Your cohort uses the PSE instead. If an adult says JAE, they mean the thing the PSE now does."
   },
   {
    "term": "Nitec",
    "full": "National ITE Certificate",
-   "plain": "An ITE qualification employers know straight away. You earn it inside the three year Higher Nitec course, and can leave with it after Year 2 and come back later."
+   "plain": "An ITE qualification. Since 2026 every Nitec course runs in a three year structure that leads directly to a Higher Nitec. Ask ITE how the Nitec is awarded along the way."
   },
   {
    "term": "Higher Nitec",
    "full": "Higher National ITE Certificate",
-   "plain": "The main ITE course now: three years, or straight into Year 2 with stronger results. From here the polytechnic route opens, and from there the degree route."
+   "plain": "The main ITE course now. The 3 year course takes G1 results. The 2 year course needs ELMAB3 of 19 or better at G2. After it you can pursue a diploma at ITE or a polytechnic, or work."
   },
   {
    "term": "GPA",
    "full": "Grade Point Average",
-   "plain": "How results are scored at ITE and poly. For ITE students applying to poly, 2.5 with bonus points counted is the minimum, and a raw 3.5 or above guarantees a place."
+   "plain": "How results are scored at ITE and polytechnic. For Higher Nitec students applying to polytechnic from 2027, a net GPA of 2.5 is the minimum. A raw GPA of 3.5 or more guarantees a place in a mapped course."
   },
   {
    "term": "UAS",
    "full": "University of the Arts Singapore",
-   "plain": "NAFA and LASALLE sit under it. Entry leans on a portfolio or audition rather than a score."
+   "plain": "NAFA and LASALLE, which MOE pages call the Arts Institutions. They run their own admissions, with a portfolio or audition beside the academic requirements. MOE also writes UAS for the University Admission Score.",
+   "status": "provisional"
   },
   {
    "term": "WSP",
    "full": "Work Study Programme",
-   "plain": "A SkillsFuture route where you are employed and paid while working towards a qualification."
+   "plain": "A SkillsFuture route where you are employed and paid while working towards a qualification.",
+   "status": "provisional"
   },
   {
    "term": "MCES",
    "full": "Mid Career Enhanced Subsidy",
-   "plain": "Covers up to 90 percent of course fees for adults, including full time diplomas at ITE, the polys, NAFA and LASALLE."
+   "plain": "Subsidies of up to 90 percent of course fees on MOE or SkillsFuture funded programmes, for Singaporeans aged 40 and above. From 2025 it can cover another publicly funded full time diploma."
   },
   {
    "term": "ECG",
    "full": "Education and Career Guidance",
-   "plain": "The part of school that helps you think about what comes next. Your school has an ECG counsellor. It is free and it is the most underused thing in the building."
+   "plain": "Lessons and experiences in school that help you answer three questions: Who am I? Where do I want to go? How do I get there? Secondary schools have ECG Counsellors who guide education and career plans."
   },
   {
    "term": "CCA",
    "full": "Co-Curricular Activity",
-   "plain": "The club, sport, uniformed group or performing arts group you join at school. It runs in curriculum time and after it, and what you do in it counts in Early Admissions and DSA."
+   "plain": "The club, sport, uniformed group or arts group you join at school. A CCA is compulsory in secondary school. It earns CCA bonus points for post secondary admission, and it is evidence for Early Admissions and DSA."
   },
   {
    "term": "VIA",
    "full": "Values in Action",
-   "plain": "Service you do as part of school, from a beach cleanup to a term helping at a home. Every student does some. Planning one yourself reads very differently from attending one."
+   "plain": "Service to the community as part of school. MOE designs it to build student ownership and initiative. You reflect on the experience and on how to keep contributing."
   },
   {
    "term": "PW",
    "full": "Project Work",
-   "plain": "A compulsory JC subject done in a group: research a question, write it up, present it. It is graded and it counts toward university admission."
+   "plain": "A JC subject done in a group: research a question, write it up, present it. It is graded pass or fail and left out of the University Admission Score. You need a pass for the autonomous universities."
   },
   {
    "term": "EXCO",
    "full": "Executive Committee",
-   "plain": "The small group that actually runs a club or CCA: chairperson, secretary, treasurer, and so on. Being on it is a leadership role you can name in an application."
+   "plain": "The small group that actually runs a club or CCA: chairperson, secretary, treasurer, and so on. Being on it is a leadership role you can name in an application.",
+   "status": "provisional"
   },
   {
    "term": "class comm",
    "full": "class committee",
-   "plain": "The elected students who run things for a class: monitor, treasurer, subject reps. Usually the first leadership role available to anyone."
+   "plain": "The elected students who run things for a class: monitor, treasurer, subject reps. Usually the first leadership role available to anyone.",
+   "status": "provisional"
   },
   {
    "term": "DSA",
    "full": "Direct School Admission",
-   "plain": "A route into a secondary school or a JC on a talent, before results. Sport, music, art, robotics, a subject you are unusually strong in. An accepted offer is binding, so you give up the posting choice."
+   "plain": "A route into a secondary school or a JC on a talent, before the exams. Sport, the arts, leadership, a uniformed group, or a subject you are strong in. An accepted offer is a commitment, so you give up the posting choice."
   },
   {
    "term": "ORD",
    "full": "Operationally Ready Date",
-   "plain": "The day full time National Service ends. Everything after it is yours to plan, and the courses you started during service finish sooner than you think."
+   "plain": "The day full time National Service ends. Everything after it is yours to plan, and the courses you started during service finish sooner than you think.",
+   "status": "provisional"
   },
   {
    "term": "NYAA",
    "full": "National Youth Achievement Award",
-   "plain": "A youth award for service, a skill, an adventure journey and physical activity, at bronze, silver or gold. It runs over months, not days, and it gives shape to what you do outside lessons."
+   "plain": "A youth award for service, a skill, an adventure journey and physical activity, at bronze, silver or gold. It runs over months, not days, and it gives shape to what you do outside lessons.",
+   "status": "provisional"
   },
   {
    "term": "immersion",
    "full": "overseas immersion programme",
-   "plain": "A school trip, usually one to two weeks, to a partner school abroad. Lessons, homestays or a project together. Schools often run them at Sec 3."
+   "plain": "A school trip, usually one to two weeks, to a partner school abroad. Lessons, homestays or a project together. Schools often run them at Sec 3.",
+   "status": "provisional"
   },
   {
    "term": "remedial",
    "full": "remedial lessons",
-   "plain": "Extra lessons for a subject you are behind in, usually after school and usually free. Going is a decision, not a punishment."
+   "plain": "Extra lessons for a subject you are behind in, usually after school and usually free. Going is a decision, not a punishment.",
+   "status": "provisional"
   },
   {
    "term": "Early Admissions",
    "full": "Early Admissions Exercise",
-   "plain": "Applying to a polytechnic or ITE course in June, before your results, on interest and aptitude. Also written EAE. The offer still needs you to meet the course minimum."
+   "plain": "Applying to a polytechnic or ITE course before the exams, on aptitude and interest. Also written EAE. In 2026, ITE applications were in late May and polytechnic applications in late June. The offer is conditional on meeting the course minimum."
   }
  ]
 }

@@ -1,11 +1,11 @@
 {
  "_meta": {
-  "source": "MOE fees and financial assistance pages, ITE and polytechnic fee schedules, autonomous university subsidised fee tables, CPF Education Scheme, SkillsFuture Credit, and the four self help groups",
+  "source": "MOE pages read directly on 2026-11-11: school fees and its fee checker data, financial assistance and its eligibility checker data, Edusave, Post-Secondary Education Account, Higher Education Student Loan, and the 16 October 2025 press release on revised income criteria and bursary amounts. Search extracts only for the autonomous universities, the arts institutions, independent schools, CPF and the self help groups, whose own sites this build could not reach",
   "url": "https://www.moe.gov.sg/financial-matters/financial-assistance",
-  "accessed": "2026-08-09",
+  "accessed": "2026-11-11",
   "units": "Singapore dollars, for a Singapore Citizen, before assistance",
-  "status": "provisional",
-  "notes": "EVERY FIGURE HERE IS PROVISIONAL AND NEEDS A HUMAN AGAINST THE NAMED PAGE. Fee schedules change annually and vary by course and by school, so bands are used rather than point figures wherever the real number varies: a precise wrong number is worse than an honest range. Costs are listed before help on purpose, because a page that opened with reassurance would read as a sales pitch. The four truths at the end are the actual guidance; the tables are the evidence for them."
+  "status": "part confirmed",
+  "notes": "Re-checked 2026-11-11. A row with `checked` was read on moe.gov.sg that day and carries no `status`, because the money sweep accepts no status but provisional. A row with `status: provisional` rests at least partly on a search extract or on nothing published: the independent school fee (Hwa Chong and ACS Independent figures from a search extract), the arts institution fee (one LASALLE diploma at 5,490 from a search extract; no NAFA figure found), the university band (NTU's own page and a third party guide, both by search extract), the CPF Education Loan Scheme terms (name confirmed on moe.gov.sg, limits from a search summary of cpf.gov.sg), the self help groups (search extracts) and the school's own fund (MOE confirms it exists and is decided case by case; nothing more is published). Changed on this pass: the Tuition Fee Loan became the Higher Education Student Loan on 29 July 2026; the CPF Education Scheme is the CPF Education Loan Scheme; standard and second tier miscellaneous fees merged into one fee on 1 January 2024; MOE FAS and bursary income limits rose from Academic Year 2026; Edusave awards are paid by PayNow and not into the account; a 10,000 top up to the Post-Secondary Education Account at 17 starts with those turning 17 in 2026. Not found and so not stated: any 2027 fee change for citizens, an ITE registration fee, how often MOE FAS is renewed, bursary deadlines, and whether a self help group bursary can be held with another. Costs are listed before help on purpose, because a page that opened with reassurance would read as a sales pitch. The four truths at the end are the guidance; the tables are the evidence for them."
  },
  "sources": {
   "moe_fees": "MOE school fees pages for government, government aided, independent and specialised schools",
@@ -16,9 +16,9 @@
   "moe_fas": "MOE Financial Assistance Scheme criteria and coverage",
   "moe_edusave": "MOE Edusave scheme pages",
   "moe_psea": "MOE Post Secondary Education Account pages",
-  "moe_bursary": "MOE Higher Education Bursary and institution bursary pages",
-  "moe_loan": "Tuition Fee Loan terms published by the institutions",
-  "cpf_edu": "CPF Education Scheme pages",
+  "moe_bursary": "MOE financial assistance page and the 16 October 2025 press release, for the Higher Education Community Bursary and Higher Education Bursary",
+  "moe_loan": "MOE Higher Education Student Loan page",
+  "cpf_edu": "CPF Education Loan Scheme pages",
   "selfhelp": "CDAC, MENDAKI, SINDA and Eurasian Association assistance pages",
   "school_fund": "School based student welfare funds, which each school administers",
   "sf_credit": "SkillsFuture Credit scheme pages"
@@ -27,10 +27,10 @@
   {
    "id": "sec",
    "label": "Secondary school, government or government aided",
-   "fee": "About 5 a month",
-   "misc": "Standard miscellaneous fees on top, usually under 25 a month",
-   "note": "For a Singapore Citizen. Permanent Residents and international students pay published higher rates.",
-   "status": "provisional",
+   "fee": "5 a month",
+   "misc": "Miscellaneous fees of 20 a month, payable from Edusave",
+   "note": "For a Singapore Citizen in 2026, so 25 a month in all. Autonomous schools add 3 to 18. Permanent Residents and international students pay published higher rates.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_fees",
    "covers": [
     "sec5"
@@ -41,7 +41,7 @@
    "label": "Independent school",
    "fee": "Several hundred a month",
    "misc": "Varies by school, and published by each",
-   "note": "The Independent School Bursary exists precisely because this figure is large, and it reaches well into middle incomes.",
+   "note": "The MOE Independent School Bursary covers part of this for households earning up to 12,000 a month, or 3,000 per person.",
    "status": "provisional",
    "sourceRef": "moe_fees",
    "covers": []
@@ -49,10 +49,10 @@
   {
    "id": "jc",
    "label": "Junior college or Millennia Institute",
-   "fee": "About 6 a month",
-   "misc": "Miscellaneous fees usually under 30 a month",
+   "fee": "6 a month",
+   "misc": "Miscellaneous fees of 27 a month, so 33 in all",
    "note": "Three years at Millennia Institute rather than two, so the total is one more year of the same small number.",
-   "status": "provisional",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_fees",
    "covers": [
     "jc",
@@ -61,11 +61,11 @@
   },
   {
    "id": "ite",
-   "label": "ITE, Nitec or Higher Nitec",
-   "fee": "About 400 to 600 a year",
-   "misc": "Plus a one time registration fee and course materials",
-   "note": "The lowest fee of any post secondary route, and the ITE bursaries reduce it further.",
-   "status": "provisional",
+   "label": "ITE, Higher Nitec",
+   "fee": "530 a year",
+   "misc": "Plus supplementary fees for examinations, insurance and the like",
+   "note": "For the 2026 cohort, the same every year of the course. At the first bursary tier the fee is fully covered, with 1,850 a year on top.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "ite_fees",
    "covers": [
     "nitec",
@@ -75,10 +75,10 @@
   {
    "id": "poly",
    "label": "Polytechnic diploma",
-   "fee": "About 3,000 a year",
+   "fee": "3,100 a year",
    "misc": "Three years for most diplomas, so budget for three",
-   "note": "Before any bursary. A family on the lower income tiers can end up paying a small fraction of this.",
-   "status": "provisional",
+   "note": "For the 2026 cohort, before any bursary. At the first bursary tier the bursary is 3,050 a year.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "poly_fees",
    "covers": [
     "poly",
@@ -90,7 +90,7 @@
    "label": "Arts institution diploma or degree",
    "fee": "Higher than a polytechnic diploma",
    "misc": "Materials and studio costs are real and are not in the fee",
-   "note": "Published per course. There are bursaries specific to the arts institutions, and the materials cost is the one families forget.",
+   "note": "Published per course. The government bursaries cover NAFA and LASALLE too, and each has its own schemes. Materials are the cost families forget.",
    "status": "provisional",
    "sourceRef": "arts_fees",
    "covers": [
@@ -100,9 +100,9 @@
   {
    "id": "uni",
    "label": "Degree at a local autonomous university",
-   "fee": "About 8,000 to 10,000 a year",
-   "misc": "More for medicine, dentistry and law, and four years for most degrees",
-   "note": "Subsidised rate for a Singapore Citizen. The Tuition Fee Loan covers most of it and charges no interest while studying.",
+   "fee": "About 7,500 to 13,500 a year",
+   "misc": "More for medicine and dentistry. Fees differ by university and course",
+   "note": "Subsidised rate for a Singapore Citizen. The Higher Education Student Loan covers up to 90 percent of it, interest free while studying.",
    "status": "provisional",
    "sourceRef": "uni_fees",
    "covers": []
@@ -112,58 +112,58 @@
   {
    "id": "fas",
    "label": "MOE Financial Assistance Scheme",
-   "what": "School fees, standard miscellaneous fees, textbooks, uniforms, and subsidies for transport and meals.",
-   "who": "Singapore Citizens in government and government aided schools, on household income criteria.",
+   "what": "School fees and all miscellaneous fees, textbooks, uniforms, and subsidies for transport and meals.",
+   "who": "Singapore Citizens in government and government aided schools, with household income up to 4,000 a month, or 1,000 per person.",
    "howMuch": "In practice this takes the cost of secondary school close to nothing.",
-   "howToGet": "One form from the school's general office, once a year. The form teacher can start it.",
-   "status": "provisional",
+   "howToGet": "Apply online, or hand the MOE FAS form to the school. One form covers brothers and sisters in other schools.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_fas"
   },
   {
    "id": "edusave",
    "label": "Edusave",
-   "what": "An account in the student's own name, topped up every year, for enrichment and approved programmes.",
+   "what": "An account in the student's own name, topped up every year until the end of secondary school, for miscellaneous fees and enrichment.",
    "who": "Every Singapore Citizen in school. Nothing to apply for.",
-   "howMuch": "An annual contribution, plus awards and bursaries paid into the same account.",
-   "howToGet": "It is already there. The school can say what the balance is and what it can be spent on.",
-   "status": "provisional",
+   "howMuch": "290 a year for a secondary student. Edusave awards are separate and are paid to the student's bank account by PayNow.",
+   "howToGet": "It is already there. A parent can check the balance on the Student Finance System with Singpass.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_edusave"
   },
   {
    "id": "psea",
    "label": "Post Secondary Education Account",
-   "what": "Where the Edusave balance goes at the end of secondary school, to be spent on approved post secondary fees.",
-   "who": "Singapore Citizens. It can be used for a sibling's fees as well as your own.",
-   "howMuch": "Whatever was left over, plus government top ups.",
-   "howToGet": "Automatic. Fee payment through the institution can draw on it directly.",
-   "status": "provisional",
+   "what": "Where the Edusave balance goes in the year the student turns 17, or on leaving an MOE funded school if that is later.",
+   "who": "Singapore Citizens. It pays ITE, polytechnic, arts and university fees, a sibling's too. It does not pay JC or MI costs.",
+   "howMuch": "Whatever Edusave was left, plus a 10,000 top up in the year the student turns 17, from 2026.",
+   "howToGet": "The account is automatic. To pay fees from it, set up a Standing Order for the institution on the Student Finance System.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_psea"
   },
   {
    "id": "bursary",
-   "label": "Bursaries at ITE, polytechnic and university",
+   "label": "Government bursaries at ITE, polytechnic and university",
    "what": "Money that reduces the fee and does not have to be paid back.",
-   "who": "Income tiered, and the tiers reach further up than most families assume.",
-   "howMuch": "At the lower tiers a large part of the fee, and at middle incomes still a real amount.",
-   "howToGet": "Applied for through the institution, usually in the first weeks. Deadlines are early and easy to miss.",
-   "status": "provisional",
+   "who": "Four income tiers, up to a household income of 12,000 a month, or 3,000 per person.",
+   "howMuch": "A year, first tier to fourth. ITE: fees plus 1,850, down to 490. Diploma: 3,050 to 950. Degree: 6,300 to 1,350.",
+   "howToGet": "Applied for through the institution's financial aid office. Each institution has its own procedure, so ask on enrolling.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_bursary"
   },
   {
    "id": "loan",
-   "label": "Tuition Fee Loan",
-   "what": "A loan for most of the subsidised fee at a polytechnic or a university.",
-   "who": "Available broadly, not only on low income.",
-   "howMuch": "Up to most of the fee, with no interest charged while still studying.",
-   "howToGet": "Through the institution at enrolment. A guarantor is needed.",
-   "status": "provisional",
+   "label": "Higher Education Student Loan",
+   "what": "A loan for subsidised diploma and degree fees, from ITE to university. It replaced the Tuition Fee Loan in July 2026.",
+   "who": "Available broadly, not only on low income. The last 10 percent and a living allowance are income tested.",
+   "howMuch": "Up to 90 percent of the fee, with no interest charged while still studying.",
+   "howToGet": "On the StudentLoanSG portal with Singpass, in the window each institution sets.",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "moe_loan"
   },
   {
    "id": "cpf",
-   "label": "CPF Education Scheme",
+   "label": "CPF Education Loan Scheme",
    "what": "Paying fees from a parent's or a sibling's CPF Ordinary Account, repaid with interest after graduating.",
-   "who": "Singapore Citizens and Permanent Residents at approved institutions.",
+   "who": "Singapore Citizens and Permanent Residents on full time courses at approved institutions in Singapore.",
    "howMuch": "Up to a share of the account balance, per the scheme's limits.",
    "howToGet": "An application through CPF, with the student agreeing to repay.",
    "status": "provisional",
@@ -174,7 +174,7 @@
    "label": "The self help groups and community funds",
    "what": "Bursaries and tuition support from CDAC, MENDAKI, SINDA and the Eurasian Association.",
    "who": "By community, and each publishes its own criteria.",
-   "howMuch": "Varies, and can be held at the same time as a school or institution bursary.",
+   "howMuch": "Varies by group. MENDAKI's tertiary fee subsidy adds to the national schemes.",
    "howToGet": "Directly, and separately from the school. Ask, because nobody will offer.",
    "status": "provisional",
    "sourceRef": "selfhelp"
@@ -183,9 +183,9 @@
    "id": "school",
    "label": "The school's own welfare fund",
    "what": "The quiet money for a camp fee, a trip, a pair of shoes, a laptop.",
-   "who": "Anybody in the school with a need, decided in the school.",
-   "howMuch": "Small amounts, quickly, and often without a form.",
-   "howToGet": "Ask the form teacher or the year head. This is the fastest help in the system.",
+   "who": "Anybody in the school with a need.",
+   "howMuch": "No published amount. The school decides each request case by case.",
+   "howToGet": "Ask the form teacher, the year head or the general office.",
    "status": "provisional",
    "sourceRef": "school_fund"
   },
@@ -194,9 +194,9 @@
    "label": "SkillsFuture Credit, later",
    "what": "Credit for courses across a working life, with a larger top up in mid career.",
    "who": "Singapore Citizens, from twenty five, with the mid career top up from forty.",
-   "howMuch": "An opening amount, periodic top ups, and a substantial mid career addition.",
+   "howMuch": "500 at 25 and 4,000 in the year of turning 40. Neither expires.",
    "howToGet": "Nothing to apply for. It sits in an account until it is used.",
-   "status": "provisional",
+   "checked": "confirmed on moe.gov.sg, 2026-11-11",
    "sourceRef": "sf_credit"
   }
  ],
@@ -206,12 +206,12 @@
    "body": "Every route after secondary school has a bursary attached to it, and the income tiers reach further up than families expect. The most expensive route also has the largest loan behind it, interest free while studying."
   },
   {
-   "head": "Nobody offers. Everybody has to ask",
-   "body": "Almost all of this is applied for, once, on a form, in the first weeks of a school year. A family that does not know a scheme exists is not offered it, which is why knowing the names on this page is worth money."
+   "head": "Some arrives. Most of it is asked for",
+   "body": "Edusave, the Post Secondary Education Account and SkillsFuture Credit arrive without a form. The Financial Assistance Scheme, the bursaries and the loan are applied for, and a family that does not know a name does not apply."
   },
   {
-   "head": "The cheapest route is not the least ambitious one",
-   "body": "ITE costs the least and its graduates start earning earliest. Four years of pay while another route is still paying fees is a real advantage, and it is not an argument against the other routes."
+   "head": "A low fee is not a low ambition",
+   "body": "At 530 a year, ITE costs less than a polytechnic, an arts institution or a university, and a Higher Nitec takes three years. Earning sooner is a real advantage, and it is no argument against the other routes."
   },
   {
    "head": "Money is a reason to ask, not to stop",
