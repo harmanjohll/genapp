@@ -1,35 +1,79 @@
 {
   "_meta": {
-    "source": "MOE PSE and JAE aggregate type tables, polytechnic aggregate type pages (SP, NP, TP 2027), NYP PFP cluster page, ITE and MOE CourseFinder examples, individual JC subject combination pages",
+    "source": "MOE PSE pages (aggregate types, 3 year Higher Nitec score types), MOE Polytechnic Aggregate Types Computation table for the 2026 JAE, MOE PFP eligibility page and PFP cluster list from AY2027, MOE CourseFinder course pages, individual JC subject combination pages",
     "url": "https://www.moe.gov.sg/coursefinder",
-    "accessed": "2026-10-27",
+    "accessed": "2026-11-11",
     "units": "none",
-    "notes": "Every family here is provisional: the 2028 course lists and minimum entry requirements are due on MOE CourseFinder in mid 2027, and the 2026 cycle sources disagree in places. Shown only when a student turns course families on."
+    "notes": "Every family here is provisional: the 2028 course lists and minimum entry requirements are due on MOE SchoolFinder and CourseFinder in mid 2027. Polytechnic and PFP subject lists were read in full from MOE's own 2026 JAE table and its PFP pages on 2026-11-11, so they are MOE's lists for the cohort before this one. The one row confirmed for 2028 is that course type B counts only Mathematics or Additional Mathematics as R1. JC needs come from individual college pages; MOE publishes no common H2 requirement. ITE examples are 2026 CourseFinder entries where marked, and otherwise not rechecked. Shown only when a student turns course families on.",
+    "sources": {
+      "moe_poly_types_2026": {
+        "title": "Polytechnic aggregate types computation, 2026 JAE",
+        "url": "https://www.moe.gov.sg/media/files/post-secondary/2026%20JAE/Polytechnic%20Aggregate%20Types%20Computation%202026%20JAE.pdf",
+        "accessed": "2026-11-11"
+      },
+      "moe_pse_poly": {
+        "title": "PSE: polytechnic diploma course",
+        "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/polytechnic-diploma-course",
+        "accessed": "2026-11-11"
+      },
+      "moe_pfp_now": {
+        "title": "Polytechnic Foundation Programme eligibility, current cohort",
+        "url": "https://www.moe.gov.sg/post-secondary/admissions/pfp/eligibility-criteria",
+        "accessed": "2026-11-11"
+      },
+      "moe_pfp_clusters": {
+        "title": "PFP courses and clusters from AY2027",
+        "url": "https://www.moe.gov.sg/media/files/post-secondary/e98ca3e8-f1c7-4e12-bc0f-71cc1789ebb4.pdf",
+        "accessed": "2026-11-11"
+      },
+      "moe_pse_hn3": {
+        "title": "PSE: ITE 3 year Higher Nitec",
+        "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/ite-3-year-higher-nitec",
+        "accessed": "2026-11-11"
+      },
+      "moe_cf_hn_ee2": {
+        "title": "CourseFinder: Higher Nitec in Electrical Engineering (2 Years)",
+        "url": "https://www.moe.gov.sg/coursefinder/coursedetail/higher-nitec-in-electrical-engineering-2-years",
+        "accessed": "2026-11-11"
+      },
+      "moe_cf_hn_elec3": {
+        "title": "CourseFinder: Higher Nitec in Electronics Engineering (3 Years)",
+        "url": "https://www.moe.gov.sg/coursefinder/coursedetail/higher-nitec-in-electronics-engineering-3-years",
+        "accessed": "2026-11-11"
+      },
+      "moe_pse_jc_subjects": {
+        "title": "PSE: JC and MI subjects and programmes",
+        "url": "https://www.moe.gov.sg/post-secondary/admissions/pse/jc-and-mi/subjects-and-programmes",
+        "accessed": "2026-11-11"
+      }
+    }
   },
   "destinations": {
     "jc": [
       {
         "id": "jc_math_sci",
-        "name": "Science/Maths (H2 Mathematics)",
+        "name": "Science and Mathematics (H2 Mathematics)",
         "needs": [
           {
-            "text": "H2 Maths assumes Additional Mathematics; typical indicative cut off B3 B4 in A Maths (NJC also accepts A2 in Maths). Without A Maths, colleges advise H1 Maths or a readiness test.",
+            "text": "H2 Mathematics builds on Additional Mathematics. Colleges often ask for about B3 or B4 in it. Each college sets its own grade.",
             "subjects": [
               "amaths",
               "maths"
             ],
             "minLevel": "G3",
             "minGrade": "B4",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pse_jc_subjects"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       },
       {
         "id": "jc_physics",
         "name": "H2 Physics",
         "needs": [
           {
-            "text": "Physics or Science (Physics, Chemistry/Biology); indicative B3 Physics or A2 combined science; some JCs require H2 Maths alongside",
+            "text": "Colleges look for Physics, or a Science with Physics in it. Each college sets its own grade.",
             "subjects": [
               "physics",
               "sci_pc",
@@ -37,16 +81,18 @@
             ],
             "minLevel": "G3",
             "minGrade": "B3",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pse_jc_subjects"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       },
       {
         "id": "jc_chemistry",
         "name": "H2 Chemistry",
         "needs": [
           {
-            "text": "Chemistry or Science (Physics/Biology, Chemistry); grade cut off varies by JC",
+            "text": "Colleges look for Chemistry, or a Science with Chemistry in it. Each college sets its own grade.",
             "subjects": [
               "chemistry",
               "sci_pc",
@@ -54,16 +100,18 @@
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pse_jc_subjects"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       },
       {
         "id": "jc_biology",
         "name": "H2 Biology",
         "needs": [
           {
-            "text": "Biology or Science (Physics/Chemistry, Biology); indicative B4 Biology or B3 combined science (CJC)",
+            "text": "Colleges look for Biology, or a Science with Biology in it. Each college sets its own grade.",
             "subjects": [
               "biology",
               "sci_pb",
@@ -71,37 +119,41 @@
             ],
             "minLevel": "G3",
             "minGrade": "B4",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pse_jc_subjects"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       },
       {
         "id": "jc_humanities",
-        "name": "Humanities/Arts (H2 Econs, History, Geography, Literature)",
+        "name": "Humanities and Arts (H2 Economics, History, Geography, Literature)",
         "needs": [
           {
-            "text": "No published common prerequisite found; colleges set their own. Prior Literature/History/Geography is generally helpful for the matching H2 subject.",
+            "text": "MOE sets no common requirement. Each college sets its own, and the matching Humanities subject helps.",
             "subjects": [
               "literature",
               "history",
               "geography",
-              "hum_ss_lit",
-              "hum_ss_hist",
               "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
               "economics"
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pse_jc_subjects"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       },
       {
         "id": "jc_art_music",
-        "name": "H2 Art / H2 Music",
+        "name": "H2 Art or H2 Music",
         "needs": [
           {
-            "text": "Not researched in primary sources; colleges typically expect prior Art/Music or portfolio/audition. Unverified.",
+            "text": "Not checked on a primary page. Colleges usually look for Art or Music, or a portfolio or audition.",
             "subjects": [
               "art",
               "higher_art",
@@ -112,16 +164,82 @@
             "minGrade": null,
             "status": "provisional"
           }
-        ]
+        ],
+        "basis": "Individual college pages. MOE publishes no common H2 requirement, and each college sets its own."
       }
     ],
     "poly": [
       {
         "id": "poly_A",
-        "name": "ELR2B2 A: business, humanities, media, early childhood type courses",
+        "name": "ELR2B2 A: mostly business, humanities and media courses",
         "needs": [
           {
-            "text": "R1 from 1st group (arts/humanities/business list: Art, Business Studies, Combined Humanities, Economics, Geography, History, Literature, Music, etc.)",
+            "text": "R1 is an arts, business or Humanities subject, such as Art, Economics, Geography, History, Literature, Music or Humanities (Social Studies with an elective).",
+            "subjects": [
+              "art",
+              "higher_art",
+              "economics",
+              "geography",
+              "history",
+              "literature",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "music",
+              "higher_music"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
+          },
+          {
+            "text": "R2 is a second subject from that list, or Mathematics, Additional Mathematics, Mother Tongue, Design and Technology, Nutrition and Food Science or Principles of Accounts. No science counts.",
+            "subjects": [
+              "art",
+              "higher_art",
+              "economics",
+              "geography",
+              "history",
+              "literature",
+              "hum_ss_geog",
+              "hum_ss_hist",
+              "hum_ss_lit",
+              "music",
+              "higher_music",
+              "maths",
+              "amaths",
+              "mtl",
+              "hmtl",
+              "dt",
+              "nfs",
+              "poa"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
+          }
+        ],
+        "basis": "MOE's Polytechnic Aggregate Types Computation table for the 2026 JAE. The 2028 lists arrive in mid 2027."
+      },
+      {
+        "id": "poly_B",
+        "name": "ELR2B2 B: business courses with Mathematics, such as Accountancy",
+        "needs": [
+          {
+            "text": "R1 is Mathematics or Additional Mathematics. MOE states this for 2028.",
+            "subjects": [
+              "maths",
+              "amaths"
+            ],
+            "minLevel": "G3",
+            "minGrade": null,
+            "status": "confirmed",
+            "sourceRef": "moe_pse_poly"
+          },
+          {
+            "text": "R2 is an arts, business or Humanities subject, such as Principles of Accounts, Economics, Geography, History, Literature, Art, Music or Humanities (Social Studies with an elective).",
             "subjects": [
               "art",
               "higher_art",
@@ -138,76 +256,29 @@
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
-          },
-          {
-            "text": "R2 from 2nd group (wider list incl. Mathematics, MTL, D&T, F&N, sciences)",
-            "subjects": [
-              "maths",
-              "amaths",
-              "mtl",
-              "hmtl",
-              "dt",
-              "nfs",
-              "sci_pc",
-              "sci_pb",
-              "sci_cb",
-              "physics",
-              "chemistry",
-              "biology"
-            ],
-            "minLevel": "G3",
-            "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
           }
-        ]
-      },
-      {
-        "id": "poly_B",
-        "name": "ELR2B2 B: business with mathematics (e.g. Accountancy & Finance)",
-        "needs": [
-          {
-            "text": "R1 = Mathematics or Additional Mathematics",
-            "subjects": [
-              "maths",
-              "amaths"
-            ],
-            "minLevel": "G3",
-            "minGrade": null,
-            "status": "provisional"
-          },
-          {
-            "text": "R2 from 2nd group (humanities/arts/commerce list per one source; sources disagree)",
-            "subjects": [
-              "poa",
-              "economics",
-              "geography",
-              "history",
-              "literature",
-              "art"
-            ],
-            "minLevel": "G3",
-            "minGrade": null,
-            "status": "provisional"
-          }
-        ]
+        ],
+        "basis": "MOE's Polytechnic Aggregate Types Computation table for the 2026 JAE. The 2028 lists arrive in mid 2027."
       },
       {
         "id": "poly_C",
-        "name": "ELR2B2 C: engineering, IT, applied & health sciences (Nursing uses C)",
+        "name": "ELR2B2 C: engineering, IT, applied and health sciences, with Nursing",
         "needs": [
           {
-            "text": "R1 = Mathematics or Additional Mathematics",
+            "text": "R1 is Mathematics or Additional Mathematics.",
             "subjects": [
               "maths",
               "amaths"
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
           },
           {
-            "text": "R2 = a science/technology subject (Biology, Chemistry, Physics, combined sciences, Computing, D&T, F&N, Electronics...)",
+            "text": "R2 is a science or technology subject: a Science, Physics, Chemistry, Biology, Computing, Design and Technology, Nutrition and Food Science, Electronics or Exercise and Sports Science.",
             "subjects": [
               "physics",
               "chemistry",
@@ -218,43 +289,55 @@
               "computing",
               "dt",
               "nfs",
-              "electronics"
+              "electronics",
+              "ess"
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
           }
-        ]
+        ],
+        "basis": "MOE's Polytechnic Aggregate Types Computation table for the 2026 JAE. The 2028 lists arrive in mid 2027."
       },
       {
         "id": "poly_D",
-        "name": "ELR2B2 D: design and architecture",
+        "name": "ELR2B2 D: design and architecture courses",
         "needs": [
           {
-            "text": "R1 = Mathematics or Additional Mathematics (per SP table)",
+            "text": "R1 is Mathematics or Additional Mathematics.",
             "subjects": [
               "maths",
               "amaths"
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
           },
           {
-            "text": "Must have sat one 2nd group subject (Art, D&T, Design Studies, sciences per one source)",
+            "text": "R2 is Art, Higher Art, Design and Technology, Computing, Electronics, Nutrition and Food Science, or a science subject.",
             "subjects": [
               "art",
               "higher_art",
               "dt",
+              "computing",
+              "electronics",
+              "nfs",
               "physics",
               "chemistry",
-              "biology"
+              "biology",
+              "sci_pc",
+              "sci_pb",
+              "sci_cb"
             ],
             "minLevel": "G3",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_poly_types_2026"
           }
-        ]
+        ],
+        "basis": "MOE's Polytechnic Aggregate Types Computation table for the 2026 JAE. The 2028 lists arrive in mid 2027."
       }
     ],
     "pfp": [
@@ -263,69 +346,56 @@
         "name": "Sciences cluster",
         "needs": [
           {
-            "text": "Relevant science subject at G2 equivalent 3",
+            "text": "One relevant subject at G2 grade 3 or better. The current list names Design and Technology, Nutrition and Food Science and the three combined Sciences. Physics, Chemistry and Biology are assumed to count; confirm in mid 2027.",
             "subjects": [
+              "dt",
+              "nfs",
               "sci_pc",
               "sci_pb",
               "sci_cb",
               "physics",
               "chemistry",
-              "biology",
-              "nfs"
+              "biology"
             ],
             "minLevel": "G2",
             "minGrade": "3",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pfp_now"
           }
-        ]
+        ],
+        "basis": "MOE's PFP eligibility page for the current cohort and its cluster list from AY2027. The 2028 lists arrive in mid 2027."
       },
       {
-        "id": "pfp_eng_tech",
-        "name": "Engineering & Technology cluster",
+        "id": "pfp_det",
+        "name": "Design, Engineering and Technology cluster",
+        "note": "At Nanyang Polytechnic and Temasek Polytechnic this cluster is two smaller groups: Design, and Engineering and Technology.",
         "needs": [
           {
-            "text": "Relevant science/D&T subject at G2 equivalent 3",
+            "text": "One relevant subject at G2 grade 3 or better. The current list names Design and Technology, Nutrition and Food Science and the three combined Sciences. Physics, Chemistry and Biology are assumed to count; confirm in mid 2027.",
             "subjects": [
+              "dt",
+              "nfs",
               "sci_pc",
               "sci_pb",
               "sci_cb",
               "physics",
               "chemistry",
-              "biology",
-              "dt",
-              "nfs"
+              "biology"
             ],
             "minLevel": "G2",
             "minGrade": "3",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pfp_now"
           }
-        ]
-      },
-      {
-        "id": "pfp_design",
-        "name": "Design cluster",
-        "needs": [
-          {
-            "text": "Same relevant subject list as sciences at some polys; design courses may add art/portfolio",
-            "subjects": [
-              "dt",
-              "art",
-              "sci_pc",
-              "sci_pb",
-              "sci_cb"
-            ],
-            "minLevel": "G2",
-            "minGrade": "3",
-            "status": "provisional"
-          }
-        ]
+        ],
+        "basis": "MOE's PFP eligibility page for the current cohort and its cluster list from AY2027. The 2028 lists arrive in mid 2027."
       },
       {
         "id": "pfp_hamb",
-        "name": "Humanities, Arts, Media & Business cluster",
+        "name": "Humanities, Art, Media and Business cluster",
         "needs": [
           {
-            "text": "Relevant humanities/business subject at G2 equivalent 3 (PoA, Literature, History, Geography, Art...)",
+            "text": "One relevant subject at G2 grade 3 or better. The current list names Art, Geography, History, Literature in English, Principles of Accounts and Humanities (Social Studies with an elective).",
             "subjects": [
               "poa",
               "literature",
@@ -338,9 +408,11 @@
             ],
             "minLevel": "G2",
             "minGrade": "3",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_pfp_now"
           }
-        ]
+        ],
+        "basis": "MOE's PFP eligibility page for the current cohort and its cluster list from AY2027. The 2028 lists arrive in mid 2027."
       }
     ],
     "hnitec": [
@@ -349,30 +421,34 @@
         "name": "Engineering",
         "needs": [
           {
-            "text": "Example 2026 MER (Higher Nitec Electrical Engineering 2 yr, O Level grades): EL 1 to 8, Maths/A Maths 1 to 7, one science type subject 1 to 8",
+            "text": "2026 example, Higher Nitec in Electrical Engineering: English, Mathematics or Additional Mathematics, and one science or technology subject. From 2028 these are read at G2 grades. The grades arrive in mid 2027.",
             "subjects": [
               "el",
               "maths",
               "amaths",
               "physics",
               "chemistry",
+              "biology",
               "sci_pc",
               "sci_pb",
               "sci_cb",
+              "computing",
+              "dt",
               "electronics"
             ],
-            "minLevel": "G3",
+            "minLevel": "G2",
             "minGrade": null,
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_cf_hn_ee2"
           }
         ]
       },
       {
         "id": "ite_infocomm",
-        "name": "Info comm Technology & Digital Media",
+        "name": "Infocomm Technology and Digital Media",
         "needs": [
           {
-            "text": "Example (Higher Nitec IT Systems & Networks): EL 1 to 8, Maths 1 to 7, approved science subject 1 to 8 (Biology, Chemistry, Combined Science, Physics, etc.)",
+            "text": "Example from ITE's own page, not rechecked on 11 November 2026: English, Mathematics and one science subject. The 2028 grades arrive in mid 2027.",
             "subjects": [
               "el",
               "maths",
@@ -385,7 +461,7 @@
               "sci_cb",
               "computing"
             ],
-            "minLevel": "G3",
+            "minLevel": "G2",
             "minGrade": null,
             "status": "provisional"
           }
@@ -393,14 +469,11 @@
       },
       {
         "id": "ite_business_services",
-        "name": "Business & Services",
+        "name": "Business and Services",
         "needs": [
           {
-            "text": "MERs not found for 2028; some services courses (accounting, hospitality, event mgmt) require Maths to have been sat",
-            "subjects": [
-              "el",
-              "maths"
-            ],
+            "text": "Not published for 2028. Due on CourseFinder in mid 2027.",
+            "subjects": [],
             "minLevel": null,
             "minGrade": null,
             "status": "provisional"
@@ -409,10 +482,10 @@
       },
       {
         "id": "ite_applied_health",
-        "name": "Applied & Health Sciences",
+        "name": "Applied and Health Sciences",
         "needs": [
           {
-            "text": "MERs not found",
+            "text": "Not published for 2028. Due on CourseFinder in mid 2027.",
             "subjects": [],
             "minLevel": null,
             "minGrade": null,
@@ -422,10 +495,10 @@
       },
       {
         "id": "ite_design_media",
-        "name": "Design & Media",
+        "name": "Design and Media",
         "needs": [
           {
-            "text": "MERs not found",
+            "text": "Not published for 2028. Due on CourseFinder in mid 2027.",
             "subjects": [],
             "minLevel": null,
             "minGrade": null,
@@ -440,7 +513,7 @@
         "name": "Engineering",
         "needs": [
           {
-            "text": "Example (Higher Nitec Electronics Engineering 3 yr): Maths or Science at A D or 1 to 5, plus any 2 other subjects A D or 1 to 5; some applied subjects may replace Science",
+            "text": "2026 example, Higher Nitec in Electronics Engineering: Mathematics or Science at G1 grade D or G2 grade 5 or better, plus any two other subjects.",
             "subjects": [
               "maths",
               "science_g1",
@@ -453,16 +526,17 @@
             ],
             "minLevel": "G1",
             "minGrade": "D",
-            "status": "provisional"
+            "status": "provisional",
+            "sourceRef": "moe_cf_hn_elec3"
           }
         ]
       },
       {
         "id": "ite3_infocomm",
-        "name": "Info comm Technology & Digital Media",
+        "name": "Infocomm Technology and Digital Media",
         "needs": [
           {
-            "text": "Example (IT Systems & Networks 3 yr): N Level route Maths or Science A D/1 to 5 plus two others; likely R1B3 B",
+            "text": "Example from ITE's own page, not rechecked on 11 November 2026: Mathematics or Science, plus two other subjects. Which score type each course uses is not published yet.",
             "subjects": [
               "maths",
               "science_g1",
@@ -476,14 +550,12 @@
       },
       {
         "id": "ite3_business_services",
-        "name": "Business & Services",
+        "name": "Business and Services",
         "needs": [
           {
-            "text": "Aggregate type mapping not published; R1B3 C (English) or R2B2 plausible. Unverified.",
-            "subjects": [
-              "el"
-            ],
-            "minLevel": "G1",
+            "text": "Which of the five score types each course uses is not published for 2028. Due on CourseFinder in mid 2027.",
+            "subjects": [],
+            "minLevel": null,
             "minGrade": null,
             "status": "provisional"
           }
@@ -491,10 +563,10 @@
       },
       {
         "id": "ite3_applied_health",
-        "name": "Applied & Health Sciences",
+        "name": "Applied and Health Sciences",
         "needs": [
           {
-            "text": "Not found",
+            "text": "Not published for 2028. Due on CourseFinder in mid 2027.",
             "subjects": [],
             "minLevel": null,
             "minGrade": null,
@@ -504,10 +576,10 @@
       },
       {
         "id": "ite3_design_media",
-        "name": "Design & Media",
+        "name": "Design and Media",
         "needs": [
           {
-            "text": "Not found; B4 or R1B3 C plausible. Unverified.",
+            "text": "Not published for 2028. Due on CourseFinder in mid 2027.",
             "subjects": [],
             "minLevel": null,
             "minGrade": null,
@@ -519,10 +591,10 @@
     "arts": [
       {
         "id": "arts_visual_design",
-        "name": "Visual arts & design diplomas",
+        "name": "Visual arts and design diplomas",
         "needs": [
           {
-            "text": "Portfolio required; no specific subject prerequisite found",
+            "text": "Each programme sets its own portfolio, test or interview. MOE lists no required subject.",
             "subjects": [
               "art",
               "higher_art",
@@ -539,7 +611,7 @@
         "name": "Performing arts (music, theatre, dance)",
         "needs": [
           {
-            "text": "Audition required; no specific subject prerequisite found",
+            "text": "Each programme sets its own audition, test or interview. MOE lists no required subject.",
             "subjects": [
               "music",
               "higher_music",

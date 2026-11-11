@@ -337,3 +337,7 @@
 .whatsnew h2 { font-size: 1.2rem; margin: 0 0 8px; }
 .whatsnew ul, .wn-list { margin: 0 0 12px; padding-left: 18px; display: grid; gap: 6px; font-size: 0.94rem; color: var(--ink-soft); }
 .whatsnew .btnrow { margin: 0; }
+
+/* A figure read on the primary page, beside the ones still to confirm. */
+.src-chip.checked { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 1px 6px; border-radius: 5px; background: var(--open-wash); color: var(--open-ink); }
+.src-chip.checked .ic { width: 11px; height: 11px; }

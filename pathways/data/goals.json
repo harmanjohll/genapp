@@ -60,9 +60,8 @@
     "poly_C": "Engineering, IT, applied sciences and health, including Nursing",
     "poly_D": "Design and architecture",
     "pfp_sciences": "Sciences",
-    "pfp_eng_tech": "Engineering and Technology",
-    "pfp_design": "Design",
-    "pfp_hamb": "Humanities, Arts, Media and Business",
+    "pfp_det": "Design, Engineering and Technology",
+    "pfp_hamb": "Humanities, Art, Media and Business",
     "ite_engineering": "Engineering",
     "ite_infocomm": "Infocomm Technology and Digital Media",
     "ite_business_services": "Business and Services",
@@ -100,7 +99,7 @@
       "poly_D",
       "ite_engineering",
       "ite3_engineering",
-      "pfp_eng_tech"
+      "pfp_det"
     ],
     "business": [
       "jc_humanities",
@@ -132,7 +131,7 @@
       "poly_C",
       "ite_infocomm",
       "ite3_infocomm",
-      "pfp_eng_tech"
+      "pfp_det"
     ],
     "design": [
       "jc_art_music",
@@ -140,7 +139,7 @@
       "arts_visual_design",
       "ite_design_media",
       "ite3_design_media",
-      "pfp_design"
+      "pfp_det"
     ],
     "engineering": [
       "jc_physics",
@@ -148,7 +147,7 @@
       "poly_C",
       "ite_engineering",
       "ite3_engineering",
-      "pfp_eng_tech"
+      "pfp_det"
     ],
     "food": [
       "jc_chemistry",
@@ -182,7 +181,7 @@
       "ite3_engineering",
       "ite_business_services",
       "ite3_business_services",
-      "pfp_eng_tech"
+      "pfp_det"
     ],
     "selling": [
       "jc_humanities",

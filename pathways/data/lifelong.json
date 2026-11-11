@@ -34,7 +34,7 @@
       "to": 29,
       "label": "Finding my feet",
       "tone": "work",
-      "you": "Early work"
+      "you": "First jobs"
     },
     {
       "id": "mid",
@@ -50,7 +50,7 @@
       "to": 65,
       "label": "Often somewhere new",
       "tone": "work",
-      "you": "Often somewhere new"
+      "you": "Somewhere new"
     }
   ],
   "markers": [
@@ -133,7 +133,7 @@
       "status": "confirmed",
       "you": {
         "title": "SkillsFuture Level Up Programme",
-        "body": "At 40: a $4,000 credit. A monthly allowance if you study full time, and $300 a month part time."
+        "body": "At 40: a $4,000 credit. Half your income, up to $3,000 a month, if you study full time, or $300 a month part time."
       }
     },
     {
