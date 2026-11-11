@@ -12,6 +12,7 @@ What each version is, what is critical in it and why it was superseded:
 | `pathways-v2/` | v2.15.0, 2026-08-20 |
 | `pathways-v3/` | v3.0.0, 2026-08-23 |
 | `pathways-v4/` | v4.4.0, 2026-11-01, frozen 2026-11-09 when 6.0 replaced it |
+| `pathways-v6/` | v6.0.0, 2026-11-09, frozen 2026-11-11 when the next build began |
 
 Their own READMEs still describe their old addresses (`pathways/`,
 `pathways2/`, `pathways3/`); those addresses now forward here or, for v1,
@@ -19,3 +20,6 @@ open the latest. The only edit made since freezing is v3's link to the v2
 tabletop mode, so it still resolves. v4 was frozen with two changes: the
 same v2 link, and its own offline cache name, so the latest version's
 cleanup leaves it alone.
+v6 was frozen the same way: its own offline cache name, and its links to
+v2 and v4 pointed at their folders here. It keeps its own saved plans; the
+latest version reads them once and never writes to them.

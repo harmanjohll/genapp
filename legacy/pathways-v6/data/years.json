@@ -1,0 +1,326 @@
+{
+  "_meta": {
+    "source": "MOE Full SBB pages and FAQ, MOE S1 posting pages, SEAB SEC pages, MOE PSE pages and press releases (2024 to 2026), school subject combination booklets as examples only",
+    "url": "https://www.moe.gov.sg/psle-fsbb/full-subject-based-banding/secondary-school-experience",
+    "accessed": "2026-10-27",
+    "units": "none",
+    "notes": "Read from search engine extracts of the primary pages on 2026-10-27. Items marked provisional come from school booklets or secondary summaries and vary by school. Schools set their own review criteria and dates; the school's own are the real ones."
+  },
+  "years": {
+    "p6": {
+      "phase": "Primary",
+      "headline": "From PSLE to your first levels",
+      "lede": "Your PSLE Score sets your Posting Group. A strong AL can let you start that subject at a higher level.",
+      "happens": [
+        {
+          "when": "May to June",
+          "what": "Direct School Admission applications, for talents a school recognises.",
+          "status": "confirmed"
+        },
+        {
+          "when": "September to October",
+          "what": "PSLE written papers. Each subject gets an AL from 1 to 8. Your PSLE Score is the total of four.",
+          "status": "confirmed"
+        },
+        {
+          "when": "Late November",
+          "what": "Results, the S1 Option Form and the eligibility letter. You list six schools in a short window.",
+          "status": "confirmed"
+        },
+        {
+          "when": "December",
+          "what": "Sec 1 posting results.",
+          "status": "confirmed"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "With a score of 21, 22 or 25, choose one of two Posting Groups before listing schools. It applies to all six choices."
+        },
+        {
+          "text": "List six schools in order. Posting goes by PSLE Score, then citizenship, then choice order, then a ballot."
+        },
+        {
+          "text": "If an AL allows it, decide whether to start English, Mother Tongue, Maths or Science at a higher level."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which subject do you enjoy most, whatever your AL?",
+          "Would you start a subject higher and work hard, or start steady and move up later?",
+          "What do you want in a secondary school: a CCA, a programme, friends, distance from home?"
+        ],
+        "parent": [
+          "Ask: which subject felt easiest this year, and which felt hardest?",
+          "Ask: if you could start one subject at a higher level, which would it be?",
+          "Ask: what matters to you in a school, apart from the score range?"
+        ],
+        "teacher": [
+          "Ask the student: what do you do when something is hard?",
+          "Ask: which subject would you like to start at a higher level?",
+          "Ask: who at home will help you choose your six schools?"
+        ]
+      },
+      "source": "From MOE PSLE and S1 posting pages, October 2026."
+    },
+    "sec1": {
+      "phase": "Lower Sec",
+      "headline": "Settling in, and the first review",
+      "lede": "English, Mother Tongue, Maths and Science each sit at G1, G2 or G3. Each can move up at the school's review.",
+      "happens": [
+        {
+          "when": "All year",
+          "what": "About a third of the week is in a mixed form class. Subjects: Art, Music, Design and Technology, Food and Consumer Education, PE and CCE. These have no levels.",
+          "status": "confirmed"
+        },
+        {
+          "when": "All year",
+          "what": "For levelled subjects, you join students from other classes at the same level.",
+          "status": "confirmed"
+        },
+        {
+          "when": "School review",
+          "what": "Often at the end of the year. The school looks at your results and workload. English, Mother Tongue, Maths and Science can move up or down for Sec 2.",
+          "status": "provisional"
+        },
+        {
+          "when": "For Sec 2",
+          "what": "Your interest and results in Geography, History and Literature this year decide if they move up in Sec 2.",
+          "status": "confirmed"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "Whether to take a subject at a higher level next year, if the school offers it. Schools set their own bar, for example 75 percent in that subject."
+        },
+        {
+          "text": "Which CCA to commit to. Post secondary schools look at your CCA record."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which subject could you move up by the end of the year? What would your teacher want to see?",
+          "Which subject needs more of your time, without changing its level?",
+          "Which Humanities subject do you enjoy enough to work harder at next year?"
+        ],
+        "parent": [
+          "Ask: which subject could go up a level? What would help?",
+          "Ask: is any subject taking so much time that the others suffer?",
+          "Ask: what does your teacher say you do well?"
+        ],
+        "teacher": [
+          "Ask the student: which subject would you like to try at the next level?",
+          "Ask: what does a good week of revision look like for you?",
+          "Ask: which Humanities subject do you look forward to?"
+        ]
+      },
+      "source": "From the MOE Full SBB FAQ and secondary school pages, October 2026."
+    },
+    "sec2": {
+      "phase": "Lower Sec",
+      "headline": "The year that shapes Sec 3",
+      "lede": "Humanities can move up now. At the end of the year, your school sets your Sec 3 and Sec 4 subjects.",
+      "happens": [
+        {
+          "when": "Start of year",
+          "what": "Humanities moves earned in Sec 1 take effect.",
+          "status": "confirmed"
+        },
+        {
+          "when": "Mid year",
+          "what": "Most schools hold a briefing on upper secondary subjects.",
+          "status": "provisional"
+        },
+        {
+          "when": "End of year",
+          "what": "Your results and the school review set your Sec 3 subjects and levels.",
+          "status": "provisional"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "Your Sec 3 subjects: English, Mother Tongue, Maths, a Science, a Humanities and electives. Most students take 7 or 8 exam subjects; the range is 5 to 9."
+        },
+        {
+          "text": "Science: a Science pair, two or three pure sciences, or G1 Science."
+        },
+        {
+          "text": "Humanities: Social Studies with Geography, History or Literature. Some schools add a pure Humanities subject."
+        },
+        {
+          "text": "Additional Mathematics, if your school offers it to you. Schools set their own bar, often 55 to 70 percent in Sec 2 G3 Maths."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which subjects do you want in Sec 3 because you like them?",
+          "Which subject is close to moving up before your Sec 3 subjects are set?",
+          "Which places do you want to keep open, and which subjects keep them open?"
+        ],
+        "parent": [
+          "Ask: which subjects would you choose if it were only up to you?",
+          "Ask: which subject is close to the next level? What would help?",
+          "Ask: would you rather take more subjects, or fewer done well?"
+        ],
+        "teacher": [
+          "Ask the student: which subject are you choosing for yourself?",
+          "Ask: which level do you want to keep or raise by the end of the year?",
+          "Ask: is Additional Maths, or a pure science, right for you? Why?"
+        ]
+      },
+      "source": "From the MOE Full SBB FAQ, October 2026. Subject details from school booklets, still to be confirmed."
+    },
+    "sec3": {
+      "phase": "Upper Sec",
+      "headline": "Your combination, year one",
+      "lede": "The two year SEC course starts. Your levels are mostly set. Grade targets start to matter.",
+      "happens": [
+        {
+          "when": "All year",
+          "what": "First year of the SEC course.",
+          "status": "confirmed"
+        },
+        {
+          "when": "End of year",
+          "what": "Promotion to Sec 4. Some schools review levels at this point.",
+          "status": "provisional"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "Set a grade target for each subject. The Targets tab shows the score each place reads."
+        },
+        {
+          "text": "Whether any level should change for Sec 4. The school decides, and a change is not guaranteed."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which grade target is a stretch, but still realistic for you?",
+          "Which subject takes the most time for the least progress? Why?",
+          "Which place are you aiming for, and what score does it read?"
+        ],
+        "parent": [
+          "Ask: what grade would you be proud of in each subject?",
+          "Ask: which subject needs help that we could find together?",
+          "Ask: what are you aiming for after Sec 4, for now?"
+        ],
+        "teacher": [
+          "Ask the student: which target would you set yourself?",
+          "Ask: what one habit would raise your weakest grade by one step?",
+          "Ask: which place are you working towards? Do you know what it counts?"
+        ]
+      },
+      "source": "From MOE Full SBB pages, October 2026. Review practice varies by school."
+    },
+    "sec4": {
+      "phase": "Upper Sec",
+      "headline": "Finishing well, and the SEC",
+      "lede": "The first SEC is in 2027. Early admissions can offer you a place before the results.",
+      "happens": [
+        {
+          "when": "May to July",
+          "what": "Early admissions for ITE and polytechnic, and DSA for JC. Places are offered on aptitude and interest, before the exams.",
+          "status": "provisional"
+        },
+        {
+          "when": "Before the written papers",
+          "what": "Orals, listening and science practicals.",
+          "status": "confirmed"
+        },
+        {
+          "when": "September",
+          "what": "English and Mother Tongue written papers.",
+          "status": "confirmed"
+        },
+        {
+          "when": "October to November",
+          "what": "All other written papers.",
+          "status": "confirmed"
+        },
+        {
+          "when": "January",
+          "what": "All SEC results together, then the Post Secondary Admissions Exercise opens in mid January.",
+          "status": "confirmed"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "Whether to apply through early admissions, and for which course."
+        },
+        {
+          "text": "Your choices in the Post Secondary Admissions Exercise. From 2028 it covers JC, MI, polytechnic, PFP and ITE."
+        },
+        {
+          "text": "If Sec 5 is open to you, whether to take it, and what to aim for."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which course would you apply for in early admissions? What would you show them?",
+          "Which two grades would change your score the most?",
+          "If your results are different from what you expect, what is your second choice?"
+        ],
+        "parent": [
+          "Ask: which course would you apply for early, if you could?",
+          "Ask: what is your plan if results are better or worse than you hope?",
+          "Ask: what help do you need between now and October?"
+        ],
+        "teacher": [
+          "Ask the student: which course interests you most? Have you visited it?",
+          "Ask: which two subjects will you put extra hours into, and when?",
+          "Ask: what would you choose if your score came in two points higher or lower?"
+        ]
+      },
+      "source": "From SEAB SEC pages and MOE PSE pages, October 2026."
+    },
+    "sec5": {
+      "phase": "Upper Sec",
+      "headline": "A fifth year, aimed at something",
+      "lede": "Sec 5 gives you another year, and subjects can move up a level. It helps most when you aim it at one place.",
+      "happens": [
+        {
+          "when": "Entry",
+          "what": "For students with two or fewer G3 passes. You need ELMAB3 of 21 or better, or ELB3 or MAB3 of 14 or better. Each subject counted needs Grade 5 or better.",
+          "status": "confirmed"
+        },
+        {
+          "when": "Entry",
+          "what": "To take every subject at G3 in Sec 5, you need ELMAB3 of 19 or better.",
+          "status": "confirmed"
+        },
+        {
+          "when": "End of year",
+          "what": "SEC papers in the subjects you take, then the Post Secondary Admissions Exercise.",
+          "status": "provisional"
+        }
+      ],
+      "decisions": [
+        {
+          "text": "Which subjects to take, and at which level, to reach the place you are aiming for."
+        },
+        {
+          "text": "Whether the Polytechnic Foundation Programme or a 2 year Higher Nitec suits you better than Sec 5."
+        }
+      ],
+      "talk": {
+        "student": [
+          "Which place are you aiming for this year?",
+          "Which subject moving to G3 would make the biggest difference?",
+          "Would another route get you there sooner? Would you prefer it?"
+        ],
+        "parent": [
+          "Ask: what do you want this extra year to make possible?",
+          "Ask: which subject would you take to G3, and what help do you need?",
+          "Ask: have we compared PFP and Higher Nitec side by side?"
+        ],
+        "teacher": [
+          "Ask the student: what place is this year for?",
+          "Ask: which subject at G3 is realistic for you? How will you study it differently?",
+          "Ask: what would make you choose a different route?"
+        ]
+      },
+      "source": "From the MOE page on the SEC and Sec 5, October 2026."
+    }
+  }
+}

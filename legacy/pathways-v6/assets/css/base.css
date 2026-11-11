@@ -1,0 +1,168 @@
+/* Base, v3. Reset, type, focus, press, the five motion verbs, print.
+   One definition per thing: if a rule needs changing, it changes here,
+   it does not get a dated patch section below. */
+
+@layer base;
+
+@layer base {
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  background: var(--paper);
+  transition: background-color calc(var(--dur) * 2) var(--ease);
+  overflow-wrap: break-word;
+}
+
+/* The grain: one fixed composited layer, never on a scrolling box.
+   Invisible at 13, tangible at 48. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--grain);
+  opacity: var(--grain-o);
+  transition: opacity calc(var(--dur) * 2) var(--ease);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: var(--lh-h);
+  margin: 0 0 var(--s-3);
+  letter-spacing: -0.012em;
+}
+h1 { font-size: var(--t-h1); }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); }
+
+p { margin: 0 0 var(--s-3); }
+
+a { color: var(--accent-dk); text-underline-offset: 2px; }
+a:hover { color: var(--accent-dkr); }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img, svg, canvas { max-width: 100%; height: auto; display: block; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+::selection { background: var(--accent-wash); }
+
+/* Every tappable thing acknowledges the tap. v2 had one :active rule in
+   2,336 lines, for a touch-first audience. */
+button:active,
+a.btn:active,
+.press:active {
+  transform: scale(0.98);
+  transition-duration: 90ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active, a.btn:active, .press:active { transform: none; }
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  color: var(--ink);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow);
+}
+.skip-link:focus { left: var(--s-4); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.wrap-narrow { max-width: var(--max-narrow); margin: 0 auto; padding: 0 var(--gutter); }
+
+.caps {
+  font-family: var(--body);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.small { font-size: var(--t-small); color: var(--ink-mute); }
+
+/* ---- the five motion verbs ------------------------------------------------
+   ARRIVE - content enters. Staggered, at most four items deep.
+   DRAW   - a line draws itself. The house signature; SVG strokes only.
+   TRAVEL - a thing moves to where it now lives (FLIP in JS, this eases it).
+   OPEN   - the door ceremony (play.css owns the choreography).
+   SETTLE - a state changes in place, no movement, a tone shift. */
+
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.arrive { animation: arrive var(--dur) var(--ease) both; }
+.arrive.d1 { animation-delay: 60ms; }
+.arrive.d2 { animation-delay: 120ms; }
+.arrive.d3 { animation-delay: 180ms; }
+
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--draw-len, 1000); }
+  to   { stroke-dashoffset: 0; }
+}
+.draw {
+  stroke-dasharray: var(--draw-len, 1000);
+  animation: draw-line var(--dur-draw) var(--ease) both;
+}
+
+.travel { transition: transform var(--dur) var(--ease); }
+
+.settle { transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  .arrive, .draw { animation: none; }
+  .draw { stroke-dasharray: none; }
+  .travel, .settle { transition: none; }
+  body, body::before { transition: none; }
+}
+
+/* ---- print ---------------------------------------------------------------
+   The parent page and the story card print. Chrome does not. */
+@media print {
+  body { background: #fff; color: #000; }
+  body::before { display: none; }
+  .site-head, .site-foot, .tabbar, .no-print { display: none !important; }
+  a { color: inherit; text-decoration: none; }
+}
+
+} /* @layer base */
