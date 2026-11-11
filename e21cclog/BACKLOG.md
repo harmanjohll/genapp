@@ -2,6 +2,8 @@
 
 Built in order, one item at a time (see `LOOP.md`; the scheduled runs are paused). Items A1 to D4 and S1 were built in `e21cclog/next/` beside the pilot, then folded into the Log as Version 4 on 8 November 2026; from here every item is built in the Log itself, at `e21cclog/`. Statuses: `ready`, `needs Harman` (a question below the item), `blocked` (waiting on something outside the code), `done`.
 
+**Version 6 (11 November):** an audit against Harman's seven intents, his decisions that day and what is open are in `V6.md`. Nothing from it is built yet; read it before any Version 6 work.
+
 The decisions behind these items were made with Harman in November 2026:
 - serverless first, with school Microsoft 365 later;
 - a school staff list in the app, reaching students by one school link;
