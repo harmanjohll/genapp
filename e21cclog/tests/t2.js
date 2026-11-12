@@ -1,4 +1,5 @@
 const { chromium } = require('playwright');
+const { AFFIRM } = require('./fixtures/affirm.js');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/') + 'index.html'; const SHOTS = require('./shots.js')('v2-');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function chooseCtx(page, name){ const chip = await page.$(`.xchips [data-exp$="|${name}"]`); if (chip) return chip.click(); await page.click('[data-ptype=subject]'); await sleep(150); const sc = await page.$(`.typepanel [data-exp="subject|${name}"]`); if (sc) return sc.click(); await page.fill('[name=ctxName]', name); }
@@ -33,6 +34,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
   await page.fill('[data-a=r2]', 'Redo Q3 on Tuesday after CCA for 20 minutes.');
   await page.click('#cNext'); await sleep(150); await page.click('#cNext'); await sleep(150); await page.click('#cNext'); await sleep(200);
   await page.click('#cNext'); await sleep(250);
+  if (await page.$('#claimNudge')){ await page.click('#cNext'); await sleep(250); }   // 6.0: no claim, so the step asks once
   await page.screenshot({path:SHOTS + '21-readback.png', fullPage:true});
   await page.click('#cSave'); await sleep(1500);
   let calls = await relayCalls();
@@ -45,7 +47,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
 
   // edit without changing words: no new call, read kept
   await page.click('a.btn:has-text("Edit")'); await sleep(300);
-  for (let i = 0; i < 6; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
+  for (let i = 0; i < 8; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
   await page.click('#cSave'); await sleep(1200);
   calls = await relayCalls();
   const s2 = await page.evaluate(id => { const d = JSON.parse(localStorage.getItem('e21cclog')); const e = d.profiles[d.current].entries.find(x => x.id === id); return {ai:!!e.coach.ai, src:e.e21cc.source}; }, eid);
@@ -55,7 +57,9 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
   await page.evaluate(id => location.hash = '#/entry/' + id, eid); await sleep(400);
   await page.click('[data-maylink="ct1.l1"]'); await sleep(500);
   await page.evaluate(() => location.hash = '#/c/critical'); await sleep(400);
-  check('statement started after link: backed by the words, one entry of two', await page.$$eval('.st.s-started', l => l.length) === 1 && (await page.textContent('.st.s-started .stl')).includes('1 of 2 entries'));
+  check('6.0: linked, the claim waits for a teacher', (await page.textContent('.st.s-linked .stl')).includes('Waiting for a teacher'));
+  await page.evaluate(AFFIRM); await page.evaluate(() => route()); await sleep(300);   // a stand in teacher affirms it
+  check('statement started once a teacher affirms it, one entry of two', await page.$$eval('.st.s-started', l => l.length) === 1 && (await page.textContent('.st.s-started .stl')).includes('1 of 2 entries'));
   await page.screenshot({path:SHOTS + '23-basket-lit.png', fullPage:true});
   await page.evaluate(() => location.hash = '#/'); await sleep(400);
   check('wheel shows Critical Thinking at Emerging, no star until secured', !!(await page.$('a[href="#/c/critical"].lv1')) && await page.$$eval('.wheel .star', l => l.length) === 0);
@@ -65,7 +69,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
   await page.evaluate(id => location.hash = '#/grow/' + id, eid); await sleep(300);
   await page.click('#cNext'); await sleep(150);
   await page.fill('[data-a=g2]', 'I would show my friend the burette and explain why the meniscus matters.');
-  for (let i = 0; i < 6; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
+  for (let i = 0; i < 8; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
   await page.click('#cSave'); await sleep(1500);
   calls = await relayCalls(); check('changed edit: read again', calls.length === 2, 'calls ' + calls.length);
   // two more new entries: third read allowed, fourth blocked by the daily allowance
@@ -73,7 +77,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
     await page.evaluate(() => location.hash = '#/act'); await sleep(300);
     await chooseCtx(page, 'Chemistry'); await sleep(150); await page.click('#cNext'); await sleep(150);
     await page.fill('[data-a=a1]', txt);
-    for (let i = 0; i < 6; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
+    for (let i = 0; i < 8; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
     await page.click('#cSave'); await sleep(1300);
   }
   calls = await relayCalls();
@@ -122,7 +126,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
   await page.screenshot({path:SHOTS + '29-note-1280.png', fullPage:false});
   await page.setViewportSize({width:390, height:844});
   await page.goto(link); await sleep(900);
-  const nn = await page.evaluate(id => { const d = JSON.parse(localStorage.getItem('e21cclog')); return d.profiles[d.current].entries.find(x => x.id === id).notes.length; }, eid);
+  const nn = await page.evaluate(id => { const d = JSON.parse(localStorage.getItem('e21cclog')); return d.profiles[d.current].entries.find(x => x.id === id).notes.filter(n => !n.verdict).length; }, eid);   // the stand in teacher's review is not one of these notes
   check('replayed link adds nothing', nn === 2, 'notes ' + nn);
   const bad = await mk('0000000000000000', [{id:'n9', eid, anchor:'g1', text:'not for you', at:Date.now()}]);
   await page.goto(bad); await sleep(900);

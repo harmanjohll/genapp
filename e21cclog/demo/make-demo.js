@@ -156,6 +156,15 @@ const profileOf = (name, email, entries, opts = {}) => ({id:'demo-' + email.spli
     // the older entries already went to the form teacher; the two newest wait in Send
     for (const e of me.entries) if (e.created < NOW - 4 * D) e.sent[form] = e.created + D;
     me.done.sam06 = true;
+    // 6.0: teachers have checked Sam's older claims. Where the words show it, the subject teacher affirmed it; where
+    // they do not, the teacher said not yet, with advice. The newest entries still wait for a teacher.
+    const nameOf = em => (((db.staff || {}).list || []).find(t => t.email === em) || {}).name || 'Your teacher';
+    const teacherOf = e => { const T = me.teachers || {}; const em = (T.subjects || {})[e.context.name] || (T.ccas || {})[e.context.name] || T.form; return nameOf(typeof em === 'object' && em ? em.email : em); };
+    for (const e of me.entries) if (e.created < NOW - 6 * D) for (const l of (e.links || [])){
+      const st = statementById(l.sid); if (!st) continue; const yes = wordsShow(e, st);
+      e.notes.push({id:'r' + e.id + l.sid.replace(/\W/g, ''), by:teacherOf(e), role:e.context.type === 'cca' ? 'CCA teacher' : 'Subject teacher', at:e.created + 2 * D, anchor:'claim:' + l.sid, sid:l.sid, quote:l.quote, verdict:yes ? 'yes' : 'notyet', seen:true,
+        text:yes ? 'I saw this too. You named what you did and why, and it matches what I saw in class. Next, try it somewhere new and say what changed.' : 'Not yet. Your sentence says what happened, but not how you decided. Next time, write the reason that tipped your choice.'});
+    }
     const d = ${JSON.stringify(SAM_DRAFT)}; d.saved = NOW - d.d * D; d.started = d.saved - 600000; d.term = termKey(NOW); delete d.d; me.drafts.grow = d;`;
   const S = await run(sam, samSetup);
   const mates = []; for (const m of MATES) mates.push(await run(profileOf(m.name, m.email, m.entries)));
@@ -169,9 +178,9 @@ const profileOf = (name, email, entries, opts = {}) => ({id:'demo-' + email.spli
     const list = Object.values(store.items); list.forEach((it, i) => { it.received = (it.data.updated || it.data.created || NOW) + 3600e3 * (2 + i % 5); it.opened = it.received < NOW - 3 * D; });
     const note = (sk, id, text, sent, anchor = 'entry') => { const key = sk + '|' + id; if (!store.items[key]) return; (store.notes[key] = store.notes[key] || []).push({id:'d' + Math.abs(key.split('').reduce((h, c) => h * 31 + c.charCodeAt(0) | 0, 7)).toString(36), anchor, text, at:store.items[key].received + 3600e3, sentAt:sent ? store.items[key].received + 7200e3 : null}); };
     const sk = n => Object.keys(store.students).find(k => store.students[k].name === n);
-    note(sk('Sam Lee'), 'sam11', 'Seen. Thank you for sharing this.', true, 'entry');
-    note(sk('Priya Nair'), 'm2e0', 'Clear thinking here. Keep going.', true);
-    note(sk('Daniel Ng'), 'm1e1', 'Let’s talk about this next lesson.', false);
+    note(sk('Sam Lee'), 'sam11', 'Thank you for sharing this. Your plan names a day and a task, which makes it easy to check. Tell me on Friday how it went.', true, 'entry');
+    note(sk('Priya Nair'), 'm2e0', 'Clear thinking here: you gave a reason for each choice. Next, compare it with what your group decided.', true);
+    note(sk('Daniel Ng'), 'm1e1', 'Let us talk about this next lesson: bring the match sheet, and we will look at where the marking broke down.', false);
     note(sk('Aisyah Rahman'), 'm0e0', 'You set the group up well. What would you do differently next time?', false, 'g1');
     return JSON.parse(JSON.stringify(store));
   }, [[S, ...mates].map(x => ({from:x.from, items:x.items})), NOW, D]);

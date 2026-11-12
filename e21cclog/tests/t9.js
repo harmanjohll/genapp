@@ -1,6 +1,7 @@
 // t9: Beatty's statements, securing, levels, the teacher's confirmation, SEC, ASK, the four views, the name
 const { chromium } = require('playwright');
-const fs = require('fs'); const path = require('path');
+const fs = require('fs');
+const { AFFIRM_STORE } = require('./fixtures/affirm.js'); const path = require('path');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/'); const SHOTS = require('./shots.js')('v2-');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
@@ -20,7 +21,7 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
   page.on('console', m => { if (m.type() === 'error' && !/400/.test(m.text())) errors.push(m.text()); });
   page.on('pageerror', e => errors.push('PAGEERROR ' + e.message));
   const go = async h => { await page.evaluate(x => location.hash = x, h); await sleep(400); };
-  const load = async seed => { await page.goto(BASE + 'index.html#/'); await page.evaluate(s => localStorage.setItem('e21cclog', s), JSON.stringify(seed)); await page.reload(); await sleep(500); await go('#/'); };
+  const load = async seed => { await page.goto(BASE + 'index.html#/'); await page.evaluate(s => localStorage.setItem('e21cclog', s), JSON.stringify(seed)); await page.evaluate(AFFIRM_STORE); await page.reload(); await sleep(500); await go('#/'); };
   const prof = () => page.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); return d.profiles[d.current]; });
 
   // 1. the set
@@ -69,7 +70,7 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
   await page.click('#cNext'); await sleep(200); await page.click('#cSave'); await sleep(600);
   const newest = (await prof()).entries.sort((a, b) => b.created - a.created)[0];
   check('Log it: the claim becomes the entry’s links, and its competencies follow', newest.links.length === 2 && newest.competencies.length >= 1 && newest.links.every(l => l.quote.length > 10), JSON.stringify(newest.links));
-  check('the entry lists the statements it backs', (await page.textContent('.backs')).includes('Statements this entry backs'));
+  check('the entry lists the statements it claims', (await page.textContent('.backs')).includes('Statements this entry claims'));
   // 8. levels: waiting for a teacher, then the teacher confirms
   await load(seed4);
   await go('#/c/critical');

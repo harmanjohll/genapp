@@ -78,6 +78,7 @@ const SCHOOL = JSON.parse(fs.readFileSync(path.join(__dirname, '../school/beatty
   { const raw = JSON.parse(JSON.stringify(seed)); const P = raw.profiles[raw.current];
     P.experiences.subjects = ['English', 'Literature', 'PE', 'NEXUS', 'Mathematics']; P.experiences.levels = {English:'G2'};
     P.entries.push(Object.assign(JSON.parse(JSON.stringify(P.entries[0])), {id:'nx1', context:{type:'subject', name:'NEXUS'}, subject:'NEXUS', links:[]}));
+    require('./fixtures/affirm.js').affirmAll(P);
     const {ctx, p} = await open(Q => { Object.assign(Q, P); });
     const r = await p.evaluate(raw => {
       const before = raw.profiles[raw.current].entries; const secured = es => (STMT_SET.list || []).filter(s => securedOf(es, s).state === 'secured').length;

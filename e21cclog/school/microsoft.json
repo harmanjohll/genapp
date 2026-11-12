@@ -1,0 +1,7 @@
+{
+  "about": "School sign in for the E21CC Log. Empty until the school ICT registers the Log in the school Microsoft admin page: see MICROSOFT.md. tenantId is the Directory (tenant) ID; clientId is the Application (client) ID of the registration for students, E21CC Log; consoleClientId is that of the registration for teachers, E21CC Log console. With them filled in, students and teachers can sign in with their school account, and each log is kept in the student’s own OneDrive. Empty them to turn sign in off again.",
+  "tenantId": "",
+  "clientId": "",
+  "consoleClientId": "",
+  "folder": "E21CC Log"
+}

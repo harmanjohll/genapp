@@ -3,6 +3,7 @@
 // the console's three levels, and the one time copy from v2.
 const { chromium } = require('playwright');
 const fs = require('fs');
+const { AFFIRM_STORE } = require('./fixtures/affirm.js');
 const BASE = (process.env.BASE || 'http://localhost:8123/e21cclog/'); const SHOTS = require('./shots.js')('');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? '  ' + info : '')); };
@@ -23,7 +24,7 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   page.on('console', m => { if (m.type() === 'error' && !/400/.test(m.text())) errors.push(m.text()); });
   page.on('pageerror', e => errors.push('PAGEERROR ' + e.message));
   const go = async h => { await page.evaluate(x => location.hash = x, h); await sleep(450); };
-  const load = async (seed, look) => { const s = JSON.parse(JSON.stringify(seed)); if (look) s.profiles[s.current].prefs.look = look; await page.goto(BASE + 'index.html#/'); await page.evaluate(x => { localStorage.clear(); localStorage.setItem('e21cclog', x); }, JSON.stringify(s)); await page.reload(); await sleep(500); await go('#/'); };
+  const load = async (seed, look) => { const s = JSON.parse(JSON.stringify(seed)); if (look) s.profiles[s.current].prefs.look = look; await page.goto(BASE + 'index.html#/'); await page.evaluate(x => { localStorage.clear(); localStorage.setItem('e21cclog', x); }, JSON.stringify(s)); await page.evaluate(AFFIRM_STORE); await page.reload(); await sleep(500); await go('#/'); };
   const prof = () => page.evaluate(() => { const d = JSON.parse(localStorage.getItem('e21cclog')); return d.profiles[d.current]; });
 
   // 1. three levels, the top one confirmed by a teacher
@@ -211,7 +212,7 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
   check('the console reads Proficient: waiting, with Confirm Proficient', /Critical Thinking ?Proficient: waiting for a teacher/.test(tc.a) && tc.btn.includes('Confirm Proficient'), JSON.stringify(tc.btn));
   check('the student’s own word shows beside the standard one', /Adaptive Thinking ?Developing · they see “Navigating”/.test(tc.a), tc.a.slice(0, 300));
   check('a v2 Leading snapshot reads as Proficient', /Communication ?Proficient/.test(tc.b) && !/Leading/.test(tc.b), tc.b.slice(0, 200));
-  check('the console shows Version 5 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 5/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
+  check('the console shows Version 6 in the page, not the title, and says nothing of Leading as a level', tc.title.startsWith('E21CC Log') && !/v\d/.test(tc.title) && /Version 6/.test(await tp.textContent('.brand')) && !/Leading:|Confirm Leading|L Leading/.test(await tp.textContent('body')));
 
 
   // 12. no dashes in what students read

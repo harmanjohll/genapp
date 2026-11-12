@@ -1,6 +1,6 @@
 # E21CC Log
 
-One app, at one address that stays the same from version to version, so bookmarks and links shared in Teams keep working. The version shows only inside the app: the small badge, and Settings, About. This is **Version 4** (8 November 2026): the pilot (Version 3) with the test version that was built beside it folded in.
+One app, at one address that stays the same from version to version, so bookmarks and links shared in Teams keep working. The version shows only inside the app: the small badge, and Settings, About. This is **Version 6** (12 November 2026): a teacher checks every claim, and school sign in keeps each log in the student's own OneDrive once the school's ICT turns it on (`MICROSOFT.md`).
 
 ## Links to use
 | Who | Link |
@@ -44,7 +44,7 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 
 ## Tests
 `e21cclog/tests/run.sh` starts a local server and a mock coach relay, then runs:
-- every suite (t2 to t27);
+- every suite (t2 to t35);
 - the console sweep;
 - one colour sweep per look.
 
@@ -64,6 +64,9 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 | t23 to t25 | Plans checked back on their day and the weekly reminder; this term's rhythm and milestones; one gentle prompt per open |
 | t26 | Backup in one tap, and restore with nothing doubled |
 | t27 | Version 4: a Version 3 log and console open with nothing lost, the fresh start keeps pilot logs, test logs brought across once, `next/` forwarding and its offline copy, the Version 3 archive |
+| t28 to t33 | Goals, the calendar, the goal coach, the goal loop, the pilot report |
+| t34 | Version 6: a teacher validates every claim; only affirmed claims secure; a note starts an ACT; the claim nudge; occasions, not weeks; what the class says |
+| t35 | Version 6: school sign in and OneDrive, against a stand in for Microsoft (`fixtures/graph.js`): off by default, the sign in request, a log in the student's OneDrive, two devices, sharing and replies without links, privacy |
 | `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
 
 A screen reader still needs a person. The **VoiceOver check for an iPad** (about 10 minutes):
@@ -76,6 +79,19 @@ A screen reader still needs a person. The **VoiceOver check for an iPad** (about
 7. In Settings, turn on a look and a theme. The pressed state should be read.
 
 Note anything that is silent, out of order, or unclear.
+
+## Version 6
+
+Built on 12 November 2026 from the audit against Harman's seven intents and his decisions of 11 November (`V6.md`).
+- **A teacher checks every claim.** In the console, each claim on a shared entry asks for a verdict, **I saw this too** or **Not yet, show me**, and advice of at least ten words: what the teacher saw, and what next. The replies in one tap are gone. A review travels as a note on the claim, so it goes wherever notes go: a Teams link today, OneDrive once it is on.
+- **Only an affirmed claim backs a statement.** The coach's reading of the words is now a hint ("The coach sees it in your words. Your teacher decides."). Securing is unchanged otherwise: two affirmed entries, from two subjects or CCAs, at least two weeks apart. If the student points to a different sentence, the claim waits for a teacher again.
+- **A note starts an ACT.** Every note from a teacher has **Act on this feedback**: an ACT opens about that entry's experience, with the note as its feedback.
+- **The claim step nudges once.** Next without a claim stays on the step and asks for one; a second Next goes on.
+- **Occasions, not weeks.** Home asks for a GROW when a topic, unit or camp ends, not every week.
+- **What your class says.** The console's Class grid shows, for this term's shared entries, what students say they do not yet understand, what they say comes next, and how their plans went: for the subject teacher planning the next lesson.
+- **School sign in and OneDrive (off until ICT turns it on).** With the IDs from two app registrations in `school/microsoft.json`, students sign in with their school account and the log is kept in their own OneDrive (folder `E21CC Log`), in step on every device. Sharing with a teacher writes a share file only that teacher may read and a notes file only they may write; the student sends one Teams message the first time. The console signs in, reads what students share, and saves replies straight into their logs. `MICROSOFT.md` has every step for ICT, the one day test and the pilot.
+
+What did not change: the log still lives in the browser first and works offline; backups, links in Teams and the Microsoft Form route all still work, and are what everyone uses until sign in is on.
 
 ## Version 4, and Version 5
 
@@ -108,7 +124,9 @@ Since then, each release has its own number, shown at the bottom of every page:
 
 - **5.2 The pilot report.** The console's Class grid counts, week by week, the students who shared and how many got a reply that was sent, with Copy for the pilot lead (counts only, never names).
 
-Their specs, and what comes next (V5 sharing a goal with a teacher, who responds), are in `BACKLOG.md`.
+- **6.0 Version 6.** See above.
+
+Their specs, and what comes next, are in `BACKLOG.md`.
 
 ### Pilot evidence
 - **The weekly count.** Each pilot teacher copies Term N, week by week from the console's Class grid and sends it to the pilot lead, who adds them up. A student who shares with two teachers is counted by both: the total counts exchanges.
@@ -190,7 +208,7 @@ How it works:
 - **Levels.** A band is met in a strand when half its statements, rounded up, are secured. Emerging: the competency shows in an entry. Developing: each strand's Lower Sec band is met (or an Upper Sec statement is secured there). Proficient: the Upper Sec band met in every strand, and a teacher confirms it. The student sees these in their look's words.
 - **Coach.** A built in coach works offline. For testing, an adult's Gemini API key gives AI feedback anchored in E21CC, in a tone the student chooses. The school relay (Claude, school held key) is ready for later. The coach sees only the student's own band of statements.
 
-No accounts, no database. The log lives in the student's browser and exports as a file. Students share sections with named adults; teachers read in a console, reply with notes in the margin, and confirm the top level.
+No database. The log lives in the student's browser and exports as a file; from Version 6, once the school turns on sign in, it is also kept in the student's own OneDrive. Students share sections with named adults; teachers read in a console, reply with notes in the margin, and confirm the top level.
 
 ## Run locally
 
@@ -209,6 +227,8 @@ python3 -m http.server 8000
 | --- | --- |
 | `index.html` | Student app: page and styles for the four views, and the three scripts below |
 | `assets/core.js` | Shared engine: frameworks, competency lens, Beatty's statements (embedded), the evidence gate, securing and levels, built in coach, AI coach prompt and schema, link codec, migration |
+| `assets/m365.js`, `assets/cloud.js` | Version 6: school sign in (Microsoft's MSAL library in `assets/vendor/`, MIT licence) and OneDrive; the student's side of keeping the log in step and sharing. Off until `school/microsoft.json` has its IDs |
+| `school/microsoft.json` | The school's Microsoft IDs for sign in. Empty: off |
 | `assets/store.js` | The storage and transport seam: browser storage, form submissions, links. Phase 2 swaps it for OneDrive |
 | `assets/app.js` | Student app: frame, Home, Competencies, journals, composer and claim, entries, sharing, settings, the Gemini coach |
 | `assets/console-lock.js` | The console's PIN: the store sealed with AES GCM under a key made from the PIN |
@@ -225,7 +245,9 @@ python3 -m http.server 8000
 | `BACKLOG.md`, `LOOP.md` | The backlog, and the rules for scheduled build runs (paused) |
 | `tests/` | Every browser test; `run.sh` runs them |
 | `DESIGN.md` | Decisions, verification status, and the open questions |
-| `PHASE2-REQUEST.md` | What MOE IT needs to clear before the log can live in students' OneDrive |
+| `MICROSOFT.md` | Version 6: every step for school sign in: the two app registrations (for ICT), the IDs, the one day test, the pilot, turning it off |
+| `V6.md` | The audit against the seven intents, Harman's decisions, and what is open |
+| `PHASE2-REQUEST.md` | The earlier request to MOE IT, kept for the record; replaced by `MICROSOFT.md` |
 | `E21CC.md` | Research brief on MOE's refreshed 21CC framework, with sources |
 
 ## Addresses

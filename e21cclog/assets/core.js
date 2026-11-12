@@ -918,7 +918,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '5.2';
+const VERSION_NO = '6.0';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -983,6 +983,9 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'Version 6: your teacher checks each claim. They affirm it, or say not yet, and give advice. Only an affirmed claim moves a statement towards secured',
+  'A teacher’s note can start an ACT: Act on this feedback brings the note in as the feedback',
+  'Sign in with your school account, when the school turns it on: your log is kept in your own OneDrive, on every device, and sharing with a teacher needs no message',
   'For the pilot: each teacher’s console counts, week by week, the students who shared and how many got a reply, ready to copy for the pilot lead',
   'Goals and journals join up: the Log asks on the day whether you did your goal’s step, an entry can name a goal, and a result opens a reflection. The coach helps you plan for what might get in the way',
   'Version 5: a goal coach. It asks a few questions first, then drafts a goal that matters to you, or checks your goal is SMART. You choose the target',
@@ -1379,28 +1382,38 @@ function statementsFor(set, band){ if (!set) return []; if (!set.bands) return s
 function otherBandFor(set, band){ if (!set || !set.bands) return []; const b = set.bands.some(x => x.id === band) ? band : set.bands[0].id; return set.list.filter(s => s.band && s.band !== b); }
 function strandsOf(set, comp){ return set && set.strands ? set.strands.filter(s => s.comp === comp) : []; }
 
-/* ---------- the evidence gate ----------
-   A statement lights only when the student has linked an entry AND that
-   entry's own words back it: the coach saw one of the statement's
-   competencies at clear or strong with a quote that really is there, or the
-   class coach matched this statement to a quote that really is there.
-   A coach suggestion alone never lights anything. */
-function linkBacked(entry, stmt){
+/* A claim is backed when a teacher has affirmed it (Version 6, Harman, 11 November: a teacher
+   validates wherever there is a claim). A teacher's review travels as a note on the entry:
+   {anchor:'claim:<statement id>', sid, verdict:'yes' | 'notyet', quote, text (the advice), by, at}.
+   The latest review of a claim decides it, and only while the student still points to the sentence
+   the teacher read: change the sentence and the claim waits for a teacher again.
+   The coach's reading of the words is a suggestion only; it never backs a claim. */
+function reviewsOf(entry, sid){ return (entry.notes || []).filter(n => n && n.sid === sid && (n.verdict === 'yes' || n.verdict === 'notyet')).sort((a, b) => (a.at || 0) - (b.at || 0)); }
+function reviewOf(entry, sid){
+  const l = (entry.links || []).find(x => x.sid === sid); const rs = reviewsOf(entry, sid); const r = rs[rs.length - 1];
+  if (!r || !l) return null;
+  if (r.quote && l.quote && normText(r.quote) !== normText(l.quote)) return null;   // the student changed the sentence since
+  return r;
+}
+function linkBacked(entry, stmt){ const r = reviewOf(entry, stmt.id); return !!r && r.verdict === 'yes'; }
+/* What the coach reads in the words: shown to the student as a hint before a teacher has looked. */
+function wordsShow(entry, stmt){
   const x = entry.e21cc || {};
   const byEvidence = (x.evidence || []).some(v => stmt.competencies.includes(v.id) && (v.strength === 'clear' || v.strength === 'strong') && !v.unverified && v.quote && isVerbatim(entry, v.quote));
   const byMatch = x.source === 'ai' && (x.statements || []).some(s => s.sid === stmt.id && isVerbatim(entry, s.quote));
   return byEvidence || byMatch;
 }
 /* ---------- securing a statement ----------
-   One backed entry is a start. A statement is secured when at least two backed
-   entries, from two different subjects or CCAs, sit at least two weeks apart:
+   One affirmed entry is a start. A statement is secured when at least two entries a teacher
+   affirmed, from two different subjects or CCAs, sit at least two weeks apart:
    the same thing done again, somewhere else, later. */
 const SECURE = {entries:2, contexts:2, days:14};
 function contextKey(e){ const c = e.context || {}; return String(c.name || e.subject || c.type || e.kind || '').trim().toLowerCase(); }
 function contextName(e){ const c = e.context || {}; return String(c.name || e.subject || '').trim(); }
 function securedOf(entries, stmt){
   const links = [];
-  for (const e of entries) for (const l of (e.links || [])) if (l.sid === stmt.id) links.push({e, l, backed:linkBacked(e, stmt)});
+  for (const e of entries) for (const l of (e.links || [])) if (l.sid === stmt.id){ const r = reviewOf(e, stmt.id); links.push({e, l, review:r, backed:!!r && r.verdict === 'yes'}); }
+  const notyet = links.some(k => k.review && k.review.verdict === 'notyet') && !links.some(k => k.backed);
   const backing = links.filter(k => k.backed).sort((a, b) => a.e.created - b.e.created);
   const keys = new Set(backing.map(k => contextKey(k.e)));
   const first = backing.length ? backing[0].e.created : 0, last = backing.length ? backing[backing.length - 1].e.created : 0;
@@ -1418,7 +1431,7 @@ function securedOf(entries, stmt){
   if (secured) need.entries = 0, need.context = false, need.after = 0;
   let missing = '';
   if (!secured){
-    if (!backing.length) missing = links.length ? 'The linked entry does not show it in your words yet. Add a sentence that does.' : 'Link an entry whose words show it.';
+    if (!backing.length) missing = !links.length ? 'Claim it in an entry whose words show it.' : notyet ? 'Your teacher said not yet. Read their advice, then show it in a new entry.' : 'Claimed. Share the entry with your teacher, who checks each claim.';
     else {
       const bits = []; const from = need.context ? ` from a subject or CCA other than ${[...new Set(backing.map(k => contextName(k.e)).filter(Boolean))].join(' or ') || 'this one'}` : ''; const when = need.after ? `, on or after ${new Date(need.after).toLocaleDateString('en-SG', {day:'numeric', month:'short'})}` : '';
       bits.push(`One more entry${from}${when}.`);
@@ -1426,7 +1439,7 @@ function securedOf(entries, stmt){
     }
   }
   const state = secured ? 'secured' : backing.length ? 'started' : links.length ? 'linked' : 'none';
-  return {stmt, links, backing, contexts:keys.size, spanDays, secured, securedAt, need, missing, state};
+  return {stmt, links, backing, contexts:keys.size, spanDays, secured, securedAt, need, missing, state, notyet, waiting:links.length > 0 && !backing.length && !notyet};
 }
 function statementStatus(entries, stmt){
   const s = securedOf(entries, stmt);

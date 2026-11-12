@@ -2,7 +2,7 @@
 
 Built in order, one item at a time (see `LOOP.md`; the scheduled runs are paused). Items A1 to D4 and S1 were built in `e21cclog/next/` beside the pilot, then folded into the Log as Version 4 on 8 November 2026; from here every item is built in the Log itself, at `e21cclog/`. Statuses: `ready`, `needs Harman` (a question below the item), `blocked` (waiting on something outside the code), `done`.
 
-**Version 6 (11 November):** an audit against Harman's seven intents, his decisions that day and what is open are in `V6.md`. Nothing from it is built yet; read it before any Version 6 work.
+**Version 6 (built 12 November):** the audit against Harman's seven intents, his decisions and what is open are in `V6.md`; what was built is section W below; the steps for school sign in are in `MICROSOFT.md`.
 
 The decisions behind these items were made with Harman in November 2026:
 - serverless first, with school Microsoft 365 later;
@@ -16,12 +16,17 @@ The decisions behind these items were made with Harman in November 2026:
 - a goal coach that asks before it suggests (9 November): coaching questions first, and the student names the target; the Log never picks one;
 - a teacher responds to a student's goal, and does not suggest one, at least for now (9 November);
 - close loops before adding features, then gather evidence from the pilot (9 November, after the audit): V6, V5 and P1 come first; C1 to C3, E2 to E5 and Paths in goals wait for pilot data;
-- the pilot count (9 November): each form teacher's console shows their own weekly count, and the pilot lead adds them up.
+- the pilot count (9 November): each form teacher's console shows their own weekly count, and the pilot lead adds them up;
+- a teacher validates wherever there is a claim, with substantial advice, not a quick reply (11 November);
+- entries come where useful, at the end of a topic, unit or camp, not every week (11 November);
+- every entry should carry a claim: the Log nudges, it does not force (11 November);
+- the reader of class signals is the subject teacher (11 November);
+- the school's own Microsoft tenant is the platform: students hold accounts on the same domain as staff, and the school's ICT can register apps (11 November).
 
 ## Waiting on Harman (outside the runs)
+- **ICT for W6:** the two app registrations and the three IDs (`MICROSOFT.md`, part A), then the one day test (part C).
 - **Support contacts for E1:** the school counsellor's name and how to reach them, and the helplines to show, checked by the counsellor.
 - **The timetable for A1:** a CSV from the pilot lead or ICT, with name, school email, subjects with levels, CCAs and form class for each teacher.
-- **Microsoft 365 for F:** can the school register an app in its Microsoft setup, or does MOE control that centrally? Ask ICT.
 - **Dilemma cards in E5b:** a content review of the twelve cards, in that item's pull request.
 
 ## The order, agreed on 4 November
@@ -44,6 +49,48 @@ Version 4 is live. Harman's next three, built in this order, each its own versio
 Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** After the audit that day: **V6 The goal loop (5.1)**, then V5 (share a goal with a teacher, who responds), then P1 (a pilot report), C1 to C3 coaching, E regulation. Later, when Harman says: a link to the Teams calendar, and Paths' pathways woven into goals.
 
 ---
+
+## W. Version 6 (built 12 November 2026)
+
+From the audit against the seven intents and Harman's decisions of 11 November (`V6.md`).
+
+### W1 A teacher validates every claim
+- **Status:** done (6.0)
+- **Spec:** in the console reader, each claim on a shared entry asks for a verdict (I saw this too, or Not yet, show me) and advice of at least ten words. No replies in one tap. The review is a note anchored to the claim (`anchor:'claim:<id>'`, `sid`, `verdict`, `quote`), so it travels by the note link or OneDrive. An entry with no claim says so and still takes a note.
+- **Tests:** t34.
+
+### W2 Only an affirmed claim backs a statement
+- **Status:** done (6.0)
+- **Spec:** `linkBacked` asks for the latest review of the claim to be yes, for the sentence the student still points to (`reviewOf` in `assets/core.js`). The coach's reading (`wordsShow`) is a hint only. Securing is otherwise unchanged. States: waiting for a teacher, not yet, started, secured.
+- **Tests:** t34; earlier suites seed a stand in teacher (`tests/fixtures/affirm.js`).
+
+### W3 A note starts an ACT
+- **Status:** done (6.0)
+- **Spec:** every teacher's note has Act on this feedback: `#/write/act?n=<entry>.<note>` opens an ACT about that entry's experience, with the note as its feedback (`fromNote` on the entry).
+- **Tests:** t34.
+
+### W4 The claim nudge, and occasions not weeks
+- **Status:** done (6.0)
+- **Spec:** Next on the claim step without a claim asks once (`#claimNudge`); a second Next goes on. Home's "Write a GROW this week" becomes "Finished a topic, a unit or a camp? Write a GROW about it."
+- **Tests:** t34; t2 and t10 pass the nudge.
+
+### W5 What your class says
+- **Status:** done (6.0)
+- **Spec:** the Class grid's second card: this term's shared entries, by topic: what students do not yet understand (R1), what comes next (W2), and plans checked back. For the subject teacher.
+- **Tests:** t34.
+
+### W6 School sign in and OneDrive
+- **Status:** built, off until ICT registers the apps (`MICROSOFT.md`)
+- **Spec:** `assets/m365.js` (MSAL 5.27.0, saved in `assets/vendor/`, redirect sign in, tokens in this browser), `assets/cloud.js` (students), the console's "school sign in" section. Two registrations: the Log (`Files.ReadWrite`) and the console (`Files.ReadWrite.All`). Files in the student's OneDrive, folder `E21CC Log`: `log.json`, `shares/E21CC share for <email>.json` (read for that teacher), `notes/E21CC notes from <email>.json` (write for that teacher). The student sends one Teams message per teacher the first time; the console can also find students through Shared with me.
+- **Done when:** the sixteen checks in `MICROSOFT.md` part C pass with real accounts.
+- **Tests:** t35, against a stand in for Microsoft.
+
+### W7 Next, once the pilot has run
+- **Status:** needs Harman
+- A teacher names the occasion (the end of a unit) so the Log prompts the class then.
+- Who validates an entry with no subject or CCA teacher (a camp, service): the form teacher?
+- A small summary for each student that CoCher can read (levels with affirmed evidence), agreed with Co-Cher's own work.
+- Where Goals and Calendar sit among the seven intents.
 
 ## V. Version 4 onwards
 

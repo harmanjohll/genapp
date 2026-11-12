@@ -2,6 +2,41 @@
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, v3 made Home simpler and help more specific, and Version 4 (November) folded in the reply loop, the console PIN, backup and restore, and nudges without pressure. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
 
+## A teacher's voice, and the school's own platform: Version 6 (12 November 2026)
+
+Harman asked for an audit of the Log against his seven intents (`V6.md`), answered its questions on 11 November, then asked for the next version and the move of platform, with every step spelled out.
+
+**What the audit found that mattered.**
+- The built in coach could secure a statement on almost any sentence with the right word in it ("because", a number, a name), so levels rested on keywords.
+- A teacher validated a competency only at the top level; the replies in one tap were acknowledgements.
+- The share and reply loop had never run with real accounts, and both ends were tied to one device.
+
+**Decided with Harman.**
+- A teacher validates wherever there is a claim, with substantial advice. Entries come where useful (the end of a topic, a unit, a camp), not weekly.
+- Every entry should carry a claim: the Log nudges.
+- Class signals are for the subject teacher.
+- The platform is the school's own Microsoft tenant: students and staff are on one domain, and the school's ICT can register apps.
+
+**How it works.**
+- **The review is a note.** A teacher's verdict on a claim is a note anchored to it (`claim:<statement id>`, with `verdict`, `sid`, and the `quote` the teacher read). So it reuses every route notes already take (the note link, a backup merge, OneDrive), merges with nothing doubled, and counts in the pilot report as a reply. `reviewOf` takes the latest review for the sentence the student still points to; change the sentence and the claim waits again, because the teacher affirmed those words, not others.
+- **Ten words of advice at least.** Long enough to say what was seen and what next, short enough not to deter. The number is one constant (`ADVICE_WORDS` in `teacher.html`).
+- **The nudge asks once.** Forcing a claim would invite a random pick, the very thing the teacher is there to catch.
+- **Sign in that changes nothing until it is on.** `school/microsoft.json` ships empty. Empty, the Log never loads Microsoft's library and works exactly as before; filled in, sign in appears. Turning it off is emptying the file.
+- **Two registrations, least privilege.** A token carries every permission granted to its app, so students (their own files) and the console (files shared with the teacher) are separate apps.
+- **Files in the student's OneDrive, not a database.** `log.json` holds the log; one share file and one notes file per teacher, each opened to that teacher alone. The student owns all of it, and can see it in OneDrive.
+- **Keeping in step.** The log is read on open, when it comes back into view, and every five minutes, and written four seconds after a change, with the file's version tag: if another device wrote first, the Log reads, merges (as a backup merge does) and writes again.
+- **Finding the files.** The student sends one Teams message per teacher, the first time, carrying where the files are. The console can also look through Microsoft's Shared with me, which Microsoft may retire; the message does not depend on it.
+
+**Where I pushed back, or would.**
+- `Files.ReadWrite.All` is wider than the console needs; Microsoft has no permission for "files shared with me" alone. The console's code opens only students' files, and `MICROSOFT.md` says so plainly to ICT.
+- A student's account closes when they leave Beatty. The backup file is still what follows the learner (intent 6).
+- The keyword coach still shows what it sees, as a hint. Its weakness no longer decides anything.
+
+**How it was checked.**
+- t34 covers the review end to end through the note link; t35 covers sign in and OneDrive against a stand in for Microsoft (`tests/fixtures/graph.js`), including privacy (a teacher cannot open the log itself) and two devices writing at once.
+- Earlier suites that relied on the coach to secure statements now seed a stand in teacher who affirms each claim the words show (`tests/fixtures/affirm.js`), so what they test still holds.
+- **Not checked here:** real Microsoft sign in, real OneDrive sharing between a student and a staff account, and Shared with me. `MICROSOFT.md` part C is that check, sixteen steps on one day.
+
 ## One Log again: Version 4 (8 November 2026)
 
 From 3 November a test version was built beside the pilot, at `e21cclog/next/`, so the pilot stayed as it was while twelve backlog items were built and reviewed one pull request at a time (#110 to #119). On 7 November Harman paused the build runs and asked for one app to refine. The pilot had not changed since the copy was made, so the test version was the pilot plus those items, and nothing in the pilot needed bringing across.

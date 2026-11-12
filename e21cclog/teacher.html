@@ -170,10 +170,19 @@ ol.steps li{margin-bottom:8px}
 .pincard{width:min(440px,100%);margin:0} .pincard h1{font-size:1.5em;margin:6px 0 8px} .pincard .tiny.bad{color:var(--red);font-weight:600}
 .pinbrand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy)} .pinbrand img{width:32px;height:32px}
 .stafftable td{vertical-align:top}
-.quick{margin:8px 0 12px;padding:10px 12px;background:var(--card-2);border-radius:var(--radius-s)}
-.quick .qchips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
-.qchip{border:1px solid var(--line-2);background:var(--card);color:var(--navy);border-radius:999px;padding:8px 14px;min-height:44px;font:inherit;font-weight:600;font-size:.9em;cursor:pointer}
-.qchip:hover{border-color:var(--navy)} .qchip[aria-pressed=true]{background:var(--card-3);cursor:default}
+.review{margin:8px 0 12px;padding:12px 14px;background:var(--card-2);border-radius:var(--radius-s);border-left:4px solid var(--navy)}
+.review .rst{font-family:var(--serif);font-weight:700;color:var(--navy);margin:0}
+.review q{display:block;font-family:var(--serif);font-style:italic;margin:4px 0 8px}
+.review .verd{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.review .verd button{border:1px solid var(--line-2);background:var(--card);color:var(--navy);border-radius:999px;padding:8px 14px;min-height:44px;font:inherit;font-weight:700;font-size:.9em;cursor:pointer}
+.review .verd button[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.review textarea{min-height:88px}
+.signals h3{margin:14px 0 4px;font-size:1em}
+.signals ul{margin:0;padding-left:20px}
+.signals li{margin:4px 0}
+.signals q{font-family:var(--serif);font-style:italic}
+.review .wc{font-size:.82em;color:var(--text-2)}
+.mnote .vd{display:block;font-style:normal;font-weight:700;color:var(--navy);margin-top:2px}
 .quickown{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap} .quickown .f{flex:1 1 220px;margin:0}
 .replylist{list-style:none;margin:8px 0 0;padding:0} .replylist li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)} .replylist li > span{flex:1 1 180px} .replylist small{display:block;color:var(--text-2)} .stafftable td.fix{border-left:3px solid var(--red)} .stafftable .fixnote{display:block;font-weight:600}
 .dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
@@ -198,6 +207,7 @@ ol.steps li{margin-bottom:8px}
 
   <!-- ============ INBOX ============ -->
   <section id="tab-inbox" data-tab="inbox">
+    <div class="card" id="cloudCard" hidden></div>
     <div class="card" id="replyCard" hidden></div>
     <div class="card">
       <h1>What students shared with you.</h1>
@@ -229,6 +239,7 @@ ol.steps li{margin-bottom:8px}
       <div class="pilot" id="pilotBox"></div>
       <div class="scroll" id="gridTable"></div>
     </div>
+    <div class="card" id="signalsBox"></div>
   </section>
 
   <!-- ============ STUDENTS ============ -->
@@ -453,6 +464,7 @@ ol.steps li{margin-bottom:8px}
 
 <script src="assets/core.js"></script>
 <script src="assets/store.js"></script>
+<script src="assets/m365.js"></script>
 <!-- the console waits here until its PIN opens the store (assets/console-lock.js) -->
 <script type="text/plain" id="consoleMain">
 'use strict';
@@ -475,7 +487,7 @@ const ROLE_OF = {form:'Form teacher', subject:'Subject teacher', cca:'CCA teache
 /* ---------- store: this browser only ---------- */
 /* The console keeps one lasting store in this browser, sealed with the teacher's PIN by console-lock.js */
 const KEY = 'e21cclog.teacher';
-function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}, confirms:{}}; }
+function blankStore(){ return {classes:{}, current:null, me:{name:'', role:''}, items:{}, students:{}, notes:{}, confirms:{}, cloud:{connections:{}}}; }
 function load(){
   try{
     const saved = window.__consoleData || null; return saved ? Object.assign(blankStore(), saved) : blankStore();
@@ -585,7 +597,8 @@ const drop = $('#drop');
 drop.addEventListener('drop', e => ingestFiles(e.dataTransfer.files));
 /* A student's Teams link: teacher.html#/in?p=CDL1.i.… */
 async function ingestHash(){
-  const h = location.hash || ''; if (!h.startsWith('#/in')) return;
+  const h = location.hash || ''; if (h.startsWith('#/connect')) return cloudConnect(h);
+  if (!h.startsWith('#/in')) return;
   const p = new URLSearchParams(h.split('?')[1] || '').get('p') || '';
   try{ history.replaceState(null, '', location.pathname + location.search); }catch{}
   try{
@@ -610,14 +623,31 @@ function itemKind(it){ return it.kind === 'b' ? 'basket' : it.kind === 't' ? ((i
 function kindLetter(it){ return {grow:'G', act:'A', across:'L', basket:'B'}[itemKind(it)] || '?'; }
 function notesFor(key){ return store.notes[key] || (store.notes[key] = []); }
 /* A reply in one tap: a note on the whole entry, sent with the student's other notes (A5) */
-const QUICK = ['Seen. Thank you for sharing this.', 'Clear thinking here. Keep going.', 'Let’s talk about this next lesson.'];
 function addNote(key, anchor, text){ notesFor(key).push({id:uid(), anchor, text, at:Date.now(), sentAt:null}); save(); renderReplies(); }
 function answered(it){ return (store.notes[it.key] || []).length > 0; }
-function quickHtml(it){
-  const st = store.students[it.sk] || {}; const who = (st.name || 'the student').split(' ')[0]; const has = new Set(notesFor(it.key).filter(n => n.anchor === 'entry').map(n => n.text));
-  return `<div class="quick" role="group" aria-label="Reply to ${esc(who)}"><span class="tiny"><b>Reply in one tap</b></span>
-    <div class="qchips">${QUICK.map((t, i) => `<button type="button" class="qchip" data-quick="${esc(it.key)}|${i}" aria-pressed="${has.has(t)}"${has.has(t) ? ' disabled' : ''}>${esc(t)}</button>`).join('')}</div>
-    <div class="quickown"><label class="f"><span>Or a line of your own</span><input class="in" maxlength="300" data-quickown="${esc(it.key)}"></label><button type="button" class="btn small sec" data-quickadd="${esc(it.key)}">Add</button></div></div>`;
+/* 6.0: a teacher validates wherever there is a claim (Harman, 11 November). Each claim gets a verdict,
+   I saw this too or Not yet, and advice that says what was seen and what next: substantial, never a one tap reply.
+   The review travels as a note anchored to the claim, so it goes wherever a note goes: a Teams link, or OneDrive. */
+const ADVICE_WORDS = 10;
+const VERDICT = {yes:'I saw this too', notyet:'Not yet, show me'};
+const words = t => String(t || '').trim().split(/\s+/).filter(Boolean).length;
+const reviewPick = {};
+let reviewSeq = 0; const reviewRef = {};
+function rref(key, sid){ const k = key + '\u0001' + sid; for (const [r, v] of Object.entries(reviewRef)) if (v === k) return r; const r = 'r' + (++reviewSeq); reviewRef[r] = k; return r; }
+function rparse(r){ const v = reviewRef[r] || ''; const i = v.indexOf('\u0001'); return [v.slice(0, i), v.slice(i + 1)]; }
+function reviewHtml(it){
+  const e = it.data; if (e.kind === 'across') return '';
+  const links = (e.links || []).filter(l => TSET.list.some(x => x.id === l.sid));
+  if (!links.length) return `<div class="review"><p class="tiny" style="margin:0"><b>No claim on this entry.</b> Ask ${esc(((store.students[it.sk] || {}).name || 'the student').split(' ')[0])} to edit it and claim the statement their words show, so you can check it. You can still write a note below.</p></div>`;
+  return links.map(l => {
+    const r = rref(it.key, l.sid); const anchor = 'claim:' + l.sid; const mine = notesFor(it.key).filter(n => n.anchor === anchor); const last = mine[mine.length - 1];
+    const pick = reviewPick[r] || '';
+    const ask = last && !last.sentAt ? '' : `<div class="verd">${Object.entries(VERDICT).map(([v, t]) => `<button type="button" data-verdict="${r}" data-v="${v}" aria-pressed="${pick === v}">${esc(t)}</button>`).join('')}</div>
+      ${pick ? `<label class="f"><span>Your advice: what you saw, and what next (${ADVICE_WORDS} words at least)</span><textarea class="in" maxlength="600" data-advice="${r}" placeholder="${pick === 'yes' ? 'What in their words, or their work with you, shows it? What would take it further?' : 'What is missing? What should they show next time, and where?'}"></textarea></label>
+      <div class="row" style="margin-top:6px"><button type="button" class="btn small" data-saverev="${r}" disabled>Save</button><span class="wc" data-wc="${r}">0 words: ${ADVICE_WORDS} more</span></div>` : ''}`;
+    return `<div class="review" role="group" aria-label="Check this claim"><span class="tiny"><b>Check this claim</b></span><p class="rst">${esc(stmtText(l.sid))}</p>${l.quote ? `<q>${esc(l.quote)}</q>` : '<p class="tiny">No sentence pointed to.</p>'}
+      ${mine.map(n => `<div class="mnote ${n.sentAt ? '' : 'pending'}"><span class="by">${n.sentAt ? 'Sent ' + fmtDay(n.sentAt) : 'Not sent yet'}</span><span class="vd">${esc(VERDICT[n.verdict] || '')}</span><p>${esc(n.text)}</p>${n.sentAt ? '' : `<button class="x" data-delnote="${esc(it.key)}|${n.id}">Remove</button>`}</div>`).join('')}
+      ${ask}</div>`; }).join('');
 }
 function pendingNotes(sk){ return Object.values(store.items).filter(i => i.sk === sk).flatMap(i => (store.notes[i.key] || []).filter(n => !n.sentAt).map(n => ({it:i, n}))); }
 /* How the coach met the student: the labels teachers see and students do not. */
@@ -643,7 +673,7 @@ function readerHtml(it){
   const head = `<div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="tiny">${esc(st.name || '')}${st.email ? ' · ' + esc(st.email) : ''}</span><h2>${esc(itemTitle(it))}</h2></div><button class="btn small sec" data-close>Close</button></div>`;
   if (it.kind === 'b'){
     const b = it.data; const lv = b.levels || {}; const conf = (store.confirms[it.sk] || {});
-    const word = {secured:'Secured', started:'Started: one or more backed entries', linked:'Linked, not backed yet', lit:'Backed by the student’s words', none:'No evidence yet'};
+    const word = {secured:'Secured', started:'Started: affirmed by a teacher in one entry or more', linked:'Claimed, waiting for a teacher', lit:'Affirmed by a teacher', none:'No evidence yet'};
     const levels = Object.keys(lv).length ? `<div style="margin:8px 0 12px">${COMPETENCIES.filter(c => c.d === b.basket && lv[c.id]).map(c => { const x = lv[c.id];
         return `<div class="lvrow"><b>${esc(c.label)}</b>${x.waiting ? '<span class="lvp wait">Proficient: waiting for a teacher</span>' : `<span class="lvp ${levelIdx(x.level) === 3 ? 'leading' : x.level || 'none'}">${esc(lvWords(x, b.look))}</span>`}<span class="tiny">${x.secured} of ${x.total} secured</span>
           ${x.waiting ? (conf[c.id] ? `<span class="tiny">You confirmed this on ${fmtDay(conf[c.id])}. If the student has not opened the link, send it again.</span> <button class="btn small sec" data-confirm="${esc(it.key)}|${c.id}">Send again</button>` : `<button class="btn small acc" data-confirm="${esc(it.key)}|${c.id}">Confirm Proficient</button>`) : ''}</div>`; }).join('')}</div>` : '';
@@ -661,12 +691,11 @@ function readerHtml(it){
   const links = (e.links || []).map(l => `<span class="tag">${esc(stmtText(l.sid))}</span> <span class="tiny">“${esc(l.quote)}”</span>`).join(' ');
   return `<div class="reader">${head}
     <p class="tiny">${esc(fw.tagline)} · ${e.context && e.context.type && e.context.type !== 'subject' && e.context.type !== 'across' ? esc(contextTypeOf(e.context.type).label) + ' · ' : ''}${fmtDate(e.created)}${e.updated && e.updated !== e.created ? ' · edited ' + fmtDay(e.updated) : ''}${e.depth && DEPTHS[e.depth] ? ' · ' + DEPTHS[e.depth].label : ''}</p>
-    ${quickHtml(it)}${noteBlock('entry')}<button class="notebtn" data-note="${esc(it.key)}|entry">Note on the whole entry</button>
+    ${reviewHtml(it)}${noteBlock('entry')}<button class="notebtn" data-note="${esc(it.key)}|entry">Note on the whole entry</button>
     ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
     ${e.kind === 'across' && (e.lookedAt || []).length ? `<details><summary>Evidence the student looked across (${e.lookedAt.length})</summary>${e.lookedAt.map(x => `<q style="display:block;font-family:var(--serif);font-style:italic">${esc(x.quote)}</q>`).join('')}</details>` : ''}
     ${qs.map(({s, q}) => `<div class="qa-row"><div class="qa"><b>${s.letter} · ${q.q.replace(/<[^>]+>/g, '')}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'left blank')}</p>${e.answers[q.id] ? `<button class="notebtn" data-note="${esc(it.key)}|${q.id}">Note here</button>` : ''}</div><div class="side">${noteBlock(q.id)}</div></div>`).join('')}
     ${claims ? `<p><span class="tiny">Claimed:</span> ${claims}</p>` : e.kind !== 'across' ? '<p class="tiny">No claim made.</p>' : ''}
-    ${links ? `<p><span class="tiny">I can statements claimed:</span> ${links}</p>` : ''}
     ${e.target ? `<p class="tiny">Next time, aiming for: ${esc(stmtText(e.target))}</p>` : ''}
     ${readText(e.e21cc)}
     ${coachMeta(e)}
@@ -688,9 +717,11 @@ function wireReader(root, rerender){
     cancel.onclick = rerender;
   });
   $$('[data-delnote]', root).forEach(b => b.onclick = () => { const [key, id] = splitLast(b.dataset.delnote); store.notes[key] = notesFor(key).filter(n => n.id !== id); save(); renderReplies(); rerender(); });
-  $$('[data-quick]', root).forEach(b => b.onclick = () => { const [key, i] = splitLast(b.dataset.quick); addNote(key, 'entry', QUICK[+i]); toast('Reply ready. Send it from Replies to send.'); rerender(); });
-  $$('[data-quickadd]', root).forEach(b => b.onclick = () => { const inp = b.parentElement.querySelector('input'); const t = inp.value.trim(); if (!t){ inp.focus(); return; } addNote(b.dataset.quickadd, 'entry', t); toast('Reply ready. Send it from Replies to send.'); rerender(); });
-  $$('[data-quickown]', root).forEach(i => i.onkeydown = ev => { if (ev.key === 'Enter'){ ev.preventDefault(); i.closest('.quickown').querySelector('button').click(); } });
+  $$('[data-verdict]', root).forEach(b => b.onclick = () => { const r = b.dataset.verdict; reviewPick[r] = b.dataset.v; rerender(); const t = document.querySelector(`[data-advice="${r}"]`); if (t) t.focus(); });
+  $$('[data-advice]', root).forEach(t => t.oninput = () => { const n = words(t.value); const r = t.dataset.advice; const wc = document.querySelector(`[data-wc="${r}"]`); if (wc) wc.textContent = n >= ADVICE_WORDS ? plural(n, 'word') : `${plural(n, 'word')}: ${ADVICE_WORDS - n} more`; const sb = document.querySelector(`[data-saverev="${r}"]`); if (sb) sb.disabled = n < ADVICE_WORDS; });
+  $$('[data-saverev]', root).forEach(b => b.onclick = () => { const r = b.dataset.saverev; const [key, sid] = rparse(r); const t = document.querySelector(`[data-advice="${r}"]`); const text = (t && t.value || '').trim(); if (words(text) < ADVICE_WORDS) return;
+    const it = store.items[key]; const l = it && (it.data.links || []).find(x => x.sid === sid); const v = reviewPick[r]; if (!it || !v) return;
+    notesFor(key).push({id:uid(), anchor:'claim:' + sid, sid, verdict:v, quote:l ? l.quote || '' : '', text, at:Date.now(), sentAt:null}); delete reviewPick[r]; save(); renderReplies(); toast('Saved. Send it from Replies to send.'); rerender(); });
   $$('[data-sendnotes]', root).forEach(b => b.onclick = () => sendNotes(b.dataset.sendnotes, rerender));
   $$('[data-confirm]', root).forEach(b => b.onclick = () => { const [key, comp] = splitLast(b.dataset.confirm); const it = store.items[key]; if (it) confirmTop(it.sk, comp, rerender); });
 }
@@ -701,6 +732,7 @@ async function confirmTop(sk, comp, rerender){
   if (!to){ dialog(`<h2>No email for this student</h2><p>A confirmation finds a student by their school email, and this domain came without one. Ask them to add their email in Settings and share again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
   const by = {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''};
   const at = Date.now();
+  if (cloudConn(sk)) return cloudConfirm(sk, comp, at, rerender);
   const link = appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:[], confirms:[{comp, at}]});
   const msg = `${by.name} confirmed your top level in ${c.label} on your E21CC Log. Open: ${link}`;
   dialog(`<h2>Confirm Proficient in ${esc(c.label)}</h2><p>${esc(st.name || 'The student')} has secured the Upper Sec statements in every strand. Confirm only if what you have seen matches: their entries, and their work with you. The link sets the top level in their log, and only opens for the student with the email ${esc(st.email || 'on the shared domain')}.</p>
@@ -712,13 +744,15 @@ async function confirmTop(sk, comp, rerender){
 }
 /* Notes go back by a per student link; never a class wide bundle. */
 function signer(){ return {name:store.me.name || (cur && cur.teacherName) || 'Your teacher', role:store.me.role || (cur && ROLE_OF[cur.type]) || ''}; }
+function noteOut(it, n){ return Object.assign({id:n.id, eid:it.data.id, anchor:n.anchor, text:n.text, at:n.at}, n.verdict ? {verdict:n.verdict, sid:n.sid, quote:n.quote || ''} : {}); }
 async function noteLink(sk){
   const st = store.students[sk] || {}; const list = pendingNotes(sk); if (!list.length) return null;
   const to = st.tag || (st.email ? await emailTag(st.email) : ''); const by = signer();
-  const link = to ? appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:list.map(({it, n}) => ({id:n.id, eid:it.data.id, anchor:n.anchor, text:n.text, at:n.at}))}) : '';
+  const link = to ? appUrl() + '#/note?n=' + await packCDL('n', {v:1, to, by, notes:list.map(({it, n}) => noteOut(it, n))}) : '';
   return {st, list, to, by, link, msg:`${by.name} left ${plural(list.length, 'note')} on your E21CC Log. Open: ${link}`};
 }
 async function sendNotes(sk, rerender){
+  if (cloudConn(sk)) return cloudSendNotes(sk, rerender);
   const p = await noteLink(sk); if (!p) return; const {st, list, to, by, link, msg} = p;
   if (!to){ dialog(`<h2>No email for this student</h2><p>Notes find a student by their school email, and this item came without one. Ask them to add their email in Settings and send again.</p><div class="row"><button class="btn sec" id="dClose">OK</button></div>`); $('#dClose').onclick = closeDialog; return; }
   dialog(`<h2>Send ${plural(list.length, 'note')} to ${esc(st.name || 'the student')}</h2><p>The link opens in ${esc((st.name || 'their').split(' ')[0])}’s log, beside the paragraphs you wrote on. It only opens for the student with the email ${esc(st.email || 'on the entry')}.</p>
@@ -738,12 +772,13 @@ async function renderReplies(){
   if (tok !== replyTok) return;
   box.hidden = !rows.length; if (!rows.length){ box.innerHTML = ''; return; }
   for (const r of rows) replyLinks[r.sk] = {link:r.link, ids:r.list.map(x => x.n.id)};
-  box.innerHTML = `<h2 style="margin-top:0">Replies to send</h2><p class="muted">One link for each student carries all their replies. Send in Teams opens a chat with it ready; press Send there.</p>
-    <ul class="replylist">${rows.map(r => `<li><span><b>${esc(r.st.name || 'A student')}</b><small>${plural(r.list.length, 'reply', 'replies')} · ${esc([...new Set(r.list.map(x => itemTitle(x.it)))].join(', '))}</small></span>${!r.to ? '<small>No school email came with this student’s work. Ask them to add it in Settings and share again.</small>' : `${r.st.email ? `<a class="btn small" href="${esc(teamsChatUrl(r.st.email, r.msg))}" target="_blank" rel="noopener" data-replysent="${esc(r.sk)}">Send in Teams</a>` : ''}<button type="button" class="btn small sec" data-replycopy="${esc(r.sk)}">Copy link</button>`}</li>`).join('')}</ul>
+  box.innerHTML = `<h2 style="margin-top:0">Replies to send</h2><p class="muted">${Object.keys((store.cloud || {}).connections || {}).length ? 'A student who shares through OneDrive gets your replies in their log when you press Save to their log. For anyone else, ' : ''}One link for each student carries all their replies. Send in Teams opens a chat with it ready; press Send there.</p>
+    <ul class="replylist">${rows.map(r => `<li><span><b>${esc(r.st.name || 'A student')}</b><small>${plural(r.list.length, 'reply', 'replies')} · ${esc([...new Set(r.list.map(x => itemTitle(x.it)))].join(', '))}</small></span>${cloudConn(r.sk) ? `<button class="btn small" data-replycloud="${esc(r.sk)}">Save to their log</button>` : !r.to ? '<small>No school email came with this student’s work. Ask them to add it in Settings and share again.</small>' : `${r.st.email ? `<a class="btn small" href="${esc(teamsChatUrl(r.st.email, r.msg))}" target="_blank" rel="noopener" data-replysent="${esc(r.sk)}">Send in Teams</a>` : ''}<button type="button" class="btn small sec" data-replycopy="${esc(r.sk)}">Copy link</button>`}</li>`).join('')}</ul>
     ${store.me.name ? '' : `<div class="quickown" style="margin-top:10px"><label class="f"><span>Sign your replies as</span><input class="in" id="rName" maxlength="60" placeholder="e.g. Ms Lim"></label><button type="button" class="btn small sec" id="rNameGo">Save</button></div><p class="tiny">Until then students see them signed “Your teacher”.</p>`}`;
   const rn = $('#rName', box); if (rn){ const go = () => { const v = rn.value.trim(); if (!v){ rn.focus(); return; } store.me.name = v; save(); renderReplies(); renderInbox(); }; $('#rNameGo', box).onclick = go; rn.onkeydown = ev => { if (ev.key === 'Enter'){ ev.preventDefault(); go(); } }; }
   const sent = sk => { const x = replyLinks[sk]; if (!x) return; const now = Date.now(); for (const {n} of pendingNotes(sk)) if (x.ids.includes(n.id)) n.sentAt = now; save(); };
   $$('[data-replysent]', box).forEach(a => a.onclick = () => { const sk = a.dataset.replysent; setTimeout(() => { sent(sk); toast('Marked as sent. If Teams did not open, use Copy link.'); renderReplies(); renderInbox(); }, 60); });
+  $$('[data-replycloud]', box).forEach(b => b.onclick = async () => { b.disabled = true; await cloudSendNotes(b.dataset.replycloud); });
   $$('[data-replycopy]', box).forEach(b => b.onclick = async () => { const sk = b.dataset.replycopy; const x = replyLinks[sk]; try{ await navigator.clipboard.writeText(x.link); }catch{ prompt('Copy this link:', x.link); } sent(sk); toast('Copied, and marked as sent.'); renderReplies(); renderInbox(); });
 }
 
@@ -836,8 +871,24 @@ function renderPilot(code){
     <details><summary>About these counts</summary><p class="tiny">A student who shares with two teachers is counted by both, so the pilot lead's total counts exchanges, not separate students. A reply counts once it is sent. The copy carries counts only, never names.</p></details>`;
   $('#pilotCopy').onclick = () => copy(pilotText(p, code));
 }
+/* 6.0: what the class says, for the subject teacher planning the next lesson (intent 7). From this term's shared
+   entries: what students say they do not yet understand, what they say comes next, and how plans went. Only your
+   own students' words, as they shared them with you; nothing leaves this page. */
+function renderSignals(code){
+  const box = $('#signalsBox'); if (!box) return; const tk = termKey(Date.now());
+  const es = Object.values(store.items).filter(i => i.kind === 'e' && inGroup(i.sk, code) && termKey(i.data.created) === tk);
+  const who = it => esc(((store.students[it.sk] || {}).name || 'A student').split(' ')[0]);
+  const by = (qid) => { const m = new Map(); for (const it of es){ const a = String((it.data.answers || {})[qid] || '').trim(); if (!a || answerStatus(a) !== 'answered') continue; const t = [(it.data.context || {}).name || it.data.subject || '', it.data.topic || ''].filter(Boolean).join(' · ') || 'Other'; if (!m.has(t)) m.set(t, []); m.get(t).push({it, a}); } return [...m.entries()].sort((x, y) => y[1].length - x[1].length); };
+  const yet = by('r1'), next = by('w2');
+  const ft = {done:0, partly:0, not:0}; for (const it of es){ const f = it.data.followThrough; if (!f) continue; const a = String(f.answer || f.status || '').toLowerCase(); if (/yes|done/.test(a)) ft.done++; else if (/part/.test(a)) ft.partly++; else if (a) ft.not++; }
+  const list = groups => groups.slice(0, 6).map(([t, xs]) => `<h3>${esc(t)} <span class="tiny">${plural(xs.length, 'student')}</span></h3><ul>${xs.slice(0, 8).map(({it, a}) => `<li><b>${who(it)}:</b> <q>${esc(a.length > 220 ? a.slice(0, 220) + '…' : a)}</q></li>`).join('')}</ul>`).join('');
+  box.innerHTML = `<h2 style="margin-top:0">What your class says</h2><p class="muted">From entries shared with you this term${code ? ' in ' + esc(code) : ''}. For planning the next lesson: what to reteach, whom to group, what they expect.</p><div class="signals">
+    ${yet.length ? `<details open><summary><b>Not yet understood</b> (GROW, R)</summary>${list(yet)}</details>` : '<p class="tiny">No one has said what they do not yet understand this term.</p>'}
+    ${next.length ? `<details><summary><b>What they say comes next</b> (GROW, W)</summary>${list(next)}</details>` : ''}
+    ${ft.done + ft.partly + ft.not ? `<p class="tiny" style="margin-top:10px">Plans checked back this term: ${ft.done} done, ${ft.partly} partly, ${ft.not} not yet.</p>` : ''}</div>`;
+}
 function renderGrid(){
-  groupOptions($('#gGroup'), 'All groups'); renderPilot($('#gGroup').value); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
+  groupOptions($('#gGroup'), 'All groups'); renderPilot($('#gGroup').value); renderSignals($('#gGroup').value); const rows = studentRows($('#gGroup').value); const tp = termPos(Date.now());
   const lvCell = (b, lv, look) => COMPETENCIES.filter(c => c.d === b && lv[c.id]).map(c => { const x = lv[c.id]; const i = levelIdx(x.level); return `<span class="lvc ${x.waiting ? 'w' : 'l' + i}" title="${esc(c.label)}: ${x.waiting ? 'Proficient, waiting for you to confirm' : esc(lvWords(x, look))}">${x.waiting ? '!' : LV_LETTER[x.level] || '·'}</span>`; }).join('');
   const cell = (c, b) => c.snap ? (c.levels ? lvCell(b, c.levels, c.look) || '<span class="cell0">·</span>' : `${c.lit}/${c.total}${c.lit ? '<span class="lit" title="lit"></span>' : ''}`) : (c.n ? `${c.n}` : '<span class="cell0">·</span>');
   $('#gridTable').innerHTML = rows.length ? `<table class="gridtable"><thead><tr><th>Student</th><th>GROW<br><span class="tiny">T${tp.term}</span></th><th>ACT<br><span class="tiny">T${tp.term}</span></th>${DOMAINS.map(d => `<th>${esc(d.short)}</th>`).join('')}<th>Last entry</th><th>Notes sent</th></tr></thead><tbody>
@@ -1037,8 +1088,109 @@ $('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d
 cur = normaliseClass((store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank());
 fill();
 if (!store.me.name && cur.teacherName){ store.me.name = cur.teacherName; store.me.role = ROLE_OF[cur.type] || ''; save(); }
+
+/* ---------- 6.0: school sign in, and students who share through OneDrive ----------
+   A student signed in to the Log keeps a share file for each teacher in their own OneDrive, open to that
+   teacher alone, and a notes file the teacher may write. The console remembers where each student's files
+   are (store.cloud.connections), reads the share files when asked, and saves replies into the notes file.
+   Off until the school fills in school/microsoft.json: then this card stays hidden and nothing changes. */
+store.cloud = store.cloud || {connections:{}}; store.cloud.connections = store.cloud.connections || {};
+function cloudOnT(){ return typeof M365 !== 'undefined' && M365.enabled() && new URLSearchParams(location.search).get('demo') !== '1'; }
+function cloudIn(){ return cloudOnT() && !!M365.who(); }
+function cloudConn(sk){ const c = ((store.cloud || {}).connections || {})[sk]; return cloudIn() && c && c.driveId && c.notes ? c : null; }
+var cloudBusy = false, cloudMsg = '';
+function cloudSigner(){ const w = M365.who() || {}; return Object.assign(signer(), {name:store.me.name || w.name || 'Your teacher', email:w.email || ''}); }
+function renderCloudCard(){
+  const box = $('#cloudCard'); if (!box) return;
+  if (!cloudOnT()){ box.hidden = true; return; }
+  box.hidden = false; const w = M365.who(); const n = Object.keys(store.cloud.connections).length;
+  box.innerHTML = !w ? `<h2 style="margin-top:0">School account</h2><p class="muted">Sign in with your school account to read what students share with you through OneDrive, and to save your replies straight into their logs. No links, no pasting.</p><button class="btn" id="cloudIn">Sign in with your school account</button>${M365.lastError ? `<p class="tiny">${esc(M365.lastError)}</p>` : ''}`
+    : `<h2 style="margin-top:0">School account</h2><p class="muted">Signed in as <b>${esc(w.name || w.email)}</b>. ${n ? plural(n, 'student shares', 'students share') + ' with you through OneDrive.' : 'No student shares with you through OneDrive yet. When one does, they send you a message once; open it here.'}</p>
+      <p class="tiny" id="cloudMsg" role="status">${cloudBusy ? '<span class="spin"></span> Reading OneDrive…' : esc(cloudMsg || (store.cloud.refreshedAt ? 'Last read ' + fmtDay(store.cloud.refreshedAt) + ' ' + new Date(store.cloud.refreshedAt).toLocaleTimeString('en-SG', {hour:'numeric', minute:'2-digit'}) + '.' : ''))}</p>
+      <div class="row"><button class="btn" id="cloudGet"${cloudBusy ? ' disabled' : ''}>Get what is new</button><button class="btn sec" id="cloudFind"${cloudBusy ? ' disabled' : ''}>Look for students who shared</button><button class="btn ghost" id="cloudOut">Sign out</button></div>`;
+  const i = $('#cloudIn', box); if (i) i.onclick = async () => { try{ await M365.signIn(); }catch(e){ toast(e.message, 4200); } };
+  const g = $('#cloudGet', box); if (g) g.onclick = () => cloudRefresh();
+  const f = $('#cloudFind', box); if (f) f.onclick = () => cloudFind();
+  const o = $('#cloudOut', box); if (o) o.onclick = async () => { await M365.signOut(); toast('Signed out here. Your console keeps what it has.'); renderCloudCard(); renderReplies(); };
+}
+/* Read every connected student's share file, and bring in what is new or changed. */
+async function cloudRefresh(quiet){
+  if (!cloudIn() || cloudBusy) return; cloudBusy = true; renderCloudCard();
+  let added = 0, updated = 0; const fails = [];
+  for (const [sk, c] of Object.entries(store.cloud.connections)){
+    try{
+      const got = await M365.readJson(M365.item(c.driveId, c.share)); if (!got || !got.data) continue;
+      const d = got.data; if (d.notes && d.notes.id){ c.notes = d.notes.id; c.driveId = d.notes.driveId || c.driveId; }
+      const r = addItems(Object.assign({name:c.name, email:c.email, tag:c.tag}, d.from || {}), d.items || [], 'onedrive'); added += r.added; updated += r.updated; c.readAt = Date.now();
+    }catch(e){ fails.push((c.name || sk) + ': ' + e.message); if (e.auth) break; }
+  }
+  store.cloud.refreshedAt = Date.now(); cloudBusy = false; save();
+  cloudMsg = fails.length ? fails.slice(0, 2).join(' ') : added || updated ? `${plural(added + updated, 'item')} new or changed.` : 'Nothing new.';
+  if (!quiet || added || updated) toast(cloudMsg, 3200);
+  renderCloudCard(); renderInbox(); renderReplies();
+}
+/* Students' share files that Microsoft lists as shared with this teacher. */
+async function cloudFind(){
+  if (!cloudIn()) return; let found = 0;
+  try{
+    const list = await M365.sharedWithMe();
+    for (const x of list){
+      const r = x.remoteItem || x; const name = r.name || x.name || ''; if (!/^E21CC share for /i.test(name)) continue;
+      const driveId = r.parentReference && r.parentReference.driveId; if (!driveId || !r.id) continue;
+      if (Object.values(store.cloud.connections).some(c => c.share === r.id)) continue;
+      const got = await M365.readJson(M365.item(driveId, r.id)); const d = got && got.data; if (!d || !d.from) continue;
+      store.cloud.connections[studentKey(d.from)] = {name:d.from.name || '', email:d.from.email || '', tag:d.from.tag || '', driveId, share:r.id, notes:d.notes && d.notes.id, at:Date.now()}; found++;
+    }
+    save(); toast(found ? `${plural(found, 'student')} found.` : 'No new students found. A student can also send you their message once in Teams.', 4200);
+  }catch(e){ toast('Microsoft could not list what is shared with you: ' + e.message + ' Ask the student to send their message once in Teams.', 5200); }
+  if (found) await cloudRefresh(); else renderCloudCard();
+}
+/* The message a student sends once: it says where their share and notes files are. */
+async function cloudConnect(h){
+  const c = new URLSearchParams(h.split('?')[1] || '').get('c') || '';
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch{}
+  try{
+    const got = await unpackCDL(c); if (!got || got.kind !== 'c' || !got.data.driveId || !got.data.share) throw new Error('x');
+    const d = got.data; const sk = studentKey(d.from || {});
+    store.cloud.connections[sk] = {name:(d.from || {}).name || '', email:(d.from || {}).email || '', tag:(d.from || {}).tag || '', driveId:d.driveId, share:d.share, notes:d.notes, at:Date.now()}; save();
+    if (!store.students[sk]) store.students[sk] = {name:(d.from || {}).name || 'A student', email:(d.from || {}).email || '', tag:(d.from || {}).tag || '', groups:(d.from || {}).groups || []};
+    toast(cloudIn() ? `${(d.from || {}).name || 'A student'} now shares with you through OneDrive.` : `${(d.from || {}).name || 'A student'} shares with you through OneDrive. Sign in with your school account to read it.`, 4200);
+    showTab('inbox'); renderCloudCard(); if (cloudIn()) await cloudRefresh(true);
+  }catch{ toast('That message did not open. Ask the student to send it again.', 4200); }
+}
+/* Replies go into the student's notes file, which only this teacher may write. */
+async function cloudWriteNotes(c, change){
+  const ref = M365.item(c.driveId, c.notes);
+  const once = async () => { const cur = await M365.readJson(ref); const d = cur && cur.data && Array.isArray(cur.data.notes) ? cur.data : {app:'e21cclog-notes', v:1, notes:[]}; change(d); d.by = cloudSigner(); d.updated = Date.now(); return M365.writeJson(ref, d, cur ? cur.etag : null); };
+  try{ return await once(); }catch(e){ if (e.status === 412) return once(); throw e; }
+}
+async function cloudSendNotes(sk, rerender){
+  const c = cloudConn(sk); const list = pendingNotes(sk); if (!c || !list.length) return;
+  try{
+    await cloudWriteNotes(c, d => { const have = new Set(d.notes.map(n => n.id)); for (const {it, n} of list) if (!have.has(n.id)) d.notes.push(noteOut(it, n)); });
+    const now = Date.now(); for (const {n} of list) n.sentAt = now; save();
+    toast(`Saved to ${(c.name || 'the student').split(' ')[0]}’s log.`, 3200);
+  }catch(e){ toast('That did not reach OneDrive: ' + e.message, 5200); }
+  renderReplies(); renderInbox(); if (rerender) rerender();
+}
+async function cloudConfirm(sk, comp, at, rerender){
+  const c = cloudConn(sk); const k = compOf(comp);
+  try{
+    await cloudWriteNotes(c, d => { d.confirms = (d.confirms || []).filter(x => x.comp !== comp).concat([{comp, at}]); });
+    store.confirms[sk] = store.confirms[sk] || {}; store.confirms[sk][comp] = at; save();
+    toast(`Confirmed ${k ? k.label : ''}. It is in ${(c.name || 'the student').split(' ')[0]}’s log.`, 3600);
+  }catch(e){ toast('That did not reach OneDrive: ' + e.message, 5200); }
+  if (rerender) rerender();
+}
+async function cloudStartT(){
+  if (typeof M365 === 'undefined') return; await M365.prepare();
+  if (!cloudOnT()) return;
+  await M365.init('teacher'); renderCloudCard(); renderReplies();
+  if (cloudIn() && Object.keys(store.cloud.connections).length) cloudRefresh(true);
+}
+
 renderInbox(); backupLine(); keepConsole();
-ingestHash();
+ingestHash(); cloudStartT();
 window.addEventListener('hashchange', ingestHash);
 </script>
 <script src="assets/console-lock.js"></script>

@@ -1,6 +1,7 @@
-// t20 (A5): a reply in one tap. The console offers three replies and a line of the teacher's own on each
-// shared entry; Replies to send lists each student with one Send in Teams; the Inbox can show what waits for a
-// reply; the student's Home puts notes from teachers first, and a link with notes on several entries opens there.
+// t20 (A5, changed in 6.0): replies. Version 6 took out the replies in one tap (a teacher validates each claim with
+// real advice, t34); a note on the whole entry, or beside an answer, is how a teacher replies otherwise. Replies to
+// send lists each student with one Send in Teams; the Inbox can show what waits for a reply; the student's Home puts
+// notes from teachers first, and a link with notes on several entries opens there.
 const fs = require('fs');
 const { v1 } = require('./fixtures/fixture.js');
 const launch = require('./fixtures/launch.js');
@@ -29,32 +30,30 @@ let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; consol
   check('the console holds the three shared entries', keys.length === 3, JSON.stringify(keys));
   const open = async key => { const isOpen = await con.evaluate(k => openKey === k, key); if (!isOpen){ await con.click(`#inboxList .item[data-key="${key}"]`); await sleep(250); } };
   const pending = () => con.$$eval('#inboxList .mnote.pending p', l => l.map(x => x.textContent));
+  const noteOn = async (key, text) => { await open(key); await con.click(`#inboxList .reader [data-note="${key}|entry"]`); await sleep(150); await con.fill('#inboxList .reader .noteedit textarea', text); await con.click('#inboxList .reader .noteedit .btn >> nth=0'); await sleep(300); };
   const card = () => con.evaluate(() => { const c = document.querySelector('#replyCard'); return {hidden:c.hidden, rows:[...c.querySelectorAll('.replylist li')].map(l => l.textContent.replace(/\s+/g, ' ').trim()), teams:(c.querySelector('[data-replysent]') || {}).href || ''}; });
 
-  // 1. quick replies on the oldest entry (e1, Chemistry)
+  // 1. a note on the whole of the oldest entry (e1, Chemistry); no replies in one tap
   await open(keys[0]);
-  const chips = await con.$$eval('#inboxList .reader .qchip', l => l.map(b => b.textContent));
-  check('the reader offers three replies in one tap', chips.length === 3 && chips[0] === 'Seen. Thank you for sharing this.', JSON.stringify(chips));
+  check('the reader offers no replies in one tap', !(await con.$('#inboxList .reader .qchip')));
   const c0 = await card(); check('Replies to send stays hidden while nothing waits', c0.hidden);
-  await con.click('#inboxList .reader .qchip >> nth=0'); await sleep(300);
-  check('one tap readies the reply as a note on the whole entry', JSON.stringify(await pending()) === JSON.stringify(['Seen. Thank you for sharing this.']));
-  check('that reply cannot be readied twice', await con.$eval('#inboxList .reader .qchip', b => b.disabled && b.getAttribute('aria-pressed') === 'true'));
-  await con.fill('#inboxList .reader [data-quickown]', 'Why did the first titre run high?'); await con.press('#inboxList .reader [data-quickown]', 'Enter'); await sleep(300);
-  check('a line of the teacher’s own is readied too, with Enter', (await pending()).includes('Why did the first titre run high?'));
+  await noteOn(keys[0], 'Seen. Thank you for sharing this. Your repeat of the titre shows real care with the readings.');
+  check('a note on the whole entry waits to be sent', JSON.stringify(await pending()) === JSON.stringify(['Seen. Thank you for sharing this. Your repeat of the titre shows real care with the readings.']), JSON.stringify(await pending()));
+  await noteOn(keys[0], 'Why did the first titre run high?');
   await con.click('#inboxList .reader .mnote.pending .x >> nth=1'); await sleep(300);
-  check('a readied reply can be removed before it is sent', JSON.stringify(await pending()) === JSON.stringify(['Seen. Thank you for sharing this.']));
+  check('a note can be removed before it is sent', (await pending()).length === 1);
   const c1 = await card();
   check('Replies to send lists the student, with one reply', !c1.hidden && c1.rows.length === 1 && /^Aisha Tan\s*1 reply ·/.test(c1.rows[0]), JSON.stringify(c1.rows));
 
   // 2. a second reply on the newest entry (e3, Football CCA)
-  await open(keys[2]); await con.click('#inboxList .reader .qchip >> nth=1'); await sleep(400);
+  await noteOn(keys[2], 'Clear thinking here. Keep going: say next time who you will mark at corners.');
   check('Replies to send asks for the teacher’s name while replies would be signed Your teacher', !!(await con.$('#replyCard #rName')));
   await con.fill('#rName', 'Ms Lim'); await con.press('#rName', 'Enter'); await sleep(500);
   const c2 = await card(); const t = new URL(c2.teams); const msg = t.searchParams.get('message') || ''; const noteLink = msg.slice(msg.indexOf('http'));
   check('once saved, the replies are signed with that name', /^Ms Lim left 2 notes/.test(msg) && !(await con.$('#replyCard #rName')), msg.slice(0, 40));
   check('one student, two replies, one Teams chat addressed to her', c2.rows.length === 1 && /2 replies/.test(c2.rows[0]) && t.searchParams.get('users') === 'aisha_tan@students.edu.sg' && /index\.html#\/note\?n=CDL/.test(noteLink), JSON.stringify({rows:c2.rows, users:t.searchParams.get('users')}));
   await con.screenshot({path:shots('t20-console-replies.png'), animations:'disabled'});
-  const a1 = await axe(con); check('the console with quick replies and Replies to send has no serious or critical accessibility issues', !a1.length, a1.join(' | '));
+  const a1 = await axe(con); check('the console with a note and Replies to send has no serious or critical accessibility issues', !a1.length, a1.join(' | '));
 
   // 3. Waiting for a reply: only the entry no one has answered
   await con.selectOption('#fShow', 'wait'); await sleep(300);
@@ -74,7 +73,7 @@ let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; consol
     return {hash:location.hash, card:!!f, first:!!f && !!w && !!(f.compareDocumentPosition(w) & Node.DOCUMENT_POSITION_FOLLOWING), items:f ? [...f.querySelectorAll('.fromlist > li')].map(l => l.textContent.replace(/\s+/g, ' ').trim()) : [],
       now:[...document.querySelectorAll('.nxpart:first-of-type .nxlist>li')].map(l => l.textContent.replace(/\s+/g, ' ').trim())}; });
   check('notes on two entries open Home, where From your teachers comes first', home.hash === '#/' && home.card && home.first, JSON.stringify({hash:home.hash, card:home.card, first:home.first}));
-  check('each note shows who wrote it, the words and the entry', home.items.length === 2 && home.items.every(x => /^Ms Lim/.test(x)) && home.items.some(x => /Clear thinking here\. Keep going\..*Football CCA/.test(x)) && home.items.some(x => /Seen\. Thank you for sharing this\..*Chemistry/.test(x)), JSON.stringify(home.items));
+  check('each note shows who wrote it, the words and the entry', home.items.length === 2 && home.items.every(x => /^Ms Lim/.test(x)) && home.items.some(x => /Clear thinking here\. Keep going.*Football CCA/.test(x)) && home.items.some(x => /Seen\. Thank you for sharing this\..*Chemistry/.test(x)), JSON.stringify(home.items));
   check('the note is not repeated in What next', !home.now.some(x => /’s note/.test(x)), JSON.stringify(home.now));
   await stu.screenshot({path:shots('t20-home-from-teachers.png'), animations:'disabled'});
   const a2 = await axe(stu); check('Home with From your teachers has no serious or critical accessibility issues', !a2.length, a2.join(' | '));
@@ -85,7 +84,7 @@ let fails = 0; const check = (name, ok, info = '') => { if (!ok) fails++; consol
   check('Open the entry goes to it, and once read the card is gone', /^#\/entry\//.test(ent) && !(await stu.$('.fromcard')), ent);
 
   // 6. a link with notes on one entry still opens that entry
-  await open(keys[1]); await con.click('#inboxList .reader .qchip >> nth=2'); await sleep(400);
+  await noteOn(keys[1], 'Let us talk about this next lesson, and bring your essay plan.');
   const one = new URL((await card()).teams).searchParams.get('message'); const oneLink = one.slice(one.indexOf('http'));
   await stu.goto(oneLink); await sleep(1000);
   check('a note on one entry opens that entry', /^#\/entry\/e2/.test(await stu.evaluate(() => location.hash)), await stu.evaluate(() => location.hash));

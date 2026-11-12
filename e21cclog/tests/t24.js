@@ -22,7 +22,7 @@ const SG = s => new Date(s + '+08:00').getTime();
   };
   const home = async p => { await p.evaluate(() => { window.__toasts = []; location.hash = '#/'; route(); }); await sleep(800); return p.evaluate(() => window.__toasts.slice()); };
   // an entry made the way the app makes one: migrated, and read by the built in coach
-  const add = (p, e) => p.evaluate(e => { const x = migrateEntry(Object.assign({competencies:[], notes:[], sent:{}, links:[], topic:'Topic', groupCode:'', feedbackFrom:'teacher', feedbackText:''}, e)); x.e21cc = builtinE21cc(x, myStatements()); me.entries.push(x); saveDb(); }, e);
+  const add = (p, e) => p.evaluate(e => { const x = migrateEntry(Object.assign({competencies:[], notes:[], sent:{}, links:[], topic:'Topic', groupCode:'', feedbackFrom:'teacher', feedbackText:''}, e)); x.e21cc = builtinE21cc(x, myStatements()); for (const l of x.links){ const s = statementById(l.sid); if (s && wordsShow(x, s)) x.notes.push({id:'rv' + x.id + l.sid, by:'Ms Test', at:x.created + 1000, anchor:'claim:' + l.sid, sid:l.sid, verdict:'yes', quote:l.quote, text:'Affirmed by a stand in teacher in a test.', seen:true}); } me.entries.push(x); saveDb(); }, e);
 
   // 1. rhythm across the Term 3 to Term 4 change, on Wednesday 4 November 2026 (Term 4, week 8)
   const R = JSON.parse(JSON.stringify(seed)); const RP = R.profiles[R.current]; const base = RP.entries[0];
