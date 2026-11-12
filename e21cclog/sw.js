@@ -3,11 +3,11 @@
    down. Fonts and images, which never change, come from the copy first. Nothing outside this
    site is touched: AI coach calls and group files from elsewhere always go to the network.
    Change VERSION when a release should replace every copy at once. */
-const VERSION = 'e21cclog-5.2-2026-11-09';
+const VERSION = 'e21cclog-6.0-2026-11-12';
 const SHELL = ['./', './index.html', './teacher.html', './manifest.webmanifest',
-  './assets/core.js', './assets/store.js', './assets/app.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
+  './assets/core.js', './assets/store.js', './assets/app.js', './assets/m365.js', './assets/cloud.js', './assets/vendor/msal-browser.min.js', './assets/console-lock.js', './assets/crest.png', './assets/icon-192.png',
   './assets/fonts/inter-regular-latin.woff2', './assets/fonts/inter-semibold-latin.woff2', './assets/fonts/inter-bold-latin.woff2',
-  './assets/fonts/inter-extrabold-latin.woff2', './assets/fonts/literata-var-latin.woff2', './statements/beatty-v1.json'];
+  './assets/fonts/inter-extrabold-latin.woff2', './assets/fonts/literata-var-latin.woff2', './statements/beatty-v1.json', './school/microsoft.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => Promise.all(SHELL.map(u => c.add(new Request(u, {cache:'reload'})).catch(() => {})))));

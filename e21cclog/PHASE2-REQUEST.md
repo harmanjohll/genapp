@@ -1,5 +1,7 @@
 # Request to MOE IT: the Competency Development Log in students' OneDrive
 
+**Replaced on 12 November 2026 by `MICROSOFT.md`.** Beatty's own ICT can register the app in the school's tenant, so this request is no longer needed. It is kept for the record.
+
 From Beatty Secondary School. One page.
 
 ## Purpose

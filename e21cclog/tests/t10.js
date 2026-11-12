@@ -26,6 +26,7 @@ P.experiences.levels = {Chemistry:'G1', Geography:'G3'};
   const u0 = await page.evaluate(() => readsUsed());
   await go('#/write/act'); await page.click('.xchips .chip'); await sleep(150);
   for (let i = 0; i < 5; i++){ await page.click('#cNext'); await sleep(150); }
+  if (await page.$('#claimNudge')){ await page.click('#cNext'); await sleep(150); }   // 6.0: no claim, so the step asks once
   const rb = (await page.textContent('#sheet .coach')).trim();
   check('1. a blank entry: the readback says only that there is nothing to give feedback on, and offers no AI read', rb === 'Nothing is written yet, so there is nothing to give feedback on.' && !(await page.$('#askAi')), rb);
   await page.click('#cSave'); await sleep(700);

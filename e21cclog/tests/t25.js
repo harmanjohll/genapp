@@ -2,6 +2,7 @@
 // a subject with no entry yet this term); the same prompt for the whole open; Not now puts that kind aside a week;
 // nothing said twice on Home; no prompt when nothing applies; never "missed" or "have not".
 const fs = require('fs');
+const { AFFIRM_STORE } = require('./fixtures/affirm.js');
 const launch = require('./fixtures/launch.js');
 const BASE = process.env.BASE || 'http://localhost:8123/e21cclog/';
 const AXE = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
@@ -23,7 +24,7 @@ P.experiences.subjects = [...P.experiences.subjects, 'History'];   // a subject 
   const seen = p => p.evaluate(() => { const n = document.querySelector('#main .nudge'); return {kind:n ? n.dataset.kind : null, text:n ? n.textContent.replace(/\s+/g, ' ').trim() : '', planLine:!!document.querySelector('.nxlist .nxplan'), almostLine:[...document.querySelectorAll('.nxlist li')].some(l => /^Almost secured/.test(l.textContent.trim())), href:(n && n.querySelector('a.btn') || {}).getAttribute ? n.querySelector('a.btn') && n.querySelector('a.btn').getAttribute('href') : ''}; });
   // each open is a new tab: its own session, the same log
   const open = async () => { const p = await ctx.newPage(); p.on('pageerror', e => errors.push(e.message)); await p.goto(BASE + 'index.html#/'); await sleep(1300); const s = await seen(p); if (s.text) said.push(s.text); return {p, s}; };
-  const first = await ctx.newPage(); await first.goto(BASE + 'index.html'); await first.evaluate(x => localStorage.setItem('e21cclog', x), JSON.stringify(seed)); await first.close();
+  const first = await ctx.newPage(); await first.goto(BASE + 'index.html'); await sleep(900); await first.evaluate(x => localStorage.setItem('e21cclog', x), JSON.stringify(seed)); await first.evaluate(AFFIRM_STORE); await first.close();   // the seeding page opens first, so it cannot save over the seed
 
   // 1. three opens, three prompts, in turn
   let o1 = await open();
@@ -68,7 +69,7 @@ P.experiences.subjects = [...P.experiences.subjects, 'History'];   // a subject 
   const Q = JSON.parse(JSON.stringify(seed)); const QP = Q.profiles[Q.current]; const e0 = JSON.parse(JSON.stringify(newest));
   Object.assign(e0, {id:'q1', created:SG('2026-11-11T16:00:00'), updated:SG('2026-11-11T16:00:00'), links:[], notes:[], sent:{}, context:{type:'subject', name:'Chemistry'}, subject:'Chemistry'}); e0.answers = {g1:'I learnt how to name salts.'};
   QP.entries = [e0]; QP.experiences = {subjects:['Chemistry'], cca:'', others:[], levels:{}}; QP.done = {}; QP.planChecks = {}; delete QP.prompts;
-  const p0 = await ctx.newPage(); p0.on('pageerror', e => errors.push(e.message)); await p0.goto(BASE + 'index.html'); await p0.evaluate(x => localStorage.setItem('e21cclog', x), JSON.stringify(Q)); await p0.close();
+  const p0 = await ctx.newPage(); p0.on('pageerror', e => errors.push(e.message)); await p0.goto(BASE + 'index.html'); await sleep(900); await p0.evaluate(x => localStorage.setItem('e21cclog', x), JSON.stringify(Q)); await p0.evaluate(AFFIRM_STORE); await p0.close();
   { const o = await open(); check('when nothing applies, there is no prompt', !o.s.kind, JSON.stringify(o.s)); await o.p.close(); }
 
   check('every prompt shown is kind: never missed, have not or haven’t', said.length >= 6 && !said.some(t => /missed|have not|haven’t|haven't/i.test(t)), JSON.stringify(said.length));

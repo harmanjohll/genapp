@@ -35,7 +35,7 @@ function rememberOpen(id){ try{ if (id) sessionStorage.setItem(OPEN_KEY, id); el
 function openInTab(id){ try{ return !!id && sessionStorage.getItem(OPEN_KEY) === id; }catch{ return false; } }
 let draft = null;            // composer state
 let toastTimer = null;
-function saveDb(){ if (!STORE.save(db)) toast('Could not save on this device. Export your log to keep it.'); }
+function saveDb(){ if (typeof cloudTouched === 'function') cloudTouched(); if (!STORE.save(db)) toast('Could not save on this device. Export your log to keep it.'); }
 function newProfile(name, email, code){
   return migrateProfile({
     id:uid(), name:name.trim(), email:(email || '').trim().toLowerCase(),
@@ -580,6 +580,8 @@ async function sendSheet(a, preset){
   $('#dGo').onclick = async () => { const chosen = $$('#sendList input').filter(x => x.checked).map(x => items[+x.dataset.i]); if (!chosen.length) return toast('Tick at least one.'); $('#dGo').disabled = true; await deliver(a, chosen); };
 }
 async function deliver(a, chosen){
+  // 6.0: signed in with the school account, a teacher with an email gets it through OneDrive
+  if (typeof cloudMine === 'function' && cloudMine() && a.email && !a.viaLink && !(a.sink && a.sink.url)) return cloudDeliver(a, chosen);
   const from = await senderInfo(); const payloadItems = chosen.map(toPayloadItem); const sink = a.sink;
   if (sink && sink.url && (sink.kind === 'msforms' || sink.kind === 'gforms')){
     if (!mappedCount(sink, Object.fromEntries(FORM_FIELDS.map(f => [f, 1])))){ dialog(`<h2>The drop box is not set up</h2><p>${esc(a.name)}’s form has no field map yet. Tell them, or send a link instead.</p><div class="row"><button class="btn" id="dLink">${icon('link')} Send a link instead</button><button class="btn sec" id="dClose">Close</button></div>`); $('#dClose').onclick = closeDialog; $('#dLink').onclick = () => deliver(Object.assign({}, a, {sink:null}), chosen); return; }
@@ -609,6 +611,24 @@ function msStep(a, parts, k){
 }
 
 /* ---------- margin notes arrive by link: index.html#/note?n=CDL1.n.… ---------- */
+/* One teacher's note as the log keeps it. A review of a claim also carries its verdict, the statement, and the sentence the teacher read. */
+function noteIn(n, by){
+  const note = {id:String(n.id), by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:n.at || Date.now(), anchor:String(n.anchor || 'entry'), text:String(n.text).slice(0, 600), seen:false};
+  if ((n.verdict === 'yes' || n.verdict === 'notyet') && n.sid){ note.verdict = n.verdict; note.sid = String(n.sid).slice(0, 40); note.quote = String(n.quote || '').slice(0, 400); }
+  return note;
+}
+/* Notes for this log, from any route: added where their entry is, waiting where it is not. Returns what landed. */
+function landNotes(list, by){
+  let added = 0, pending = 0, first = null; const landed = new Set();
+  for (const n of (Array.isArray(list) ? list : [])){
+    if (!n || !n.id || !n.text) continue;
+    const note = noteIn(n, by || {});
+    const e = me.entries.find(x => x.id === n.eid);
+    if (!e){ if (!me.pendingNotes.some(p => p.note.id === note.id)){ me.pendingNotes.push({eid:n.eid, note}); pending++; } continue; }
+    if (!(e.notes = e.notes || []).some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; landed.add(e.id); }
+  }
+  return {added, pending, first, entries:landed.size};
+}
 async function importNoteLink(text){
   const got = await unpackCDL(text); if (!got || got.kind !== 'n') throw new Error('That link is not a note link.');
   const d = got.data || {};
@@ -619,7 +639,7 @@ async function importNoteLink(text){
   for (const c of (Array.isArray(d.confirms) ? d.confirms : [])){ if (!c || !compOf(c.comp) || compOf(c.comp).d === 'sec') continue; me.confirmed[c.comp] = {by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:Number(c.at) || Date.now()}; confirmed.push(c.comp); }
   for (const n of (Array.isArray(d.notes) ? d.notes : [])){
     if (!n || !n.id || !n.text) continue;
-    const note = {id:String(n.id), by:String(by.name || 'Your teacher').slice(0, 60), role:String(by.role || '').slice(0, 40), at:n.at || Date.now(), anchor:String(n.anchor || 'entry'), text:String(n.text).slice(0, 600), seen:false};
+    const note = noteIn(n, by);
     const e = me.entries.find(x => x.id === n.eid);
     if (!e){ if (!me.pendingNotes.some(p => p.note.id === note.id)){ me.pendingNotes.push({eid:n.eid, note}); pending++; } continue; }
     if (!e.notes.some(x => x.id === note.id)){ e.notes.push(note); added++; first = first || e.id; landed.add(e.id); }
@@ -720,8 +740,13 @@ async function boot(){
   const typing = el => el && el.matches && el.matches('input:not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select');
   document.addEventListener('focusin', ev => { if (typing(ev.target)) document.body.classList.add('typing'); });
   document.addEventListener('focusout', () => setTimeout(() => { if (!typing(document.activeElement)) document.body.classList.remove('typing'); }, 60));
+  document.addEventListener('click', ev => { const b = ev.target.closest && ev.target.closest('[data-actnote]'); if (!b || !me) return; ev.preventDefault(); const [eid, nid] = b.dataset.actnote.split('|'); location.hash = `#/write/act?n=${encodeURIComponent(eid + '.' + nid)}`; });
   if (db.current && db.profiles[db.current]){ me = db.profiles[db.current]; if (me.pin && openInTab(me.id)) unlocked = true; }
   applyPrefs();
+  // 6.0: back from the school's sign in page, open (or start) that person's log, in step with their OneDrive
+  let signedIn = null;
+  if (typeof M365 !== 'undefined' && !GUEST && !DEMO) await M365.prepare();
+  if (typeof M365 !== 'undefined' && M365.wasReply && !GUEST && !DEMO){ await M365.init('student'); if (M365.who()) signedIn = await cloudAdopt(); }
   bootStart = location.hash || '#/';
   const back = me && (!me.pin || unlocked) ? takeResume() : null;
   if (back && back.hash !== '#/') history.replaceState(null, '', location.pathname + location.search + back.hash);
@@ -735,6 +760,8 @@ async function boot(){
   processStashedLink(link || null);
   if (db.broughtAcross && !db.broughtAcross.noticed){ const b = db.broughtAcross; b.noticed = true; saveDb(); setTimeout(() => toast(`${plural(b.added + b.updated, 'entry', 'entries')} brought across from ${b.from === 'v1' ? 'the first version' : 'v2'}.`, 5200), 700); }
   keepSafe();
+  if (signedIn && signedIn.fresh && (location.hash || '#/') === '#/') location.hash = '#/setup';
+  if (typeof cloudStart === 'function') cloudStart();
   if (DEMO && window.demoStart) window.demoStart();
 }
 async function importConfigFromHash(){
@@ -1017,11 +1044,12 @@ function renderWelcome(view){
       <p class="meta">One log for what you learn at Beatty: lessons, CCA, camps and competitions.</p>
       <div class="cover-tabs" aria-hidden="true"><span class="t-grow">GROW</span><span class="t-act">ACT</span><span class="t-ask">ASK</span></div>
     </section>
-    <div class="wcol">${panel}${testCard('welcome')}${restoreCard()}${guest}</div>
+    <div class="wcol">${typeof cloudWelcome === 'function' ? cloudWelcome() : ''}${panel}${testCard('welcome')}${restoreCard()}${guest}</div>
   </div>`;
   const w = $('#wChoose'); if (w) w.onclick = () => { if (view === 'pin'){ db.current = null; saveDb(); } renderWelcome('choose'); };
   const n = $('#wNew'); if (n) n.onclick = () => { renderWelcome('new'); const f = $('#newForm [name=name]'); if (f) f.focus(); };
   $$('.pcard').forEach(b => b.onclick = () => pickProfile(b.dataset.id));
+  const ci = $('#cloudIn'); if (ci) ci.onclick = cloudSignIn;
   wireRestore(); wireFromTest();
   if (view === 'pin'){
     const inp = $('#pinForm input'); if (inp) inp.focus();
@@ -1331,7 +1359,7 @@ function renderHome(){
   if (almost && promptKind !== 'almost') now.push(nextItem('ladder', `<b>Almost secured:</b> “${esc(almost.stmt.text.replace(/\.$/, ''))}”.`, `#/c/${almost.stmt.comp}`, 'See the statement', esc(almost.missing)));
   { const today = ymd(Date.now()); const soon = calItems().find(it => it.kind === 'event' && it.date >= today && goalDate(it.date) <= addDays(Date.now(), 7));
     if (soon) now.push(nextItem('clock', `<b>Coming up:</b> ${esc(soon.title)}, ${fmtDay(goalDate(soon.date))}${soon.time ? ', ' + esc(clockWords(soon.time)) : ''}.`, '#/goals/calendar', 'Calendar')); }
-  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Write a GROW this week.</b>`, '#/write/grow', 'New GROW', 'After your next lesson or CCA session. Two or three sentences for each question is enough.'));
+  if (!thisWeek && setupDone()) now.push(nextItem('plus', `<b>Finished a topic, a unit or a camp?</b> Write a GROW about it.`, '#/write/grow', 'New GROW', 'The end of something is the time to look back. Take your time: your teacher reads it and checks your claim.'));
   if (!now.length && !plan && promptKind) now.push(nextItem('check', `<b>One thing above,</b> then you are up to date.`));
   if (!now.length && !plan && unread.length) now.push(nextItem('note', `<b>Read your teachers’ notes,</b> above.`));
   if (!now.length && !plan) now.push(nextItem('check', `<b>You are up to date.</b>`, '', '', 'Write a GROW after your next lesson, or an ACT when feedback comes back.'));
@@ -1349,11 +1377,11 @@ function renderHome(){
   if (!outer.some(c => st[c.id].idx >= 1)) later.push(nextItem('ladder', `<b>Start with one competency.</b>`, '#/c', 'Choose one', 'Write an entry that shows it, then link it to one of its I can statements.'));
   if (tp.inTerm && daysLeft <= 21 && acrossDone.size < 4) later.push(`<li><span class="nxi" aria-hidden="true">${icon('clock')}</span><div><p><b>Term ${tp.term} ends in ${plural(daysLeft, 'day')}.</b> Look across one area.</p><div class="chips">${DOMAINS.map(d => `<a class="chip ${acrossDone.has(d.id) ? 'on' : ''}" href="#/across/${d.id}">${acrossDone.has(d.id) ? icon('check') : ''}${esc(d.short)}</a>`).join('')}</div></div></li>`);
   if (!me.reminder && me.entries.length && !GUEST) later.push(nextItem('clock', `<b>Remind me each week.</b>`, '#/settings?s=remind', 'Set it up', 'A weekly event in your own calendar, at a time that suits you.'));
-  if (!later.length) later.push(nextItem('ladder', `<b>Over the term:</b> one GROW a week, and an ACT for each piece of feedback.`));
+  if (!later.length) later.push(nextItem('ladder', `<b>Over the term:</b> a GROW when a topic, unit or camp ends, and an ACT for feedback that matters.`));
   const first = recentComp(st);
   // replies from teachers come first (A5): who, on which entry, and the words
   unread.sort((a, b) => (b.n.at || 0) - (a.n.at || 0));
-  const fromT = unread.length ? `<section class="card fromcard" aria-labelledby="fromH"><h2 id="fromH">From your teachers</h2><ul class="fromlist">${unread.slice(0, 3).map(({e, n}) => `<li>${noteHtml(n)}<p class="tiny">On your entry <a href="#/entry/${e.id}">${esc(entryTitle(e))}</a></p><div class="row"><a class="btn small" href="#/entry/${e.id}">Open the entry</a><button type="button" class="btn small ghost" data-readnote="${esc(e.id)}|${esc(n.id)}">Mark as read</button></div></li>`).join('')}</ul>${unread.length > 3 ? `<p class="tiny">${plural(unread.length - 3, 'more note')} in your entries.</p>` : ''}</section>` : '';
+  const fromT = unread.length ? `<section class="card fromcard" aria-labelledby="fromH"><h2 id="fromH">From your teachers</h2><ul class="fromlist">${unread.slice(0, 3).map(({e, n}) => `<li>${noteHtml(n, e)}<p class="tiny">On your entry <a href="#/entry/${e.id}">${esc(entryTitle(e))}</a></p><div class="row"><a class="btn small" href="#/entry/${e.id}">Open the entry</a><button type="button" class="btn small ghost" data-readnote="${esc(e.id)}|${esc(n.id)}">Mark as read</button></div></li>`).join('')}</ul>${unread.length > 3 ? `<p class="tiny">${plural(unread.length - 3, 'more note')} in your entries.</p>` : ''}</section>` : '';
   let carryCard = '';
   if (carry){ const d = me.drafts[carry], fw = FRAMEWORKS[carry]; const name = (d.context && d.context.name) || d.subject || ''; const qs = fw.steps.flatMap(x => x.qs); const done = qs.filter(q => String((d.answers || {})[q.id] || '').trim()).length;
     carryCard = `<section class="card carrycard" aria-labelledby="carryH"><h2 id="carryH">${name ? `Carry on with your ${esc(name)} ${fw.name}` : `Carry on with your ${fw.name} entry`}</h2><p class="tiny">${d.saved ? 'Last saved ' + fmtDay(d.saved) + ' · ' : ''}${done} of ${qs.length} questions answered. Your words are saved.</p><div class="row"><a class="btn" href="#/write/${carry}?go=1">${icon('edit')} Continue</a><button type="button" class="btn ghost" id="carryLater">Not now</button></div></section>`; }
@@ -1415,8 +1443,8 @@ const MARK = {secured:'check', started:'clock', linked:'link'};
 function stmtRow(x){
   const s = x.stmt; const stretch = isStretch(s) && x.state === 'none';
   const ctx = ctxNames(x);
-  const line = x.secured ? `Secured${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}` : x.backing.length ? `<b>${progressWord(x)}</b>${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}. ${esc(x.missing)}` : x.links.length ? 'Linked, but your words do not show it yet.' : '';
-  const sr = {secured:'secured', started:'started', linked:'linked, not backed yet', none:'not started'}[x.state];
+  const line = x.secured ? `Secured${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}` : x.backing.length ? `<b>${progressWord(x)}</b>${ctx.length ? ' · ' + esc(ctx.join(', ')) : ''}. ${esc(x.missing)}` : x.links.length ? (x.notyet ? 'Claimed. Your teacher said not yet: read their advice.' : 'Claimed. Waiting for a teacher to check it.') : '';
+  const sr = {secured:'secured', started:'started', linked:x.notyet ? 'claimed, not yet' : 'claimed, waiting for a teacher', none:'not started'}[x.state];
   const ev = x.links.map(k => `<div class="ev ${k.backed ? 'ok' : ''}"><div class="row" style="justify-content:space-between;gap:6px"><a href="#/entry/${k.e.id}"><span class="badge b-${k.e.kind}" style="margin-right:6px">${FRAMEWORKS[k.e.kind].name}</span>${esc(entryTitle(k.e))}, ${fmtDay(k.e.created)}</a><span class="str ${k.backed ? 'strong' : 'none'}">${k.backed ? 'Backed' : 'Not backed yet'}</span></div>${k.l.quote ? `<q>${esc(k.l.quote)}</q>` : ''}${k.backed ? '' : `<small class="muted">${esc((compOf(s.comp) || {}).probe || '')}</small>`}<button class="linkbtn" data-unlink="${k.e.id}|${esc(s.id)}">Unlink</button></div>`).join('');
   const sug = x.suggested.slice(0, 2).map(e => { const m = ((e.e21cc && e.e21cc.statements) || []).find(y => y.sid === s.id); return `<div class="sugg"><span class="kick">The coach suggests</span><a href="#/entry/${e.id}"><span class="badge b-${e.kind}" style="margin-right:6px">${FRAMEWORKS[e.kind].name}</span>${esc(entryTitle(e))}, ${fmtDay(e.created)}</a>${m && m.quote ? `<q>${esc(m.quote)}</q>` : ''}<button class="btn small sec" data-linkit="${e.id}|${esc(s.id)}">${icon('link')} Link it</button></div>`; }).join('');
   return `<li class="st s-${x.state}${stretch ? ' stretch' : ''}"><span class="mk" aria-hidden="true">${MARK[x.state] ? icon(MARK[x.state]) : stretch ? icon('star') : ''}</span><div class="grow">
@@ -1485,7 +1513,7 @@ function addLink(e, sid, quote){
   if (s && !(e.competencies || []).some(t => t.id === s.comp)) e.competencies = (e.competencies || []).concat([{id:s.comp, level:2, where:String(quote || '').slice(0, 160)}]);
   saveDb(); closeDialog();
   const x = s ? securedOf(me.entries, s) : null;
-  toast(!s ? 'Linked.' : x.secured ? 'Linked. That statement is now secured.' : linkBacked(e, s) ? `Linked, and your words back it. ${x.missing}` : 'Linked. The coach has not seen it in your words yet.', 4200);
+  toast(!s ? 'Linked.' : x.secured ? 'Linked. That statement is now secured.' : 'Claimed. Share the entry with your teacher, who checks each claim.', 4200);
   route();
 }
 /* Link an entry: pick an entry, then the sentence of yours that shows the statement. */
@@ -1527,6 +1555,13 @@ function claimDialog(e, compId){
 function draftKey(kind, basket){ return kind === 'across' ? 'across:' + basket : kind; }
 function draftHasWork(d){ return !!d && (Object.values(d.answers || {}).some(v => String(v || '').trim()) || !!(d.context && d.context.name) || !!d.subject || !!String(d.topic || '').trim()); }
 function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], claims:[], target:'', basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
+function noteRef(ref){ const [eid, nid] = String(ref || '').split('.'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); return e && n ? {e, n} : null; }
+function applyNote(ref){
+  const r = noteRef(ref); if (!r) return; const {e, n} = r;
+  draft.context = Object.assign({}, e.context || {type:'subject', name:e.subject || ''}); draft.topic = e.topic || ''; draft.groupCode = e.groupCode || '';
+  draft.feedbackFrom = 'teacher'; draft.feedbackText = `${n.by || 'My teacher'}: ${n.text}`; draft.fromNote = {eid:e.id, nid:n.id}; draft.step = 0;
+  if (!n.seen){ n.seen = true; saveDb(); }
+}
 function applyPrefill(pre){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
 function openComposer(kind, editId, basket){
   if (kind === 'across' && !basketOf(basket)){ location.hash = '#/'; return; }
@@ -1555,6 +1590,9 @@ function openComposer(kind, editId, basket){
     // 5.1: started from a goal, the entry names it; started from a result, it is about that result
     const gq = kind !== 'across' && !editId ? hashParts().q.get('g') || '' : ''; draft._goal = gq && goalById(gq) ? gq : '';
     if (draft._goal && !ask){ draft.goal = draft._goal; const gg = goalById(gq); if (hashParts().q.get('r') && gg.got && !draft.topic) draft.topic = `My result: ${gradeLabel(gg.level, gg.got)}`; }
+    // 6.0: started from a teacher's note, an ACT is about that entry's experience, with the note as its feedback
+    draft._note = kind === 'act' && !editId ? hashParts().q.get('n') || '' : '';
+    if (draft._note && !ask) applyNote(draft._note);
     if (kind === 'across') draft.lookedAt = acrossEvidence(basket, draft.term).map(x => ({eid:x.e.id, quote:x.q.quote})).slice(0, 8);
   }
   renderComposer();
@@ -1566,7 +1604,7 @@ function closeComposer(){
   if (was) setTimeout(() => { const t = composerFrom && [...document.querySelectorAll(`a[href="${composerFrom}"]`)].find(a => a.offsetParent); const m = t || $('#main'); if (m) m.focus({preventScroll:true}); }, 80);
 }
 function saveDraft(){
-  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._goal; delete d._pickQ; d.saved = Date.now();
+  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._goal; delete d._note; delete d._pickQ; delete d._claimNudged; d.saved = Date.now();
   if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
   saveDb();
 }
@@ -1615,7 +1653,7 @@ function renderComposer(){
   $('#cHome').onclick = () => leave('#/');
   $('#cClose').onclick = () => leave(draftReturn());
   const rc = $('#rContinue'); if (rc) rc.onclick = () => { draft._ask = false; renderComposer(); };
-  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre, gl = draft._goal; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre, _goal:gl}); if (pre) applyPrefill(pre); if (gl) draft.goal = gl; renderComposer(); };
+  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre, gl = draft._goal, nt = draft._note; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre, _goal:gl, _note:nt}); if (pre) applyPrefill(pre); if (gl) draft.goal = gl; if (nt) applyNote(nt); renderComposer(); };
   const bk = $('#cBack'); if (bk) bk.onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
   // leaving step 1 needs a subject or experience; a new one joins the student's list
   const leaveContext = () => {
@@ -1624,7 +1662,9 @@ function renderComposer(){
     if (undo){ const nm = draft.context.name; toast(`${nm} is now in your ${draft.context.type === 'subject' ? 'subjects' : draft.context.type === 'cca' ? 'CCA list' : 'experiences'}.`, 5000, {label:'Undo', fn:undo, done:`${nm} removed from your list.`}); }
     return true;
   };
-  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); if (kind === 'context' && !leaveContext()) return; draft.step = i + 1; saveDraft(); renderComposer(); };
+  const nx = $('#cNext'); if (nx) nx.onclick = () => { collect(); if (kind === 'context' && !leaveContext()) return;
+    // 6.0: every entry should carry a claim for a teacher to check; the first Next without one asks once
+    if (kind === 'claim' && !(draft.claims || []).length && !draft._claimNudged){ draft._claimNudged = true; renderComposer(); const nn = $('#claimNudge'); if (nn) nn.focus(); return; } draft.step = i + 1; saveDraft(); renderComposer(); };
   $$('[data-jump]', $('#sheet')).forEach(b => b.onclick = () => { collect(); const k = +b.dataset.jump; if (k === i) return; if (kind === 'context' && !leaveContext()) return; draft.step = k; saveDraft(); renderComposer(); });
   const sv = $('#cSave'); if (sv) sv.onclick = saveEntry;
   $$('textarea.in, input.in', $('#sheet')).forEach(t => t.addEventListener('focus', () => { setTimeout(() => { try{ t.scrollIntoView({block:'center', behavior:'smooth'}); }catch{} }, 250); }));
@@ -1652,7 +1692,7 @@ function stepFilled(fw, st){
 function guideTip(fw, st){
   if (st === 'context') return ['Pick the learning experience this entry is about. If it is not listed, choose a type and type its name.'];
   if (st === 'evidence') return ['Read what you wrote this term. Look for things that happened more than once.'];
-  if (st === 'claim') return ['Only choose a statement if you can point to a sentence in your answers that shows it.', 'A statement is secured when two entries back it, from two different subjects or CCAs, at least two weeks apart.'];
+  if (st === 'claim') return ['Only choose a statement if you can point to a sentence in your answers that shows it.', 'Your teacher checks each claim. A statement is secured when a teacher has affirmed it in two entries, from two different subjects or CCAs, at least two weeks apart.'];
   if (st === 'readback') return ['Read your answers once more. Change anything vague before you log it.'];
   return ['Each question has an (i) beside it: point at it or tap it to see what the question asks, what a strong answer has, and examples.', 'Press I’m stuck under a box for help with your own answer.'];
 }
@@ -1853,7 +1893,8 @@ function claimStep(){
         ${picking ? `<div class="stack sents" role="radiogroup" aria-label="The sentence that shows it">${sents.map((t, i) => `<label class="pick-row"><input type="radio" name="q-${esc(s.id)}" data-q="${esc(s.id)}" value="${i}" ${normText(t) === normText(cl.quote) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('') || '<p class="muted">Write your answers first, then come back.</p>'}</div>` : ''}` : ''}</div>`; };
   const extra = claims.map(c => statementById(c.sid)).filter(s => s && !sug.some(x => x.id === s.id));
   const browse = draft._browse || ''; const band = myBand(); const other = band === 'upper' ? 'lower' : 'upper';
-  return `<p class="muted">Choose up to two. Then point to the sentence in your answers that shows each one. The coach checks your words, and each statement they back moves towards secured.</p>
+  const nudge = draft._claimNudged && !claims.length ? `<div class="notice" id="claimNudge" tabindex="-1" role="status"><b>Choose one statement before you go on.</b> Your teacher can only affirm a claim you make. Pick the one closest to what you wrote, and point to your sentence. Or press Next again to go on without one for now.</div>` : '';
+  return `${nudge}<p class="muted">Choose up to two. Then point to the sentence in your answers that shows each one. Your teacher reads each claim and affirms it, or says not yet. Each affirmed claim moves the statement towards secured.</p>
     ${extra.length ? `<span class="mini">Your choices</span>${extra.map(card).join('')}` : ''}
     ${sug.length ? `<span class="mini">Suggested from your words</span>${sug.map(card).join('')}` : `<div class="notice">Your answers do not clearly show a competency yet. Browse the statements below, or go back and add a moment where you reasoned, worked with others or connected your learning to the world.</div>`}
     <span class="mini" id="brLbl">Browse all statements</span>
@@ -1865,7 +1906,7 @@ function draftEntry(){
   const base = {id:draft.editId || draft._id || (draft._id = uid()), kind:draft.kind, created:draft.created || Date.now(), answers:draft.answers};
   if (draft.kind === 'across'){ const b = basketOf(draft.basket); return Object.assign(base, {basket:draft.basket, term:draft.term, context:{type:'across', name:b.label}, subject:b.short, topic:termLabel(draft.term), lookedAt:draft.lookedAt || [], groupCode:'', competencies:[]}); }
   const claims = draft.claims || [];
-  return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText,
+  return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText, fromNote:draft.fromNote || null,
     competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || '', followThrough:draft.followThrough || null, goal:draft.goal || ''});
 }
 function readbackStep(){
@@ -1996,14 +2037,26 @@ function saveEntry(){
 }
 
 /* ---------- an entry: the words, the margin notes, the read ---------- */
-function noteHtml(n){ return `<aside class="mnote${n.seen ? '' : ' unread'}" aria-label="Note from ${esc(n.by)}"><span class="by">${esc(n.by)}${n.role ? ' · ' + esc(n.role) : ''} · ${fmtDay(n.at)}</span><p>${esc(n.text)}</p></aside>`; }
+/* A teacher's note. A review of a claim says what the teacher decided, and every note can start an ACT. */
+function noteHtml(n, e){
+  const st = n.sid ? statementById(n.sid) : null;
+  const head = n.verdict === 'yes' ? `<p class="verdict yes">${icon('check')} Affirmed${st ? ': ' + esc(st.text) : ''}</p>` : n.verdict === 'notyet' ? `<p class="verdict notyet">Not yet${st ? ': ' + esc(st.text) : ''}</p>` : '';
+  return `<aside class="mnote${n.seen ? '' : ' unread'}" aria-label="Note from ${esc(n.by)}"><span class="by">${esc(n.by)}${n.role ? ' · ' + esc(n.role) : ''} · ${fmtDay(n.at)}</span>${head}<p>${esc(n.text)}</p>${e && e.kind !== 'across' ? `<button type="button" class="linkbtn" data-actnote="${esc(e.id)}|${esc(n.id)}">Act on this feedback</button>` : ''}</aside>`;
+}
+/* How a claim stands, in the student's words: affirmed (and how far the statement has come), not yet, or waiting. */
+function claimWord(e, s, x){
+  const r = reviewOf(e, s.id); x = x || securedOf(me.entries, s);
+  if (r && r.verdict === 'yes') return {ok:true, word:progressWord(x), by:r.by};
+  if (r && r.verdict === 'notyet') return {ok:false, notyet:true, word:`Not yet: see ${r.by || 'your teacher'}’s advice`};
+  return {ok:false, word:'Waiting for a teacher', hint:wordsShow(e, s)};
+}
 function answersWithNotes(e){
   const fw = FRAMEWORKS[e.kind]; const notes = e.notes || [];
   return fw.steps.map(s => s.qs.map(q => {
     const ns = notes.filter(n => n.anchor === q.id).sort((a, b) => a.at - b.at);
     const latest = ns[ns.length - 1]; const older = ns.slice(0, -1);
     return `<div class="qa-row${ns.length ? ' has-note' : ''}" data-anchor="${q.id}"><div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'Not answered. ' + EMPTY_LINE)}</p></div>
-      ${latest ? `<div class="notes">${older.length ? `<details class="older"><summary>${plural(older.length, 'earlier note')}</summary>${older.map(noteHtml).join('')}</details>` : ''}${noteHtml(latest)}</div>` : ''}</div>`;
+      ${latest ? `<div class="notes">${older.length ? `<details class="older"><summary>${plural(older.length, 'earlier note')}</summary>${older.map(n => noteHtml(n, e)).join('')}</details>` : ''}${noteHtml(latest, e)}</div>` : ''}</div>`;
   }).join('')).join('');
 }
 /* The statements an entry is linked to, and how far each has come. */
@@ -2011,9 +2064,9 @@ function backsHtml(e){
   const links = (e.links || []).map(l => ({l, s:statementById(l.sid)})).filter(x => x.s);
   const aim = e.target ? statementById(e.target) : null;
   const legacy = !links.length && (e.competencies || []).length ? `<p style="margin-top:8px"><span class="tiny">You claimed: </span>${e.competencies.map(t => { const c = compOf(t.id); return c ? `<span class="tag">${esc(c.label)}</span>` : ''; }).join('')}</p>` : '';
-  return `${links.length ? `<div class="backs"><span class="kick">Statements this entry backs</span><ul class="blist">${links.map(({l, s}) => { const ok = linkBacked(e, s); const x = securedOf(me.entries, s);
-      return `<li class="${ok ? 'ok' : 'no'}"><span class="mk" aria-hidden="true">${icon(ok ? (x.secured ? 'check' : 'clock') : 'link')}</span><div><p class="stt"><a href="#/c/${s.comp}">${esc(s.text)}</a></p><small>${esc(compOf(s.comp).label)} · ${ok ? `<b>${progressWord(x)}</b>${x.secured ? '' : '. ' + esc(x.missing)}` : 'Not backed yet: your words do not show it'}</small></div></li>`; }).join('')}</ul></div>`
-    : legacy || '<p class="tiny" style="margin-top:8px">No statement linked yet. Edit the entry, or link one from its feedback.</p>'}
+  return `${links.length ? `<div class="backs"><span class="kick">Statements this entry claims</span><ul class="blist">${links.map(({l, s}) => { const x = securedOf(me.entries, s); const w = claimWord(e, s, x); const ok = w.ok;
+      return `<li class="${ok ? 'ok' : 'no'}"><span class="mk" aria-hidden="true">${icon(ok ? (x.secured ? 'check' : 'clock') : 'link')}</span><div><p class="stt"><a href="#/c/${s.comp}">${esc(s.text)}</a></p><small>${esc(compOf(s.comp).label)} · <b>${esc(w.word)}</b>${ok && !x.secured ? '. ' + esc(x.missing) : ''}</small></div></li>`; }).join('')}</ul></div>`
+    : legacy || '<p class="tiny" style="margin-top:8px">No claim yet. Edit the entry and choose the statement your words show, so your teacher can check it.</p>'}
     ${aim ? `<p class="aimline">${icon('ladder')}<span>Next time, aiming for: <a href="#/c/${aim.comp}">${esc(aim.text)}</a></span></p>` : ''}`;
 }
 function entryParts(e, f = {}){
@@ -2030,7 +2083,7 @@ function entryParts(e, f = {}){
           ${files.length ? `<p class="tiny" style="margin:4px 0 0">Shows ${COMPETENCIES.filter(c => compLevelOf(e, c.id) >= 2).map(c => `<a href="#/c/${c.id}">${esc(c.label)}</a>`).join(', ') || files.map(b => esc(basketOf(b).short)).join(', ')}</p>` : ''}</div>
         <span class="badge b-${e.kind}">${fw.name}</span>
       </div>
-      ${topNotes.map(noteHtml).join('')}
+      ${topNotes.map(n => noteHtml(n, e)).join('')}
       ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
       ${e.kind === 'across' && (e.lookedAt || []).length ? `<details style="margin-top:10px"><summary>The evidence you looked across (${e.lookedAt.length})</summary><ul class="evid" style="margin-top:8px">${e.lookedAt.map(x => `<li><q>${esc(x.quote)}</q></li>`).join('')}</ul></details>` : ''}
       <div class="readback" style="margin-top:12px">${answersWithNotes(e)}</div>
@@ -2083,10 +2136,10 @@ function e21ccCard(e, opts = {}){
   const cls = groupFor(e);
   const who = esc(x.source === 'ai' ? coachWho('ai', (e.coach && e.coach.ai && e.coach.ai.model) || '', cls).name : 'Built in coach');
   const links = (e.links || []).map(l => ({l, s:statementById(l.sid)})).filter(x => x.s);
-  const claimRows = links.length ? links.map(({l, s}) => { const c = compOf(s.comp); const ev = seenEv(s.comp); const ok = linkBacked(e, s);
-    return `<li><div class="row" style="justify-content:space-between"><b>${esc(s.text)}</b><span class="str ${ok ? (ev ? ev.strength : 'clear') : 'none'}">${ok ? 'Backed' : 'Not seen yet'}</span></div>
+  const claimRows = links.length ? links.map(({l, s}) => { const c = compOf(s.comp); const ev = seenEv(s.comp); const w = claimWord(e, s); const r = reviewOf(e, s.id);
+    return `<li><div class="row" style="justify-content:space-between"><b>${esc(s.text)}</b><span class="str ${w.ok ? 'strong' : w.notyet ? 'glimpse' : 'none'}">${w.ok ? 'Affirmed' : w.notyet ? 'Not yet' : 'Waiting for a teacher'}</span></div>
       <small>${esc(c.label)}${l.quote ? `. You pointed to “${esc(l.quote)}”` : ''}.</small>
-      ${ok ? (ev ? (ev.quote ? `<q>${esc(ev.quote)}</q>` : '') + `<small>${esc(ev.why)}</small>` : '') : `<small>Your words do not show this yet. ${esc(c.probe)}</small>`}</li>`; }).join('')
+      ${r ? `<small><b>${esc(r.by || 'Your teacher')}:</b> ${esc(r.text)}</small>` : w.hint ? `<small>The coach sees it in your words. Your teacher decides.</small>` : `<small>The coach does not see it in your words yet. ${esc(c.probe)}</small>`}</li>`; }).join('')
     : claims.map(t => { const c = compOf(t.id); if (!c) return ''; const ev = seenEv(t.id);
     return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev ? ev.strength : 'none'}">${ev ? 'Seen · ' + STRENGTHS[ev.strength].label : 'Not seen yet'}</span></div>
       ${t.where ? `<small>You pointed to “${esc(t.where)}”.</small>` : ''}
@@ -2100,7 +2153,7 @@ function e21ccCard(e, opts = {}){
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">E21CC feedback</h2><span class="tiny">${who}${opts.pending ? ' · <span class="spin"></span> reading…' : ''}</span></div>
     ${err ? (err.allowance ? `<div class="notice">${esc(err.msg)}</div>` : `<div class="notice warn">The coach could not read this entry: ${esc(err.msg)} The built in feedback is shown instead. <button class="btn small sec" id="e21Retry" style="margin-top:6px">Try again</button></div>`) : ''}
     ${ksvdList(x)}
-    ${e.kind === 'across' ? '' : claimRows ? `<span class="kick">Your claim, checked against your words</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You did not choose a statement this time. If the coach sees a competency below, link it to a statement.</p>`}
+    ${e.kind === 'across' ? '' : claimRows ? `<span class="kick">Your claim, and what your teacher says</span><ul class="evid">${claimRows}</ul>` : `<p class="muted">You did not choose a statement this time. If the coach sees a competency below, link it to a statement.</p>`}
     ${others.length ? `<span class="kick" style="margin-top:12px">${e.kind === 'across' ? 'Shown in your words' : 'Also shown in your words'}</span><ul class="evid">${others.map(ev => { const c = compOf(ev.id); if (!c) return ''; return `<li><div class="row" style="justify-content:space-between"><b>${esc(c.label)}</b><span class="str ${ev.strength}">${STRENGTHS[ev.strength].label}</span></div>${ev.quote ? `<q>${esc(ev.quote)}</q>` : ''}<small>${esc(ev.why)}</small>${e.kind === 'across' || !strandsOf(STMT_SET, ev.id).length ? '' : `<button class="btn small sec" data-claimc="${ev.id}">${icon('link')} Link a statement</button>`}</li>`; }).join('')}</ul>` : ''}
     ${may.length ? `<span class="kick" style="margin-top:12px">Could back a statement</span><ul class="evid">${may.map(s => { const stmt = statementById(s.sid); return `<li><b>${esc(stmt.text)}</b><q>${esc(s.quote)}</q>${s.why ? `<small>${esc(s.why)}</small>` : ''}<button class="btn small sec" data-maylink="${esc(s.sid)}">${icon('link')} Link it</button></li>`; }).join('')}</ul>` : ''}
     <div class="stance" style="margin-top:12px"><div class="track"><i class="${pos >= 0 ? 'on' : ''}"></i><i class="${pos >= 1 ? 'on' : ''}"></i><i class="${pos >= 2 ? 'on' : ''}"></i></div><div><b>${st.label}</b> <span class="tiny">${esc(x.stance_note || st.help)}</span></div></div>
@@ -2124,8 +2177,8 @@ const PIVOTS = [['experience', 'Experience'], ['date', 'Date'], ['competency', '
 const TYPE_COLOUR = {cca:'#0f7a6b', subject:'#1f3fa8', camp:'#2f6b3a', competition:'#b23a48', service:'#a8740b', other:'#6a3f86', across:'#c98a00'};
 function backsLine(e){
   const l = (e.links || []).find(x => statementById(x.sid)); if (!l) return '';
-  const s = statementById(l.sid); const x = securedOf(me.entries, s); const ok = linkBacked(e, s); const more = (e.links || []).filter(y => statementById(y.sid)).length - 1;
-  return `<span class="backsl">${icon('link')}<span>Backs: ${esc(s.text)} <b>${ok ? progressWord(x) : 'Not backed yet'}</b>${more > 0 ? ` and ${more} more` : ''}</span></span>`;
+  const s = statementById(l.sid); const w = claimWord(e, s); const more = (e.links || []).filter(y => statementById(y.sid)).length - 1;
+  return `<span class="backsl">${icon('link')}<span>Claims: ${esc(s.text)} <b>${esc(w.word)}</b>${more > 0 ? ` and ${more} more` : ''}</span></span>`;
 }
 function entryRow(e){
   const fw = FRAMEWORKS[e.kind]; const c = coachOf(e); const first = fw.steps[0].qs[0].id;
@@ -2881,7 +2934,8 @@ function renderSettings(){
         <label class="f" style="margin:0"><span>Time</span><input class="in" type="time" id="rTime" value="${esc(me.reminder ? me.reminder.time : '15:30')}"></label></div>
       <div class="row" style="margin-top:10px"><button class="btn" id="rAdd">${icon('down')} Add to my calendar</button></div></section>
     <section class="card" id="data"><h2>Your data</h2>
-      <p class="muted">Your log lives in this browser. Back it up now and then.</p>${more('A cleared cache, a new laptop or a school reimage loses it. A backup file opens again here, or on any device.')}
+      ${typeof cloudCard === 'function' ? cloudCard() : ''}
+      <p class="muted">${typeof cloudMine === 'function' && cloudMine() ? 'Your log is kept in this browser and in your OneDrive. A backup file is still worth keeping.' : 'Your log lives in this browser. Back it up now and then.'}</p>${more('A cleared cache, a new laptop or a school reimage loses it. A backup file opens again here, or on any device.')}
       <ul class="safe">
         <li>${icon(me.backup ? 'check' : 'clock')}<span>${me.backup ? `Last backed up on ${fmtDate(me.backup.at)}, with ${plural(me.backup.count, 'entry', 'entries')}.` : 'Not backed up yet.'}</span></li>
         <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if it is not opened for a while.'}</span></li>
@@ -2961,7 +3015,7 @@ function renderSettings(){
     if (await shareFile(name, text, 'text/calendar', 'E21CC Log reminder') === 'cancelled') return;
     me.reminder = {day, time, at:Date.now()}; saveDb(); toast('Open the file to add the weekly event to your calendar.', 4200); renderSettings();
   };
-  $('#sExport').onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); } }; wireSafe();
+  $('#sExport').onclick = async () => { if (await backupNow()){ toast('Backed up. Keep the file somewhere safe, such as OneDrive.', 4200); renderSettings(); } }; wireSafe(); if (typeof wireCloud === 'function') wireCloud();
   $('#sImport').onchange = async ev => {
     const f = ev.target.files[0]; if (!f) return;
     try{
