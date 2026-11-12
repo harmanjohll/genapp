@@ -11,6 +11,11 @@ One app, at one address that stays the same from version to version, so bookmark
 | The demo, straight into a view | `e21cclog/demo/student/` (Sam Lee's log) and `e21cclog/demo/teacher/` (Mrs Goh's console) |
 | Older versions, read only | https://harmanjohll.github.io/genapp/e21cclog/legacy/ |
 
+## Has a change reached the live site?
+A merge into `main` is published by GitHub Pages, usually within a few minutes. To check, open `https://harmanjohll.github.io/genapp/e21cclog/sw.js`: its `VERSION` line names the version the site is serving. The same number shows beside the title on the welcome page.
+- **Still the old version after ten minutes, in a private window too:** the publish did not run or failed. On GitHub, open the repository's **Settings**, then **Pages**: it shows the last publish and any error. Any new commit on `main` publishes again.
+- **New in a private window, old in the usual one:** that browser holds its offline copy. Close every tab of the Log and open it again.
+
 ## Where things are
 | Path | What it is |
 | --- | --- |
