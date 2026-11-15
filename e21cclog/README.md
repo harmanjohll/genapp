@@ -130,6 +130,7 @@ Since then, each release has its own number, shown at the bottom of every page:
 - **5.2 The pilot report.** The console's Class grid counts, week by week, the students who shared and how many got a reply that was sent, with Copy for the pilot lead (counts only, never names).
 
 - **6.0 Version 6.** See above.
+- **6.1 A calmer page.** Labels in sentence case instead of small capitals, headings no heavier than semibold, quiet status dots instead of pill badges, no full stops on console headings, and the Class grid ahead of the week by week count. Teachers' words keep the red margin.
 
 Their specs, and what comes next, are in `BACKLOG.md`.
 
