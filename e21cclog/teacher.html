@@ -29,12 +29,12 @@ button{font:inherit;cursor:pointer} input,textarea,select{font:inherit;color:var
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);min-height:44px}
 .brand img{width:26px;border-radius:4px}
-.brand .word{font-family:var(--serif);font-weight:700;font-size:1.1em}
+.brand .word{font-family:var(--serif);font-weight:600;font-size:1.1em}
 .brand .sub{font-size:.8em;color:var(--text-2);display:block;line-height:1.1}
-.homebtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px 0 12px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--navy);font-weight:700;margin-left:auto}
+.homebtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px 0 12px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--navy);font-weight:600;margin-left:auto}
 .homebtn svg{width:19px;height:19px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 18px;border-bottom:2px solid var(--line)}
-.tabs button{border:0;background:transparent;padding:10px 12px;font-weight:700;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px;-webkit-tap-highlight-color:transparent}
+.tabs button{border:0;background:transparent;padding:10px 12px;font-weight:600;color:var(--text-2);border-bottom:3px solid transparent;margin-bottom:-2px;min-height:44px;-webkit-tap-highlight-color:transparent}
 .tabs button.on{color:var(--navy);border-bottom-color:var(--navy)}
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 16px}
 .card.flat{box-shadow:none;border:1px solid var(--line)}
@@ -42,7 +42,7 @@ button{font:inherit;cursor:pointer} input,textarea,select{font:inherit;color:var
 .grid{display:grid;gap:16px;grid-template-columns:1fr}
 @media (min-width:820px){.grid{grid-template-columns:1.1fr .9fr}.grid .span{grid-column:1/-1}}
 label.f{display:block;margin-bottom:12px}
-label.f>span{display:block;font-weight:700;margin-bottom:5px;color:var(--navy)}
+label.f>span{display:block;font-weight:600;margin-bottom:5px;color:var(--navy)}
 label.f small{display:block;font-weight:400;color:var(--text-2);margin-top:3px}
 .in{width:100%;border:2px solid var(--field-line);border-radius:var(--radius-s);padding:10px 12px;background:#fff;min-height:44px}
 .in:focus{border-color:var(--navy);outline:0;box-shadow:0 0 0 3px rgba(255,226,0,.45)}
@@ -50,7 +50,7 @@ textarea.in{min-height:90px;line-height:1.5;resize:vertical}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .two{display:grid;gap:0 14px;grid-template-columns:1fr}
 @media (min-width:600px){.two{grid-template-columns:1fr 1fr}}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-weight:700;min-height:44px;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;padding:10px 18px;font-weight:600;min-height:44px;text-decoration:none}
 .btn.sec{background:transparent;color:var(--navy);border-color:var(--line-2)}
 .btn.acc{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
 .btn.small{padding:6px 12px;min-height:44px;font-size:.9em}
@@ -68,20 +68,20 @@ th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertic
 th{font-family:var(--serif);color:var(--navy)}
 .tag{display:inline-block;background:var(--card-3);border-radius:999px;padding:2px 10px;font-size:.78em;font-weight:600;color:var(--navy);margin:2px 4px 2px 0}
 .coach{border:2px solid var(--line);border-radius:var(--radius);padding:14px;background:var(--card-2)}
-.coach .part{margin-bottom:8px} .coach .part b{display:block;font-size:.76em;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)}
+.coach .part{margin-bottom:8px} .coach .part b{display:block;font-size:.76em;color:var(--text-2)}
 .coach .part p{margin:0} .coach .ask{border-left:3px solid var(--yellow);padding-left:10px;font-family:var(--serif)}
 .classes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .classes button{border:2px solid var(--line-2);background:#fff;border-radius:999px;padding:6px 12px;font-weight:600;min-height:44px}
 .classes button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 details{border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;background:#fff}
-.pilot{margin:0 0 16px}
+.pilot{margin:24px 0 0}
 .pilot h2{margin:0 0 4px}
 .pilottable{border-collapse:collapse;margin:8px 0 10px;width:auto;min-width:320px}
 .pilottable th,.pilottable td{padding:6px 12px 6px 0;text-align:left;border-bottom:1px solid var(--line)}
 .pilottable td{font-variant-numeric:tabular-nums}
 .pilottable small{color:var(--text-2);font-weight:400}
 .pilot summary{min-height:44px;display:flex;align-items:center;cursor:pointer}
-summary{cursor:pointer;font-weight:700;color:var(--navy);padding:10px 0;min-height:44px}
+summary{cursor:pointer;font-weight:600;color:var(--navy);padding:10px 0;min-height:44px}
 ol.steps li{margin-bottom:8px}
 .drop{border:2px dashed var(--line-2);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-2);background:#fff}
 .drop.over{border-color:var(--navy);background:var(--card-3)}
@@ -101,33 +101,34 @@ ol.steps li{margin-bottom:8px}
 /* ---------- E21CC Log console ---------- */
 .brand .word{line-height:1.15}
 .tabs{position:sticky;top:0;background:var(--bg);z-index:5}
-.badge{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--red-ink);color:#fff;font-size:.78em;font-weight:700;text-align:center;margin-left:4px}
+.badge{display:inline-block;min-width:22px;padding:0 7px;border-radius:999px;background:var(--red-ink);color:#fff;font-size:.78em;font-weight:600;text-align:center;margin-left:4px}
 .items{list-style:none;margin:0;padding:0}
 .item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:12px 4px;color:var(--text)}
 .item:first-child{border-top:0}
 .item:hover{background:var(--card-2)}
 .item.open{background:var(--card-3)}
-.item .k{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;color:#fff;background:var(--navy)}
+.item .k{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:600;color:#fff;background:var(--navy)}
 .item .k.act{background:var(--red)} .item .k.across{background:var(--yellow);color:var(--navy)} .item .k.basket{background:var(--card-3);color:var(--navy);border:2px solid var(--navy)}
 .item b{display:block;font-family:var(--serif);color:var(--navy)}
 .item small{display:block;color:var(--text-2)}
-.item .new{display:inline-block;background:var(--red-ink);color:#fff;border-radius:999px;padding:0 8px;font-size:.75em;font-weight:700;margin-left:6px;vertical-align:1px}
+.item .new{display:inline-block;background:var(--red-ink);color:#fff;border-radius:999px;padding:0 8px;font-size:.75em;font-weight:600;margin-left:6px;vertical-align:1px}
 .reader{border:2px solid var(--navy);border-radius:var(--radius);padding:16px;margin:8px 0 16px;background:#fff}
 .reader h2{margin-bottom:2px}
 .qa-row{margin:0 0 12px}
 .qa-row .qa{margin:0}
-.notebtn{border:0;background:transparent;color:var(--navy);font-weight:700;font-size:.85em;text-decoration:underline;padding:4px 0;min-height:44px}
+.notebtn{border:0;background:transparent;color:var(--navy);font-weight:600;font-size:.85em;text-decoration:underline;padding:4px 0;min-height:44px}
 .mnote{border-left:3px solid var(--red);background:var(--card-2);padding:8px 12px;margin:6px 0;border-radius:0 var(--radius-s) var(--radius-s) 0}
 .mnote.pending{border-left-style:dashed}
-.mnote .by{display:block;font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2)}
+.mnote .by{display:block;font-size:.78em;font-weight:600;color:var(--text-2)}
 .mnote p{margin:2px 0 0;font-family:var(--serif);font-style:italic;color:#B3141A;white-space:pre-wrap}
 .mnote .x{border:0;background:transparent;color:var(--text-2);font-size:.8em;text-decoration:underline;padding:2px 0}
 .noteedit textarea{min-height:70px}
 @media (min-width:900px){.qa-row{display:grid;grid-template-columns:minmax(0,1fr) 260px;column-gap:20px;align-items:start}.qa-row .side{grid-column:2}.qa-row .mnote{margin-top:0}}
 .read{background:var(--card-2);border-radius:var(--radius-s);padding:10px 12px;margin:10px 0}
 .read q{display:block;font-family:var(--serif);font-style:italic;margin:2px 0;quotes:"“" "”"}
-.str{font-size:.78em;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--card-3);color:var(--navy);white-space:nowrap}
-.str.clear{background:var(--navy);color:#fff} .str.strong{background:var(--yellow);color:var(--navy)}
+.str{display:inline-flex;align-items:center;gap:6px;font-size:.85em;font-weight:600;color:var(--text-2);white-space:nowrap}
+.str::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--line-2);flex:none}
+.str.clear,.str.strong{color:var(--navy)} .str.clear::before{background:#4f6bb0} .str.strong::before{background:var(--navy)}
 .st{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
 .st .mark{width:14px;height:14px;flex:0 0 14px;border-radius:50%;border:2px solid var(--g4);margin-top:5px}
 .st.linked .mark{border-color:var(--navy);background:linear-gradient(90deg,var(--navy) 50%,transparent 50%)}
@@ -147,18 +148,18 @@ ol.steps li{margin-bottom:8px}
 .lvrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
 .lvrow:first-of-type{border-top:0}
 .lvrow b{min-width:12em;font-family:var(--serif);color:var(--navy)}
-.lvp{display:inline-block;font-size:.8em;font-weight:700;padding:2px 9px;border-radius:999px;background:#e8edff;color:#1f3fa8;white-space:nowrap}
+.lvp{display:inline-block;font-size:.8em;font-weight:600;padding:2px 9px;border-radius:999px;background:#e8edff;color:#1f3fa8;white-space:nowrap}
 .lvp.leading{background:var(--navy);color:#fff}
 .lvp.wait{background:var(--yellow);color:var(--navy)}
 .lvp.none{background:var(--card-3);color:var(--text-2)}
-.lvc{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 4px;border-radius:6px;font-size:.78em;font-weight:800;background:var(--card-3);color:var(--text-2);margin:0 1px}
+.lvc{display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 4px;border-radius:6px;font-size:.78em;font-weight:600;background:var(--card-3);color:var(--text-2);margin:0 1px}
 .lvc.l1{background:#e8edff;color:#1f3fa8}.lvc.l2{background:#c9d4ff;color:#14267a}.lvc.l3{background:var(--navy);color:#fff}.lvc.w{background:var(--yellow);color:var(--navy)}
-.draft{display:inline-block;font:700 .72em var(--sans);letter-spacing:.08em;text-transform:uppercase;background:var(--yellow);color:var(--navy);padding:2px 8px;border-radius:6px;vertical-align:3px;margin-left:6px}
+.draft{display:inline-block;font:600 .72em var(--sans);background:var(--yellow);color:var(--navy);padding:2px 8px;border-radius:6px;vertical-align:3px;margin-left:6px}
 .ladder{list-style:none;margin:4px 0 10px;padding:0}
 .ladder li{display:flex;gap:8px;padding:5px 0;border-top:1px dashed var(--line)}
 .ladder li:first-child{border-top:0}
 .ladder code{flex:none;font-size:.78em;background:var(--card-3);height:fit-content}
-.blabel{display:block;font-size:.76em;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text-2);margin:10px 0 2px}
+.blabel{display:block;font-size:.76em;font-weight:600;color:var(--text-2);margin:10px 0 2px}
 .ksvd{margin:6px 0 4px}
 .ktype{margin:4px 0;font-size:.92em}
 .ktype>b{display:inline-block;min-width:7.5em;color:var(--navy)}
@@ -168,13 +169,13 @@ ol.steps li{margin-bottom:8px}
 .flags li{font-size:.9em;color:var(--text-2)}
 #pinGate{position:fixed;inset:0;z-index:60;background:var(--bg);display:grid;place-items:center;padding:16px;overflow:auto}
 .pincard{width:min(440px,100%);margin:0} .pincard h1{font-size:1.5em;margin:6px 0 8px} .pincard .tiny.bad{color:var(--red);font-weight:600}
-.pinbrand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy)} .pinbrand img{width:32px;height:32px}
+.pinbrand{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--navy)} .pinbrand img{width:32px;height:32px}
 .stafftable td{vertical-align:top}
 .review{margin:8px 0 12px;padding:12px 14px;background:var(--card-2);border-radius:var(--radius-s);border-left:4px solid var(--navy)}
-.review .rst{font-family:var(--serif);font-weight:700;color:var(--navy);margin:0}
+.review .rst{font-family:var(--serif);font-weight:600;color:var(--navy);margin:0}
 .review q{display:block;font-family:var(--serif);font-style:italic;margin:4px 0 8px}
 .review .verd{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
-.review .verd button{border:1px solid var(--line-2);background:var(--card);color:var(--navy);border-radius:999px;padding:8px 14px;min-height:44px;font:inherit;font-weight:700;font-size:.9em;cursor:pointer}
+.review .verd button{border:1px solid var(--line-2);background:var(--card);color:var(--navy);border-radius:999px;padding:8px 14px;min-height:44px;font:inherit;font-weight:600;font-size:.9em;cursor:pointer}
 .review .verd button[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
 .review textarea{min-height:88px}
 .signals h3{margin:14px 0 4px;font-size:1em}
@@ -182,7 +183,7 @@ ol.steps li{margin-bottom:8px}
 .signals li{margin:4px 0}
 .signals q{font-family:var(--serif);font-style:italic}
 .review .wc{font-size:.82em;color:var(--text-2)}
-.mnote .vd{display:block;font-style:normal;font-weight:700;color:var(--navy);margin-top:2px}
+.mnote .vd{display:block;font-style:normal;font-weight:600;color:var(--navy);margin-top:2px}
 .quickown{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap} .quickown .f{flex:1 1 220px;margin:0}
 .replylist{list-style:none;margin:8px 0 0;padding:0} .replylist li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)} .replylist li > span{flex:1 1 180px} .replylist small{display:block;color:var(--text-2)} .stafftable td.fix{border-left:3px solid var(--red)} .stafftable .fixnote{display:block;font-weight:600}
 .dlg{position:fixed;inset:0;background:rgba(0,12,83,.5);display:grid;place-items:center;z-index:60;padding:16px}
@@ -210,7 +211,7 @@ ol.steps li{margin-bottom:8px}
     <div class="card" id="cloudCard" hidden></div>
     <div class="card" id="replyCard" hidden></div>
     <div class="card">
-      <h1>What students shared with you.</h1>
+      <h1>What students shared with you</h1>
       <p class="muted">Paste rows from your form’s Excel sheet, drop exported files, or open a link a student sent you in Teams. Each student chose to share these sections with you. Read, then write a note in the margin; notes go back by a link you send in Teams.</p>
       <label class="f"><span>Paste from Excel</span><textarea class="in" id="paste" placeholder="Select the rows in the workbook (Ctrl A is fine), copy, and paste here."></textarea></label>
       <div class="row"><button class="btn" id="pasteGo">Add to Inbox</button><label class="btn sec" for="inFiles">Add files<input type="file" id="inFiles" accept=".json,.csv,application/json,text/csv" multiple hidden></label><span class="tiny" id="pasteMsg"></span></div>
@@ -233,11 +234,11 @@ ol.steps li{margin-bottom:8px}
   <!-- ============ CLASS GRID ============ -->
   <section id="tab-grid" data-tab="grid" hidden>
     <div class="card">
-      <h1>The class at a glance.</h1>
+      <h1>The class at a glance</h1>
       <p class="muted">One row per student who has shared with you. GROW and ACT count this term’s entries. When a student shares a domain, its column shows their level in each competency (E Emerging, D Developing, P Proficient, ! waiting for a teacher to confirm Proficient); otherwise the number of their shared entries that show it.</p>
       <div class="row" style="margin-bottom:10px"><select class="in" id="gGroup" aria-label="Group" style="width:auto"></select><button class="btn sec small" id="gCsv">Download CSV</button></div>
-      <div class="pilot" id="pilotBox"></div>
       <div class="scroll" id="gridTable"></div>
+      <div class="pilot" id="pilotBox"></div>
     </div>
     <div class="card" id="signalsBox"></div>
   </section>
@@ -245,7 +246,7 @@ ol.steps li{margin-bottom:8px}
   <!-- ============ STUDENTS ============ -->
   <section id="tab-students" data-tab="students" hidden>
     <div class="card">
-      <h1>One student at a time.</h1>
+      <h1>One student at a time</h1>
       <p class="muted">Everything a student has shared with you, newest first. Useful before a mentoring conversation or a parent meeting.</p>
       <div class="students" id="studentCards"></div>
     </div>
@@ -273,7 +274,7 @@ ol.steps li{margin-bottom:8px}
       <div id="staffOut" aria-live="polite"></div>
     </div>
     <div class="card">
-      <h1>A group file is a small JSON document.</h1>
+      <h1>A group file is a small JSON document</h1>
       <p class="muted">One per class or CCA you teach. It carries your name and email, the subject or activity, your coach voice, your success criteria, and where students’ shared entries should go. Students load it by typing the code (if the file is published in <code>logs/classes/</code>) or by opening the share link you give them. A student can belong to several groups. Nothing here is sent anywhere by this page.</p>
       <div class="classes" id="classList"></div>
       <div class="row"><button class="btn small sec" id="newClass">New class</button><label class="btn small sec" for="loadClass">Open a class file<input type="file" id="loadClass" accept=".json,application/json" hidden></label><button class="btn small danger" id="delClass">Forget this class on this device</button></div>
@@ -345,7 +346,7 @@ ol.steps li{margin-bottom:8px}
   <!-- ============ DROP BOX ============ -->
   <section id="tab-dropbox" data-tab="setup" hidden>
     <div class="card">
-      <h1>Where shared entries land.</h1>
+      <h1>Where shared entries land</h1>
       <p class="muted">Students’ logs live on their devices, and nothing reaches you until a student shares a section with you and presses Send. The landing place is a form you own, with a spreadsheet behind it; paste its rows into the Inbox to read them here. Without a form, students send you a link in Teams that opens straight in your Inbox.</p>
       <div class="two">
         <div class="card flat"><h3>Microsoft Form → Excel in OneDrive (recommended)</h3><p class="tiny">Fits MOE staff accounts: your form, your OneDrive, no scripts. The app opens your form with the entry already filled in; the student presses Submit once. Responses land in an Excel workbook in your OneDrive (open it in Excel for the web to refresh). Filter by your email or class code. Limit: 4,000 characters per answer.</p></div>

@@ -918,7 +918,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '6.0';
+const VERSION_NO = '6.1';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -983,6 +983,7 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'A calmer page: labels in plain sentence case, lighter headings, quiet status dots instead of badges. Your teacher’s words keep the red margin',
   'Version 6: your teacher checks each claim. They affirm it, or say not yet, and give advice. Only an affirmed claim moves a statement towards secured',
   'A teacher’s note can start an ACT: Act on this feedback brings the note in as the feedback',
   'Sign in with your school account, when the school turns it on: your log is kept in your own OneDrive, on every device, and sharing with a teacher needs no message',
