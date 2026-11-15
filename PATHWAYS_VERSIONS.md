@@ -2,12 +2,29 @@
 
 The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
 
-## Latest: v7.0.0, in `pathways/`. Build here.
+## Latest: v7.1.0, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
 - To release: `node pathways/tools/release.mjs x.y.z`, then add the notes to `pathways/data/version.json` and a line under the version below.
+
+### v7.1.0 (2026-11-15): the unslop pass
+
+A design polish run with the unslop skill (by Damir Sokolovsky, CC BY 4.0). It kept the night line brand and fixed only what the audit found.
+
+**What is critical (keep these when building on it)**
+- Two weights: 500 for labels and buttons, 600 for headings and figures. No 700 to 900.
+- Labels in sentence case. No `text-transform: uppercase` and no wide tracking; mono stays for codes, counts and meta.
+- Yellow (`--accent`) marks the primary action, where the student is, and the yellow line with its stations, which is the signature. Never a decorative stripe on a card.
+- Spacing on a 4px grid (2px nudges inside small controls only). Radius tokens: 12, 16, 20.
+- No looping motion and no grain. The compass needle settles; it does not waver.
+- The unslop rules for later passes are in the notes at the end of `assets/css/v7.css` and in `DESIGN.md`.
+
+**What changed**
+- 173 heavy weights lightened, 42 uppercase tracked labels set in sentence case, 350 spacing values moved onto the 4px grid, 14 yellow stripes removed or made neutral.
+- Removed: the wavering compass needle, the grain overlay in the game, the glow on the door beat, the tilted Saved stamp, periods on headings.
+- Glossary terms no longer push a line apart. Saved has one primary and one secondary action. Me lays the compass beside its parts on a wide screen.
 
 ### v7.0.0 (2026-11-11): the three questions
 
@@ -117,7 +134,8 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 
 | Version | Folder | Status | Dates | Built for |
 | --- | --- | --- | --- | --- |
-| v7.0.0 | `pathways/` | **Latest** | 2026-11-11 | MOE's three questions: Me (the compass), a goal with steps and a date, the path past 17, the game joined to both |
+| v7.1.0 | `pathways/` | **Latest** | 2026-11-15 | The unslop pass: calmer type, yellow only where it means something, spacing on a 4px grid |
+| v7.0.0 | `pathways/` (superseded by 7.1) | Superseded | 2026-11-11 | MOE's three questions: Me (the compass), a goal with steps and a date, the path past 17, the game joined to both |
 | v6.0.0 | `legacy/pathways-v6/` | Legacy, frozen | 2026-11-09 to 2026-11-11 | One app: v5's path, goal, compare and sharing, with v4.4's hub, saved page and game |
 | v5.0.0 | none (folded into 6.0) | Superseded | 2026-11-04 to 2026-11-09 | One path, goal first planning, compare, sharing for the conversation |
 | v4.4.0 | `legacy/pathways-v4/` | Legacy, frozen | 2026-10-27 to 2026-11-01 | Year by year planning, named advice, targets, conversation |

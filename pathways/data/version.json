@@ -3,8 +3,21 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "7.0.0",
+  "version": "7.1.0",
   "releases": [
+    {
+      "version": "7.1.0",
+      "date": "2026-11-15",
+      "head": "Calmer screens",
+      "changes": [
+        "Lighter type and plain labels. Headings no longer shout, and small labels are no longer in capitals.",
+        "Yellow now marks only what matters: your next action, where you are, and the line through your school years.",
+        "The compass needle rests on the next part to fill, without wobbling.",
+        "Words in the glossary sit inside a sentence without pushing the lines apart.",
+        "Saved shows one main action. The counsellor session and sending to another device are links below it.",
+        "On a wide screen, Me shows the compass beside its four parts."
+      ]
+    },
     {
       "version": "7.0.0",
       "date": "2026-11-11",

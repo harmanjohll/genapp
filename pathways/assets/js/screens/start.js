@@ -20,17 +20,17 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, setLabelMode, setWordStyle,
-} from '../state.js?v=7.0.0';
-import { reach } from '../engine/reach.js?v=7.0.0';
-import { evalPlan, isLower } from '../engine/years.js?v=7.0.0';
-import { advise } from '../engine/advice.js?v=7.0.0';
-import { signalHtml } from '../ui/signal.js?v=7.0.0';
-import { stepArt, introArt } from '../ui/scenes.js?v=7.0.0';
-import { ticketHtml } from '../ui/ticket.js?v=7.0.0';
-import { subjTile, patchTile } from './year.js?v=7.0.0';
-import { esc, onAction } from '../ui/dom.js?v=7.0.0';
-import { icon } from '../ui/icons.js?v=7.0.0';
-import { t, openWord } from '../ui/labels.js?v=7.0.0';
+} from '../state.js?v=7.1.0';
+import { reach } from '../engine/reach.js?v=7.1.0';
+import { evalPlan, isLower } from '../engine/years.js?v=7.1.0';
+import { advise } from '../engine/advice.js?v=7.1.0';
+import { signalHtml } from '../ui/signal.js?v=7.1.0';
+import { stepArt, introArt } from '../ui/scenes.js?v=7.1.0';
+import { ticketHtml } from '../ui/ticket.js?v=7.1.0';
+import { subjTile, patchTile } from './year.js?v=7.1.0';
+import { esc, onAction } from '../ui/dom.js?v=7.1.0';
+import { icon } from '../ui/icons.js?v=7.1.0';
+import { t, openWord } from '../ui/labels.js?v=7.1.0';
 
 const ORDER = ['year', 'levels', 'reveal', 'move'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -203,7 +203,7 @@ function renderIntro(root, api) {
     <div class="st-stage">${introArt(ex)}</div>
     <p class="st-legend"><span data-k="open">Open now</span><span data-k="ring">One or more moves away</span></p>
     <div class="st-introcopy">
-      <h1>See what your levels open.</h1>
+      <h1>See what your levels open</h1>
       <button type="button" class="btn big press" data-action="st-go" data-step="year">Try it with my levels ${icon('arrow')}</button>
       <p class="st-promise">${icon('check')} No sign up needed.</p>
     </div>
@@ -297,7 +297,7 @@ function renderDone(root, api) {
   <section class="st">
     <div class="wrap-narrow st-body st-done">
       <div class="st-art">${stepArt('done')}</div>
-      <h1>Saved.</h1>
+      <h1>Saved</h1>
       <p class="st-sub">Your path shows your next step each time you open it.</p>
       <div class="st-words">
         <p class="st-words-h">How much to show</p>
