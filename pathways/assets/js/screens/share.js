@@ -9,26 +9,26 @@
 // 7.0: the compass stays off the card until the student switches it on. The
 // image then shows its words; the link carries its ids and nothing typed.
 
-import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.0.0';
-import { decodePacket } from '../engine/packet.js?v=7.0.0';
-import { reach } from '../engine/reach.js?v=7.0.0';
-import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
-import { advise } from '../engine/advice.js?v=7.0.0';
-import { goalMoves } from '../engine/goal.js?v=7.0.0';
-import { sayMove } from '../ui/talk.js?v=7.0.0';
-import { esc, onAction } from '../ui/dom.js?v=7.0.0';
-import { icon } from '../ui/icons.js?v=7.0.0';
-import { stateWord, openWord } from '../ui/labels.js?v=7.0.0';
-import { goalLine } from './path.js?v=7.0.0';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.0.0';
+import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.1.0';
+import { decodePacket } from '../engine/packet.js?v=7.1.0';
+import { reach } from '../engine/reach.js?v=7.1.0';
+import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.1.0';
+import { advise } from '../engine/advice.js?v=7.1.0';
+import { goalMoves } from '../engine/goal.js?v=7.1.0';
+import { sayMove } from '../ui/talk.js?v=7.1.0';
+import { esc, onAction } from '../ui/dom.js?v=7.1.0';
+import { icon } from '../ui/icons.js?v=7.1.0';
+import { stateWord, openWord } from '../ui/labels.js?v=7.1.0';
+import { goalLine } from './path.js?v=7.1.0';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.1.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const FOR = { parent: 'A parent', teacher: 'A teacher', counsellor: 'My ECG counsellor' };
 
 // ---- the packet: what a link carries (engine/packet.js) -------------------
 
-export { decodePacket } from '../engine/packet.js?v=7.0.0';
-import { encodePacket } from '../engine/packet.js?v=7.0.0';
+export { decodePacket } from '../engine/packet.js?v=7.1.0';
+import { encodePacket } from '../engine/packet.js?v=7.1.0';
 export function packFor(st, y, withMe = false) { return { y, plan: st.plans[y] || {}, goal: st.goal || null, me: withMe ? st.compass : null }; }
 function linkFor(packet, who) {
   const url = new URL(location.origin + location.pathname);

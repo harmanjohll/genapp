@@ -62,7 +62,7 @@ app's own metaphor literal: school is a transit line.
 | Score track | Aggregate drawn as a line, cut offs as stations, now as a hollow marker, target as the train | A gap you can see, with the grade steps named under it |
 | Pass | My plan as a navy pass with the year line and each year's levels | The page that goes to the next conversation, and prints |
 
-Shape system: controls are pills; cards, boards and tickets 18px; tiles 24px;
+Shape system: controls are pills; cards, boards and tickets 16px; tiles 20px;
 keys 12px. Motion: train glide, thumb slide, row flip, dock bump, ticket
 punch, arrival stagger; all off under `prefers-reduced-motion`.
 
@@ -129,3 +129,32 @@ and in the session.
 - Seven: what comes across from 6.0, the compass limits, goal dates, what a
   link may carry, and that the lists the new screens read are whole.
 - Reachable: five tabs, every screen within two taps.
+
+## The unslop pass (2026-11-15)
+
+Run with the unslop skill (Damir Sokolovsky, CC BY 4.0) in polish mode: the
+screen was designed, so the direction came from the brand already here.
+
+- **Product.** Plans secondary school in Singapore, for a student and the
+  adults around them.
+- **Character.** Calm, exact, encouraging.
+- **World.** A transit line at night: navy, a yellow platform edge, a
+  timetable in mono.
+- **Moments.** The compass on Me, the route on Goal, the signal wires on Path.
+  They carry the colour; the chrome around them stays quiet.
+- **Signature.** The yellow line with its station roundels: the path, the
+  goal's route and the long view. Yellow elsewhere marks only the next action
+  and where the student is.
+
+| Pass | What changed |
+| --- | --- |
+| Spacing | 350 values onto the 4px grid; radius tokens 12, 16, 20 |
+| Color | 14 yellow stripes on cards removed or made neutral; the door beat lost its glow; yellow minute pills became mono text |
+| Copy | Periods off headings |
+| Type | Weights 500 and 600 only; 42 uppercase tracked labels in sentence case; no negative tracking on small text |
+| Layout | Saved keeps one primary and one secondary action; Me splits on a wide screen |
+| Details | Glossary terms inline at text size; the tilted Saved stamp removed |
+| Motion | The wavering needle and the game's grain removed |
+
+Suggested next, not done: give Goal, Path and Saved a two column layout on
+wide screens as Me now has.

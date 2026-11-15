@@ -36,10 +36,10 @@ body::before {
 
 h1, h2, h3, h4 {
   font-family: var(--display);
-  font-weight: 700;
+  font-weight: 500;
   line-height: var(--lh-h);
   margin: 0 0 var(--s-3);
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
 }
 h1 { font-size: var(--t-h1); }
 h2 { font-size: var(--t-h2); }
@@ -112,9 +112,8 @@ a.btn:active,
 .caps {
   font-family: var(--body);
   font-size: var(--t-micro);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0;
   color: var(--ink-mute);
 }
 

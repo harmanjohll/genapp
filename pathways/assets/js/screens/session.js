@@ -11,18 +11,18 @@
 // the only counsellor flow: the adults page opens it, and no longer keeps a
 // second, shorter guide that disagreed with it.
 
-import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.0.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.0.0';
-import { advise } from '../engine/advice.js?v=7.0.0';
-import { goalMoves } from '../engine/goal.js?v=7.0.0';
-import { sayMove } from '../ui/talk.js?v=7.0.0';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.0.0';
-import { esc, onAction } from '../ui/dom.js?v=7.0.0';
-import { icon } from '../ui/icons.js?v=7.0.0';
-import { stateWord } from '../ui/labels.js?v=7.0.0';
-import { goalLine } from './path.js?v=7.0.0';
-import { readPlan } from './share.js?v=7.0.0';
-import { decodePacket } from '../engine/packet.js?v=7.0.0';
+import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.1.0';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.1.0';
+import { advise } from '../engine/advice.js?v=7.1.0';
+import { goalMoves } from '../engine/goal.js?v=7.1.0';
+import { sayMove } from '../ui/talk.js?v=7.1.0';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.1.0';
+import { esc, onAction } from '../ui/dom.js?v=7.1.0';
+import { icon } from '../ui/icons.js?v=7.1.0';
+import { stateWord } from '../ui/labels.js?v=7.1.0';
+import { goalLine } from './path.js?v=7.1.0';
+import { readPlan } from './share.js?v=7.1.0';
+import { decodePacket } from '../engine/packet.js?v=7.1.0';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 

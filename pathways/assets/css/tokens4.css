@@ -152,7 +152,7 @@
 
   /* shape: one documented system. Buttons and switches are pills, cards
      and boards 18, inputs and tiles 12. */
-  --r-sm: 12px; --r-md: 18px; --r-lg: 24px; --r-pill: 999px;
+  --r-sm: 12px; --r-md: 16px; --r-lg: 20px; --r-pill: 999px;
 
   /* motion */
   --ease:      cubic-bezier(0.22, 1, 0.36, 1);
@@ -187,25 +187,25 @@
     --paper: color-mix(in srgb, var(--paper-base) 91%, #7A8CA3 9%);
     --paper-warm: color-mix(in srgb, var(--paper-warm-base) 91%, #7A8CA3 9%);
     --surface: color-mix(in srgb, var(--surface-base) 96%, #7A8CA3 4%);
-    --grain-o: 0.025; --tempo: 1.05;
+    --grain-o: 0; --tempo: 1.05;
   }
   body[data-era="twenties"] {
     --paper: color-mix(in srgb, var(--paper-base) 89%, #6E8797 11%);
     --paper-warm: color-mix(in srgb, var(--paper-warm-base) 89%, #6E8797 11%);
     --surface: color-mix(in srgb, var(--surface-base) 95%, #6E8797 5%);
-    --grain-o: 0.035; --tempo: 1.1;
+    --grain-o: 0; --tempo: 1.1;
   }
   body[data-era="thirties"] {
     --paper: color-mix(in srgb, var(--paper-base) 86%, #66788E 14%);
     --paper-warm: color-mix(in srgb, var(--paper-warm-base) 86%, #66788E 14%);
     --surface: color-mix(in srgb, var(--surface-base) 94%, #66788E 6%);
-    --grain-o: 0.05; --tempo: 1.18;
+    --grain-o: 0; --tempo: 1.18;
   }
   body[data-era="later"] {
     --paper: color-mix(in srgb, var(--paper-base) 84%, #5E6B7A 16%);
     --paper-warm: color-mix(in srgb, var(--paper-warm-base) 84%, #5E6B7A 16%);
     --surface: color-mix(in srgb, var(--surface-base) 93%, #5E6B7A 7%);
-    --grain-o: 0.065; --tempo: 1.25;
+    --grain-o: 0; --tempo: 1.25;
   }
 }
 

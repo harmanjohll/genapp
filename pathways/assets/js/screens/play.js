@@ -15,26 +15,26 @@
 // The screen sets the era: the paper cools as the decades pass, and nothing
 // semantic ever changes hue with it.
 
-import { esc, onAction } from '../ui/dom.js?v=7.0.0';
-import { icon } from '../ui/icons.js?v=7.0.0';
-import { decorate, bindGlossary } from '../ui/glossary.js?v=7.0.0';
-import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../ui/sheet.js?v=7.0.0';
-import { cue } from '../sound.js?v=7.0.0';
-import { drawStoryMap, saveStoryCard } from '../ui/storymap.js?v=7.0.0';
-import { skyline, envelopeArt } from '../ui/scenes.js?v=7.0.0';
+import { esc, onAction } from '../ui/dom.js?v=7.1.0';
+import { icon } from '../ui/icons.js?v=7.1.0';
+import { decorate, bindGlossary } from '../ui/glossary.js?v=7.1.0';
+import { openSheet, onSheetAction, setSheetFoot, close as closeSheet } from '../ui/sheet.js?v=7.1.0';
+import { cue } from '../sound.js?v=7.1.0';
+import { drawStoryMap, saveStoryCard } from '../ui/storymap.js?v=7.1.0';
+import { skyline, envelopeArt } from '../ui/scenes.js?v=7.1.0';
 import {
   possibilitiesFor, markShown, forkNeed, possibilitiesMissed,
-} from '../engine/possible.js?v=7.0.0';
+} from '../engine/possible.js?v=7.1.0';
 import {
   createRun, sequenceFor, chapterCount, currentStage, ageAt, answerNS, visibleChoices,
   applyChoices, applyReflection, respondToChance, finish, diffRuns, CAPACITY_CAP, heldAsks,
   wantAffinity, pointsFor, dealHand, playAsk, HAND_LIMIT, ASKS_PER_YEAR, grantYield, strongestDisp,
   companionLine, companionEnd, midyearLine,
-} from '../engine/journey4.js?v=7.0.0';
+} from '../engine/journey4.js?v=7.1.0';
 import {
   getState, saveRun, clearRuns, setLiveRun, currentYear, setSubjectLevel,
   addNote, toggleAction,
-} from '../state.js?v=7.0.0';
+} from '../state.js?v=7.1.0';
 
 let NAV = () => {};
 const YEAR_FOR_PICK = () => { const y = getState().year; return y === 'p6' ? 'sec1' : y; };
@@ -277,7 +277,7 @@ function introScreen(host, data, st) {
     <div class="wrap-narrow">
       <div class="section fade-up" style="margin-top:var(--s-6)">
         <p class="caps">Play</p>
-        <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward.</h1>
+        <h1 class="serif" style="font-size:var(--t-hero);line-height:var(--lh-hero)" tabindex="-1">Play it forward</h1>
         <p class="lede" style="max-width:40ch;margin-top:var(--s-3)">Pick what I do each chapter, from now to 35. Life happens in between. No choice ends my story.</p>
         ${comboBlock}
         <div class="wantbox">
