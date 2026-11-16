@@ -1425,8 +1425,10 @@ function renderHome(){
   let carryCard = '';
   if (carry){ const d = me.drafts[carry], fw = FRAMEWORKS[carry]; const name = (d.context && d.context.name) || d.subject || ''; const qs = fw.steps.flatMap(x => x.qs); const done = qs.filter(q => String((d.answers || {})[q.id] || '').trim()).length;
     carryCard = `<section class="card carrycard" aria-labelledby="carryH"><h2 id="carryH">${name ? `Carry on with your ${esc(name)} ${fw.name}` : `Carry on with your ${fw.name} entry`}</h2><p class="tiny">${d.saved ? 'Last saved ' + fmtDay(d.saved) + ' · ' : ''}${done} of ${qs.length} questions answered. Your words are saved.</p><div class="row"><a class="btn" href="#/write/${carry}?go=1">${icon('edit')} Continue</a><button type="button" class="btn ghost" id="carryLater">Not now</button></div></section>`; }
+  // 6.2: Start here leads a log with no entry yet; once there is one, it sits under the wheel, so on a phone New GROW and New ACT stay in the first screen
+  const startHtml = startCard(); const startTop = !me.entries.some(e => e.kind !== 'across');
   frame(`
-    ${testCard('home')}${startCard()}${askCards()}${carryCard}${fromT}
+    ${testCard('home')}${startTop ? startHtml : ''}${askCards()}${carryCard}${fromT}
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
@@ -1443,6 +1445,7 @@ function renderHome(){
       <a class="btn sec big" href="#/write/act">${icon('plus')}<span>New ACT</span></a>
     </div>
     ${promptCard(promptKind, popts[promptKind])}
+    ${startTop ? '' : startHtml}
     <section class="card nextcard">
       <h2>What next?</h2>
       <div class="nxparts">
