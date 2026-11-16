@@ -2,6 +2,25 @@
 
 October 2026. The Learning Log became the Competency Development Log, then the E21CC Log; v2 gave the coach a memory of each learner, v3 made Home simpler and help more specific, and Version 4 (November) folded in the reply loop, the console PIN, backup and restore, and nudges without pressure. The newest change comes first. Older sections keep the names of their time; the September design at the end still explains the foundations.
 
+## What staff asked for: 6.2 (16 November 2026)
+
+Staff explored 6.1 and wrote 16 notes on a Padlet. The loudest theme, in five notes from three groups, was orientation: what do I do next, when would a student use this, which part of the wheel. `BACKLOG.md` section X has every note and what became of it.
+
+**Decided with Harman.** GROW stays whole: no fewer questions. A student may write all four parts or two or more. No timetable, no rating scale. Build the rest.
+
+**How it works, and why.**
+- **Two answers to "when do I use it".** Start here covers the first time. The occasion link covers every time after: the teacher says when (the end of a unit), on what, and which I can statements to look at. It is one link for a class because it carries nothing about any student.
+- **Parts, not a shorter GROW.** The school's eight questions stay word for word. Choosing parts keeps a short look back honest: it is G and R, not a thinner whole.
+- **A real answer, by the coach's own test.** The minimum to log reuses `answerStatus`, so the Log and the coach never disagree about what counts as an answer.
+- **The growth story shows only what a teacher affirmed.** A page meant for someone outside the school should carry validated claims, not the student's own count.
+
+**Where I pushed back.**
+- **A rating scale** would be a self report with nothing for a teacher to check, the weakness Version 6 removed. Declined by Harman.
+- **A timetable** is outside the seven intents, and the Calendar in Goals already holds dates.
+- **Photos** are a real need (typing favours fluent writers) but cannot travel in a link, so they wait for school sign in.
+
+**How it was checked.** t36, and the full run.
+
 ## A teacher's voice, and the school's own platform: Version 6 (12 November 2026)
 
 Harman asked for an audit of the Log against his seven intents (`V6.md`), answered its questions on 11 November, then asked for the next version and the move of platform, with every step spelled out.

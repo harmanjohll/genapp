@@ -798,6 +798,16 @@ p.frame{background:var(--surface);border:1px dashed var(--line-2);border-radius:
 .miles svg{width:20px;height:20px;flex:none;color:var(--head);margin-top:2px} .miles small{display:block;color:var(--text-2)}
 .nudge p{margin:0 0 10px} .nudge .seg{margin-bottom:4px} .nudge .nudgeend{display:flex;justify-content:flex-end;margin-top:4px}
 .fromtest h2{margin-top:0} .ftlist{list-style:none;margin:0;padding:0} .ftlist li{padding:6px 0 8px} .ftlist li + li{border-top:1px solid var(--line)} .ftlist p{margin:0 0 6px}
+.startcard h2,.askcard h2{margin-top:0} .askcard .tiny{margin:4px 0 10px}
+.startlist{list-style:none;margin:0 0 12px;padding:0} .startlist li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;color:var(--text-2)}
+.startlist li.now{color:var(--text);font-weight:600}
+.smark{flex:none;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line-2);font-size:.85em;font-weight:600}
+.startlist li.now .smark{border-color:var(--head);color:var(--head)} .startlist li.done .smark{background:var(--surface-3);border-color:transparent} .smark svg{width:14px;height:14px}
+.usual{margin:0 0 10px} .storylink{margin:8px 0 0}
+.story h1{margin-top:4px} .storywho{margin:0 0 8px} .scomp{margin-top:20px;padding-top:12px;border-top:1px solid var(--line)} .scomp h2{margin:0 0 8px}
+.sstmt{margin:0 0 14px} .sstmt .stt{margin:0 0 4px} .sev{margin:0 0 8px;padding-left:12px;border-left:3px solid var(--line)} .sev q{display:block;font-family:var(--quote-font);font-style:italic}
+.steacher{margin:4px 0 0;color:var(--note)} .sev .tiny{margin:0}
+@media print{ body *{visibility:hidden} #story,#story *{visibility:visible} #story{position:absolute;left:0;top:0;width:100%;box-shadow:none;border:0;background:#fff;color:#000} .noprint,.noprint *{display:none!important} .sstmt{break-inside:avoid} }
 .carrycard h2{margin-top:0} .carrycard .tiny{margin:4px 0 10px}
 .fromcard h2{margin-top:0} .fromlist{list-style:none;margin:0;padding:0} .fromlist li{padding:6px 0 10px} .fromlist li + li{border-top:1px solid var(--line)} .fromlist .mnote{margin-left:0} .fromlist .tiny{margin:4px 0 6px}
 .notes details.older{border:0;padding:0;margin:0 0 4px 6px;background:transparent}

@@ -61,6 +61,8 @@ function compactEntry(e){
     depth:c ? c.depth : '', question:c ? c.question : '', target:e.target || '', followThrough:e.followThrough || null,
     // how the coach met the student: statuses, the stretch, help given, follow through, a content question
     read:c ? {nothing:!!c.nothing, answers:c.answers || [], stretch_qid:c.stretch_qid || '', follow_through:c.follow_through || null, scaffold:c.scaffold ? {level:c.scaffold.level || 1} : null, content_check:c.content_check || '', gift:c.gift || '', stretch:c.stretch || ''} : null};
+  if (e.kind === 'grow' && Array.isArray(e.parts)) out.parts = e.parts;
+  if (e.occasion && e.occasion.title) out.occasion = {id:e.occasion.id, title:e.occasion.title};
   if (e.kind === 'act'){ out.feedbackFrom = e.feedbackFrom || ''; out.feedbackText = e.feedbackText || ''; }
   if (e.kind === 'across'){ out.basket = e.basket; out.term = e.term; out.lookedAt = (e.lookedAt || []).slice(0, 8); }
   if (x) out.e21cc = {source:x.source, stance:x.stance, evidence:(x.evidence || []).map(v => ({id:v.id, strength:v.strength, quote:v.quote || '', unverified:!!v.unverified})), statements:(x.statements || []).map(s => ({sid:s.sid, quote:s.quote})), ksvd:(x.ksvd || []).map(k => ({id:k.id, strength:k.strength, quote:k.quote}))};

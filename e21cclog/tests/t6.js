@@ -83,7 +83,8 @@ const check = (name, ok, info='') => console.log((ok ? 'PASS ' : 'FAIL ') + name
   failSchemaOnce = true;
   await page.evaluate(() => location.hash = '#/write/act'); await sleep(300); await page.click('[data-exp="cca|Football"]'); await page.click('#cNext'); await sleep(150);
   await page.fill('[data-a=a1]', 'I felt annoyed but the coach was right that I drifted from my position.');
-  for (let i = 0; i < 6; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); } await page.click('#cSave'); await sleep(1200);
+  await page.evaluate(() => { draft.answers.t1 = 'Hold my position at the next training on Friday, and ask the coach to watch.'; });   // 6.2: an ACT needs two real answers
+  for (let i = 0; i < 8; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); } await page.click('#cSave'); await sleep(1200);
   check('falls back when a model rejects the schema', calls.length === 3 && !calls[2].body.generationConfig.responseJsonSchema && calls[2].body.systemInstruction.parts[0].text.includes('Reply with only one JSON object'), 'calls ' + calls.length);
   // pivots and views
   for (const [p, want] of [['competency', 'Critical Thinking'], ['date', ''], ['term', 'Term 4']]){

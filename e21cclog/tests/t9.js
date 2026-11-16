@@ -64,6 +64,7 @@ P4.entries = [mk('L1', 30, 'Mathematics'), mk('L2', 10, 'English')];
   // 7. the claim: at most two
   await go('#/write/grow'); await page.click('.xchips .chip'); await sleep(150);
   await page.click('#cNext'); await sleep(150); await page.fill('[data-a=g1]', 'Our group divided the roles and we agreed together on the plan, because Siti was careful.'); await page.fill('[data-a=g2]', 'I explained the method to my friend in my own words and checked she understood.');
+  await page.evaluate(() => { draft.answers.r2 = 'Share the roles out earlier next time, at the start of Friday’s lesson.'; });   // 6.2: a GROW needs a real answer in two parts
   for (let i = 0; i < 4; i++){ await page.click('#cNext'); await sleep(150); }
   const cards = await page.$$('.claim .cpick'); await cards[0].click(); await sleep(200); await (await page.$$('.claim .cpick'))[1].click(); await sleep(200); await (await page.$$('.claim .cpick'))[2].click(); await sleep(200);
   check('the claim takes at most two statements, each with a sentence of the student’s', (await page.$$('.claim.on')).length === 2 && (await page.textContent('#toast')).includes('up to two') && (await page.$$eval('.claim.on .where q', l => l.length)) === 2);

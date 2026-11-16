@@ -77,6 +77,7 @@ const out = {}; const check = (name, ok, info='') => { out[name] = ok; console.l
     await page.evaluate(() => location.hash = '#/act'); await sleep(300);
     await chooseCtx(page, 'Chemistry'); await sleep(150); await page.click('#cNext'); await sleep(150);
     await page.fill('[data-a=a1]', txt);
+    await page.evaluate(() => { draft.answers.t1 = 'Start my next write up with the method, on Friday in class.'; });   // 6.2: an ACT needs two real answers
     for (let i = 0; i < 8; i++){ const n = await page.$('#cNext'); if (!n) break; await n.click(); await sleep(120); }
     await page.click('#cSave'); await sleep(1300);
   }
