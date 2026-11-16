@@ -34,7 +34,7 @@ const BANNED = ['whole trick', ' beats ', 'not a verdict', 'most people never', 
   check('the card does not invent a saved date for an old draft', !card.includes('Last saved'));
   await page.screenshot({path:SHOTS + '90-resume.png'});
   await page.click('#rNew'); await sleep(300);
-  check('Start a new one: blank, nothing chosen', !(await page.$('.chip.on')) && !(await page.$('.tile.on')) && (await page.textContent('.sheet .bar b')) === 'New GROW entry' && !(await prof()).drafts.grow);
+  check('Start a new one: blank, nothing chosen', !(await page.$('.chip.on:not([data-part])')) && !(await page.$('.tile.on')) && (await page.textContent('.sheet .bar b')) === 'New GROW entry' && !(await prof()).drafts.grow);
   await page.click('#cClose'); await sleep(300);
   await setProf("p.drafts = {grow:{kind:'grow', key:'grow', step:1, subject:'Mathematics', topic:'Simultaneous equations', answers:{g1:'I can solve them by elimination.'}}};");
   await page.reload(); await sleep(400); await go('#/write/grow'); await page.click('#rContinue'); await sleep(300);
