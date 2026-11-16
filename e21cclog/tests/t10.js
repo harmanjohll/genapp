@@ -29,8 +29,11 @@ P.experiences.levels = {Chemistry:'G1', Geography:'G3'};
   if (await page.$('#claimNudge')){ await page.click('#cNext'); await sleep(150); }   // 6.0: no claim, so the step asks once
   const rb = (await page.textContent('#sheet .coach')).trim();
   check('1. a blank entry: the readback says only that there is nothing to give feedback on, and offers no AI read', rb === 'Nothing is written yet, so there is nothing to give feedback on.' && !(await page.$('#askAi')), rb);
-  await page.click('#cSave'); await sleep(700);
-  const blankId = await page.evaluate(() => location.hash.split('/')[2].split('?')[0]);
+  // 6.2: a blank entry is not logged. The rules for one already in a log (from an earlier version) still hold.
+  await page.click('#cSave'); await sleep(500);
+  check('1. a blank entry is refused at Log it, with the reason', (await page.evaluate(() => me.entries.some(e => !Object.values(e.answers || {}).some(v => String(v || '').trim())))) === false && /Answer at least two of the ACT questions/.test(await page.textContent('#lackNote')));
+  await page.click('#cClose'); await sleep(400);
+  const blankId = await page.evaluate(() => { const e = migrateEntry({id:'blank1', kind:'act', created:Date.now(), updated:Date.now(), context:{type:'subject', name:'Chemistry'}, subject:'Chemistry', topic:'', answers:{}, competencies:[], links:[], notes:[], sent:{}}); e.coach = {builtin:builtinCoach(e, null, null), ai:null}; e.e21cc = builtinE21cc(e, myStatements()); me.entries.push(e); saveDb(); location.hash = '#/entry/blank1'; return 'blank1'; }); await sleep(600);
   await page.evaluate(id => runAiFor(me.entries.find(e => e.id === id)), blankId); await sleep(300);
   const r1 = await page.evaluate(async id => { const e = me.entries.find(x => x.id === id); const r = await aiCoach(e); return {nothing:!!r.nothing, gift:r.gift, stretch:r.stretch, question:r.question}; }, blankId);
   const page1 = await page.textContent('main');
