@@ -325,7 +325,20 @@ function answerStatus(text){
   if (THIN_ONLY.includes(low) || tokens(t).length < 4) return 'thin';
   return 'answered';
 }
-function answerStatuses(entry){ const fw = FRAMEWORKS[entry.kind]; return fw.steps.flatMap(s => s.qs).map(q => ({qid:q.id, status:answerStatus((entry.answers || {})[q.id])})); }
+/* 6.2: GROW stays whole, and a student may write it in all four parts or in two or more of them (Harman, 16 November).
+   An entry carries the parts it was written in; one without says all four. */
+const GROW_PARTS = GROW.steps.map(s => s.k);
+function partsOf(entry){ if (!entry || entry.kind !== 'grow') return null; const p = Array.isArray(entry.parts) ? GROW_PARTS.filter(k => entry.parts.includes(k)) : []; return p.length >= 2 ? p : GROW_PARTS.slice(); }
+function stepsFor(entry){ const fw = FRAMEWORKS[entry.kind]; const p = partsOf(entry); return p ? fw.steps.filter(s => p.includes(s.k)) : fw.steps; }
+/* What an entry still needs before it can be logged, in words for the student; null when it has enough.
+   A real answer is more than a few words: the same test the coach uses (answerStatus). */
+function logLack(entry){
+  const real = id => answerStatus((entry.answers || {})[id]) === 'answered';
+  if (entry.kind === 'grow') return stepsFor(entry).filter(s => s.qs.some(q => real(q.id))).length >= 2 ? null : 'Not yet. Write a real answer in at least two parts of GROW, then log it. A few words is not yet an answer.';
+  if (entry.kind === 'act') return ACT.steps.flatMap(s => s.qs).filter(q => real(q.id)).length >= 2 ? null : 'Not yet. Answer at least two of the ACT questions, then log it. A few words is not yet an answer.';
+  return ACROSS.steps.flatMap(s => s.qs).some(q => real(q.id)) ? null : 'Not yet. Answer at least one question, then log it.';
+}
+function answerStatuses(entry){ return stepsFor(entry).flatMap(s => s.qs).map(q => ({qid:q.id, status:answerStatus((entry.answers || {})[q.id])})); }
 function hasAnyAnswer(entry){ return !!entry && Object.values(entry.answers || {}).some(v => String(v || '').trim()); }
 const NOTHING_LINE = 'Nothing is written yet, so there is nothing to give feedback on.';
 const EMPTY_LINE = 'Nothing to respond to here.';
@@ -378,7 +391,7 @@ function modelFor(qid, entry){ const m = MODELS[qid] || []; const subj = String(
 
 /* ---------- the built in coach: the same policy as the AI, offline ---------- */
 function builtinCoach(entry, cls, profile){
-  const fw = FRAMEWORKS[entry.kind]; const qs = fw.steps.flatMap(s => s.qs);
+  const fw = FRAMEWORKS[entry.kind]; const qs = stepsFor(entry).flatMap(s => s.qs);
   const answers = answerStatuses(entry); const st = id => (answers.find(a => a.qid === id) || {}).status;
   const out = {source:'builtin', depth:'surface', gift:'', stretch:'', question:'', competency:'', answers, stretch_qid:'', stretch_flag:'', follow_through:{status:'none', note:''}, scaffold:{level:1, frame:'', model:''}, content_check:''};
   if (!hasAnyAnswer(entry)){ out.nothing = true; return out; }
@@ -387,7 +400,7 @@ function builtinCoach(entry, cls, profile){
   const all = qs.map(q => entry.answers[q.id] || '').join('\n');
   const voice = (cls && cls.voice) || {}; const phrase = pick(voice.phrases, entry.id);
   const mean = real.length ? real.reduce((a, s) => a + s.score, 0) / real.length : -1;
-  const nextQ = qs.find(q => q.next); const nextS = scores.find(s => s.id === nextQ.id);
+  const nextQ = qs.find(q => q.next) || null; const nextS = nextQ ? scores.find(s => s.id === nextQ.id) : null;   // no plan question when Rise was not chosen
   const nextOk = nextS && nextS.hasTime && nextS.hasAction;
   // depth counts what is there and how much of the entry is there
   out.depth = (mean >= 1.6 && nextOk && real.length >= qs.length - 1) ? 'deep' : (mean >= 0.6 && real.length >= qs.length / 2 ? 'working' : 'surface');
@@ -918,7 +931,7 @@ function smartCheck(g){
 }
 
 /* The version: one number, shown on the badge, at the bottom of every page and in Settings, About. Raise it with each release. */
-const VERSION_NO = '6.1';
+const VERSION_NO = '6.2';
 const SITE_MARK = 'v' + VERSION_NO;   // the address (e21cclog/) never changes
 /* ---------- D2: the day a plan names ----------
    planDue('Practise on Thursday after CCA', written) gives the local start of that Thursday, or null when the plan
@@ -983,6 +996,10 @@ function icsWeekly({day, time, url, now = Date.now(), uid}){
 }
 
 const APP_VERSION = {label:'Version ' + VERSION_NO, no:VERSION_NO, date:'November 2026', notes:[
+  'From your teachers’ feedback: a Start here card on Home, and your teacher can ask for an entry with one link',
+  'GROW in all four parts, or in two or more of them. An entry needs real answers before it can be logged',
+  'My growth story: what your teachers affirmed, with your own words, ready to print or save',
+  'Setup starts from the usual subjects for your level in one tap',
   'A calmer page: labels in plain sentence case, lighter headings, quiet status dots instead of badges. Your teacher’s words keep the red margin',
   'Version 6: your teacher checks each claim. They affirm it, or say not yet, and give advice. Only an affirmed claim moves a statement towards secured',
   'A teacher’s note can start an ACT: Act on this feedback brings the note in as the feedback',
@@ -1143,6 +1160,16 @@ function subjectsFor(level){
 function subjectOffer(name, level){ return subjectsFor(level).find(x => sameSubject(x.name, name)) || null; }
 // the levels of demand a subject is offered at; null when it has one common level or is not banded
 function levelsFor(name, level){ const o = subjectOffer(name, level); return o ? o.levels : null; }
+/* 6.2: the subjects nearly every student at a level takes, to start setup from in one tap. Lower Sec: English
+   Language, Mathematics, Science, the three Humanities, the Common Curriculum, PE and CCE. Upper Sec, where
+   combinations differ: English Language, Mathematics, PE and CCE. Never a subject taken outside the school. */
+function usualSubjects(level){
+  if (!level) return [];
+  const upper = stageOf(level) === 'upper';
+  return subjectsFor(level).filter(x => !(x.outside && x.outside.length) && (upper
+    ? (x.name === 'English Language' || x.name === 'Mathematics' || x.group === 'Others')
+    : (x.name === 'English Language' || ['Mathematics', 'Sciences', 'Common Curriculum', 'Others'].includes(x.group) || (x.group === 'Humanities' && x.name !== 'Humanities Exposure Modules')))).map(x => x.name);
+}
 function subjectGroups(level){
   const list = subjectsFor(level), st = stageOf(level), notes = (st && SCHOOL.notes && SCHOOL.notes[st]) || {};
   return (SCHOOL.groups || []).map(g => ({group:g, subjects:list.filter(x => x.group === g), note:notes[g] || ''})).filter(g => g.subjects.length);

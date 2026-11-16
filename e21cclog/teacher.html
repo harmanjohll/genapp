@@ -178,6 +178,7 @@ ol.steps li{margin-bottom:8px}
 .review .verd button{border:1px solid var(--line-2);background:var(--card);color:var(--navy);border-radius:999px;padding:8px 14px;min-height:44px;font:inherit;font-weight:600;font-size:.9em;cursor:pointer}
 .review .verd button[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
 .review textarea{min-height:88px}
+.akparts{border:1px solid var(--line-2);border-radius:var(--radius-s);padding:8px 12px 10px;margin:0 0 12px} .akparts legend{font-weight:600;font-size:.9em;padding:0 4px} .akparts label{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-right:14px}
 .signals h3{margin:14px 0 4px;font-size:1em}
 .signals ul{margin:0;padding-left:20px}
 .signals li{margin:4px 0}
@@ -266,6 +267,26 @@ ol.steps li{margin-bottom:8px}
 
   <!-- ============ SET UP ============ -->
   <section id="tab-setup" data-tab="setup" hidden>
+    <div class="card" id="askCard">
+      <h2>Ask for an entry</h2>
+      <p class="muted">When a topic, a unit or a camp ends, make one link for the class. A student who opens it sees what you ask on their Home, with the experience and the I can statements you chose ready. The link names no student.</p>
+      <label class="f"><span>What you ask</span><input class="in" id="akTitle" maxlength="120" placeholder="e.g. End of unit: Acids and bases"></label>
+      <div class="row">
+        <label class="f"><span>Journal</span><select class="in" id="akKind"><option value="grow">GROW, after a learning experience</option><option value="act">ACT, on feedback</option></select></label>
+        <label class="f"><span>Kind of experience</span><select class="in" id="akType"></select></label>
+      </div>
+      <label class="f"><span>Subject, CCA or experience</span><input class="in" id="akName" maxlength="80" list="akNames" placeholder="e.g. Chemistry"></label><datalist id="akNames"></datalist>
+      <label class="f"><span>Topic <small style="display:inline">(optional)</small></span><input class="in" id="akTopic" maxlength="80" placeholder="e.g. Acids and bases"></label>
+      <fieldset class="akparts" id="akPartsBox"><legend>Parts of GROW to write</legend><div class="row" id="akParts"></div><p class="tiny" style="margin:4px 0 0">All four when something ends. At least two.</p></fieldset>
+      <div id="akStmts"></div>
+      <div class="row">
+        <label class="f"><span>Your name</span><input class="in" id="akBy" maxlength="60" placeholder="e.g. Ms Lim"></label>
+        <label class="f"><span>Your school email</span><input class="in" id="akEmail" type="email" maxlength="120" placeholder="So students can share with you"></label>
+      </div>
+      <div class="row"><button class="btn" id="akMake">Make the link</button></div>
+      <p class="tiny" id="akMsg" role="status"></p>
+      <div id="akOut" hidden><label class="f"><span>The link for your class</span><textarea class="in" id="akLink" readonly rows="3"></textarea></label><div class="row"><button class="btn sec" id="akCopy">Copy link</button></div><p class="tiny">Post it in your class Teams or SLS. It works for every student in the class.</p></div>
+    </div>
     <div class="card" id="staffCard">
       <h2>School staff list</h2>
       <p class="muted">For the pilot lead, once a term. Paste the staff list from the timetable, check it, then share one school link with students in Teams or SLS. A student who opens the link keeps the list on their device, so they can pick their teachers. Nothing about staff is put on the website.</p>
@@ -687,11 +708,11 @@ function readerHtml(it){
   if (it.kind === 't') return `<div class="reader">${head}<p class="tiny">From a form without the payload questions: the text only, no notes possible.</p><pre>${esc(it.data.entry || '')}</pre>${it.data.competencies ? `<p class="tiny">${esc(it.data.competencies)}</p>` : ''}</div>`;
   const e = it.data; const fw = FRAMEWORKS[e.kind]; const notes = notesFor(it.key);
   const noteBlock = anchor => notes.filter(n => n.anchor === anchor).map(n => `<div class="mnote ${n.sentAt ? '' : 'pending'}"><span class="by">${n.sentAt ? 'Sent ' + fmtDay(n.sentAt) : 'Not sent yet'}</span><p>${esc(n.text)}</p>${n.sentAt ? '' : `<button class="x" data-delnote="${esc(it.key)}|${n.id}">Remove</button>`}</div>`).join('');
-  const qs = fw.steps.flatMap(s => s.qs.map(q => ({s, q})));
+  const qs = stepsFor(e).flatMap(s => s.qs.map(q => ({s, q})));
   const claims = (e.competencies || []).map(t => { const c = compOf(t.id); const l = LEVELS.find(z => z.n === t.level); return c ? `<span class="tag">${esc(c.label)}${l ? ' · ' + l.label : ''}</span>${t.where ? ` <span class="tiny">“${esc(t.where)}”</span>` : ''}` : ''; }).join(' ');
   const links = (e.links || []).map(l => `<span class="tag">${esc(stmtText(l.sid))}</span> <span class="tiny">“${esc(l.quote)}”</span>`).join(' ');
   return `<div class="reader">${head}
-    <p class="tiny">${esc(fw.tagline)} · ${e.context && e.context.type && e.context.type !== 'subject' && e.context.type !== 'across' ? esc(contextTypeOf(e.context.type).label) + ' · ' : ''}${fmtDate(e.created)}${e.updated && e.updated !== e.created ? ' · edited ' + fmtDay(e.updated) : ''}${e.depth && DEPTHS[e.depth] ? ' · ' + DEPTHS[e.depth].label : ''}</p>
+    <p class="tiny">${e.occasion && e.occasion.title ? 'For: ' + esc(e.occasion.title) + ' · ' : ''}${esc(fw.tagline)} · ${e.context && e.context.type && e.context.type !== 'subject' && e.context.type !== 'across' ? esc(contextTypeOf(e.context.type).label) + ' · ' : ''}${fmtDate(e.created)}${e.updated && e.updated !== e.created ? ' · edited ' + fmtDay(e.updated) : ''}${e.depth && DEPTHS[e.depth] ? ' · ' + DEPTHS[e.depth].label : ''}</p>
     ${reviewHtml(it)}${noteBlock('entry')}<button class="notebtn" data-note="${esc(it.key)}|entry">Note on the whole entry</button>
     ${e.kind === 'act' && e.feedbackText ? `<div class="notice"><b>Feedback (${esc(e.feedbackFrom || 'teacher')}):</b> ${esc(e.feedbackText)}</div>` : ''}
     ${e.kind === 'across' && (e.lookedAt || []).length ? `<details><summary>Evidence the student looked across (${e.lookedAt.length})</summary>${e.lookedAt.map(x => `<q style="display:block;font-family:var(--serif);font-style:italic">${esc(x.quote)}</q>`).join('')}</details>` : ''}
@@ -1087,6 +1108,39 @@ $('#compList').innerHTML = DOMAINS.map(d => `<h3 style="margin-top:12px">${esc(d
 
 /* ---------- boot ---------- */
 cur = normaliseClass((store.current && store.classes[store.current]) || Object.values(store.classes)[0] || blank());
+/* ---------- 6.2: ask for an entry ----------
+   One link for a class, index.html#/ask?o=CDL1.o.…: what the teacher asks, the experience, up to three I can
+   statements, and which parts of GROW. It answers staff's question of when a student should use the Log. */
+function renderAskCard(){
+  $('#akType').innerHTML = CONTEXT_TYPES.map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('');
+  $('#akNames').innerHTML = [...SUBJECTS, ...ccaNames()].map(n => `<option value="${esc(n)}"></option>`).join('');
+  $('#akParts').innerHTML = GROW.steps.map(st => `<label><input type="checkbox" data-akpart="${st.k}" checked> ${st.letter} · ${esc(st.title.replace(/<[^>]+>/g, '').split(' ')[0])}</label>`).join('');
+  $('#akStmts').innerHTML = [0, 1, 2].map(i => `<div class="row"><label class="f"><span>I can statement ${i + 1} <small style="display:inline">(optional)</small></span><select class="in" data-akc="${i}"><option value="">No competency chosen</option>${COMPETENCIES.filter(c => c.d !== 'sec').map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('')}</select></label><label class="f grow"><span>Statement ${i + 1}</span><select class="in" data-aks="${i}" disabled><option value="">Choose a competency first</option></select></label></div>`).join('');
+  $$('[data-akc]').forEach(sel => sel.onchange = () => { const out = document.querySelector(`[data-aks="${sel.dataset.akc}"]`); const c = sel.value;
+    if (!c){ out.innerHTML = '<option value="">Choose a competency first</option>'; out.disabled = true; return; }
+    out.disabled = false; out.innerHTML = '<option value="">Choose a statement</option>' + TSET.strands.filter(st => st.comp === c).map(st => ['lower', 'upper'].map(b => `<optgroup label="${esc(BAND_LABEL[b])} · ${esc(st.name)}">${st[b].map(x => `<option value="${esc(x.id)}">${esc(x.text)}</option>`).join('')}</optgroup>`).join('')).join(''); });
+  $('#akKind').onchange = () => { $('#akPartsBox').hidden = $('#akKind').value !== 'grow'; };
+  $('#akBy').value = store.me.name || (cur && cur.teacherName) || ''; $('#akEmail').value = store.me.email || (cur && cur.teacherEmail) || ((typeof M365 !== 'undefined' && M365.who() && M365.who().email) || '');
+  $('#akMake').onclick = makeAskLink;
+  $('#akCopy').onclick = () => copy($('#akLink').value);
+}
+async function makeAskLink(){
+  const msg = t => { $('#akMsg').textContent = t; };
+  const title = $('#akTitle').value.trim(), name = $('#akName').value.trim(), kind = $('#akKind').value;
+  if (!title){ msg('Say what you ask, for example: End of unit: Acids and bases.'); $('#akTitle').focus(); return; }
+  if (!name){ msg('Name the subject, CCA or experience.'); $('#akName').focus(); return; }
+  const parts = $$('[data-akpart]').filter(b => b.checked).map(b => b.dataset.akpart);
+  if (kind === 'grow' && parts.length < 2){ msg('Keep at least two parts of GROW.'); return; }
+  const sids = [...new Set($$('[data-aks]').map(x => x.value).filter(Boolean))];
+  const teacher = {name:$('#akBy').value.trim(), email:$('#akEmail').value.trim().toLowerCase()};
+  if (teacher.name && !store.me.name) store.me.name = teacher.name; if (teacher.email) store.me.email = teacher.email; save();
+  const o = {v:1, id:uid(), title, kind, ctx:{type:$('#akType').value, name}, topic:$('#akTopic').value.trim(), sids, teacher};
+  if (kind === 'grow' && parts.length < 4) o.parts = parts;
+  $('#akLink').value = appUrl() + '#/ask?o=' + await packCDL('o', o); $('#akOut').hidden = false; msg('Link made. Copy it for your class.');
+  window.__lastAsk = o;
+}
+renderAskCard();
+
 fill();
 if (!store.me.name && cur.teacherName){ store.me.name = cur.teacherName; store.me.role = ROLE_OF[cur.type] || ''; save(); }
 

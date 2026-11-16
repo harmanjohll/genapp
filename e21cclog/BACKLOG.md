@@ -50,6 +50,53 @@ Then, agreed on 9 November: **V4 The goal coach, released as Version 5 (5.0).** 
 
 ---
 
+## X. From the staff Padlet (16 November 2026), built as 6.2
+
+Staff groups (Classroom Teaching, CCA, Enrichment, Leadership, Level Programmes, NEXUS) explored 6.1 and posted 16 notes under Must have, Nice to have and Worry about. By theme:
+
+| Theme | What staff said | What was done |
+| --- | --- | --- |
+| Orientation (5 notes) | Not clear what to do next, when to use the Log, or which part of the wheel; a navigation guide; build familiarity first | **X1 Start here** and **X2 Ask for an entry** |
+| Effort and form (5) | Fewer GROW questions; dropdowns; a rating scale; photos of handwritten work; other inputs | **X3 parts of GROW**. Rating scale declined. Photos: see X7 |
+| Empty entries (1) | A blank GROW can be logged | **X4 no empty entries** |
+| Payoff (2) | An export that shows growth (DSA, EAE); entries that follow the student by name | **X5 My growth story**. Logs are already the student's, not the class's |
+| I can statements (2) | A programme picks the statements for its activity; align other questionnaires | **X2**. Aligning other questionnaires is a school decision |
+| Setup (1) | Select subjects in one go | **X6 the usual subjects** |
+| Time (1) | A timetable | Declined: outside the seven intents; the Calendar in Goals holds dates |
+| Teacher portal (1) | Easy, with analysis for teaching | What your class says (6.0); ease waits for school sign in |
+| Rollout (1) | Trial with student leaders or a small group first | The plan already |
+
+Harman, 16 November: GROW stays whole, not diluted, and a student may do all four parts or two or more; no timetable; no rating scale; build the rest.
+
+### X1 Start here
+- **Status:** done (6.2)
+- **Spec:** a card at the top of Home until the first entry is shared, or Hide this: 1 set up, 2 write your first GROW, 3 share it. The current step holds the one button. Details says what each place is for.
+
+### X2 Ask for an entry (the occasion link)
+- **Status:** done (6.2)
+- **Spec:** console, Set up: a title, GROW or ACT, the experience, a topic, up to three I can statements, the parts of GROW, the teacher's name and email. One link (`#/ask?o=`, kind `o`), naming no student. On the student's device it is kept in `db.occasions`; Home shows "(teacher) asks: (title)" until an entry for it is logged; the composer starts on that experience, and the claim step lists the teacher's statements first. The entry carries `occasion`, shown in the console as "For:". The teacher joins the student's adults, to share with.
+
+### X3 The parts of GROW
+- **Status:** done (6.2)
+- **Spec:** `parts` on a GROW draft and entry (`partsOf`, `stepsFor` in `assets/core.js`). The first step offers G, R, O, W, all on; at least two stay. Only the chosen parts are steps, are shown on the entry and in the console, and are read by the coach.
+
+### X4 No empty entries
+- **Status:** done (6.2)
+- **Spec:** `logLack` in `assets/core.js`: a GROW needs a real answer in two parts, an ACT two real answers, a look across one. A real answer is one the coach would call answered (four words or more, not "idk"). Log it is refused on Read it back, with the reason.
+
+### X5 My growth story
+- **Status:** done (6.2). It was G1 in the order of 4 November.
+- **Spec:** `#/story`: per competency, each statement a teacher affirmed, with the entries, the student's sentence and the teacher's words; the level, and who confirmed Proficient. Print styles show the story alone.
+
+### X6 The usual subjects
+- **Status:** done (6.2)
+- **Spec:** `usualSubjects(level)` in `assets/core.js`; one button in the subject picker.
+
+### X7 Photos of handwritten work
+- **Status:** needs Harman, after school sign in
+- **Why not now:** a link in Teams cannot carry an image, and the browser's store is too small for photos. With sign in, a photo can sit in the student's OneDrive beside the entry and open for the teacher it is shared with.
+- **Reading the handwriting into text** needs an AI service, through the school's relay: a cost and consent decision.
+
 ## W. Version 6 (built 12 November 2026)
 
 From the audit against the seven intents and Harman's decisions of 11 November (`V6.md`).

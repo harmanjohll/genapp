@@ -49,7 +49,7 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 
 ## Tests
 `e21cclog/tests/run.sh` starts a local server and a mock coach relay, then runs:
-- every suite (t2 to t35);
+- every suite (t2 to t36);
 - the console sweep;
 - one colour sweep per look.
 
@@ -72,6 +72,7 @@ Until Phase 2 puts each log in the student's OneDrive, the log lives in one brow
 | t28 to t33 | Goals, the calendar, the goal coach, the goal loop, the pilot report |
 | t34 | Version 6: a teacher validates every claim; only affirmed claims secure; a note starts an ACT; the claim nudge; occasions, not weeks; what the class says |
 | t35 | Version 6: school sign in and OneDrive, against a stand in for Microsoft (`fixtures/graph.js`): off by default, the sign in request, a log in the student's OneDrive, two devices, sharing and replies without links, privacy |
+| t36 | 6.2: Start here, the usual subjects, the parts of GROW, no empty entries, the occasion link from console to student and back, My growth story |
 | `sweep.js`, `tsweep.js`, `audit.js` | Colour and state contrast in every look, theme and colour; the console; every route at every size |
 
 A screen reader still needs a person. The **VoiceOver check for an iPad** (about 10 minutes):
@@ -130,6 +131,13 @@ Since then, each release has its own number, shown at the bottom of every page:
 - **5.2 The pilot report.** The console's Class grid counts, week by week, the students who shared and how many got a reply that was sent, with Copy for the pilot lead (counts only, never names).
 
 - **6.0 Version 6.** See above.
+- **6.2 From the staff Padlet.** Staff explored 6.1 on 16 November and said what they needed (see `BACKLOG.md`, section X).
+  - **Start here.** A new log's Home leads with three steps, set up, write a GROW, share it, and one button.
+  - **Ask for an entry.** In the console's Set up, a teacher makes one link for a class: what is asked, the experience, up to three I can statements, and which parts of GROW. The student's Home shows it, and the entry starts ready.
+  - **GROW in all four parts, or two or more.** The questions are unchanged; the student, or the teacher's link, chooses the parts.
+  - **No empty entries.** A GROW needs a real answer in two parts before it is logged; an ACT, two real answers.
+  - **My growth story.** From Competencies or Settings: what teachers affirmed, with the student's own sentence and the teacher's words, to print or save as a PDF.
+  - **Setup in one tap.** Start with the usual subjects for the level, then adjust.
 - **6.1 A calmer page.** Labels in sentence case instead of small capitals, headings no heavier than semibold, quiet status dots instead of pill badges, no full stops on console headings, and the Class grid ahead of the week by week count. Teachers' words keep the red margin.
 
 Their specs, and what comes next, are in `BACKLOG.md`.

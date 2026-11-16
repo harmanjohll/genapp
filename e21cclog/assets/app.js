@@ -753,6 +753,7 @@ async function boot(){
   const link = stashLink();
   if ((location.hash || '').startsWith('#/config')) await importConfigFromHash();
   if ((location.hash || '').startsWith('#/staff')) await importStaffFromHash();
+  if ((location.hash || '').startsWith('#/ask')) await importAskFromHash();
   if (QS.get('class') && !me) db._preClass = QS.get('class').toUpperCase();
   route();
   if (me){ await Promise.all(me.groups.map(g => loadGroup(g.code))); await loadStatements(); const h = location.hash || '#/'; if (h === '#/' || h.startsWith('#/c')) route(); }
@@ -775,6 +776,22 @@ async function importConfigFromHash(){
 }
 /* The school staff list arrives by link (index.html#/staff?s=CDL1.s.…) from the pilot lead, through Teams or SLS.
    It is kept on this device, for every log here, before any log is open or unlocked; a newer list replaces an older one. */
+/* 6.2: a teacher's occasion link, index.html#/ask?o=CDL1.o.…: what they ask for, the experience, and the I can
+   statements to look at. Kept on this device, like the staff list; it names no student. */
+async function importAskFromHash(){
+  const q = new URLSearchParams((location.hash.split('?')[1]) || ''); let d = null;
+  try{ const got = await unpackCDL(q.get('o') || ''); if (got && got.kind === 'o') d = got.data; }catch{}
+  const to = me && (!me.pin || unlocked) ? '#/' : '#/welcome';
+  if (!d || !d.id || !d.title){ toast('That link did not open. Ask your teacher to send it again.', 4200); location.hash = to; return; }
+  const c = d.ctx || {}, t = d.teacher || {};
+  const oc = {id:String(d.id).slice(0, 40), title:String(d.title).slice(0, 120), kind:d.kind === 'act' ? 'act' : 'grow',
+    ctx:{type:CONTEXT_TYPES.some(x => x.id === c.type) ? c.type : 'subject', name:String(c.name || '').slice(0, 80)}, topic:String(d.topic || '').slice(0, 80),
+    sids:(Array.isArray(d.sids) ? d.sids : []).filter(x => typeof x === 'string').slice(0, 3), parts:Array.isArray(d.parts) ? d.parts.filter(k => GROW_PARTS.includes(k)) : null,
+    teacher:{name:String(t.name || '').slice(0, 60), email:String(t.email || '').trim().toLowerCase().slice(0, 120)}, at:Date.now()};
+  db.occasions = db.occasions || {}; db.occasions[oc.id] = oc; saveDb();
+  toast(`${oc.teacher.name || 'Your teacher'} asks: ${oc.title}`, 4200);
+  if ((location.hash || '') === to) route(); else location.hash = to;
+}
 async function importStaffFromHash(){
   const q = new URLSearchParams((location.hash.split('?')[1]) || '');
   let got = null; try{ got = await unpackCDL(q.get('s') || ''); }catch{}
@@ -793,6 +810,7 @@ function route(){
   if (h.startsWith('#/note')){ const l = stashLink(); processStashedLink(l); return; }
   if (h.startsWith('#/config')){ importConfigFromHash(); return; }
   if (h.startsWith('#/staff')){ importStaffFromHash(); return; }
+  if (h.startsWith('#/ask')){ importAskFromHash(); return; }
   if (!me || (me.pin && !unlocked)){ if (h !== '#/welcome'){ location.hash = '#/welcome'; return; } return renderWelcome(); }
   const {parts} = hashParts(); rememberPage(h);
   if (h.startsWith('#/write/')){ const kind = parts[2]; if (kind === 'grow' || kind === 'act'){ if (!parts[3] && !setupDone() && !GUEST) return settingsGate(kind); return openComposer(kind, parts[3]); } }
@@ -810,6 +828,7 @@ function route(){
   if (h.startsWith('#/setup')) return renderSetup();
   if (h.startsWith('#/sharing')) return renderSharing();
   if (h.startsWith('#/goals')) return renderGoals();
+  if (h.startsWith('#/story')) return renderStory();
   if (h.startsWith('#/settings')) return renderSettings();
   // a log already open never shows the welcome page: it would invite a second log
   if (h.startsWith('#/welcome')){ location.hash = '#/'; return; }
@@ -1121,7 +1140,8 @@ function settingsGate(kind){
     <div class="row"><button type="button" class="btn" id="gateGo">${icon('arrow')} Continue to my entry</button><button type="button" class="btn ghost" id="gateLater">Not now</button></div>`);
   const update = () => { const m = missing(); const go = $('#gateGo'); if (!go) return; go.disabled = m.length > 0; $('#gateMsg').textContent = m.length ? `Still needed: ${m.join(' and ')}.` : 'All set.'; };
   const wireSubj = () => $$('[data-gsubj]').forEach(b => b.onclick = () => { const sb = b.dataset.gsubj; const i = x.subjects.indexOf(sb); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(sb); const on = i < 0; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); saveDb(); update(); });
-  wireLevel(() => { $('#gateSubj').innerHTML = subjectPicker('gsubj', false); wireSubj(); update(); }); wireSubj();
+  const wireUsual = () => $$('[data-usual]').forEach(b => b.onclick = () => { addUsualSubjects(); $('#gateSubj').innerHTML = subjectPicker('gsubj', false); wireSubj(); wireUsual(); update(); toast('Added. Remove what you do not take, and add your Mother Tongue.', 4200); });
+  wireLevel(() => { $('#gateSubj').innerHTML = subjectPicker('gsubj', false); wireSubj(); wireUsual(); update(); }); wireSubj(); wireUsual();
   $('#gateCca').onchange = e => { setCcas([e.target.value, ...ccasOf().slice(1)]); saveDb(); update(); };
   $('#gateGo').onclick = () => { if (!setupDone()) return; going = true; closeDialog(); openComposer(kind); };
   $('#gateLater').onclick = () => { closeDialog(); location.hash = '#/'; };
@@ -1321,6 +1341,26 @@ function promptCard(kind, o){
   else { const x = o.x; body = `<p><b id="nudgeH">Nothing in your log yet for ${esc(x.name)} this term.</b> Your next ${esc(x.name)} ${x.type === 'cca' ? 'session' : 'lesson'} could be the one.</p><a class="btn small" href="#/write/grow?x=${encodeURIComponent((x.type === 'cca' ? 'cca' : 'subject') + ':' + x.name)}">${icon('plus')} New GROW</a>`; }
   return `<section class="card nudge" data-kind="${kind}" aria-labelledby="nudgeH">${body}<div class="nudgeend"><button type="button" class="linkbtn" id="nudgeLater">Not now</button></div></section>`;
 }
+/* 6.2: Start here. Staff found it unclear what to do first: three steps, one button, until the first entry is shared. */
+function startCard(){
+  if (me.startDone) return '';
+  const wrote = me.entries.slice().sort((a, b) => a.created - b.created).find(e => e.kind !== 'across'); const shared = me.entries.some(e => Object.keys(e.sent || {}).length > 0);
+  const steps = [{done:setupDone(), label:'Set up your Sec level, subjects and CCA', href:'#/setup', go:'Set up'},
+    {done:!!wrote, label:'Write your first GROW, about something you have just finished', href:'#/write/grow', go:'Write a GROW'},
+    {done:shared, label:'Share it with your teacher, who checks your claim', href:wrote ? '#/entry/' + wrote.id : '#/sharing', go:'Share it'}];
+  const cur = steps.find(x => !x.done); if (!cur) return '';
+  return `<section class="card startcard" aria-labelledby="startH"><h2 id="startH">Start here</h2>
+    <ol class="startlist">${steps.map((x, i) => `<li class="${x.done ? 'done' : x === cur ? 'now' : ''}"><span class="smark" aria-hidden="true">${x.done ? icon('check') : i + 1}</span><span>${esc(x.label)}${x.done ? '<span class="sr"> (done)</span>' : ''}</span></li>`).join('')}</ol>
+    <div class="row"><a class="btn" id="startGo" href="${cur.href}">${esc(cur.go)}</a><button type="button" class="btn ghost" id="startHide">Hide this</button></div>
+    ${more('Home shows where you are and what to do next. Journals holds what you wrote. Competencies lists your I can statements. Goals holds your goals and your calendar.')}</section>`;
+}
+/* 6.2: what a teacher asks for (an occasion link), until this log has an entry for it. */
+function openOccasions(){ return Object.values(db.occasions || {}).filter(o => !me.entries.some(e => e.occasion && e.occasion.id === o.id) && !(me.occasionsHidden || {})[o.id]).sort((a, b) => b.at - a.at); }
+function askCards(){
+  return openOccasions().slice(0, 2).map(o => `<section class="card askcard" aria-label="Your teacher asks"><h2>${esc(o.teacher.name || 'Your teacher')} asks: ${esc(o.title)}</h2>
+    <p class="tiny">${o.kind === 'act' ? 'An ACT' : 'A GROW'}${o.ctx.name ? ' about ' + esc(o.ctx.name) : ''}${o.topic ? ' · ' + esc(o.topic) : ''}${o.sids.length ? `, with ${plural(o.sids.length, 'I can statement')} to look at` : ''}.</p>
+    <div class="row"><a class="btn" href="#/write/${o.kind}?oc=${encodeURIComponent(o.id)}">${icon('edit')} Write it</a><button type="button" class="btn ghost" data-askhide="${esc(o.id)}">Not for me</button></div></section>`).join('');
+}
 function renderHome(){
   const E = me.entries.slice().sort((a, b) => b.created - a.created); const st = compStats(); const tp = termPos(Date.now()); const W = levelWords(); const fresh = noteMilestones();
   const unread = E.flatMap(e => (e.notes || []).filter(n => !n.seen).map(n => ({e, n})));
@@ -1386,7 +1426,7 @@ function renderHome(){
   if (carry){ const d = me.drafts[carry], fw = FRAMEWORKS[carry]; const name = (d.context && d.context.name) || d.subject || ''; const qs = fw.steps.flatMap(x => x.qs); const done = qs.filter(q => String((d.answers || {})[q.id] || '').trim()).length;
     carryCard = `<section class="card carrycard" aria-labelledby="carryH"><h2 id="carryH">${name ? `Carry on with your ${esc(name)} ${fw.name}` : `Carry on with your ${fw.name} entry`}</h2><p class="tiny">${d.saved ? 'Last saved ' + fmtDay(d.saved) + ' · ' : ''}${done} of ${qs.length} questions answered. Your words are saved.</p><div class="row"><a class="btn" href="#/write/${carry}?go=1">${icon('edit')} Continue</a><button type="button" class="btn ghost" id="carryLater">Not now</button></div></section>`; }
   frame(`
-    ${testCard('home')}${carryCard}${fromT}
+    ${testCard('home')}${startCard()}${askCards()}${carryCard}${fromT}
     <section class="card wheelcard">
       <p class="kicker">${tp.inTerm ? `Term ${tp.term} · Week ${tp.week}` : 'School holidays'}</p>
       <h1>Where am I now?</h1>
@@ -1413,6 +1453,8 @@ function renderHome(){
   `, 'home', {wide:true, cls:'home'});
   wireWheel(st, first.id); wireSafe(); milestoneToast(fresh);
   const nl = $('#nudgeLater'); if (nl) nl.onclick = () => { me.prompts.away[promptKind] = Date.now() + 7 * 864e5; saveDb(); route(); };
+  const sh0 = $('#startHide'); if (sh0) sh0.onclick = () => { me.startDone = Date.now(); saveDb(); route(); };
+  $$('[data-askhide]').forEach(b => b.onclick = () => { me.occasionsHidden = Object.assign({}, me.occasionsHidden, {[b.dataset.askhide]:Date.now()}); saveDb(); route(); });
   const cl = $('#carryLater'); if (cl) cl.onclick = () => { me.draftLater = Object.assign({}, me.draftLater, {[carry]:me.drafts[carry].saved || Date.now()}); saveDb(); route(); };
   wireFromTest();
   wireStepAnswers();
@@ -1427,11 +1469,37 @@ function renderHome(){
 }
 
 /* ---------- Competencies: every competency and its level; one competency and its two ladders ---------- */
+/* 6.2: My growth story. Staff asked for an export that shows growth (DSA, EAE). Only what a teacher affirmed is
+   in it: the statement, the student's own sentence, and the teacher's words. Printed, or saved as a PDF, by the browser. */
+function storyData(){
+  const out = [];
+  for (const d of DOMAINS.filter(x => x.id !== 'sec')) for (const c of COMPETENCIES.filter(x => x.d === d.id)){
+    const rows = [];
+    for (const st of STMT_SET.list.filter(x => x.comp === c.id)){ const x = securedOf(me.entries, st); if (x.backing.length) rows.push({st, secured:x.secured, items:x.backing.map(k => ({e:k.e, quote:k.l.quote, r:k.review}))}); }
+    if (rows.length) out.push({c, level:levelOf(me.entries, STMT_SET, c.id, me.confirmed), rows});
+  }
+  return out;
+}
+function renderStory(){
+  const data = storyData(); const E = me.entries.filter(e => e.kind !== 'across'); const places = new Set(E.map(e => contextName(e).toLowerCase()).filter(Boolean));
+  frame(`<section class="card story" id="story">
+    <div class="row noprint" style="justify-content:space-between"><a class="backlink" href="#/c">${icon('back')} Competencies</a><button type="button" class="btn" id="storyPrint">${icon('down')} Print, or save as a PDF</button></div>
+    <p class="kicker">Beatty Secondary School · E21CC Log</p>
+    <h1>My growth story</h1>
+    <p class="storywho"><b>${esc(me.name)}</b>${me.level ? ' · Sec ' + me.level : ''} · ${fmtDate(Date.now())}</p>
+    <p class="muted">${plural(E.length, 'entry', 'entries')}, across ${plural(places.size, 'subject or experience', 'subjects and experiences')}. Only claims a teacher affirmed are shown, each with my own words and what my teacher said.</p>
+    ${data.length ? data.map(x => `<section class="scomp"><h2>${esc(x.c.label)} <span class="tiny">${esc(levelLabel(x.level.level))}${x.level.confirmed ? ', confirmed by ' + esc(x.level.confirmed.by) : ''}</span></h2>
+      ${x.rows.map(r => `<div class="sstmt"><p class="stt"><b>${esc(r.st.text)}</b> <span class="tiny">${r.secured ? 'Secured' : r.items.length > 1 ? 'Affirmed in ' + r.items.length + ' entries' : 'Affirmed in 1 entry'}</span></p>
+        ${r.items.map(it => `<div class="sev"><p class="tiny">${fmtDate(it.e.created)} · ${esc(entryTitle(it.e))}</p>${it.quote ? `<q>${esc(it.quote)}</q>` : ''}${it.r ? `<p class="steacher"><b>${esc(it.r.by || 'My teacher')}:</b> ${esc(it.r.text)}</p>` : ''}</div>`).join('')}</div>`).join('')}</section>`).join('')
+      : `<div class="notice">Nothing here yet. When a teacher affirms a claim in one of your entries, it appears here with your words and theirs.</div>`}
+  </section>`, 'comp', {wide:true, key:'story'});
+  $('#storyPrint').onclick = () => window.print();
+}
 function renderCompetencies(){
   const st = compStats(); const band = myBand();
   const dom = d => `<section class="card"><p class="kicker">${esc(d.short)}</p><h2>${esc(d.label)}</h2><p class="tiny">${esc(d.blurb)}</p>${levelRows(st, COMPETENCIES.filter(c => c.d === d.id), true)}${d.id === 'sec' ? more('The school is still writing its statements for these. Your entries show evidence of them in the meantime.') : ''}</section>`;
   frame(leaves(`
-    <section class="hero"><h1>Competencies</h1>
+    <section class="hero"><h1>Competencies</h1><p class="storylink"><a class="btn small sec" href="#/story">${icon('book')} My growth story</a></p>
       <p class="meta">Your levels grow from the I can statements you secure.${me.level ? '' : ` <a href="#/settings?s=me">Set your Sec level</a> first.`}</p>
       ${more(`A statement is secured when two entries back it in your own words, from two different subjects or CCAs, at least two weeks apart. ${me.level ? `You are in Sec ${me.level}, so your statements are ${esc(bandLabel(band))}. ${band === 'lower' ? 'Upper Sec statements are a stretch you can claim too.' : 'Lower Sec statements are earlier ground you can still claim.'}` : `Until you set your level you see ${esc(bandLabel(band))}.`}`)}
       <details class="howlv"><summary>How levels work</summary><ol class="lvkey">${LOG_LEVELS.map((l, i) => `<li>${meter(i + 1, levelWords()[i])}<div><b>${esc(levelWords()[i])}</b><span>${esc(l.help)}</span></div></li>`).join('')}</ol></details>
@@ -1554,13 +1622,22 @@ function claimDialog(e, compId){
 /* ---------- composer: GROW, ACT, and the termly look across ---------- */
 function draftKey(kind, basket){ return kind === 'across' ? 'across:' + basket : kind; }
 function draftHasWork(d){ return !!d && (Object.values(d.answers || {}).some(v => String(v || '').trim()) || !!(d.context && d.context.name) || !!d.subject || !!String(d.topic || '').trim()); }
-function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], claims:[], target:'', basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
+function freshDraft(kind, key, basket){ return {kind, key, step:0, context:{type:'subject', name:''}, topic:'', groupCode:'', feedbackFrom:'teacher', feedbackText:'', answers:{}, competencies:[], claims:[], target:'', parts:kind === 'grow' ? GROW_PARTS.slice() : null, basket:basket || null, term:termKey(Date.now()), started:Date.now()}; }
 function noteRef(ref){ const [eid, nid] = String(ref || '').split('.'); const e = me.entries.find(x => x.id === eid); const n = e && (e.notes || []).find(x => x.id === nid); return e && n ? {e, n} : null; }
 function applyNote(ref){
   const r = noteRef(ref); if (!r) return; const {e, n} = r;
   draft.context = Object.assign({}, e.context || {type:'subject', name:e.subject || ''}); draft.topic = e.topic || ''; draft.groupCode = e.groupCode || '';
   draft.feedbackFrom = 'teacher'; draft.feedbackText = `${n.by || 'My teacher'}: ${n.text}`; draft.fromNote = {eid:e.id, nid:n.id}; draft.step = 0;
   if (!n.seen){ n.seen = true; saveDb(); }
+}
+function applyOccasion(id){
+  const o = (db.occasions || {})[id]; if (!o) return;
+  if (o.ctx.name) draft.context = {type:o.ctx.type, name:o.ctx.name}; if (o.topic) draft.topic = o.topic;
+  if (draft.kind === 'grow' && o.parts) draft.parts = partsOf({kind:'grow', parts:o.parts});
+  draft.occasion = {id:o.id, title:o.title}; draft.ocSids = o.sids.slice(); draft.step = 0; matchGroup();
+  // the teacher who asks is offered first when the entry is shared; the student still presses Send
+  const em = o.teacher.email;
+  if (em && !adults().some(a => String(a.email || '').toLowerCase() === em)){ const aid = 'o:' + em; me.shares.adults[aid] = {id:aid, name:o.teacher.name || 'Your teacher', email:em, role:'Teacher'}; const sec = me.shares.sections[draft.kind] = me.shares.sections[draft.kind] || []; if (!sec.includes(aid)) sec.push(aid); saveDb(); }
 }
 function applyPrefill(pre){ const i = pre.indexOf(':'); draft.context = {type:pre.slice(0, i) || 'subject', name:pre.slice(i + 1)}; draft.step = 0; matchGroup(); }
 function openComposer(kind, editId, basket){
@@ -1584,6 +1661,7 @@ function openComposer(kind, editId, basket){
     draft.key = key; draft.editId = editId || null; draft.step = draft.step || 0; draft._ask = ask;
     if (!draft.context) draft.context = {type:inferContextType(draft.subject), name:draft.subject || ''};
     if (!Array.isArray(draft.claims)) draft.claims = [];
+    draft.parts = kind === 'grow' ? partsOf({kind:'grow', parts:draft.parts}) : null;
     // nothing is assumed: the subject or experience comes from the student, or from the bookmark they started at
     draft._pre = kind !== 'across' && !editId ? hashParts().q.get('x') || '' : '';
     if (draft._pre && !ask) applyPrefill(draft._pre);
@@ -1593,6 +1671,8 @@ function openComposer(kind, editId, basket){
     // 6.0: started from a teacher's note, an ACT is about that entry's experience, with the note as its feedback
     draft._note = kind === 'act' && !editId ? hashParts().q.get('n') || '' : '';
     if (draft._note && !ask) applyNote(draft._note);
+    draft._oc = kind !== 'across' && !editId ? hashParts().q.get('oc') || '' : '';
+    if (draft._oc && !ask) applyOccasion(draft._oc);
     if (kind === 'across') draft.lookedAt = acrossEvidence(basket, draft.term).map(x => ({eid:x.e.id, quote:x.q.quote})).slice(0, 8);
   }
   renderComposer();
@@ -1604,11 +1684,11 @@ function closeComposer(){
   if (was) setTimeout(() => { const t = composerFrom && [...document.querySelectorAll(`a[href="${composerFrom}"]`)].find(a => a.offsetParent); const m = t || $('#main'); if (m) m.focus({preventScroll:true}); }, 80);
 }
 function saveDraft(){
-  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._goal; delete d._note; delete d._pickQ; delete d._claimNudged; d.saved = Date.now();
+  if (!draft || draft._ask) return; const d = Object.assign({}, draft); delete d.editId; delete d.coachAi; delete d._ask; delete d._pre; delete d._goal; delete d._note; delete d._oc; delete d._pickQ; delete d._claimNudged; delete d._lack; d.saved = Date.now();
   if (!draft.editId){ me.drafts[draft.key] = d; const p = $('#sheet .prog'); if (p && !$('.saved', p)) p.insertAdjacentHTML('beforeend', `<span class="saved">${icon('check')} Draft saved</span>`); }
   saveDb();
 }
-function stepsOf(){ const fw = FRAMEWORKS[draft.kind]; return draft.kind === 'across' ? ['evidence', ...fw.steps.map((_, i) => 'letter' + i), 'readback'] : ['context', ...fw.steps.map((_, i) => 'letter' + i), 'claim', 'readback']; }
+function stepsOf(){ const fw = FRAMEWORKS[draft.kind]; return draft.kind === 'across' ? ['evidence', ...fw.steps.map((_, i) => 'letter' + i), 'readback'] : ['context', ...fw.steps.map((st, i) => draft.kind !== 'grow' || (draft.parts || GROW_PARTS).includes(st.k) ? 'letter' + i : null).filter(Boolean), 'claim', 'readback']; }
 /* An unfinished entry waits; the student decides whether to pick it up. */
 function resumeCard(fw){
   const qs = fw.steps.flatMap(s => s.qs); const done = qs.filter(q => String(draft.answers[q.id] || '').trim()).length;
@@ -1653,7 +1733,7 @@ function renderComposer(){
   $('#cHome').onclick = () => leave('#/');
   $('#cClose').onclick = () => leave(draftReturn());
   const rc = $('#rContinue'); if (rc) rc.onclick = () => { draft._ask = false; renderComposer(); };
-  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre, gl = draft._goal, nt = draft._note; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre, _goal:gl, _note:nt}); if (pre) applyPrefill(pre); if (gl) draft.goal = gl; if (nt) applyNote(nt); renderComposer(); };
+  const rn = $('#rNew'); if (rn) rn.onclick = () => { delete me.drafts[draft.key]; saveDb(); const pre = draft._pre, gl = draft._goal, nt = draft._note, oc = draft._oc; draft = Object.assign(freshDraft(draft.kind, draft.key, draft.basket), {editId:null, _pre:pre, _goal:gl, _note:nt, _oc:oc}); if (pre) applyPrefill(pre); if (gl) draft.goal = gl; if (nt) applyNote(nt); if (oc) applyOccasion(oc); renderComposer(); };
   const bk = $('#cBack'); if (bk) bk.onclick = () => { collect(); draft.step = Math.max(0, i - 1); saveDraft(); renderComposer(); };
   // leaving step 1 needs a subject or experience; a new one joins the student's list
   const leaveContext = () => {
@@ -1790,6 +1870,7 @@ function contextStep(fw){
     <div class="tiles" role="group" aria-labelledby="pkType">${PICK_TYPES.map(([id, l, ic]) => `<button type="button" class="tile ${ptype === id ? 'on' : ''}" data-ptype="${id}" aria-expanded="${ptype === id}">${icon(ic)}${esc(l).replace('@', '<wbr>@')}</button>`).join('')}</div>
     ${ptype ? `<div class="typepanel">${panel}${willAdd && cur.type === ptype ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}</div>` : willAdd ? `<p class="addhint">${icon('check')} ${esc(cur.name)} will be added to your ${where}.</p>` : ''}
     ${!usual.length ? `<p class="tiny" style="margin:10px 0 0">Tip: add your subjects and CCA in <a href="#/settings" id="toSettings">Settings</a>, and they will appear at the top.</p>` : ''}
+    ${fw.id === 'grow' ? `<div class="f" style="margin-top:16px"><span class="flabel" id="partsLbl">Which parts of GROW?</span><div class="chips" role="group" aria-labelledby="partsLbl">${GROW.steps.map(st => { const on = (draft.parts || GROW_PARTS).includes(st.k); return `<button type="button" class="chip ${on ? 'on' : ''}" data-part="${st.k}" aria-pressed="${on}">${on ? icon('check') : ''}${st.letter} · ${st.title.replace(/<[^>]+>/g, '').split(' ')[0]}</button>`; }).join('')}</div><small>All four when a topic, a unit or a camp ends. For a shorter look back, choose two or more.</small></div>` : ''}
     <label class="f" style="margin-top:16px"><span>${fw.id === 'grow' ? ct.topic : 'What was the feedback on?'} <small style="display:inline">(optional)</small></span><input class="in" name="topic" value="${esc(draft.topic)}" placeholder="${esc(fw.id === 'grow' ? ct.topicPh : 'e.g. Chemistry practical write up')}" maxlength="80"></label>
     ${(() => { const live = goalsOf().filter(x => !x.done || x.id === draft.goal); return live.length ? `<label class="f" style="margin-top:12px"><span>For a goal <small style="display:inline">(optional)</small></span><select class="in" name="goalLink"><option value="">None</option>${live.map(x => `<option value="${esc(x.id)}" ${draft.goal === x.id ? 'selected' : ''}>${esc(goalTitle(x))}</option>`).join('')}</select></label>` : ''; })()}
     ${groupLine()}
@@ -1886,15 +1967,16 @@ function claimSuggestions(entry){
 }
 function claimStep(){
   const claims = draft.claims || (draft.claims = []); const entry = draftEntry();
-  const sents = sentencesOf(entryAnswersText(entry)); const sug = claimSuggestions(entry); const chosen = new Set(claims.map(c => c.sid));
+  const sents = sentencesOf(entryAnswersText(entry)); const ocs = (draft.ocSids || []).map(statementById).filter(Boolean); const sug = claimSuggestions(entry).filter(x => !ocs.some(o => o.id === x.id)); const chosen = new Set(claims.map(c => c.sid));
   const card = s => { const on = chosen.has(s.id); const cl = claims.find(c => c.sid === s.id); const picking = on && draft._pickQ === s.id;
     return `<div class="claim${on ? ' on' : ''}"><button type="button" class="cpick" data-claim="${esc(s.id)}" aria-pressed="${on}"><span class="cbox" aria-hidden="true">${on ? icon('check') : ''}</span><span class="grow"><b>${esc(s.text)}</b><small>${stmtMeta(s)}</small></span></button>
       ${on ? `<div class="where">${cl.quote ? `<span>Where it shows: <q>${esc(cl.quote)}</q></span>` : '<span>Choose the sentence that shows it.</span>'} <button type="button" class="linkbtn" data-chq="${esc(s.id)}" aria-expanded="${picking}">${cl.quote ? 'Change' : 'Choose'}</button></div>
         ${picking ? `<div class="stack sents" role="radiogroup" aria-label="The sentence that shows it">${sents.map((t, i) => `<label class="pick-row"><input type="radio" name="q-${esc(s.id)}" data-q="${esc(s.id)}" value="${i}" ${normText(t) === normText(cl.quote) ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('') || '<p class="muted">Write your answers first, then come back.</p>'}</div>` : ''}` : ''}</div>`; };
-  const extra = claims.map(c => statementById(c.sid)).filter(s => s && !sug.some(x => x.id === s.id));
+  const extra = claims.map(c => statementById(c.sid)).filter(s => s && !sug.some(x => x.id === s.id) && !ocs.some(x => x.id === s.id));
   const browse = draft._browse || ''; const band = myBand(); const other = band === 'upper' ? 'lower' : 'upper';
   const nudge = draft._claimNudged && !claims.length ? `<div class="notice" id="claimNudge" tabindex="-1" role="status"><b>Choose one statement before you go on.</b> Your teacher can only affirm a claim you make. Pick the one closest to what you wrote, and point to your sentence. Or press Next again to go on without one for now.</div>` : '';
   return `${nudge}<p class="muted">Choose up to two. Then point to the sentence in your answers that shows each one. Your teacher reads each claim and affirms it, or says not yet. Each affirmed claim moves the statement towards secured.</p>
+    ${ocs.length ? `<span class="mini">Your teacher asks you to look at these</span>${ocs.map(card).join('')}` : ''}
     ${extra.length ? `<span class="mini">Your choices</span>${extra.map(card).join('')}` : ''}
     ${sug.length ? `<span class="mini">Suggested from your words</span>${sug.map(card).join('')}` : `<div class="notice">Your answers do not clearly show a competency yet. Browse the statements below, or go back and add a moment where you reasoned, worked with others or connected your learning to the world.</div>`}
     <span class="mini" id="brLbl">Browse all statements</span>
@@ -1907,7 +1989,7 @@ function draftEntry(){
   if (draft.kind === 'across'){ const b = basketOf(draft.basket); return Object.assign(base, {basket:draft.basket, term:draft.term, context:{type:'across', name:b.label}, subject:b.short, topic:termLabel(draft.term), lookedAt:draft.lookedAt || [], groupCode:'', competencies:[]}); }
   const claims = draft.claims || [];
   return Object.assign(base, {context:{type:draft.context.type, name:draft.context.name}, subject:draft.context.name, topic:draft.topic, groupCode:draft.groupCode || '', feedbackFrom:draft.feedbackFrom, feedbackText:draft.feedbackText, fromNote:draft.fromNote || null,
-    competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || '', followThrough:draft.followThrough || null, goal:draft.goal || ''});
+    competencies:claims.length ? claimsFromLinks(claims, draft.competencies) : (draft.competencies || []), target:draft.target || '', followThrough:draft.followThrough || null, goal:draft.goal || '', parts:draft.kind === 'grow' ? (draft.parts || GROW_PARTS).slice() : undefined, occasion:draft.occasion || undefined});
 }
 function readbackStep(){
   const fw = FRAMEWORKS[draft.kind]; const entry = draftEntry(); const cls = groupFor(entry); const stmts = myStatements();
@@ -1916,7 +1998,8 @@ function readbackStep(){
   return `
     <div class="readback">
       <p class="tiny">${esc(entryTitle(entry))} · ${fmtDate(Date.now())}</p>
-      ${fw.steps.map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'Not answered')}</p></div>`).join('')).join('')}
+      ${draft._lack ? `<div class="notice warn" id="lackNote" tabindex="-1" role="alert">${esc(draft._lack)}</div>` : ''}
+      ${stepsFor(entry).map(s => s.qs.map(q => `<div class="qa"><b>${s.letter} · ${q.q}</b><p class="${draft.answers[q.id] ? '' : 'empty'}">${esc(draft.answers[q.id] || 'Not answered')}</p></div>`).join('')).join('')}
       ${draft.kind !== 'across' ? ((draft.claims || []).length ? `<div class="backs"><span class="kick">Your statements</span><ul class="blist">${draft.claims.map(c => { const st = statementById(c.sid); return st ? `<li><b>${esc(st.text)}</b><small>${stmtMeta(st)}${c.quote ? ` · “${esc(c.quote)}”` : ''}</small></li>` : ''; }).join('')}</ul></div>` : '<p class="tiny">No statement chosen. You can link one later from the entry or a competency page.</p>') : ''}
       ${draft.target && statementById(draft.target) ? `<p class="tiny">Next time, aiming for: ${esc(statementById(draft.target).text)}</p>` : ''}
     </div>
@@ -1960,6 +2043,9 @@ function wireStep(){
   const sh = $('#sheet');
   $$('[data-ptype]', sh).forEach(b => b.onclick = () => { collect(); const t = b.dataset.ptype; const open = draft._pick === t || (draft._pick == null && $('.tile.on', sh) === b); draft._pick = open ? '' : t; if (!open && draft.context.type !== t) draft.context = {type:t, name:''}; saveDraft(); renderComposer(); if (!open && t !== 'subject'){ const n = $('[name=ctxName]'); if (n && !$('.typepanel .chip', sh)) n.focus(); } });
   $$('[data-exp]', sh).forEach(b => b.onclick = () => { collect(); const s = b.dataset.exp; const i = s.indexOf('|'); draft.context = {type:s.slice(0, i), name:s.slice(i + 1)}; if (b.closest('.xchips')) draft._pick = ''; const n = $('[name=ctxName]', sh); if (n) n.value = ''; matchGroup(); saveDraft(); renderComposer(); });
+  $$('[data-part]', sh).forEach(b => b.onclick = () => { collect(); const k = b.dataset.part; const p = (draft.parts || GROW_PARTS).slice(); const i = p.indexOf(k);
+    if (i >= 0){ if (p.length <= 2){ toast('Keep at least two parts.'); return; } p.splice(i, 1); } else p.push(k);
+    draft.parts = GROW_PARTS.filter(x => p.includes(x)); saveDraft(); renderComposer(); const again = $(`[data-part="${k}"]`, $('#sheet')); if (again) again.focus(); });
   const gc = $('#grpChange', sh); if (gc) gc.onclick = () => { collect(); draft._grpOpen = !draft._grpOpen; saveDraft(); renderComposer(); };
   const ts = $('#toSettings', sh); if (ts) ts.onclick = () => { collect(); saveDraft(); draft = null; };
   const fb = $('#fbFrom', sh); if (fb) $$('button', fb).forEach(b => b.onclick = () => { draft.feedbackFrom = b.dataset.v; $$('button', fb).forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); }); saveDraft(); });
@@ -2014,6 +2100,9 @@ function linksFromClaims(prev){
 }
 function saveEntry(){
   collect(); const e = draftEntry(); const stmts = myStatements(); const h = inputHash(e, stmts);
+  // 6.2: an entry with nothing real in it is not logged
+  const lack = logLack(e); if (lack){ draft._lack = lack; renderComposer(); const ln = $('#lackNote'); if (ln) ln.focus(); return; }
+  delete draft._lack;
   const fresh = draft.coachAi && draft.coachAi.inputHash === h ? draft.coachAi : null;
   e.updated = Date.now();
   e.coach = {builtin:builtinCoach(e, groupFor(e), profileFor(e)), ai:fresh};
@@ -2052,7 +2141,7 @@ function claimWord(e, s, x){
 }
 function answersWithNotes(e){
   const fw = FRAMEWORKS[e.kind]; const notes = e.notes || [];
-  return fw.steps.map(s => s.qs.map(q => {
+  return stepsFor(e).map(s => s.qs.map(q => {
     const ns = notes.filter(n => n.anchor === q.id).sort((a, b) => a.at - b.at);
     const latest = ns[ns.length - 1]; const older = ns.slice(0, -1);
     return `<div class="qa-row${ns.length ? ' has-note' : ''}" data-anchor="${q.id}"><div class="qa"><b>${s.letter} · ${q.q}</b><p class="${e.answers[q.id] ? '' : 'empty'}">${esc(e.answers[q.id] || 'Not answered. ' + EMPTY_LINE)}</p></div>
@@ -2347,13 +2436,16 @@ function setCcas(list){ const seen = new Set(); me.experiences.cca = list.map(n 
 const outsideAll = s => !!(s.outside && s.levels && s.outside.length === s.levels.length);
 /* The subjects Beatty offers at the student's Sec level, by group, with any of the student's own
    subjects that are not on the list (kept from an earlier year, or taken elsewhere). */
+function addUsualSubjects(){ const x = me.experiences; for (const n of usualSubjects(me.level)) if (!x.subjects.some(sb => sameSubject(sb, n))) x.subjects.push(n); saveDb(); }
 function subjectPicker(attr, check){
   const x = me.experiences;
   if (!me.level) return `<p class="tiny" style="margin:0 0 8px">Choose your Sec level first: your subjects depend on it.${(location.hash || '').startsWith('#/settings') ? ' <a href="#/settings?s=me">Choose it in Me</a>' : ''}</p>`;
   const offered = subjectsFor(me.level); const has = n => x.subjects.includes(n);
   const own = x.subjects.filter(n => !offered.some(o => sameSubject(o.name, n)));
+  const usual = usualSubjects(me.level); const lacksUsual = usual.some(n => !x.subjects.some(sb => sameSubject(sb, n)));
+  const usualBtn = lacksUsual ? `<div class="usual"><button type="button" class="btn small sec" data-usual="${attr}">${icon('check')} Start with the usual subjects for Sec ${me.level}</button><p class="tiny gnote">Then remove what you do not take, and add your Mother Tongue.</p></div>` : '';
   const chip = (n, note) => `<button type="button" class="chip ${has(n) ? 'on' : ''}" data-${attr}="${esc(n)}" aria-pressed="${has(n)}">${check && has(n) ? icon('check') : ''}<span>${esc(n)}${note ? ` <em>${note}</em>` : ''}</span></button>`;
-  return subjectGroups(me.level).map((g, i) => `<span class="mini" id="sg${attr}${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="sg${attr}${i}">${g.subjects.map(s => chip(s.name, outsideAll(s) ? 'outside school' : '')).join('')}</div>${g.note ? `<p class="tiny gnote">${esc(g.note)}</p>` : ''}`).join('')
+  return usualBtn + subjectGroups(me.level).map((g, i) => `<span class="mini" id="sg${attr}${i}">${esc(g.group)}</span><div class="chips" role="group" aria-labelledby="sg${attr}${i}">${g.subjects.map(s => chip(s.name, outsideAll(s) ? 'outside school' : '')).join('')}</div>${g.note ? `<p class="tiny gnote">${esc(g.note)}</p>` : ''}`).join('')
     + (own.length ? `<span class="mini" id="sg${attr}own">Your own</span><div class="chips" role="group" aria-labelledby="sg${attr}own">${own.map(n => chip(n)).join('')}</div><p class="tiny gnote">Not on Beatty's list for Sec ${me.level}. Tap one to remove it.</p>` : '');
 }
 // one CCA, chosen from the school's list (the gate before a first entry)
@@ -2413,6 +2505,7 @@ function wireExperiences(rerender){
     if (kind === 'form') T.form = val; else { const map = kind === 'cca' ? T.ccas : T.subjects; for (const k of Object.keys(map)) if (kind === 'cca' ? k.toLowerCase() === name.toLowerCase() : sameSubject(k, name)) delete map[k]; if (val) map[name] = val; }
     saveDb(); toast(val ? `${val.name || 'Teacher'} is your ${kind === 'form' ? 'form teacher' : name + ' teacher'}.` : 'Choice cleared.'); });
   const again = sel => { const y = window.scrollY; rerender(); window.scrollTo(0, y); const nb = sel && $(sel); if (nb) nb.focus(); };
+  $$('[data-usual]').forEach(b => b.onclick = () => { addUsualSubjects(); toast('Added. Remove what you do not take, and add your Mother Tongue.', 4200); again('[data-subj]'); });
   $$('[data-subj]').forEach(b => b.onclick = () => { const s = b.dataset.subj; const i = x.subjects.indexOf(s); if (i >= 0) x.subjects.splice(i, 1); else x.subjects.push(s); saveDb(); again(`[data-subj="${CSS.escape(s)}"]`); });
   $('#addSubj').onsubmit = ev => { ev.preventDefault(); const v = canonSubject(String(new FormData(ev.target).get('s') || '')); if (!v) return; if (!x.subjects.some(s => sameSubject(s, v))) x.subjects.push(v); saveDb(); rerender(); };
   $$('[data-cca]').forEach(b => b.onclick = () => { const n = b.dataset.cca; const mine = ccasOf(); setCcas(mine.some(m => m.toLowerCase() === n.toLowerCase()) ? mine.filter(m => m.toLowerCase() !== n.toLowerCase()) : [...mine, n]); saveDb(); again(`[data-cca="${CSS.escape(n)}"]`); });
@@ -2936,6 +3029,7 @@ function renderSettings(){
     <section class="card" id="data"><h2>Your data</h2>
       ${typeof cloudCard === 'function' ? cloudCard() : ''}
       <p class="muted">${typeof cloudMine === 'function' && cloudMine() ? 'Your log is kept in this browser and in your OneDrive. A backup file is still worth keeping.' : 'Your log lives in this browser. Back it up now and then.'}</p>${more('A cleared cache, a new laptop or a school reimage loses it. A backup file opens again here, or on any device.')}
+      <p><a class="btn small sec" href="#/story">${icon('book')} My growth story</a> <span class="tiny">What your teachers affirmed, ready to print or save.</span></p>
       <ul class="safe">
         <li>${icon(me.backup ? 'check' : 'clock')}<span>${me.backup ? `Last backed up on ${fmtDate(me.backup.at)}, with ${plural(me.backup.count, 'entry', 'entries')}.` : 'Not backed up yet.'}</span></li>
         <li>${icon(db.persist && db.persist.granted ? 'check' : 'clock')}<span>${db.persist && db.persist.granted ? 'This browser has agreed to keep your log.' : 'This browser may clear your log if it is not opened for a while.'}</span></li>

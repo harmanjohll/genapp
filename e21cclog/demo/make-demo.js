@@ -156,6 +156,8 @@ const profileOf = (name, email, entries, opts = {}) => ({id:'demo-' + email.spli
     // the older entries already went to the form teacher; the two newest wait in Send
     for (const e of me.entries) if (e.created < NOW - 4 * D) e.sent[form] = e.created + D;
     me.done.sam06 = true;
+    // 6.2: Sam's Chemistry teacher asks for an entry, so Home shows the card
+    db.occasions = {demo1:{id:'demo1', title:'End of unit: Acids and bases', kind:'grow', ctx:{type:'subject', name:'Chemistry'}, topic:'Acids and bases', sids:['ct1.u1'], parts:null, teacher:{name:'Ms Lim Mei', email:'${T('Lim Mei')}'}, at:NOW - D}};
     // 6.0: teachers have checked Sam's older claims. Where the words show it, the subject teacher affirmed it; where
     // they do not, the teacher said not yet, with advice. The newest entries still wait for a teacher.
     const nameOf = em => (((db.staff || {}).list || []).find(t => t.email === em) || {}).name || 'Your teacher';
