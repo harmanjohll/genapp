@@ -49,9 +49,9 @@ const bare = JSON.parse(JSON.stringify(seed3)); const PB = bare.profiles[bare.cu
 
   // 3. Home: Where am I now? and What next?, nothing else
   await load(seed3);
-  const home = await page.evaluate(() => ({h1:document.querySelector('.wheelcard h1').textContent, h2:document.querySelector('.nextcard h2').textContent, parts:[...document.querySelectorAll('.nxh')].map(h => h.firstChild.textContent.trim()), cards:document.querySelectorAll('#main section.card').length,
+  const home = await page.evaluate(() => ({h1:document.querySelector('.wheelcard h1').textContent, h2:document.querySelector('.nextcard h2').textContent, parts:[...document.querySelectorAll('.nxh')].map(h => h.firstChild.textContent.trim()), cards:document.querySelectorAll('#main section.card:not(.startcard)').length, start:!!document.querySelector('#main .startcard'),
     gone:['.showcase', '.lvlist', '.latest', '.slist'].filter(s => document.querySelector('#main ' + s)), text:document.querySelector('#main').textContent}));
-  check('Home is two places: Where am I now? and What next?', home.h1 === 'Where am I now?' && home.h2 === 'What next?' && home.cards === 2, JSON.stringify({h1:home.h1, h2:home.h2, cards:home.cards}));
+  check('Home is two places: Where am I now? and What next? (and Start here, until the first entry is shared)', home.h1 === 'Where am I now?' && home.h2 === 'What next?' && home.cards === 2 && home.start, JSON.stringify({h1:home.h1, h2:home.h2, cards:home.cards}));
   check('What next? has Immediate, then Longer term', JSON.stringify(home.parts) === '["Immediate","Longer term"]', JSON.stringify(home.parts));
   check('the levels list, showcase, latest feedback and statement lists are gone from Home', !home.gone.length, home.gone.join(','));
   const nx = await page.evaluate(() => ({now:[...document.querySelectorAll('.nxpart:first-of-type .nxlist>li')].map(l => l.textContent.replace(/\s+/g, ' ').trim()), later:[...document.querySelectorAll('.nxpart:last-of-type .nxlist>li')].map(l => l.textContent.replace(/\s+/g, ' ').trim())}));
