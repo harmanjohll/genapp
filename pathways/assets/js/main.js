@@ -18,20 +18,20 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.1.0';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.2.0';
 import {
   getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
   reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
   setLabelMode, markStart, setAllSubjects, setWordStyle,
-} from './state.js?v=7.1.0';
-import { effective } from './engine/years.js?v=7.1.0';
-import { runStrip } from './ui/yearstrip.js?v=7.1.0';
-import { t } from './ui/labels.js?v=7.1.0';
-import { esc, onAction } from './ui/dom.js?v=7.1.0';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.1.0';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.1.0';
-import { icon } from './ui/icons.js?v=7.1.0';
-import { cue, setMutePredicate } from './sound.js?v=7.1.0';
+} from './state.js?v=7.2.0';
+import { effective } from './engine/years.js?v=7.2.0';
+import { runStrip } from './ui/yearstrip.js?v=7.2.0';
+import { t } from './ui/labels.js?v=7.2.0';
+import { esc, onAction } from './ui/dom.js?v=7.2.0';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.2.0';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.2.0';
+import { icon } from './ui/icons.js?v=7.2.0';
+import { cue, setMutePredicate } from './sound.js?v=7.2.0';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);

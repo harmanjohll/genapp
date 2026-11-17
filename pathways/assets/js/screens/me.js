@@ -17,11 +17,11 @@
 
 import {
   getState, toggleEnjoy, toggleValue, toggleStrength, setProof, addNote, dropNote, compassFill,
-} from '../state.js?v=7.1.0';
-import { compassSvg, POINTS, nextPoint, pips, compassWords } from '../ui/compass.js?v=7.1.0';
-import { esc, onAction } from '../ui/dom.js?v=7.1.0';
-import { icon } from '../ui/icons.js?v=7.1.0';
-import { goalLine } from './path.js?v=7.1.0';
+} from '../state.js?v=7.2.0';
+import { compassSvg, POINTS, nextPoint, pips, compassWords } from '../ui/compass.js?v=7.2.0';
+import { esc, onAction } from '../ui/dom.js?v=7.2.0';
+import { icon } from '../ui/icons.js?v=7.2.0';
+import { goalLine } from './path.js?v=7.2.0';
 
 const COLOR = { enjoy: 'var(--cp-enjoy)', strengths: 'var(--cp-good)', values: 'var(--cp-matter)', goal: 'var(--cp-aim)' };
 const NEXT_WORDS = { strengths: 'what you are good at', values: 'what matters to you', goal: 'where you are aiming' };

@@ -3,8 +3,20 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "7.1.0",
+  "version": "7.2.0",
   "releases": [
+    {
+      "version": "7.2.0",
+      "date": "2026-11-17",
+      "head": "A Japandi look in Beatty's colours",
+      "changes": [
+        "Warm paper, calm panels and fine lines.",
+        "Beatty's navy for text and buttons, yellow for where you are, red for your goal.",
+        "Georgia for headings and Calibri for text.",
+        "On a laptop or tablet, your year shows the chart beside your best move, and your goal shows its route beside your steps.",
+        "The places after Sec 4 are plain rings, filled when they are on track."
+      ]
+    },
     {
       "version": "7.1.0",
       "date": "2026-11-15",
