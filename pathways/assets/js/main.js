@@ -448,8 +448,18 @@ onAction(document.body, {
     const id = btn.dataset.id;
     const was = getState().role;
     setRole(id);
+    // Closing a routed sheet steps history back. Open the adults' page only
+    // after that step lands, or the back would undo it.
+    const go = () => { if (id !== 'student' && id !== was) nav('adults', { tab: id }); else refresh(); };
+    const pushed = sheetPushed;
+    if (pushed) {
+      let done = false;
+      const once = () => { if (done) return; done = true; window.removeEventListener('popstate', once); setTimeout(go, 0); };
+      window.addEventListener('popstate', once);
+      setTimeout(once, 250);
+    }
     closeSheet();
-    if (id !== 'student' && id !== was) nav('adults', { tab: id }); else refresh();
+    if (!pushed) go();
   },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
   'set-detail': (btn) => { setWordStyle(flip(btn) ? 'detailed' : 'short'); refresh(); },
