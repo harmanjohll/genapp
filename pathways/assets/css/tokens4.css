@@ -66,73 +66,73 @@
 
 :root {
   /* ink and paper: cool, never cream */
-  --ink:        #0B1430;
-  --ink-soft:   #29344F;
-  --ink-mute:   #4F5A73;
-  --ink-faint:  #56617A;
-  --paper:      #F3F5F9;
-  --paper-warm: #E8ECF3;
-  --paper-base:      #F3F5F9;
-  --paper-warm-base: #E8ECF3;
-  --surface:      #FFFFFF;
-  --surface-base: #FFFFFF;
-  --rule:       #D5DBE6;
-  --rule-soft:  #E3E7EF;
+  --ink:        #1F2130;
+  --ink-soft:   #45474F;
+  --ink-mute:   #5F5D58;
+  --ink-faint:  #5F5D58;
+  --paper:      #F7F5F0;
+  --paper-warm: #EEEAE2;
+  --paper-base:      #F7F5F0;
+  --paper-warm-base: #EEEAE2;
+  --surface:      #FDFCF9;
+  --surface-base: #FDFCF9;
+  --rule:       #DCD6CB;
+  --rule-soft:  #E8E3DA;
 
   /* the night line: chrome, boards, the pass */
-  --night:      #0B1A3F;
-  --night-2:    #13265A;
-  --night-ink:  #EEF2FB;
-  --night-mute: #A9B6D6;
-  --night-rule: #24376B;
+  --night:      #000C53;
+  --night-2:    #0D1C6B;
+  --night-ink:  #F7F5F0;
+  --night-mute: #B4B8D6;
+  --night-rule: #1D2A78;
   /* selected state for tabs and chips: night on paper, yellow after dark */
-  --sel-bg:     #0B1A3F;
-  --sel-ink:    #EEF2FB;
+  --sel-bg:     #000C53;
+  --sel-ink:    #F7F5F0;
   --on-lv:      #FFFFFF;
 
   /* Subject levels. Three hues of deliberately equal weight. Never reused. */
-  --g1:       #0D857A;
-  --g1-wash:  rgba(13, 133, 122, 0.08);
-  --g2:       #2E62D9;
-  --g2-wash:  rgba(46, 98, 217, 0.08);
-  --g3:       #8A3DB8;
-  --g3-wash:  rgba(138, 61, 184, 0.08);
+  --g1:       #5B6290;
+  --g1-wash:  rgba(91, 98, 144, 0.10);
+  --g2:       #2B3880;
+  --g2-wash:  rgba(43, 56, 128, 0.08);
+  --g3:       #000C53;
+  --g3-wash:  rgba(0, 12, 83, 0.07);
 
   /* Reach states, wash voice. */
-  --open:         #15803D;
-  --open-wash:    rgba(21, 128, 61, 0.10);
-  --open-ink:     #136C35;
-  --within:       #8A5300;
-  --within-wash:  rgba(234, 160, 20, 0.16);
-  --longer:       #2357B8;
-  --longer-wash:  rgba(35, 87, 184, 0.10);
-  --other:        #6B4BB3;
-  --other-wash:   rgba(107, 75, 179, 0.10);
+  --open:         #000C53;
+  --open-wash:    rgba(0, 12, 83, 0.07);
+  --open-ink:     #000C53;
+  --within:       #000C53;
+  --within-wash:  rgba(255, 226, 0, 0.42);
+  --longer:       #55545A;
+  --longer-wash:  rgba(31, 33, 48, 0.06);
+  --other:        #5F5D58;
+  --other-wash:   rgba(31, 33, 48, 0.04);
 
   /* Reach states, line voice: strokes in drawn SVG only. */
-  --line-open:   #1FA855;
-  --line-within: #F2A20C;
-  --line-longer: #3D7FEA;
-  --line-other:  #9A6BF0;
-  --line-accent: #FFC21A;
-  --line-faint:  #C3CBDA;
+  --line-open:   #000C53;
+  --line-within: #C9AE00;
+  --line-longer: #9E9E9E;
+  --line-other:  #C4BEB2;
+  --line-accent: #FFE200;
+  --line-faint:  #D6D0C4;
 
-  --compass:      #2357B8;
-  --compass-wash: rgba(35, 87, 184, 0.08);
+  --compass:      #000C53;
+  --compass-wash: rgba(0, 12, 83, 0.06);
 
   /* Action: signal yellow. */
-  --accent:      #FFC21A;
-  --accent-ink:  #0B1430;
-  --accent-dk:   #1D3FA8;
-  --accent-dkr:  #142F85;
-  --accent-wash: rgba(255, 194, 26, 0.22);
-  --flag:        #6E5325;
-  --flag-wash:   rgba(255, 194, 26, 0.18);
+  --accent:      #FFE200;
+  --accent-ink:  #000C53;
+  --accent-dk:   #000C53;
+  --accent-dkr:  #1D2A78;
+  --accent-wash: rgba(255, 226, 0, 0.32);
+  --flag:        #000C53;
+  --flag-wash:   rgba(255, 226, 0, 0.32);
 
   /* type: one family with character, one mono */
-  --display: 'Bricolage Grotesque', 'Segoe UI', Roboto, system-ui, sans-serif;
-  --body:    'Bricolage Grotesque', 'Segoe UI', Roboto, system-ui, sans-serif;
-  --mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --display: Georgia, 'Times New Roman', serif;
+  --body:    Calibri, Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono:    Calibri, Carlito, 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --t-hero:  clamp(2.4rem, 8vw, 4.6rem);
   --t-h1:    clamp(1.8rem, 5vw, 2.9rem);
@@ -152,7 +152,7 @@
 
   /* shape: one documented system. Buttons and switches are pills, cards
      and boards 18, inputs and tiles 12. */
-  --r-sm: 12px; --r-md: 16px; --r-lg: 20px; --r-pill: 999px;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-pill: 999px;
 
   /* motion */
   --ease:      cubic-bezier(0.22, 1, 0.36, 1);
@@ -171,9 +171,9 @@
   --max-narrow: 780px;
 
   /* shadows tinted to the night, never pure black */
-  --shadow-sm: 0 1px 2px rgba(11, 26, 63, 0.07);
-  --shadow:    0 6px 24px rgba(11, 26, 63, 0.09);
-  --shadow-lg: 0 18px 48px rgba(11, 26, 63, 0.18);
+  --shadow-sm: 0 1px 2px rgba(31, 33, 48, 0.04);
+  --shadow:    0 1px 3px rgba(31, 33, 48, 0.05);
+  --shadow-lg: 0 8px 24px rgba(31, 33, 48, 0.06);
 
   --tap: 44px;
 }
@@ -215,109 +215,109 @@
    glow that only exists after dark (applied in app.css, gated on theme). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink:        #EEF2FB;
-    --ink-soft:   #CBD4EA;
-    --ink-mute:   #A3AFCC;
-    --ink-faint:  #98A5C4;
-    --paper:      #070D1F;
-    --paper-warm: #0C1530;
-    --paper-base:      #070D1F;
-    --paper-warm-base: #0C1530;
-    --surface:      #101A36;
-    --surface-base: #101A36;
-    --rule:       #26355F;
-    --rule-soft:  #1A2648;
+    --ink:        #EEEAE2;
+    --ink-soft:   #C9C5BC;
+    --ink-mute:   #A19D95;
+    --ink-faint:  #A19D95;
+    --paper:      #0E1020;
+    --paper-warm: #151829;
+    --paper-base:      #0E1020;
+    --paper-warm-base: #151829;
+    --surface:      #171A2C;
+    --surface-base: #171A2C;
+    --rule:       #2C3047;
+    --rule-soft:  #21253A;
 
-    --night:      #0B1A3F;
-    --night-2:    #142A63;
-    --night-ink:  #EEF2FB;
-    --night-mute: #A9B6D6;
-    --night-rule: #24376B;
-    --sel-bg:     #FFC21A;
-    --sel-ink:    #0B1430;
-    --on-lv:      #0B1430;
+    --night:      #000C53;
+    --night-2:    #0D1C6B;
+    --night-ink:  #EEEAE2;
+    --night-mute: #B4B8D6;
+    --night-rule: #1D2A78;
+    --sel-bg:     #FFE200;
+    --sel-ink:    #000C53;
+    --on-lv:      #000C53;
 
-    --g1:       #3CC2B3;  --g1-wash:  rgba(60, 194, 179, 0.14);
-    --g2:       #7EA2FF;  --g2-wash:  rgba(126, 162, 255, 0.14);
-    --g3:       #C98AF0;  --g3-wash:  rgba(201, 138, 240, 0.14);
+    --g1:       #8890C4;  --g1-wash:  rgba(136, 144, 196, 0.16);
+    --g2:       #B5BBE6;  --g2-wash:  rgba(181, 187, 230, 0.14);
+    --g3:       #EEEAE2;  --g3-wash:  rgba(238, 234, 226, 0.10);
 
-    --open:     #4ADE80;  --open-wash: rgba(74, 222, 128, 0.14);  --open-ink: #6EE79A;
-    --within:   #FBBF24;  --within-wash: rgba(251, 191, 36, 0.16);
-    --longer:   #7EA8FF;  --longer-wash: rgba(126, 168, 255, 0.15);
-    --other:    #B79CFF;  --other-wash: rgba(183, 156, 255, 0.15);
+    --open:     #EEEAE2;  --open-wash: rgba(238, 234, 226, 0.10);  --open-ink: #EEEAE2;
+    --within:   #FFE200;  --within-wash: rgba(255, 226, 0, 0.16);
+    --longer:   #A19D95;  --longer-wash: rgba(238, 234, 226, 0.06);
+    --other:    #8C887F;  --other-wash: rgba(238, 234, 226, 0.04);
 
-    --line-open:   #34D27A;
-    --line-within: #FBBF24;
-    --line-longer: #6B9CFF;
-    --line-other:  #B08CFF;
-    --line-accent: #FFC21A;
-    --line-faint:  #2C3B66;
+    --line-open:   #EEEAE2;
+    --line-within: #FFE200;
+    --line-longer: #8C887F;
+    --line-other:  #5C5A55;
+    --line-accent: #FFE200;
+    --line-faint:  #2C3047;
 
-    --compass:  #9DB7FF;  --compass-wash: rgba(157, 183, 255, 0.12);
+    --compass:  #B5BBE6;  --compass-wash: rgba(181, 187, 230, 0.10);
 
-    --accent:      #FFC21A;
-    --accent-ink:  #0B1430;
-    --accent-dk:   #FFD25A;
-    --accent-dkr:  #FFE08A;
-    --accent-wash: rgba(255, 194, 26, 0.16);
-    --flag:        #FFD25A;  --flag-wash: rgba(255, 194, 26, 0.14);
+    --accent:      #FFE200;
+    --accent-ink:  #000C53;
+    --accent-dk:   #FFE200;
+    --accent-dkr:  #FFF07A;
+    --accent-wash: rgba(255, 226, 0, 0.16);
+    --flag:        #FFE200;  --flag-wash: rgba(255, 226, 0, 0.14);
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow:    0 8px 24px rgba(0, 3, 15, 0.45);
-    --shadow-lg: 0 18px 48px rgba(0, 3, 15, 0.6);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow:    0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
   }
 }
 :root[data-theme="dark"] {
-  --ink:        #EEF2FB;
-  --ink-soft:   #CBD4EA;
-  --ink-mute:   #A3AFCC;
-  --ink-faint:  #98A5C4;
-  --paper:      #070D1F;
-  --paper-warm: #0C1530;
-  --paper-base:      #070D1F;
-  --paper-warm-base: #0C1530;
-  --surface:      #101A36;
-  --surface-base: #101A36;
-  --rule:       #26355F;
-  --rule-soft:  #1A2648;
+  --ink:        #EEEAE2;
+  --ink-soft:   #C9C5BC;
+  --ink-mute:   #A19D95;
+  --ink-faint:  #A19D95;
+  --paper:      #0E1020;
+  --paper-warm: #151829;
+  --paper-base:      #0E1020;
+  --paper-warm-base: #151829;
+  --surface:      #171A2C;
+  --surface-base: #171A2C;
+  --rule:       #2C3047;
+  --rule-soft:  #21253A;
 
-  --night:      #0B1A3F;
-  --night-2:    #142A63;
-  --night-ink:  #EEF2FB;
-  --night-mute: #A9B6D6;
-  --night-rule: #24376B;
-  --sel-bg:     #FFC21A;
-  --sel-ink:    #0B1430;
-  --on-lv:      #0B1430;
+  --night:      #000C53;
+  --night-2:    #0D1C6B;
+  --night-ink:  #EEEAE2;
+  --night-mute: #B4B8D6;
+  --night-rule: #1D2A78;
+  --sel-bg:     #FFE200;
+  --sel-ink:    #000C53;
+  --on-lv:      #000C53;
 
-  --g1:       #3CC2B3;  --g1-wash:  rgba(60, 194, 179, 0.14);
-  --g2:       #7EA2FF;  --g2-wash:  rgba(126, 162, 255, 0.14);
-  --g3:       #C98AF0;  --g3-wash:  rgba(201, 138, 240, 0.14);
+  --g1:       #8890C4;  --g1-wash:  rgba(136, 144, 196, 0.16);
+  --g2:       #B5BBE6;  --g2-wash:  rgba(181, 187, 230, 0.14);
+  --g3:       #EEEAE2;  --g3-wash:  rgba(238, 234, 226, 0.10);
 
-  --open:     #4ADE80;  --open-wash: rgba(74, 222, 128, 0.14);  --open-ink: #6EE79A;
-  --within:   #FBBF24;  --within-wash: rgba(251, 191, 36, 0.16);
-  --longer:   #7EA8FF;  --longer-wash: rgba(126, 168, 255, 0.15);
-  --other:    #B79CFF;  --other-wash: rgba(183, 156, 255, 0.15);
+  --open:     #EEEAE2;  --open-wash: rgba(238, 234, 226, 0.10);  --open-ink: #EEEAE2;
+  --within:   #FFE200;  --within-wash: rgba(255, 226, 0, 0.16);
+  --longer:   #A19D95;  --longer-wash: rgba(238, 234, 226, 0.06);
+  --other:    #8C887F;  --other-wash: rgba(238, 234, 226, 0.04);
 
-  --line-open:   #34D27A;
-  --line-within: #FBBF24;
-  --line-longer: #6B9CFF;
-  --line-other:  #B08CFF;
-  --line-accent: #FFC21A;
-  --line-faint:  #2C3B66;
+  --line-open:   #EEEAE2;
+  --line-within: #FFE200;
+  --line-longer: #8C887F;
+  --line-other:  #5C5A55;
+  --line-accent: #FFE200;
+  --line-faint:  #2C3047;
 
-  --compass:  #9DB7FF;  --compass-wash: rgba(157, 183, 255, 0.12);
+  --compass:  #B5BBE6;  --compass-wash: rgba(181, 187, 230, 0.10);
 
-  --accent:      #FFC21A;
-  --accent-ink:  #0B1430;
-  --accent-dk:   #FFD25A;
-  --accent-dkr:  #FFE08A;
-  --accent-wash: rgba(255, 194, 26, 0.16);
-  --flag:        #FFD25A;  --flag-wash: rgba(255, 194, 26, 0.14);
+  --accent:      #FFE200;
+  --accent-ink:  #000C53;
+  --accent-dk:   #FFE200;
+  --accent-dkr:  #FFF07A;
+  --accent-wash: rgba(255, 226, 0, 0.16);
+  --flag:        #FFE200;  --flag-wash: rgba(255, 226, 0, 0.14);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow:    0 8px 24px rgba(0, 3, 15, 0.45);
-  --shadow-lg: 0 18px 48px rgba(0, 3, 15, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow:    0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 /* ---- board mode: theatre, not enlargement --------------------------------

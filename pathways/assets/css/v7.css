@@ -377,3 +377,115 @@ h1, h2, h3, h4 { font-weight: 600; }
 .pass-more .linkbtn { color: var(--night-ink); display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
 .pass-more .linkbtn .ic { width: 16px; height: 16px; color: var(--night-mute); }
 .pass-more .linkbtn:hover { color: var(--accent); }
+
+/* ---- 7.2: Japandi ---------------------------------------------------------------------------
+   Washi paper, sumi ink, and Beatty's three colours used the way a Japanese room uses colour:
+   navy #000C53 is the ink (text, primary actions, the compass), yellow #FFE200 is the one
+   highlight (where you are, what is selected, the next step), red #EC3237 is the seal (the
+   brand mark and the goal), under a tenth of the screen. Headings in Georgia, text in Calibri.
+   Flat surfaces, hairlines, generous space. Red never marks a place as closed. */
+
+:root {
+  --navy: #000C53;
+  --bty-yellow: #FFE200;
+  --bty-red: #EC3237;
+  --washi: #EFEBE3;
+  --washi-2: #E6E1D7;
+  --btn-bg: #000C53;
+  --btn-ink: #F7F5F0;
+  --btn-hover: #0D1C6B;
+  --panel-accent: #000C53;
+  --panel-accent-ink: #F7F5F0;
+  --cp-enjoy:  #FFE200;
+  --cp-good:   #EC3237;
+  --cp-matter: #F7F5F0;
+  --cp-aim:    #9E9E9E;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --washi: #151829; --washi-2: #1D2136; --btn-bg: #EEEAE2; --btn-ink: #000C53; --btn-hover: #FFFFFF; --panel-accent: #FFE200; --panel-accent-ink: #000C53; }
+}
+:root[data-theme="dark"] { --washi: #151829; --washi-2: #1D2136; --btn-bg: #EEEAE2; --btn-ink: #000C53; --btn-hover: #FFFFFF; --panel-accent: #FFE200; --panel-accent-ink: #000C53; }
+
+body { font-variant-numeric: tabular-nums; letter-spacing: 0; }
+h1, h2 { font-weight: 400; letter-spacing: 0; }
+h3, h4 { font-weight: 700; letter-spacing: 0; }
+.ph h1, .goalwrap h1, .mewrap h1, .adultwrap h1, .cmpwrap h1, .sharewrap h1 { font-weight: 400; }
+
+/* Panels that were navy blocks become washi with ink. The night and accent tokens are
+   remapped inside each, so everything drawn in them follows. */
+.site-head, .nextstep, .goalchip, .pass, .groute, .gcheck, .plancard, .tn-card div, .chg-y, .ss-ask, .scorepass, .cmp-head, .signal:not(.mini), .board, .dock-in {
+  --night: var(--washi); --night-2: var(--washi-2); --night-ink: var(--ink); --night-mute: var(--ink-mute); --night-rule: var(--rule);
+  --accent: var(--panel-accent); --accent-ink: var(--panel-accent-ink);
+  background: var(--washi); color: var(--ink); box-shadow: none;
+}
+.nextstep, .goalchip, .pass, .groute, .gcheck, .plancard, .tn-card div, .ss-ask, .scorepass, .cmp-head, .signal:not(.mini), .board, .dock-in { border: 1px solid var(--rule); }
+.tk-result, .lc-name, .tile-h, .ss-big, .pc-year, .pc-mr { font-weight: 400; }
+.nextstep h1, .pass h1, .gcheck h2, .nextstep h2 { color: var(--ink); }
+.site-head { background: var(--paper); border-bottom: 1px solid var(--rule); }
+.site-head .rolechip { background: transparent; border-color: var(--rule); color: var(--ink); }
+
+/* The brand mark is a seal: red, flat, the one red thing in the header. */
+.brand-mark rect { fill: var(--bty-red); }
+.brand-mark path { stroke: #FFFFFF; }
+.brand-mark circle { fill: #FFFFFF; }
+.brand span { font-weight: 400; color: var(--ink); }
+
+/* Buttons: ink on washi, a soft corner, no lift and no hard shadow. */
+.btn, .btn.accent, .btn.small, .btn.big { background: var(--btn-bg); color: var(--btn-ink); border: 1px solid var(--btn-bg); box-shadow: none; border-radius: 10px; font-weight: 600; transform: none; }
+.btn:hover, .btn.accent:hover { background: var(--btn-hover); color: var(--btn-ink); border-color: var(--btn-hover); transform: none; box-shadow: none; }
+.btn:active, .btn.press:active { transform: scale(0.98); box-shadow: none; }
+.btn.small { border-radius: 8px; }
+.btn.ghost, .btn.small.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); box-shadow: none; }
+.btn.ghost:hover { background: var(--washi); border-color: var(--ink-mute); }
+.btn.ghost.on-night { color: var(--ink); border-color: var(--rule); }
+:root:not([data-theme="light"]) .btn:not(.ghost), :root[data-theme="dark"] .btn:not(.ghost) { box-shadow: none; }
+.btn[aria-pressed="true"].tk-keep { background: var(--washi); color: var(--ink); border-color: var(--rule); box-shadow: none; }
+.alb[aria-pressed="true"] { transform: none; box-shadow: none; }
+.nextcard, .tile-plan { box-shadow: none; }
+
+/* Navigation: the current tab and page get the yellow, quietly. */
+.tab[aria-current="page"] .ic { background: var(--accent-wash); color: var(--ink); }
+.topnav-item[aria-current="page"] { background: transparent; color: var(--ink); box-shadow: inset 0 -3px 0 var(--bty-yellow); border-radius: 0; }
+
+/* The line through the years: a fine ink line; yellow only where you are. */
+.pline::before { width: 2px; left: 16px; background: var(--ink); opacity: 0.85; }
+.py-dot { border-width: 2px; border-color: var(--ink-mute); background: var(--paper); }
+.py[data-when="past"] .py-dot { background: var(--ink-mute); }
+.py[data-when="now"] .py-dot { border-color: var(--ink); background: var(--bty-yellow); box-shadow: none; }
+.py[data-when="after"] .py-dot, .py[data-when="later"] .py-dot { border-color: var(--ink); }
+.py-h, .py-body, .mepart, .card, .gcard, .gopt, .steplist li, .asklist li, .keptlist li, .runsheet li, .lv-card, .daycard { box-shadow: none; }
+.py[data-open="true"] > .py-h, .py-body { border-color: var(--ink-mute); border-width: 1px; }
+.py-h, .mepart, .gcard, .gopt { border-width: 1px; }
+
+/* The goal: red is the seal on where you are aiming. */
+.goalchip .ic, .pa-row[data-goal="true"] .ic, .pc-goal .ic, .pass-goal > .ic, .me-goal .ic, .py-goal-h .ic { color: var(--bty-red); }
+.pa-row[data-goal="true"] { border-color: var(--bty-red); background: var(--surface); }
+.gr-stop[data-state="within-reach"] .gr-node { background: var(--bty-yellow); border-color: var(--bty-yellow); color: var(--navy); }
+.gr-stop[data-state="open"] .gr-node { background: var(--navy); border-color: var(--navy); color: #F7F5F0; }
+.gr-end .gr-node { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--bty-red); }
+.gr-stop[data-now="true"] .gr-node { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--bty-yellow); }
+
+/* The compass keeps its navy disc in every theme and every panel: it is the moment. */
+.cp-disc { fill: #000C53; }
+.cp-ring { stroke: #1D2A78; }
+.cp-tick { stroke: #B4B8D6; }
+.cp-tick.long { stroke: #FFE200; }
+.cp-needle-n { fill: #F7F5F0; stroke: #000C53; }
+.cp-needle-s { fill: #B4B8D6; stroke: #000C53; }
+.cp-hub { fill: #FFE200; stroke: #000C53; }
+.rose-svg { filter: none; }
+.mechipbtn { box-shadow: 0 0 0 1px var(--rule); }
+
+/* The long view: school in yellow, the years after it in ink, then quiet greys. */
+.lv-band[data-id="sec"] { background: var(--bty-yellow); }
+.lv-band[data-id="postsec"] { background: var(--navy); }
+.lv-band[data-id="early"] { background: var(--washi-2); }
+.lv-band[data-id="mid"] { background: var(--washi); }
+.lv-band[data-id="later"] { background: color-mix(in srgb, var(--washi) 50%, var(--paper)); }
+.lv-m[aria-pressed="true"] i { background: var(--bty-yellow); border-color: var(--navy); }
+.lv-key i[data-id="postsec"] { background: var(--navy); box-shadow: none; }
+
+/* Chips and selection: ink fills, no lift. */
+.mechip[aria-pressed="true"], .gopt[aria-pressed="true"] { background: var(--sel-bg); color: var(--sel-ink); border-color: var(--sel-bg); }
+.mechip, .idea, .proof input, .noteadd input, .goalwhy input, .goalby input { border-width: 1px; }
+.play-goal .ic { color: var(--bty-red); }
