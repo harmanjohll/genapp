@@ -30,9 +30,9 @@
    as generic. v4 takes its identity from the thing the app has always been
    about, a transit network, and from the school it is built in: deep navy
    (the night line) and signal yellow (the platform edge, Beatty's own
-   colour). One sans family with a real personality (Bricolage Grotesque,
-   OFL) and one mono for codes, grades and counts (JetBrains Mono, OFL),
-   both bundled, same origin, no CDN.
+   colour). 7.2 kept the navy and yellow at Beatty's own codes, added the
+   red, and moved to Georgia and Calibri on warm washi paper (Japandi). No
+   font files are fetched.
 
    Rules carried from v3, unchanged:
    - Reach states are semantic and never move: open, within reach, a longer
@@ -49,21 +49,7 @@
 
 @layer tokens {
 
-@font-face {
-  font-family: 'Bricolage Grotesque';
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url('../fonts/bricolage-var-latin.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 100 800;
-  font-display: swap;
-  src: url('../fonts/jetbrains-mono-var-latin.woff2') format('woff2');
-}
-
+/* 7.2 moved to Georgia and Calibri, which are on the device: no font files to fetch. */
 :root {
   /* ink and paper: cool, never cream */
   --ink:        #1F2130;

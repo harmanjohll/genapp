@@ -15,16 +15,16 @@
 
 import {
   getState, setGoal, patchGoal, checkGoal, goalDue, toggleEnjoy, toggleAction, toggleDone, YEARS,
-} from '../state.js?v=7.1.0';
-import { sectorsFor, placesFor, familiesFor, workBack, goalMoves } from '../engine/goal.js?v=7.1.0';
-import { isLower } from '../engine/years.js?v=7.1.0';
-import { ticketHtml } from '../ui/ticket.js?v=7.1.0';
-import { DEST_CODE } from '../ui/signal.js?v=7.1.0';
-import { STRIP } from '../ui/yearstrip.js?v=7.1.0';
-import { esc, onAction } from '../ui/dom.js?v=7.1.0';
-import { icon } from '../ui/icons.js?v=7.1.0';
-import { stateWord, isShort } from '../ui/labels.js?v=7.1.0';
-import { goalLine, goalFamily } from './path.js?v=7.1.0';
+} from '../state.js?v=7.3';
+import { sectorsFor, placesFor, familiesFor, workBack, goalMoves } from '../engine/goal.js?v=7.3';
+import { isLower } from '../engine/years.js?v=7.3';
+import { ticketHtml } from '../ui/ticket.js?v=7.3';
+import { DEST_CODE } from '../ui/signal.js?v=7.3';
+import { STRIP } from '../ui/yearstrip.js?v=7.3';
+import { esc, onAction } from '../ui/dom.js?v=7.3';
+import { icon } from '../ui/icons.js?v=7.3';
+import { stateWord, isShort } from '../ui/labels.js?v=7.3';
+import { goalLine, goalFamily } from './path.js?v=7.3';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));
@@ -205,16 +205,19 @@ function summaryHtml(api, st) {
     <h1>${esc(goalLine(api, goal))}</h1>
     ${goalFamily(api, goal) ? `<p class="lede gfam">Courses: ${esc(goalFamily(api, goal))}</p>` : ''}
     ${fits.length ? `<p class="gfrom">${icon('compass')}<span>Fits what you enjoy: ${fits.map((x) => esc(x.label.charAt(0).toLowerCase() + x.label.slice(1))).join(' · ')}</span></p>` : ''}
+    <div class="gcols"><div class="gmain">
     ${routeHtml(api, st, back)}
     <label class="goalwhy"><span class="py-k">Why this goal</span>
       <input type="text" id="g-why" maxlength="140" value="${esc(goal.why || '')}" placeholder="One line, in your words." autocomplete="off"></label>
     ${moves.length ? `<section class="gsec"><h2 class="advh">Best move for it in ${esc(LABEL[y])}</h2>${ticketHtml(moves[0], { hero: true })}</section>` : ''}
+    </div><div class="gside">
     ${stepsHtml(api, st)}
     ${agreeHtml(api, st)}
     <details class="fold gsec"${isShort() ? '' : ' open'}>
       <summary>What it asks, year by year</summary>
       ${asks}
     </details>
+    </div></div>
     <p class="glinks">
       <button type="button" class="chip press" data-action="go" data-s="path">${icon('steps')} On your path</button>
       ${goal.sector ? `<button type="button" class="chip press" data-action="go" data-s="work" data-sector="${esc(goal.sector)}">${icon('d_portfolio')} Jobs in this field</button>` : `<button type="button" class="chip press" data-action="go" data-s="work">${icon('d_portfolio')} Jobs and sectors</button>`}

@@ -8,8 +8,8 @@
 // The data is data/lifelong.json, which an earlier build wrote for a ribbon
 // it never drew.
 
-import { esc } from './dom.js?v=7.1.0';
-import { icon } from './icons.js?v=7.1.0';
+import { esc } from './dom.js?v=7.3';
+import { icon } from './icons.js?v=7.3';
 
 const pct = (age, r) => ((age - r.from) / (r.to - r.from)) * 100;
 

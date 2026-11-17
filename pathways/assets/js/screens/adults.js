@@ -15,11 +15,11 @@
 // The tab arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
 // printed handout always reproduces the exact page.
 
-import { getState } from '../state.js?v=7.1.0';
-import { esc, onAction } from '../ui/dom.js?v=7.1.0';
-import { decorate } from '../ui/glossary.js?v=7.1.0';
-import { icon } from '../ui/icons.js?v=7.1.0';
-import { STEPS } from './session.js?v=7.1.0';
+import { getState } from '../state.js?v=7.3';
+import { esc, onAction } from '../ui/dom.js?v=7.3';
+import { decorate } from '../ui/glossary.js?v=7.3';
+import { icon } from '../ui/icons.js?v=7.3';
+import { STEPS } from './session.js?v=7.3';
 
 const TABS = [
   { id: 'parent', label: 'Parents' },

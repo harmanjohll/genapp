@@ -10,7 +10,7 @@
 // loads. A new build (new VERSION below, stamped by tools/release.mjs) makes
 // a new cache and the old one is deleted on activate.
 
-const VERSION = '7.1.0';
+const VERSION = '7.3';
 const CACHE = `paths7-${VERSION}`;
 // The caches earlier builds kept at genapp/pathways/ and genapp/pathways5/. The
 // frozen copies in legacy/ use `paths4legacy-` and `paths6legacy-`, which this
@@ -23,7 +23,6 @@ const SHELL = [
   './index.html',
   v('./assets/css/tokens4.css'), v('./assets/css/base.css'),
   v('./assets/css/app.css'), v('./assets/css/play.css'), v('./assets/css/v4.css'), v('./assets/css/v7.css'),
-  v('./assets/fonts/bricolage-var-latin.woff2'), v('./assets/fonts/jetbrains-mono-var-latin.woff2'),
   v('./assets/js/main.js'), v('./assets/js/state.js'),
   v('./assets/js/data-loader.js'), v('./assets/js/sound.js'),
   v('./assets/js/engine/rules.js'), v('./assets/js/engine/reach.js'),

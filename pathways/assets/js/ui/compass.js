@@ -9,7 +9,7 @@
 // Nothing here is computed about the student. The drawing only counts what
 // they tapped, so it can never say what kind of person they are.
 
-import { esc } from './dom.js?v=7.1.0';
+import { esc } from './dom.js?v=7.3';
 
 export const POINTS = [
   { id: 'enjoy', short: 'Enjoy', max: 2, turn: 0 },

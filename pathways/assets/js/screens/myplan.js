@@ -14,23 +14,23 @@
 // on the pass, the compass has its own card, and each saved step can be
 // ticked as done. It prints as one page for a parent or a review.
 
-import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.1.0';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.1.0';
-import { goalLine } from './path.js?v=7.1.0';
-import { reach } from '../engine/reach.js?v=7.1.0';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.1.0';
-import { advise, sayName } from '../engine/advice.js?v=7.1.0';
-import { report } from '../engine/grades.js?v=7.1.0';
-import { psleScore } from '../engine/psle.js?v=7.1.0';
-import { openCount, mapPips } from '../ui/map.js?v=7.1.0';
-import { sayMove, roleWords } from '../ui/talk.js?v=7.1.0';
-import { ticketHtml } from '../ui/ticket.js?v=7.1.0';
-import { boardHtml } from '../ui/board.js?v=7.1.0';
-import { signalHtml } from '../ui/signal.js?v=7.1.0';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.1.0';
-import { STRIP } from '../ui/yearstrip.js?v=7.1.0';
-import { esc, onAction } from '../ui/dom.js?v=7.1.0';
-import { icon } from '../ui/icons.js?v=7.1.0';
+import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.3';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.3';
+import { goalLine } from './path.js?v=7.3';
+import { reach } from '../engine/reach.js?v=7.3';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.3';
+import { advise, sayName } from '../engine/advice.js?v=7.3';
+import { report } from '../engine/grades.js?v=7.3';
+import { psleScore } from '../engine/psle.js?v=7.3';
+import { openCount, mapPips } from '../ui/map.js?v=7.3';
+import { sayMove, roleWords } from '../ui/talk.js?v=7.3';
+import { ticketHtml } from '../ui/ticket.js?v=7.3';
+import { boardHtml } from '../ui/board.js?v=7.3';
+import { signalHtml } from '../ui/signal.js?v=7.3';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.3';
+import { STRIP } from '../ui/yearstrip.js?v=7.3';
+import { esc, onAction } from '../ui/dom.js?v=7.3';
+import { icon } from '../ui/icons.js?v=7.3';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 

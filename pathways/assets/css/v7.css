@@ -489,3 +489,29 @@ h3, h4 { font-weight: 700; letter-spacing: 0; }
 .mechip[aria-pressed="true"], .gopt[aria-pressed="true"] { background: var(--sel-bg); color: var(--sel-ink); border-color: var(--sel-bg); }
 .mechip, .idea, .proof input, .noteadd input, .goalwhy input, .goalby input { border-width: 1px; }
 .play-goal .ic { color: var(--bty-red); }
+
+/* Signal lamps: a plain ring for every state. No dashed ring, which read as a gear. */
+.sg-dot { fill: var(--paper); stroke-width: 2; }
+.sg-lamp[data-state="other-route"] .sg-dot { stroke-dasharray: none; stroke-width: 1.5; }
+.sg-lamp[data-state="open"] .sg-dot { fill: var(--line-open); stroke: var(--line-open); }
+.sg-lamp[data-state="open"] .sg-glow { opacity: 0; }
+
+/* Laptop and tablet: use the width. The open year sets the signal beside the best move,
+   and Goal sets the route beside the steps. Phones keep one column. */
+@media (min-width: 1024px) {
+  .pathwrap { max-width: 1180px; }
+  .py-body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 32px; align-items: start; }
+  .py-body > * { grid-column: 1 / -1; }
+  .py-body > .signal { grid-column: 1; grid-row: 1; align-self: center; }
+  .py-body > .py-goal { grid-column: 1; grid-row: 2; }
+  .py-body > .py-move { grid-column: 2; grid-row: 1 / span 2; display: grid; gap: 12px; }
+  .py-move .tk-result { font-size: 1.3rem; }
+  .lookrow { max-width: none; }
+
+  .goalwrap { max-width: 1180px; }
+  .gcols { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); column-gap: 40px; align-items: start; }
+  .gside > .gsec:first-child > .advh { margin-top: 0; }
+  .gmain > .gsec:last-child { margin-bottom: 0; }
+}
+@media (min-width: 1024px) and (max-width: 1180px) { .py-body { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .gmain .tk-hero .tk-result { font-size: 1.45rem; } }

@@ -16,21 +16,21 @@
 // Explore used to hold (places, jobs, fees, school types, adults) are links
 // at the foot of the line.
 
-import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.1.0';
-import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.1.0';
-import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.1.0';
-import { reach } from '../engine/reach.js?v=7.1.0';
-import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.1.0';
-import { sayMove } from '../ui/talk.js?v=7.1.0';
-import { advise } from '../engine/advice.js?v=7.1.0';
-import { psleScore } from '../engine/psle.js?v=7.1.0';
-import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.1.0';
-import { signalHtml } from '../ui/signal.js?v=7.1.0';
-import { ticketHtml } from '../ui/ticket.js?v=7.1.0';
-import { subjTile } from './year.js?v=7.1.0';
-import { esc, onAction } from '../ui/dom.js?v=7.1.0';
-import { icon } from '../ui/icons.js?v=7.1.0';
-import { stateWord, openWord, isShort, t } from '../ui/labels.js?v=7.1.0';
+import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.3';
+import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.3';
+import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.3';
+import { reach } from '../engine/reach.js?v=7.3';
+import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.3';
+import { sayMove } from '../ui/talk.js?v=7.3';
+import { advise } from '../engine/advice.js?v=7.3';
+import { psleScore } from '../engine/psle.js?v=7.3';
+import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.3';
+import { signalHtml } from '../ui/signal.js?v=7.3';
+import { ticketHtml } from '../ui/ticket.js?v=7.3';
+import { subjTile } from './year.js?v=7.3';
+import { esc, onAction } from '../ui/dom.js?v=7.3';
+import { icon } from '../ui/icons.js?v=7.3';
+import { stateWord, openWord, isShort, t } from '../ui/labels.js?v=7.3';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const ORDER = YEARS.map((y) => y.id);
@@ -165,7 +165,7 @@ function yearBody(api, y, st) {
       ${carry ? `<p><button type="button" class="btn press" data-action="py-carry" data-y="${y}">Copy your ${esc(LABEL[carry.from])} levels ${icon('arrow')}</button></p>` : ''}
       ${rows ? signalHtml(rows, { key: `path-${y}`, mini: true }) : ''}
       ${goalHtml(api, y, st)}
-      ${top ? `<p class="py-k">${st.goal && gm.length ? 'Best move for your goal' : 'Your best move'}</p>${ticketHtml(top, { simple: true })}` : ''}
+      ${top ? `<div class="py-move"><p class="py-k">${st.goal && gm.length ? 'Best move for your goal' : 'Your best move'}</p>${ticketHtml(top, { simple: true })}</div>` : ''}
       <details class="fold py-levels"${n ? '' : ' open'}>
         <summary>${n ? `Your ${esc(LABEL[y])} levels` : `Set your ${esc(LABEL[y])} levels`}</summary>
         <div class="subjgrid">${tiles.map((s) => subjTile(s, plan, 'py-lvl')).join('')}</div>

@@ -2,12 +2,33 @@
 
 The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
 
-## Latest: v7.1.0, in `pathways/`. Build here.
+## Latest: v7.3, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
-- To release: `node pathways/tools/release.mjs x.y.z`, then add the notes to `pathways/data/version.json` and a line under the version below.
+- To release: `node pathways/tools/release.mjs x.y` (two numbers, such as 7.3), then add the notes to `pathways/data/version.json` and a line under the version below.
+
+### v7.3 (2026-11-17): fixes
+
+From 7.3, versions are two numbers (major.minor): `release.mjs` accepts `7.3` and refuses `7.3.0`.
+
+**What changed**
+- Choosing Parent or Teacher under "I am" opens their page. Closing the menu stepped history back after the page changed, which undid it (`pick-role` in `main.js` now waits for that step).
+- The shared plan card image (`cardImage` in `screens/share.js`) is drawn in the Japandi look; it still used the 6.0 navy, yellow and fonts.
+- The game's story map image uses Georgia and Calibri.
+- The two bundled font files 7.2 stopped using are deleted, with their preload, cache entries and `@font-face` rules.
+- A sweep of every screen, in light and dark, at 390px and 1280px: no errors, no failed requests, no sideways scroll, no low contrast text.
+
+### v7.2.0 (2026-11-17): Japandi, in Beatty's colours
+
+**What is critical (keep these when building on it)**
+- Beatty's three colours, from the school's visual identity guide: navy `#000C53` is the ink (text, primary buttons, the compass disc), yellow `#FFE200` the one highlight (where you are, what is selected), red `#EC3237` the seal (the brand mark and the goal), under a tenth of the screen. Red never marks a place as closed.
+- No other hues: on track is navy, 1 to 2 moves is yellow, longer routes are grey.
+- Warm washi paper `#F7F5F0`; panels `--washi` with hairlines; no hard shadows.
+- Georgia for headings, Calibri (Carlito, then the system sans) for text. The bundled fonts are no longer used.
+- Panels that were navy remap the night and accent tokens locally (`v7.css`, 7.2 section).
+- Laptop and tablet (1024px and up): the open year sets the chart beside the best move; Goal sets the route beside the steps. Phones keep one column.
 
 ### v7.1.0 (2026-11-15): the unslop pass
 
@@ -134,7 +155,9 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 
 | Version | Folder | Status | Dates | Built for |
 | --- | --- | --- | --- | --- |
-| v7.1.0 | `pathways/` | **Latest** | 2026-11-15 | The unslop pass: calmer type, yellow only where it means something, spacing on a 4px grid |
+| v7.3 | `pathways/` | **Latest** | 2026-11-17 | Fixes: the role menu, the shared card image, unused fonts removed |
+| v7.2.0 | `pathways/` (superseded by 7.3) | Superseded | 2026-11-17 | Japandi in Beatty's navy, yellow and red; wider layouts on laptop and tablet |
+| v7.1.0 | `pathways/` (superseded by 7.2) | Superseded | 2026-11-15 | The unslop pass: calmer type, yellow only where it means something, spacing on a 4px grid |
 | v7.0.0 | `pathways/` (superseded by 7.1) | Superseded | 2026-11-11 | MOE's three questions: Me (the compass), a goal with steps and a date, the path past 17, the game joined to both |
 | v6.0.0 | `legacy/pathways-v6/` | Legacy, frozen | 2026-11-09 to 2026-11-11 | One app: v5's path, goal, compare and sharing, with v4.4's hub, saved page and game |
 | v5.0.0 | none (folded into 6.0) | Superseded | 2026-11-04 to 2026-11-09 | One path, goal first planning, compare, sharing for the conversation |
@@ -219,6 +242,6 @@ The forwarding pages keep any `?query`, and remove any offline cache an old vers
 ## Starting the next version (v8)
 
 1. Copy `pathways/` to `legacy/pathways-v7/`, give its offline cache its own prefix, point its links to other legacy folders at `../pathways-vN/`, and commit that copy on its own.
-2. Build v8 in `pathways/`; `node pathways/tools/release.mjs 8.0.0`.
+2. Build v8 in `pathways/`; `node pathways/tools/release.mjs 8.0`.
 3. Update this log: the Latest line, a v8 section, and v7 moved to Legacy with why it was superseded.
 4. Keep `pathways.html` and the forwarding pages as they are; they need no change.
