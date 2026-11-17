@@ -10,7 +10,7 @@
 // stylesheets, the entry module, every relative import inside the module graph,
 // and every data file at fetch time.
 //
-//   node pathways/tools/release.mjs 3.0.1   set a new version everywhere
+//   node pathways/tools/release.mjs 7.3     set a new version everywhere (major.minor)
 //   node pathways/tools/release.mjs         re-stamp the current one
 //
 // Then write the release notes into data/version.json. The version sweep fails
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HTML = join(root, 'index.html');
-const SUBRESOURCES = ['assets/css/tokens4.css', 'assets/css/base.css', 'assets/css/app.css', 'assets/css/play.css', 'assets/css/v4.css', 'assets/css/v7.css', 'assets/fonts/bricolage-var-latin.woff2', 'assets/js/main.js'];
+const SUBRESOURCES = ['assets/css/tokens4.css', 'assets/css/base.css', 'assets/css/app.css', 'assets/css/play.css', 'assets/css/v4.css', 'assets/css/v7.css', 'assets/js/main.js'];
 
 /** Every .js under assets/js, at any depth. */
 function jsFiles(dir) {
@@ -40,8 +40,8 @@ if (!version) {
   console.error('No version given and none in index.html.');
   process.exit(1);
 }
-if (!/^\d+\.\d+\.\d+$/.test(version)) {
-  console.error(`Version must look like 2.4.1, got ${version}`);
+if (!/^\d+\.\d+$/.test(version)) {
+  console.error(`Version must look like 7.3 (major.minor), got ${version}`);
   process.exit(1);
 }
 
@@ -56,7 +56,7 @@ SUBRESOURCES.forEach((rel) => {
 // Every other versioned address in the document: the module preloads and data
 // preloads. They sat at an old stamp for two releases, so each hinted file was
 // fetched twice, once at the hint's address and once at the real one.
-out = out.replace(/\?v=\d+\.\d+\.\d+/g, `?v=${version}`);
+out = out.replace(/\?v=\d+\.\d+(\.\d+)?/g, `?v=${version}`);
 writeFileSync(HTML, out);
 
 // 2. Every relative import inside the module graph. Node resolves a query on a

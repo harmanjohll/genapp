@@ -3,8 +3,20 @@
     "purpose": "Version stamp and release notes, shown in the what changed sheet.",
     "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
   },
-  "version": "7.2.0",
+  "version": "7.3",
   "releases": [
+    {
+      "version": "7.3",
+      "date": "2026-11-17",
+      "head": "Fixes",
+      "changes": [
+        "Choosing Parent or Teacher under I am opens their own page again.",
+        "The plan card you share as an image now matches the app: washi paper, navy text, the red seal.",
+        "The story map at the end of the game uses the same fonts as the app.",
+        "Paths no longer downloads two font files it stopped using, so it opens faster on school wifi.",
+        "Version numbers are now two numbers, such as 7.3."
+      ]
+    },
     {
       "version": "7.2.0",
       "date": "2026-11-17",

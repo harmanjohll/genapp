@@ -9,26 +9,26 @@
 // 7.0: the compass stays off the card until the student switches it on. The
 // image then shows its words; the link carries its ids and nothing typed.
 
-import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.2.0';
-import { decodePacket } from '../engine/packet.js?v=7.2.0';
-import { reach } from '../engine/reach.js?v=7.2.0';
-import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.2.0';
-import { advise } from '../engine/advice.js?v=7.2.0';
-import { goalMoves } from '../engine/goal.js?v=7.2.0';
-import { sayMove } from '../ui/talk.js?v=7.2.0';
-import { esc, onAction } from '../ui/dom.js?v=7.2.0';
-import { icon } from '../ui/icons.js?v=7.2.0';
-import { stateWord, openWord } from '../ui/labels.js?v=7.2.0';
-import { goalLine } from './path.js?v=7.2.0';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.2.0';
+import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.3';
+import { decodePacket } from '../engine/packet.js?v=7.3';
+import { reach } from '../engine/reach.js?v=7.3';
+import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.3';
+import { advise } from '../engine/advice.js?v=7.3';
+import { goalMoves } from '../engine/goal.js?v=7.3';
+import { sayMove } from '../ui/talk.js?v=7.3';
+import { esc, onAction } from '../ui/dom.js?v=7.3';
+import { icon } from '../ui/icons.js?v=7.3';
+import { stateWord, openWord } from '../ui/labels.js?v=7.3';
+import { goalLine } from './path.js?v=7.3';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.3';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const FOR = { parent: 'A parent', teacher: 'A teacher', counsellor: 'My ECG counsellor' };
 
 // ---- the packet: what a link carries (engine/packet.js) -------------------
 
-export { decodePacket } from '../engine/packet.js?v=7.2.0';
-import { encodePacket } from '../engine/packet.js?v=7.2.0';
+export { decodePacket } from '../engine/packet.js?v=7.3';
+import { encodePacket } from '../engine/packet.js?v=7.3';
 export function packFor(st, y, withMe = false) { return { y, plan: st.plans[y] || {}, goal: st.goal || null, me: withMe ? st.compass : null }; }
 function linkFor(packet, who) {
   const url = new URL(location.origin + location.pathname);
@@ -95,42 +95,48 @@ async function cardImage(api, pl, who) {
   const W = 1080; const H = 1350;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const x = cv.getContext('2d');
-  x.fillStyle = '#0B1A3F'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#FFC21A'; x.beginPath(); x.roundRect(80, 80, 72, 72, 20); x.fill();
+  // The card in the app's own look: washi paper, navy ink, the red seal, a yellow highlight.
+  const NAVY = '#000C53'; const INK = '#1F2130'; const MUTE = '#5F5D58'; const RED = '#EC3237'; const YEL = '#FFE200';
+  const SERIF = 'Georgia, serif'; const SANS = 'Calibri, Carlito, "Segoe UI", system-ui, sans-serif';
+  x.fillStyle = '#F7F5F0'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = '#DCD6CB'; x.lineWidth = 2; x.strokeRect(40, 40, W - 80, H - 80);
+  x.fillStyle = RED; x.beginPath(); x.roundRect(80, 80, 72, 72, 16); x.fill();
   // The brand mark: the same path as the 32 unit SVG, scaled by 2.25 at (80, 80).
-  x.strokeStyle = '#0B1A3F'; x.lineWidth = 7; x.lineCap = 'round'; x.beginPath(); x.moveTo(95.75, 131.75);
+  x.strokeStyle = '#FFFFFF'; x.lineWidth = 7; x.lineCap = 'round'; x.beginPath(); x.moveTo(95.75, 131.75);
   x.bezierCurveTo(107, 131.75, 104.75, 100.25, 116, 100.25); x.bezierCurveTo(127.25, 100.25, 125, 131.75, 136.25, 131.75); x.stroke();
-  x.fillStyle = '#EEF2FB'; x.font = '800 54px "Bricolage Grotesque", sans-serif'; x.fillText('Paths', 176, 134);
-  x.fillStyle = '#A9B6D6'; x.font = '700 26px "JetBrains Mono", monospace'; x.fillText(`FOR ${String(FOR[who] || 'you').toUpperCase()}`, 80, 220);
-  x.fillStyle = '#EEF2FB'; x.font = '800 96px "Bricolage Grotesque", sans-serif'; x.fillText(LABEL[pl.y], 80, 320);
-  x.fillStyle = '#FFC21A'; x.font = '700 40px "Bricolage Grotesque", sans-serif'; x.fillText(`${pl.open} of 8 ${pl.word}`, 80, 380);
-  let y = 450;
-  if (pl.goal) { x.fillStyle = '#EEF2FB'; x.font = '700 36px "Bricolage Grotesque", sans-serif'; y = wrap(x, `Aiming for: ${goalLine(api, pl.goal)}`, 80, y, 920, 46) + 14; }
+  x.fillStyle = NAVY; x.font = `400 54px ${SERIF}`; x.fillText('Paths', 176, 134);
+  x.fillStyle = MUTE; x.font = `500 28px ${SANS}`; x.fillText(`For ${String(FOR[who] || 'you').replace(/^A /, 'a ').replace(/^My /, 'my ')}`, 80, 220);
+  x.fillStyle = NAVY; x.font = `400 96px ${SERIF}`; x.fillText(LABEL[pl.y], 80, 320);
+  x.font = `600 38px ${SANS}`; const openTxt = `${pl.open} of 8 ${pl.word}`;
+  x.fillStyle = YEL; x.fillRect(80, 352, x.measureText(openTxt).width + 24, 44);
+  x.fillStyle = NAVY; x.fillText(openTxt, 92, 386);
+  let y = 460;
+  if (pl.goal) { x.fillStyle = RED; x.beginPath(); x.arc(92, y - 12, 10, 0, Math.PI * 2); x.fill(); x.fillStyle = INK; x.font = `500 36px ${SANS}`; y = wrap(x, goalLine(api, pl.goal), 116, y, 880, 46) + 14; }
   // The compass, only when the student switched it on: one line for each part.
   pl.meLines.forEach(([k, list]) => {
-    x.fillStyle = '#A9B6D6'; x.font = '700 24px "JetBrains Mono", monospace'; x.fillText(k.toUpperCase(), 80, y);
-    x.fillStyle = '#EEF2FB'; x.font = '500 28px "Bricolage Grotesque", sans-serif'; y = wrap(x, list.join(' · '), 300, y, 700, 36) + 8;
+    x.fillStyle = MUTE; x.font = `500 26px ${SANS}`; x.fillText(k, 80, y);
+    x.fillStyle = INK; x.font = `400 28px ${SANS}`; y = wrap(x, list.join(' · '), 300, y, 700, 36) + 8;
   });
   if (pl.meLines.length) y += 14;
   // Levels as chips.
-  x.font = '700 30px "Bricolage Grotesque", sans-serif';
+  x.font = `600 30px ${SANS}`;
   let cx = 80; const chipH = 54;
   pl.levels.forEach((l) => {
     const label = `${l.name}  ${l.lv}`; const w = x.measureText(label).width + 40;
     if (cx + w > W - 80) { cx = 80; y += chipH + 14; }
-    x.fillStyle = '#13265A'; x.beginPath(); x.roundRect(cx, y, w, chipH, 14); x.fill();
-    x.fillStyle = '#EEF2FB'; x.fillText(label, cx + 20, y + 37); cx += w + 12;
+    x.fillStyle = '#EEEAE2'; x.beginPath(); x.roundRect(cx, y, w, chipH, 10); x.fill();
+    x.fillStyle = NAVY; x.fillText(label, cx + 20, y + 37); cx += w + 12;
   });
   y += chipH + 50;
   if (pl.top) {
-    x.fillStyle = '#A9B6D6'; x.font = '700 24px "JetBrains Mono", monospace'; x.fillText('BEST MOVE', 80, y); y += 46;
-    x.fillStyle = '#EEF2FB'; x.font = '800 40px "Bricolage Grotesque", sans-serif'; y = wrap(x, pl.top.result, 80, y, 920, 50);
-    x.fillStyle = '#A9B6D6'; x.font = '500 30px "Bricolage Grotesque", sans-serif'; y = wrap(x, `${pl.top.cond.charAt(0).toUpperCase()}${pl.top.cond.slice(1)}.`, 80, y + 4, 920, 40) + 24;
+    x.fillStyle = MUTE; x.font = `500 26px ${SANS}`; x.fillText('Best move', 80, y); y += 46;
+    x.fillStyle = NAVY; x.font = `400 40px ${SERIF}`; y = wrap(x, pl.top.result, 80, y, 920, 50);
+    x.fillStyle = INK; x.font = `400 30px ${SANS}`; y = wrap(x, `${pl.top.cond.charAt(0).toUpperCase()}${pl.top.cond.slice(1)}.`, 80, y + 4, 920, 40) + 24;
   }
-  x.fillStyle = '#A9B6D6'; x.font = '700 24px "JetBrains Mono", monospace'; x.fillText('QUESTIONS TO ASK', 80, y); y += 46;
-  x.fillStyle = '#EEF2FB'; x.font = '500 32px "Bricolage Grotesque", sans-serif';
+  x.fillStyle = MUTE; x.font = `500 26px ${SANS}`; x.fillText('Questions to ask', 80, y); y += 46;
+  x.fillStyle = INK; x.font = `400 32px ${SANS}`;
   questionsFor(api, who, pl).slice(0, 2).forEach((q) => { if (y < H - 160) y = wrap(x, q, 80, y, 920, 42) + 14; });
-  x.fillStyle = '#FFC21A'; x.font = '700 26px "JetBrains Mono", monospace'; x.fillText('harmanjohll.github.io/genapp/pathways.html', 80, H - 80);
+  x.fillStyle = NAVY; x.font = `500 26px ${SANS}`; x.fillText('harmanjohll.github.io/genapp/pathways.html', 80, H - 80);
   return new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 

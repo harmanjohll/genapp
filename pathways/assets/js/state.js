@@ -12,8 +12,8 @@
 // 7.0 keeps its own key. On its first visit it reads what 6.0 saved on this
 // device, or joins v4.4 and v5 the way 6.0 did (engine/migrate.js). It never
 // writes to an old key, so the frozen builds in legacy/ keep their own plans.
-import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.2.0';
-import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.2.0';
+import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.3';
+import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.3';
 
 const STORAGE_KEY = 'paths7.state.v1';
 const V6_KEY = 'paths6.state.v1';

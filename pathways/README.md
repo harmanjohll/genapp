@@ -51,8 +51,8 @@ Underneath:
 - **Private and offline.** No account, nothing leaves the device, and no
   network calls at runtime. The compass leaves the device only if the
   student adds it to a card they share; a link carries its ids and never
-  what was typed. Fonts (Bricolage Grotesque, JetBrains Mono; OFL) and icons
-  (Phosphor; MIT) are bundled, and a service worker keeps a copy for use
+  what was typed. Headings use Georgia and text Calibri, both on the device;
+  icons (Phosphor; MIT) are bundled, and a service worker keeps a copy for use
   with no signal.
 
 ## Where things are
@@ -123,6 +123,6 @@ and links (the Seven sweep).
 
 ## Releasing
 
-`node pathways/tools/release.mjs x.y.z` stamps the version everywhere a
+`node pathways/tools/release.mjs x.y` stamps the version everywhere a
 browser might cache it. Then add the notes to `data/version.json` and a line
 to `../PATHWAYS_VERSIONS.md`.

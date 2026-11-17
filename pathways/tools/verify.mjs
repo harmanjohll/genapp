@@ -126,7 +126,6 @@ function payloadSweep() {
   const parts = [
     join(root, 'index.html'),
     ...CSS_FILES.map((f) => join(root, 'assets/css', f)),
-    join(root, 'assets/fonts/bricolage-var-latin.woff2'),
     ...EAGER_DATA.map((n) => join(root, 'data', `${n}.json`)),
   ];
   parts.forEach((p) => { try { total += statSync(p).size; } catch { failures.push({ why: `missing: ${p}` }); } });
