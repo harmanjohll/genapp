@@ -5,12 +5,12 @@
 // one obvious next step is the last thing on the panel: carry these levels
 // into Sec 1.
 
-import { getState, setPsle, replaceYearPlan } from '../state.js?v=7.3';
-import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=7.3';
-import { esc, onAction } from './dom.js?v=7.3';
-import { icon } from './icons.js?v=7.3';
-import { listNames } from '../engine/advice.js?v=7.3';
-import { isShort } from './labels.js?v=7.3';
+import { getState, setPsle, replaceYearPlan } from '../state.js?v=7.4';
+import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=7.4';
+import { esc, onAction } from './dom.js?v=7.4';
+import { icon } from './icons.js?v=7.4';
+import { listNames } from '../engine/advice.js?v=7.4';
+import { isShort } from './labels.js?v=7.4';
 
 const SUBJ_PLAN_ID = { el: 'el', mtl: 'mtl', maths: 'maths', science: 'ls_science' };
 
@@ -85,10 +85,10 @@ function choicesHtml(api, psle, rules, names) {
   return `
     <h2 class="advh">What these choices put on track</h2>
     ${isShort() ? '' : '<p class="small">On track means these levels fit what each place asks in the SEC.</p>'}
-    <p class="p6-now"><b>${ch.onTrack}</b> of ${ch.total} on track with the levels above.</p>
+    <p class="p6-now">${ch.names.length ? `With the levels above: ${esc(listNames(ch.names))}.` : ''} Every other place keeps a route in.</p>
     ${ch.groups.length ? `
     <ul class="p6c">
-      ${ch.groups.map((g) => `<li><b>Group ${g.g}</b>: most subjects start at ${esc(g.base)}. ${g.onTrack} of ${ch.total} on track${g.names.length ? `: ${esc(listNames(g.names))}` : ''}.</li>`).join('')}
+      ${ch.groups.map((g) => `<li><b>Group ${g.g}</b>: most subjects start at ${esc(g.base)}. ${g.names.length ? `On track: ${esc(listNames(g.names))}.` : ''}</li>`).join('')}
     </ul>` : ''}
     ${ch.picks.length ? `
     <ul class="p6c">

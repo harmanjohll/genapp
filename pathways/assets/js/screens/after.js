@@ -10,21 +10,21 @@
 // says which year that is, every time, because a Sec 1 plan read as a
 // destination answer is an inference and must look like one.
 
-import { getState, setFamilies } from '../state.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { effective } from '../engine/years.js?v=7.3';
-import { advise, listNames, sayName } from '../engine/advice.js?v=7.3';
-import { report } from '../engine/grades.js?v=7.3';
-import { openCount } from '../ui/map.js?v=7.3';
-import { yearStrip } from '../ui/yearstrip.js?v=7.3';
-import { sayMove, roleWords } from '../ui/talk.js?v=7.3';
-import { ticketHtml } from '../ui/ticket.js?v=7.3';
-import { boardWord } from '../ui/board.js?v=7.3';
-import { DEST_CODE } from '../ui/signal.js?v=7.3';
-import { t, isShort, stateWord } from '../ui/labels.js?v=7.3';
-import { decorate } from '../ui/glossary.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
+import { getState, setFamilies } from '../state.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { effective } from '../engine/years.js?v=7.4';
+import { advise, listNames, sayName } from '../engine/advice.js?v=7.4';
+import { report } from '../engine/grades.js?v=7.4';
+import { openCount } from '../ui/map.js?v=7.4';
+import { yearStrip } from '../ui/yearstrip.js?v=7.4';
+import { roleWords } from '../ui/talk.js?v=7.4';
+import { ticketHtml } from '../ui/ticket.js?v=7.4';
+import { boardWord } from '../ui/board.js?v=7.4';
+import { DEST_CODE } from '../ui/signal.js?v=7.4';
+import { t, isShort, stateWord } from '../ui/labels.js?v=7.4';
+import { decorate } from '../ui/glossary.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
 
 const YEAR_LABEL = { sec1: 'Sec 1', sec2: 'Sec 2', sec3: 'Sec 3', sec4: 'Sec 4', sec5: 'Sec 5' };
 const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });
@@ -94,10 +94,10 @@ export const after = {
         <div class="sign-body">
           <p class="sign-meta">After Sec <span>Age 16 to 17</span></p>
           <h1>${esc(t('afterTitle'))}</h1>
-          <p class="sign-lede">Your levels decide how many moves each place needs.</p>
+          <p class="sign-lede">What each place asks, and where your levels stand for it.</p>
         </div>
       </header>
-      <p class="basis">${icon('train')} ${esc(basisLine(api))} <b>${open} of ${rows.length}</b> open on that plan.</p>
+      <p class="basis">${icon('train')} ${esc(basisLine(api))} Each place is a path in its own right.</p>
       <div class="linegrid">
         ${rows.map((r, i) => `
           <button type="button" class="linecard press arrive" style="--lc:${LINE[r.state]};animation-delay:${Math.min(i, 7) * 40}ms" data-action="go" data-s="dest" data-id="${esc(r.id)}">

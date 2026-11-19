@@ -5,14 +5,14 @@
 // B changes, place by place, then the table, then B's levels. "Use Plan B"
 // is the only thing that writes to the real plan.
 
-import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=7.3';
-import { listNames } from '../engine/advice.js?v=7.3';
-import { subjTile } from './year.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { stateWord, openWord } from '../ui/labels.js?v=7.3';
+import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=7.4';
+import { listNames } from '../engine/advice.js?v=7.4';
+import { subjTile } from './year.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { stateWord } from '../ui/labels.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const RANK = { open: 0, 'within-reach': 1, 'longer-route': 2, 'other-route': 3 };
@@ -73,7 +73,7 @@ export default {
         ${changed.length ? `<p class="small">Plan B changes ${esc(listNames(changed.map((s) => `${s.shortName || s.name} to ${B[s.id] || 'none'}`)))}.</p>` : ''}
       </section>
       <table class="cmp-table">
-        <thead><tr><th scope="col">Place</th><th scope="col">Plan A <small>${rb.length ? `${ra.filter((r) => r.state === 'open').length} ${openWord(ra)}` : ''}</small></th><th scope="col">Plan B <small>${rb.filter((r) => r.state === 'open').length} ${openWord(rb)}</small></th></tr></thead>
+        <thead><tr><th scope="col">Place</th><th scope="col">Plan A</th><th scope="col">Plan B</th></tr></thead>
         <tbody>${order.map((i) => {
           const a = ra[i]; const b = rb[i];
           const diff = RANK[b.state] < RANK[a.state] ? 'better' : RANK[b.state] > RANK[a.state] ? 'worse' : (b.distance < a.distance ? 'closer' : '');

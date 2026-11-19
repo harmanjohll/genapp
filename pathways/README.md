@@ -25,7 +25,8 @@ I want to go? How do I get there?):
   (a subject move, and things to do outside class), a date to look at it
   again, and the adult it was agreed with.
 - **Path.** Home. P6 to after Sec on one line. Each year opens in place with
-  its levels, the best move and the dates that matter. After the 8 places
+  the goal first: on track, or the one move that serves it. With no goal, no
+  move is pushed. No place is ever counted or ranked. After the 8 places
   comes the long view: ages 12 to 65, drawn to scale. Links at the foot open
   the places, jobs, fees, school types and the pages for adults.
 - **Play.** The game: a life played forward from the student's own subjects,
@@ -35,9 +36,10 @@ I want to go? How do I get there?):
   targets and the printable plan. It also opens the plan card and share
   link, and the 15 minute counsellor session.
 
-For adults, picking Parent or Teacher under "I am" opens their own page:
-what changed as four dates, an old stream in today's words, a 45 minute
-lesson, and the one counsellor session.
+For adults, "Parents and teachers" in the header opens their own page: what
+changed as four dates, an old stream in today's words, a 45 minute lesson
+guide that prints (Do, Say, Watch for, and a debrief), and the one counsellor
+session. The student's screens always speak to the student.
 
 Underneath:
 

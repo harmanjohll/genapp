@@ -1,0 +1,72 @@
+{
+  "_meta": {
+    "purpose": "The teacher's facilitation guide: a 45 minute lesson in six blocks, each with what students do, what to say and what to watch for. Written for a form teacher or an ECG lesson with a class that holds G1, G2 and G3 in the same room.",
+    "source": "Authored for this app. The order follows the three questions of MOE's Education and Career Guidance: Who am I? Where do I want to go? How do I get there?",
+    "url": "https://www.moe.gov.sg/education-in-sg/our-programmes/education-and-career-guidance",
+    "accessed": "2026-11-19",
+    "notes": "The guide never asks a teacher to compare students. The app shows no count of places, and the guide asks teachers to keep it that way in the room."
+  },
+  "before": [
+    "Open Paths once on each device while on school wifi. After that it works with no signal.",
+    "Make a class play code on this page and write it on the board.",
+    "Open the projector view on the classroom screen.",
+    "Nothing is collected. Each plan stays on that student's device."
+  ],
+  "frame": {
+    "head": "One class, every level",
+    "lines": [
+      "Your class holds G1, G2 and G3 in the same subject. Each of the 8 places is a path in its own right.",
+      "Start from each student's goal. Do not ask who has more places on track.",
+      "A move up is an option. For a student whose levels fit their goal, the work is doing well where they are."
+    ]
+  },
+  "blocks": [
+    {
+      "min": 5, "tab": "Me", "icon": "compass",
+      "do": "Two taps on what they enjoy. One strength, with one line of what shows it.",
+      "say": "There are no right answers here. Nobody sees this unless you share it.",
+      "watch": "Students copying a neighbour. Ask each one what shows their strength."
+    },
+    {
+      "min": 8, "tab": "Path", "icon": "steps",
+      "do": "They set their real levels for this year.",
+      "say": "A level describes a subject this year. It does not describe you.",
+      "watch": "Levels entered as wishes. Both are fine. Ask which it is."
+    },
+    {
+      "min": 5, "tab": "Goal", "icon": "target",
+      "do": "One goal, and one line of why.",
+      "say": "Pick the place that fits what you wrote on Me. You can change it next week.",
+      "watch": "Goals chosen for status. Ask about the work, then the place."
+    },
+    {
+      "min": 12, "tab": "Play", "icon": "play",
+      "do": "The short story, once through, with the class code.",
+      "say": "Everyone meets the same chances. Your choices are what differ.",
+      "watch": "Racing to the end. Slow the room down at results day."
+    },
+    {
+      "min": 10, "tab": "Talk", "icon": "talk",
+      "do": "In pairs, then the room. Use the debrief questions below.",
+      "say": "Tell your partner one thing your story showed you about yourself.",
+      "watch": "Comparing routes as better or worse. Bring it back to fit."
+    },
+    {
+      "min": 5, "tab": "Saved", "icon": "flag",
+      "do": "One step, one date, one adult to tell.",
+      "say": "Choose one step you will do this term.",
+      "watch": "Lists of five steps. One done is worth more."
+    }
+  ],
+  "debrief": [
+    { "q": "What did you assume was closed to you that turned out to have a route in?", "why": "Surfaces beliefs picked up from siblings and from adults schooled under streams." },
+    { "q": "What did your starting levels decide, and what did they leave open?", "why": "The question the lesson turns on. Give it ten minutes." },
+    { "q": "Whose goal looks nothing like yours, and what does it ask of them?", "why": "Each path asks for something. None is the easy one." },
+    { "q": "What went wrong in your story, and what happened after it?", "why": "Treats a setback as an event with a next step." }
+  ],
+  "after": [
+    "Next week, ask each student about their one step.",
+    "For a student who wants more time, the 15 minute session below takes the same order.",
+    "A parent can open a card the student shares. It carries only what the student chose."
+  ]
+}

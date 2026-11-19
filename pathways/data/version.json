@@ -1,167 +1,181 @@
 {
-  "_meta": {
-    "purpose": "Version stamp and release notes, shown in the what changed sheet.",
-    "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
+ "_meta": {
+  "purpose": "Version stamp and release notes, shown in the what changed sheet.",
+  "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
+ },
+ "version": "7.4",
+ "releases": [
+  {
+   "version": "7.4",
+   "date": "2026-11-19",
+   "head": "Your goal leads",
+   "changes": [
+    "Paths no longer counts places. Each of the 8 places is a path in its own right.",
+    "With a goal set, your year opens on that goal. If your levels fit it, Paths says so and turns to grades.",
+    "With no goal, no move is pushed. Paths asks you to pick a goal first.",
+    "Grade targets now work for every level, with a card for Higher Nitec (3 yrs).",
+    "The start is shorter: what you enjoy, your year, your levels.",
+    "Parents and teachers have their own button at the top. Teachers get a 45 minute lesson guide to print.",
+    "Settings has a Larger text switch."
+   ]
   },
-  "version": "7.3",
-  "releases": [
-    {
-      "version": "7.3",
-      "date": "2026-11-17",
-      "head": "Fixes",
-      "changes": [
-        "Choosing Parent or Teacher under I am opens their own page again.",
-        "The plan card you share as an image now matches the app: washi paper, navy text, the red seal.",
-        "The story map at the end of the game uses the same fonts as the app.",
-        "Paths no longer downloads two font files it stopped using, so it opens faster on school wifi.",
-        "Version numbers are now two numbers, such as 7.3."
-      ]
-    },
-    {
-      "version": "7.2.0",
-      "date": "2026-11-17",
-      "head": "A Japandi look in Beatty's colours",
-      "changes": [
-        "Warm paper, calm panels and fine lines.",
-        "Beatty's navy for text and buttons, yellow for where you are, red for your goal.",
-        "Georgia for headings and Calibri for text.",
-        "On a laptop or tablet, your year shows the chart beside your best move, and your goal shows its route beside your steps.",
-        "The places after Sec 4 are plain rings, filled when they are on track."
-      ]
-    },
-    {
-      "version": "7.1.0",
-      "date": "2026-11-15",
-      "head": "Calmer screens",
-      "changes": [
-        "Lighter type and plain labels. Headings no longer shout, and small labels are no longer in capitals.",
-        "Yellow now marks only what matters: your next action, where you are, and the line through your school years.",
-        "The compass needle rests on the next part to fill, without wobbling.",
-        "Words in the glossary sit inside a sentence without pushing the lines apart.",
-        "Saved shows one main action. The counsellor session and sending to another device are links below it.",
-        "On a wide screen, Me shows the compass beside its four parts."
-      ]
-    },
-    {
-      "version": "7.0.0",
-      "date": "2026-11-11",
-      "head": "A compass, a real goal, and the long view",
-      "changes": [
-        "Five tabs: Me, Goal, Path, Play and Saved.",
-        "The Me tab is new. Your compass holds what you enjoy, what you are good at and what matters to you. You fill it in. Nothing is worked out about you.",
-        "A goal now has a why, steps you can tick, a date to look at it again, and the adult you agreed it with.",
-        "The path goes past Sec 4. After the 8 places it shows ages 12 to 65 to scale.",
-        "The game starts from your compass and your goal. At the end you can keep one line about yourself and one step.",
-        "Parents and teachers have their own pages: what changed and when, your old stream in today's words, a 45 minute lesson and a 15 minute session.",
-        "Explore is gone. The places, jobs, fees and school types are one tap from the path.",
-        "Admission rules, school year facts and fees were checked again on MOE's own pages on 11 November 2026.",
-        "Your saved plans come across. The version before this one stays available from Settings."
-      ]
-    },
-    {
-      "version": "6.0.0",
-      "date": "2026-11-09",
-      "head": "One Paths, with everything from before",
-      "changes": [
-        "Paths is one app again, at the same address. Your saved plans from either earlier version come across.",
-        "Four tabs: Path, Goal, Explore and Saved.",
-        "Your path shows your next step on top, then every year from P6 to after Sec.",
-        "Explore holds the 8 places, jobs, fees, school types, help for parents and teachers, and the game.",
-        "Saved keeps your moves and targets, and shares your plan as a card, a link or a printout.",
-        "Try a what if from any year to compare two plans.",
-        "The earlier version stays available, unchanged, from Settings."
-      ]
-    },
-    {
-      "version": "5.0.0",
-      "date": "2026-11-04",
-      "head": "One path, a goal, and the conversation",
-      "changes": [
-        "Your whole plan on one line, from P6 to after Sec. Each year opens in place.",
-        "Start from a goal: what you enjoy, the work that fits, the place, the course. The app works back to this year's moves.",
-        "Compare two plans side by side and see what one change does.",
-        "Share your plan as an image or a link, written for a parent, a teacher or your counsellor.",
-        "A 15 minute counsellor session, sized for a desk or a projector.",
-        "A day at each place, and one route there, on every destination page."
-      ]
-    },
-    {
-      "version": "4.4.0",
-      "date": "2026-11-01",
-      "head": "Shorter, plainer words",
-      "changes": [
-        "Every planning screen is rewritten in plain words that speak to you directly.",
-        "Short is the new default. Each move leads with what changes, and the reasons and dates are one tap away.",
-        "Switch to Detailed in Settings, or on the last setup step, to see everything in full.",
-        "About 4,300 words of old text that never showed on screen are gone.",
-        "The P6 page no longer shows an internal research note."
-      ]
-    },
-    {
-      "version": "4.3.0",
-      "date": "2026-11-01",
-      "head": "Beatty's subjects first",
-      "changes": [
-        "Set levels shows the subjects Beatty offers, at the levels Beatty runs them: Additional Mathematics and Principles of Accounts at G3, Design and Technology at G2, and so on.",
-        "Every other school's subjects are under More subjects, for a transfer or another school. A switch in Settings shows the full list.",
-        "Advice only suggests a subject and level Beatty runs. Music and Computing at G3 are marked as taken at another school or centre.",
-        "In Sec 1 and 2, G1 Humanities is named for what it is: the Humanities Exposure Modules.",
-        "Subject names are spelt out in full, such as Humanities (Social Studies, Geography) and Science (Physics, Chemistry)."
-      ]
-    },
-    {
-      "version": "4.2.0",
-      "date": "2026-11-01",
-      "head": "Advice that fits the year",
-      "changes": [
-        "Sec 1 and Sec 2 are judged by their own rules, in the subjects I take now. The five subject counts belong to the SEC, so they no longer show up as moves in lower secondary.",
-        "In Sec 1 and Sec 2, places read On track instead of Open: nothing opens before the SEC. Each place says once what the SEC will count.",
-        "Mother Tongue no longer has to be G3 for Junior College or Millennia Institute in lower secondary advice, matching the 2028 rules.",
-        "Moves say what they lead to in Sec 3, such as G3 Maths and Additional Maths, and that the school sets the mark and decides.",
-        "P6: a list of the choices my PSLE gives me and what each puts on track, a place for a Higher Mother Tongue result, and the Foundation option for Posting Group 3.",
-        "SEC rules re-checked: a third Humanities, Maths or Science at G3 for JC and MI, four at G3 for NAFA and LASALLE, and grade targets that apply each place's own rules."
-      ]
-    },
-    {
-      "version": "4.1.0",
-      "date": "2026-10-31",
-      "head": "Clearer words, readable at night",
-      "changes": [
-        "Every button and label is now readable in dark mode. Text on coloured fills follows the theme, and a new check stops white text on light fills from coming back.",
-        "The four places are now Home, Subjects, Pathways and Saved.",
-        "The tabs say what you do: Set levels, Best moves, Grade targets, Year guide.",
-        "Distance in moves: Open now, 1 to 2 moves away, 3 to 5 moves away, or Another route in.",
-        "Clearer place names: Sec 5, NAFA or LASALLE, Higher Nitec (2 yrs) and Higher Nitec (3 yrs).",
-        "Buttons name their action: Save move, Copy words, Skip setup, Copy your Sec 2 levels into Sec 3. The header shows who is reading: I am: Student."
-      ]
-    },
-    {
-      "version": "4.0.0",
-      "date": "2026-10-27",
-      "head": "Year by year",
-      "changes": [
-        "A page for every year, P6 to Sec 5, on one transit line you can tap along.",
-        "Advice that names the move: which subject, which level, and what it opens.",
-        "Targets: enter the grades you expect and aim for, and see the scores each place reads.",
-        "My plan: one page for the next conversation, voiced for a student, a parent or a teacher.",
-        "The admission rules for 2028 re-checked, with the course families behind an option.",
-        "A new look: the night line. Navy and signal yellow, a departures board that answers every tap, advice as tickets you keep, and your score drawn as a train on a track.",
-        "A guided start: a short wordless intro, then four steps to your first move. Home now shows one next step."
-      ]
-    },
-    {
-      "version": "3.0.0",
-      "date": "2026-08-22",
-      "head": "A new map",
-      "changes": [
-        "The map is now the whole tool: it is the home screen, it answers every subject you tap in Plan, it grows as you play, and it is the card you keep at the end.",
-        "The back button works everywhere, and a reload puts you back where you were.",
-        "First visit asks your year and your guess once, then never again.",
-        "The rulebook now arrives in three steps: a plain word, a plain sentence, and the exact rule with its source behind one fold.",
-        "Money, work and your school now appear where they matter, not only as pages.",
-        "One face for the words on every phone, and dark mode is a proper night."
-      ]
-    }
-  ],
-  "date": null
+  {
+   "version": "7.3",
+   "date": "2026-11-17",
+   "head": "Fixes",
+   "changes": [
+    "Choosing Parent or Teacher under I am opens their own page again.",
+    "The plan card you share as an image now matches the app: washi paper, navy text, the red seal.",
+    "The story map at the end of the game uses the same fonts as the app.",
+    "Paths no longer downloads two font files it stopped using, so it opens faster on school wifi.",
+    "Version numbers are now two numbers, such as 7.3."
+   ]
+  },
+  {
+   "version": "7.2.0",
+   "date": "2026-11-17",
+   "head": "A Japandi look in Beatty's colours",
+   "changes": [
+    "Warm paper, calm panels and fine lines.",
+    "Beatty's navy for text and buttons, yellow for where you are, red for your goal.",
+    "Georgia for headings and Calibri for text.",
+    "On a laptop or tablet, your year shows the chart beside your best move, and your goal shows its route beside your steps.",
+    "The places after Sec 4 are plain rings, filled when they are on track."
+   ]
+  },
+  {
+   "version": "7.1.0",
+   "date": "2026-11-15",
+   "head": "Calmer screens",
+   "changes": [
+    "Lighter type and plain labels. Headings no longer shout, and small labels are no longer in capitals.",
+    "Yellow now marks only what matters: your next action, where you are, and the line through your school years.",
+    "The compass needle rests on the next part to fill, without wobbling.",
+    "Words in the glossary sit inside a sentence without pushing the lines apart.",
+    "Saved shows one main action. The counsellor session and sending to another device are links below it.",
+    "On a wide screen, Me shows the compass beside its four parts."
+   ]
+  },
+  {
+   "version": "7.0.0",
+   "date": "2026-11-11",
+   "head": "A compass, a real goal, and the long view",
+   "changes": [
+    "Five tabs: Me, Goal, Path, Play and Saved.",
+    "The Me tab is new. Your compass holds what you enjoy, what you are good at and what matters to you. You fill it in. Nothing is worked out about you.",
+    "A goal now has a why, steps you can tick, a date to look at it again, and the adult you agreed it with.",
+    "The path goes past Sec 4. After the 8 places it shows ages 12 to 65 to scale.",
+    "The game starts from your compass and your goal. At the end you can keep one line about yourself and one step.",
+    "Parents and teachers have their own pages: what changed and when, your old stream in today's words, a 45 minute lesson and a 15 minute session.",
+    "Explore is gone. The places, jobs, fees and school types are one tap from the path.",
+    "Admission rules, school year facts and fees were checked again on MOE's own pages on 11 November 2026.",
+    "Your saved plans come across. The version before this one stays available from Settings."
+   ]
+  },
+  {
+   "version": "6.0.0",
+   "date": "2026-11-09",
+   "head": "One Paths, with everything from before",
+   "changes": [
+    "Paths is one app again, at the same address. Your saved plans from either earlier version come across.",
+    "Four tabs: Path, Goal, Explore and Saved.",
+    "Your path shows your next step on top, then every year from P6 to after Sec.",
+    "Explore holds the 8 places, jobs, fees, school types, help for parents and teachers, and the game.",
+    "Saved keeps your moves and targets, and shares your plan as a card, a link or a printout.",
+    "Try a what if from any year to compare two plans.",
+    "The earlier version stays available, unchanged, from Settings."
+   ]
+  },
+  {
+   "version": "5.0.0",
+   "date": "2026-11-04",
+   "head": "One path, a goal, and the conversation",
+   "changes": [
+    "Your whole plan on one line, from P6 to after Sec. Each year opens in place.",
+    "Start from a goal: what you enjoy, the work that fits, the place, the course. The app works back to this year's moves.",
+    "Compare two plans side by side and see what one change does.",
+    "Share your plan as an image or a link, written for a parent, a teacher or your counsellor.",
+    "A 15 minute counsellor session, sized for a desk or a projector.",
+    "A day at each place, and one route there, on every destination page."
+   ]
+  },
+  {
+   "version": "4.4.0",
+   "date": "2026-11-01",
+   "head": "Shorter, plainer words",
+   "changes": [
+    "Every planning screen is rewritten in plain words that speak to you directly.",
+    "Short is the new default. Each move leads with what changes, and the reasons and dates are one tap away.",
+    "Switch to Detailed in Settings, or on the last setup step, to see everything in full.",
+    "About 4,300 words of old text that never showed on screen are gone.",
+    "The P6 page no longer shows an internal research note."
+   ]
+  },
+  {
+   "version": "4.3.0",
+   "date": "2026-11-01",
+   "head": "Beatty's subjects first",
+   "changes": [
+    "Set levels shows the subjects Beatty offers, at the levels Beatty runs them: Additional Mathematics and Principles of Accounts at G3, Design and Technology at G2, and so on.",
+    "Every other school's subjects are under More subjects, for a transfer or another school. A switch in Settings shows the full list.",
+    "Advice only suggests a subject and level Beatty runs. Music and Computing at G3 are marked as taken at another school or centre.",
+    "In Sec 1 and 2, G1 Humanities is named for what it is: the Humanities Exposure Modules.",
+    "Subject names are spelt out in full, such as Humanities (Social Studies, Geography) and Science (Physics, Chemistry)."
+   ]
+  },
+  {
+   "version": "4.2.0",
+   "date": "2026-11-01",
+   "head": "Advice that fits the year",
+   "changes": [
+    "Sec 1 and Sec 2 are judged by their own rules, in the subjects I take now. The five subject counts belong to the SEC, so they no longer show up as moves in lower secondary.",
+    "In Sec 1 and Sec 2, places read On track instead of Open: nothing opens before the SEC. Each place says once what the SEC will count.",
+    "Mother Tongue no longer has to be G3 for Junior College or Millennia Institute in lower secondary advice, matching the 2028 rules.",
+    "Moves say what they lead to in Sec 3, such as G3 Maths and Additional Maths, and that the school sets the mark and decides.",
+    "P6: a list of the choices my PSLE gives me and what each puts on track, a place for a Higher Mother Tongue result, and the Foundation option for Posting Group 3.",
+    "SEC rules re-checked: a third Humanities, Maths or Science at G3 for JC and MI, four at G3 for NAFA and LASALLE, and grade targets that apply each place's own rules."
+   ]
+  },
+  {
+   "version": "4.1.0",
+   "date": "2026-10-31",
+   "head": "Clearer words, readable at night",
+   "changes": [
+    "Every button and label is now readable in dark mode. Text on coloured fills follows the theme, and a new check stops white text on light fills from coming back.",
+    "The four places are now Home, Subjects, Pathways and Saved.",
+    "The tabs say what you do: Set levels, Best moves, Grade targets, Year guide.",
+    "Distance in moves: Open now, 1 to 2 moves away, 3 to 5 moves away, or Another route in.",
+    "Clearer place names: Sec 5, NAFA or LASALLE, Higher Nitec (2 yrs) and Higher Nitec (3 yrs).",
+    "Buttons name their action: Save move, Copy words, Skip setup, Copy your Sec 2 levels into Sec 3. The header shows who is reading: I am: Student."
+   ]
+  },
+  {
+   "version": "4.0.0",
+   "date": "2026-10-27",
+   "head": "Year by year",
+   "changes": [
+    "A page for every year, P6 to Sec 5, on one transit line you can tap along.",
+    "Advice that names the move: which subject, which level, and what it opens.",
+    "Targets: enter the grades you expect and aim for, and see the scores each place reads.",
+    "My plan: one page for the next conversation, voiced for a student, a parent or a teacher.",
+    "The admission rules for 2028 re-checked, with the course families behind an option.",
+    "A new look: the night line. Navy and signal yellow, a departures board that answers every tap, advice as tickets you keep, and your score drawn as a train on a track.",
+    "A guided start: a short wordless intro, then four steps to your first move. Home now shows one next step."
+   ]
+  },
+  {
+   "version": "3.0.0",
+   "date": "2026-08-22",
+   "head": "A new map",
+   "changes": [
+    "The map is now the whole tool: it is the home screen, it answers every subject you tap in Plan, it grows as you play, and it is the card you keep at the end.",
+    "The back button works everywhere, and a reload puts you back where you were.",
+    "First visit asks your year and your guess once, then never again.",
+    "The rulebook now arrives in three steps: a plain word, a plain sentence, and the exact rule with its source behind one fold.",
+    "Money, work and your school now appear where they matter, not only as pages.",
+    "One face for the words on every phone, and dark mode is a proper night."
+   ]
+  }
+ ],
+ "date": null
 }

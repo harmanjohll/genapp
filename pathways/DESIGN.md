@@ -31,8 +31,8 @@ no ranking of destinations, no red, nothing leaves the device).
 3. Grades are the student's own targets. The app computes from them and never
    guesses them. Bonus points are named, never added.
 4. Course families are opt in (Settings, or the button on a destination page).
-5. One version for all three readers. The role changes who speaks, never what
-   is true.
+5. One version for all three readers. Since 7.4 the app speaks only to the
+   student; parents and teachers have their own page, not their own voice.
 6. The game keeps its engine; its subject picker now opens the year page.
 
 ## Gates added to `tools/verify.mjs`
@@ -158,3 +158,21 @@ screen was designed, so the direction came from the brand already here.
 
 Suggested next, not done: give Goal, Path and Saved a two column layout on
 wide screens as Me now has.
+
+
+## Parity pass: the goal leads (2026-11-19)
+
+An audit asked three things: is every level served, do the roles earn their
+own views, and is the flow plain. Three answers shaped the build.
+
+1. A count is a rank. "5 of 8" told a G1 student they had less. Counts are
+   gone; each place is named, in equal ink, and the goal wears the red ring.
+2. Advice follows the goal. On track is an answer in its own right, and it
+   turns the student to grades. A move shows only when it serves the goal.
+   With no goal, the card asks for one and pushes nothing.
+3. One reader per screen. The student's screens speak to the student. Adults
+   get one door in the header, and teachers get a guide to run a class with,
+   which a reworded label never gave them.
+
+The start now mirrors the tabs (Me, then levels, then the Path), so the first
+minute teaches the order of the app. Larger text is a switch in Settings.

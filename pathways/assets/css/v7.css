@@ -515,3 +515,84 @@ h3, h4 { font-weight: 700; letter-spacing: 0; }
 }
 @media (min-width: 1024px) and (max-width: 1180px) { .py-body { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1024px) { .gmain .tk-hero .tk-result { font-size: 1.45rem; } }
+
+/* ---- 7.4: every path in its own right ---------------------------------------------------------
+   No count of places anywhere. The goal leads; the eight places carry equal weight; a move is an
+   option. One voice: the "I am" switch is gone and adults have their own page. */
+
+/* Equal weight for all eight places: the same ink for every name. The ring says where it stands. */
+.sg-name, .sg-code, .sg-lamp:not([data-state="open"]) .sg-name, .sg-lamp:not([data-state="open"]) .sg-code,
+.py-body .signal.mini .sg-code, .py-body .signal.mini .sg-lamp:not([data-state="open"]) .sg-code { fill: var(--ink); }
+.sg-lamp[data-goal="true"] .sg-name, .sg-lamp[data-goal="true"] .sg-code { font-weight: 700; }
+.sg-lamp[data-goal="true"] .sg-glow { opacity: 1; fill: none; stroke: var(--bty-red); stroke-width: 2; }
+.sg-hubtext .sg-small, .py-body .signal.mini .sg-small { fill: var(--ink-mute); font: 500 12px var(--body); }
+.signal:not(.mini) .sg-hub text { fill: var(--navy); }
+
+/* The header link that replaced the "I am" chip. */
+.adultlink { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--rule); background: transparent; color: var(--ink); font-weight: 600; font-size: 0.9rem; }
+.adultlink:hover { background: var(--washi); }
+.adultlink[aria-current="page"] { box-shadow: inset 0 -3px 0 var(--bty-yellow); }
+.adultlink .ic { width: 18px; height: 18px; }
+@media (max-width: 720px) { .adultlink span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .adultlink { padding: 0 10px; } }
+
+/* On track for the goal, and the prompt when there is no goal yet. */
+.ontrack, .nogoal { background: var(--washi); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 16px; display: grid; gap: 8px; align-content: start; }
+.ot-h { display: flex; gap: 8px; align-items: flex-start; margin: 0; font: 400 1.25rem/1.25 var(--display); color: var(--ink); }
+.ot-h .ic { width: 20px; height: 20px; flex: none; margin-top: 3px; color: var(--navy); }
+.nogoal .ot-h .ic { color: var(--bty-red); }
+.ot-p { margin: 0; color: var(--ink-soft); }
+.ot-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-weight: 600; }
+.ontrack .btnrow, .nogoal .btnrow { margin: 4px 0 0; }
+.ontrack .small { margin: 0; }
+@media (min-width: 1024px) {
+  .py-body > .py-goal { grid-column: 1; grid-row: 1; }
+  .py-body > .signal { grid-column: 1; grid-row: 2; }
+  .py-body > .py-move { grid-column: 2; grid-row: 1 / span 2; }
+}
+.py-later > .py-h { width: 100%; }
+
+/* First run: the welcome. */
+.st-welcome .st-body { padding-top: 48px; }
+.st-seal { width: 48px; height: 48px; border-radius: 12px; background: var(--bty-red); display: grid; place-items: center; margin-bottom: 20px; }
+.st-seal svg { width: 30px; height: 30px; }
+.st-three { list-style: none; margin: 20px 0 8px; padding: 0; display: grid; gap: 8px; }
+.st-three li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 12px 16px; }
+.st-three .ic { width: 24px; height: 24px; color: var(--navy); justify-self: center; }
+.st-three span { display: grid; gap: 2px; color: var(--ink-soft); }
+.st-three b { font: 400 1.2rem/1.2 var(--display); color: var(--ink); }
+.st-welcome .st-promise { color: var(--ink-mute); }
+.st-promise .ic { color: var(--navy); width: 16px; height: 16px; vertical-align: -2px; }
+.st .ph-k { margin-top: 8px; }
+
+/* Larger text, for anyone who wants it. */
+:root[data-big="true"] { font-size: 112.5%; }
+
+/* The teacher's guide. */
+.teachframe { background: var(--washi); border: 1px solid var(--rule); border-left: 4px solid var(--bty-yellow); border-radius: var(--r-md); padding: 16px 20px; margin: 16px 0; }
+.teachframe h3 { margin: 0 0 8px; font: 400 1.25rem/1.2 var(--display); }
+.teachframe ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.tick { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.tick li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; }
+.tick .ic { width: 16px; height: 16px; margin-top: 4px; color: var(--navy); }
+.codecard { box-shadow: none; padding: 12px 16px; }
+.blocks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+@media (min-width: 860px) { .blocks { grid-template-columns: 1fr 1fr; } }
+.block { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r-md); padding: 16px; display: grid; gap: 12px; align-content: start; }
+.block-h { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.block-h b { font: 400 1.3rem/1 var(--display); }
+.block dl { margin: 0; display: grid; gap: 8px; }
+.block dl div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.block dt { color: var(--ink-mute); font-size: 0.86rem; font-weight: 600; }
+.block dd { margin: 0; }
+.block dd.say { font-weight: 600; color: var(--ink); }
+@media print {
+  .site-head, .tabbar, .site-foot, .tabstrip, .no-print { display: none !important; }
+  .blocks { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .block, .teachframe { break-inside: avoid; }
+  .adultwrap details > *:not(summary) { display: block; }
+}
+
+/* The start's chart sits on paper, like every other panel: the place names are ink, so a navy
+   panel behind them would hide them. */
+.st-sticky { background: var(--washi); border-bottom: 1px solid var(--rule); box-shadow: none; }
+.st-sticky .signal.mini .sg-small { fill: var(--ink-mute); }

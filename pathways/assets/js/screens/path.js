@@ -16,21 +16,20 @@
 // Explore used to hold (places, jobs, fees, school types, adults) are links
 // at the foot of the line.
 
-import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.3';
-import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.3';
-import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.3';
-import { sayMove } from '../ui/talk.js?v=7.3';
-import { advise } from '../engine/advice.js?v=7.3';
-import { psleScore } from '../engine/psle.js?v=7.3';
-import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.3';
-import { signalHtml } from '../ui/signal.js?v=7.3';
-import { ticketHtml } from '../ui/ticket.js?v=7.3';
-import { subjTile } from './year.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { stateWord, openWord, isShort, t } from '../ui/labels.js?v=7.3';
+import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.4';
+import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.4';
+import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.4';
+import { advise } from '../engine/advice.js?v=7.4';
+import { psleScore } from '../engine/psle.js?v=7.4';
+import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.4';
+import { signalHtml } from '../ui/signal.js?v=7.4';
+import { ticketHtml } from '../ui/ticket.js?v=7.4';
+import { subjTile } from './year.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { stateWord, isShort, t } from '../ui/labels.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const ORDER = YEARS.map((y) => y.id);
@@ -78,15 +77,20 @@ export function nextStep(api, st) {
   }
   const plan = (st.plans && st.plans[y]) || {};
   if (!Object.keys(plan).length) return null;
+  // 7.4: the order of the three questions. Who you are, then where you want
+  // to go, then what to do about it. No move is pushed before there is a goal.
+  if (!st.compass.enjoy.length) {
+    return { title: 'Say what you enjoy', body: 'Two taps on your compass. It shapes your goal and the game.', cta: 'Open Me', s: 'me' };
+  }
+  if (!st.goal) {
+    return { title: 'Set a goal', body: 'Each of the 8 places is a path in its own right. Pick the one that fits you.', cta: 'Find a goal', s: 'goal' };
+  }
   if (goalDue(st.goal)) {
     return { title: 'Is this still your goal?', body: goalLine(api, st.goal), cta: 'Look at it again', s: 'goal' };
   }
-  if (st.role === 'student' && !st.compass.enjoy.length) {
-    return { title: 'Say what you enjoy', body: 'Two taps on your compass. It shapes your goal and the game.', cta: 'Open Me', s: 'me' };
+  if (!st.actions.length) {
+    return { title: 'Add your first step', body: 'One thing you will do this term for your goal.', cta: 'Open your goal', s: 'goal' };
   }
-  const a = advise({ yearId: y, plan, ctx: api.ctx() });
-  const top = a.singles[0] || a.pairs[0];
-  if (top && !st.actions.includes(sayMove(top, st.role))) return null;
   if (!isLower(y) && !Object.keys((st.grades && st.grades.target) || {}).length) {
     return { title: 'Set your grade targets', body: 'See the score each place reads, and the grades that close a gap.', cta: 'Set targets', s: 'year', y, tab: 'targets' };
   }
@@ -118,9 +122,11 @@ function yearSummary(api, y, st) {
   const plan = st.plans[y] || {};
   const n = Object.keys(plan).length;
   if (!n) return 'Not set yet';
-  const rows = rowsFor(api, y, plan);
-  const open = rows.filter((r) => r.state === 'open').length;
-  return `${n} subjects · ${open} of 8 ${openWord(rows)}`;
+  // No count of places: a number out of 8 reads as a score. With a goal, the
+  // line says where the goal stands on this year's levels.
+  if (!st.goal) return `${n} subjects set`;
+  const r = goalReach(st.goal, y, plan, api.ctx(), api.data);
+  return r ? `${n} subjects · ${r.railName}: ${stateWord(r.state, r.lens).toLowerCase()}` : `${n} subjects set`;
 }
 
 function datesHtml(api, y) {
@@ -146,6 +152,29 @@ function goalHtml(api, y, st) {
     </div>`;
 }
 
+/**
+ * On track for the goal: what to do when nothing needs to move. 6.0 and 7.0
+ * only ever said "move up", so a student whose levels already fit their goal
+ * was shown moves toward other places. This says what the goal's place reads
+ * next and which levels are holding it, at whatever level those are.
+ */
+function onTrackHtml(api, y, st, r, adv) {
+  const d = api.ctx().destinations.find((x) => x.id === st.goal.dest) || {};
+  const name = d.railName || d.name || '';
+  const reads = (d.performance || []).slice(0, 2).map((x) => x.label);
+  const hold = ((adv && adv.holds) || []).find((h) => (h.line || '').includes(name));
+  return `<div class="py-move ontrack">
+    <p class="ot-h">${icon('check')}<span>Your levels are on track for ${esc(name)}</span></p>
+    <p class="ot-p">${isLower(y) ? 'Keep these levels, and do well in them.' : 'Now it is about grades at these levels.'}</p>
+    ${!isLower(y) && reads.length ? `<ul class="ot-list">${reads.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    ${hold ? `<p class="small">${esc(hold.line)}</p>` : ''}
+    <p class="btnrow">
+      ${!isLower(y) ? `<button type="button" class="btn small press" data-action="go" data-s="year" data-y="${y}" data-tab="targets">${icon('target')} Set grade targets</button>` : ''}
+      <button type="button" class="btn ${isLower(y) ? '' : 'ghost '}small press" data-action="go" data-s="goal">Your steps ${icon('arrow')}</button>
+    </p>
+  </div>`;
+}
+
 function yearBody(api, y, st) {
   const c = api.ctx();
   if (y === 'p6') {
@@ -159,13 +188,25 @@ function yearBody(api, y, st) {
   const rows = n ? rowsFor(api, y, plan) : null;
   const gm = st.goal ? goalMoves(st.goal, y, plan, c) : [];
   const adv = n ? advise({ yearId: y, plan, ctx: c }) : null;
-  const top = gm[0] || (adv && (adv.singles[0] || adv.pairs[0]));
+  const gr = st.goal && n ? goalReach(st.goal, y, plan, c, api.data) : null;
+  // With a goal: its best move, or what to do when it is already on track.
+  // Without one: no move is pushed. The moves sit one tap away, as options.
+  const lead = !n ? ''
+    : gr && gr.state === 'open' ? onTrackHtml(api, y, st, gr, adv)
+      : st.goal && gm.length ? `<div class="py-move"><p class="py-k">Best move for your goal</p>${ticketHtml(gm[0], { simple: true })}</div>`
+        : st.goal ? ''
+          : `<div class="py-move nogoal">
+              <p class="ot-h">${icon('target')}<span>Each place is a path in its own right</span></p>
+              <p class="ot-p">Set a goal to see the move that matters for you.</p>
+              <p class="btnrow"><button type="button" class="btn small press" data-action="go" data-s="goal">Find a goal ${icon('arrow')}</button>
+                <button type="button" class="linkbtn" data-action="go" data-s="year" data-y="${y}" data-tab="advice">See all moves</button></p>
+            </div>`;
   return `
     <div class="py-body">
       ${carry ? `<p><button type="button" class="btn press" data-action="py-carry" data-y="${y}">Copy your ${esc(LABEL[carry.from])} levels ${icon('arrow')}</button></p>` : ''}
-      ${rows ? signalHtml(rows, { key: `path-${y}`, mini: true }) : ''}
       ${goalHtml(api, y, st)}
-      ${top ? `<div class="py-move"><p class="py-k">${st.goal && gm.length ? 'Best move for your goal' : 'Your best move'}</p>${ticketHtml(top, { simple: true })}</div>` : ''}
+      ${rows ? signalHtml(rows, { key: `path-${y}`, mini: true, goal: st.goal && st.goal.dest }) : ''}
+      ${lead}
       <details class="fold py-levels"${n ? '' : ' open'}>
         <summary>${n ? `Your ${esc(LABEL[y])} levels` : `Set your ${esc(LABEL[y])} levels`}</summary>
         <div class="subjgrid">${tiles.map((s) => subjTile(s, plan, 'py-lvl')).join('')}</div>
@@ -204,6 +245,7 @@ export default {
     const age = st.yearSet ? (currentYear().realAge || currentYear().age) : 14;
     const markers = (api.data.lifelong && api.data.lifelong.markers) || [];
     let lvSel = firstMarker(markers, age);
+    const lvOpen = q.lv === '1';
     // A student who used an earlier build sees, once, what is different.
     const rel = ((api.data.version || {}).releases || [])[0];
     const showNew = !!(rel && st.importedFrom && st.seenVersion !== rel.version);
@@ -211,7 +253,7 @@ export default {
     <div class="wrap-narrow pathwrap">
       <header class="ph arrive">
         <p class="ph-k">How do I get there?</p>
-        <h1>${st.role === 'student' ? 'From P6 to after Sec' : 'The path, P6 to after Sec'}</h1>
+        <h1>From P6 to after Sec</h1>
         <div class="ph-row">
           <button type="button" class="mechipbtn press" data-action="go" data-s="me" aria-label="Me: your compass, ${pointsFilled(compassFill())} of 4 points filled">${compassSvg(compassFill(), { mini: true })}</button>
           ${st.goal
@@ -219,8 +261,7 @@ export default {
             : `<button type="button" class="btn press" data-action="go" data-s="goal">${icon('target')} Set a goal</button>`}
         </div>
       </header>
-      ${st.role !== 'student' ? `<button type="button" class="adultdoor press arrive" data-action="go" data-s="adults" data-tab="${st.role === 'teacher' ? 'teacher' : 'parent'}">
-        ${icon(st.role)}<span><b>${st.role === 'teacher' ? 'For teachers' : 'For parents'}</b><small>${st.role === 'teacher' ? 'A lesson, and a 15 minute session.' : 'What changed since your school days.'}</small></span>${icon('arrow')}</button>` : ''}
+
       ${showNew ? `<section class="whatsnew arrive" aria-labelledby="wn-h">
         <p class="ns-k">New in this version</p>
         <h2 id="wn-h">${esc(rel.head)}</h2>
@@ -250,9 +291,9 @@ export default {
             <p class="py-links"><button type="button" class="linkbtn" data-action="go" data-s="after">What each place asks and costs</button></p>
           </div>
         </li>
-        <li class="py py-end py-later" data-when="later" data-open="true">
-          <div class="py-h static"><span class="py-dot" aria-hidden="true"></span><span class="py-name">After that</span><span class="py-sum">Ages 12 to 65, to scale</span></div>
-          <div class="py-body" id="py-long">${longViewHtml(api.data.lifelong, age, lvSel)}</div>
+        <li class="py py-end py-later" data-when="later" data-open="${lvOpen}">
+          <button type="button" class="py-h press" data-action="lv-toggle" aria-expanded="${lvOpen}"><span class="py-dot" aria-hidden="true"></span><span class="py-name">After that</span><span class="py-sum">Ages 12 to 65, to scale</span>${icon('caret', 'py-chev')}</button>
+          ${lvOpen ? `<div class="py-body" id="py-long">${longViewHtml(api.data.lifelong, age, lvSel)}</div>` : ''}
         </li>
       </ol>
       <nav class="lookrow" aria-label="More to look at">
@@ -275,6 +316,7 @@ export default {
         const back = host.querySelector(`[data-key="${btn.dataset.key}"]:not([disabled])`) || host.querySelector('[data-key="lv-next"]:not([disabled])') || host.querySelector('[data-key="lv-prev"]');
         if (back) back.focus({ preventScroll: true });
       },
+      'lv-toggle': () => { api.setQuery({ lv: lvOpen ? null : '1' }); api.refresh(); },
       'py-open': (btn) => {
         const y = btn.dataset.y;
         api.setQuery({ y: y === open ? '_' : y });

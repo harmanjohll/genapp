@@ -9,26 +9,26 @@
 // 7.0: the compass stays off the card until the student switches it on. The
 // image then shows its words; the link carries its ids and nothing typed.
 
-import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.3';
-import { decodePacket } from '../engine/packet.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.3';
-import { advise } from '../engine/advice.js?v=7.3';
-import { goalMoves } from '../engine/goal.js?v=7.3';
-import { sayMove } from '../ui/talk.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { stateWord, openWord } from '../ui/labels.js?v=7.3';
-import { goalLine } from './path.js?v=7.3';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.3';
+import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.4';
+import { decodePacket } from '../engine/packet.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
+import { advise } from '../engine/advice.js?v=7.4';
+import { goalMoves } from '../engine/goal.js?v=7.4';
+import { sayMove } from '../ui/talk.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { stateWord, openWord } from '../ui/labels.js?v=7.4';
+import { goalLine } from './path.js?v=7.4';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const FOR = { parent: 'A parent', teacher: 'A teacher', counsellor: 'My ECG counsellor' };
 
 // ---- the packet: what a link carries (engine/packet.js) -------------------
 
-export { decodePacket } from '../engine/packet.js?v=7.3';
-import { encodePacket } from '../engine/packet.js?v=7.3';
+export { decodePacket } from '../engine/packet.js?v=7.4';
+import { encodePacket } from '../engine/packet.js?v=7.4';
 export function packFor(st, y, withMe = false) { return { y, plan: st.plans[y] || {}, goal: st.goal || null, me: withMe ? st.compass : null }; }
 function linkFor(packet, who) {
   const url = new URL(location.origin + location.pathname);
@@ -50,7 +50,10 @@ export function readPlan(api, y, plan, goal, me = null) {
   const top = gm[0] || a.singles[0] || a.pairs[0] || null;
   const byId = new Map(c.subjects.map((s) => [s.id, s]));
   const levels = Object.entries(plan).map(([id, lv]) => ({ name: (byId.get(id) || {}).shortName || (byId.get(id) || {}).name || id, lv }));
-  return { y, rows, top, levels, open: rows.filter((r) => r.state === 'open').length, word: openWord(rows), goal, me, meLines: me ? compassLines(api.data, me) : [] };
+  // No count of places. With a goal, the card says where the goal stands.
+  const gRow = goal ? rows.find((r) => r.id === goal.dest) : null;
+  const goalState = gRow ? `${gRow.railName}: ${stateWord(gRow.state, gRow.lens).toLowerCase()}` : '';
+  return { y, rows, top: goal ? (gm[0] || null) : null, levels, word: openWord(rows), goal, goalState, me, meLines: me ? compassLines(api.data, me) : [] };
 }
 
 /** The questions for whoever is reading. */
@@ -67,7 +70,7 @@ function cardHtml(api, pl, who) {
   return `
   <article class="plancard">
     <p class="pc-k">${icon('brand')} Paths · for ${esc(FOR[who] || 'you')}</p>
-    <p class="pc-year">${esc(LABEL[pl.y])} <span>${pl.open} of 8 ${esc(pl.word)}</span></p>
+    <p class="pc-year">${esc(LABEL[pl.y])}${pl.goalState ? ` <span>${esc(pl.goalState)}</span>` : ''}</p>
     ${pl.goal ? `<p class="pc-goal">${icon('target')} ${esc(goalLine(api, pl.goal))}</p>` : ''}
     ${pl.goal && pl.goal.why && pl.me ? `<p class="pc-why">${esc(pl.goal.why)}</p>` : ''}
     ${pl.meLines.length ? `<div class="pc-me">${compassSvg({ enjoy: pl.me.enjoy.length, strengths: pl.me.strengths.length, values: pl.me.values.length, goal: pl.goal ? 1 : 0 }, { mini: true })}
@@ -107,10 +110,13 @@ async function cardImage(api, pl, who) {
   x.fillStyle = NAVY; x.font = `400 54px ${SERIF}`; x.fillText('Paths', 176, 134);
   x.fillStyle = MUTE; x.font = `500 28px ${SANS}`; x.fillText(`For ${String(FOR[who] || 'you').replace(/^A /, 'a ').replace(/^My /, 'my ')}`, 80, 220);
   x.fillStyle = NAVY; x.font = `400 96px ${SERIF}`; x.fillText(LABEL[pl.y], 80, 320);
-  x.font = `600 38px ${SANS}`; const openTxt = `${pl.open} of 8 ${pl.word}`;
-  x.fillStyle = YEL; x.fillRect(80, 352, x.measureText(openTxt).width + 24, 44);
-  x.fillStyle = NAVY; x.fillText(openTxt, 92, 386);
-  let y = 460;
+  let y = 400;
+  if (pl.goalState) {
+    x.font = `600 38px ${SANS}`;
+    x.fillStyle = YEL; x.fillRect(80, 352, x.measureText(pl.goalState).width + 24, 44);
+    x.fillStyle = NAVY; x.fillText(pl.goalState, 92, 386);
+    y = 460;
+  }
   if (pl.goal) { x.fillStyle = RED; x.beginPath(); x.arc(92, y - 12, 10, 0, Math.PI * 2); x.fill(); x.fillStyle = INK; x.font = `500 36px ${SANS}`; y = wrap(x, goalLine(api, pl.goal), 116, y, 880, 46) + 14; }
   // The compass, only when the student switched it on: one line for each part.
   pl.meLines.forEach(([k, list]) => {

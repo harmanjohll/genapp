@@ -9,8 +9,8 @@
 //
 // Pure: no DOM, no storage. Rules come from data/psle.json.
 
-import { reach } from './reach.js?v=7.3';
-import { evalPlan } from './years.js?v=7.3';
+import { reach } from './reach.js?v=7.4';
+import { evalPlan } from './years.js?v=7.4';
 
 export function alOf(entry, rules) {
   if (!entry) return null;
@@ -169,7 +169,7 @@ export function p6Choices(psle, rules, ctx) {
       });
     });
   });
-  return { group, base: now.base, onTrack: onTrack(nowRows).length, total: nowRows.length, groups, picks };
+  return { group, base: now.base, onTrack: onTrack(nowRows).length, total: nowRows.length, names: onTrack(nowRows).map((r) => r.railName), groups, picks };
 }
 
 /** The Sec 1 plan the P6 page currently points at, or null. */
