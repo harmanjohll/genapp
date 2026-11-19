@@ -8,8 +8,8 @@
 // Ethics carried: no row ever says closed. The weakest word on the board is
 // OTHER ROAD, and it is true: every destination keeps a road in.
 
-import { esc } from './dom.js?v=7.4';
-import { stateWord, openWord, t } from './labels.js?v=7.4';
+import { esc } from './dom.js?v=7.5';
+import { stateWord, openWord, t } from './labels.js?v=7.5';
 
 // Board words follow the reader's vocabulary (plain by default), and a lower
 // secondary row reads "On track" where an upper one reads "Open now".

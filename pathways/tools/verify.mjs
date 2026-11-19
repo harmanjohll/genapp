@@ -572,6 +572,9 @@ async function sevenSweep() {
     ['the first run asks about the student before their levels', /ORDER = \['me', 'year', 'levels'\]/.test(src('screens/start.js'))],
     ['the reader is always the student: no role or voice switch is kept', /base\.role = 'student'/.test(src('state.js')) && !/pick-role|roleSheet/.test(src('main.js'))],
     ['the lesson guide adds up to 45 minutes, each block with do, say and watch', lesson.blocks.length === 6 && lesson.blocks.reduce((n, b) => n + b.min, 0) === 45 && lesson.blocks.every((b) => b.do && b.say && b.watch)],
+    ['no page per audience: the guide has no tab row and no counsellor page', !/role="tablist"|counsellorTab/.test(src('screens/adults.js')) && !/adultlink/.test(src('main.js'))],
+    ['explore and reset are wired: start, keep, go back, tick to clear, start over', ['explore-start', 'explore-keep', 'explore-back', 'rs-pick', 'rs-go', 'rs-all'].every((a) => src('main.js').includes(`'${a}'`)) && /export function resetParts/.test(src('state.js')) && /export function endExplore/.test(src('state.js'))],
+    ['explore and reset never touch settings', !/PLAN_KEYS = \[[^\]]*(bigText|wordStyle|soundOn|families)/.test(src('state.js'))],
     ['the lesson guide has a debrief and a frame on parity', lesson.debrief.length >= 3 && lesson.frame.lines.length >= 3],
   );
   const fails = cases.filter(([, ok]) => !ok).map(([name]) => ({ case: name }));

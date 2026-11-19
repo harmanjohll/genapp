@@ -11,17 +11,17 @@
 // the only counsellor flow: the adults page opens it, and no longer keeps a
 // second, shorter guide that disagreed with it.
 
-import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.4';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
-import { goalMoves } from '../engine/goal.js?v=7.4';
-import { sayMove } from '../ui/talk.js?v=7.4';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
-import { stateWord } from '../ui/labels.js?v=7.4';
-import { goalLine } from './path.js?v=7.4';
-import { readPlan } from './share.js?v=7.4';
-import { decodePacket } from '../engine/packet.js?v=7.4';
+import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.5';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.5';
+import { goalMoves } from '../engine/goal.js?v=7.5';
+import { sayMove } from '../ui/talk.js?v=7.5';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
+import { stateWord } from '../ui/labels.js?v=7.5';
+import { goalLine } from './path.js?v=7.5';
+import { readPlan } from './share.js?v=7.5';
+import { decodePacket } from '../engine/packet.js?v=7.5';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -38,7 +38,7 @@ const niceDay = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numer
 
 export default {
   id: 'session',
-  title: 'Counsellor session',
+  title: 'Talk it through',
   era: 'school',
 
   render(root, api) {

@@ -14,21 +14,21 @@
 // on the pass, the compass has its own card, and each saved step can be
 // ticked as done. It prints as one page for a parent or a review.
 
-import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.4';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
-import { goalLine } from './path.js?v=7.4';
-import { reach } from '../engine/reach.js?v=7.4';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
-import { advise, sayName } from '../engine/advice.js?v=7.4';
-import { report, hn3Check, entries } from '../engine/grades.js?v=7.4';
-import { psleScore } from '../engine/psle.js?v=7.4';
-import { ticketHtml } from '../ui/ticket.js?v=7.4';
-import { boardHtml } from '../ui/board.js?v=7.4';
-import { signalHtml } from '../ui/signal.js?v=7.4';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.4';
-import { STRIP } from '../ui/yearstrip.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
+import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.5';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.5';
+import { goalLine } from './path.js?v=7.5';
+import { reach } from '../engine/reach.js?v=7.5';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.5';
+import { advise, sayName } from '../engine/advice.js?v=7.5';
+import { report, hn3Check, entries } from '../engine/grades.js?v=7.5';
+import { psleScore } from '../engine/psle.js?v=7.5';
+import { ticketHtml } from '../ui/ticket.js?v=7.5';
+import { boardHtml } from '../ui/board.js?v=7.5';
+import { signalHtml } from '../ui/signal.js?v=7.5';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.5';
+import { STRIP } from '../ui/yearstrip.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -98,7 +98,7 @@ export default {
           <span class="small pass-note" id="mp-note"></span>
         </p>
         <p class="pass-more no-print">
-          <button type="button" class="linkbtn" data-action="go" data-s="session">${icon('talk')} Counsellor session, 15 minutes</button>
+          <button type="button" class="linkbtn" data-action="go" data-s="session">${icon('talk')} Talk it through, 15 minutes</button>
           <button type="button" class="linkbtn" data-action="mp-carry">Send to another device</button>
         </p>
       </section>

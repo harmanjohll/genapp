@@ -16,20 +16,20 @@
 // Explore used to hold (places, jobs, fees, school types, adults) are links
 // at the foot of the line.
 
-import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.4';
-import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.4';
-import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.4';
-import { reach } from '../engine/reach.js?v=7.4';
-import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.4';
-import { advise } from '../engine/advice.js?v=7.4';
-import { psleScore } from '../engine/psle.js?v=7.4';
-import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.4';
-import { signalHtml } from '../ui/signal.js?v=7.4';
-import { ticketHtml } from '../ui/ticket.js?v=7.4';
-import { subjTile } from './year.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
-import { stateWord, isShort, t } from '../ui/labels.js?v=7.4';
+import { getState, setYearLevel, replaceYearPlan, YEARS, goalDue, compassFill, currentYear, markVersionSeen } from '../state.js?v=7.5';
+import { compassSvg, pointsFilled } from '../ui/compass.js?v=7.5';
+import { longViewHtml, firstMarker } from '../ui/longview.js?v=7.5';
+import { reach } from '../engine/reach.js?v=7.5';
+import { evalPlan, effective, isLower, subjectsForYear, carryForward } from '../engine/years.js?v=7.5';
+import { advise } from '../engine/advice.js?v=7.5';
+import { psleScore } from '../engine/psle.js?v=7.5';
+import { goalReach, goalMoves, familiesFor } from '../engine/goal.js?v=7.5';
+import { signalHtml } from '../ui/signal.js?v=7.5';
+import { ticketHtml } from '../ui/ticket.js?v=7.5';
+import { subjTile } from './year.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
+import { stateWord, isShort, t } from '../ui/labels.js?v=7.5';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const ORDER = YEARS.map((y) => y.id);
@@ -300,7 +300,7 @@ export default {
         <button type="button" class="chip press" data-action="go" data-s="work">${icon('d_portfolio')} Jobs and sectors</button>
         <button type="button" class="chip press" data-action="go" data-s="money">${icon('ticket')} Fees and help</button>
         <button type="button" class="chip press" data-action="go" data-s="schools">${icon('home')} School types</button>
-        <button type="button" class="chip press" data-action="go" data-s="adults">${icon('d_people')} Parents and teachers</button>
+        <button type="button" class="chip press" data-action="go" data-s="adults">${icon('d_people')} What changed</button>
       </nav>
     </div>`;
 

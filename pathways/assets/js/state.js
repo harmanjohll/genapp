@@ -12,8 +12,8 @@
 // 7.0 keeps its own key. On its first visit it reads what 6.0 saved on this
 // device, or joins v4.4 and v5 the way 6.0 did (engine/migrate.js). It never
 // writes to an old key, so the frozen builds in legacy/ keep their own plans.
-import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.4';
-import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.4';
+import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.5';
+import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.5';
 
 const STORAGE_KEY = 'paths7.state.v1';
 const V6_KEY = 'paths6.state.v1';
@@ -729,4 +729,86 @@ export function carrySummary() {
     school: !!state.schoolKind,
     activities: (state.activities || []).length,
   };
+}
+
+/* ---- 7.5: explore, and choose what to reset --------------------------------
+   A student who is only trying things out should not have to fear their own
+   taps. Two tools, both the student's to use:
+
+   Explore keeps a copy of the plan aside. Everything works as usual while it
+   is on, and a bar at the top says so. Ending it either keeps the changes or
+   puts the copy back. The copy lives in its own key, so closing the tab in
+   the middle loses nothing.
+
+   Reset clears only the parts the student picks. Settings such as larger
+   text are not plan data and are never touched by either tool. */
+
+const EXPLORE_KEY = 'paths7.explore.v1';
+const PLAN_KEYS = ['year', 'yearSet', 'plan', 'plans', 'psle', 'grades', 'compass', 'goal', 'actions', 'done', 'scenario', 'activities', 'schoolKind'];
+
+function exploreCopy() {
+  if (GUEST) return null;
+  try { return JSON.parse(localStorage.getItem(EXPLORE_KEY) || 'null'); } catch { return null; }
+}
+
+export function isExploring() { return !!exploreCopy(); }
+
+export function startExplore() {
+  if (GUEST || isExploring()) return false;
+  const copy = {};
+  PLAN_KEYS.forEach((k) => { copy[k] = state[k]; });
+  try { localStorage.setItem(EXPLORE_KEY, JSON.stringify(copy)); } catch { return false; }
+  notify({ kind: 'explore', on: true });
+  return true;
+}
+
+/** End exploring. keep: true keeps what was tried; false puts the plan back. */
+export function endExplore(keep) {
+  const copy = exploreCopy();
+  try { localStorage.removeItem(EXPLORE_KEY); } catch { /* private mode */ }
+  if (!keep && copy) {
+    const fresh = initial();
+    PLAN_KEYS.forEach((k) => { state[k] = k in copy ? copy[k] : fresh[k]; });
+    state.goal = cleanGoal(state.goal);
+    state.compass = cleanCompass(state.compass);
+    persist();
+  }
+  notify({ kind: 'explore', on: false });
+}
+
+/** What can be reset on this device right now: only parts that hold something. */
+export function resetChoices() {
+  const out = [];
+  if (Object.keys(state.psle || {}).length) out.push({ id: 'psle', label: 'P6 scores' });
+  YEARS.filter((y) => y.id !== 'p6').forEach((y) => {
+    if (Object.keys(state.plans[y.id] || {}).length) out.push({ id: y.id, label: `${y.label} levels` });
+  });
+  if (Object.keys(state.grades.now).length || Object.keys(state.grades.target).length) out.push({ id: 'grades', label: 'Grade targets' });
+  if (state.goal || state.actions.length) out.push({ id: 'goal', label: 'Goal and steps' });
+  const c = state.compass;
+  if (c.enjoy.length || c.strengths.length || c.values.length || c.notes.length) out.push({ id: 'compass', label: 'Me: your compass' });
+  if (state.runs.length || state.liveRun) out.push({ id: 'runs', label: 'Game stories' });
+  return out;
+}
+
+/** Clear the chosen parts. 'all' starts over: the plan, and the start itself. */
+export function resetParts(parts) {
+  const fresh = initial();
+  const has = (id) => parts.includes('all') || parts.includes(id);
+  if (has('psle')) state.psle = {};
+  YEARS.filter((y) => y.id !== 'p6').forEach((y) => { if (has(y.id)) state.plans[y.id] = {}; });
+  if (has('grades')) state.grades = { now: {}, target: {} };
+  if (has('goal')) { state.goal = null; state.actions = []; state.done = {}; }
+  if (has('compass')) state.compass = fresh.compass;
+  if (has('runs')) { state.runs = []; state.liveRun = null; }
+  if (parts.includes('all')) {
+    ['year', 'yearSet', 'scenario', 'activities', 'schoolKind', 'history', 'looked', 'guesses', 'seenStart', 'seenWelcome', 'landingGuess'].forEach((k) => { state[k] = fresh[k]; });
+    try { localStorage.removeItem(EXPLORE_KEY); } catch { /* private mode */ }
+  }
+  if (state.scenario && has(state.scenario.yearId)) state.scenario = null;
+  // The effective plan is the latest year that still has levels.
+  const last = ['sec5', 'sec4', 'sec3', 'sec2', 'sec1'].find((y) => Object.keys(state.plans[y] || {}).length);
+  state.plan = last ? { ...state.plans[last] } : {};
+  persist();
+  notify({ kind: 'reset' });
 }

@@ -5,11 +5,11 @@
 // say to a real person. "Keep" puts the words on My plan, and the ticket is
 // punched: a small, honest acknowledgement that the student did something.
 
-import { getState } from '../state.js?v=7.4';
-import { sayMove, roleWords } from './talk.js?v=7.4';
-import { esc } from './dom.js?v=7.4';
-import { icon } from './icons.js?v=7.4';
-import { t, isShort } from './labels.js?v=7.4';
+import { getState } from '../state.js?v=7.5';
+import { sayMove, roleWords } from './talk.js?v=7.5';
+import { esc } from './dom.js?v=7.5';
+import { icon } from './icons.js?v=7.5';
+import { t, isShort } from './labels.js?v=7.5';
 
 const LV_COLOR = { G1: 'var(--g1)', G2: 'var(--g2)', G3: 'var(--g3)' };
 

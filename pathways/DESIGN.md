@@ -176,3 +176,16 @@ own views, and is the flow plain. Three answers shaped the build.
 
 The start now mirrors the tabs (Me, then levels, then the Path), so the first
 minute teaches the order of the app. Larger text is a switch in Settings.
+
+## Pencil, not pen (2026-11-19)
+
+1. Exploration comes before commitment. If every tap feels permanent, a
+   student commits early. Explore keeps the plan aside; Reset clears only
+   what the student ticks. Both are one tap from any screen.
+2. One app. A page per audience asked every adult to work out which door was
+   theirs. Parents now use what their child uses, or read what their child
+   shares. What is left for adults is reading: what changed, a lesson guide,
+   the evidence.
+3. The counsellor is the source. Paths prepares a student for that
+   conversation and does not script the counsellor's side of it.
+

@@ -5,12 +5,12 @@
 // one obvious next step is the last thing on the panel: carry these levels
 // into Sec 1.
 
-import { getState, setPsle, replaceYearPlan } from '../state.js?v=7.4';
-import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=7.4';
-import { esc, onAction } from './dom.js?v=7.4';
-import { icon } from './icons.js?v=7.4';
-import { listNames } from '../engine/advice.js?v=7.4';
-import { isShort } from './labels.js?v=7.4';
+import { getState, setPsle, replaceYearPlan } from '../state.js?v=7.5';
+import { psleScore, postingFor, startLevels, hmtlEligible, p6Choices } from '../engine/psle.js?v=7.5';
+import { esc, onAction } from './dom.js?v=7.5';
+import { icon } from './icons.js?v=7.5';
+import { listNames } from '../engine/advice.js?v=7.5';
+import { isShort } from './labels.js?v=7.5';
 
 const SUBJ_PLAN_ID = { el: 'el', mtl: 'mtl', maths: 'maths', science: 'ls_science' };
 

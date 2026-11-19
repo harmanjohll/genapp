@@ -2,12 +2,34 @@
 
 The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
 
-## Latest: v7.4, in `pathways/`. Build here.
+## Latest: v7.5, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
-- To release: `node pathways/tools/release.mjs x.y` (two numbers, such as 7.4), then add the notes to `pathways/data/version.json` and a line under the version below.
+- To release: `node pathways/tools/release.mjs x.y` (two numbers, such as 7.5), then add the notes to `pathways/data/version.json` and a line under the version below.
+
+### v7.5 (2026-11-19): explore, reset, and one app for everyone
+
+Two questions drove this build. The "Parents and teachers" page confused: its door named two audiences, the room had four tabs, and a parent on their own phone was sent into an empty student app. And a student who was only trying things out had no way back.
+
+**What is critical (keep these when building on it)**
+- Paths is one app, for students, that anyone can use the same way. There is no page per audience and no header door for adults. A parent on their own phone has two routes: open the plan their child shares, or use Paths as a guest.
+- No counsellor page. The ECG counsellor is the source of advice; Paths helps a student get ready for that talk. The 15 minute session stays on Saved as "Talk it through".
+- `screens/adults.js` is now three reading pages, with no tab row: What changed (default), the lesson guide (`tab=teacher`) and what this is built on (`tab=evidence`). Old links to the parent and counsellor tabs open What changed.
+- Explore (`startExplore`, `endExplore` in `state.js`): a copy of the plan fields is kept aside in `paths7.explore.v1`. Everything works as usual while it is on, the header chip turns yellow on every screen, and ending it either keeps what was tried or puts the copy back. It survives a reload. Settings are never part of the copy.
+- Reset (`resetChoices`, `resetParts`): the student ticks the parts to clear (one year's levels, P6 scores, grade targets, goal and steps, Me, game stories). Only parts that hold something are listed. Nothing clears on the first tap. Start over clears it all and shows the start.
+- `afterSheet` in `main.js`: closing a routed sheet steps history back, so anything that changes the page must wait for that step.
+
+**What changed besides**
+- The parents' questions ask for the child's year first; they no longer assume Sec 2.
+- The old streams table speaks to anyone, not only to a parent who was streamed.
+- The lesson guide says what the play code and the projector view are for.
+- The Moves badge and Saved follow the goal (from 7.4) through explore and reset.
+
+**Known gaps**
+- Both videos and the 7.3 artifact show screens that no longer exist.
+- Still untested with real students, parents and teachers.
 
 ### v7.4 (2026-11-19): the goal leads, and no place is counted
 

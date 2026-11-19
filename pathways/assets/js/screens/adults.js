@@ -1,80 +1,77 @@
-// The adults' hub: one screen, four tabs, each ordered by the task the adult
-// walked in with.
+// The guide pages: what changed, the lesson guide, and what this is built on.
 //
-// 7.0 rewrite. In 6.0 this page still described v3: a lesson built on Plan,
-// the lever line and Act, none of which a teacher could find, and a three
-// step counsellor guide beside a five step session that disagreed with it.
-// It was also two taps down inside Explore.
+// 7.5 rewrite. This was a hub with four audience tabs (Parents, Teachers,
+// Counsellors, Evidence) behind a door that named two of them. Everyone
+// landed on Parents, the tab row mixed who with what, and a parent on their
+// own phone was sent into an empty student app.
 //
-// Now: picking Parent or Teacher in "I am" lands here, on that tab. Parents
-// get what changed as one line of four dates, and their own stream in
-// today's words; the reading folds away under it. Teachers get a lesson
-// that names the five tabs as they are. Counsellors get the one session.
-// The evidence tab keeps the citations, criticism first.
+// Paths is now one app, for students, that anyone can use the same way. What
+// is left here is reading, not a place to be:
 //
-// The tab arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
-// printed handout always reproduces the exact page.
+//   What changed   four dates and the old streams in today's words, for
+//                  anyone new to subject levels. A short block for parents
+//                  says how to see a child's plan on their own phone.
+//   Lesson guide   for a teacher running a class, and it prints.
+//   Built on       the evidence, criticism first.
+//
+// There is no counsellor page. The ECG counsellor is the source of advice;
+// Paths helps a student get ready for that conversation, and the 15 minute
+// session on Saved is the student's to bring.
+//
+// The page arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
+// printed handout always reproduces it. Old links to the parent and
+// counsellor tabs open What changed.
 
-import { getState } from '../state.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { decorate } from '../ui/glossary.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
-import { STEPS } from './session.js?v=7.4';
+import { getState, YEARS } from '../state.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { decorate } from '../ui/glossary.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
 
-const TABS = [
-  { id: 'parent', label: 'Parents' },
-  { id: 'teacher', label: 'Teachers' },
-  { id: 'counsellor', label: 'Counsellors' },
-  { id: 'evidence', label: 'Evidence' },
+const PAGES = [
+  { id: 'changed', label: 'What changed', k: 'New to subject levels?', h1: 'What changed' },
+  { id: 'teacher', label: 'Lesson guide for teachers', k: 'For teachers', h1: 'Lesson guide' },
+  { id: 'evidence', label: 'What this is built on', k: 'For the curious', h1: 'What this is built on' },
 ];
 
 function currentTab() {
   const t = new URLSearchParams(location.search).get('tab');
-  if (TABS.some((x) => x.id === t)) return t;
-  return 'parent';
+  return PAGES.some((x) => x.id === t) ? t : 'changed';
 }
 
 let stream = 'express';
+let askYear = null;
 
 export default {
   id: 'adults',
-  title: 'For parents and teachers',
+  title: 'What changed',
   era: 'school',
 
   render(root, api) {
     const tab = currentTab();
-    const body = tab === 'parent' ? parentTab(api)
-      : tab === 'teacher' ? teacherTab(api)
-      : tab === 'counsellor' ? counsellorTab(api)
-      : evidenceTab(api);
+    const page = PAGES.find((x) => x.id === tab);
+    const body = tab === 'teacher' ? teacherTab(api) : tab === 'evidence' ? evidenceTab(api) : changedPage(api);
 
     root.innerHTML = `
     <div class="wrap-narrow adultwrap">
       <header class="ph">
-        <p class="ph-k">For the adults</p>
-        <h1>${esc({ parent: 'For parents', teacher: 'For teachers', counsellor: 'For ECG counsellors', evidence: 'What this is built on' }[tab])}</h1>
+        <p class="ph-k">${esc(page.k)}</p>
+        <h1>${esc(page.h1)}</h1>
       </header>
-
-      <div class="tabstrip" role="tablist" aria-label="Who is reading">
-        ${TABS.map((t) => `
-          <button type="button" role="tab" id="ad-tab-${t.id}" class="press"
-            aria-selected="${t.id === tab}" aria-controls="ad-panel"
-            data-action="ad-tab" data-tab="${t.id}">${esc(t.label)}</button>`).join('')}
-      </div>
-
-      <div id="ad-panel" role="tabpanel" aria-labelledby="ad-tab-${esc(tab)}">
-        ${body}
-      </div>
+      ${body}
+      <nav class="guidelinks no-print" aria-label="More reading">
+        ${PAGES.filter((x) => x.id !== tab).map((x) => `<button type="button" class="chip press" data-action="go" data-s="adults" data-tab="${x.id}">${esc(x.label)}</button>`).join('')}
+        <button type="button" class="chip press" data-action="go" data-s="path">${icon('steps')} Back to the Path</button>
+      </nav>
     </div>`;
 
     bind(root, api);
   },
 };
 
-/* ---- for parents ----------------------------------------------------------
-   Four dates and one translation carry most of what a parent needs: the
-   system changed, and here is what your own stream is called now. The game
-   as a guest comes next, and the reading sits under folds. */
+/* ---- what changed ----------------------------------------------------------
+   Four dates and one translation carry most of it: the system changed, and
+   here is what each old stream is called now. Then three things a parent can
+   do from their own phone. The longer reading sits under folds. */
 
 function thenNowHtml(p) {
   const tn = p.thenNow || {};
@@ -97,16 +94,25 @@ function thenNowHtml(p) {
   </section>`;
 }
 
-function parentTab(api) {
-  const p = api.data.parent || {};
-  const g = p.guest || {};
+function askHtml(api) {
   const st = getState();
-  const y = st.yearSet ? st.year : 'sec2';
-  const asks = ((((api.data.years || {}).years || {})[y] || {}).talk || {}).parent || [];
+  const y = askYear || (st.yearSet ? st.year : null);
+  const asks = y ? ((((api.data.years || {}).years || {})[y] || {}).talk || {}).parent || [] : [];
   const meAsks = (((api.data.compass || {}).prompts || {}).parent) || [];
+  return `<div id="ad-asks">
+    <div class="yearpick" role="group" aria-label="Which year is your child in?">
+      ${YEARS.map((v) => `<button type="button" class="mechip press" data-action="ad-year" data-id="${v.id}" aria-pressed="${v.id === y}">${esc(v.label)}</button>`).join('')}
+    </div>
+    ${y ? `<div class="bubbles" style="margin-top:12px">${[...asks.slice(0, 2), ...meAsks.slice(0, 1)].map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>`
+      : '<p class="small" style="margin:8px 0 0">Pick your child\'s year to see what to ask this week.</p>'}
+  </div>`;
+}
+
+function changedPage(api) {
+  const p = api.data.parent || {};
   return `
   <section class="changes" aria-labelledby="chg-h">
-    <h2 id="chg-h">${esc(p.changesHead || 'What changed')}</h2>
+    <h2 id="chg-h" class="sr-only">${esc(p.changesHead || 'What changed')}</h2>
     <ol class="chg">${(p.changes || []).map((c) => `<li>
       <b class="chg-y">${esc(c.year)}</b>
       <span class="chg-t">${esc(c.head)}</span>
@@ -115,23 +121,15 @@ function parentTab(api) {
 
   ${thenNowHtml(p)}
 
-  ${asks.length ? `<section class="section" aria-labelledby="ask-h">
-    <h2 id="ask-h">${esc(p.askHead || 'Three things to ask this week')}</h2>
-    <div class="bubbles">${asks.slice(0, 3).map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>
-    ${meAsks.length ? `<p class="py-k" style="margin-top:16px">About who they are</p><div class="bubbles">${meAsks.map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>` : ''}
-    <p class="btnrow"><button type="button" class="btn press" data-action="go" data-s="path">${icon('steps')} Open the path</button>
-      <button type="button" class="btn ghost press" data-action="go" data-s="me">${icon('compass')} Their compass</button></p>
-  </section>` : ''}
-
-  <section class="section" aria-label="${esc(g.head || 'Play your own school years')}">
-    <div class="card" style="border-left:4px solid var(--accent)">
-      <h2 style="margin-bottom:8px">${esc(g.head || 'Play your own school years')}</h2>
-      <p>${decorate(g.body || '')}</p>
-      <p class="btnrow" style="margin-bottom:0">
-        <a class="btn press" href="./?guest=1&amp;s=play">${icon('play')} ${esc(g.cta || 'Play it from Sec 3')}</a>
-      </p>
-      <p class="small" style="margin:12px 0 0">${esc(g.note || '')}</p>
-    </div>
+  <section class="section athome" aria-labelledby="home-h">
+    <h2 id="home-h">For parents</h2>
+    <ol>
+      <li><b>See your child's plan on your phone.</b>Ask them to tap Share on Saved. The link opens as a card you can read. Nothing is changed.</li>
+      <li><b>Or try Paths yourself.</b>It works the same way for you. As a guest, nothing is saved.
+        <span class="btnrow" style="margin:8px 0 0"><a class="btn small press" href="./?guest=1&amp;s=start">${icon('play')} Try it as a guest</a></span></li>
+      <li><b>Ask, then listen.</b>${askHtml(api)}</li>
+    </ol>
+    <p class="small" style="margin:0">Your school's ECG counsellor is the source for advice. Paths helps your child get ready for that talk.</p>
   </section>
 
   <details class="fold section">
@@ -181,6 +179,7 @@ function teacherTab(api) {
       <button type="button" class="btn small press" data-action="ad-print">${icon('print')} Print this guide</button>
       <a class="btn ghost small" href="./?board=1">Projector view</a>
     </p>
+    <p class="small no-print">Projector view shows the chart large, for the classroom screen.</p>
     ${(frame.lines || []).length ? `<div class="teachframe">
       <h3>${esc(frame.head || '')}</h3>
       <ul>${frame.lines.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
@@ -194,6 +193,7 @@ function teacherTab(api) {
           <button type="button" class="btn small press no-print" data-action="ad-code">${esc(api.copy('teacher.playBtn', 'New play code'))}</button>
           <span id="ad-code-out" class="figure" aria-live="polite" style="letter-spacing:0.1em"></span>
         </p>
+        <p class="small" style="margin:8px 0 0">Students type this code when the game starts. Everyone then meets the same chances, so only their choices differ.</p>
       </div>
     </details>` : ''}
     <ol class="blocks">
@@ -230,57 +230,7 @@ function teacherTab(api) {
     <p style="max-width:65ch">Nothing to install and nothing collected. Saved has a link that carries a plan to another device, and a card to share with a parent.</p>
     <p class="small" style="max-width:65ch">For two to six students around one device,
       <a href="../legacy/pathways-v2/?mode=table">the tabletop game is in an earlier version</a>.</p>
-    <p class="btnrow"><button type="button" class="btn ghost small press" data-action="ad-evidence">What this is built on</button></p>
   </details>`;
-}
-
-/* ---- for counsellors --------------------------------------------------------
-   The counsellor knows the system better than this app does. What they do not
-   know is what their student has just been shown, so the facts table below
-   renders from the same file the student screens read. The two cannot
-   disagree, which is the point. */
-
-function counsellorTab(api) {
-  const c = api.ctx();
-  const meta = c.pathwaysMeta || {};
-  return `
-  <section aria-labelledby="ss-h">
-    <h2 id="ss-h">Fifteen minutes, one student</h2>
-    <ol class="runsheet">
-      ${STEPS.map((s) => `<li>
-        <span class="rs-min">${s.min} min</span>
-        <span class="rs-t"><b>${esc(s.t)}</b>${esc(s.ask)}</span></li>`).join('')}
-    </ol>
-    <p class="btnrow">
-      <button type="button" class="btn big press" data-action="go" data-s="session">${icon('talk')} Start a session</button>
-    </p>
-    <p class="small">It reads the plan on this device. A plan a student shared by link opens the same session, and saves nothing.</p>
-    <p class="small">The steps follow MOE's three questions: Who am I? Where do I want to go? How do I get there? For interest profiles and course search, use the <a href="https://go.gov.sg/mysfsec" target="_blank" rel="noopener">MySkillsFuture Student Portal</a>.</p>
-  </section>
-
-  <details class="fold section">
-    <summary>The facts the tool serves</summary>
-    <p class="small" style="max-width:65ch">From the same file the student screens read. Subject level rules only: the tool never weighs a grade against a student unless they enter a target.</p>
-    <ul class="movelist">
-      ${(c.destinations || []).map((d) => `
-      <li class="move">
-        <div style="min-width:0">
-          <p style="margin:0 0 2px"><strong>${esc(d.name)}</strong></p>
-          <p class="small" style="margin:0">${decorate((d.structural || []).map((r) => r.label).join(' · '))}</p>
-        </div>
-      </li>`).join('')}
-    </ul>
-    <p class="provline" style="margin-top:var(--s-3)">
-      <span>Source: ${esc(meta.source || 'MOE post secondary admissions pages')}${meta.accessed ? ` · checked ${esc(meta.accessed)}` : ''}</span>
-    </p>
-  </details>
-
-  <section class="section" aria-label="What this tool refuses to do">
-    <div class="notegood">
-      <p style="margin:0 0 6px"><strong>What this tool refuses to do.</strong></p>
-      <p style="margin:0">It does not predict grades, rank routes or give a student a type. The compass holds only what the student tapped or wrote.</p>
-    </div>
-  </section>`;
 }
 
 /* ---- what this is built on -------------------------------------------------
@@ -334,11 +284,13 @@ function evidenceTab(api) {
 
 function bind(root, api) {
   onAction(root, {
-    'ad-tab': (btn) => {
-      if (btn.getAttribute('aria-selected') === 'true') return;
-      api.nav('adults', { tab: btn.dataset.tab });
+    'ad-year': (btn) => {
+      askYear = btn.dataset.id;
+      const host = root.querySelector('#ad-asks');
+      if (host) host.outerHTML = askHtml(api);
+      const again = root.querySelector(`[data-action="ad-year"][data-id="${askYear}"]`);
+      if (again) again.focus({ preventScroll: true });
     },
-    'ad-evidence': () => api.nav('adults', { tab: 'evidence' }),
     'ad-print': () => window.print(),
     'ad-stream': (btn) => {
       stream = btn.dataset.id;
