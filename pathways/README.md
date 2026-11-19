@@ -36,10 +36,16 @@ I want to go? How do I get there?):
   targets and the printable plan. It also opens the plan card and share
   link, and the 15 minute counsellor session.
 
-For adults, "Parents and teachers" in the header opens their own page: what
-changed as four dates, an old stream in today's words, a 45 minute lesson
-guide that prints (Do, Say, Watch for, and a debrief), and the one counsellor
-session. The student's screens always speak to the student.
+Paths is one app, for students, that anyone can use the same way. A parent
+on their own phone opens the plan their child shares, or tries Paths as a
+guest. Three reading pages sit behind the footer: what changed (four dates,
+the old streams in today's words, and what a parent can do), a 45 minute
+lesson guide for teachers that prints, and what the app is built on. The
+ECG counsellor is the source of advice; Paths gets a student ready for it.
+
+- **Explore.** The header chip keeps the plan safe while a student tries
+  things. They go back to it, or keep what they tried.
+- **Reset.** In Settings: tick the parts to clear, or start over.
 
 Underneath:
 

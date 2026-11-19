@@ -18,14 +18,14 @@
 
 import {
   getState, setYear, YEARS, markStart, markWelcome, setYearLevel, toggleEnjoy,
-} from '../state.js?v=7.4';
-import { reach } from '../engine/reach.js?v=7.4';
-import { evalPlan, isLower } from '../engine/years.js?v=7.4';
-import { signalHtml } from '../ui/signal.js?v=7.4';
-import { stepArt } from '../ui/scenes.js?v=7.4';
-import { subjTile, patchTile } from './year.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
+} from '../state.js?v=7.5';
+import { reach } from '../engine/reach.js?v=7.5';
+import { evalPlan, isLower } from '../engine/years.js?v=7.5';
+import { signalHtml } from '../ui/signal.js?v=7.5';
+import { stepArt } from '../ui/scenes.js?v=7.5';
+import { subjTile, patchTile } from './year.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
 
 const ORDER = ['me', 'year', 'levels'];
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
@@ -174,7 +174,7 @@ function renderWelcome(root) {
         <button type="button" class="btn big press" data-action="st-go" data-step="me">Start ${icon('arrow')}</button>
       </div>
       <p class="st-promise">${icon('check')} No sign up. Your plan stays on this device.</p>
-      <p class="small st-role">Parent or teacher? <button type="button" class="linkbtn" data-action="go" data-s="adults">Open your page</button></p>
+      <p class="small st-role">Anyone can use Paths, parents too. New to subject levels? <button type="button" class="linkbtn" data-action="go" data-s="adults">See what changed</button></p>
     </div>
   </section>`;
 }

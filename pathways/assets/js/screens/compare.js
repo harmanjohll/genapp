@@ -5,14 +5,14 @@
 // B changes, place by place, then the table, then B's levels. "Use Plan B"
 // is the only thing that writes to the real plan.
 
-import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=7.4';
-import { reach } from '../engine/reach.js?v=7.4';
-import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=7.4';
-import { listNames } from '../engine/advice.js?v=7.4';
-import { subjTile } from './year.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
-import { stateWord } from '../ui/labels.js?v=7.4';
+import { getState, setScenario, replaceYearPlan, YEARS } from '../state.js?v=7.5';
+import { reach } from '../engine/reach.js?v=7.5';
+import { evalPlan, subjectsForYear, PLAN_YEARS } from '../engine/years.js?v=7.5';
+import { listNames } from '../engine/advice.js?v=7.5';
+import { subjTile } from './year.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
+import { stateWord } from '../ui/labels.js?v=7.5';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const RANK = { open: 0, 'within-reach': 1, 'longer-route': 2, 'other-route': 3 };

@@ -3,8 +3,20 @@
   "purpose": "Version stamp and release notes, shown in the what changed sheet.",
   "note": "The version must mirror index.html's app-version meta tag; verify.mjs enforces it."
  },
- "version": "7.4",
+ "version": "7.5",
  "releases": [
+  {
+   "version": "7.5",
+   "date": "2026-11-19",
+   "head": "Explore freely",
+   "changes": [
+    "Explore: try any levels, goal or grades. Your plan is kept safe. Go back to it, or keep what you tried.",
+    "Reset: tick what to clear, such as one year's levels or your goal. Or start over.",
+    "Paths is one app for everyone. Parents can use it the same way, or open the plan you share.",
+    "What changed is now one page anyone can read. Teachers have a lesson guide.",
+    "Your ECG counsellor is the source for advice. Paths helps you get ready for that talk."
+   ]
+  },
   {
    "version": "7.4",
    "date": "2026-11-19",

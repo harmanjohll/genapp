@@ -10,8 +10,8 @@
 // Data order always (never ranked). SVG is decoration; the list of names and
 // states is in the accessible label and in the text beside it.
 
-import { esc } from './dom.js?v=7.4';
-import { stateWord } from './labels.js?v=7.4';
+import { esc } from './dom.js?v=7.5';
+import { stateWord } from './labels.js?v=7.5';
 
 export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 

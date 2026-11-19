@@ -18,18 +18,18 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.4';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.5';
 import {
-  getState, subscribe, setMode, setYear, YEARS, isGuest, reconcile, setSound, MODES, setEffective, setFamilies, toggleAction, markStart, setAllSubjects, setWordStyle, setBigText,
-} from './state.js?v=7.4';
-import { effective } from './engine/years.js?v=7.4';
-import { runStrip } from './ui/yearstrip.js?v=7.4';
-import { t } from './ui/labels.js?v=7.4';
-import { esc, onAction } from './ui/dom.js?v=7.4';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.4';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.4';
-import { icon } from './ui/icons.js?v=7.4';
-import { cue, setMutePredicate } from './sound.js?v=7.4';
+  getState, subscribe, setMode, setYear, YEARS, isGuest, reconcile, setSound, MODES, setEffective, setFamilies, toggleAction, markStart, setAllSubjects, setWordStyle, setBigText, isExploring, startExplore, endExplore, resetChoices, resetParts,
+} from './state.js?v=7.5';
+import { effective } from './engine/years.js?v=7.5';
+import { runStrip } from './ui/yearstrip.js?v=7.5';
+import { t } from './ui/labels.js?v=7.5';
+import { esc, onAction } from './ui/dom.js?v=7.5';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.5';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.5';
+import { icon } from './ui/icons.js?v=7.5';
+import { cue, setMutePredicate } from './sound.js?v=7.5';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -216,7 +216,7 @@ function failedScreen(id, missing) {
 }
 
 function screenLabel(s) {
-  return { year: 'Subjects', after: 'After Sec', myplan: 'Saved', play: 'Play', me: 'Me', goal: 'Goal', adults: 'For parents and teachers', money: 'Fees and financial help', work: 'Jobs and sectors', schools: 'My school type' }[s] || s;
+  return { year: 'Subjects', after: 'After Sec', myplan: 'Saved', play: 'Play', me: 'Me', goal: 'Goal', adults: 'What changed', money: 'Fees and financial help', work: 'Jobs and sectors', schools: 'My school type' }[s] || s;
 }
 
 async function paint({ scrollTo = null, fromPop = false } = {}) {
@@ -332,7 +332,6 @@ const NAV_ITEMS = [
 ];
 
 function navCurrent(s) {
-  if (s === 'adults') return 'adults';
   if (['home', 'year', 'compare', 'after', 'dest', 'money', 'schools'].includes(s)) return 'path';
   if (s === 'work') return 'goal';
   if (['share', 'shared', 'session'].includes(s)) return 'myplan';
@@ -352,7 +351,7 @@ function renderChrome() {
       ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.s === 'myplan' ? t('plan') : n.label)}</button>`).join('')}
     </nav>
     <span class="headspace"></span>
-    <button type="button" class="adultlink press" data-action="go" data-s="adults" aria-current="${route.s === 'adults' ? 'page' : 'false'}">${icon('d_people')}<span>Parents and teachers</span></button>
+    ${st.seenStart && !isGuest() ? `<button type="button" class="explorechip press" data-action="explore" data-on="${isExploring()}" aria-label="${isExploring() ? 'Exploring. Your plan is kept safe. Open to finish.' : 'Explore without changing your plan'}">${icon('compass')}<span>${isExploring() ? 'Exploring' : 'Explore'}</span></button>` : ''}
     <button type="button" class="iconbtn press" data-action="settings" aria-label="Settings">${icon('settings')}</button>
   </div>
   ${isGuest() ? `<p class="guestline">${esc(copy('chrome.guest', 'Guest: nothing is saved on this phone.'))}</p>` : ''}`;
@@ -396,11 +395,65 @@ function settingsSheet(trigger) {
     <div class="morerow">
       <button type="button" class="chip press" data-action="words">Glossary</button>
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
+      <button type="button" class="chip press" data-action="reset">Reset</button>
     </div>
     <p class="caps" style="margin-top:20px">Earlier version</p>
     <p class="small">Version 6 is kept as it was, with its own saved plans.</p>
     <p><a class="btn ghost small" href="../legacy/pathways-v6/">Open version 6</a></p>
     <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
+}
+
+// Close a routed sheet, then act. Closing steps history back, so a page
+// change made before that step lands would be undone by it.
+function afterSheet(fn) {
+  const pushed = sheetPushed;
+  if (pushed) {
+    let done = false;
+    const once = () => { if (done) return; done = true; window.removeEventListener('popstate', once); setTimeout(fn, 0); };
+    window.addEventListener('popstate', once);
+    setTimeout(once, 250);
+  }
+  closeSheet();
+  if (!pushed) fn();
+}
+
+// 7.5: explore. Trying things out should cost nothing. While it is on, the
+// plan from before is kept aside, and the header says so on every screen.
+function exploreSheet(trigger) {
+  const on = isExploring();
+  openSheetRouted(on ? `
+    <h2 id="sheet-title">You are exploring</h2>
+    <p>Your plan from before is kept safe. Change anything you like.</p>
+    <div class="sheetacts">
+      <button type="button" class="btn press" data-action="explore-back">${icon('back')} Go back to my plan</button>
+      <button type="button" class="btn ghost press" data-action="explore-keep">${icon('check')} Keep what I tried</button>
+    </div>
+    <p class="small">Going back undoes everything you tried: levels, goal, grades and Me.</p>` : `
+    <h2 id="sheet-title">Explore</h2>
+    <p>Try any levels, goal or grades. Your plan is kept safe while you look.</p>
+    <p class="small">When you finish, go back to your plan as it was, or keep what you tried.</p>
+    <div class="sheetacts">
+      <button type="button" class="btn press" data-action="explore-start">${icon('compass')} Start exploring</button>
+    </div>
+    <p class="small">Want to clear something for good? <button type="button" class="linkbtn" data-action="reset">Choose what to reset</button></p>`, trigger);
+}
+
+// Reset: the student picks the parts. Nothing is cleared on the first tap.
+function resetSheet(trigger) {
+  const list = resetChoices();
+  openSheetRouted(`
+    <h2 id="sheet-title">Reset</h2>
+    ${list.length ? `<p class="small">Tick what to clear. Everything else stays.</p>
+    <div class="resetlist">
+      ${list.map((x) => `<button type="button" class="resetrow press" role="checkbox" aria-checked="false" data-action="rs-pick" data-id="${esc(x.id)}"><i aria-hidden="true">${icon('check')}</i><span>${esc(x.label)}</span></button>`).join('')}
+    </div>
+    <div class="sheetacts">
+      <button type="button" class="btn press" data-action="rs-go" disabled>Clear what I ticked</button>
+    </div>` : '<p>There is nothing to clear yet.</p>'}
+    <p class="small" style="margin-top:20px">Or begin again from the first screen.</p>
+    <p><button type="button" class="btn ghost small press" data-action="rs-all">Start over</button></p>
+    <p class="small" id="rs-note" role="status"></p>
+    ${isExploring() ? '<p class="small">You are exploring. Going back to your plan still restores it.</p>' : ''}`, trigger);
 }
 
 function yearSheet(trigger) {
@@ -433,6 +486,34 @@ onAction(document.body, {
   },
   'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
   settings: (btn) => settingsSheet(btn),
+  explore: (btn) => exploreSheet(btn),
+  'explore-start': () => { startExplore(); afterSheet(() => { announce('Exploring. Your plan is kept safe.'); refresh(); }); },
+  'explore-keep': () => { endExplore(true); afterSheet(() => { announce('Kept. This is your plan now.'); refresh(); }); },
+  'explore-back': () => { endExplore(false); afterSheet(() => { announce('Back to your plan as it was.'); refresh(); }); },
+  reset: (btn) => { afterSheet(() => resetSheet(btn && btn.isConnected ? btn : null)); },
+  'rs-pick': (btn) => {
+    btn.setAttribute('aria-checked', String(btn.getAttribute('aria-checked') !== 'true'));
+    const go = document.querySelector('[data-action="rs-go"]');
+    const n = document.querySelectorAll('.resetrow[aria-checked="true"]').length;
+    if (go) { go.disabled = !n; go.dataset.armed = 'false'; go.textContent = 'Clear what I ticked'; }
+  },
+  'rs-go': (btn) => {
+    const parts = [...document.querySelectorAll('.resetrow[aria-checked="true"]')].map((b) => b.dataset.id);
+    if (!parts.length) return;
+    if (btn.dataset.armed !== 'true') { btn.dataset.armed = 'true'; btn.textContent = 'Tap again to clear'; return; }
+    resetParts(parts);
+    afterSheet(() => { announce('Cleared.'); refresh(); });
+  },
+  'rs-all': (btn) => {
+    if (btn.dataset.armed !== 'true') {
+      btn.dataset.armed = 'true'; btn.textContent = 'Tap again to start over';
+      const note = document.getElementById('rs-note');
+      if (note) note.textContent = 'This clears every level, your goal, Me and the game stories on this device.';
+      return;
+    }
+    resetParts(['all']);
+    afterSheet(() => nav('start', {}));
+  },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
   'set-detail': (btn) => { setWordStyle(flip(btn) ? 'detailed' : 'short'); refresh(); },
   'set-big': (btn) => { const on = flip(btn); setBigText(on); document.documentElement.dataset.big = String(on); },
@@ -465,7 +546,8 @@ onAction(document.body, {
 
 subscribe((st, evt) => {
   if (evt.kind === 'plans') syncEffective();
-  if (evt.kind === 'role' || evt.kind === 'year') renderChrome();
+  if (evt.kind === 'explore' || evt.kind === 'reset') syncEffective();
+  if (['role', 'year', 'explore', 'reset', 'start'].includes(evt.kind)) renderChrome();
 });
 
 // ---- boot ----------------------------------------------------------------------

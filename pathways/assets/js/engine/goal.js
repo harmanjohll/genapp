@@ -12,9 +12,9 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=7.4';
-import { evalPlan, isLower, PLAN_YEARS } from './years.js?v=7.4';
-import { advise, listNames } from './advice.js?v=7.4';
+import { reach } from './reach.js?v=7.5';
+import { evalPlan, isLower, PLAN_YEARS } from './years.js?v=7.5';
+import { advise, listNames } from './advice.js?v=7.5';
 
 const RULE_DESTS = new Set(['jc', 'mi', 'poly', 'pfp']);
 

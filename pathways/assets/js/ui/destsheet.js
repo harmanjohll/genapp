@@ -12,9 +12,9 @@
 // carries the cost line for this destination when the money file is in hand,
 // and degrades to nothing when it is not.
 
-import { esc } from './dom.js?v=7.4';
-import { decorate } from './glossary.js?v=7.4';
-import { stateWord } from './labels.js?v=7.4';
+import { esc } from './dom.js?v=7.5';
+import { decorate } from './glossary.js?v=7.5';
+import { stateWord } from './labels.js?v=7.5';
 
 // One set of state words for the whole app (ui/labels.js).
 const STATE_WORD = new Proxy({}, { get: (_, k) => stateWord(String(k)) });

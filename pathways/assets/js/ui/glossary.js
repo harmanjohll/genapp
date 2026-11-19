@@ -5,8 +5,8 @@
 // they carry the explanation load for the weakest readers, so cutting them
 // hardest would cut exactly the students they exist for.
 
-import { esc, onAction } from './dom.js?v=7.4';
-import { openSheet } from './sheet.js?v=7.4';
+import { esc, onAction } from './dom.js?v=7.5';
+import { openSheet } from './sheet.js?v=7.5';
 
 let terms = [];
 let byTerm = new Map();

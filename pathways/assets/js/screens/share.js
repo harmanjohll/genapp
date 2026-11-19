@@ -9,26 +9,26 @@
 // 7.0: the compass stays off the card until the student switches it on. The
 // image then shows its words; the link carries its ids and nothing typed.
 
-import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.4';
-import { decodePacket } from '../engine/packet.js?v=7.4';
-import { reach } from '../engine/reach.js?v=7.4';
-import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
-import { advise } from '../engine/advice.js?v=7.4';
-import { goalMoves } from '../engine/goal.js?v=7.4';
-import { sayMove } from '../ui/talk.js?v=7.4';
-import { esc, onAction } from '../ui/dom.js?v=7.4';
-import { icon } from '../ui/icons.js?v=7.4';
-import { stateWord, openWord } from '../ui/labels.js?v=7.4';
-import { goalLine } from './path.js?v=7.4';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
+import { getState, replaceYearPlan, setGoal, YEARS } from '../state.js?v=7.5';
+import { decodePacket } from '../engine/packet.js?v=7.5';
+import { reach } from '../engine/reach.js?v=7.5';
+import { evalPlan, effective, PLAN_YEARS } from '../engine/years.js?v=7.5';
+import { advise } from '../engine/advice.js?v=7.5';
+import { goalMoves } from '../engine/goal.js?v=7.5';
+import { sayMove } from '../ui/talk.js?v=7.5';
+import { esc, onAction } from '../ui/dom.js?v=7.5';
+import { icon } from '../ui/icons.js?v=7.5';
+import { stateWord, openWord } from '../ui/labels.js?v=7.5';
+import { goalLine } from './path.js?v=7.5';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.5';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const FOR = { parent: 'A parent', teacher: 'A teacher', counsellor: 'My ECG counsellor' };
 
 // ---- the packet: what a link carries (engine/packet.js) -------------------
 
-export { decodePacket } from '../engine/packet.js?v=7.4';
-import { encodePacket } from '../engine/packet.js?v=7.4';
+export { decodePacket } from '../engine/packet.js?v=7.5';
+import { encodePacket } from '../engine/packet.js?v=7.5';
 export function packFor(st, y, withMe = false) { return { y, plan: st.plans[y] || {}, goal: st.goal || null, me: withMe ? st.compass : null }; }
 function linkFor(packet, who) {
   const url = new URL(location.origin + location.pathname);
@@ -235,6 +235,7 @@ export const shared = {
         <button type="button" class="btn ghost press" data-action="sd-save">Save this plan to this device</button>
       </p>
       <p class="small" id="sd-note" role="status"></p>
+      <p class="small">New to subject levels? <button type="button" class="linkbtn" data-action="go" data-s="adults">See what changed</button>. To try Paths yourself, <a href="./?guest=1&amp;s=start">open it as a guest</a>.</p>
     </div>`;
     onAction(root, {
       'sd-for': (btn) => { api.setQuery({ for: btn.dataset.for }); api.refresh(); },
