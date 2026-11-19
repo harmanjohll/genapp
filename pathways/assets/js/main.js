@@ -18,20 +18,18 @@
 // live region that exists from boot, and manage scroll. A screen never
 // touches the address bar; the address bar always reproduces the screen.
 
-import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.3';
+import { loadAll, ensureData, topUp, MODE_DATA, BUILD, have } from './data-loader.js?v=7.4';
 import {
-  getState, subscribe, setMode, setYear, YEARS, currentYear, isGuest,
-  reconcile, setSound, MODES, setEffective, setRole, setFamilies, toggleAction,
-  setLabelMode, markStart, setAllSubjects, setWordStyle,
-} from './state.js?v=7.3';
-import { effective } from './engine/years.js?v=7.3';
-import { runStrip } from './ui/yearstrip.js?v=7.3';
-import { t } from './ui/labels.js?v=7.3';
-import { esc, onAction } from './ui/dom.js?v=7.3';
-import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.3';
-import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.3';
-import { icon } from './ui/icons.js?v=7.3';
-import { cue, setMutePredicate } from './sound.js?v=7.3';
+  getState, subscribe, setMode, setYear, YEARS, isGuest, reconcile, setSound, MODES, setEffective, setFamilies, toggleAction, markStart, setAllSubjects, setWordStyle, setBigText,
+} from './state.js?v=7.4';
+import { effective } from './engine/years.js?v=7.4';
+import { runStrip } from './ui/yearstrip.js?v=7.4';
+import { t } from './ui/labels.js?v=7.4';
+import { esc, onAction } from './ui/dom.js?v=7.4';
+import { openSheet, close as closeSheet, isOpen as sheetIsOpen } from './ui/sheet.js?v=7.4';
+import { initGlossary, bindGlossary, openFullList } from './ui/glossary.js?v=7.4';
+import { icon } from './ui/icons.js?v=7.4';
+import { cue, setMutePredicate } from './sound.js?v=7.4';
 
 const app = document.getElementById('app');
 const params = new URLSearchParams(location.search);
@@ -131,7 +129,7 @@ function parseRoute() {
   if (s === 'act') s = 'goal';
   if (!SCREENS[s]) s = null;
   const extras = {};
-  ['tab', 'sector', 'kind', 'y', 'id', 'g', 'd', 'for', 'step', 'i', 'dest', 'role', 'part', 'me', 'by'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
+  ['tab', 'sector', 'kind', 'y', 'id', 'g', 'd', 'for', 'step', 'i', 'dest', 'role', 'part', 'me', 'by', 'lv'].forEach((k) => { if (q.get(k)) extras[k] = q.get(k); });
   return { s, q: extras };
 }
 
@@ -332,10 +330,10 @@ const NAV_ITEMS = [
   { s: 'play', label: 'Play', icon: 'play' },
   { s: 'myplan', label: 'Saved', icon: 'flag' },
 ];
-const ROLE_LABEL = { student: 'Student', parent: 'Parent', teacher: 'Teacher' };
 
 function navCurrent(s) {
-  if (['home', 'year', 'compare', 'after', 'dest', 'money', 'schools', 'adults'].includes(s)) return 'path';
+  if (s === 'adults') return 'adults';
+  if (['home', 'year', 'compare', 'after', 'dest', 'money', 'schools'].includes(s)) return 'path';
   if (s === 'work') return 'goal';
   if (['share', 'shared', 'session'].includes(s)) return 'myplan';
   return s;
@@ -354,7 +352,7 @@ function renderChrome() {
       ${NAV_ITEMS.map((n) => `<button type="button" class="topnav-item press" data-action="go" data-s="${n.s}" aria-current="${cur === n.s ? 'page' : 'false'}">${esc(n.s === 'myplan' ? t('plan') : n.label)}</button>`).join('')}
     </nav>
     <span class="headspace"></span>
-    <button type="button" class="rolechip press" data-action="role" aria-label="I am a ${esc(ROLE_LABEL[st.role].toLowerCase())}. Change who is reading.">${icon(st.role)}<span><small>I am:</small> ${esc(ROLE_LABEL[st.role])}</span>${icon('caret', 'chev')}</button>
+    <button type="button" class="adultlink press" data-action="go" data-s="adults" aria-current="${route.s === 'adults' ? 'page' : 'false'}">${icon('d_people')}<span>Parents and teachers</span></button>
     <button type="button" class="iconbtn press" data-action="settings" aria-label="Settings">${icon('settings')}</button>
   </div>
   ${isGuest() ? `<p class="guestline">${esc(copy('chrome.guest', 'Guest: nothing is saved on this phone.'))}</p>` : ''}`;
@@ -369,16 +367,9 @@ function renderChrome() {
   </div>`;
 }
 
-function roleSheet(trigger) {
-  const st = getState();
-  openSheetRouted(`
-    <h2 id="sheet-title">Who is reading?</h2>
-    <p class="small">The facts stay the same. Parents and teachers get questions to ask, and their own page.</p>
-    <div class="rolegrid">
-      ${Object.entries(ROLE_LABEL).map(([id, label]) => `<button type="button" class="btn ${st.role === id ? '' : 'ghost'} press" data-action="pick-role" data-id="${id}" aria-pressed="${st.role === id}">${esc(label)}</button>`).join('')}
-    </div>`, trigger);
-}
-
+// 7.4: the "I am" switch is gone. It only reworded the student's own screens,
+// and a phone handed back in Parent mode showed the student "My child's plan".
+// Parents and teachers have their own page, one tap from the header.
 // Switches are buttons, not checkboxes: onAction prevents default on click,
 // which would silently undo a native checkbox toggle.
 function switchRow(action, label, note, on) {
@@ -395,7 +386,7 @@ function settingsSheet(trigger) {
     <h2 id="sheet-title">Settings</h2>
     <div class="setlist">
       ${switchRow('set-detail', 'Detailed wording', 'Off: short lines, with reasons a tap away. On: everything shown in full.', st.wordStyle === 'detailed')}
-      ${switchRow('set-line', 'Transit words (Line mode)', 'Departures, tickets and a pass instead of plain words.', st.labelMode === 'line')}
+      ${switchRow('set-big', 'Larger text', 'Bigger words on every screen.', !!st.bigText)}
       ${data.offer ? switchRow('set-allsubj', 'Every school\'s subjects', `Off: ${data.offer.school}'s subjects. On: every school's subjects, for a transfer.`, !!st.allSubjects) : ''}
       ${switchRow('set-families', 'Course families', 'Show course groups and the subjects each asks for.', st.families)}
       ${switchRow('set-theme', 'Dark colours', 'Dark background.', themeNow() === 'dark')}
@@ -407,8 +398,8 @@ function settingsSheet(trigger) {
       <button type="button" class="chip press" data-action="replay-start">Show the start again</button>
     </div>
     <p class="caps" style="margin-top:20px">Earlier version</p>
-    <p class="small">The version before this one is kept as it was, with its own saved plans.</p>
-    <p><a class="btn ghost small" href="../legacy/pathways-v6/">Open the earlier version</a></p>
+    <p class="small">Version 6 is kept as it was, with its own saved plans.</p>
+    <p><a class="btn ghost small" href="../legacy/pathways-v6/">Open version 6</a></p>
     <p class="small" style="margin-top:16px">Your plan stays on this device. No account is needed.</p>`, trigger);
 }
 
@@ -427,7 +418,6 @@ onAction(document.body, {
     ['y', 'id', 'tab', 'step', 'd', 'for', 'dest', 'sector', 'i', 'role', 'part'].forEach((k) => { if (btn.dataset[k]) q[k] = btn.dataset[k]; });
     nav(btn.dataset.s, q);
   },
-  role: (btn) => roleSheet(btn),
   // Tickets live on several screens; their two actions live here.
   'tk-copy': async (btn) => {
     try { await navigator.clipboard.writeText(btn.dataset.text); btn.innerHTML = `${icon('check')} Copied`; } catch { btn.textContent = 'Select the line above to copy'; }
@@ -443,27 +433,9 @@ onAction(document.body, {
   },
   'yr-go': (btn) => { if (route.s === 'year' && route.q.y === btn.dataset.y) return; nav('year', { y: btn.dataset.y }); },
   settings: (btn) => settingsSheet(btn),
-  // A parent or teacher lands on their own page; a student goes back to where they were.
-  'pick-role': (btn) => {
-    const id = btn.dataset.id;
-    const was = getState().role;
-    setRole(id);
-    // Closing a routed sheet steps history back. Open the adults' page only
-    // after that step lands, or the back would undo it.
-    const go = () => { if (id !== 'student' && id !== was) nav('adults', { tab: id }); else refresh(); };
-    const pushed = sheetPushed;
-    if (pushed) {
-      let done = false;
-      const once = () => { if (done) return; done = true; window.removeEventListener('popstate', once); setTimeout(go, 0); };
-      window.addEventListener('popstate', once);
-      setTimeout(once, 250);
-    }
-    closeSheet();
-    if (!pushed) go();
-  },
   'set-families': (btn) => { setFamilies(flip(btn)); refresh(); },
   'set-detail': (btn) => { setWordStyle(flip(btn) ? 'detailed' : 'short'); refresh(); },
-  'set-line': (btn) => { setLabelMode(flip(btn) ? 'line' : 'plain'); renderChrome(); refresh(); },
+  'set-big': (btn) => { const on = flip(btn); setBigText(on); document.documentElement.dataset.big = String(on); },
   'set-allsubj': (btn) => { setAllSubjects(flip(btn)); refresh(); },
   'replay-start': () => { markStart(false); nav('start', {}); },
   'set-theme': (btn) => {
@@ -497,6 +469,8 @@ subscribe((st, evt) => {
 });
 
 // ---- boot ----------------------------------------------------------------------
+
+if (getState().bigText) document.documentElement.dataset.big = 'true';
 
 async function boot() {
   try {

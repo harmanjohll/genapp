@@ -10,7 +10,7 @@
 // loads. A new build (new VERSION below, stamped by tools/release.mjs) makes
 // a new cache and the old one is deleted on activate.
 
-const VERSION = '7.3';
+const VERSION = '7.4';
 const CACHE = `paths7-${VERSION}`;
 // The caches earlier builds kept at genapp/pathways/ and genapp/pathways5/. The
 // frozen copies in legacy/ use `paths4legacy-` and `paths6legacy-`, which this
@@ -53,7 +53,7 @@ const DATA = [
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories',
   'moves', 'version', 'activities', 'possibilities', 'work', 'money',
   'evidence', 'schools', 'years', 'psle', 'grades', 'families',
-  'offer', 'goals', 'daysin', 'compass',
+  'offer', 'goals', 'daysin', 'compass', 'lesson',
 ].map((n) => v(`./data/${n}.json`));
 
 self.addEventListener('install', (e) => {

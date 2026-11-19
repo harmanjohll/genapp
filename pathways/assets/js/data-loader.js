@@ -16,7 +16,7 @@ const FILES = [
   'subjects', 'pathways', 'progressions', 'lifelong', 'copy', 'parent',
   'glossary', 'dispositions', 'futures', 'chances', 'journey', 'stories', 'moves', 'version',
   'activities', 'possibilities', 'work', 'money', 'evidence', 'schools',
-  'years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass',
+  'years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass', 'lesson',
 ];
 
 /**
@@ -61,7 +61,7 @@ export const MODE_DATA = {
   share: ['goals', 'families', 'compass'], shared: ['goals', 'families', 'compass'], session: ['goals', 'families', 'daysin', 'compass'],
   myplan: ['goals', 'compass'],
   play: ['journey', 'chances', 'moves', 'possibilities', 'dispositions', 'goals', 'compass'],
-  adults: ['parent', 'journey', 'chances', 'futures', 'dispositions', 'stories', 'evidence'],
+  adults: ['parent', 'evidence', 'lesson', 'compass', 'goals'],
   work: ['work', 'futures'], money: ['money'], schools: ['schools'],
 };
 

@@ -11,23 +11,23 @@
 
 import {
   getState, setYearLevel, replaceYearPlan, setYear, YEARS,
-} from '../state.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { pulse } from '../engine/pulse.js?v=7.3';
-import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=7.3';
-import { advise } from '../engine/advice.js?v=7.3';
-import { psleSec1Plan } from '../engine/psle.js?v=7.3';
-import { openCount } from '../ui/map.js?v=7.3';
-import { destSheetHtml } from '../ui/destsheet.js?v=7.3';
-import { yearStrip, STRIP } from '../ui/yearstrip.js?v=7.3';
-import { boardHtml, lampsHtml } from '../ui/board.js?v=7.3';
-import { ticketHtml, holdHtml } from '../ui/ticket.js?v=7.3';
-import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=7.3';
-import { targetsHtml, bindTargets } from '../ui/targets.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { signalHtml } from '../ui/signal.js?v=7.3';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.3';
+} from '../state.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { pulse } from '../engine/pulse.js?v=7.4';
+import { evalPlan, subjectsForYear, moreSubjects, carryForward, isLower } from '../engine/years.js?v=7.4';
+import { advise } from '../engine/advice.js?v=7.4';
+import { psleSec1Plan } from '../engine/psle.js?v=7.4';
+import { openCount } from '../ui/map.js?v=7.4';
+import { destSheetHtml } from '../ui/destsheet.js?v=7.4';
+import { yearStrip, STRIP } from '../ui/yearstrip.js?v=7.4';
+import { boardHtml, lampsHtml } from '../ui/board.js?v=7.4';
+import { ticketHtml, holdHtml } from '../ui/ticket.js?v=7.4';
+import { psleHtml, bindPsle } from '../ui/pslepanel.js?v=7.4';
+import { targetsHtml, bindTargets } from '../ui/targets.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { signalHtml } from '../ui/signal.js?v=7.4';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.4';
 
 // The answer, in the reader's chosen form: the live signal by default, the
 // departures board in Line mode. Same data, same order, same states.
@@ -91,7 +91,7 @@ export default {
     const showResult = y !== 'p6';
     const rows = showResult ? reachFor(api, y, plan) : [];
     const adv = showResult ? advise({ yearId: y, plan, ctx: api.ctx() }) : null;
-    const advCount = adv ? adv.singles.length + adv.pairs.length : 0;
+    const advCount = goalMoveCount(api, adv);
 
     root.innerHTML = `
     ${yearStrip(y, st)}
@@ -306,6 +306,15 @@ export function patchTile(root, sid, level, name) {
 
 /* ---- advice ----------------------------------------------------------------- */
 
+// The badge counts only the moves that serve the goal. With no goal, or a goal
+// these levels already fit, there is nothing to flag: a move is never pushed.
+function goalMoveCount(api, adv) {
+  const goal = getState().goal;
+  if (!goal || !adv) return 0;
+  const name = (api.ctx().destinations.find((d) => d.id === goal.dest) || {}).railName || '';
+  return [...adv.singles, ...adv.pairs].filter((m) => (m.opens || []).includes(name) || (m.nearer || []).includes(name)).length;
+}
+
 function adviceHtml(api, y, rows, adv) {
   const st = getState();
   const open = openCount(rows);
@@ -329,12 +338,12 @@ function adviceHtml(api, y, rows, adv) {
 
     ${top ? `
       <h2 class="advh">${esc(t('nextMove'))}</h2>
+      <p class="small advsub">A move is an option. Take one only if it serves the place you want.</p>
       ${ticketHtml(top, { hero: true })}` : (open === rows.length ? `
       <div class="allopen">
-        <p class="allopen-n">8/8</p>
-        <div><p class="allopen-h">${isLower(y) ? 'All 8 places are on track.' : 'All 8 places are open.'}</p>
-        <p class="small">Next, decide which one you want. You can try one in Play.</p>
-        <button type="button" class="btn press" data-action="go" data-s="play">Play it forward</button></div>
+        <div><p class="allopen-h">No level needs to move.</p>
+        <p class="small">Next, decide which place you want, and do well at these levels.</p>
+        <button type="button" class="btn press" data-action="go" data-s="goal">${getState().goal ? 'Open your goal' : 'Find a goal'}</button></div>
       </div>` : '')}
 
     ${rest.length ? `
@@ -367,8 +376,7 @@ function yearHtml(api, y) {
     ${(m.decisions || []).length ? foldOr(`Decisions in ${LABEL[y]}`, `
       <div class="decgrid">${m.decisions.map((d, i) => `<div class="dec"><span class="dec-n">${i + 1}</span><p>${esc(d.text || d)}</p></div>`).join('')}</div>`) : ''}
     ${talk.length ? foldOr(st.role === 'parent' ? 'Questions to ask at home' : st.role === 'teacher' ? 'Questions for the conversation' : 'Questions to ask yourself', `
-      <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
-      <p class="small">Written for a ${esc(st.role)}. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>`) : ''}
+      <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>`) : ''}
     ${m.source ? `<p class="srcline">${esc(m.source)}</p>` : ''}`;
 }
 
@@ -386,10 +394,9 @@ function dockHtml(rows, adv) {
   const top = adv && adv.singles[0];
   const k = lastLine || t('answer');
   const lower = openWord(rows) === 'on track';
-  const line = top ? top.short : (open === rows.length ? (lower ? 'All 8 places are on track.' : 'All 8 places are open.') : 'Set a level to see what changes.');
+  const line = top ? top.short : (open === rows.length ? 'No level needs to move.' : 'Set a level to see what changes.');
   return `
-    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(lastLine)} ${esc(line)} Open the advice.">
-      <span class="dock-num"><b>${open}</b>/${rows.length}</span>
+    <button type="button" class="dock-in press" data-action="yr-tab" data-tab="advice" aria-label="${esc(lastLine)} ${esc(line)} Open the advice.">
       <span class="dock-words"><span class="dock-k">${esc(k)}</span><span class="dock-line">${top ? `${icon('ticket')} ` : ''}${esc(line)}</span></span>
       ${lampsHtml(rows)}
     </button>`;
@@ -447,7 +454,7 @@ function bind(root, api, y) {
       if (dock) { dock.innerHTML = dockHtml(nextRows, adv); dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump'); }
       const aside = root.querySelector('#yaside');
       if (aside) aside.innerHTML = asideHtml(api, y, nextRows, adv);
-      const n = adv.singles.length + adv.pairs.length;
+      const n = goalMoveCount(api, adv);
       const tab = root.querySelector('#tab-advice');
       if (tab) {
         let badge = tab.querySelector('.segbadge');

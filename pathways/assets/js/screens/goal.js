@@ -15,16 +15,16 @@
 
 import {
   getState, setGoal, patchGoal, checkGoal, goalDue, toggleEnjoy, toggleAction, toggleDone, YEARS,
-} from '../state.js?v=7.3';
-import { sectorsFor, placesFor, familiesFor, workBack, goalMoves } from '../engine/goal.js?v=7.3';
-import { isLower } from '../engine/years.js?v=7.3';
-import { ticketHtml } from '../ui/ticket.js?v=7.3';
-import { DEST_CODE } from '../ui/signal.js?v=7.3';
-import { STRIP } from '../ui/yearstrip.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { stateWord, isShort } from '../ui/labels.js?v=7.3';
-import { goalLine, goalFamily } from './path.js?v=7.3';
+} from '../state.js?v=7.4';
+import { sectorsFor, placesFor, familiesFor, workBack, goalMoves } from '../engine/goal.js?v=7.4';
+import { isLower } from '../engine/years.js?v=7.4';
+import { ticketHtml } from '../ui/ticket.js?v=7.4';
+import { DEST_CODE } from '../ui/signal.js?v=7.4';
+import { STRIP } from '../ui/yearstrip.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { stateWord, isShort } from '../ui/labels.js?v=7.4';
+import { goalLine, goalFamily } from './path.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 const CODE = Object.fromEntries(STRIP.map((y) => [y.id, y.code]));

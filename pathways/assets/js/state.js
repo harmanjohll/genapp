@@ -12,8 +12,8 @@
 // 7.0 keeps its own key. On its first visit it reads what 6.0 saved on this
 // device, or joins v4.4 and v5 the way 6.0 did (engine/migrate.js). It never
 // writes to an old key, so the frozen builds in legacy/ keep their own plans.
-import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.3';
-import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.3';
+import { fromEarlier, cleanCompass, cleanGoal, WANT_CODE } from './engine/migrate.js?v=7.4';
+import { encodePacket, decodePacket, packMe, unpackMe } from './engine/packet.js?v=7.4';
 
 const STORAGE_KEY = 'paths7.state.v1';
 const V6_KEY = 'paths6.state.v1';
@@ -77,6 +77,7 @@ const initial = () => ({
   seenIntro: false,
   seenWelcome: false,   // the first-run conversation, had once, never a toll gate
   landingGuess: null,   // what they guessed, quoted only in the session it was made
+  bigText: false,       // 7.4: larger text on every screen, for anyone who wants it
   soundOn: false,       // five small cues, opt in, remembered
   seenVersion: null,
   history: [],          // plan snapshots: { t, plan, open }, one a day at most
@@ -121,8 +122,11 @@ function load() {
   if (!base.grades || typeof base.grades !== 'object') base.grades = { now: {}, target: {} };
   ['now', 'target'].forEach((k) => { if (!base.grades[k] || typeof base.grades[k] !== 'object') base.grades[k] = {}; });
   if (!base.psle || typeof base.psle !== 'object' || Array.isArray(base.psle)) base.psle = {};
-  if (!['student', 'parent', 'teacher'].includes(base.role)) base.role = 'student';
-  if (!['plain', 'line'].includes(base.labelMode)) base.labelMode = 'plain';
+  // 7.4: one voice. The role switch and the transit words are retired, so a
+  // device that had either set comes back to the student's plain words.
+  base.role = 'student';
+  base.labelMode = 'plain';
+  base.bigText = !!base.bigText;
   if (!['short', 'detailed'].includes(base.wordStyle)) base.wordStyle = 'short';
   base.goal = cleanGoal(base.goal);
   // A goal set before 7.0 has no dates. It counts as set today, so it comes up
@@ -425,6 +429,11 @@ export function compassFill(c = state.compass) {
 export function setScenario(sc) {
   state.scenario = sc && sc.plan ? { yearId: sc.yearId, plan: { ...sc.plan } } : null;
   persist(); notify({ kind: 'scenario' });
+}
+
+export function setBigText(on) {
+  state.bigText = !!on;
+  persist(); notify({ kind: 'labels' });
 }
 
 export function setWordStyle(style) {

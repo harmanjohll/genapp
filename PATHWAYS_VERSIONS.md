@@ -2,12 +2,35 @@
 
 The one place Paths version numbers are explained. Everywhere else, including the root README, the app is simply Paths, at genapp/pathways.html; the footer of the app shows the exact build.
 
-## Latest: v7.3, in `pathways/`. Build here.
+## Latest: v7.4, in `pathways/`. Build here.
 
 - Share **genapp/pathways.html**. It forwards to `pathways/`, which always holds the latest.
 - Older versions are frozen in `legacy/`. Do not edit them, except to keep a link working.
 - Before any push: `node pathways/tools/verify.mjs` (every sweep must say PASS).
-- To release: `node pathways/tools/release.mjs x.y` (two numbers, such as 7.3), then add the notes to `pathways/data/version.json` and a line under the version below.
+- To release: `node pathways/tools/release.mjs x.y` (two numbers, such as 7.4), then add the notes to `pathways/data/version.json` and a line under the version below.
+
+### v7.4 (2026-11-19): the goal leads, and no place is counted
+
+Three findings from an audit of parity, roles and flow drove this build: the count of places ranked students, advice only ever said "move up", and grade targets computed nothing for a student at G1.
+
+**What is critical (keep these when building on it)**
+- No count of places, anywhere. "N of 8" read as a score and put G1 students at the bottom of it. Every place is a path in its own right; the chart, the plan, the shared card and the session show the goal's state in words instead. The Seven sweep fails if a count comes back.
+- The goal leads. With a goal the levels fit, the year opens on "Your levels are on track for X" and turns to grades (`onTrackHtml` in `screens/path.js`). With a goal they do not yet fit, it shows the one move that serves that goal. With no goal, no move is pushed: the card asks for a goal.
+- The Moves badge counts only moves that serve the goal (`goalMoveCount` in `screens/year.js`).
+- Grade targets serve every level. `hn3Check` in `engine/grades.js` reads the five score types of the 3 year Higher Nitec. Scores a student's levels cannot make fold into one row, so nobody scrolls past empty cards. The goal's own score comes first.
+- One reader: the student. The "I am" switch and the transit words switch are gone (`state.js` forces `role` and `labelMode` on load). Adults get one header button, "Parents and teachers", to their own page.
+- The start follows the tabs: welcome, what you enjoy, year, levels, then the Path. No animation, no count, no move.
+- Teachers have a lesson guide (`data/lesson.json`, the Teachers tab of `screens/adults.js`): a frame on parity, six timed blocks that add up to 45 minutes, each with Do, Say and Watch for, a debrief and a follow up. It prints.
+
+**What changed besides**
+- Settings: a Larger text switch (`data-big` on the root, 112.5%).
+- The long view on the Path is a row that opens, so the phone page is shorter.
+- Saved lists only scores the grades can make, and shows the Higher Nitec check when that is the goal.
+- Unused imports and the unreachable role menu are removed.
+
+**Known gaps**
+- ITE and arts course families still have no subject rules: MOE publishes the 2028 lists in mid 2027.
+- No student, parent or teacher has tested this build. The flow is checked by script as three students (all G1, all G2, all G3), which is not the same thing.
 
 ### v7.3 (2026-11-17): fixes
 

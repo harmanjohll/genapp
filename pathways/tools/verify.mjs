@@ -362,7 +362,7 @@ function v4PsleSweep() {
 /** House style for the v4 data: no dashes in anything a reader sees. */
 function v4DashSweep() {
   const fails = [];
-  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass'].forEach((n) => {
+  ['years', 'psle', 'grades', 'families', 'offer', 'goals', 'daysin', 'compass', 'lesson'].forEach((n) => {
     const walk = (v, path) => {
       if (typeof v === 'string') {
         if (path.includes('url') || path.includes('_meta') || /\.id$/.test(path)) return;
@@ -555,6 +555,25 @@ async function sevenSweep() {
     ['what changed runs in date order', (parent.changes || []).length >= 3 && parent.changes.every((c, i, all) => !i || Number(c.year) > Number(all[i - 1].year))],
     ['each old stream has its words for today', ['express', 'na', 'nt'].every((k) => parent.thenNow && parent.thenNow.rows[k] && parent.thenNow.rows[k].levels && parent.thenNow.rows[k].group && parent.thenNow.rows[k].exam)],
   ];
+  // 7.4: parity across levels, no count of places, and the lesson guide.
+  const { hn3Check, entries } = await import(join(root, 'assets/js/engine/grades.js'));
+  const lesson = readData('lesson');
+  const gr = readData('grades');
+  const g1Plan = { el: 'G1', mtl: 'G1', maths: 'G1', science_g1: 'G1' };
+  const g1 = (grade) => hn3Check(entries(g1Plan, { el: grade, mtl: grade, maths: grade, science_g1: grade }, gr, {}), gr);
+  const src = (f) => readFileSync(join(root, 'assets/js', f), 'utf8').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  const shown = ['ui/signal.js', 'screens/path.js', 'screens/start.js', 'screens/myplan.js', 'screens/share.js', 'screens/session.js', 'screens/after.js', 'screens/compare.js', 'ui/pslepanel.js'];
+  const COUNT = /\$\{[^}]*\b(open|openCount\([^)]*\)|n|count)\}\s*(of|\/)\s*(8|\$\{[^}]*rows\.length\})|\bof 8\b(?! places)/;
+  cases.push(
+    ['an all G1 student with passes meets every Higher Nitec (3 yrs) score type', g1('D').types.length === 5 && g1('D').types.every((x) => x.meets)],
+    ['a better G1 grade never loses a Higher Nitec score type', g1('A').types.every((x) => x.meets)],
+    ['fewer than four graded subjects meets none, and says why', hn3Check(entries({ el: 'G1' }, { el: 'A' }, gr, {}), gr).types.every((x) => !x.meets && x.need)],
+    ['no screen prints a count of places out of 8', shown.every((f) => !COUNT.test(src(f)))],
+    ['the first run asks about the student before their levels', /ORDER = \['me', 'year', 'levels'\]/.test(src('screens/start.js'))],
+    ['the reader is always the student: no role or voice switch is kept', /base\.role = 'student'/.test(src('state.js')) && !/pick-role|roleSheet/.test(src('main.js'))],
+    ['the lesson guide adds up to 45 minutes, each block with do, say and watch', lesson.blocks.length === 6 && lesson.blocks.reduce((n, b) => n + b.min, 0) === 45 && lesson.blocks.every((b) => b.do && b.say && b.watch)],
+    ['the lesson guide has a debrief and a frame on parity', lesson.debrief.length >= 3 && lesson.frame.lines.length >= 3],
+  );
   const fails = cases.filter(([, ok]) => !ok).map(([name]) => ({ case: name }));
   const ok = !fails.length;
   pass('Seven', ok, `${cases.length} cases: what comes across from 6.0, the compass, goal dates, links, and the lists the new screens read`);

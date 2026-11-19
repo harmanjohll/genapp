@@ -24,9 +24,9 @@
 //
 // Pure: no DOM, no storage.
 
-import { reach } from './reach.js?v=7.3';
-import { evalPlan, subjectsForYear, isLower } from './years.js?v=7.3';
-import { moveTiming } from './rules.js?v=7.3';
+import { reach } from './reach.js?v=7.4';
+import { evalPlan, subjectsForYear, isLower } from './years.js?v=7.4';
+import { moveTiming } from './rules.js?v=7.4';
 
 const LV = ['G1', 'G2', 'G3'];
 

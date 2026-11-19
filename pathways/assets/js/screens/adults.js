@@ -15,11 +15,11 @@
 // The tab arrives in the URL (?s=adults&tab=teacher), so a bookmark or a
 // printed handout always reproduces the exact page.
 
-import { getState } from '../state.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { decorate } from '../ui/glossary.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { STEPS } from './session.js?v=7.3';
+import { getState } from '../state.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { decorate } from '../ui/glossary.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { STEPS } from './session.js?v=7.4';
 
 const TABS = [
   { id: 'parent', label: 'Parents' },
@@ -31,7 +31,7 @@ const TABS = [
 function currentTab() {
   const t = new URLSearchParams(location.search).get('tab');
   if (TABS.some((x) => x.id === t)) return t;
-  return getState().role === 'teacher' ? 'teacher' : 'parent';
+  return 'parent';
 }
 
 let stream = 'express';
@@ -103,6 +103,7 @@ function parentTab(api) {
   const st = getState();
   const y = st.yearSet ? st.year : 'sec2';
   const asks = ((((api.data.years || {}).years || {})[y] || {}).talk || {}).parent || [];
+  const meAsks = (((api.data.compass || {}).prompts || {}).parent) || [];
   return `
   <section class="changes" aria-labelledby="chg-h">
     <h2 id="chg-h">${esc(p.changesHead || 'What changed')}</h2>
@@ -117,6 +118,7 @@ function parentTab(api) {
   ${asks.length ? `<section class="section" aria-labelledby="ask-h">
     <h2 id="ask-h">${esc(p.askHead || 'Three things to ask this week')}</h2>
     <div class="bubbles">${asks.slice(0, 3).map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>
+    ${meAsks.length ? `<p class="py-k" style="margin-top:16px">About who they are</p><div class="bubbles">${meAsks.map((q) => `<p class="bubble">${esc(q)}</p>`).join('')}</div>` : ''}
     <p class="btnrow"><button type="button" class="btn press" data-action="go" data-s="path">${icon('steps')} Open the path</button>
       <button type="button" class="btn ghost press" data-action="go" data-s="me">${icon('compass')} Their compass</button></p>
   </section>` : ''}
@@ -163,55 +165,53 @@ function parentTab(api) {
 }
 
 /* ---- for teachers -----------------------------------------------------------
-   Task order. The 45 minute shape is what a teacher opening this page five
-   minutes before class needs, and each row names a tab the class can see. */
-
-const LESSON = [
-  { min: 5, ic: 'compass', tab: 'Me', line: 'Two taps: what they enjoy. One strength, with what shows it.' },
-  { min: 8, ic: 'steps', tab: 'Path', line: 'Their real levels for this year. Read the best move together.' },
-  { min: 5, ic: 'target', tab: 'Goal', line: 'One goal and why. It can change next week.' },
-  { min: 12, ic: 'play', tab: 'Play', line: 'The short story, once through. Same play code for the class.' },
-  { min: 10, ic: 'talk', tab: 'Talk', line: 'In pairs, then the room. Use the four questions below.' },
-  { min: 5, ic: 'flag', tab: 'Saved', line: 'One step, one date, one adult to tell.' },
-];
+   Task order. What a teacher opening this page five minutes before class needs
+   comes first: the room's framing, then six blocks, each with what students do,
+   what to say and what to watch for. The words are in data/lesson.json. */
 
 function teacherTab(api) {
-  const prompts = [
-    { q: 'What did you assume was closed to you that turned out not to be?',
-      why: 'Surfaces beliefs picked up from siblings and from adults schooled under a different system.' },
-    { q: 'What did your starting levels decide, and what did they leave open?',
-      why: 'The question the lesson turns on. Give it ten minutes.' },
-    { q: 'Whose combination looks nothing like yours, and what does it open that yours does not?',
-      why: 'There is no best combination. The evidence is the person sitting next to them.' },
-    { q: 'What went wrong in your story, and what happened after it?',
-      why: 'Treats a setback as an event with a next step.' },
-  ];
-
+  const L = api.data.lesson || {};
+  const blocks = L.blocks || [];
+  const total = blocks.reduce((n, b) => n + (b.min || 0), 0);
+  const frame = L.frame || {};
   return `
   <section aria-labelledby="les-h">
-    <h2 id="les-h">A 45 minute lesson</h2>
-    <p class="small" style="max-width:60ch">One device each. Budget more time for talk than for screen.</p>
-    <ol class="runsheet">
-      ${LESSON.map((r) => `<li>
-        <span class="rs-min">${r.min} min</span>
-        <span class="rs-ic">${icon(r.ic)}</span>
-        <span class="rs-t"><b>${esc(r.tab)}</b>${esc(r.line)}</span></li>`).join('')}
+    <h2 id="les-h">A ${total} minute lesson</h2>
+    <p class="btnrow no-print">
+      <button type="button" class="btn small press" data-action="ad-print">${icon('print')} Print this guide</button>
+      <a class="btn ghost small" href="./?board=1">Projector view</a>
+    </p>
+    ${(frame.lines || []).length ? `<div class="teachframe">
+      <h3>${esc(frame.head || '')}</h3>
+      <ul>${frame.lines.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+    </div>` : ''}
+    ${(L.before || []).length ? `<details class="fold" open>
+      <summary>Before the lesson</summary>
+      <ul class="tick">${L.before.map((x) => `<li>${icon('check')}<span>${esc(x)}</span></li>`).join('')}</ul>
+      <div class="card codecard">
+        <p style="margin:0"><strong>${esc(api.copy('teacher.playHead', 'Class play: same luck for everyone'))}</strong></p>
+        <p class="btnrow" style="margin:8px 0 0">
+          <button type="button" class="btn small press no-print" data-action="ad-code">${esc(api.copy('teacher.playBtn', 'New play code'))}</button>
+          <span id="ad-code-out" class="figure" aria-live="polite" style="letter-spacing:0.1em"></span>
+        </p>
+      </div>
+    </details>` : ''}
+    <ol class="blocks">
+      ${blocks.map((b) => `<li class="block">
+        <div class="block-h"><span class="rs-ic">${icon(b.icon)}</span><b>${esc(b.tab)}</b><span class="rs-min">${b.min} min</span></div>
+        <dl>
+          <div><dt>Do</dt><dd>${esc(b.do)}</dd></div>
+          <div><dt>Say</dt><dd class="say">${esc(b.say)}</dd></div>
+          <div><dt>Watch for</dt><dd>${esc(b.watch)}</dd></div>
+        </dl>
+      </li>`).join('')}
     </ol>
-    <div class="card" style="margin-top:var(--s-4)">
-      <h3 style="margin-bottom:4px">${esc(api.copy('teacher.playHead', 'Class play: same luck for everyone'))}</h3>
-      <p class="small">${esc(api.copy('teacher.playIntro', 'Generate a play code and read it out. Every student who enters it gets the same chances in the same order, so the debrief compares answers instead of luck.'))}</p>
-      <p class="btnrow" style="margin-bottom:0">
-        <button type="button" class="btn small press" data-action="ad-code">${esc(api.copy('teacher.playBtn', 'New play code'))}</button>
-        <span id="ad-code-out" class="figure" aria-live="polite" style="letter-spacing:0.1em"></span>
-        <a class="btn ghost small" href="./?board=1">Projector view</a>
-      </p>
-    </div>
   </section>
 
   <section class="section" aria-labelledby="deb-h">
     <h2 id="deb-h">The debrief</h2>
     <ul class="debrief">
-      ${prompts.map((x) => `
+      ${(L.debrief || []).map((x) => `
       <li>
         <p style="margin:0"><strong>${esc(x.q)}</strong></p>
         <p class="small" style="margin:2px 0 0">${esc(x.why)}</p>
@@ -219,15 +219,15 @@ function teacherTab(api) {
     </ul>
   </section>
 
-  <section class="section" aria-labelledby="one-h">
-    <h2 id="one-h">One student, 15 minutes</h2>
-    <p class="small">The same five steps an ECG counsellor uses. Open it on the student's device.</p>
-    <p class="btnrow"><button type="button" class="btn press" data-action="go" data-s="session">${icon('talk')} Start a session</button></p>
+  <section class="section" aria-labelledby="aft-h">
+    <h2 id="aft-h">After the lesson</h2>
+    <ul class="tick">${(L.after || []).map((x) => `<li>${icon('check')}<span>${esc(x)}</span></li>`).join('')}</ul>
+    <p class="btnrow no-print"><button type="button" class="btn press" data-action="go" data-s="session">${icon('talk')} Start a 15 minute session</button></p>
   </section>
 
-  <details class="fold section">
-    <summary>Set up for my school</summary>
-    <p style="max-width:65ch">Nothing to install and nothing collected. Each student plans on their own device and the plan stays there. Saved has a link that carries a plan to another device, and a card to share with a parent.</p>
+  <details class="fold section no-print">
+    <summary>More</summary>
+    <p style="max-width:65ch">Nothing to install and nothing collected. Saved has a link that carries a plan to another device, and a card to share with a parent.</p>
     <p class="small" style="max-width:65ch">For two to six students around one device,
       <a href="../legacy/pathways-v2/?mode=table">the tabletop game is in an earlier version</a>.</p>
     <p class="btnrow"><button type="button" class="btn ghost small press" data-action="ad-evidence">What this is built on</button></p>
@@ -339,6 +339,7 @@ function bind(root, api) {
       api.nav('adults', { tab: btn.dataset.tab });
     },
     'ad-evidence': () => api.nav('adults', { tab: 'evidence' }),
+    'ad-print': () => window.print(),
     'ad-stream': (btn) => {
       stream = btn.dataset.id;
       const host = root.querySelector('.thennow');

@@ -304,6 +304,55 @@ export function report({ plan, grades, g, names, destNames }) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// The 3 year Higher Nitec. 7.3 computed nothing for a student taking mostly G1
+// subjects, because every score above reads G2 or G3. MOE's page gives this
+// course five score types, each counting four subjects at G1 grades, and no
+// maximum score. On four of the types, three subjects need a pass: G3 E8,
+// G2 5 or G1 D, or better. The fifth reads the best four with no grade need.
+// Source: moe.gov.sg/post-secondary/admissions/pse/ite-3-year-higher-nitec,
+// read 2026-11-11. Which course uses which type arrives in mid 2027.
+
+const SCI = ['science_g1', 'sci_pc', 'sci_pb', 'sci_cb', 'physics', 'chemistry', 'biology'];
+const HN3_TYPES = [
+  { id: 'R2B2', name: 'Courses that read English and Mathematics', named: [['el'], ['maths', 'amaths']], others: 1 },
+  { id: 'R1B3-A', name: 'Courses that read Mathematics', named: [['maths', 'amaths']], others: 2 },
+  { id: 'R1B3-B', name: 'Courses that read Mathematics or Science', named: [['maths', 'amaths', ...SCI]], others: 2 },
+  { id: 'R1B3-C', name: 'Courses that read English', named: [['el']], others: 2 },
+  { id: 'B4', name: 'Courses that read your best four subjects', named: [], others: 0 },
+];
+const PASS_AT = { G3: 8, G2: 5, G1: 4 };
+const PASS_WORD = { G3: 'E8', G2: '5', G1: 'D' };
+const NAMED_WORD = { el: 'English', maths: 'Mathematics', science_g1: 'Mathematics or Science' };
+
+/**
+ * Which of the five score types a set of grades meets.
+ * @returns {{ graded: number, types: Array<{ id, name, meets, need }> }}
+ */
+export function hn3Check(es, g) {
+  const passed = (e) => { const v = pts(e.level, e.grade, g); return v != null && v <= PASS_AT[e.level]; };
+  const types = HN3_TYPES.map((t) => {
+    if (es.length < 4) return { id: t.id, name: t.name, meets: false, need: 'Needs four subjects with a grade.' };
+    const used = new Set();
+    let need = null;
+    t.named.forEach((ids) => {
+      if (need) return;
+      const held = es.filter((e) => ids.includes(e.sid) && !used.has(e.sid));
+      const ok = held.find(passed);
+      if (ok) { used.add(ok.sid); return; }
+      const word = ids.includes('science_g1') ? 'Mathematics or Science' : NAMED_WORD[ids[0]] || 'that subject';
+      const lv = held[0] ? held[0].level : 'G1';
+      need = held.length ? `Needs ${word} at ${PASS_WORD[lv]} or better.` : `Needs ${word} with a grade.`;
+    });
+    if (!need) {
+      const more = es.filter((e) => !used.has(e.sid) && passed(e)).length;
+      if (more < t.others) need = `Needs ${t.others - more === 1 ? 'one more subject' : 'two more subjects'} at a pass grade.`;
+    }
+    return { id: t.id, name: t.name, meets: !need, need };
+  });
+  return { graded: es.length, types };
+}
+
 /** Polytechnic by course type, for the course families view. */
 export function polyByType(plan, grades, g, names, families) {
   const fam = (families && families.poly) || [];

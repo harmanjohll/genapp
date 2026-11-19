@@ -11,24 +11,23 @@
 // the only counsellor flow: the adults page opens it, and no longer keeps a
 // second, shorter guide that disagreed with it.
 
-import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.3';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.3';
-import { advise } from '../engine/advice.js?v=7.3';
-import { goalMoves } from '../engine/goal.js?v=7.3';
-import { sayMove } from '../ui/talk.js?v=7.3';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
-import { stateWord } from '../ui/labels.js?v=7.3';
-import { goalLine } from './path.js?v=7.3';
-import { readPlan } from './share.js?v=7.3';
-import { decodePacket } from '../engine/packet.js?v=7.3';
+import { getState, toggleAction, patchGoal, compassFill, YEARS } from '../state.js?v=7.4';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
+import { goalMoves } from '../engine/goal.js?v=7.4';
+import { sayMove } from '../ui/talk.js?v=7.4';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
+import { stateWord } from '../ui/labels.js?v=7.4';
+import { goalLine } from './path.js?v=7.4';
+import { readPlan } from './share.js?v=7.4';
+import { decodePacket } from '../engine/packet.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
 export const STEPS = [
   { t: 'Who you are', min: 3, ask: 'Ask: which of these is most you? What shows it?' },
-  { t: 'Where you stand', min: 3, ask: 'Ask: which place here surprises you?' },
+  { t: 'Where you stand', min: 3, ask: 'Ask: which of these places do you know least about?' },
   { t: 'What you want', min: 3, ask: 'Ask: what work do you picture yourself doing? What draws you to it?' },
   { t: 'One move', min: 3, ask: 'Ask: what would make this move realistic this term?' },
   { t: 'Agree it', min: 3, ask: 'Agree one step and a date. Say who will ask about it.' },
@@ -59,7 +58,9 @@ export default {
     }
     const pl = readPlan(api, y, plan, goal);
     const c = api.ctx();
-    const moves = [...(goal ? goalMoves(goal, y, plan, c) : []), ...advise({ yearId: y, plan, ctx: c }).singles].filter((m, i, all) => all.findIndex((x) => x.line === m.line) === i).slice(0, 3);
+    // Only moves that serve the goal. Other steps come from the goal's own list.
+    const moves = (goal ? goalMoves(goal, y, plan, c) : []).slice(0, 2);
+    const ideas = ((((api.data.goals || {}).steps || {}).list) || []).filter((x) => (!goal || !x.for || x.for.includes(goal.dest)) && (x.years || []).includes(y) && x.id !== 'targets').slice(0, 3 - moves.length);
     const S = STEPS[n - 1];
     const lines = me ? compassLines(api.data, me) : [];
     let body = '';
@@ -71,7 +72,7 @@ export default {
            ${own ? `<p><button type="button" class="btn big press" data-action="go" data-s="me">Fill it in together</button></p>` : ''}`;
     }
     if (n === 2) {
-      body = `<p class="ss-big">${esc(LABEL[y])}: ${pl.open} of 8 ${esc(pl.word)}</p>
+      body = `<p class="ss-big">${esc(LABEL[y])}${pl.goalState ? `. ${esc(pl.goalState)}` : ''}</p>
         <p class="pc-levels big">${pl.levels.map((l) => `<span class="pl-chip" data-level="${l.lv}">${esc(l.name)} <b>${l.lv}</b></span>`).join('')}</p>
         <ul class="pafter big">${pl.rows.map((r) => `<li><div class="pa-row" data-goal="${!!(goal && r.id === goal.dest)}"><span class="pa-name">${esc(r.railName)}</span><span class="pill" data-tone="${esc(r.state)}">${esc(stateWord(r.state, r.lens))}</span></div></li>`).join('')}</ul>`;
     }
@@ -80,14 +81,17 @@ export default {
         ? `<p class="ss-big">${icon('target')} ${esc(goalLine(api, goal))}</p>${goal.why ? `<p class="lede">${esc(goal.why)}</p>` : ''}`
         : `<p class="ss-big">No goal yet</p><p class="lede">That is fine at this stage. Start from what the student enjoys.</p>${own ? `<p><button type="button" class="btn big press" data-action="go" data-s="goal">Find a goal together</button></p>` : ''}`;
     }
-    if (n === 4) body = pl.top ? `<p class="ss-big">${esc(pl.top.result)}</p><p class="lede">${esc(pl.top.cond.charAt(0).toUpperCase() + pl.top.cond.slice(1))}.</p><p class="bubble">${esc(sayMove(pl.top, 'student'))}</p>` : '<p class="ss-big">No move needed</p>';
+    if (n === 4 && !pl.top && goal) body = `<p class="ss-big">${icon('check')} On track for the goal</p><p class="lede">Nothing needs to move. Talk about doing well at these levels, and one step outside class.</p>`;
+    else if (n === 4 && !pl.top) body = `<p class="ss-big">No goal yet, so no move to make</p><p class="lede">Each place is a path in its own right. Agree a first step toward choosing one.</p>`;
+    else if (n === 4) body = pl.top ? `<p class="ss-big">${esc(pl.top.result)}</p><p class="lede">${esc(pl.top.cond.charAt(0).toUpperCase() + pl.top.cond.slice(1))}.</p><p class="bubble">${esc(sayMove(pl.top, 'student'))}</p>` : '<p class="ss-big">No move needed</p>';
     if (n === 5) {
       const by = own && goal ? goal.by : (q.by || null);
       const saved = own
         ? (goal ? 'The step and the date are saved to the student\'s goal.' : 'The step is saved to the student\'s steps. Set a goal to keep a date with it.')
         : 'This plan came by link, so nothing is saved here. Write it down together.';
       body = `<p class="py-k">1. The step</p>
-        <div class="glist">${moves.map((m, i) => `<button type="button" class="gcard press" data-action="ss-agree" data-i="${i}" aria-pressed="${own && st.actions.includes(sayMove(m, st.role))}"><span class="gcard-t">${esc(m.result)}</span><span class="gcard-p">${esc(m.cond.charAt(0).toUpperCase() + m.cond.slice(1))}.</span></button>`).join('')}</div>
+        <div class="glist">${moves.map((m, i) => `<button type="button" class="gcard press" data-action="ss-agree" data-i="${i}" aria-pressed="${own && st.actions.includes(sayMove(m, 'student'))}"><span class="gcard-t">${esc(m.result)}</span><span class="gcard-p">${esc(m.cond.charAt(0).toUpperCase() + m.cond.slice(1))}.</span></button>`).join('')}
+          ${ideas.map((x) => `<button type="button" class="gcard press" data-action="ss-idea" data-id="${esc(x.id)}" aria-pressed="${own && st.actions.includes(x.label)}"><span class="gcard-t">${esc(x.label)}</span></button>`).join('')}</div>
         <p class="py-k">2. Look at it again in</p>
         <div class="chipset">${[[14, '2 weeks'], [30, '1 month'], [90, '3 months']].map(([d, label]) => `<button type="button" class="mechip press" data-action="ss-by" data-n="${d}" aria-pressed="${by === inDays(d)}">${esc(label)}</button>`).join('')}</div>
         <p class="small" id="ss-note" role="status">${by ? `Agreed: look again by ${esc(niceDay(by))}. ` : ''}${esc(saved)}</p>`;
@@ -118,7 +122,7 @@ export default {
       'ss-agree': (btn) => {
         const m = moves[Number(btn.dataset.i)];
         if (own) {
-          const say = sayMove(m, getState().role);
+          const say = sayMove(m, 'student');
           if (!getState().actions.includes(say)) toggleAction(say);
           if (getState().goal) patchGoal({ who: 'ecg' });
           api.refresh();
@@ -126,6 +130,12 @@ export default {
           root.querySelectorAll('[data-action="ss-agree"]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
           root.querySelector('#ss-note').textContent = `Agreed: ${m.result}, ${m.cond}. Write it down together.`;
         }
+      },
+      'ss-idea': (btn) => {
+        const x = ideas.find((i) => i.id === btn.dataset.id);
+        if (!x) return;
+        if (own) { if (!getState().actions.includes(x.label)) toggleAction(x.label); if (getState().goal) patchGoal({ who: 'ecg' }); api.refresh(); }
+        else { root.querySelectorAll('.glist .gcard').forEach((b) => b.setAttribute('aria-pressed', String(b === btn))); root.querySelector('#ss-note').textContent = `Agreed: ${x.label} Write it down together.`; }
       },
       'ss-by': (btn) => {
         const d = inDays(Number(btn.dataset.n));

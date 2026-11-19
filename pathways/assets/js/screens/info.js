@@ -12,9 +12,9 @@
 // money.json's own register is the guide: costs first, in full, then the
 // help, then the sentences that matter more than either table.
 
-import { getState, setSchoolKind } from '../state.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
+import { getState, setSchoolKind } from '../state.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
 
 function fmtDate(iso) {
   const d = new Date(iso);

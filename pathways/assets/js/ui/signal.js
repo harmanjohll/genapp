@@ -10,8 +10,8 @@
 // Data order always (never ranked). SVG is decoration; the list of names and
 // states is in the accessible label and in the text beside it.
 
-import { esc } from './dom.js?v=7.3';
-import { stateWord, openWord } from './labels.js?v=7.3';
+import { esc } from './dom.js?v=7.4';
+import { stateWord } from './labels.js?v=7.4';
 
 export const DEST_CODE = { sec5: 'S5', arts: 'AR', hnitec: 'HN2', jc: 'JC', mi: 'MI', nitec: 'HN3', pfp: 'PFP', poly: 'PO' };
 
@@ -37,7 +37,6 @@ export function signalHtml(rows, o = {}) {
   if (o.mini) return miniHtml(rows, o);
   const key = o.key || 'main';
   const changed = changedSet(key, rows);
-  const open = rows.filter((r) => r.state === 'open').length;
   const H = 304; const hubY = H / 2; const lampX = 176;
   const y = (i) => 20 + i * ((H - 40) / Math.max(1, rows.length - 1));
   const wires = rows.map((r, i) => {
@@ -47,18 +46,15 @@ export function signalHtml(rows, o = {}) {
   }).join('');
   const lamps = rows.map((r, i) => {
     const yy = y(i);
-    return `<g class="sg-lamp${changed.has(r.id) ? ' changed' : ''}" data-state="${esc(r.state)}" style="--i:${i}">
+    return `<g class="sg-lamp${changed.has(r.id) ? ' changed' : ''}" data-state="${esc(r.state)}" data-goal="${r.id === o.goal}" style="--i:${i}">
       <circle class="sg-glow" cx="${lampX}" cy="${yy}" r="17"/>
       <circle class="sg-dot" cx="${lampX}" cy="${yy}" r="10"/>
       <text class="sg-name" x="${lampX + 20}" y="${yy + 4.5}">${esc(r.railName)}</text>
     </g>`;
   }).join('');
   return `
-  <figure class="signal${o.intro ? ' intro' : ''}" role="img" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(summary(rows))}.">
-    <figcaption class="sg-head">
-      <span class="sg-count"><b>${open}</b> of ${rows.length} ${openWord(rows)}</span>
-      ${o.caption ? `<span class="sg-cap">${esc(o.caption)}</span>` : ''}
-    </figcaption>
+  <figure class="signal${o.intro ? ' intro' : ''}" role="img" aria-label="${esc(summary(rows))}.">
+    ${o.caption ? `<figcaption class="sg-head"><span class="sg-cap">${esc(o.caption)}</span></figcaption>` : ''}
     <svg class="sg-art" viewBox="0 0 340 ${H}" aria-hidden="true">
       ${wires}
       <g class="sg-hub"><circle cx="34" cy="${hubY}" r="25"/><text x="34" y="${hubY + 4}" text-anchor="middle">YOU</text></g>
@@ -77,21 +73,20 @@ export function signalHtml(rows, o = {}) {
  */
 function miniHtml(rows, o) {
   const changed = changedSet(o.key || 'mini', rows);
-  const open = rows.filter((r) => r.state === 'open').length;
   const H = 140; const hubY = H / 2; const lampX = 166;
   const y = (i) => 10 + i * ((H - 20) / Math.max(1, rows.length - 1));
   const parts = rows.map((r, i) => {
     const yy = y(i);
     return `<path class="sg-wire${changed.has(r.id) ? ' changed' : ''}" data-state="${esc(r.state)}" d="M108 ${hubY} C 138 ${hubY}, 140 ${yy}, ${lampX - 8} ${yy}" pathLength="100"/>
-      <g class="sg-lamp${changed.has(r.id) ? ' changed' : ''}" data-state="${esc(r.state)}">
+      <g class="sg-lamp${changed.has(r.id) ? ' changed' : ''}" data-state="${esc(r.state)}" data-goal="${r.id === o.goal}">
         <circle class="sg-glow" cx="${lampX}" cy="${yy}" r="10"/><circle class="sg-dot" cx="${lampX}" cy="${yy}" r="6"/>
         <text class="sg-code" x="${lampX + 13}" y="${yy + 3.5}">${esc(r.railName)}</text>
       </g>`;
   }).join('');
   return `
-  <figure class="signal mini" role="img" aria-label="${open} of ${rows.length} ${openWord(rows)}. ${esc(summary(rows))}.">
+  <figure class="signal mini" role="img" aria-label="${esc(summary(rows))}.">
     <svg class="sg-art" viewBox="0 0 320 ${H}" aria-hidden="true">
-      <g class="sg-hubtext"><text class="sg-big" x="8" y="${hubY + 12}">${open}</text><text class="sg-small" x="${open > 9 ? 48 : 30}" y="${hubY + 12}">/${rows.length}</text><text class="sg-small" x="8" y="${hubY + 30}">${openWord(rows)}</text></g>
+      <g class="sg-hubtext"><text class="sg-small" x="8" y="${hubY - 4}">Your</text><text class="sg-small" x="8" y="${hubY + 14}">${esc(o.label || 'levels')}</text></g>
       <circle class="sg-hubdot" cx="100" cy="${hubY}" r="9"/>
       ${parts}
     </svg>

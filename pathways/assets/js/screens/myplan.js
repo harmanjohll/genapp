@@ -14,23 +14,21 @@
 // on the pass, the compass has its own card, and each saved step can be
 // ticked as done. It prints as one page for a parent or a review.
 
-import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.3';
-import { compassSvg, compassLines } from '../ui/compass.js?v=7.3';
-import { goalLine } from './path.js?v=7.3';
-import { reach } from '../engine/reach.js?v=7.3';
-import { effective, PLAN_YEARS } from '../engine/years.js?v=7.3';
-import { advise, sayName } from '../engine/advice.js?v=7.3';
-import { report } from '../engine/grades.js?v=7.3';
-import { psleScore } from '../engine/psle.js?v=7.3';
-import { openCount, mapPips } from '../ui/map.js?v=7.3';
-import { sayMove, roleWords } from '../ui/talk.js?v=7.3';
-import { ticketHtml } from '../ui/ticket.js?v=7.3';
-import { boardHtml } from '../ui/board.js?v=7.3';
-import { signalHtml } from '../ui/signal.js?v=7.3';
-import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.3';
-import { STRIP } from '../ui/yearstrip.js?v=7.3';
-import { esc, onAction } from '../ui/dom.js?v=7.3';
-import { icon } from '../ui/icons.js?v=7.3';
+import { getState, toggleAction, toggleDone, carryUrl, carrySummary, compassFill, YEARS } from '../state.js?v=7.4';
+import { compassSvg, compassLines } from '../ui/compass.js?v=7.4';
+import { goalLine } from './path.js?v=7.4';
+import { reach } from '../engine/reach.js?v=7.4';
+import { effective, PLAN_YEARS } from '../engine/years.js?v=7.4';
+import { advise, sayName } from '../engine/advice.js?v=7.4';
+import { report, hn3Check, entries } from '../engine/grades.js?v=7.4';
+import { psleScore } from '../engine/psle.js?v=7.4';
+import { ticketHtml } from '../ui/ticket.js?v=7.4';
+import { boardHtml } from '../ui/board.js?v=7.4';
+import { signalHtml } from '../ui/signal.js?v=7.4';
+import { t, lineMode, openWord, isShort } from '../ui/labels.js?v=7.4';
+import { STRIP } from '../ui/yearstrip.js?v=7.4';
+import { esc, onAction } from '../ui/dom.js?v=7.4';
+import { icon } from '../ui/icons.js?v=7.4';
 
 const LABEL = Object.fromEntries(YEARS.map((y) => [y.id, y.label]));
 
@@ -41,17 +39,26 @@ export default {
   render(root, api) {
     const st = getState();
     const c = api.ctx();
-    const rw = roleWords(st.role);
     const byId = Object.fromEntries(c.subjects.map((s) => [s.id, s]));
     const e = effective(st.plans, c.subjects);
     const rows = c.destinations.map((d) => reach(c.plan, d, c));
-    const open = openCount(rows);
     const adv = e.yearId ? advise({ yearId: e.yearId, plan: st.plans[e.yearId], ctx: c }) : null;
-    const top = adv ? adv.singles.slice(0, 3).concat(adv.pairs.slice(0, 1)) : [];
+    // Only moves that serve the goal are listed here. With no goal, none is pushed.
+    const goalName = st.goal ? ((c.destinations.find((d) => d.id === st.goal.dest) || {}).railName || '') : '';
+    const top = adv && goalName ? [...adv.singles, ...adv.pairs].filter((m) => (m.opens || []).includes(goalName) || (m.nearer || []).includes(goalName)).slice(0, 3) : [];
     const sc = api.data.psle ? psleScore(st.psle || {}, api.data.psle) : { complete: false };
     const g = api.data.grades;
     const anyGrades = Object.keys(st.grades.now).length || Object.keys(st.grades.target).length;
     const rep = g && anyGrades ? report({ plan: c.plan, grades: st.grades, g, names: Object.fromEntries(c.subjects.map((s) => [s.id, sayName(s)])), destNames: Object.fromEntries(c.destinations.map((d) => [d.id, d.railName])) }) : [];
+    // Only scores these grades can make are listed. The 3 year Higher Nitec has
+    // no score, so it shows which score types the grades meet: when it is the
+    // goal, or when no other score can be made.
+    const scored = rep.filter((a) => (a.basis === 'target' ? a.target : a.now).value != null);
+    const nameOf = Object.fromEntries(c.subjects.map((s) => [s.id, sayName(s)]));
+    const tg = Object.keys(st.grades.target).length ? st.grades.target : st.grades.now;
+    const hnName = (c.destinations.find((d) => d.id === 'nitec') || {}).railName || 'Higher Nitec (3 yrs)';
+    const hnAll = g && anyGrades && c.plan ? hn3Check(entries(c.plan, tg, g, nameOf), g) : null;
+    const hn = hnAll && hnAll.graded && ((st.goal && st.goal.dest === 'nitec') || !scored.length) ? hnAll : null;
     const yearMeta = ((api.data.years || {}).years || {})[st.year] || {};
     const talk = (yearMeta.talk && yearMeta.talk[st.role]) || [];
     const meLines = compassLines(api.data, st.compass);
@@ -66,9 +73,8 @@ export default {
         <div class="pass-top">
           <div>
             <p class="pass-k">${st.yearSet ? `Now in ${esc(LABEL[st.year])}` : 'Year not set'} · for the next conversation</p>
-            <h1 id="pass-h">${esc(st.role === 'student' ? t('planTitle') : rw.plan)}</h1>
+            <h1 id="pass-h">${esc(t('planTitle'))}</h1>
           </div>
-          <p class="pass-open"><b>${open}</b><span>of ${rows.length} ${openWord(rows)}</span></p>
         </div>
         ${st.goal ? `<p class="pass-goal">${icon('target')}<span><b>${esc(goalLine(api, st.goal))}</b>${st.goal.why ? `<small>${esc(st.goal.why)}</small>` : ''}${by || who ? `<small>${by ? `Look again by ${esc(by)}` : ''}${by && who ? ' · ' : ''}${who ? `Agreed with: ${esc(who.charAt(0).toLowerCase() + who.slice(1))}` : ''}</small>` : ''}</span></p>`
     : `<p class="pass-goal no-print"><button type="button" class="btn ghost on-night small press" data-action="go" data-s="goal">${icon('target')} Set a goal</button></p>`}
@@ -101,7 +107,7 @@ export default {
         <section class="destsec">
           ${lineMode()
             ? boardHtml(rows, { key: 'plan', title: e.yearId ? t(openWord(rows) === 'on track' ? 'answerFromLower' : 'answerFrom', LABEL[e.yearId]) : t('answer') })
-            : signalHtml(rows, { key: 'plan', caption: e.yearId ? t(openWord(rows) === 'on track' ? 'answerFromLower' : 'answerFrom', LABEL[e.yearId]) : t('answer') })}
+            : signalHtml(rows, { key: 'plan', goal: st.goal && st.goal.dest, caption: e.yearId ? t(openWord(rows) === 'on track' ? 'answerFromLower' : 'answerFrom', LABEL[e.yearId]) : t('answer') })}
         </section>
 
         <section class="destsec">
@@ -110,7 +116,7 @@ export default {
             <button type="button" class="stepcheck press" role="checkbox" aria-checked="${!!st.done[a]}" data-action="mp-done" data-i="${i}" aria-label="Done: ${esc(a)}">${st.done[a] ? icon('check') : ''}</button>
             <span>${esc(a)}</span>
             <button type="button" class="iconbtn press no-print" data-action="mp-drop" data-i="${i}" aria-label="Remove this step">${icon('x')}</button></li>`).join('')}</ul>`
-            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">Each move comes with words to say to a teacher or parent.</p></div>`}
+            : `<div class="emptystate small-es"><span class="es-ic">${icon('ticket')}</span><p class="es-h">${esc(t('noneKept'))}</p><p class="small">One step this term is enough.</p></div>`}
           <p class="small no-print"><button type="button" class="linkbtn" data-action="go" data-s="goal">${st.goal ? 'Add steps on your goal' : 'Set a goal and add steps'}</button></p>
         </section>
       </div>
@@ -118,25 +124,26 @@ export default {
       <section class="destsec mecard">
         <button type="button" class="mecard-rose press no-print-btn" data-action="go" data-s="me" aria-label="Open Me">${compassSvg(compassFill(), { mini: true })}</button>
         <div>
-          <h2 class="advh">${st.role === 'student' ? 'Who you are' : 'Who they are'}</h2>
+          <h2 class="advh">Who you are</h2>
           ${meLines.length ? `<dl class="melines">${meLines.map(([k, list]) => `<div><dt>${esc(k)}</dt><dd>${list.map((w) => esc(w)).join(' · ')}</dd></div>`).join('')}</dl>`
     : `<p class="small no-print">Nothing on the compass yet. <button type="button" class="linkbtn" data-action="go" data-s="me">Open Me</button></p>`}
           ${st.compass.notes.length ? `<p class="small">${esc(st.compass.notes[st.compass.notes.length - 1].text)}</p>` : ''}
         </div>
       </section>
 
-      ${top.length ? `
+      ${st.goal && top.length ? `
       <section class="destsec">
-        <h2 class="advh">Best next moves</h2>
+        <h2 class="advh">Moves for your goal</h2>
         <div class="ticketlist">${(isShort() ? top.slice(0, 1) : top).map((m) => ticketHtml(m)).join('')}</div>
       </section>` : ''}
 
-      ${rep.length ? `
+      ${scored.length || hn ? `
       <section class="destsec">
         <h2 class="advh">Targets</h2>
-        <div class="targetcells">${rep.map((a) => {
+        <div class="targetcells">${hn ? `<div class="tcell"><span class="tcell-k">${esc(hnName)} <small>meets courses that read</small></span>
+            <span class="tcell-d">${hn.types.map((x) => `<span data-meets="${x.meets}">${esc(x.name.replace('Courses that read ', ''))}</span>`).join('')}</span></div>` : ''}${scored.map((a) => {
           const ref = a.basis === 'target' ? a.target : a.now;
-          return `<div class="tcell"><span class="tcell-k">${esc(a.name)} <small>${a.basis}</small></span><b>${ref.value == null ? '·' : ref.value}</b>
+          return `<div class="tcell"><span class="tcell-k">${esc(a.name)} <small>${a.basis}</small></span><b>${ref.value}</b>
             <span class="tcell-d">${a.dests.map((d) => `<span data-meets="${!!d.meets}">${esc(d.name)} ${d.cutoff}</span>`).join('')}</span></div>`;
         }).join('')}</div>
       </section>` : ''}
@@ -145,7 +152,6 @@ export default {
       <${isShort() ? 'details class="fold destsec"' : 'section class="destsec"'}>
         ${isShort() ? '<summary>Questions to talk through</summary>' : '<h2 class="advh">Questions to talk through</h2>'}
         <div class="bubbles">${talk.map((t) => `<p class="bubble">${esc(t)}</p>`).join('')}</div>
-        <p class="small no-print">Written for a ${esc(st.role)}. <button type="button" class="linkbtn" data-action="role">Change who is reading</button></p>
       </${isShort() ? 'details' : 'section'}>` : ''}
 
       <p class="small srcline">A planning tool. Check important details with your ECG counsellor and at moe.gov.sg.</p>

@@ -8,11 +8,11 @@
 // the train. A gap is then something you can see, and the sentence under the
 // track names the grade steps, by subject, that would close it.
 
-import { getState, setGrade } from '../state.js?v=7.3';
-import { report, gradesFor, polyByType } from '../engine/grades.js?v=7.3';
-import { esc, onAction } from './dom.js?v=7.3';
-import { icon } from './icons.js?v=7.3';
-import { listNames, sayName } from '../engine/advice.js?v=7.3';
+import { getState, setGrade } from '../state.js?v=7.4';
+import { report, gradesFor, polyByType, hn3Check, entries } from '../engine/grades.js?v=7.4';
+import { esc, onAction } from './dom.js?v=7.4';
+import { icon } from './icons.js?v=7.4';
+import { listNames, sayName } from '../engine/advice.js?v=7.4';
 
 const SHORT = { jc: 'JC', mi: 'MI', poly: 'Poly', pfp: 'PFP', hnitec: 'Higher Nitec (2 yrs)', sec5: 'Sec 5' };
 const SCALE = { L1R4: [5, 35], ELR2B2: [5, 35], ELMAB3: [5, 30] };
@@ -98,7 +98,7 @@ function outHtml(api, y) {
   const anyGrade = Object.keys(st.grades.now).length || Object.keys(st.grades.target).length;
   if (!anyGrade) return `<p class="callout small">${icon('target')} Step a grade for each subject and the score tracks appear here.</p>`;
 
-  const cards = rep.map((a) => {
+  const cardList = rep.map((a) => {
     const nv = a.now.value; const tv = a.target.value;
     const ref = a.basis === 'target' ? a.target : a.now;
     const lines = ref.value == null ? `<p class="small">${esc(ref.why || '')}</p>` : `<ul class="meets">${a.dests.map((d) => {
@@ -127,13 +127,34 @@ function outHtml(api, y) {
       ${lines}
       ${counted ? `<p class="small counted">Counted (${a.basis}): ${counted}. ${esc(a.bonus || '')}</p>` : ''}
     </article>`;
-  }).join('');
+  });
 
   const tg = Object.keys(st.grades.target).length ? st.grades.target : st.grades.now;
+  // The 3 year Higher Nitec has no score to track, so it gets its own card:
+  // the five score types and which of them these grades meet.
+  const hn = hn3Check(entries(plan, tg, g, names(api)), g);
+  const hnCard = `<article class="scorecard" data-dest="nitec">
+      <div class="scorehead"><span class="scorename">${esc(destNames(api).nitec || 'Higher Nitec (3 yrs)')}</span></div>
+      <p class="small">Four subjects, read at G1 grades. MOE gives no maximum score. Three of the four need a pass on most courses.</p>
+      <ul class="meets">${hn.types.map((t) => `<li data-meets="${t.meets}"><b>${esc(t.name)}</b><span>${t.meets ? `${icon('check')}These grades meet it` : esc(t.need)}</span></li>`).join('')}</ul>
+      <p class="small counted">A pass is D at G1, 5 at G2 or E8 at G3. Which course uses which is published in mid 2027.</p>
+    </article>`;
+  // The goal's own score comes first. Otherwise the cards keep the order of the 8 places.
+  const goalDest = st.goal && st.goal.dest;
+  // A score these levels cannot make yet has nothing to draw. Those fold into
+  // one quiet row, so a student never scrolls past empty cards to reach theirs.
+  const live = (a) => a.now.value != null || a.target.value != null;
+  const all = [...rep.map((a, i) => ({ html: cardList[i], dests: a.dests.map((d) => d.id), live: live(a), name: a.name })), { html: hnCard, dests: ['nitec'], live: true }];
+  all.sort((p, q) => (q.dests.includes(goalDest) ? 1 : 0) - (p.dests.includes(goalDest) ? 1 : 0));
+  const shown = all.filter((x) => x.live || x.dests.includes(goalDest));
+  const folded = all.filter((x) => !shown.includes(x));
   const fam = st.families ? polyByType(plan, tg, g, names(api), (api.data.families || {}).destinations) : [];
   return `
     <h2 class="advh">What these grades reach</h2>
-    <div class="scorelist">${cards}</div>
+    <div class="scorelist">${shown.map((x) => x.html).join('')}</div>
+    ${folded.length ? `<details class="fold scorefold"><summary>Other scores: ${esc(listNames(folded.map((x) => x.name)))}</summary>
+      <p class="small">These read subjects at other levels, or need more grades. They show here when your grades can make them.</p>
+      <div class="scorelist">${folded.map((x) => x.html).join('')}</div></details>` : ''}
     ${fam.length ? `
       <h2 class="advh">Polytechnic by course type</h2>
       <p class="small">Each type counts different relevant subjects. Provisional until the 2028 lists in mid 2027.</p>
